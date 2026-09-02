@@ -24,7 +24,7 @@ Generate IDE project files, then open `Hansa.uproject` in Unreal Editor:
 pwsh -File Scripts/GenerateProjectFiles.ps1
 ```
 
-Project generation is pinned to Visual Studio 2022 by default even when a newer Visual Studio is installed.
+Project generation is pinned to Visual Studio 2022 even when a newer Visual Studio is installed. The pin applies both to the repository script and to regeneration initiated by Unreal Editor or Windows Explorer.
 
 Generated Unreal directories and IDE files are intentionally excluded from version control. Unreal packages and common source-art/media formats are stored through Git LFS.
 

@@ -54,6 +54,8 @@ Costs:
 
 Implementation clarification, 2026-09-02 (`S01-P01`): authoritative scaling uses a portable unsigned 128-bit intermediate with explicit `TowardZero`, `Floor`, `Ceiling`, and `HalfAwayFromZero` modes. The current clock version is `1` with a default 60 simulated minutes per tick. Named streams use `SplitMix64V1`; their initial state is the campaign seed XOR an FNV-1a 64-bit hash of the strict ASCII dot-separated stream name. Stream name, algorithm, state, and draw count are serialized in the versioned `HPR1` primitive format. Any incompatible change to these rules requires a version change.
 
+Pipeline clarification, 2026-09-02 (`S01-P02`): system-pipeline version `1` executes eleven fixed phases in the order recorded by [SimulationKernel.md](../../Development/SimulationKernel.md), beginning with accepted commands and ending with publication/checksum. State initialization canonicalizes all result-affecting arrays. Accepted command metadata is globally sequence-ordered, the clock advances exactly one tick per successful step, and failed preflight is transactionally state-neutral. Changing phase meaning or order requires a pipeline/simulation-version decision.
+
 ## Deferred
 
 - Maximum supported campaign duration and formal numeric range budget per subsystem.

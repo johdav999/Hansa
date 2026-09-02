@@ -142,11 +142,12 @@ An evidence bundle records the operation/test, build/version, fixture/seed where
 
 ## 9. Git and enforcement
 
-`Binaries`, `DerivedDataCache`, `Intermediate`, `Saved`, IDE workspaces, generated solutions, and generated staging remain ignored. Unreal packages, source art, audio/video, and raster images use Git LFS. Do not force-add ignored output.
+`Binaries`, `DerivedDataCache`, `Intermediate`, IDE workspaces, generated solutions, generated staging, and transient `Saved` content remain ignored. The sole tracked `Saved` exception is `Saved/UnrealBuildTool/BuildConfiguration.xml`: UBT reads this project-scoped source setting when the Editor or Explorer regenerates project files, and it pins the repository to Visual Studio 2022. Unreal packages, source art, audio/video, and raster images use Git LFS. Do not force-add other ignored output.
 
 `Scripts/VerifyRepositoryConventions.ps1` fails for:
 
 - high-confidence credential material in repository text;
+- a missing/drifted Visual Studio 2022 generator pin, incompatible `.vsconfig`, or incompatible generated project metadata;
 - provider configuration inside runtime source, project config, or the project descriptor;
 - production references to Developer/generated staging paths;
 - a nonempty Android file-server security token;

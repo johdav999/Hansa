@@ -77,4 +77,4 @@ pwsh -File Scripts/RunAutomationTests.ps1 -TestFilter Hansa.Simulation.Primitive
 
 Coverage includes canonical validation, typed comparison and ordering, zero/negative/range failures, arithmetic overflow, large intermediate values, all rounding directions, clock projection and overflow, identical named sequences, the locked first `SplitMix64V1` value, bounded draws, exact round trips and malformed binary envelopes.
 
-`S01-P02 — Simulation state and ordered pipeline` is the next unblocked prompt. It should consume these types without weakening their checked or versioned boundaries.
+`S01-P02 — Simulation state and ordered pipeline` consumes these types through [SimulationKernel.md](SimulationKernel.md), `S01-P03` uses them through [CommandGateway.md](CommandGateway.md), and `S01-P04` locks their normalized diagnostic representation in [DeterminismDiagnostics.md](DeterminismDiagnostics.md). Sprint 1 is complete.

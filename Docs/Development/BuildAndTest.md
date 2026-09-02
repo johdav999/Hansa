@@ -30,7 +30,7 @@ If neither is supplied, the scripts read `EngineAssociation` from `Hansa.uprojec
 pwsh -File Scripts/VerifyRepositoryConventions.ps1
 ```
 
-This engine-independent gate checks convention files, high-confidence credential patterns, provider leakage into runtime/configuration, forbidden production references to Developer/generated staging, safe config defaults, cook exclusions, ignored output, Git LFS routing, test names and the fixture template. It writes a machine-readable result under `Saved/BuildArtifacts/` and never prints suspected credential values.
+This engine-independent gate checks convention files, the persistent Visual Studio 2022 generator pin and any current generated project metadata, high-confidence credential patterns, provider leakage into runtime/configuration, forbidden production references to Developer/generated staging, safe config defaults, cook exclusions, ignored output, Git LFS routing, test names and the fixture template. It writes a machine-readable result under `Saved/BuildArtifacts/` and never prints suspected credential values.
 
 ### Generate IDE project files
 
@@ -40,13 +40,7 @@ pwsh -File Scripts/GenerateProjectFiles.ps1
 
 This is useful for local IDE setup. CI builds do not require a generated solution. The repository baseline is Visual Studio 2022, so the script explicitly passes Unreal's `-2022` generator option and verifies that the resulting solution uses Visual Studio version 17, MSBuild tools version 17.0, and platform toolset `v143`.
 
-If Visual Studio 2026 becomes the approved project IDE later, it can be requested explicitly after installing its C++ game workload:
-
-```powershell
-pwsh -File Scripts/GenerateProjectFiles.ps1 -VisualStudioVersion 2026
-```
-
-Do not rely on Unreal's automatic newest-IDE selection when multiple Visual Studio major versions are installed; it can generate a VS 2026 project that Visual Studio 2022 reports as incompatible.
+The source-controlled `Saved/UnrealBuildTool/BuildConfiguration.xml` also pins `VisualStudio2022`. This second layer is required because project files regenerated from Unreal Editor or Windows Explorer do not receive the script's command-line option. Do not remove or locally empty that file: when multiple Visual Studio major versions are installed, Unreal otherwise selects the newest IDE and can generate a VS 2026 project that Visual Studio 2022 reports as incompatible. A future IDE-major migration must update the persistent configuration, generator checks, `.vsconfig`, documentation, and convention audit together.
 
 Launcher builds that do not contain `GenerateProjectFiles.bat` automatically use UnrealBuildTool's `-projectfiles` mode.
 

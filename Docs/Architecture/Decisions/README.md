@@ -17,6 +17,8 @@ Architecture Decision Records (ADRs) capture durable technical decisions that im
 | [ADR-0002](0002-stable-identifiers.md) | Accepted | Stable definition and runtime entity identifiers |
 | [ADR-0003](0003-deterministic-units-and-time.md) | Accepted | Fixed-point domain units, simulation time and deterministic ordering |
 | [ADR-0004](0004-shipping-exclusion.md) | Accepted | Compile-time and packaging exclusion of editor, automation, test and generation tooling |
+| [ADR-0005](0005-command-gateway-and-domain-events.md) | Accepted | Single typed transactional command gateway and ordered domain-event publication |
+| [ADR-0006](0006-normalized-state-hashes-and-diagnostics.md) | Accepted | Versioned normalized subsystem hashes and first-divergence diagnostics |
 
 ## ADR rules
 
@@ -35,6 +37,10 @@ flowchart LR
     A2[ADR-0002\nstable identifiers] --> A3[ADR-0003\ndeterministic state and time]
     A2 --> Save[future save/protocol ADRs]
     A3 --> Save
+	A2 --> A5[ADR-0005\ncommand gateway and events]
+	A3 --> A5
+	A3 --> A6[ADR-0006\nstate hashes and diagnostics]
+	A5 --> A6
     A1 --> Auto[future automation protocol ADR]
     A4 --> Auto
 ```

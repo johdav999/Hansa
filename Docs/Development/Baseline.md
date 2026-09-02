@@ -1,15 +1,15 @@
 # Hansa — Development Baseline
 
 - Audit date: 2026-09-01
-- Last verification update: `S01-P01`, 2026-09-02
-- Sprint tasks covered: `S00-P01`, `S00-P02`, `S00-P03`, `S00-P04`, `S01-P01`
+- Last verification update: `S01-P04`, 2026-09-02
+- Sprint tasks covered: `S00-P01`, `S00-P02`, `S00-P03`, `S00-P04`, `S01-P01`, `S01-P02`, `S01-P03`, `S01-P04`
 - Audited branch: `main`
 - Audited commit: `9375951` (`Initial Unreal Engine project setup`)
 - Project: Unreal Engine 5.8 C++ project on Windows
 
 ## 1. Purpose
 
-This report separates the repository's verified current state from the target architecture in [TechnicalArchitecture.md](../TechnicalArchitecture.md). Sprint 0 and `S01-P01` are complete and this is the handoff baseline for `S01-P02`. Module shells, architecture smoke tests, repeatable build/test/audit entry points, repository conventions, source/configuration release guardrails, and deterministic domain primitives are implemented; later simulation state/pipeline, gameplay, editor studio, automation transport, external tools, real content validation, packaging, and release gates are still plans.
+This report separates the repository's verified current state from the target architecture in [TechnicalArchitecture.md](../TechnicalArchitecture.md). Sprint 0 and Sprint 1 through `S01-P04` are complete and this is the handoff baseline for `S02-P01`. Module shells, architecture smoke tests, repeatable build/test/audit entry points, repository conventions, source/configuration release guardrails, deterministic domain primitives, authoritative state, fixed-step pipeline, read-only projections/diffs, typed commands, ordered domain events, normalized hashes and named headless fixtures are implemented; later gameplay definitions, editor studio, automation transport, external tools, real content validation, packaging, and release gates are still plans.
 
 The workspace was intentionally left dirty. At audit start, `README.md` was modified and `AGENTS.md` plus `Docs/` were untracked. These are user/project documentation changes and must not be reset or overwritten.
 
@@ -26,7 +26,7 @@ The workspace was intentionally left dirty. At audit start, `README.md` was modi
 | Git LFS | Installed, version `3.5.1`; no LFS objects are currently tracked |
 | Build settings | `BuildSettingsVersion.V7` in both targets |
 
-The checked-in `.vsconfig` requests the native-game workload and UE-selected Visual Studio 2022 compiler/SDK components. UBT selected Visual Studio 2022 for compilation, but its automatic project-file generator initially selected the separately installed Visual Studio 2026 and produced `ToolsVersion="18.0"`/`v145` files that Visual Studio 2022 could not load. `GenerateProjectFiles.ps1` now explicitly defaults to `-2022`, verifies solution/project/toolset markers, and regenerated `.vsconfig` for MSVC 14.44. Project generation must not assume that UBT's compile-toolchain choice and newest-IDE project format are the same decision.
+The checked-in `.vsconfig` requests the native-game workload and UE-selected Visual Studio 2022 compiler/SDK components. UBT selected Visual Studio 2022 for compilation, but its automatic project-file generator selected the separately installed Visual Studio 2026 and produced `ToolsVersion="18.0"`/`v145` files that Visual Studio 2022 could not load. A command-line-only `-2022` fix was insufficient because Unreal Editor and Explorer regeneration do not inherit that option. The source-controlled project-scoped `Saved/UnrealBuildTool/BuildConfiguration.xml` now pins `VisualStudio2022` for every regeneration path; `GenerateProjectFiles.ps1` and the repository convention audit verify the persistent setting plus solution/project/toolset markers. Project generation must not assume that UBT's compile-toolchain choice and newest-IDE project format are the same decision.
 
 ## 3. Build verification
 
@@ -69,9 +69,14 @@ After `S00-P04`, the integrated command passed again on 2026-09-02 with the repo
 - Non-reflected foundation helpers demonstrate the `Hansa::<Area>` namespace convention in automation and test code; UHT-reflected types will retain Unreal's global naming conventions.
 - The `Hansa` runtime module still declares no Slate, UMG, Enhanced Input, networking, asset-management, editor, automation, or test dependency.
 - The unused `MyClass.h/.cpp` placeholder has been removed.
-- No Gameplay Framework subclasses, simulation state, definitions, commands or queries exist yet.
+- No Gameplay Framework subclasses or authored definition assets exist yet. S01-P03 adds transport-neutral typed representative command payloads and immutable domain events without implementing a city feature.
 - `HansaSimulation` now owns typed canonical definition IDs, typed runtime entity IDs, checked fixed-point money/quantity/rate arithmetic, versioned tick/calendar values, named deterministic RNG streams and the versioned `HPR1` primitive serializer. The concrete contract is recorded in [DeterministicPrimitives.md](DeterministicPrimitives.md).
 - Five headless tests under `Hansa.Simulation.Primitives` cover identity, arithmetic, clock, RNG and serialization behavior. No primitive includes an Actor, UObject, World, editor, automation or provider dependency.
+- `HansaSimulation` now also owns the immutable definition context, canonical plain-record simulation state, versioned eleven-phase fixed-step pipeline, rebuildable transient cache, owning snapshots and purpose-built read-only projections documented in [SimulationKernel.md](SimulationKernel.md).
+- Five tests under `Hansa.Simulation.Kernel` cover canonicalization, exact phase order, transactional failures, read-only snapshot/projection behavior and 1,000-tick deterministic replay through the sole command gateway.
+- `HansaSimulation` now owns the versioned typed command envelope, authority context, structured gateway result, transactional create/cancel/no-op lifecycle payloads and immutable ordered domain events documented in [CommandGateway.md](CommandGateway.md). Four `Hansa.Simulation.Commands` tests cover lifecycle application, rollback, structured validation, caller-origin parity, replay and cross-tick event order.
+- `HansaSimulation` now derives fingerprint version 3 from nine versioned normalized subsystem hashes, exposes compact state reports and projection diffs, and owns a named exact-tick fixture/trace/comparison/evidence harness documented in [DeterminismDiagnostics.md](DeterminismDiagnostics.md). Five `Hansa.Simulation.Diagnostics` tests cover normalization/exclusions, projection diffs, golden fixture execution, Saved JSON evidence, first-divergence diagnostics and intentional phase-order drift.
+- `Tests/Fixtures/foundation_determinism_v1.json` is the first reviewed runnable descriptor and locks its six-tick final checksum.
 
 ### Content and configuration
 
@@ -231,6 +236,39 @@ Target-level Shipping exclusion is automated because the forbidden modules exist
 - [x] `HansaEditor` Development and `Hansa` Shipping compile; all five focused primitive tests and the full seven-test `Hansa` filter pass headlessly.
 - [x] The repository convention audit passes with the new source, tests and documentation.
 
+### Proven at S01-P02
+
+- [x] Immutable definition identity and mutable authoritative records are separate plain C++ boundaries.
+- [x] State initialization canonicalizes every result-affecting collection and rejects duplicate IDs, invalid ranges and missing entity references.
+- [x] Pipeline version 1 executes eleven named phases in a fixed inspected order and advances exactly one tick per successful step.
+- [x] Wrong command tick/order, count overflow and clock overflow fail before authoritative mutation.
+- [x] Transient cache data is rebuildable and excluded from snapshots, projections and fingerprints.
+- [x] Live const access, owning snapshots and purpose-built projections expose no mutable authoritative container.
+- [x] Equal initial state, definition hash, seed and accepted command stream retain equal fingerprints at every step across a 1,000-tick test.
+
+### Proven at S01-P03
+
+- [x] Every state-changing tick enters through one transport-neutral typed gameplay command gateway; the pipeline executor is not a public bypass.
+- [x] Commands carry versioned typed payloads, monotonic stable identity, issuing-house/principal/origin authority context, requested tick and deterministic global sequence.
+- [x] Player, AI, multiplayer RPC and controlled automation origins share the same authoritative validation and application path.
+- [x] Stable structured results distinguish schema, identity, authority, tick, order, capacity, payload, existence, ownership and clock failures.
+- [x] Tick batches apply to a working state copy; any late failure preserves state, time, fingerprint and transient cache and publishes no events.
+- [x] Successful commands emit immutable globally ordered events correlated to command ID, house and tick.
+- [x] Equal typed streams replay to equal per-tick fingerprints and event order; a one-field payload difference diverges.
+- [x] The runtime command/event model adds no authored definition property, so no editor schema or migration surface is applicable in this prompt.
+
+### Proven at S01-P04
+
+- [x] Hash format, normalization and global fingerprint versions are explicit; the global fingerprint is derived from one fixed ordered subsystem report.
+- [x] Included authoritative fields and excluded transient/presentation/evidence fields are recorded in ADR-0006 and executable tests.
+- [x] Nine domain-separated component hashes identify contract, metadata, random stream and entity-record divergence.
+- [x] Read-only projection comparison produces stable field/value entries and bounded compact summaries without mutation access.
+- [x] A validated named descriptor initializes a headless state and advances an exact bounded tick count exclusively through the normal command gateway.
+- [x] Per-tick traces record pipeline order, domain-event order and state-after-tick components.
+- [x] Trace comparison stops at the first mismatch and identifies pipeline, events or the relevant authoritative state subsystem.
+- [x] `foundation_determinism_v1` locks its final checksum and writes parseable versioned run/divergence JSON under ignored `Saved/TestEvidence`.
+- [x] Tests intentionally alter the phase order fingerprint and report the first affected tick.
+
 ### Sprint 0 exit status
 
 - [x] Development Editor and game targets build from documented repository entry points.
@@ -256,4 +294,4 @@ Target-level Shipping exclusion is automated because the forbidden modules exist
 
 ## 10. Next prompt
 
-`S01-P02 — Simulation state and ordered pipeline` is unblocked. It should build the authoritative plain-record simulation state and explicit fixed-step system pipeline on the checked, versioned primitives documented in [DeterministicPrimitives.md](DeterministicPrimitives.md), with deterministic ordering, read-only projections and no World Actor dependency.
+`S02-P01 — Definition base, schema registry and generic editor shell` is unblocked. It must introduce the first reflected authoring definition, derive generic editor/schema coverage from metadata, and enforce the complete editor/game parity contract in `Docs/EditorArchitecture.md` and `Docs/EditorMVP.md`.

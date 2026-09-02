@@ -1,0 +1,30 @@
+{
+  "fixtureId": "foundation_determinism_v1",
+  "schemaVersion": 1,
+  "owner": "Foundation",
+  "seed": "0000000044556677",
+  "definitionHash": "1020304050607080",
+  "initialTick": 0,
+  "exactTickCount": 6,
+  "commands": [
+    {
+      "type": "NoOpTest",
+      "commandId": 1,
+      "globalSequence": 1,
+      "requestedExecutionTick": 2,
+      "correlationValue": 77
+    },
+    {
+      "type": "NoOpTest",
+      "commandId": 2,
+      "globalSequence": 2,
+      "requestedExecutionTick": 4,
+      "correlationValue": 88
+    }
+  ],
+  "expected": {
+    "processedCommandCount": 2,
+    "finalTick": 6,
+    "finalChecksum": "B5BF9C0729753C4B"
+  }
+}

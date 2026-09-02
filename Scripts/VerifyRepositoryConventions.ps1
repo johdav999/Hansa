@@ -72,6 +72,7 @@ try {
         'Docs/Development/RepositoryConventions.md',
         'Content/Hansa/README.md',
         'SourceArt/README.md',
+        'Saved/UnrealBuildTool/BuildConfiguration.xml',
         'Tests/README.md',
         'Tests/Fixtures/fixture.example.json'
     )
@@ -82,6 +83,56 @@ try {
     }
     if ($failures.Count -eq 0) {
         Add-HansaConventionPass 'Required convention and example files exist.'
+    }
+
+    $toolchainFailuresBefore = $failures.Count
+    $projectBuildConfigurationPath = Join-Path $projectRoot 'Saved\UnrealBuildTool\BuildConfiguration.xml'
+    try {
+        [xml]$projectBuildConfiguration = Get-Content -Raw -LiteralPath $projectBuildConfigurationPath
+        $projectFileFormats = @($projectBuildConfiguration.Configuration.ProjectFileGenerator.Format)
+        if ($projectFileFormats.Count -ne 1 -or [string]$projectFileFormats[0] -ne 'VisualStudio2022') {
+            Add-HansaConventionFailure 'Saved/UnrealBuildTool/BuildConfiguration.xml must specify exactly one project file format: VisualStudio2022.'
+        }
+    }
+    catch {
+        Add-HansaConventionFailure "Saved/UnrealBuildTool/BuildConfiguration.xml is missing or invalid: $($_.Exception.Message)"
+    }
+
+    $vsConfigPath = Join-Path $projectRoot '.vsconfig'
+    try {
+        $vsConfig = Get-Content -Raw -LiteralPath $vsConfigPath | ConvertFrom-Json
+        $vsComponents = @($vsConfig.components | ForEach-Object { [string]$_ })
+        if ('Microsoft.VisualStudio.Component.VC.14.44.17.14.x86.x64' -notin $vsComponents) {
+            Add-HansaConventionFailure '.vsconfig must request the approved Visual Studio 2022 MSVC 14.44 component.'
+        }
+        if ($vsComponents | Where-Object { $_ -match '(?:VC\.14\.50|\.18\.0)(?:\.|$)' }) {
+            Add-HansaConventionFailure '.vsconfig contains Visual Studio 2026/MSVC 14.50 components. Regenerate project files for Visual Studio 2022.'
+        }
+    }
+    catch {
+        Add-HansaConventionFailure ".vsconfig is missing or invalid: $($_.Exception.Message)"
+    }
+
+    $solutionPath = Join-Path $projectRoot 'Hansa.sln'
+    if (Test-Path -LiteralPath $solutionPath -PathType Leaf) {
+        $solutionText = Get-Content -Raw -LiteralPath $solutionPath
+        $gameProjectPath = Join-Path $projectRoot 'Intermediate\ProjectFiles\Hansa.vcxproj'
+        $commonPropsPath = Join-Path $projectRoot 'Intermediate\ProjectFiles\UECommon.props'
+        if (-not $solutionText.Contains('# Visual Studio Version 17') -or
+            -not $solutionText.Contains('VisualStudioVersion = 17.')) {
+            Add-HansaConventionFailure 'Generated Hansa.sln is not compatible with Visual Studio 2022. Run Scripts/GenerateProjectFiles.ps1.'
+        }
+        if (-not (Test-Path -LiteralPath $gameProjectPath -PathType Leaf) -or
+            -not (Get-Content -Raw -LiteralPath $gameProjectPath).Contains('ToolsVersion="17.0"')) {
+            Add-HansaConventionFailure 'Generated Hansa.vcxproj does not use MSBuild tools version 17.0. Run Scripts/GenerateProjectFiles.ps1.'
+        }
+        if (-not (Test-Path -LiteralPath $commonPropsPath -PathType Leaf) -or
+            -not (Get-Content -Raw -LiteralPath $commonPropsPath).Contains('<PlatformToolset>v143</PlatformToolset>')) {
+            Add-HansaConventionFailure 'Generated UECommon.props does not use platform toolset v143. Run Scripts/GenerateProjectFiles.ps1.'
+        }
+    }
+    if ($failures.Count -eq $toolchainFailuresBefore) {
+        Add-HansaConventionPass 'Persistent and generated Visual Studio project metadata matches the Visual Studio 2022 baseline.'
     }
 
     $secretRules = @(
@@ -201,12 +252,15 @@ try {
     }
 
     $generatedTrackingPattern = '(^|/)(?:Binaries|DerivedDataCache|Intermediate|Saved|\.vs)(?:/|$)|\.slnx?$|^Content/Hansa/Generated/Staging(?:/|$)'
-    $trackedGenerated = @($trackedFiles | Where-Object { $_ -match $generatedTrackingPattern })
+    $trackedGeneratedExceptions = @('Saved/UnrealBuildTool/BuildConfiguration.xml')
+    $trackedGenerated = @($trackedFiles | Where-Object {
+        $_ -match $generatedTrackingPattern -and $_ -notin $trackedGeneratedExceptions
+    })
     foreach ($trackedPath in $trackedGenerated) {
         Add-HansaConventionFailure "Generated or transient path must not be tracked: $trackedPath"
     }
     if ($trackedGenerated.Count -eq 0) {
-        Add-HansaConventionPass 'No generated Unreal, IDE, evidence, or staging output is tracked.'
+        Add-HansaConventionPass 'No generated Unreal, IDE, evidence, or staging output outside the UBT source configuration is tracked.'
     }
 
     $ignoreProbes = @(

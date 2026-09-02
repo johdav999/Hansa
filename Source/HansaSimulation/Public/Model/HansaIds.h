@@ -151,6 +151,8 @@ namespace Hansa::Simulation
 	HANSA_ENTITY_ID_TRAITS(FHansaVehicleIdTraits, "Vehicle", 42);
 	HANSA_ENTITY_ID_TRAITS(FHansaRouteIdTraits, "Route", 43);
 	HANSA_ENTITY_ID_TRAITS(FHansaContractIdTraits, "Contract", 44);
+	HANSA_ENTITY_ID_TRAITS(FHansaCommandIdTraits, "Command", 45);
+	HANSA_ENTITY_ID_TRAITS(FHansaTestEntityIdTraits, "TestEntity", 46);
 
 #undef HANSA_ENTITY_ID_TRAITS
 
@@ -217,4 +219,6 @@ namespace Hansa::Simulation
 	using FHansaVehicleId = THansaEntityId<FHansaVehicleIdTraits>;
 	using FHansaRouteId = THansaEntityId<FHansaRouteIdTraits>;
 	using FHansaContractId = THansaEntityId<FHansaContractIdTraits>;
+	using FHansaCommandId = THansaEntityId<FHansaCommandIdTraits>;
+	using FHansaTestEntityId = THansaEntityId<FHansaTestEntityIdTraits>;
 }
