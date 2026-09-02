@@ -1,0 +1,13 @@
+{
+  "$comment": "Documentation-only template. Copy to a stable fixture-specific path before making it runnable.",
+  "fixtureId": "example_foundation_v1",
+  "schemaVersion": 1,
+  "owner": "Foundation",
+  "seed": 1,
+  "definitionHash": "REPLACE_WITH_COMPILED_DEFINITION_HASH",
+  "initialTick": 0,
+  "expected": {
+    "checkpoints": [],
+    "finalChecksum": null
+  }
+}

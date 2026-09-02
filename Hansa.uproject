@@ -5,9 +5,29 @@
 	"Description": "",
 	"Modules": [
 		{
+			"Name": "HansaSimulation",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "Hansa",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "HansaEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
+		},
+		{
+			"Name": "HansaAutomation",
+			"Type": "DeveloperTool",
+			"LoadingPhase": "PostEngineInit"
+		},
+		{
+			"Name": "HansaTests",
+			"Type": "DeveloperTool",
+			"LoadingPhase": "PostEngineInit"
 		}
 	],
 	"Plugins": [

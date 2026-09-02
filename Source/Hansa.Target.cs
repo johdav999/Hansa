@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 using UnrealBuildTool;
 using System.Collections.Generic;
 
@@ -9,7 +7,15 @@ public class HansaTarget : TargetRules
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V7;
+		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_8;
 
-		ExtraModuleNames.AddRange( new string[] { "Hansa" } );
+		bool bWithHansaAutomation = Configuration != UnrealTargetConfiguration.Shipping;
+		bBuildDeveloperTools = bWithHansaAutomation;
+
+		ExtraModuleNames.Add("Hansa");
+		if (bWithHansaAutomation)
+		{
+			ExtraModuleNames.Add("HansaAutomation");
+		}
 	}
 }
