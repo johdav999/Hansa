@@ -171,6 +171,16 @@ namespace Hansa::Simulation
 			AddUInt32(Hash, Event.GetIssuingHouseId().GetGeneration());
 			AddUInt64(Hash, Event.GetTestEntityId().GetValue());
 			AddUInt32(Hash, Event.GetTestEntityId().GetGeneration());
+			AddUInt64(Hash, Event.GetProductionId().GetValue());
+			AddUInt32(Hash, Event.GetProductionId().GetGeneration());
+			AddUInt64(Hash, Event.GetBuildingId().GetValue());
+			AddUInt32(Hash, Event.GetBuildingId().GetGeneration());
+			AddUInt32(Hash, static_cast<uint32>(Event.GetRecipeId().ToString().Len()));
+			for (const TCHAR Character : Event.GetRecipeId().ToString())
+			{
+				AddUInt32(Hash, static_cast<uint32>(Character));
+			}
+			AddByte(Hash, static_cast<uint8>(Event.GetProductionBlocker()));
 			AddUInt64(Hash, static_cast<uint64>(Event.GetValue()));
 		}
 		return Hash;

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hansa.local/schemas/automation-wire.schema.json",
+  "title": "Hansa automation framed wire protocol",
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "request": {
+      "type": "object",
+      "required": ["schemaVersion", "requestId", "operation", "controllerId", "sessionId", "timeoutMs", "payload"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "requestId": { "$ref": "#/$defs/identifier" },
+        "operation": {
+          "enum": ["ping", "capabilities_get", "session_start", "session_get", "session_stop", "health", "fixture_list", "fixture_load", "gameplay_query", "gameplay_command", "gameplay_assert", "simulation_step", "simulation_run", "simulation_run_until", "semantic_find", "semantic_state", "semantic_activate", "semantic_focus", "wait_for", "screenshot_capture"]
+        },
+        "controllerId": { "type": "string", "maxLength": 64 },
+        "sessionId": { "type": "string", "maxLength": 64 },
+        "timeoutMs": { "type": "integer", "minimum": 1, "maximum": 30000 },
+        "payload": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "required": ["code", "correlationId", "message", "remedy", "retryable"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "correlationId": { "type": "string", "maxLength": 64 },
+        "message": { "type": "string", "maxLength": 1024 },
+        "remedy": { "type": "string", "maxLength": 1024 },
+        "retryable": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "response": {
+      "type": "object",
+      "required": ["schemaVersion", "requestId", "ok"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "requestId": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "ok": { "type": "boolean" },
+        "payload": { "type": "object" },
+        "error": { "$ref": "#/$defs/error" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "ok": { "const": true } } },
+          "then": { "required": ["payload"], "not": { "required": ["error"] } },
+          "else": { "required": ["error"], "not": { "required": ["payload"] } }
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/request" },
+    { "$ref": "#/$defs/response" }
+  ]
+}

@@ -1,15 +1,15 @@
 # Hansa — Development Baseline
 
 - Audit date: 2026-09-01
-- Last verification update: `S01-P04`, 2026-09-02
-- Sprint tasks covered: `S00-P01`, `S00-P02`, `S00-P03`, `S00-P04`, `S01-P01`, `S01-P02`, `S01-P03`, `S01-P04`
+- Last verification update: `S02-P04`, 2026-09-02
+- Sprint tasks covered: `S00-P01`, `S00-P02`, `S00-P03`, `S00-P04`, `S01-P01`, `S01-P02`, `S01-P03`, `S01-P04`, `S02-P01`, `S02-P02`, `S02-P03`, `S02-P04`
 - Audited branch: `main`
 - Audited commit: `9375951` (`Initial Unreal Engine project setup`)
 - Project: Unreal Engine 5.8 C++ project on Windows
 
 ## 1. Purpose
 
-This report separates the repository's verified current state from the target architecture in [TechnicalArchitecture.md](../TechnicalArchitecture.md). Sprint 0 and Sprint 1 through `S01-P04` are complete and this is the handoff baseline for `S02-P01`. Module shells, architecture smoke tests, repeatable build/test/audit entry points, repository conventions, source/configuration release guardrails, deterministic domain primitives, authoritative state, fixed-step pipeline, read-only projections/diffs, typed commands, ordered domain events, normalized hashes and named headless fixtures are implemented; later gameplay definitions, editor studio, automation transport, external tools, real content validation, packaging, and release gates are still plans.
+This report separates the repository's verified current state from the target architecture in [TechnicalArchitecture.md](../TechnicalArchitecture.md). Sprint 0, Sprint 1, Sprint 2 and `S03-P01` through `S03-P03` are complete, and this is the handoff baseline for `S03-P04`. Economic definitions, atomic inventories, fixed-tick causal production, the reflected authoring foundation, authenticated automation session, Windows named-pipe endpoint, external MCP STDIO sidecar, stable semantic UI registry, observable waits and native screenshot evidence are implemented; full production fixture automation, broader content validation, packaging, and release gates remain later work.
 
 The workspace was intentionally left dirty. At audit start, `README.md` was modified and `AGENTS.md` plus `Docs/` were untracked. These are user/project documentation changes and must not be reset or overwritten.
 
@@ -21,6 +21,7 @@ The workspace was intentionally left dirty. At audit start, `README.md` was modi
 | Installed engine used | UE 5.8.2, changelist `56702186`, under `H:\Unreal\UE_5.8` |
 | Unreal build toolchain | Visual Studio 2022 Professional toolchain, MSVC `14.44.35228`/tools `14.44.35207` |
 | Windows SDK selected by UBT | `10.0.22621.0` |
+| External sidecar runtime | Node.js `24.13.1` (repository minimum: Node.js 22) |
 | Other installed IDEs | VS 2019 Build Tools, VS 2022 Community, VS 2026 Professional |
 | Git remote | `origin` → `https://github.com/johdav999/Hansa.git` |
 | Git LFS | Installed, version `3.5.1`; no LFS objects are currently tracked |
@@ -46,6 +47,10 @@ The two tests under `Hansa.Architecture.Modules` passed headlessly. The Shipping
 
 After `S00-P04`, the integrated command passed again on 2026-09-02 with the repository-convention audit as its first gate. The gate checked 51 repository text files for high-confidence secret patterns, verified runtime/config provider separation, confirmed cook and ignore rules, validated representative LFS routing, checked both Unreal test names, and parsed the fixture template before Unreal compilation began.
 
+After `S02-P03`, the complete integrated command passed on 2026-09-02 with the HansaMcp contract gate inserted after repository conventions. Nine Node.js contracts passed, all 32 Unreal tests passed, Development Editor/game and Shipping compiled, and the Shipping receipt/executable audit passed. A separate live smoke launched a hidden headless Development game and completed named-pipe ping, capability discovery, authenticated session open, health and session close; the sidecar connected on bounded retry attempt 14.
+
+After `S02-P04`, the complete integrated command passed on 2026-09-02 with 12 Node.js contracts and all 35 Unreal tests. Development Editor/game and Shipping compiled, and the repository convention plus Shipping receipt/executable audits passed. A separate hidden windowed Development smoke negotiated `ControlledActions`, activated and focused native Slate controls, matched observable selected/focused/warning predicates, reported screen-relative semantic bounds, and wrote inspected 1280×720 and 1920×1080 native evidence bundles with synchronized snapshots and no post-capture resizing. An explicit `-RenderOffscreen` probe failed structurally with `CaptureUnavailable`, confirming that the service does not fabricate pixels when UE has no native platform window.
+
 ## 4. Current repository shape
 
 ### Unreal descriptors and targets
@@ -56,7 +61,7 @@ After `S00-P04`, the integrated command passed again on 2026-09-02 with the repo
 - `HansaEditor.Target.cs` explicitly includes the game, editor, automation and test modules.
 - Both targets use UE 5.8 include order.
 - There is no dedicated server target or separate test target; the proven initial test shape is a `DeveloperTool` project module.
-- There is no `Tools/HansaMcp` or `Tools/HansaGenerationWorker` tree.
+- `Tools/HansaMcp` is a zero-dependency Node.js 22 external sidecar with MCP STDIO, framed named-pipe client, fake in-process endpoint, checked-in wire schema and 12 contract tests covering session, semantic UI, waits and evidence. `Tools/HansaGenerationWorker` does not exist yet.
 
 ### C++ source
 
@@ -64,7 +69,7 @@ After `S00-P04`, the integrated command passed again on 2026-09-02 with the repo
 - `HansaSimulation` depends only on `Core` and has a minimal module lifecycle/log category.
 - `Hansa` publicly depends on `Core` and `HansaSimulation`; its Engine-facing dependencies are private.
 - `HansaEditor` depends one-way on both runtime modules and `UnrealEd` and refuses non-Editor target compilation.
-- `HansaAutomation` depends one-way on both runtime modules and refuses Shipping compilation.
+- `HansaAutomation` depends one-way on both runtime modules plus private Engine/Slate/JSON support, refuses Shipping compilation, and owns the explicitly enabled single-client Windows named-pipe adapter, transport-neutral session service, widget-neutral semantic registry, ticker-observed waits, exact-size native screenshot service and automation-only Slate proof surface.
 - `HansaTests` contains headless loadability, descriptor-host-type and source dependency-boundary tests and refuses Shipping compilation.
 - Non-reflected foundation helpers demonstrate the `Hansa::<Area>` namespace convention in automation and test code; UHT-reflected types will retain Unreal's global naming conventions.
 - The `Hansa` runtime module still declares no Slate, UMG, Enhanced Input, networking, asset-management, editor, automation, or test dependency.
@@ -75,7 +80,7 @@ After `S00-P04`, the integrated command passed again on 2026-09-02 with the repo
 - `HansaSimulation` now also owns the immutable definition context, canonical plain-record simulation state, versioned eleven-phase fixed-step pipeline, rebuildable transient cache, owning snapshots and purpose-built read-only projections documented in [SimulationKernel.md](SimulationKernel.md).
 - Five tests under `Hansa.Simulation.Kernel` cover canonicalization, exact phase order, transactional failures, read-only snapshot/projection behavior and 1,000-tick deterministic replay through the sole command gateway.
 - `HansaSimulation` now owns the versioned typed command envelope, authority context, structured gateway result, transactional create/cancel/no-op lifecycle payloads and immutable ordered domain events documented in [CommandGateway.md](CommandGateway.md). Four `Hansa.Simulation.Commands` tests cover lifecycle application, rollback, structured validation, caller-origin parity, replay and cross-tick event order.
-- `HansaSimulation` now derives fingerprint version 3 from nine versioned normalized subsystem hashes, exposes compact state reports and projection diffs, and owns a named exact-tick fixture/trace/comparison/evidence harness documented in [DeterminismDiagnostics.md](DeterminismDiagnostics.md). Five `Hansa.Simulation.Diagnostics` tests cover normalization/exclusions, projection diffs, golden fixture execution, Saved JSON evidence, first-divergence diagnostics and intentional phase-order drift.
+- `HansaSimulation` now derives fingerprint version 9 from thirteen versioned normalized subsystem hashes, including inventories, production, population and markets, exposes compact state reports and projection diffs, and owns a named exact-tick fixture/trace/comparison/evidence harness documented in [DeterminismDiagnostics.md](DeterminismDiagnostics.md). Five `Hansa.Simulation.Diagnostics` tests cover normalization/exclusions, projection diffs, golden fixture execution, Saved JSON evidence, first-divergence diagnostics and intentional phase-order drift.
 - `Tests/Fixtures/foundation_determinism_v1.json` is the first reviewed runnable descriptor and locks its six-tick final checksum.
 
 ### Content and configuration
@@ -86,7 +91,7 @@ After `S00-P04`, the integrated command passed again on 2026-09-02 with the repo
 - Rendering defaults enable DX12/SM6, Lumen-style dynamic GI/reflections, ray tracing, distance fields, skin cache, and Substrate. These are template choices, not measured Hansa performance decisions.
 - `DefaultEngine.ini` repeats `DefaultGraphicsRHI=DefaultGraphicsRHI_DX12`.
 - Android File Server and its network access are disabled in shared config and `SecurityToken` is empty.
-- `[Hansa.Project]` records the convention version. `[Hansa.Automation] bEnableTransport=False` is the checked-in development default; `S00-P02` still implements no pipe/socket endpoint.
+- `[Hansa.Project]` records the convention version. `[Hansa.Automation] bEnableTransport=False` is the checked-in development default; no named pipe or polling ticker exists unless the flag, safe pipe name, token and permission are all valid.
 - `/Game/Hansa/Developer` and `/Game/Hansa/Generated/Staging` are excluded from cook. Generated staging is also ignored by Git, and production references to either development path fail the repository convention audit.
 - `Tests/Fixtures/fixture.example.json` documents the deterministic fixture envelope without implementing a domain fixture. No provider configuration or credential path exists in runtime/configuration.
 
@@ -111,6 +116,7 @@ flowchart LR
     Tests[HansaTests\nDeveloperTool] --> Auto
     Tests --> Game
     Tests --> Sim
+    Mcp[Tools/HansaMcp\nexternal] <-->|framed named pipe v1| Auto
 ```
 
 Unreal Build Tool now enforces these module dependency lists. The smoke tests add a fast guard against forbidden source-level reverse dependencies and incorrect `.uproject` host types.
@@ -165,11 +171,12 @@ pwsh -File Scripts/GenerateProjectFiles.ps1
 pwsh -File Scripts/Build.ps1 -Target HansaEditor -Configuration Development
 pwsh -File Scripts/Build.ps1 -Target Hansa -Configuration Development
 pwsh -File Scripts/RunAutomationTests.ps1 -TestFilter Hansa
+pwsh -File Scripts/RunHansaMcpTests.ps1
 pwsh -File Scripts/VerifyShippingExclusion.ps1
 pwsh -File Scripts/InvokeCI.ps1 -TestFilter Hansa
 ```
 
-Expected now: project generation works with both the engine batch entry point and UnrealBuildTool fallback; all current target builds compile with UE 5.8 include order; both architecture tests pass; the Shipping audit excludes representative development markers. Failures return nonzero and retain command output plus normal Unreal logs under ignored evidence directories.
+Expected now: project generation works with both the engine batch entry point and UnrealBuildTool fallback; all current target builds compile with UE 5.8 include order; Unreal tests and the game-free HansaMcp contracts pass; the Shipping audit excludes representative development markers. Failures return nonzero and retain command output plus normal Unreal logs under ignored evidence directories.
 
 ### Gates that do not exist yet
 
@@ -269,6 +276,51 @@ Target-level Shipping exclusion is automated because the forbidden modules exist
 - [x] `foundation_determinism_v1` locks its final checksum and writes parseable versioned run/divergence JSON under ignored `Saved/TestEvidence`.
 - [x] Tests intentionally alter the phase order fingerprint and report the first affected tick.
 
+### Proven at S02-P01
+
+- [x] Runtime definitions share `UHansaDefinitionBase`, structured validation, stable schema/authored versions and deterministic derived content hashing.
+- [x] Every reflected field is classified for generic editing, validation, serialization, migration, references, bulk editing and AI access; numeric fields declare unit and bounds.
+- [x] The Editor-only registry discovers non-abstract definition classes and inherited fields without a handwritten property list.
+- [x] Draft 2020-12 JSON Schema export is deterministic and locked by a reviewed golden fixture.
+- [x] An intentionally incomplete test field is rejected by metadata coverage.
+- [x] The native Authoring Studio tab provides searchable virtualized browsing, standard Details editing, validation output, schema export and Editor undo/redo.
+- [x] `UHansaFoundationSampleDefinition` proves automatic editor/schema discovery while remaining Editor-only and non-production.
+- [x] The `Hansa.Architecture.Authoring` filter passes discovery, coverage, golden and transaction tests.
+
+### Proven at S02-P02
+
+- [x] `HansaAutomation` owns a transport-neutral pure-C++ session service and opens no endpoint or per-frame work.
+- [x] Ordinary Development/Editor startup remains disabled; requested startup still fails closed without a valid short-lived token and permission ceiling.
+- [x] Protocol `1.0`, capability discovery and exact granted-capability snapshots are explicit.
+- [x] One process-generated session is owned by one controller and supports authenticated open/get/close lifecycle.
+- [x] `ReadOnly`, `ControlledActions` and `FixtureControl` are ordered permissions set beneath a process-owned maximum.
+- [x] Typed operations require an explicit capability and permission; missing, mutating and unknown requests are rejected structurally.
+- [x] Correlation IDs and monotonic request timeouts are bounded and preserved in safe structured errors.
+- [x] Seven focused automation-boundary tests pass, including source-level Shipping unavailability.
+
+### Proven at S02-P03
+
+- [x] `Tools/HansaMcp` speaks newline-delimited MCP JSON-RPC over STDIO and exposes only capabilities, session, ping and health tools.
+- [x] The sidecar and Unreal endpoint share a versioned four-byte little-endian length-prefixed UTF-8 JSON contract capped at 64 KiB.
+- [x] A Windows named pipe exists only after explicit non-Shipping startup with matching safe pipe name, token and permission; it rejects remote clients and accepts one controller.
+- [x] Unreal remains authoritative for protocol, capabilities, authentication, permission and session state; the sidecar performs only schema/transport adaptation.
+- [x] Bounded reconnect never automatically replays an ambiguous in-flight request.
+- [x] Structured game failures become MCP tool errors with code, correlation, remedy and retryability intact.
+- [x] Logs use STDERR and redact secret-named fields plus the known session token; STDOUT remains MCP-only.
+- [x] The fake in-process endpoint exercises the real frame codec so CI needs neither Unreal nor a game process.
+- [x] The repository-owned Node.js contract gate is integrated into `InvokeCI.ps1`, while convention and Shipping checks keep the sidecar external.
+
+### Proven at S02-P04
+
+- [x] Semantic nodes expose stable namespaced IDs, roles, labels, boolean states, screen-relative integer bounds, enabled/visible/focus properties, parent/child relationships and explicit actions without widget class names.
+- [x] UI inspection remains read-only while native activate/focus actions require an explicitly negotiated `ControlledActions` session.
+- [x] `wait_for` observes declared semantic predicates from the game ticker and completes on state change or bounded monotonic timeout without sleeping or blocking the game thread.
+- [x] Native capture accepts only 1280×720 and 1920×1080, verifies the exact pixel count and encodes the captured pixels directly with no resize stage.
+- [x] Evidence bundles under ignored `Saved/TestEvidence/Automation/S02P04` contain PNG, metadata, synchronized semantic snapshot and content hash.
+- [x] The automation-only native Slate proof screen demonstrates find/state/activate/focus/warning and readable non-color focus/warning feedback.
+- [x] Three inspected reference images plus sibling prompt records establish the component/style direction; no generated raster ships as the interactive screen.
+- [x] Twelve sidecar contracts, 35 full Unreal tests, Development Editor/game builds and Shipping exclusion pass in the integrated gate.
+
 ### Sprint 0 exit status
 
 - [x] Development Editor and game targets build from documented repository entry points.
@@ -278,20 +330,20 @@ Target-level Shipping exclusion is automated because the forbidden modules exist
 
 ### Deferred gates owned by later feature/release prompts
 
-- [ ] Data Validation gains real Hansa definitions/assets and validators with `S02-P01` and later content prompts.
+- [ ] Data Validation gains asset-backed production definitions and domain validators in later content prompts; `S02-P01` supplies the runtime base, structured validation and schema metadata gate.
 - [ ] Shipping packaging, staged/cooked/depot inspection, and the disabled-endpoint launch probe are automated before release.
 
 ## 9. Unresolved decisions and risks
 
 | Item | Why unresolved | Owner prompt/ADR |
 | --- | --- | --- |
-| Automation transport/authentication | Named pipe versus loopback and token lifecycle require a focused threat/contract decision | Later automation ADR, before `S02-P02` |
+| Orphan automation-session recovery | A sidecar crash after session open leaves the single-controller game session active until process shutdown; automatic mutation replay is unsafe | Add a lease/recovery contract only when real launched-game workflows require it |
 | Test/CI host platform | No CI platform is selected; the scripts and checklist are deliberately platform-neutral | Select when hosted CI is introduced |
 | Server target timing | Required architecture, but not part of the immediate module-shell prompt | Before multiplayer implementation |
-| Definition asset identity redirects | Stable ID rules are accepted; exact redirect registry/storage lands with definitions | `S02-P01` |
+| Definition asset identity redirects | Base identity and replacement metadata now exist; exact redirect registry/storage remains deferred until production definition catalogues | Later content/migration prompt |
 | Rendering feature budget | Current ray tracing/Substrate settings are template defaults without measurements | Performance baseline before art scale-up |
 | Full binary asset referencer audit | No production `.uasset` exists yet, so the current gate can enforce path/config policy but not real Asset Registry references | First real content plus packaged release gate |
 
 ## 10. Next prompt
 
-`S02-P01 — Definition base, schema registry and generic editor shell` is unblocked. It must introduce the first reflected authoring definition, derive generic editor/schema coverage from metadata, and enforce the complete editor/game parity contract in `Docs/EditorArchitecture.md` and `Docs/EditorMVP.md`.
+`S03-P04 — Production fixture, queries and editor validation` is next. It can expose the implemented causal production model through the allowlisted automation surface and add the corresponding Authoring Studio/commandlet validators and golden evidence.

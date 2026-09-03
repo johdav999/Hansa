@@ -2,6 +2,7 @@ using UnrealBuildTool;
 
 public class HansaSimulation : ModuleRules
 {
+	// Runtime-only deterministic simulation systems, including population and local markets.
 	public HansaSimulation(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;

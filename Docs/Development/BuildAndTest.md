@@ -64,6 +64,14 @@ pwsh -File Scripts/RunAutomationTests.ps1 -TestFilter Hansa
 
 The test entry point builds Development Editor unless `-SkipBuild` is supplied. It fails if the filter matches zero tests, Unreal returns a nonzero exit code, a test reports failure, the Unreal log is missing, or the successful completion marker is absent.
 
+### Run HansaMcp contract tests
+
+```powershell
+pwsh -File Scripts/RunHansaMcpTests.ps1
+```
+
+This engine-independent gate requires Node.js 22 or newer and runs the dependency-free sidecar's framing, fake endpoint, MCP lifecycle, structured-error, log-redaction and delayed named-pipe reconnect tests. It launches no game and makes no network or provider call. Results are retained under the normal ignored build-artifact root.
+
 ### Build and audit Shipping exclusion
 
 ```powershell
@@ -80,7 +88,7 @@ This is a target-level gate. It does not yet replace the later packaged/cooked/d
 pwsh -File Scripts/InvokeCI.ps1 -TestFilter Hansa
 ```
 
-The sequence first verifies repository conventions, then builds Development Editor, runs headless Hansa tests, builds the Development game, builds Shipping, and performs the exclusion audit. Add `-GenerateProjectFiles` only when a CI environment explicitly needs IDE files.
+The sequence first verifies repository conventions, runs HansaMcp contract tests, then builds Development Editor, runs headless Hansa tests, builds the Development game, builds Shipping, and performs the exclusion audit. Add `-GenerateProjectFiles` only when a CI environment explicitly needs IDE files.
 
 Use a different artifact root when a CI runner requires it:
 
@@ -105,14 +113,15 @@ A future Windows runner must:
 
 1. Check out the repository without discarding Git LFS pointers, then run `git lfs pull`.
 2. Provide the approved UE 5.8 build and compatible Visual Studio 2022/MSVC plus Windows SDK.
-3. Set `HANSA_UNREAL_ENGINE_ROOT` or pass `-EngineRoot`.
-4. Run `pwsh -File Scripts/InvokeCI.ps1 -TestFilter Hansa`.
-5. Treat the PowerShell process exit code as authoritative.
-6. Upload `Saved/BuildArtifacts/**`, `Saved/Logs/**` and relevant `Saved/Automation/**` output on success and failure.
-7. Keep normal CI free of OpenAI, Tripo, ElevenLabs, TRELLIS or other paid live calls.
-8. Add packaged Shipping cook/stage inspection when packaging is introduced; do not treat the current target-level audit as that future proof.
-9. Cache Derived Data Cache only with an engine/changelist/project-content-aware key and never commit the cache.
-10. Keep all credentials in the CI secret store and out of command output, `.ini`, source, assets and uploaded public logs.
+3. Install Node.js 22 or newer for the dependency-free HansaMcp contract tests.
+4. Set `HANSA_UNREAL_ENGINE_ROOT` or pass `-EngineRoot`.
+5. Run `pwsh -File Scripts/InvokeCI.ps1 -TestFilter Hansa`.
+6. Treat the PowerShell process exit code as authoritative.
+7. Upload `Saved/BuildArtifacts/**`, `Saved/Logs/**` and relevant `Saved/Automation/**` output on success and failure.
+8. Keep normal CI free of OpenAI, Tripo, ElevenLabs, TRELLIS or other paid live calls.
+9. Add packaged Shipping cook/stage inspection when packaging is introduced; do not treat the current target-level audit as that future proof.
+10. Cache Derived Data Cache only with an engine/changelist/project-content-aware key and never commit the cache.
+11. Keep all credentials in the CI secret store and out of command output, `.ini`, source, assets and uploaded public logs.
 
 ## 6. Adding a future entry point
 

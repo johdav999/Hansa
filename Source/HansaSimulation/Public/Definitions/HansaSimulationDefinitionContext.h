@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Definitions/HansaEconomicRegistry.h"
+#include "Misc/Optional.h"
 #include "Model/HansaIds.h"
 #include "Model/HansaValueResult.h"
 
@@ -17,16 +19,22 @@ namespace Hansa::Simulation
 		static THansaValueResult<FHansaSimulationDefinitionContext> TryCreate(
 			FHansaScenarioId ScenarioId,
 			uint64 DefinitionHash);
+		static THansaValueResult<FHansaSimulationDefinitionContext> TryCreate(
+			FHansaScenarioId ScenarioId,
+			uint64 DefinitionHash,
+			FHansaEconomicRegistry EconomicRegistry);
 
-		[[nodiscard]] bool IsValid() const { return ScenarioId.IsValid() && DefinitionHash != 0; }
+		[[nodiscard]] bool IsValid() const;
 		[[nodiscard]] const FHansaScenarioId& GetScenarioId() const { return ScenarioId; }
 		[[nodiscard]] uint64 GetDefinitionHash() const { return DefinitionHash; }
+		[[nodiscard]] const FHansaEconomicRegistry* GetEconomicRegistry() const;
 
 		friend bool operator==(
 			const FHansaSimulationDefinitionContext& Left,
 			const FHansaSimulationDefinitionContext& Right)
 		{
-			return Left.ScenarioId == Right.ScenarioId && Left.DefinitionHash == Right.DefinitionHash;
+			return Left.ScenarioId == Right.ScenarioId && Left.DefinitionHash == Right.DefinitionHash &&
+				Left.EconomicRegistry.IsSet() == Right.EconomicRegistry.IsSet();
 		}
 
 	private:
@@ -38,5 +46,6 @@ namespace Hansa::Simulation
 
 		FHansaScenarioId ScenarioId;
 		uint64 DefinitionHash = 0;
+		TOptional<FHansaEconomicRegistry> EconomicRegistry;
 	};
 }

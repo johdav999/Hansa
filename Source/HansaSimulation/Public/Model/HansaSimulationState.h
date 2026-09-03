@@ -1,10 +1,17 @@
 #pragma once
 
 #include "Containers/Array.h"
+#include "Construction/HansaConstruction.h"
+#include "Inventory/HansaInventory.h"
+#include "Logistics/HansaLocalLogistics.h"
 #include "Math/HansaDeterministicRandom.h"
 #include "Math/HansaFixedPoint.h"
+#include "Market/HansaMarket.h"
 #include "Model/HansaIds.h"
 #include "Model/HansaSimulationTime.h"
+#include "Production/HansaProduction.h"
+#include "Population/HansaPopulation.h"
+#include "Placement/HansaPlacement.h"
 
 namespace Hansa::Simulation
 {
@@ -31,6 +38,9 @@ namespace Hansa::Simulation
 		FHansaBuildingTypeId DefinitionId;
 		FHansaHouseId OwnerId;
 		FHansaRate ConstructionProgress;
+		EHansaConstructionState ConstructionState = EHansaConstructionState::UnderConstruction;
+		FHansaSimulationTick ConstructionStartedTick;
+		int32 ConstructionElapsedTicks = 0;
 	};
 
 	struct FHansaVehicleState
@@ -76,6 +86,15 @@ namespace Hansa::Simulation
 		TArray<FHansaVehicleState> Vehicles;
 		TArray<FHansaRouteState> Routes;
 		TArray<FHansaTestEntityState> TestEntities;
+		FHansaPlacementInitialization Placement;
+		TArray<FHansaInventoryInitialization> Inventories;
+		int32 InventoryMovementHistoryCapacity = 64;
+		TArray<FHansaProductionInitialization> Productions;
+		TArray<FHansaPopulationCohortInitialization> PopulationCohorts;
+		FHansaMarketSettings MarketSettings;
+		TArray<FHansaCityMarketInitialization> Markets;
+		FHansaLocalLogisticsSettings LocalLogisticsSettings;
+		TArray<FHansaLogisticsRequestInitialization> LocalLogisticsRequests;
 	};
 
 	/**
@@ -85,7 +104,7 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaSimulationState final
 	{
 	public:
-		static constexpr uint32 DeterminismFingerprintVersion = 3;
+		static constexpr uint32 DeterminismFingerprintVersion = 13;
 		static constexpr uint32 CurrentSystemPipelineVersion = 1;
 		static constexpr uint64 EmptyCommandHistoryFingerprint = 14695981039346656037ULL;
 
@@ -120,5 +139,17 @@ namespace Hansa::Simulation
 		TArray<FHansaVehicleState> Vehicles;
 		TArray<FHansaRouteState> Routes;
 		TArray<FHansaTestEntityState> TestEntities;
+		FHansaPlacementState Placement;
+		FHansaInventoryLedger InventoryLedger;
+		uint64 NextProductionReservationValue = 1;
+		TArray<FHansaProductionState> Productions;
+		TArray<FHansaPopulationCohortState> PopulationCohorts;
+		FHansaMarketSettings MarketSettings;
+		TArray<FHansaCityMarketState> Markets;
+		FHansaLocalLogisticsSettings LocalLogisticsSettings;
+		uint64 NextLogisticsJobValue = 1;
+		uint64 NextLogisticsReservationValue = 0x8000000000000000ULL;
+		TArray<FHansaLogisticsRequestState> LocalLogisticsRequests;
+		TArray<FHansaLogisticsJobState> LocalLogisticsJobs;
 	};
 }

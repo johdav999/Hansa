@@ -1,0 +1,25 @@
+{
+  "fixtureId": "economic_invalid_references_v1",
+  "schemaVersion": 1,
+  "owner": "Hansa.Editor.Definitions",
+  "cases": [
+    {
+      "kind": "recipeInput",
+      "targetId": "Recipe.MillFlour",
+      "invalidReference": "Good.Missing",
+      "expectedCode": "HSA-REGISTRY-003"
+    },
+    {
+      "kind": "buildingRecipe",
+      "targetId": "Building.Bakery",
+      "invalidReference": "Recipe.Missing",
+      "expectedCode": "HSA-REGISTRY-006"
+    },
+    {
+      "kind": "buildingUpgrade",
+      "targetId": "Building.Residence.Laborer",
+      "invalidReference": "Building.Missing",
+      "expectedCode": "HSA-REGISTRY-007"
+    }
+  ]
+}

@@ -4,6 +4,7 @@
 #include "Containers/Array.h"
 #include "Containers/ArrayView.h"
 #include "Events/HansaDomainEvent.h"
+#include "Misc/Optional.h"
 #include "Queries/HansaSimulationReadOnly.h"
 
 namespace Hansa::Simulation
@@ -31,7 +32,13 @@ namespace Hansa::Simulation
 		TargetAlreadyExists,
 		TargetNotFound,
 		NotAuthorized,
-		ClockOverflow
+		ClockOverflow,
+		PlacementRejected,
+		ConstructionCostUnavailable,
+		ConstructionStateInvalid,
+		ConstructionRefundUnavailable,
+		TargetHasDependents,
+		ResidenceProgressionUnavailable
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaCommandGatewayError Error);
@@ -49,6 +56,14 @@ namespace Hansa::Simulation
 		[[nodiscard]] FHansaSimulationTick GetTickAfter() const { return TickAfter; }
 		[[nodiscard]] const FHansaDeterminismFingerprint& GetFingerprintAfter() const { return FingerprintAfter; }
 		[[nodiscard]] TConstArrayView<FHansaDomainEvent> GetEvents() const { return Events; }
+		[[nodiscard]] const TOptional<FHansaPlacementValidationResult>& GetPlacementValidation() const
+		{
+			return PlacementValidation;
+		}
+		[[nodiscard]] const TOptional<FHansaConstructionCostProjection>& GetConstructionCost() const
+		{
+			return ConstructionCost;
+		}
 
 	private:
 		friend class FHansaSimulationPipeline;
@@ -60,6 +75,8 @@ namespace Hansa::Simulation
 		FHansaSimulationTick TickAfter;
 		FHansaDeterminismFingerprint FingerprintAfter;
 		TArray<FHansaDomainEvent> Events;
+		TOptional<FHansaPlacementValidationResult> PlacementValidation;
+		TOptional<FHansaConstructionCostProjection> ConstructionCost;
 	};
 
 	/** The sole public state-mutation entry point shared by player, AI, RPC and controlled automation callers. */

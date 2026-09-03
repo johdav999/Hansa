@@ -45,11 +45,21 @@ $arguments = @(
     "-AbsLog=$unrealLogPath"
 )
 
-Invoke-HansaNativeCommand `
-    -FilePath $context.UnrealEditorCommand `
-    -Arguments $arguments `
-    -LogPath $wrapperLogPath `
-    -FailureMessage "Unreal automation tests failed for filter '$TestFilter'." | Out-Null
+# UE 5.8's headless TargetPlatform startup otherwise validates every installed
+# platform descriptor and can abort Win64 tests on unrelated SDK.json entries.
+# Scope the engine-supported bypass to this child process and restore the caller.
+$previousSkipSdkSetup = [Environment]::GetEnvironmentVariable('UE_SKIP_UBT_SDK_SETUP', 'Process')
+try {
+    [Environment]::SetEnvironmentVariable('UE_SKIP_UBT_SDK_SETUP', '1', 'Process')
+    Invoke-HansaNativeCommand `
+        -FilePath $context.UnrealEditorCommand `
+        -Arguments $arguments `
+        -LogPath $wrapperLogPath `
+        -FailureMessage "Unreal automation tests failed for filter '$TestFilter'." | Out-Null
+}
+finally {
+    [Environment]::SetEnvironmentVariable('UE_SKIP_UBT_SDK_SETUP', $previousSkipSdkSetup, 'Process')
+}
 
 if (-not (Test-Path -LiteralPath $unrealLogPath -PathType Leaf)) {
     throw "Unreal exited successfully but did not create its expected log: $unrealLogPath"

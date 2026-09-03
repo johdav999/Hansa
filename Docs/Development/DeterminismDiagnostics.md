@@ -1,11 +1,11 @@
 # Hansa — Determinism Diagnostics and Fixture Contract
 
-- Implemented prompt: `S01-P04`
-- Contract date: 2026-09-02
+- Implemented prompts: `S01-P04`, extended through `S06-P03`
+- Contract date: 2026-09-03
 - Owning module: `HansaSimulation`
 - Hash format version: `1`
 - Normalization version: `1`
-- Determinism fingerprint version: `3`
+- Determinism fingerprint version: `13`
 - Evidence schema version: `1`
 - Governing decision: [ADR-0006](../Architecture/Decisions/0006-normalized-state-hashes-and-diagnostics.md)
 
@@ -23,7 +23,7 @@
 
 ## Hash normalization
 
-The nine fixed-order subsystem hashes are:
+The fifteen fixed-order subsystem hashes are:
 
 1. `Contract` — fingerprint/pipeline versions, scenario ID and definition hash;
 2. `SimulationMetadata` — clock, seed, command identity/order/history and published-event count;
@@ -33,7 +33,13 @@ The nine fixed-order subsystem hashes are:
 6. `Buildings`;
 7. `Vehicles`;
 8. `Routes`;
-9. `TestEntities` — the representative S01-P03 lifecycle records.
+9. `Inventories` — canonical inventory records, accepted goods, stock, reservations, retained movements and movement sequencing;
+10. `Productions` — canonical production configuration, automatic city-workforce participation, progress, blockers, reservations, completed cycles and reservation sequencing;
+11. `TestEntities` — the representative S01-P03 lifecycle records;
+12. `Population` — canonical cohorts, operational residence and market-access status, requirements, satisfaction, workforce and growth state;
+13. `Market` — cadence/settings plus canonical city-good price inputs, factors, accumulators, affordability, alert onset and bounded history;
+14. `Placement` — canonical city grids, ownership, entitlements, placed footprints and road occupancy;
+15. `Logistics` — local capacity/delay policy, canonical requests, causal bottlenecks, reserved pickups and in-transit delivery jobs.
 
 Every component is domain-separated by format, normalization and subsystem ID and includes its normalized record count. State initialization already canonicalizes result-affecting arrays; hashes consume that stable order. The global `FHansaDeterminismFingerprint` is now the ordered aggregate of these component hashes, so there is no parallel checksum algorithm to drift.
 
@@ -51,7 +57,7 @@ Projection diffs are evidence only. They do not expose or mutate authoritative c
 
 The successful result contains the final read-only projection and `FHansaDeterminismTrace`: initial hashes plus one record for every processed tick. Invalid ranges/schedules and gateway/projection/trace failures return structured causes.
 
-The reviewed `foundation_determinism_v1` descriptor runs six exact ticks with no-op commands at ticks two and four and locks final fingerprint `B5BF9C0729753C4B`.
+The reviewed `foundation_determinism_v1` descriptor runs six exact ticks with no-op commands at ticks two and four and locks final fingerprint `5428C9542869BCFE`. S06-P03 advances the contract to version 13 by including residence/market operational status and automatic city-workforce participation.
 
 ## First-divergence and evidence behavior
 
@@ -76,4 +82,4 @@ Coverage proves normalized component/global correlation, cache exclusion, compac
 
 ## Deliberate next boundary
 
-Sprint 1 is complete. `S02-P01 — Definition base, schema registry and generic editor shell` is the next prompt and must follow the full reflected gameplay/editor parity contract.
+Future simulation increments must preserve the versioned subsystem ordering or explicitly advance the fingerprint contract and refresh reviewed evidence.

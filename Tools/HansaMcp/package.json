@@ -1,0 +1,17 @@
+{
+  "name": "@hansa/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local MCP-to-HansaAutomation development sidecar",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "smoke:live": "node scripts/live-smoke.js",
+    "smoke:placement": "node scripts/placement-flow.js",
+    "smoke:integrated": "node scripts/integrated-flow.js",
+    "test": "node --test"
+  }
+}

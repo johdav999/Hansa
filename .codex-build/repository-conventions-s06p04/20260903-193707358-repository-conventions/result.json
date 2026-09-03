@@ -1,0 +1,21 @@
+{
+  "Operation": "VerifyRepositoryConventions",
+  "Status": "Succeeded",
+  "ProjectRoot": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa",
+  "CompletedUtc": "2026-09-03T17:37:09.1869938Z",
+  "PassedChecks": [
+    "Required convention and example files exist.",
+    "Persistent and generated Visual Studio project metadata matches the Visual Studio 2022 baseline.",
+    "High-confidence secret scan passed for 241 repository text files.",
+    "Runtime source, project configuration, and descriptor contain no provider-specific configuration.",
+    "External HansaMcp package is dependency-free and contains no Unreal header dependency.",
+    "Production source/content contains no Developer or generated-staging references.",
+    "Namespaced config defaults, cook exclusions, and Android file-server safety defaults are present.",
+    "No generated Unreal, IDE, evidence, or staging output outside the UBT source configuration is tracked.",
+    "Generated Unreal, IDE, evidence, and staging probes are ignored.",
+    "Representative Unreal, source-art, audio, and raster assets route through Git LFS.",
+    "Validated 78 Unreal automation test names.",
+    "Fixture template parses and follows identity/version conventions."
+  ],
+  "Failures": []
+}

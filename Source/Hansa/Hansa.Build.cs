@@ -10,13 +10,14 @@ public class Hansa : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
 			"Core",
+			"CoreUObject",
+			"Engine",
 			"HansaSimulation"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"CoreUObject",
-			"Engine",
+			"EnhancedInput",
 			"InputCore"
 		});
 	}

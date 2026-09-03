@@ -16,8 +16,13 @@ public class HansaAutomation : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
+			"CoreUObject",
+			"Engine",
 			"Hansa",
-			"HansaSimulation"
+			"HansaSimulation",
+			"Json",
+			"Slate",
+			"SlateCore"
 		});
 	}
 }

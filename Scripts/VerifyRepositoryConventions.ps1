@@ -74,7 +74,11 @@ try {
         'SourceArt/README.md',
         'Saved/UnrealBuildTool/BuildConfiguration.xml',
         'Tests/README.md',
-        'Tests/Fixtures/fixture.example.json'
+        'Tests/Fixtures/fixture.example.json',
+        'Tools/HansaMcp/package.json',
+        'Tools/HansaMcp/package-lock.json',
+        'Tools/HansaMcp/schemas/automation-wire.schema.json',
+        'Scripts/RunHansaMcpTests.ps1'
     )
     foreach ($requiredFile in $requiredFiles) {
         if (-not (Test-Path -LiteralPath (Join-Path $projectRoot $requiredFile) -PathType Leaf)) {
@@ -192,6 +196,32 @@ try {
     }
     if ($failures.Count -eq $providerFailuresBefore) {
         Add-HansaConventionPass 'Runtime source, project configuration, and descriptor contain no provider-specific configuration.'
+    }
+
+    $sidecarFailuresBefore = $failures.Count
+    $sidecarPackagePath = Join-Path $projectRoot 'Tools\HansaMcp\package.json'
+    try {
+        $sidecarPackage = Get-Content -Raw -LiteralPath $sidecarPackagePath | ConvertFrom-Json
+        if ($sidecarPackage.PSObject.Properties.Name -contains 'dependencies' -or
+            $sidecarPackage.PSObject.Properties.Name -contains 'devDependencies') {
+            Add-HansaConventionFailure 'Tools/HansaMcp must remain a zero-runtime-dependency scaffold in S02-P03.'
+        }
+        if ([string]$sidecarPackage.engines.node -ne '>=22') {
+            Add-HansaConventionFailure 'Tools/HansaMcp must declare the verified Node.js >=22 baseline.'
+        }
+        $sidecarSourceFiles = $allRepositoryFiles | Where-Object { $_ -like 'Tools/HansaMcp/src/*.js' }
+        foreach ($relativePath in $sidecarSourceFiles) {
+            $content = Get-HansaTextFileContent -RelativePath $relativePath
+            if ($content -match '#include\s*[<"]|CoreMinimal\.h|UnrealEd|Engine/') {
+                Add-HansaConventionFailure "External HansaMcp source must not depend on Unreal headers: $relativePath"
+            }
+        }
+    }
+    catch {
+        Add-HansaConventionFailure "Tools/HansaMcp package boundary is invalid: $($_.Exception.Message)"
+    }
+    if ($failures.Count -eq $sidecarFailuresBefore) {
+        Add-HansaConventionPass 'External HansaMcp package is dependency-free and contains no Unreal header dependency.'
     }
 
     $forbiddenProductionTokens = @(

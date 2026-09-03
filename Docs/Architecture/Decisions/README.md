@@ -19,6 +19,10 @@ Architecture Decision Records (ADRs) capture durable technical decisions that im
 | [ADR-0004](0004-shipping-exclusion.md) | Accepted | Compile-time and packaging exclusion of editor, automation, test and generation tooling |
 | [ADR-0005](0005-command-gateway-and-domain-events.md) | Accepted | Single typed transactional command gateway and ordered domain-event publication |
 | [ADR-0006](0006-normalized-state-hashes-and-diagnostics.md) | Accepted | Versioned normalized subsystem hashes and first-divergence diagnostics |
+| [ADR-0007](0007-reflected-definition-schema-contract.md) | Accepted | Reflected definition metadata as the generic editor and JSON Schema contract |
+| [ADR-0008](0008-automation-session-and-capability-boundary.md) | Accepted | Opt-in authenticated automation sessions with negotiated capabilities and permissions |
+| [ADR-0009](0009-mcp-sidecar-and-framed-named-pipe.md) | Accepted | External MCP STDIO sidecar and bounded Windows named-pipe framing |
+| [ADR-0010](0010-semantic-ui-waits-and-native-evidence.md) | Accepted | Widget-neutral semantic UI, observable waits and native screenshot evidence |
 
 ## ADR rules
 
@@ -41,8 +45,13 @@ flowchart LR
 	A3 --> A5
 	A3 --> A6[ADR-0006\nstate hashes and diagnostics]
 	A5 --> A6
-    A1 --> Auto[future automation protocol ADR]
-    A4 --> Auto
+	A1 --> A7[ADR-0007\nreflected definition schemas]
+	A2 --> A7
+    A1 --> A8[ADR-0008\nautomation sessions]
+    A4 --> A8
+	A5 --> A8
+	A8 --> A9[ADR-0009\nMCP sidecar and pipe framing]
+	A9 --> A10[ADR-0010\nsemantic UI, waits and evidence]
 ```
 
 The audited implementation status for these decisions is maintained in [Development/Baseline.md](../../Development/Baseline.md).

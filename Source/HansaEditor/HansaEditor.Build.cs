@@ -13,11 +13,20 @@ public class HansaEditor : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
+			"AssetRegistry",
 			"Core",
 			"CoreUObject",
+			"EditorFramework",
 			"Engine",
 			"Hansa",
 			"HansaSimulation",
+			"InputCore",
+			"Json",
+			"LevelEditor",
+			"PropertyEditor",
+			"Slate",
+			"SlateCore",
+			"ToolMenus",
 			"UnrealEd"
 		});
 	}

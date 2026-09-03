@@ -153,6 +153,12 @@ namespace Hansa::Simulation
 	HANSA_ENTITY_ID_TRAITS(FHansaContractIdTraits, "Contract", 44);
 	HANSA_ENTITY_ID_TRAITS(FHansaCommandIdTraits, "Command", 45);
 	HANSA_ENTITY_ID_TRAITS(FHansaTestEntityIdTraits, "TestEntity", 46);
+	HANSA_ENTITY_ID_TRAITS(FHansaInventoryIdTraits, "Inventory", 47);
+	HANSA_ENTITY_ID_TRAITS(FHansaReservationIdTraits, "Reservation", 48);
+	HANSA_ENTITY_ID_TRAITS(FHansaProductionIdTraits, "Production", 49);
+	HANSA_ENTITY_ID_TRAITS(FHansaPopulationCohortIdTraits, "PopulationCohort", 50);
+	HANSA_ENTITY_ID_TRAITS(FHansaLogisticsRequestIdTraits, "LogisticsRequest", 51);
+	HANSA_ENTITY_ID_TRAITS(FHansaLogisticsJobIdTraits, "LogisticsJob", 52);
 
 #undef HANSA_ENTITY_ID_TRAITS
 
@@ -221,4 +227,10 @@ namespace Hansa::Simulation
 	using FHansaContractId = THansaEntityId<FHansaContractIdTraits>;
 	using FHansaCommandId = THansaEntityId<FHansaCommandIdTraits>;
 	using FHansaTestEntityId = THansaEntityId<FHansaTestEntityIdTraits>;
+	using FHansaInventoryId = THansaEntityId<FHansaInventoryIdTraits>;
+	using FHansaReservationId = THansaEntityId<FHansaReservationIdTraits>;
+	using FHansaProductionId = THansaEntityId<FHansaProductionIdTraits>;
+	using FHansaPopulationCohortId = THansaEntityId<FHansaPopulationCohortIdTraits>;
+	using FHansaLogisticsRequestId = THansaEntityId<FHansaLogisticsRequestIdTraits>;
+	using FHansaLogisticsJobId = THansaEntityId<FHansaLogisticsJobIdTraits>;
 }

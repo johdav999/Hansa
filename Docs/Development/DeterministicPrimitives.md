@@ -30,6 +30,8 @@ This note records the concrete primitive contracts introduced by `S01-P01`. The 
 - `FHansaDefinitionId` accepts only registered ASCII dot-separated canonical IDs with at least two PascalCase alphanumeric segments.
 - Typed aliases enforce the registered definition domains from `Docs/Development/RepositoryConventions.md` and cannot implicitly convert across domains.
 - Runtime aliases store `(uint64 value, uint32 generation)`. Value zero is invalid. Ordering compares numeric value, then generation.
+- Inventory and reservation identities introduced by `S03-P02` use the same typed runtime-ID contract and cannot be interchanged with other entity domains.
+- Production identities introduced by `S03-P03` use the same typed runtime-ID contract and cannot be interchanged with buildings, inventories or reservations.
 - Definition ordering is case-sensitive canonical-text order. Runtime ordering is typed numeric order.
 - Definition `ToString()` and entity `ToDebugString()` are stable diagnostic evidence for the current implementation, not save compatibility contracts.
 - Global uniqueness, redirects, tombstones and compact registry handles remain registry/migration responsibilities in later prompts.

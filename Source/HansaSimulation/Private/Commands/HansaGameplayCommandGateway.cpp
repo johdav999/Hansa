@@ -25,6 +25,12 @@ namespace Hansa::Simulation
 		case EHansaCommandGatewayError::TargetNotFound: return TEXT("TargetNotFound");
 		case EHansaCommandGatewayError::NotAuthorized: return TEXT("NotAuthorized");
 		case EHansaCommandGatewayError::ClockOverflow: return TEXT("ClockOverflow");
+		case EHansaCommandGatewayError::PlacementRejected: return TEXT("PlacementRejected");
+		case EHansaCommandGatewayError::ConstructionCostUnavailable: return TEXT("ConstructionCostUnavailable");
+		case EHansaCommandGatewayError::ConstructionStateInvalid: return TEXT("ConstructionStateInvalid");
+		case EHansaCommandGatewayError::ConstructionRefundUnavailable: return TEXT("ConstructionRefundUnavailable");
+		case EHansaCommandGatewayError::TargetHasDependents: return TEXT("TargetHasDependents");
+		case EHansaCommandGatewayError::ResidenceProgressionUnavailable: return TEXT("ResidenceProgressionUnavailable");
 		default: return TEXT("UnknownCommandGatewayError");
 		}
 	}

@@ -7,6 +7,7 @@ Hansa is an Unreal Engine 5.8 trade and city-builder game.
 - Unreal Engine 5.8
 - Visual Studio 2022 with the **Game development with C++** workload
 - PowerShell 7 (`pwsh`)
+- Node.js 22 or newer for the external `HansaMcp` contract suite
 - Git LFS
 
 ## Getting started
@@ -36,6 +37,7 @@ The scripts discover the UE 5.8 installation automatically where possible. You c
 pwsh -File Scripts/VerifyRepositoryConventions.ps1
 pwsh -File Scripts/Build.ps1 -Target HansaEditor -Configuration Development
 pwsh -File Scripts/RunAutomationTests.ps1 -TestFilter Hansa
+pwsh -File Scripts/RunHansaMcpTests.ps1
 pwsh -File Scripts/VerifyShippingExclusion.ps1
 ```
 
@@ -57,6 +59,13 @@ Before adding code, assets, fixtures, configuration, generated content, or tests
 - [Integrated MVP sprint and prompt plan](Docs/MVPSprintPlan.md)
 - [Current development baseline](Docs/Development/Baseline.md)
 - [Build, test and CI entry points](Docs/Development/BuildAndTest.md)
+- [Automation session boundary](Docs/Development/AutomationSession.md)
+- [MCP sidecar startup and protocol](Docs/Development/HansaMcp.md)
+- [Semantic UI, waits and screenshot evidence](Docs/Development/SemanticAutomation.md)
+- [Production simulation, headless fixture and validation](Docs/Development/Production.md)
+- [Lübeck MVP world and strategy camera](Docs/Development/LubeckWorldAndCamera.md)
+- [Deterministic grid placement](Docs/Development/Placement.md)
+- [Managed building and road world projections](Docs/Development/WorldPlacementProjections.md)
 - [Repository conventions](Docs/Development/RepositoryConventions.md)
 - [Architecture decision records](Docs/Architecture/Decisions/README.md)
 - [Editor and AI-assisted authoring architecture](Docs/EditorArchitecture.md)

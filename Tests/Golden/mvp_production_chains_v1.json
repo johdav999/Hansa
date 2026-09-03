@@ -1,0 +1,9 @@
+{
+  "fixtureId": "mvp_production_chains_v1",
+  "fixtureVersion": 3,
+  "ticksRun": 30,
+  "registryHash": "B0481C9F740D6C18",
+  "initialStateHash": "F6DD9C7BE8B409D1",
+  "finalStateHash": "427718B30E147F11",
+  "eventCount": 146
+}

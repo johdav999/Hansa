@@ -178,11 +178,19 @@ bool FHansaNormalizedStateHashTest::RunTest(const FString& Parameters)
 		Report.GetHashFormatVersion(), FHansaStateHashReport::CurrentHashFormatVersion);
 	TestEqual(TEXT("Normalization rules are explicitly versioned"),
 		Report.GetNormalizationVersion(), FHansaStateHashReport::CurrentNormalizationVersion);
-	TestEqual(TEXT("All current authoritative subsystems are reported"), Report.GetSubsystems().Num(), 9);
+	TestEqual(TEXT("All current authoritative subsystems are reported"), Report.GetSubsystems().Num(), 15);
 	TestEqual(TEXT("Global fingerprint is derived from the normalized report"),
 		View.GetFingerprint().Value, Report.GetOverallHash());
 	TestEqual(TEXT("Fingerprint contract advanced for normalized subsystem hashing"),
-		FHansaSimulationState::DeterminismFingerprintVersion, uint32(3));
+		FHansaSimulationState::DeterminismFingerprintVersion, uint32(13));
+	TestTrue(TEXT("Population is covered by a dedicated hash subsystem"),
+		Report.Find(EHansaStateHashSubsystem::Population) != nullptr);
+	TestTrue(TEXT("Markets are covered by a dedicated hash subsystem"),
+		Report.Find(EHansaStateHashSubsystem::Market) != nullptr);
+	TestTrue(TEXT("Placement is covered by a dedicated hash subsystem"),
+		Report.Find(EHansaStateHashSubsystem::Placement) != nullptr);
+	TestTrue(TEXT("Local logistics is covered by a dedicated hash subsystem"),
+		Report.Find(EHansaStateHashSubsystem::Logistics) != nullptr);
 	TestTrue(TEXT("A relevant subsystem can be located without parsing text"),
 		Report.Find(EHansaStateHashSubsystem::Houses) != nullptr);
 	TestTrue(TEXT("Compact summary names relevant subsystems"), Report.ToCompactDebugString().Contains(TEXT("Houses=")));

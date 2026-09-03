@@ -200,6 +200,9 @@ bool FHansaModuleBoundaryTest::RunTest(const FString& Parameters)
 			TEXT("Hansa automation transport is disabled by default"),
 			DefaultGameText.Contains(TEXT("bEnableTransport=False")));
 		TestTrue(
+			TEXT("Hansa automation permission ceiling defaults to read-only"),
+			DefaultGameText.Contains(TEXT("MaximumPermission=ReadOnly")));
+		TestTrue(
 			TEXT("Developer content is excluded from cook"),
 			DefaultGameText.Contains(TEXT("/Game/Hansa/Developer")));
 		TestTrue(

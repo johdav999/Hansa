@@ -2,6 +2,7 @@
 
 #include "Model/HansaIds.h"
 #include "Model/HansaSimulationTime.h"
+#include "Placement/HansaPlacement.h"
 
 namespace Hansa::Simulation
 {
@@ -25,7 +26,7 @@ namespace Hansa::Simulation
 
 	struct FHansaCommandHeader
 	{
-		static constexpr uint16 CurrentSchemaVersion = 1;
+		static constexpr uint16 CurrentSchemaVersion = 4;
 
 		FHansaCommandId CommandId;
 		FHansaCommandAuthorityContext Authority;
@@ -50,11 +51,46 @@ namespace Hansa::Simulation
 		int64 CorrelationValue = 0;
 	};
 
+	/** Authoritative activation change; stock and output remain consequences of normal simulation systems. */
+	struct FHansaSetProductionActiveCommand
+	{
+		FHansaProductionId ProductionId;
+		bool bActive = true;
+	};
+
+	/** Normal authoritative build command. Preview and automation submit this same payload. */
+	struct FHansaPlaceBuildingCommand
+	{
+		FHansaBuildingId BuildingId;
+		FHansaPlacementSpec Placement;
+	};
+
+	struct FHansaCancelConstructionCommand
+	{
+		FHansaBuildingId BuildingId;
+	};
+
+	struct FHansaRemoveBuildingCommand
+	{
+		FHansaBuildingId BuildingId;
+	};
+
+	/** Manual MVP residence progression; the authored upgrade target determines the next tier. */
+	struct FHansaUpgradeResidenceCommand
+	{
+		FHansaBuildingId BuildingId;
+	};
+
 	enum class EHansaGameplayCommandType : uint8
 	{
 		CreateTestEntity = 0,
 		CancelTestEntity,
-		NoOpTest
+		NoOpTest,
+		SetProductionActive,
+		PlaceBuilding,
+		CancelConstruction,
+		RemoveBuilding,
+		UpgradeResidence
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaGameplayCommandType Type);
@@ -75,12 +111,32 @@ namespace Hansa::Simulation
 		static FHansaGameplayCommand Create(
 			const FHansaCommandHeader& Header,
 			const FHansaNoOpTestCommand& Payload);
+		static FHansaGameplayCommand Create(
+			const FHansaCommandHeader& Header,
+			const FHansaSetProductionActiveCommand& Payload);
+		static FHansaGameplayCommand Create(
+			const FHansaCommandHeader& Header,
+			const FHansaPlaceBuildingCommand& Payload);
+		static FHansaGameplayCommand Create(
+			const FHansaCommandHeader& Header,
+			const FHansaCancelConstructionCommand& Payload);
+		static FHansaGameplayCommand Create(
+			const FHansaCommandHeader& Header,
+			const FHansaRemoveBuildingCommand& Payload);
+		static FHansaGameplayCommand Create(
+			const FHansaCommandHeader& Header,
+			const FHansaUpgradeResidenceCommand& Payload);
 
 		[[nodiscard]] const FHansaCommandHeader& GetHeader() const { return Header; }
 		[[nodiscard]] EHansaGameplayCommandType GetType() const { return Type; }
 		[[nodiscard]] const FHansaCreateTestEntityCommand& GetCreateTestEntity() const;
 		[[nodiscard]] const FHansaCancelTestEntityCommand& GetCancelTestEntity() const;
 		[[nodiscard]] const FHansaNoOpTestCommand& GetNoOpTest() const;
+		[[nodiscard]] const FHansaSetProductionActiveCommand& GetSetProductionActive() const;
+		[[nodiscard]] const FHansaPlaceBuildingCommand& GetPlaceBuilding() const;
+		[[nodiscard]] const FHansaCancelConstructionCommand& GetCancelConstruction() const;
+		[[nodiscard]] const FHansaRemoveBuildingCommand& GetRemoveBuilding() const;
+		[[nodiscard]] const FHansaUpgradeResidenceCommand& GetUpgradeResidence() const;
 		[[nodiscard]] uint64 ComputeStableFingerprint() const;
 
 	private:
@@ -89,5 +145,10 @@ namespace Hansa::Simulation
 		FHansaCreateTestEntityCommand CreateTestEntity;
 		FHansaCancelTestEntityCommand CancelTestEntity;
 		FHansaNoOpTestCommand NoOpTest;
+		FHansaSetProductionActiveCommand SetProductionActive;
+		FHansaPlaceBuildingCommand PlaceBuilding;
+		FHansaCancelConstructionCommand CancelConstruction;
+		FHansaRemoveBuildingCommand RemoveBuilding;
+		FHansaUpgradeResidenceCommand UpgradeResidence;
 	};
 }

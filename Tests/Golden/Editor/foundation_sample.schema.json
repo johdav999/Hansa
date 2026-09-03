@@ -1,0 +1,195 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "hansa://schema/Hansa.FoundationSampleDefinition/v1",
+	"title": "Foundation sample definition",
+	"type": "object",
+	"additionalProperties": false,
+	"x-hansa-schema-version": 1,
+	"properties":
+	{
+		"AuthoredRevision":
+		{
+			"title": "Authored revision",
+			"description": "Monotonic human-authored revision used for reviewed patch and stale-draft checks.",
+			"type": "integer",
+			"x-hansa-category": "Definition|Versioning",
+			"x-hansa-reference": "None",
+			"x-hansa-ai-access": "Read",
+			"x-hansa-bulk-editable": false,
+			"x-hansa-migration": "Compatible",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "Range",
+			"x-hansa-unit": "Revision",
+			"minimum": 1,
+			"maximum": 2147483647
+		},
+		"ContentHash":
+		{
+			"title": "Content hash",
+			"description": "Derived deterministic hash of accepted definition content; this value is never authored or proposed.",
+			"type": "integer",
+			"x-hansa-category": "Definition|Derived",
+			"x-hansa-reference": "None",
+			"x-hansa-ai-access": "Never",
+			"x-hansa-bulk-editable": false,
+			"x-hansa-migration": "Derived",
+			"x-hansa-serialization": "Derived",
+			"x-hansa-validation": "Derived",
+			"x-hansa-unit": "Hash64",
+			"minimum": 0,
+			"maximum": 1.8446744073709552e+19,
+			"readOnly": true
+		},
+		"ContentSet":
+		{
+			"title": "Content set",
+			"description": "Stable content-set name controlling registry inclusion and fixture availability.",
+			"type": "string",
+			"x-hansa-category": "Definition|Organization",
+			"x-hansa-reference": "ContentSet",
+			"x-hansa-ai-access": "Read",
+			"x-hansa-bulk-editable": true,
+			"x-hansa-migration": "RequiresMigration",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "NonEmpty"
+		},
+		"DefinitionCategory":
+		{
+			"title": "Category",
+			"description": "Authoring category used for browsing and filtering; it does not define gameplay identity.",
+			"type": "string",
+			"x-hansa-category": "Definition|Organization",
+			"x-hansa-reference": "None",
+			"x-hansa-ai-access": "Generate",
+			"x-hansa-bulk-editable": true,
+			"x-hansa-migration": "Compatible",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "NonEmpty"
+		},
+		"DisplayName":
+		{
+			"title": "Display name",
+			"description": "Localized display text shown to authors and players; it never defines stable identity.",
+			"type": "string",
+			"x-hansa-category": "Definition|Presentation",
+			"x-hansa-reference": "None",
+			"x-hansa-ai-access": "Suggest",
+			"x-hansa-bulk-editable": true,
+			"x-hansa-migration": "Compatible",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "NonEmpty"
+		},
+		"LocalizationKey":
+		{
+			"title": "Localization key",
+			"description": "Stable localization identity for the display name.",
+			"type": "string",
+			"x-hansa-category": "Definition|Presentation",
+			"x-hansa-reference": "LocalizationKey",
+			"x-hansa-ai-access": "Read",
+			"x-hansa-bulk-editable": false,
+			"x-hansa-migration": "RequiresMigration",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "NonEmpty"
+		},
+		"ReplacementDefinitionId":
+		{
+			"title": "Replacement definition ID",
+			"description": "Canonical stable ID that replaces this definition when Deprecated is enabled.",
+			"type": "string",
+			"x-hansa-category": "Definition|Deprecation",
+			"x-hansa-reference": "Definition",
+			"x-hansa-ai-access": "Never",
+			"x-hansa-bulk-editable": false,
+			"x-hansa-migration": "RequiresMigration",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "ConditionalReference"
+		},
+		"SampleValue":
+		{
+			"title": "Sample value",
+			"description": "Small bounded property used to prove automatic Details and JSON Schema discovery without a handwritten form.",
+			"type": "integer",
+			"x-hansa-category": "Sample",
+			"x-hansa-reference": "None",
+			"x-hansa-ai-access": "Suggest",
+			"x-hansa-bulk-editable": true,
+			"x-hansa-migration": "Compatible",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "Range",
+			"x-hansa-unit": "Percent",
+			"minimum": 0,
+			"maximum": 100
+		},
+		"SchemaVersion":
+		{
+			"title": "Schema version",
+			"description": "Version of this reflected definition schema. Breaking changes require an explicit migration.",
+			"type": "integer",
+			"x-hansa-category": "Definition|Versioning",
+			"x-hansa-reference": "None",
+			"x-hansa-ai-access": "Never",
+			"x-hansa-bulk-editable": false,
+			"x-hansa-migration": "RequiresMigration",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "Range",
+			"x-hansa-unit": "Version",
+			"minimum": 1,
+			"maximum": 2147483647
+		},
+		"StableDefinitionId":
+		{
+			"title": "Stable definition ID",
+			"description": "Immutable canonical Domain.Name identity used by runtime registries, saves, references and authoring tools.",
+			"type": "string",
+			"x-hansa-category": "Definition|Identity",
+			"x-hansa-reference": "Definition",
+			"x-hansa-ai-access": "Never",
+			"x-hansa-bulk-editable": false,
+			"x-hansa-migration": "Identity",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "StableId"
+		},
+		"Tags":
+		{
+			"title": "Tags",
+			"description": "Deterministically sorted authoring and content-selection tags.",
+			"type": "array",
+			"x-hansa-category": "Definition|Organization",
+			"x-hansa-reference": "None",
+			"x-hansa-ai-access": "Generate",
+			"x-hansa-bulk-editable": true,
+			"x-hansa-migration": "Compatible",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "Optional",
+			"items":
+			{
+				"type": "string"
+			}
+		},
+		"bDeprecated":
+		{
+			"title": "Deprecated",
+			"description": "Marks this definition unavailable for new content while preserving compatibility for existing references.",
+			"type": "boolean",
+			"x-hansa-category": "Definition|Deprecation",
+			"x-hansa-reference": "None",
+			"x-hansa-ai-access": "Never",
+			"x-hansa-bulk-editable": true,
+			"x-hansa-migration": "RequiresMigration",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "Boolean"
+		}
+	},
+	"required": [
+		"AuthoredRevision",
+		"ContentSet",
+		"DefinitionCategory",
+		"DisplayName",
+		"LocalizationKey",
+		"SampleValue",
+		"SchemaVersion",
+		"StableDefinitionId",
+		"bDeprecated"
+	]
+}

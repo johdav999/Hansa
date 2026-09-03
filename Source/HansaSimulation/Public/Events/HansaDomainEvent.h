@@ -2,14 +2,27 @@
 
 #include "Model/HansaIds.h"
 #include "Model/HansaSimulationTime.h"
+#include "Production/HansaProduction.h"
+#include "Placement/HansaPlacement.h"
 
 namespace Hansa::Simulation
 {
+	class FHansaConstructionExecutor;
+
 	enum class EHansaDomainEventType : uint8
 	{
 		TestEntityCreated = 0,
 		TestEntityCancelled,
-		NoOpCommandAccepted
+		NoOpCommandAccepted,
+		ProductionCycleCompleted,
+		ProductionBlockerChanged,
+		ProductionActiveChanged,
+		BuildingPlaced,
+		ConstructionProgressed,
+		ConstructionCompleted,
+		ConstructionCancelled,
+		BuildingRemoved,
+		ResidenceUpgraded
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaDomainEventType Type);
@@ -24,10 +37,16 @@ namespace Hansa::Simulation
 		[[nodiscard]] FHansaCommandId GetSourceCommandId() const { return SourceCommandId; }
 		[[nodiscard]] FHansaHouseId GetIssuingHouseId() const { return IssuingHouseId; }
 		[[nodiscard]] FHansaTestEntityId GetTestEntityId() const { return TestEntityId; }
+		[[nodiscard]] FHansaProductionId GetProductionId() const { return ProductionId; }
+		[[nodiscard]] FHansaBuildingId GetBuildingId() const { return BuildingId; }
+		[[nodiscard]] const FHansaRecipeId& GetRecipeId() const { return RecipeId; }
+		[[nodiscard]] EHansaProductionBlocker GetProductionBlocker() const { return ProductionBlocker; }
+		[[nodiscard]] const FHansaPlacementSpec& GetPlacement() const { return Placement; }
 		[[nodiscard]] int64 GetValue() const { return Value; }
 		[[nodiscard]] FString ToDebugString() const;
 
 	private:
+		friend class FHansaConstructionExecutor;
 		friend class FHansaSimulationPipeline;
 
 		EHansaDomainEventType Type = EHansaDomainEventType::NoOpCommandAccepted;
@@ -36,6 +55,11 @@ namespace Hansa::Simulation
 		FHansaCommandId SourceCommandId;
 		FHansaHouseId IssuingHouseId;
 		FHansaTestEntityId TestEntityId;
+		FHansaProductionId ProductionId;
+		FHansaBuildingId BuildingId;
+		FHansaRecipeId RecipeId;
+		EHansaProductionBlocker ProductionBlocker = EHansaProductionBlocker::None;
+		FHansaPlacementSpec Placement;
 		int64 Value = 0;
 	};
 }

@@ -1,0 +1,45 @@
+{
+  "evidenceSchemaVersion": 1,
+  "fixtureId": "lubeck_grain_shortage_v1",
+  "fixtureVersion": 3,
+  "registryHash": "B0481C9F740D6C18",
+  "baseline": {
+    "tick": 0,
+    "stateHash": "A701E03145EE0E9B",
+    "stockMilliUnits": 16000,
+    "desiredReserveMilliUnits": 30000,
+    "citizenDemandMilliUnits": 0,
+    "industrialDemandMilliUnits": 0,
+    "unmetDemandMilliUnits": 0,
+    "priceMilliMarks": 1000,
+    "reserveMilliDays": 0,
+    "alertCount": 0,
+    "shortage": false
+  },
+  "shortage": {
+    "tick": 5,
+    "stateHash": "C3679CF410B7138F",
+    "stockMilliUnits": 0,
+    "desiredReserveMilliUnits": 30000,
+    "citizenDemandMilliUnits": 2000,
+    "industrialDemandMilliUnits": 3500,
+    "unmetDemandMilliUnits": 5500,
+    "priceMilliMarks": 1100,
+    "reserveMilliDays": 0,
+    "alertCount": 2,
+    "shortage": true
+  },
+  "recovery": {
+    "tick": 10,
+    "stateHash": "250DD52C0E2DF654",
+    "stockMilliUnits": 56000,
+    "desiredReserveMilliUnits": 30000,
+    "citizenDemandMilliUnits": 2000,
+    "industrialDemandMilliUnits": 3500,
+    "unmetDemandMilliUnits": 0,
+    "priceMilliMarks": 1010,
+    "reserveMilliDays": 424,
+    "alertCount": 0,
+    "shortage": false
+  }
+}

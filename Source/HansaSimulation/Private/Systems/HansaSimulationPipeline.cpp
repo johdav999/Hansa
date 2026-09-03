@@ -1,6 +1,11 @@
 #include "Systems/HansaSimulationPipeline.h"
 
+#include "Construction/HansaConstructionInternal.h"
+#include "Logistics/HansaLocalLogisticsInternal.h"
 #include "Math/NumericLimits.h"
+#include "Market/HansaMarketInternal.h"
+#include "Production/HansaProductionInternal.h"
+#include "Population/HansaPopulationInternal.h"
 
 namespace Hansa::Simulation
 {
@@ -86,6 +91,79 @@ namespace Hansa::Simulation
 				++Index;
 			}
 			return Index;
+		}
+
+		int32 FindProductionIndex(const TArray<FHansaProductionState>& Productions, const FHansaProductionId ProductionId)
+		{
+			for (int32 Index = 0; Index < Productions.Num(); ++Index)
+			{
+				if (Productions[Index].Id == ProductionId)
+				{
+					return Index;
+				}
+				if (ProductionId < Productions[Index].Id)
+				{
+					break;
+				}
+			}
+			return INDEX_NONE;
+		}
+
+		const FHansaBuildingState* FindBuilding(const TArray<FHansaBuildingState>& Buildings, const FHansaBuildingId BuildingId)
+		{
+			return Buildings.FindByPredicate([BuildingId](const FHansaBuildingState& Building)
+			{
+				return Building.Id == BuildingId;
+			});
+		}
+
+		int32 FindBuildingInsertionIndex(const TArray<FHansaBuildingState>& Buildings, const FHansaBuildingId BuildingId)
+		{
+			int32 Index = 0;
+			while (Index < Buildings.Num() && Buildings[Index].Id < BuildingId)
+			{
+				++Index;
+			}
+			return Index;
+		}
+
+		int32 FindBuildingIndex(const TArray<FHansaBuildingState>& Buildings, const FHansaBuildingId BuildingId)
+		{
+			for (int32 Index = 0; Index < Buildings.Num(); ++Index)
+			{
+				if (Buildings[Index].Id == BuildingId)
+				{
+					return Index;
+				}
+				if (BuildingId < Buildings[Index].Id)
+				{
+					break;
+				}
+			}
+			return INDEX_NONE;
+		}
+
+		bool HasBuildingDependents(
+			const TArray<FHansaProductionState>& Productions,
+			const TArray<FHansaPopulationCohortState>& PopulationCohorts,
+			const FHansaInventoryLedger& InventoryLedger,
+			const FHansaBuildingId BuildingId)
+		{
+			if (Productions.ContainsByPredicate([BuildingId](const FHansaProductionState& Production)
+				{ return Production.BuildingId == BuildingId; }) ||
+				PopulationCohorts.ContainsByPredicate([BuildingId](const FHansaPopulationCohortState& Cohort)
+				{ return Cohort.ResidenceBuildingId == BuildingId; }))
+			{
+				return true;
+			}
+			for (const FHansaInventoryProjection& Inventory : InventoryLedger.CreateReadOnlyAccess().BuildProjection())
+			{
+				if (Inventory.BuildingId == BuildingId)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		void ExecuteRepresentativeNoOpSystem(const EHansaSimulationPhase Phase)
@@ -204,7 +282,10 @@ namespace Hansa::Simulation
 		{
 			return MakeFailure(EHansaCommandGatewayError::CommandCountOverflow);
 		}
-		if (CommandCount > TNumericLimits<uint64>::Max() - State.PublishedDomainEventCount)
+		const uint64 MaximumSystemEventCount = static_cast<uint64>(State.Productions.Num()) +
+			static_cast<uint64>(State.Buildings.Num() + Input.Commands.Num()) * 2ULL;
+		if (CommandCount > TNumericLimits<uint64>::Max() - MaximumSystemEventCount ||
+			CommandCount + MaximumSystemEventCount > TNumericLimits<uint64>::Max() - State.PublishedDomainEventCount)
 		{
 			return MakeFailure(EHansaCommandGatewayError::EventCountOverflow);
 		}
@@ -310,6 +391,252 @@ namespace Hansa::Simulation
 				Event.Type = EHansaDomainEventType::NoOpCommandAccepted;
 				Event.Value = Command.GetNoOpTest().CorrelationValue;
 				break;
+			case EHansaGameplayCommandType::SetProductionActive:
+			{
+				const FHansaSetProductionActiveCommand& Payload = Command.GetSetProductionActive();
+				if (!Payload.ProductionId.IsValid())
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				const int32 ProductionIndex = FindProductionIndex(Candidate.Productions, Payload.ProductionId);
+				if (ProductionIndex == INDEX_NONE)
+				{
+					return MakeFailure(EHansaCommandGatewayError::TargetNotFound, CommandIndex);
+				}
+				FHansaProductionState& Production = Candidate.Productions[ProductionIndex];
+				if (Production.Kind == EHansaProductionKind::BackgroundSupply)
+				{
+					if (Header.Authority.Origin != EHansaCommandOrigin::ControlledAutomation)
+					{
+						return MakeFailure(EHansaCommandGatewayError::NotAuthorized, CommandIndex);
+					}
+				}
+				else
+				{
+					const FHansaBuildingState* Building = FindBuilding(Candidate.Buildings, Production.BuildingId);
+					if (Building == nullptr || Building->OwnerId != Header.Authority.IssuingHouseId)
+					{
+						return MakeFailure(EHansaCommandGatewayError::NotAuthorized, CommandIndex);
+					}
+				}
+				Production.bActive = Payload.bActive;
+				Event.Type = EHansaDomainEventType::ProductionActiveChanged;
+				Event.ProductionId = Production.Id;
+				Event.BuildingId = Production.BuildingId;
+				Event.RecipeId = Production.RecipeId;
+				Event.Value = Payload.bActive ? 1 : 0;
+				break;
+			}
+			case EHansaGameplayCommandType::PlaceBuilding:
+			{
+				const FHansaPlaceBuildingCommand& Payload = Command.GetPlaceBuilding();
+				if (!Payload.BuildingId.IsValid() || !Payload.Placement.CityId.IsValid() ||
+					!Payload.Placement.BuildingDefinitionId.IsValid())
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				if (FindBuilding(Candidate.Buildings, Payload.BuildingId) != nullptr ||
+					Candidate.Placement.FindPlacement(Payload.BuildingId) != nullptr)
+				{
+					return MakeFailure(EHansaCommandGatewayError::TargetAlreadyExists, CommandIndex);
+				}
+				const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry();
+				if (Registry == nullptr)
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidDefinitionContext, CommandIndex);
+				}
+				const FHansaPlacementValidationResult Validation = FHansaPlacementRules::Validate(
+					Candidate.Placement, *Registry, Header.Authority.IssuingHouseId, Payload.Placement);
+				if (!Validation)
+				{
+					FHansaCommandGatewayResult Failure = MakeFailure(
+						EHansaCommandGatewayError::PlacementRejected, CommandIndex);
+					Failure.PlacementValidation = Validation;
+					return Failure;
+				}
+				const FHansaConstructionCostProjection Cost = FHansaConstructionExecutor::BuildCostProjection(
+					Candidate.Houses, Candidate.InventoryLedger, *Registry,
+					Header.Authority.IssuingHouseId, Payload.Placement.CityId,
+					Payload.Placement.BuildingDefinitionId);
+				if (!Cost.IsAffordable() || !FHansaConstructionExecutor::TryPayCost(
+					Candidate.Houses, Candidate.InventoryLedger, *Registry,
+					Header.Authority.IssuingHouseId, Payload.Placement.CityId,
+					Payload.Placement.BuildingDefinitionId, TickBefore))
+				{
+					FHansaCommandGatewayResult Failure = MakeFailure(
+						EHansaCommandGatewayError::ConstructionCostUnavailable, CommandIndex);
+					Failure.ConstructionCost = Cost;
+					return Failure;
+				}
+
+				FHansaBuildingState Building;
+				Building.Id = Payload.BuildingId;
+				Building.DefinitionId = Payload.Placement.BuildingDefinitionId;
+				Building.OwnerId = Header.Authority.IssuingHouseId;
+				Building.ConstructionProgress = FHansaRate();
+				Building.ConstructionState = EHansaConstructionState::UnderConstruction;
+				Building.ConstructionStartedTick = ClockAfter.Value.GetTick();
+				Building.ConstructionElapsedTicks = 0;
+				Candidate.Buildings.Insert(
+					Building,
+					FindBuildingInsertionIndex(Candidate.Buildings, Payload.BuildingId));
+				FHansaPlacementRules::ApplyValidated(
+					Candidate.Placement,
+					Payload.BuildingId,
+					Header.Authority.IssuingHouseId,
+					Payload.Placement,
+					Validation.GetOccupiedCells());
+				Event.Type = EHansaDomainEventType::BuildingPlaced;
+				Event.BuildingId = Payload.BuildingId;
+				Event.Placement = Payload.Placement;
+				break;
+			}
+			case EHansaGameplayCommandType::CancelConstruction:
+			{
+				const FHansaCancelConstructionCommand& Payload = Command.GetCancelConstruction();
+				if (!Payload.BuildingId.IsValid())
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				const int32 BuildingIndex = FindBuildingIndex(Candidate.Buildings, Payload.BuildingId);
+				if (BuildingIndex == INDEX_NONE)
+				{
+					return MakeFailure(EHansaCommandGatewayError::TargetNotFound, CommandIndex);
+				}
+				const FHansaBuildingState& Building = Candidate.Buildings[BuildingIndex];
+				if (Building.OwnerId != Header.Authority.IssuingHouseId)
+				{
+					return MakeFailure(EHansaCommandGatewayError::NotAuthorized, CommandIndex);
+				}
+				if (Building.ConstructionState != EHansaConstructionState::UnderConstruction)
+				{
+					return MakeFailure(EHansaCommandGatewayError::ConstructionStateInvalid, CommandIndex);
+				}
+				if (HasBuildingDependents(Candidate.Productions, Candidate.PopulationCohorts,
+					Candidate.InventoryLedger, Payload.BuildingId))
+				{
+					return MakeFailure(EHansaCommandGatewayError::TargetHasDependents, CommandIndex);
+				}
+				const FHansaPlacedBuildingRecord* Placement = Candidate.Placement.FindPlacement(Payload.BuildingId);
+				const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry();
+				if (Placement == nullptr || Registry == nullptr)
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidDefinitionContext, CommandIndex);
+				}
+				FHansaMoney CurrencyRefund;
+				if (!FHansaConstructionExecutor::TryRefundCancellation(
+					Candidate.Houses, Candidate.InventoryLedger, *Registry, Building,
+					Placement->Spec.CityId, TickBefore, CurrencyRefund))
+				{
+					return MakeFailure(EHansaCommandGatewayError::ConstructionRefundUnavailable, CommandIndex);
+				}
+				FHansaPlacementRules::Remove(Candidate.Placement, Payload.BuildingId);
+				Candidate.Buildings.RemoveAt(BuildingIndex);
+				Event.Type = EHansaDomainEventType::ConstructionCancelled;
+				Event.BuildingId = Payload.BuildingId;
+				Event.Value = CurrencyRefund.GetRawValue();
+				break;
+			}
+			case EHansaGameplayCommandType::RemoveBuilding:
+			{
+				const FHansaRemoveBuildingCommand& Payload = Command.GetRemoveBuilding();
+				if (!Payload.BuildingId.IsValid())
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				const int32 BuildingIndex = FindBuildingIndex(Candidate.Buildings, Payload.BuildingId);
+				if (BuildingIndex == INDEX_NONE)
+				{
+					return MakeFailure(EHansaCommandGatewayError::TargetNotFound, CommandIndex);
+				}
+				const FHansaBuildingState& Building = Candidate.Buildings[BuildingIndex];
+				if (Building.OwnerId != Header.Authority.IssuingHouseId)
+				{
+					return MakeFailure(EHansaCommandGatewayError::NotAuthorized, CommandIndex);
+				}
+				if (Building.ConstructionState != EHansaConstructionState::Completed)
+				{
+					return MakeFailure(EHansaCommandGatewayError::ConstructionStateInvalid, CommandIndex);
+				}
+				if (HasBuildingDependents(Candidate.Productions, Candidate.PopulationCohorts,
+					Candidate.InventoryLedger, Payload.BuildingId))
+				{
+					return MakeFailure(EHansaCommandGatewayError::TargetHasDependents, CommandIndex);
+				}
+				if (!FHansaPlacementRules::Remove(Candidate.Placement, Payload.BuildingId))
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				Candidate.Buildings.RemoveAt(BuildingIndex);
+				Event.Type = EHansaDomainEventType::BuildingRemoved;
+				Event.BuildingId = Payload.BuildingId;
+				break;
+			}
+			case EHansaGameplayCommandType::UpgradeResidence:
+			{
+				const FHansaUpgradeResidenceCommand& Payload = Command.GetUpgradeResidence();
+				if (!Payload.BuildingId.IsValid())
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				const int32 BuildingIndex = FindBuildingIndex(Candidate.Buildings, Payload.BuildingId);
+				if (BuildingIndex == INDEX_NONE)
+				{
+					return MakeFailure(EHansaCommandGatewayError::TargetNotFound, CommandIndex);
+				}
+				FHansaBuildingState& Building = Candidate.Buildings[BuildingIndex];
+				if (Building.OwnerId != Header.Authority.IssuingHouseId)
+				{
+					return MakeFailure(EHansaCommandGatewayError::NotAuthorized, CommandIndex);
+				}
+				if (Building.ConstructionState != EHansaConstructionState::Completed)
+				{
+					return MakeFailure(EHansaCommandGatewayError::ConstructionStateInvalid, CommandIndex);
+				}
+				FHansaPopulationCohortState* Cohort = Candidate.PopulationCohorts.FindByPredicate(
+					[&Payload](const FHansaPopulationCohortState& Value)
+					{ return Value.ResidenceBuildingId == Payload.BuildingId; });
+				const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry();
+				const FHansaCompiledBuildingDefinition* Source = Registry != nullptr
+					? Registry->FindBuilding(Building.DefinitionId.ToString()) : nullptr;
+				const FHansaCompiledBuildingDefinition* Target = Source != nullptr && !Source->UpgradeTargetBuildingId.IsEmpty()
+					? Registry->FindBuilding(Source->UpgradeTargetBuildingId) : nullptr;
+				const FHansaCompiledPopulationTierDefinition* SourceTier = Source != nullptr
+					? Registry->FindPopulationTier(Source->ResidentPopulationTierId) : nullptr;
+				const FHansaCompiledPopulationTierDefinition* TargetTier = Target != nullptr
+					? Registry->FindPopulationTier(Target->ResidentPopulationTierId) : nullptr;
+				const auto TargetBuildingId = Target != nullptr
+					? FHansaBuildingTypeId::TryParse(Target->StableId)
+					: THansaValueResult<FHansaBuildingTypeId>::Failure(EHansaValueError::InvalidFormat);
+				const auto TargetTierId = TargetTier != nullptr
+					? FHansaPopulationTierId::TryParse(TargetTier->StableId)
+					: THansaValueResult<FHansaPopulationTierId>::Failure(EHansaValueError::InvalidFormat);
+				if (Cohort == nullptr || Source == nullptr || Target == nullptr || SourceTier == nullptr ||
+					TargetTier == nullptr || !TargetBuildingId || !TargetTierId ||
+					TargetTier->PreviousTierId != SourceTier->StableId ||
+					Cohort->SatisfactionBasisPoints < SourceTier->GrowthSatisfactionBasisPoints ||
+					Cohort->Residents > Target->ResidenceCapacity)
+				{
+					return MakeFailure(EHansaCommandGatewayError::ResidenceProgressionUnavailable, CommandIndex);
+				}
+				Building.DefinitionId = TargetBuildingId.Value;
+				Cohort->TierId = TargetTierId.Value;
+				Cohort->ResidenceCapacity = Target->ResidenceCapacity;
+				Cohort->ConsecutiveGrowthTicks = 0;
+				Cohort->ConsecutiveDeclineTicks = 0;
+				for (FHansaPlacedBuildingRecord& Placement : Candidate.Placement.Placements)
+				{
+					if (Placement.BuildingId == Payload.BuildingId)
+					{
+						Placement.Spec.BuildingDefinitionId = TargetBuildingId.Value;
+						break;
+					}
+				}
+				Event.Type = EHansaDomainEventType::ResidenceUpgraded;
+				Event.BuildingId = Payload.BuildingId;
+				Event.Value = Cohort->Residents;
+				break;
+			}
 			default:
 				return MakeFailure(EHansaCommandGatewayError::InvalidPayload, CommandIndex);
 			}
@@ -325,7 +652,11 @@ namespace Hansa::Simulation
 		}
 
 		const int64 EntityCount = static_cast<int64>(Candidate.Houses.Num()) + Candidate.Cities.Num() +
-			Candidate.Buildings.Num() + Candidate.Vehicles.Num() + Candidate.Routes.Num() + Candidate.TestEntities.Num();
+			Candidate.Buildings.Num() + Candidate.Vehicles.Num() + Candidate.Routes.Num() + Candidate.TestEntities.Num() +
+			Candidate.InventoryLedger.CreateReadOnlyAccess().GetInventoryCount() + Candidate.Productions.Num() +
+			Candidate.PopulationCohorts.Num() + Candidate.Markets.Num() + Candidate.Placement.GetMaps().Num() +
+			Candidate.Placement.GetPlacements().Num() + Candidate.LocalLogisticsRequests.Num() +
+			Candidate.LocalLogisticsJobs.Num();
 		TransientCache.BeginStep(TickBefore, EntityCount);
 		for (const EHansaSimulationPhase Phase : OrderedPhases)
 		{
@@ -333,6 +664,98 @@ namespace Hansa::Simulation
 			if (Phase == EHansaSimulationPhase::CalendarAndWorldEvents)
 			{
 				Candidate.Clock = ClockAfter.Value;
+			}
+			else if (Phase == EHansaSimulationPhase::VehicleMovementAndTransfers)
+			{
+				if (const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry())
+				{
+					FHansaLocalLogisticsExecutor::SynchronizeProductionRequests(
+						Candidate.LocalLogisticsRequests,
+						Candidate.Productions,
+						Candidate.Markets,
+						*Registry,
+						Candidate.InventoryLedger,
+						Candidate.Placement,
+						Candidate.Buildings,
+						Candidate.Clock.GetTick());
+				}
+				FHansaLocalLogisticsExecutor::AdvanceOneTick(
+					Candidate.LocalLogisticsRequests,
+					Candidate.LocalLogisticsJobs,
+					Candidate.NextLogisticsJobValue,
+					Candidate.NextLogisticsReservationValue,
+					Candidate.LocalLogisticsSettings,
+					Candidate.InventoryLedger,
+					Candidate.Placement,
+					Candidate.Buildings,
+					Candidate.Clock.GetTick());
+			}
+			else if (Phase == EHansaSimulationPhase::ConstructionAndProduction)
+			{
+				if (const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry())
+				{
+					FHansaConstructionExecutor::AdvanceOneTick(
+						Candidate.Buildings, *Registry, Candidate.Clock.GetTick(),
+						Candidate.PublishedDomainEventCount, PendingEvents);
+					FHansaPopulationExecutor::SynchronizeResidencesAndAssignWorkforce(
+						Candidate.PopulationCohorts, Candidate.Productions, Candidate.Buildings,
+						Candidate.Placement, Candidate.InventoryLedger, *Registry);
+				}
+				TArray<FHansaProductionStepEvent> ProductionEvents;
+				FHansaProductionExecutor::AdvanceOneTick(
+					Candidate.Productions,
+					Candidate.NextProductionReservationValue,
+					Candidate.Buildings,
+					Candidate.InventoryLedger,
+					Definitions.GetEconomicRegistry(),
+					Candidate.Clock.GetTick(),
+					ProductionEvents);
+				for (const FHansaProductionStepEvent& ProductionEvent : ProductionEvents)
+				{
+					FHansaDomainEvent Event;
+					Event.GlobalSequence = Candidate.PublishedDomainEventCount + 1;
+					Event.Tick = Candidate.Clock.GetTick();
+					Event.Type = ProductionEvent.Kind == EHansaProductionStepEventKind::CycleCompleted
+						? EHansaDomainEventType::ProductionCycleCompleted
+						: EHansaDomainEventType::ProductionBlockerChanged;
+					Event.ProductionId = ProductionEvent.ProductionId;
+					Event.BuildingId = ProductionEvent.BuildingId;
+					Event.RecipeId = ProductionEvent.RecipeId;
+					Event.ProductionBlocker = ProductionEvent.Blocker;
+					Event.Value = static_cast<int64>(ProductionEvent.CompletedCycles);
+					if (ProductionEvent.BuildingId.IsValid())
+					{
+						const FHansaBuildingState* Building = Candidate.Buildings.FindByPredicate(
+							[&ProductionEvent](const FHansaBuildingState& Value)
+							{
+								return Value.Id == ProductionEvent.BuildingId;
+							});
+						if (Building != nullptr)
+						{
+							Event.IssuingHouseId = Building->OwnerId;
+						}
+					}
+					++Candidate.PublishedDomainEventCount;
+					PendingEvents.Add(MoveTemp(Event));
+				}
+			}
+			else if (Phase == EHansaSimulationPhase::WorkforceAndNeeds)
+			{
+				if (const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry())
+				{
+					FHansaPopulationExecutor::AdvanceOneTick(Candidate.PopulationCohorts,
+						Candidate.InventoryLedger, Candidate.Markets, Candidate.Buildings, *Registry,
+						Candidate.Clock.GetTick(), Candidate.Clock.GetMinutesPerTick());
+				}
+			}
+			else if (Phase == EHansaSimulationPhase::MarketClearing)
+			{
+				if (const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry())
+				{
+					FHansaMarketExecutor::AdvanceOneTick(Candidate.Markets, Candidate.MarketSettings,
+						Candidate.InventoryLedger, Candidate.Productions,
+						Candidate.PopulationCohorts, *Registry, Candidate.Clock.GetTick());
+				}
 			}
 			else if (Phase != EHansaSimulationPhase::ApplyCommands)
 			{

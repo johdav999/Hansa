@@ -19,7 +19,13 @@ namespace Hansa::Simulation
 		Buildings,
 		Vehicles,
 		Routes,
+		Inventories,
+		Productions,
 		TestEntities,
+		Population,
+		Market,
+		Placement,
+		Logistics,
 		NotApplicable = 255
 	};
 

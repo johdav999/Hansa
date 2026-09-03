@@ -15,6 +15,7 @@ $childArguments = @{
 }
 
 & (Join-Path $PSScriptRoot 'VerifyRepositoryConventions.ps1') -ArtifactsRoot $context.ArtifactsRoot
+& (Join-Path $PSScriptRoot 'RunHansaMcpTests.ps1') -ArtifactsRoot $context.ArtifactsRoot
 
 if ($GenerateProjectFiles) {
     & (Join-Path $PSScriptRoot 'GenerateProjectFiles.ps1') @childArguments
@@ -32,6 +33,7 @@ Write-HansaJsonArtifact -Path $summaryPath -Value ([ordered]@{
     Status = 'Succeeded'
     GeneratedProjectFiles = [bool]$GenerateProjectFiles
     RepositoryConventionsChecked = $true
+    HansaMcpContractTestsRun = $true
     TestFilter = $TestFilter
     ProjectFile = $context.ProjectFile
     EngineRoot = $context.EngineRoot
