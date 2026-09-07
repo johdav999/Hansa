@@ -23,12 +23,13 @@ export class NamedPipeTransport {
   #pending = null;
   #closed = false;
 
-  constructor({ pipeName, logger, connectAttempts = 8, initialBackoffMs = 50, maximumBackoffMs = 500 }) {
+	constructor({ pipeName, logger, connectAttempts = 8, initialBackoffMs = 50, maximumBackoffMs = 500, connectTimeoutMs = 1_000 }) {
     this.pipeName = pipeName;
     this.logger = logger;
     this.connectAttempts = connectAttempts;
     this.initialBackoffMs = initialBackoffMs;
     this.maximumBackoffMs = maximumBackoffMs;
+	this.connectTimeoutMs = connectTimeoutMs;
   }
 
   async connect() {
@@ -64,12 +65,20 @@ export class NamedPipeTransport {
   #openSocket(path) {
     return new Promise((resolve, reject) => {
       const socket = net.createConnection(path);
+	  let settled = false;
+	  const timer = setTimeout(() => fail(new Error("Named-pipe connection attempt timed out.")), this.connectTimeoutMs);
       const fail = (error) => {
+		if (settled) return;
+		settled = true;
+		clearTimeout(timer);
         socket.destroy();
         reject(error);
       };
       socket.once("error", fail);
       socket.once("connect", () => {
+		if (settled) return;
+		settled = true;
+		clearTimeout(timer);
         socket.off("error", fail);
         socket.on("data", (chunk) => this.#onData(chunk));
         socket.on("error", (error) => this.#onDisconnect(error));

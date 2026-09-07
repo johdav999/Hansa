@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Oak",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_Oak_BaseColor_1024_v2.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_Oak_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_Oak_Normal.png"
+    },
+    "source": "//..\\textures\\mill--oak--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately",
+    "previous_base_color": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_Oak_BaseColor.png",
+    "native_bake_note": "1024 native shader bake for mipmaps; original 1254 ImageGen input unmodified"
+  },
+  {
+    "name": "RoofTimber",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_RoofTimber_BaseColor_1024_v2.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_RoofTimber_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_RoofTimber_Normal.png"
+    },
+    "source": "//..\\textures\\mill--roof--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately",
+    "previous_base_color": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_RoofTimber_BaseColor.png",
+    "native_bake_note": "1024 native shader bake for mipmaps; original 1254 ImageGen input unmodified"
+  },
+  {
+    "name": "Limestone",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_Limestone_BaseColor_1024_v2.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_Limestone_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_Limestone_Normal.png"
+    },
+    "source": "//..\\textures\\mill--stone--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately",
+    "previous_base_color": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_Limestone_BaseColor.png",
+    "native_bake_note": "1024 native shader bake for mipmaps; original 1254 ImageGen input unmodified"
+  },
+  {
+    "name": "ForgedIron",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_ForgedIron_BaseColor_1024_v2.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_ForgedIron_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_ForgedIron_Normal.png"
+    },
+    "source": "Procedural iron: no image detail needed",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately",
+    "previous_base_color": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_ForgedIron_BaseColor.png",
+    "native_bake_note": "1024 native shader bake for mipmaps; original 1254 ImageGen input unmodified"
+  },
+  {
+    "name": "ShelteredOak",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_ShelteredOak_BaseColor_1024_v2.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_ShelteredOak_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_ShelteredOak_Normal.png"
+    },
+    "source": "//..\\textures\\mill--oak--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately",
+    "previous_base_color": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\SourceArt\\Generated\\Buildings\\HansaMill_20260906_01\\exports\\T_Mill_ShelteredOak_BaseColor.png",
+    "native_bake_note": "1024 native shader bake for mipmaps; original 1254 ImageGen input unmodified"
+  }
+]

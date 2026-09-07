@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hansa-generation-request-v1",
+  "title": "Hansa provider-neutral generation request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "idempotencyKey", "capability", "intendedAssetRole", "providerId", "modelVersion", "prompt", "budgets", "outputContract", "spendApproval"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "idempotencyKey": { "$ref": "#/$defs/stableId" },
+    "capability": { "enum": ["StructuredDataDraft", "TextToMesh", "ImageToMesh", "MultiViewToMesh", "MeshVariation", "TextureGeneration", "Retopology", "Segmentation", "RigCheck", "AutoRig", "AnimationPreset", "AnimationRetarget", "TextToSpeech", "TextToDialogue", "TextToSoundEffect"] },
+    "intendedAssetRole": { "$ref": "#/$defs/stableId" },
+    "providerId": { "$ref": "#/$defs/stableId" },
+    "modelVersion": { "$ref": "#/$defs/stableId" },
+    "prompt": { "type": "string", "minLength": 1, "maxLength": 16384 },
+    "negativePrompt": { "type": "string", "maxLength": 8192 },
+    "inputArtifacts": {
+      "type": "array", "maxItems": 16,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["role", "mediaType", "contentBase64", "rightsDeclaration"],
+        "properties": {
+          "role": { "$ref": "#/$defs/stableId" },
+          "mediaType": { "type": "string", "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$", "maxLength": 128 },
+          "contentBase64": { "type": "string", "contentEncoding": "base64", "maxLength": 8388608 },
+          "rightsDeclaration": { "type": "string", "minLength": 1, "maxLength": 512 }
+        }
+      }
+    },
+    "rights": { "type": "object" },
+    "budgets": {
+      "type": "object", "additionalProperties": false,
+      "required": ["maximumCostMinorUnits", "currency", "maximumOutputBytes"],
+      "properties": {
+        "maximumCostMinorUnits": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "maximumOutputBytes": { "type": "integer", "minimum": 1, "maximum": 268435456 }
+      }
+    },
+    "outputContract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "maximumArtifacts", "allowedMediaTypes"],
+      "properties": {
+        "version": { "const": 1 },
+        "maximumArtifacts": { "type": "integer", "minimum": 1, "maximum": 16 },
+        "allowedMediaTypes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$" } }
+      }
+    },
+    "seed": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+    "parameters": { "type": "object" },
+    "timeoutMs": { "type": "integer", "minimum": 25, "maximum": 300000 },
+    "spendApproval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["approved"],
+      "properties": {
+        "approved": { "type": "boolean" },
+        "approvedBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "approvedAt": { "type": "string", "format": "date-time" }
+      },
+      "allOf": [{
+        "if": { "properties": { "approved": { "const": true } } },
+        "then": { "required": ["approvedBy", "approvedAt"] }
+      }]
+    },
+    "privacy": { "type": "object", "additionalProperties": false, "properties": { "promptPrivate": { "type": "boolean" } } }
+  },
+  "$defs": {
+    "stableId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" }
+  }
+}
+

@@ -1,0 +1,118 @@
+{
+  "actors": [
+    {
+      "label": "SM_DirtRoad_Corner90_R6m",
+      "location": "<Struct 'Vector' (0x0000028FADB17B20) {x: 700.000000, y: -500.000000, z: 0.000000}>",
+      "rotation": "<Struct 'Rotator' (0x0000028FADB17B20) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>",
+      "components": [
+        {
+          "name": "StaticMeshComponent0",
+          "location": "<Struct 'Vector' (0x0000028FF318BF80) {x: 700.000000, y: -500.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB5EC0) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: 700.000000, y: -500.000000, z: 0.000000}, scale3d: {x: 1.000000, y: 1.000000, z: 1.000000}}>"
+        }
+      ]
+    },
+    {
+      "label": "SM_DirtRoad_Crossroads_12m",
+      "location": "<Struct 'Vector' (0x0000028FADB16950) {x: 800.000000, y: 1200.000000, z: 0.000000}>",
+      "rotation": "<Struct 'Rotator' (0x0000028FADB16950) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>",
+      "components": [
+        {
+          "name": "StaticMeshComponent0",
+          "location": "<Struct 'Vector' (0x0000028FF318C980) {x: 800.000000, y: 1200.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB6DF0) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: 800.000000, y: 1200.000000, z: 0.000000}, scale3d: {x: 1.000000, y: 1.000000, z: 1.000000}}>"
+        }
+      ]
+    },
+    {
+      "label": "SM_DirtRoad_End_5m",
+      "location": "<Struct 'Vector' (0x0000028FADB381A0) {x: -900.000000, y: 0.000000, z: 0.000000}>",
+      "rotation": "<Struct 'Rotator' (0x0000028FADB381A0) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>",
+      "components": [
+        {
+          "name": "StaticMeshComponent0",
+          "location": "<Struct 'Vector' (0x0000028FF318D380) {x: -900.000000, y: 0.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB6F10) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: -900.000000, y: 0.000000, z: 0.000000}, scale3d: {x: 1.000000, y: 1.000000, z: 1.000000}}>"
+        }
+      ]
+    },
+    {
+      "label": "SM_DirtRoad_Straight_8m",
+      "location": "<Struct 'Vector' (0x0000028FADB380B0) {x: -900.000000, y: -1000.000000, z: 0.000000}>",
+      "rotation": "<Struct 'Rotator' (0x0000028FADB380B0) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>",
+      "components": [
+        {
+          "name": "StaticMeshComponent0",
+          "location": "<Struct 'Vector' (0x0000028FF318DD80) {x: -900.000000, y: -1000.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB6F10) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: -900.000000, y: -1000.000000, z: 0.000000}, scale3d: {x: 1.000000, y: 1.000000, z: 1.000000}}>"
+        }
+      ]
+    },
+    {
+      "label": "SM_DirtRoad_TJunction_12m",
+      "location": "<Struct 'Vector' (0x0000028FADB38420) {x: -900.000000, y: 1200.000000, z: 0.000000}>",
+      "rotation": "<Struct 'Rotator' (0x0000028FADB38420) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>",
+      "components": [
+        {
+          "name": "StaticMeshComponent0",
+          "location": "<Struct 'Vector' (0x0000028FF318E780) {x: -900.000000, y: 1200.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB6F10) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: -900.000000, y: 1200.000000, z: 0.000000}, scale3d: {x: 1.000000, y: 1.000000, z: 1.000000}}>"
+        }
+      ]
+    },
+    {
+      "label": "DirtRoad native spline example",
+      "location": "<Struct 'Vector' (0x0000028FADB387E0) {x: -300.000000, y: -1500.000000, z: 0.000000}>",
+      "rotation": "<Struct 'Rotator' (0x0000028FADB387E0) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>",
+      "components": [
+        {
+          "name": "DefaultSceneRoot",
+          "location": "<Struct 'Vector' (0x0000028CEAC0BE80) {x: -300.000000, y: -1500.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB6F10) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: -300.000000, y: -1500.000000, z: 0.000000}, scale3d: {x: 1.000000, y: 1.000000, z: 1.000000}}>"
+        },
+        {
+          "name": "BillboardComponent_1",
+          "location": "<Struct 'Vector' (0x0000028FF2D0CC80) {x: 0.000000, y: 0.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB6F10) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: -300.000000, y: -1500.000000, z: 0.000000}, scale3d: {x: 0.500000, y: 0.500000, z: 0.500000}}>"
+        },
+        {
+          "name": "RoadPath",
+          "location": "<Struct 'Vector' (0x0000028FF378B580) {x: 0.000000, y: 0.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB6F10) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: -300.000000, y: -1500.000000, z: 0.000000}, scale3d: {x: 1.000000, y: 1.000000, z: 1.000000}}>"
+        },
+        {
+          "name": "RoadSegment0",
+          "location": "<Struct 'Vector' (0x0000028FF378AB80) {x: 0.000000, y: 0.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB6F10) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: 0.000000, y: 0.000000, z: 0.000000}, scale3d: {x: 1.000000, y: 1.000000, z: 1.000000}}>"
+        },
+        {
+          "name": "RoadSegment1",
+          "location": "<Struct 'Vector' (0x0000028FF3782980) {x: 0.000000, y: 0.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB6F10) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: 0.000000, y: 0.000000, z: 0.000000}, scale3d: {x: 1.000000, y: 1.000000, z: 1.000000}}>"
+        },
+        {
+          "name": "RoadSegment2",
+          "location": "<Struct 'Vector' (0x0000028FF3786580) {x: 0.000000, y: 0.000000, z: 0.000000}>",
+          "transform": "<Struct 'Transform' (0x0000028FADAB6F10) {rotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}, translation: {x: 0.000000, y: 0.000000, z: 0.000000}, scale3d: {x: 1.000000, y: 1.000000, z: 1.000000}}>"
+        }
+      ]
+    }
+  ],
+  "expressions": [
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionTextureSample_1' (0x0000028FF25FB400) Class 'MaterialExpressionTextureSample'>",
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionVertexColor_0' (0x0000028FF1DF5160) Class 'MaterialExpressionVertexColor'>",
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionTextureSample_3' (0x0000028FF31C9100) Class 'MaterialExpressionTextureSample'>",
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionTextureSample_4' (0x0000028FF31CAF00) Class 'MaterialExpressionTextureSample'>",
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionTextureSample_5' (0x0000028FF31CA280) Class 'MaterialExpressionTextureSample'>",
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionVertexColor_1' (0x0000028FF1BE23E0) Class 'MaterialExpressionVertexColor'>",
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionMultiply_1' (0x0000028FE1E90F00) Class 'MaterialExpressionMultiply'>",
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionMultiply_2' (0x0000028FE1E96A40) Class 'MaterialExpressionMultiply'>",
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionConstant3Vector_0' (0x0000028FF1BE2AE0) Class 'MaterialExpressionConstant3Vector'>",
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionNormalize_0' (0x0000028FF1E1D600) Class 'MaterialExpressionNormalize'>",
+    "<Object '/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad:MaterialExpressionConstant_0' (0x0000028FF1BE2840) Class 'MaterialExpressionConstant'>"
+  ],
+  "gameview": [
+    "editor_get_game_view",
+    "editor_set_game_view"
+  ]
+}

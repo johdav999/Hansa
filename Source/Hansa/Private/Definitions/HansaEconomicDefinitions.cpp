@@ -1,4 +1,5 @@
 #include "Definitions/HansaEconomicDefinitions.h"
+#include "GameFramework/Actor.h"
 
 #include "Model/HansaIds.h"
 
@@ -190,6 +191,15 @@ UHansaBuildingDefinition::UHansaBuildingDefinition()
 	PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Engine/BasicShapes/Cube.Cube")));
 }
 
+UClass* UHansaBuildingDefinition::LoadPresentationActorClass() const
+{
+	const FString Path = PresentationActorClass.ToSoftObjectPath().ToString();
+	if (Path.Contains(TEXT("/Generated/Staging/")) || Path.Contains(TEXT("/Developer/"))) return nullptr;
+	UClass* Class = PresentationActorClass.LoadSynchronous();
+	return Class != nullptr && Class->IsChildOf(AActor::StaticClass()) &&
+		!Class->HasAnyClassFlags(CLASS_Abstract | CLASS_Deprecated | CLASS_NewerVersionExists) ? Class : nullptr;
+}
+
 void UHansaBuildingDefinition::ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const
 {
 	Super::ValidateDefinition(OutIssues);
@@ -247,7 +257,13 @@ void UHansaBuildingDefinition::ValidateDefinition(TArray<FHansaDefinitionValidat
 			NSLOCTEXT("HansaEconomicDefinition", "BuildingInvalidUpgrade", "The optional upgrade target is not a canonical Building.* identity."),
 			NSLOCTEXT("HansaEconomicDefinition", "BuildingInvalidUpgradeRemedy", "Select an existing Building.* identity or leave the target empty."));
 	}
-	if (PresentationMesh.IsNull())
+	if (!PresentationActorClass.IsNull() && LoadPresentationActorClass() == nullptr)
+	{
+		AddIssue(OutIssues, TEXT("HSA-BUILDING-009"), TEXT("PresentationActorClass"),
+			NSLOCTEXT("HansaEconomicDefinition", "InvalidPresentationActor", "The presentation actor must be an existing concrete promoted Actor class."),
+			NSLOCTEXT("HansaEconomicDefinition", "InvalidPresentationActorRemedy", "Choose a production Actor Blueprint or clear it to use the presentation mesh."));
+	}
+	if (PresentationMesh.IsNull() && PresentationActorClass.IsNull())
 	{
 		AddIssue(OutIssues, TEXT("HSA-BUILDING-006"), TEXT("PresentationMesh"),
 			NSLOCTEXT("HansaEconomicDefinition", "BuildingMissingMesh", "A building needs a promoted or explicit placeholder presentation mesh."),
@@ -282,4 +298,9 @@ void UHansaBuildingDefinition::AppendDefinitionHashData(FString& InOutCanonicalD
 		bRequiresRoad ? 1 : 0,
 		bRequiresShoreline ? 1 : 0,
 		*PresentationMesh.ToSoftObjectPath().ToString());
+	// Empty is the compatible default: legacy mesh-only content keeps its existing hash.
+	if (!PresentationActorClass.IsNull())
+	{
+		InOutCanonicalData += TEXT("presentationActorClass=") + PresentationActorClass.ToSoftObjectPath().ToString() + TEXT("\n");
+	}
 }

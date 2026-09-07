@@ -3,13 +3,19 @@
 #include "Dom/JsonObject.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
+#include "HAL/FileManager.h"
 #include "HAL/PlatformProcess.h"
 #include "HAL/PlatformTime.h"
 #include "HansaAutomationModule.h"
 #include "Gameplay/HansaProductionFixtureService.h"
+#include "Gameplay/HansaStrategicAutomationFixture.h"
 #include "Gameplay/HansaPlacementAutomationFixture.h"
+#include "Multiplayer/HansaMultiplayerAutomationService.h"
 #include "CoreGlobals.h"
 #include "Policies/CondensedJsonPrintPolicy.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "World/HansaLubeckScenarioInitializer.h"
 #include "Protocol/HansaAutomationProtocol.h"
 #include "Screenshot/HansaNativeScreenshotService.h"
 #include "SemanticUI/HansaSemanticUiRegistry.h"
@@ -20,6 +26,9 @@
 #include "Synchronization/HansaAutomationWaitService.h"
 #include "UI/HansaAutomationProofScreen.h"
 #include "UI/HansaPlacementAutomationScreen.h"
+#include "UI/HansaRouteDeliveryAutomationScreen.h"
+#include "UI/HansaStrategicAutomationScreen.h"
+#include "World/HansaRuntimeSimulationHost.h"
 
 #if PLATFORM_WINDOWS
 #include "Windows/WindowsHWrapper.h"
@@ -336,6 +345,25 @@ namespace Hansa::Automation
 			}
 			return TEXT("Unavailable");
 		}
+
+		FString MakeRouteEvidenceSnapshot(const Hansa::Simulation::FHansaProductionFixture& Fixture)
+		{
+			FString Json = FString::Printf(TEXT("{\"stateHash\":\"%016llX\",\"eventCount\":%d,\"events\":["),
+				static_cast<unsigned long long>(Fixture.BuildStateHashes().GetOverallHash()), Fixture.GetEvents().Num());
+			bool bFirst = true;
+			for (const Hansa::Simulation::FHansaDomainEvent& Event : Fixture.GetEvents())
+			{
+				if (!Event.GetRouteId().IsValid()) continue;
+				if (!bFirst) Json += TEXT(",");
+				bFirst = false;
+				Json += FString::Printf(TEXT("{\"sequence\":\"%llu\",\"tick\":%lld,\"type\":\"%s\",\"cityId\":\"%s\",\"value\":%lld}"),
+					static_cast<unsigned long long>(Event.GetGlobalSequence()),
+					static_cast<long long>(Event.GetTick().GetValue()), Hansa::Simulation::LexToString(Event.GetType()),
+					*Event.GetCityId().ToString(), static_cast<long long>(Event.GetValue()));
+			}
+			Json += TEXT("]}");
+			return Json;
+		}
 	}
 
 	FHansaAutomationNamedPipeEndpoint::FHansaAutomationNamedPipeEndpoint(
@@ -350,6 +378,8 @@ namespace Hansa::Automation
 		ProofScreenHost = MakeUnique<FHansaAutomationProofScreenHost>(*SemanticRegistry);
 		ProductionFixtureService = MakeUnique<FHansaProductionFixtureService>();
 		PlacementFixture = MakeUnique<FHansaPlacementAutomationFixture>();
+		StrategicFixture = MakeUnique<FHansaStrategicAutomationFixture>();
+		MultiplayerService = MakeUnique<FHansaMultiplayerAutomationService>();
 	}
 
 	FHansaAutomationNamedPipeEndpoint::~FHansaAutomationNamedPipeEndpoint()
@@ -386,7 +416,9 @@ namespace Hansa::Automation
 	bool FHansaAutomationNamedPipeEndpoint::Tick(const float DeltaTime)
 	{
 		(void)DeltaTime;
-		if (bPlacementFixtureActive && PlacementScreenHost.IsValid()) PlacementScreenHost->SynchronizeSemantics();
+		if (bStrategicFixtureActive && StrategicScreenHost.IsValid()) StrategicScreenHost->SynchronizeSemantics();
+		else if (bRouteDeliveryFixtureActive && RouteDeliveryScreenHost.IsValid()) RouteDeliveryScreenHost->SynchronizeSemantics();
+		else if (bPlacementFixtureActive && PlacementScreenHost.IsValid()) PlacementScreenHost->SynchronizeSemantics();
 		else if (ProofScreenHost.IsValid()) ProofScreenHost->SynchronizeSemantics();
 		WaitService->Tick(MonotonicMilliseconds());
 		if (!IsRunning() && !CreateServerPipe())
@@ -716,6 +748,29 @@ namespace Hansa::Automation
 			if (!Authorized) return MakeErrorResponse(RequestId, Authorized.GetError());
 			TSharedRef<FJsonObject> Listed = ProductionFixtureService->ListFixtures();
 			TArray<TSharedPtr<FJsonValue>> Fixtures = Listed->GetArrayField(TEXT("fixtures"));
+			const bool bGoldenEvidenceProfile = SessionService.AuthorizeOperation(
+				SessionId, ControllerId, EHansaAutomationOperation::EvidenceRead, Context).IsSuccess();
+			if (bGoldenEvidenceProfile)
+			{
+				for (const TSharedPtr<FJsonValue>& Value : Fixtures)
+				{
+					const TSharedPtr<FJsonObject> Descriptor = Value.IsValid() ? Value->AsObject() : nullptr;
+					if (!Descriptor.IsValid() || Descriptor->GetStringField(TEXT("fixtureId")) !=
+						FHansaStrategicAutomationFixture::GoldenFixtureId) continue;
+					const uint64 ReviewedHash = FHansaLubeckScenarioInitializer::MvpRegistryHash;
+					Descriptor->SetNumberField(TEXT("fixtureVersion"), FHansaStrategicAutomationFixture::GoldenFixtureVersion);
+					Descriptor->SetStringField(TEXT("registryHash"), FString::Printf(TEXT("%016llX"),
+						static_cast<unsigned long long>(ReviewedHash)));
+					Descriptor->SetStringField(TEXT("fixtureHash"), FString::Printf(TEXT("%016llX"),
+						static_cast<unsigned long long>(ReviewedHash ^ FHansaStrategicAutomationFixture::SeedAlpha ^
+							FHansaStrategicAutomationFixture::GoldenFixtureVersion)));
+					Descriptor->SetStringField(TEXT("campaignSeed"), FString::Printf(TEXT("%016llX"),
+						static_cast<unsigned long long>(FHansaStrategicAutomationFixture::SeedAlpha)));
+					Descriptor->SetStringField(TEXT("purpose"),
+						TEXT("S14-P01 playable-runtime golden path: reset, semantic diagnosis, normal commands, save/load, victory, and synchronized evidence"));
+					break;
+				}
+			}
 			TSharedRef<FJsonObject> Placement = MakeShared<FJsonObject>();
 			Placement->SetStringField(TEXT("fixtureId"), FHansaPlacementAutomationFixture::StableFixtureId);
 			Placement->SetNumberField(TEXT("fixtureVersion"), FHansaPlacementAutomationFixture::FixtureVersion);
@@ -730,8 +785,22 @@ namespace Hansa::Automation
 				static_cast<unsigned long long>(FHansaPlacementAutomationFixture::IntegratedRegistryHash)));
 			Integrated->SetStringField(TEXT("purpose"), TEXT("Integrated Lübeck construction, logistics, production, and population world slice"));
 			Fixtures.Add(MakeShared<FJsonValueObject>(Integrated));
+			StrategicFixture->AppendFixtureDescriptors(Fixtures);
+			MultiplayerService->AppendFixtureDescriptor(Fixtures);
 			Listed->SetArrayField(TEXT("fixtures"), MoveTemp(Fixtures));
 			return MakeSuccessResponse(RequestId, Listed);
+		}
+
+		if (Operation == TEXT("fixture_reset"))
+		{
+			const FHansaAutomationOperationResult Authorized = SessionService.AuthorizeOperation(
+				SessionId, ControllerId, EHansaAutomationOperation::FixtureReset, Context);
+			if (!Authorized) return MakeErrorResponse(RequestId, Authorized.GetError());
+			if (ActiveFixtureId.IsEmpty()) return MakeErrorResponse(RequestId, InvalidRequest(RequestId,
+				TEXT("fixture_reset requires an active allowlisted fixture."),
+				TEXT("Call fixture_load before fixture_reset.")));
+			Payload->SetStringField(TEXT("fixtureId"), ActiveFixtureId);
+			Operation = TEXT("fixture_load");
 		}
 
 		if (Operation == TEXT("fixture_load"))
@@ -749,10 +818,34 @@ namespace Hansa::Automation
 			{
 				return MakeErrorResponse(RequestId, InvalidRequest(RequestId, TEXT("fixture_load requires fixtureId."), TEXT("Call fixture_list, then load the exact stable fixtureId.")));
 			}
-			if (FixtureId == FHansaPlacementAutomationFixture::StableFixtureId ||
+			MultiplayerService->DeactivateFixture();
+			const bool bGoldenEvidenceProfile = FixtureId == FHansaStrategicAutomationFixture::GoldenFixtureId &&
+				SessionService.AuthorizeOperation(SessionId, ControllerId,
+					EHansaAutomationOperation::EvidenceRead, Context).IsSuccess();
+			if (FixtureId == FHansaMultiplayerAutomationService::FixtureId)
+			{
+				PlacementScreenHost.Reset();
+				RouteDeliveryScreenHost.Reset();
+				StrategicScreenHost.Reset();
+				bPlacementFixtureActive = false;
+				bRouteDeliveryFixtureActive = false;
+				bStrategicFixtureActive = false;
+				SemanticRegistry->Reset();
+				ProofScreenHost = MakeUnique<FHansaAutomationProofScreenHost>(*SemanticRegistry);
+				if (!MultiplayerService->ActivateFixture(Result, Error))
+				{
+					return MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error,
+						TEXT("Launch every proof process with -HansaAuthorityFixture.")));
+				}
+			}
+			else if (FixtureId == FHansaPlacementAutomationFixture::StableFixtureId ||
 				FixtureId == FHansaPlacementAutomationFixture::IntegratedFixtureId)
 			{
 				PlacementScreenHost.Reset();
+				RouteDeliveryScreenHost.Reset();
+				StrategicScreenHost.Reset();
+				bStrategicFixtureActive = false;
+				bRouteDeliveryFixtureActive = false;
 				ProofScreenHost.Reset();
 				const bool bFixtureLoaded = FixtureId == FHansaPlacementAutomationFixture::IntegratedFixtureId
 					? PlacementFixture->LoadIntegrated(*SemanticRegistry, Error)
@@ -772,20 +865,114 @@ namespace Hansa::Automation
 				Result->SetNumberField(TEXT("placedBuildingCount"), PlacementFixture->GetPlacedBuildingCount());
 				Result->SetNumberField(TEXT("semanticRevision"), static_cast<double>(SemanticRegistry->GetRevision()));
 			}
+			else if (FHansaStrategicAutomationFixture::IsStrategicFixtureId(FixtureId) &&
+				(FixtureId != FHansaStrategicAutomationFixture::GoldenFixtureId || bGoldenEvidenceProfile))
+			{
+				PlacementScreenHost.Reset();
+				RouteDeliveryScreenHost.Reset();
+				ProofScreenHost.Reset();
+				bPlacementFixtureActive = false;
+				bRouteDeliveryFixtureActive = false;
+				SemanticRegistry->Reset();
+				if (!StrategicFixture->Load(FixtureId, Result, Error))
+				{
+					return MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error,
+						TEXT("Reload the exact strategic fixture seed identifier.")));
+				}
+				bStrategicFixtureActive = true;
+				StrategicScreenHost = MakeUnique<FHansaStrategicAutomationScreenHost>(*StrategicFixture, *SemanticRegistry);
+			}
 			else
 			{
 				PlacementScreenHost.Reset();
 				bPlacementFixtureActive = false;
+				StrategicScreenHost.Reset();
+				bStrategicFixtureActive = false;
+				RouteDeliveryScreenHost.Reset();
+				bRouteDeliveryFixtureActive = false;
 				SemanticRegistry->Reset();
-				ProofScreenHost = MakeUnique<FHansaAutomationProofScreenHost>(*SemanticRegistry);
 				if (!ProductionFixtureService->Load(FixtureId, Result, Error))
 				{
 					return MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Call fixture_list, then load the exact stable fixtureId.")));
 				}
+				bRouteDeliveryFixtureActive = FixtureId == Hansa::Simulation::FHansaProductionFixture::RouteDeliveryFixtureId;
+				if (bRouteDeliveryFixtureActive)
+				{
+					ProofScreenHost.Reset();
+					RouteDeliveryScreenHost = MakeUnique<FHansaRouteDeliveryAutomationScreenHost>(*ProductionFixtureService, *SemanticRegistry);
+				}
+				else
+				{
+					ProofScreenHost = MakeUnique<FHansaAutomationProofScreenHost>(*SemanticRegistry);
+				}
 			}
+			ActiveFixtureId = FixtureId;
+			CapturedScreenshotPaths.Reset();
+			CapturedScreenshotHashes.Reset();
 			return MakeSuccessResponse(RequestId, Result);
 		}
 
+		if (Operation == TEXT("save_list"))
+		{
+			const FHansaAutomationOperationResult Authorized = SessionService.AuthorizeOperation(
+				SessionId, ControllerId, EHansaAutomationOperation::GameplayQuery, Context);
+			if (!Authorized) return MakeErrorResponse(RequestId, Authorized.GetError());
+			if (!bStrategicFixtureActive) return MakeErrorResponse(RequestId, InvalidRequest(RequestId,
+				TEXT("Save slots require an active strategic fixture."), TEXT("Load save_roundtrip_v1 first.")));
+			TSharedRef<FJsonObject> Result = MakeShared<FJsonObject>(); FString Error;
+			return StrategicFixture->ListSaveSlots(Result, Error) ? MakeSuccessResponse(RequestId, Result)
+				: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Reload save_roundtrip_v1.")));
+		}
+
+		if (Operation == TEXT("save_create") || Operation == TEXT("save_load"))
+		{
+			const FHansaAutomationOperationResult Authorized = SessionService.AuthorizeOperation(
+				SessionId, ControllerId, EHansaAutomationOperation::ControlledCommand, Context);
+			if (!Authorized) return MakeErrorResponse(RequestId, Authorized.GetError());
+			FString SlotId;
+			if (!bStrategicFixtureActive || !Payload->TryGetStringField(TEXT("slotId"), SlotId) ||
+				(SlotId != TEXT("manual") && SlotId != TEXT("autosave")))
+				return MakeErrorResponse(RequestId, InvalidRequest(RequestId,
+					TEXT("The save operation requires save_roundtrip_v1 and slotId manual or autosave."),
+					TEXT("Load save_roundtrip_v1 and use an allowlisted slot ID.")));
+			TSharedRef<FJsonObject> Result = MakeShared<FJsonObject>(); FString Error;
+			const bool bOk = Operation == TEXT("save_create")
+				? StrategicFixture->SaveSlot(SlotId, Result, Error)
+				: StrategicFixture->LoadSlot(SlotId, Result, Error);
+			return bOk ? MakeSuccessResponse(RequestId, Result)
+				: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error,
+					Operation == TEXT("save_create") ? TEXT("Retry the controlled slot save.") : TEXT("Create the slot, then retry load.")));
+		}
+
+		if (Operation == TEXT("save_assert_roundtrip") || Operation == TEXT("save_wait_for"))
+		{
+			const FHansaAutomationOperationResult Authorized = SessionService.AuthorizeOperation(
+				SessionId, ControllerId, EHansaAutomationOperation::GameplayQuery, Context);
+			if (!Authorized) return MakeErrorResponse(RequestId, Authorized.GetError());
+			if (!bStrategicFixtureActive) return MakeErrorResponse(RequestId, InvalidRequest(RequestId,
+				TEXT("Round-trip verification requires an active save fixture."), TEXT("Load save_roundtrip_v1 first.")));
+			TSharedRef<FJsonObject> Result = MakeShared<FJsonObject>(); FString Error;
+			if (Operation == TEXT("save_wait_for"))
+			{
+				FString Condition;
+				if (!Payload->TryGetStringField(TEXT("condition"), Condition))
+					return MakeErrorResponse(RequestId, InvalidRequest(RequestId, TEXT("save_wait_for requires condition."), TEXT("Use slot_exists or roundtrip_verified.")));
+				if (Condition == TEXT("slot_exists"))
+				{
+					FString SlotId; if (!Payload->TryGetStringField(TEXT("slotId"), SlotId))
+						return MakeErrorResponse(RequestId, InvalidRequest(RequestId, TEXT("slot_exists requires slotId."), TEXT("Use manual or autosave.")));
+					if (!StrategicFixture->ListSaveSlots(Result, Error)) return MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Reload the fixture.")));
+					bool bExists = false; for (const TSharedPtr<FJsonValue>& Value : Result->GetArrayField(TEXT("slots")))
+					{ const TSharedPtr<FJsonObject> Slot = Value->AsObject(); if (Slot && Slot->GetStringField(TEXT("slotId")) == SlotId) bExists = Slot->GetBoolField(TEXT("exists")); }
+					if (!bExists) return MakeErrorResponse(RequestId, InvalidRequest(RequestId, TEXT("The requested save slot does not exist yet."), TEXT("Call save_create for that slot.")));
+					Result->SetBoolField(TEXT("matched"), true); Result->SetStringField(TEXT("condition"), Condition); return MakeSuccessResponse(RequestId, Result);
+				}
+				if (Condition != TEXT("roundtrip_verified"))
+					return MakeErrorResponse(RequestId, InvalidRequest(RequestId, TEXT("Save wait condition is not allowlisted."), TEXT("Use slot_exists or roundtrip_verified.")));
+			}
+			return StrategicFixture->AssertRoundTrip(Result, Error) ? MakeSuccessResponse(RequestId, Result)
+				: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Create and load the same controlled slot before asserting.")));
+		}
 		if (Operation == TEXT("gameplay_query"))
 		{
 			const FHansaAutomationOperationResult Authorized = SessionService.AuthorizeOperation(
@@ -796,6 +983,13 @@ namespace Hansa::Automation
 			}
 			TSharedRef<FJsonObject> Result = MakeShared<FJsonObject>();
 			FString Error;
+			if (MultiplayerService->IsFixtureActive())
+			{
+				return MultiplayerService->Query(RequestId, Payload.ToSharedRef(), Result, Error)
+					? MakeSuccessResponse(RequestId, Result)
+					: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error,
+						TEXT("Use multiplayer.status after the launched process is ready.")));
+			}
 			if (bPlacementFixtureActive)
 			{
 				FString Query;
@@ -864,6 +1058,12 @@ namespace Hansa::Automation
 					TEXT("Construction query is not allowlisted."),
 					TEXT("Use construction.list, construction.get, or construction.cost.")));
 			}
+			if (bStrategicFixtureActive)
+			{
+				return StrategicFixture->Query(Payload.ToSharedRef(), Result, Error)
+					? MakeSuccessResponse(RequestId, Result)
+					: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Use only the documented strategic query names.")));
+			}
 			return ProductionFixtureService->Query(Payload.ToSharedRef(), Result, Error)
 				? MakeSuccessResponse(RequestId, Result)
 				: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Use only the documented allowlisted query names and parameters.")));
@@ -879,6 +1079,13 @@ namespace Hansa::Automation
 			}
 			TSharedRef<FJsonObject> Result = MakeShared<FJsonObject>();
 			FString Error;
+			if (MultiplayerService->IsFixtureActive())
+			{
+				return MultiplayerService->Command(RequestId, Payload.ToSharedRef(), Result, Error)
+					? MakeSuccessResponse(RequestId, Result)
+					: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error,
+						TEXT("Submit an allowlisted intent from a connected client process.")));
+			}
 			if (bPlacementFixtureActive)
 			{
 				FString Command;
@@ -912,6 +1119,12 @@ namespace Hansa::Automation
 				Result->SetNumberField(TEXT("tick"), PlacementFixture->GetSimulationTick());
 				Result->SetNumberField(TEXT("placedBuildingCount"), PlacementFixture->GetPlacedBuildingCount());
 				return MakeSuccessResponse(RequestId, Result);
+			}
+			if (bStrategicFixtureActive)
+			{
+				return StrategicFixture->Command(Payload.ToSharedRef(), Result, Error)
+					? MakeSuccessResponse(RequestId, Result)
+					: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Use an allowlisted strategic gameplay command.")));
 			}
 			return ProductionFixtureService->Command(Payload.ToSharedRef(), Result, Error)
 				? MakeSuccessResponse(RequestId, Result)
@@ -954,6 +1167,12 @@ namespace Hansa::Automation
 						TEXT("The integrated gameplay assertion did not match."),
 						TEXT("Advance or run-until the authoritative fixture, then inspect integrated.summary.")));
 			}
+			if (bStrategicFixtureActive)
+			{
+				return StrategicFixture->AssertPredicate(Payload.ToSharedRef(), Result, Error)
+					? MakeSuccessResponse(RequestId, Result)
+					: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Use an allowlisted strategic assertion.")));
+			}
 			return ProductionFixtureService->AssertPredicate(Payload.ToSharedRef(), Result, Error)
 				? MakeSuccessResponse(RequestId, Result)
 				: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Use an allowlisted gameplay predicate.")));
@@ -974,6 +1193,13 @@ namespace Hansa::Automation
 			}
 			TSharedRef<FJsonObject> Result = MakeShared<FJsonObject>();
 			FString Error;
+			if (MultiplayerService->IsFixtureActive())
+			{
+				return MultiplayerService->Step(RequestId, static_cast<int32>(TickCount), Result, Error)
+					? MakeSuccessResponse(RequestId, Result)
+					: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error,
+						TEXT("Advance the paused fixture only from its authority process.")));
+			}
 			if (bPlacementFixtureActive)
 			{
 				if (!PlacementFixture->AdvanceTicks(static_cast<int32>(TickCount)))
@@ -985,6 +1211,12 @@ namespace Hansa::Automation
 				Result->SetNumberField(TEXT("tick"), PlacementFixture->GetSimulationTick());
 				Result->SetNumberField(TEXT("placedBuildingCount"), PlacementFixture->GetPlacedBuildingCount());
 				return MakeSuccessResponse(RequestId, Result);
+			}
+			if (bStrategicFixtureActive)
+			{
+				return StrategicFixture->Step(static_cast<int32>(TickCount), Result, Error)
+					? MakeSuccessResponse(RequestId, Result)
+					: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Advance the strategic fixture with a bounded tick count.")));
 			}
 			return ProductionFixtureService->Step(static_cast<int32>(TickCount), Result, Error)
 				? MakeSuccessResponse(RequestId, Result)
@@ -1038,6 +1270,13 @@ namespace Hansa::Automation
 					TEXT("The integrated gameplay predicate did not match within maximumTicks."),
 					TEXT("Inspect integrated.summary and its causal construction, logistics, production, and population fields."), true));
 			}
+			if (bStrategicFixtureActive)
+			{
+				return StrategicFixture->RunUntil(Payload.ToSharedRef(), Result, Error)
+					? MakeSuccessResponse(RequestId, Result)
+					: MakeErrorResponse(RequestId, MakeEndpointError(EHansaAutomationErrorCode::TimedOut, RequestId,
+						*Error, TEXT("Inspect strategic.evidence and the failed checkpoint."), true));
+			}
 			return ProductionFixtureService->RunUntil(Payload.ToSharedRef(), Result, Error)
 				? MakeSuccessResponse(RequestId, Result)
 				: MakeErrorResponse(RequestId, InvalidRequest(RequestId, *Error, TEXT("Use an allowlisted predicate and maximumTicks from 1 through 10000.")));
@@ -1064,9 +1303,13 @@ namespace Hansa::Automation
 					TEXT("A valid stable semanticId is required."),
 					TEXT("Use a namespaced semantic ID returned by semantic_find.")));
 			}
-			const bool bScreenReady = bPlacementFixtureActive
-				? PlacementScreenHost.IsValid() && PlacementScreenHost->EnsureScreen()
-				: ProofScreenHost.IsValid() && ProofScreenHost->EnsureScreen();
+			const bool bScreenReady = bStrategicFixtureActive
+				? StrategicScreenHost.IsValid() && StrategicScreenHost->EnsureScreen()
+				: bRouteDeliveryFixtureActive
+					? RouteDeliveryScreenHost.IsValid() && RouteDeliveryScreenHost->EnsureScreen()
+				: bPlacementFixtureActive
+					? PlacementScreenHost.IsValid() && PlacementScreenHost->EnsureScreen()
+					: ProofScreenHost.IsValid() && ProofScreenHost->EnsureScreen();
 			if (!bScreenReady)
 			{
 				return MakeErrorResponse(RequestId, MakeEndpointError(
@@ -1076,7 +1319,9 @@ namespace Hansa::Automation
 					TEXT("Run an explicitly enabled Development game with Slate initialized."),
 					true));
 			}
-			if (bPlacementFixtureActive) PlacementScreenHost->SynchronizeSemantics();
+			if (bStrategicFixtureActive) StrategicScreenHost->SynchronizeSemantics();
+			else if (bRouteDeliveryFixtureActive) RouteDeliveryScreenHost->SynchronizeSemantics();
+			else if (bPlacementFixtureActive) PlacementScreenHost->SynchronizeSemantics();
 			else ProofScreenHost->SynchronizeSemantics();
 			const FHansaSemanticNode* Node = SemanticRegistry->FindNode(SemanticId);
 			if (Node == nullptr)
@@ -1101,7 +1346,9 @@ namespace Hansa::Automation
 						TEXT("The semantic node cannot perform the requested action."),
 						TEXT("Inspect the node's actions array and choose an advertised action.")));
 				}
-				if (bPlacementFixtureActive) PlacementScreenHost->SynchronizeSemantics();
+				if (bStrategicFixtureActive) StrategicScreenHost->SynchronizeSemantics();
+				else if (bRouteDeliveryFixtureActive) RouteDeliveryScreenHost->SynchronizeSemantics();
+				else if (bPlacementFixtureActive) PlacementScreenHost->SynchronizeSemantics();
 				else ProofScreenHost->SynchronizeSemantics();
 				Node = SemanticRegistry->FindNode(SemanticId);
 			}
@@ -1140,7 +1387,17 @@ namespace Hansa::Automation
 					TEXT("wait_for requested an unknown observable property."),
 					TEXT("Use exists, visible, enabled, focused, selected, loading, warning, or error.")));
 			}
-			if (bPlacementFixtureActive && PlacementScreenHost.IsValid())
+			if (bStrategicFixtureActive && StrategicScreenHost.IsValid())
+			{
+				StrategicScreenHost->EnsureScreen();
+				StrategicScreenHost->SynchronizeSemantics();
+			}
+			else if (bRouteDeliveryFixtureActive && RouteDeliveryScreenHost.IsValid())
+			{
+				RouteDeliveryScreenHost->EnsureScreen();
+				RouteDeliveryScreenHost->SynchronizeSemantics();
+			}
+			else if (bPlacementFixtureActive && PlacementScreenHost.IsValid())
 			{
 				PlacementScreenHost->EnsureScreen();
 				PlacementScreenHost->SynchronizeSemantics();
@@ -1186,6 +1443,168 @@ namespace Hansa::Automation
 			return TOptional<FString>();
 		}
 
+		if (Operation == TEXT("logs_get"))
+		{
+			const FHansaAutomationOperationResult Authorized = SessionService.AuthorizeOperation(
+				SessionId, ControllerId, EHansaAutomationOperation::EvidenceRead, Context);
+			if (!Authorized) return MakeErrorResponse(RequestId, Authorized.GetError());
+			if (!bStrategicFixtureActive) return MakeErrorResponse(RequestId, InvalidRequest(RequestId,
+				TEXT("logs_get requires an active strategic fixture."),
+				TEXT("Load lubeck_grain_shortage_v1 before requesting synchronized logs.")));
+			int64 MaximumEntries = 256;
+			if (Payload->HasField(TEXT("maximumEntries")) &&
+				(!TryGetIntegralField(Payload.ToSharedRef(), TEXT("maximumEntries"), MaximumEntries) ||
+				 MaximumEntries < 1 || MaximumEntries > 512))
+			{
+				return MakeErrorResponse(RequestId, InvalidRequest(RequestId,
+					TEXT("logs_get maximumEntries must be an integer from 1 through 512."),
+					TEXT("Use a bounded structured log request.")));
+			}
+			return MakeSuccessResponse(RequestId, StrategicFixture->MakeLogSnapshot(static_cast<int32>(MaximumEntries)));
+		}
+
+		if (Operation == TEXT("evidence_bundle_create"))
+		{
+			const FHansaAutomationOperationResult Authorized = SessionService.AuthorizeOperation(
+				SessionId, ControllerId, EHansaAutomationOperation::EvidenceWrite, Context);
+			if (!Authorized) return MakeErrorResponse(RequestId, Authorized.GetError());
+			FString BundleId, TestId, McpProtocolVersion;
+			if (!bStrategicFixtureActive ||
+				StrategicFixture->GetFixtureId() != FHansaStrategicAutomationFixture::GoldenFixtureId ||
+				!Payload->TryGetStringField(TEXT("bundleId"), BundleId) || !IsBoundedWireIdentifier(BundleId) ||
+				!Payload->TryGetStringField(TEXT("testId"), TestId) || TestId != TEXT("s14-p01-mvp-golden") ||
+				!Payload->TryGetStringField(TEXT("mcpProtocolVersion"), McpProtocolVersion) ||
+				!IsBoundedWireIdentifier(McpProtocolVersion) || McpProtocolVersion.Len() > 32)
+			{
+				return MakeErrorResponse(RequestId, InvalidRequest(RequestId,
+					TEXT("evidence_bundle_create requires the active S14 golden fixture and bounded protocol/test identifiers."),
+					TEXT("Load lubeck_grain_shortage_v1 and use testId s14-p01-mvp-golden.")));
+			}
+
+			TArray<TSharedPtr<FJsonValue>> Assertions;
+			bool bCallerAssertionsPassed = true;
+			const TArray<TSharedPtr<FJsonValue>>* RequestedAssertions = nullptr;
+			if (Payload->TryGetArrayField(TEXT("assertions"), RequestedAssertions))
+			{
+				if (RequestedAssertions->Num() > 128) return MakeErrorResponse(RequestId, InvalidRequest(RequestId,
+					TEXT("The evidence assertion list exceeds 128 entries."), TEXT("Submit only bounded golden checkpoints.")));
+				for (const TSharedPtr<FJsonValue>& Value : *RequestedAssertions)
+				{
+					const TSharedPtr<FJsonObject>* AssertionObject = nullptr;
+					FString AssertionId; bool bPassed = false;
+					if (!Value.IsValid() || !Value->TryGetObject(AssertionObject) || !AssertionObject->IsValid() ||
+						!(*AssertionObject)->TryGetStringField(TEXT("id"), AssertionId) ||
+						!IsBoundedWireIdentifier(AssertionId) ||
+						!(*AssertionObject)->TryGetBoolField(TEXT("passed"), bPassed))
+					{
+						return MakeErrorResponse(RequestId, InvalidRequest(RequestId,
+							TEXT("Each evidence assertion requires a bounded id and boolean passed field."),
+							TEXT("Use the checked-in evidence_bundle_create schema.")));
+					}
+					bCallerAssertionsPassed &= bPassed;
+					Assertions.Add(MakeShared<FJsonValueObject>(*AssertionObject));
+				}
+			}
+
+			if (StrategicScreenHost.IsValid())
+			{
+				StrategicScreenHost->EnsureScreen();
+				StrategicScreenHost->SynchronizeSemantics();
+			}
+			const TCHAR* RequiredSemantics[] = {
+				TEXT("BuildMenu.Status.BreadChain"), TEXT("Market.Status.GrainDiagnosed"),
+				TEXT("TradeRoute.Editor.Status.Delivered"), TEXT("Research.Status.MarketReports"),
+				TEXT("HUD.Status.MerchantAI"), TEXT("SaveLoad.Status.RoundTrip"),
+				TEXT("Scenario.Status.Victory") };
+			bool bStructuralAssertionsPassed = true;
+			for (const TCHAR* Id : RequiredSemantics)
+			{
+				const FHansaSemanticNode* Node = SemanticRegistry->FindNode(Id);
+				bStructuralAssertionsPassed &= Node != nullptr && Node->State.bSelected;
+			}
+			const bool bHas720 = CapturedScreenshotPaths.ContainsByPredicate([](const FString& Path)
+				{ return Path.Contains(TEXT("1280x720")); });
+			const bool bHas1080 = CapturedScreenshotPaths.ContainsByPredicate([](const FString& Path)
+				{ return Path.Contains(TEXT("1920x1080")); });
+			const bool bComplete = bCallerAssertionsPassed && bStructuralAssertionsPassed &&
+				StrategicFixture->HasVerifiedRoundTrip() && bHas720 && bHas1080;
+
+			const TSharedRef<FJsonObject> QuerySnapshot = StrategicFixture->MakeEvidenceSnapshot();
+			const TSharedRef<FJsonObject> SemanticSnapshot = MakeSemanticSnapshot(*SemanticRegistry);
+			const TSharedRef<FJsonObject> LogSnapshot = StrategicFixture->MakeLogSnapshot();
+			TSharedRef<FJsonObject> AssertionSnapshot = MakeShared<FJsonObject>();
+			AssertionSnapshot->SetBoolField(TEXT("complete"), bComplete);
+			AssertionSnapshot->SetBoolField(TEXT("callerAssertionsPassed"), bCallerAssertionsPassed);
+			AssertionSnapshot->SetBoolField(TEXT("structuralAssertionsPassed"), bStructuralAssertionsPassed);
+			AssertionSnapshot->SetBoolField(TEXT("native1280x720Captured"), bHas720);
+			AssertionSnapshot->SetBoolField(TEXT("native1920x1080Captured"), bHas1080);
+			AssertionSnapshot->SetArrayField(TEXT("assertions"), MoveTemp(Assertions));
+
+			TSharedRef<FJsonObject> Protocols = MakeShared<FJsonObject>();
+			Protocols->SetStringField(TEXT("mcp"), McpProtocolVersion);
+			Protocols->SetNumberField(TEXT("wireSchema"), WireSchemaVersion);
+			Protocols->SetObjectField(TEXT("automation"), MakeProtocolVersion(SessionService.GetProtocolVersion()));
+			TSharedRef<FJsonObject> StateHashes = MakeShared<FJsonObject>();
+			StateHashes->SetStringField(TEXT("initial"), QuerySnapshot->GetStringField(TEXT("initialStateHash")));
+			StateHashes->SetStringField(TEXT("final"), QuerySnapshot->GetStringField(TEXT("stateHash")));
+			StateHashes->SetStringField(TEXT("projection"), QuerySnapshot->GetStringField(TEXT("projectionDigest")));
+			const TSharedPtr<FJsonObject> RoundTrip = QuerySnapshot->GetObjectField(TEXT("saveRoundTrip"));
+			StateHashes->SetStringField(TEXT("savedAuthoritative"), RoundTrip->GetStringField(TEXT("savedAuthoritativeHash")));
+			StateHashes->SetStringField(TEXT("savedProjection"), RoundTrip->GetStringField(TEXT("savedProjectionDigest")));
+			TArray<TSharedPtr<FJsonValue>> Screenshots;
+			for (int32 Index = 0; Index < CapturedScreenshotPaths.Num(); ++Index)
+			{
+				TSharedRef<FJsonObject> Screenshot = MakeShared<FJsonObject>();
+				Screenshot->SetStringField(TEXT("path"), CapturedScreenshotPaths[Index]);
+				Screenshot->SetStringField(TEXT("sha1"), CapturedScreenshotHashes.IsValidIndex(Index) ? CapturedScreenshotHashes[Index] : FString());
+				Screenshots.Add(MakeShared<FJsonValueObject>(Screenshot));
+			}
+
+			TSharedRef<FJsonObject> Bundle = MakeShared<FJsonObject>();
+			Bundle->SetNumberField(TEXT("evidenceSchemaVersion"), 1);
+			Bundle->SetStringField(TEXT("testId"), TestId);
+			Bundle->SetStringField(TEXT("bundleId"), BundleId);
+			Bundle->SetBoolField(TEXT("complete"), bComplete);
+			Bundle->SetObjectField(TEXT("protocols"), Protocols);
+			Bundle->SetStringField(TEXT("fixtureId"), StrategicFixture->GetFixtureId());
+			Bundle->SetNumberField(TEXT("fixtureVersion"), StrategicFixture->GetFixtureVersion());
+			Bundle->SetStringField(TEXT("contentHash"), QuerySnapshot->GetStringField(TEXT("contentHash")));
+			Bundle->SetStringField(TEXT("fixtureHash"), QuerySnapshot->GetStringField(TEXT("fixtureHash")));
+			Bundle->SetStringField(TEXT("seed"), QuerySnapshot->GetStringField(TEXT("campaignSeed")));
+			Bundle->SetObjectField(TEXT("stateHashes"), StateHashes);
+			Bundle->SetArrayField(TEXT("screenshots"), MoveTemp(Screenshots));
+
+			const FString Root = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("TestEvidence"), TEXT("Automation"),
+				TEXT("S14P01"), BundleId);
+			IFileManager::Get().MakeDirectory(*Root, true);
+			auto SaveJson = [&Root](const TCHAR* Filename, const TSharedRef<FJsonObject>& Json)
+			{
+				return FFileHelper::SaveStringToFile(SerializeResponse(Json), *FPaths::Combine(Root, Filename),
+					FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+			};
+			if (!SaveJson(TEXT("bundle.json"), Bundle) ||
+				!SaveJson(TEXT("query-snapshot.json"), QuerySnapshot) ||
+				!SaveJson(TEXT("semantic-ui.json"), SemanticSnapshot) ||
+				!SaveJson(TEXT("logs.json"), LogSnapshot) ||
+				!SaveJson(TEXT("assertions.json"), AssertionSnapshot))
+			{
+				return MakeErrorResponse(RequestId, MakeEndpointError(EHansaAutomationErrorCode::EvidenceWriteFailed,
+					RequestId, TEXT("The synchronized S14 evidence bundle could not be persisted."),
+					TEXT("Verify write access beneath Saved/TestEvidence/Automation/S14P01.")));
+			}
+			TSharedRef<FJsonObject> Result = MakeShared<FJsonObject>();
+			Result->SetBoolField(TEXT("complete"), bComplete);
+			Result->SetStringField(TEXT("bundleId"), BundleId);
+			Result->SetStringField(TEXT("testId"), TestId);
+			Result->SetStringField(TEXT("rootPath"), Root);
+			Result->SetStringField(TEXT("manifestPath"), FPaths::Combine(Root, TEXT("bundle.json")));
+			Result->SetStringField(TEXT("querySnapshotPath"), FPaths::Combine(Root, TEXT("query-snapshot.json")));
+			Result->SetStringField(TEXT("semanticSnapshotPath"), FPaths::Combine(Root, TEXT("semantic-ui.json")));
+			Result->SetStringField(TEXT("logSnapshotPath"), FPaths::Combine(Root, TEXT("logs.json")));
+			Result->SetStringField(TEXT("assertionPath"), FPaths::Combine(Root, TEXT("assertions.json")));
+			return MakeSuccessResponse(RequestId, Result);
+		}
+
 		if (Operation == TEXT("screenshot_capture"))
 		{
 			const FHansaAutomationOperationResult Authorized = SessionService.AuthorizeOperation(
@@ -1215,9 +1634,13 @@ namespace Hansa::Automation
 					TEXT("The requested screenshot size is not supported."),
 					TEXT("Request exactly 1280x720 or 1920x1080.")));
 			}
-			const bool bScreenReady = bPlacementFixtureActive
-				? PlacementScreenHost.IsValid() && PlacementScreenHost->EnsureScreen(Size)
-				: ProofScreenHost.IsValid() && ProofScreenHost->EnsureScreen(Size);
+			const bool bScreenReady = bStrategicFixtureActive
+				? StrategicScreenHost.IsValid() && StrategicScreenHost->EnsureScreen(Size)
+				: bRouteDeliveryFixtureActive
+					? RouteDeliveryScreenHost.IsValid() && RouteDeliveryScreenHost->EnsureScreen(Size)
+				: bPlacementFixtureActive
+					? PlacementScreenHost.IsValid() && PlacementScreenHost->EnsureScreen(Size)
+					: ProofScreenHost.IsValid() && ProofScreenHost->EnsureScreen(Size);
 			if (!bScreenReady)
 			{
 				return MakeErrorResponse(RequestId, MakeEndpointError(
@@ -1227,14 +1650,134 @@ namespace Hansa::Automation
 					TEXT("Run an explicitly enabled Development game with Slate initialized."),
 					true));
 			}
-			if (bPlacementFixtureActive) PlacementScreenHost->SynchronizeSemantics();
+			if (bStrategicFixtureActive) StrategicScreenHost->SynchronizeSemantics();
+			else if (bRouteDeliveryFixtureActive) RouteDeliveryScreenHost->SynchronizeSemantics();
+			else if (bPlacementFixtureActive) PlacementScreenHost->SynchronizeSemantics();
 			else ProofScreenHost->SynchronizeSemantics();
 			FHansaScreenshotContext ScreenshotContext;
 			ScreenshotContext.BundleId = BundleId;
 			ScreenshotContext.MapName = GetCurrentMapName();
-			if (bPlacementFixtureActive)
+			if (MultiplayerService->IsFixtureActive())
 			{
-				ScreenshotContext.EvidenceSuiteId = PlacementFixture->IsIntegrated() ? TEXT("S06P04") : TEXT("S05P04");
+				ScreenshotContext.EvidenceSuiteId = TEXT("S11P04");
+				ScreenshotContext.FixtureId = FHansaMultiplayerAutomationService::FixtureId;
+				ScreenshotContext.ScreenId = TEXT("Multiplayer.AuthorityProof");
+				ScreenshotContext.FlowId = TEXT("two-player-authority-v1");
+				FString EvidenceError;
+				const TSharedRef<FJsonObject> Evidence =
+					MultiplayerService->MakeEvidenceSnapshot(RequestId, EvidenceError);
+				ScreenshotContext.SimulationTick =
+					static_cast<int64>(Evidence->GetNumberField(TEXT("serverTick")));
+				ScreenshotContext.QuerySnapshotJson = SerializeResponse(Evidence);
+				ScreenshotContext.FixtureMetadataJson =
+					TEXT("{\"schemaVersion\":1,\"fixtureId\":\"two_player_authority_v1\",\"seed\":\"0x533131503034\",\"postCaptureResized\":false}");
+				ScreenshotContext.StructuralAssertions = {
+					TEXT("fixture.two_player_authority_v1=true"),
+					TEXT("projection.ready=true"),
+					TEXT("projection.authoritativeHash.present=true"),
+					TEXT("projection.projectionDigest.present=true") };
+				FString Hash;
+				FString Digest;
+				ScreenshotContext.bStructuralAssertionsPassed =
+					EvidenceError.IsEmpty() && Evidence->GetBoolField(TEXT("ready")) &&
+					Evidence->TryGetStringField(TEXT("authoritativeHash"), Hash) && !Hash.IsEmpty() &&
+					Evidence->TryGetStringField(TEXT("projectionDigest"), Digest) && !Digest.IsEmpty();
+			}
+			else if (bStrategicFixtureActive)
+			{
+				const bool bGolden = StrategicFixture->GetFixtureId() == FHansaStrategicAutomationFixture::GoldenFixtureId;
+				ScreenshotContext.EvidenceSuiteId = bGolden ? TEXT("S14P01") : TEXT("S10P04");
+				ScreenshotContext.FixtureId = StrategicFixture->GetFixtureId();
+				ScreenshotContext.ScreenId = bGolden ? TEXT("HUD.Root") : TEXT("Strategic.Root");
+				ScreenshotContext.FlowId = bGolden ? TEXT("s14-p01-mvp-golden") : TEXT("strategic-vertical-slice-v1");
+				ScreenshotContext.SimulationTick = StrategicFixture->GetHost()->GetSimulationTick();
+				ScreenshotContext.QuerySnapshotJson = SerializeResponse(StrategicFixture->MakeEvidenceSnapshot());
+				const FHansaSemanticNode* VictoryNode = SemanticRegistry->FindNode(
+					bGolden ? TEXT("Scenario.Status.Victory") : TEXT("Strategic.Status.Victory"));
+				const bool bFinalCapture = VictoryNode != nullptr && VictoryNode->State.bSelected;
+				TArray<const TCHAR*> Required;
+				if (bGolden && !bFinalCapture)
+				{
+					ScreenshotContext.ScreenId = TEXT("Market.Good.Grain");
+					TSharedRef<FJsonObject> DiagnosisRequest = MakeShared<FJsonObject>();
+					DiagnosisRequest->SetStringField(TEXT("query"), TEXT("market.diagnosis"));
+					DiagnosisRequest->SetStringField(TEXT("cityId"), TEXT("City.Lubeck"));
+					DiagnosisRequest->SetStringField(TEXT("goodId"), TEXT("Good.Grain"));
+					TSharedRef<FJsonObject> Diagnosis = MakeShared<FJsonObject>();
+					FString DiagnosisError;
+					const bool bDiagnosisAvailable = StrategicFixture->Query(
+						DiagnosisRequest, Diagnosis, DiagnosisError);
+					if (bDiagnosisAvailable)
+					{
+						ScreenshotContext.QuerySnapshotJson = SerializeResponse(Diagnosis);
+					}
+					ScreenshotContext.StructuralAssertions = {
+						TEXT("semantic.Market.Good.Grain.warning=true"),
+						TEXT("semantic.Market.Status.GrainDiagnosed.selected=true"),
+						TEXT("query.marketDiagnosis.stockBelowReserve=true") };
+					const FHansaSemanticNode* Grain = SemanticRegistry->FindNode(TEXT("Market.Good.Grain"));
+					const FHansaSemanticNode* Diagnosed = SemanticRegistry->FindNode(TEXT("Market.Status.GrainDiagnosed"));
+					ScreenshotContext.bStructuralAssertionsPassed = bDiagnosisAvailable &&
+						Diagnosis->GetBoolField(TEXT("shortageDiagnosed")) &&
+						Grain != nullptr && Grain->State.bWarning &&
+						Diagnosed != nullptr && Diagnosed->State.bSelected;
+				}
+				else
+				{
+					ScreenshotContext.StructuralAssertions = bGolden
+						? TArray<FString> {
+							TEXT("semantic.BuildMenu.Status.BreadChain.selected=true"),
+							TEXT("semantic.Market.Status.GrainDiagnosed.selected=true"),
+							TEXT("semantic.TradeRoute.Editor.Status.Delivered.selected=true"),
+							TEXT("semantic.Research.Status.MarketReports.selected=true"),
+							TEXT("semantic.HUD.Status.MerchantAI.selected=true"),
+							TEXT("semantic.SaveLoad.Status.RoundTrip.selected=true"),
+							TEXT("semantic.Scenario.Status.Victory.selected=true") }
+						: TArray<FString> {
+							TEXT("semantic.Strategic.Status.Building.selected=true"),
+							TEXT("semantic.Strategic.Status.Shortage.selected=true"),
+							TEXT("semantic.Strategic.Status.RouteRecovery.selected=true"),
+							TEXT("semantic.Strategic.Status.Research.selected=true"),
+							TEXT("semantic.Strategic.Status.AI.selected=true"),
+							TEXT("semantic.Strategic.Status.Victory.selected=true") };
+					Required = bGolden
+						? TArray<const TCHAR*> {TEXT("BuildMenu.Status.BreadChain"), TEXT("Market.Status.GrainDiagnosed"),
+							TEXT("TradeRoute.Editor.Status.Delivered"), TEXT("Research.Status.MarketReports"),
+							TEXT("HUD.Status.MerchantAI"), TEXT("SaveLoad.Status.RoundTrip"), TEXT("Scenario.Status.Victory")}
+						: TArray<const TCHAR*> {TEXT("Strategic.Status.Building"), TEXT("Strategic.Status.Shortage"),
+							TEXT("Strategic.Status.RouteRecovery"), TEXT("Strategic.Status.Research"),
+							TEXT("Strategic.Status.AI"), TEXT("Strategic.Status.Victory")};
+					ScreenshotContext.bStructuralAssertionsPassed = true;
+					for (const TCHAR* Id : Required)
+					{
+						const FHansaSemanticNode* Node = SemanticRegistry->FindNode(Id);
+						ScreenshotContext.bStructuralAssertionsPassed &= Node != nullptr && Node->State.bSelected;
+					}
+				}
+			}
+			else if (bRouteDeliveryFixtureActive)
+			{
+				const Hansa::Simulation::FHansaProductionFixture* Fixture = ProductionFixtureService->GetFixture();
+				ScreenshotContext.EvidenceSuiteId = TEXT("S09P04");
+				ScreenshotContext.FixtureId = Hansa::Simulation::FHansaProductionFixture::RouteDeliveryFixtureId;
+				ScreenshotContext.ScreenId = SemanticRegistry->FindNode(TEXT("RouteDelivery.Market"))->State.bVisible
+					? TEXT("RouteDelivery.Market") : TEXT("RouteDelivery.RouteEditor");
+				ScreenshotContext.FlowId = TEXT("route-delivery-v1");
+				if (Fixture != nullptr)
+				{
+					const auto Projection = Fixture->BuildProjection();
+					ScreenshotContext.SimulationTick = Projection ? Projection.Value.GetClock().GetTick().GetValue() : 0;
+					ScreenshotContext.QuerySnapshotJson = MakeRouteEvidenceSnapshot(*Fixture);
+				}
+				ScreenshotContext.StructuralAssertions = { TEXT("fixture.route_delivery_v1=true"),
+					TEXT("semantic.RouteDelivery.Status.Delivered.selected=true"), TEXT("evidence.stateHashSynchronized=true"),
+					TEXT("evidence.eventsSynchronized=true") };
+				const FHansaSemanticNode* Delivered = SemanticRegistry->FindNode(TEXT("RouteDelivery.Status.Delivered"));
+				ScreenshotContext.bStructuralAssertionsPassed = Delivered != nullptr && Delivered->State.bSelected && Fixture != nullptr;
+			}
+			else if (bPlacementFixtureActive)
+			{
+				ScreenshotContext.EvidenceSuiteId = PlacementFixture->IsIntegrated() ? TEXT("S06P04") : TEXT("S07P03");
 				ScreenshotContext.FixtureId = PlacementFixture->GetFixtureId();
 				ScreenshotContext.ScreenId = TEXT("BuildMode.Screen");
 				ScreenshotContext.FlowId = PlacementFixture->IsIntegrated()
@@ -1279,9 +1822,13 @@ namespace Hansa::Automation
 				ScreenshotContext,
 				[this](const FIntPoint& NativeSize, TArray<FColor>& Pixels)
 				{
-					return bPlacementFixtureActive
-						? PlacementScreenHost->CaptureNative(NativeSize, Pixels)
-						: ProofScreenHost->CaptureNative(NativeSize, Pixels);
+					return bStrategicFixtureActive
+						? StrategicScreenHost->CaptureNative(NativeSize, Pixels)
+						: bRouteDeliveryFixtureActive
+							? RouteDeliveryScreenHost->CaptureNative(NativeSize, Pixels)
+						: bPlacementFixtureActive
+							? PlacementScreenHost->CaptureNative(NativeSize, Pixels)
+							: ProofScreenHost->CaptureNative(NativeSize, Pixels);
 				});
 			if (!Capture.IsSuccess())
 			{
@@ -1304,8 +1851,11 @@ namespace Hansa::Automation
 			Result->SetStringField(TEXT("screenshotPath"), Capture.ScreenshotPath);
 			Result->SetStringField(TEXT("metadataPath"), Capture.MetadataPath);
 			Result->SetStringField(TEXT("semanticSnapshotPath"), Capture.SemanticSnapshotPath);
+			if (!Capture.QuerySnapshotPath.IsEmpty()) Result->SetStringField(TEXT("querySnapshotPath"), Capture.QuerySnapshotPath);
 			Result->SetStringField(TEXT("contentSha1"), Capture.ContentSha1);
 			Result->SetNumberField(TEXT("revision"), static_cast<double>(SemanticRegistry->GetRevision()));
+			CapturedScreenshotPaths.Add(Capture.ScreenshotPath);
+			CapturedScreenshotHashes.Add(Capture.ContentSha1);
 			return MakeSuccessResponse(RequestId, Result);
 		}
 

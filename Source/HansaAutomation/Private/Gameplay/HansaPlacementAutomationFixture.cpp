@@ -86,20 +86,28 @@ namespace Hansa::Automation
 			FHansaCompiledBuildingDefinition Road;
 			Road.StableId = TEXT("Building.Road");
 			Road.BuildTicks = 1;
+			Road.FootprintWidthCells = 1;
+			Road.FootprintHeightCells = 1;
 			FHansaCompiledBuildingDefinition Warehouse;
 			Warehouse.StableId = TEXT("Building.Warehouse");
 			Warehouse.BuildTicks = 1;
+			Warehouse.FootprintWidthCells = 1;
+			Warehouse.FootprintHeightCells = 1;
 			Warehouse.StorageCapacityMilliUnits = 50'000;
 			Warehouse.bRequiresRoad = true;
 			FHansaCompiledBuildingDefinition Bakery;
 			Bakery.StableId = TEXT("Building.Bakery");
 			Bakery.RecipeIds = { BakeryRecipe.StableId };
 			Bakery.BuildTicks = 2;
+			Bakery.FootprintWidthCells = 1;
+			Bakery.FootprintHeightCells = 1;
 			Bakery.LaborerWorkforce = 3;
 			Bakery.bRequiresRoad = true;
 			FHansaCompiledBuildingDefinition Residence;
 			Residence.StableId = TEXT("Building.Residence.Laborer");
 			Residence.BuildTicks = 3;
+			Residence.FootprintWidthCells = 1;
+			Residence.FootprintHeightCells = 1;
 			Residence.ResidenceCapacity = 12;
 			Residence.ResidentPopulationTierId = TEXT("PopulationTier.Laborer");
 			Residence.bRequiresRoad = true;
@@ -432,6 +440,10 @@ namespace Hansa::Automation
 		using namespace PlacementFixture;
 		using A = EHansaSemanticAction;
 		Registry->RegisterNode(Node(TEXT("BuildMode.Screen"), EHansaSemanticRole::Screen, TEXT("Lübeck build mode")));
+		Registry->RegisterNode(Node(TEXT("HUD.Root"), EHansaSemanticRole::Screen, TEXT("Main HUD")));
+		Registry->RegisterNode(Node(TEXT("HUD.BottomArea"), EHansaSemanticRole::Panel, TEXT("Build and selection"), TEXT("HUD.Root")));
+		Registry->RegisterNode(Node(TEXT("BuildMenu.Root"), EHansaSemanticRole::Panel, TEXT("Build menu"), TEXT("HUD.BottomArea")));
+		Registry->RegisterNode(Node(TEXT("BuildMenu.Categories"), EHansaSemanticRole::Panel, TEXT("Build categories"), TEXT("BuildMenu.Root")));
 		Registry->RegisterNode(Node(TEXT("BuildMode.Camera"), EHansaSemanticRole::Status, TEXT("Strategy camera"), TEXT("BuildMode.Screen")));
 		Registry->RegisterNode(Node(TEXT("BuildMode.Map"), EHansaSemanticRole::Panel, TEXT("Lübeck placement map"), TEXT("BuildMode.Screen")));
 
@@ -441,12 +453,33 @@ namespace Hansa::Automation
 			Registry->RegisterNode(Node(Id, EHansaSemanticRole::Button, Label, Parent, { A::Activate, A::Focus }),
 				Handlers(MoveTemp(Activate), [this, StableId] { FocusIntent(StableId); return true; }));
 		};
+		RegisterButton(TEXT("BuildMenu.Category.Roads"), TEXT("Roads"), TEXT("BuildMenu.Categories"), [this] { return SelectRoadIntent(); });
+		RegisterButton(TEXT("BuildMenu.Category.Residences"), TEXT("Residences"), TEXT("BuildMenu.Categories"), [] { return true; });
+		RegisterButton(TEXT("BuildMenu.Category.Production"), TEXT("Production"), TEXT("BuildMenu.Categories"), [] { return true; });
+		RegisterButton(TEXT("BuildMenu.Category.Storage"), TEXT("Storage"), TEXT("BuildMenu.Categories"), [this] { return SelectWarehouseIntent(); });
+		RegisterButton(TEXT("BuildMenu.Category.Harbor"), TEXT("Harbor"), TEXT("BuildMenu.Categories"), [] { return true; });
+		RegisterButton(TEXT("BuildMenu.Category.Civic"), TEXT("Civic"), TEXT("BuildMenu.Categories"), [] { return true; });
+		RegisterButton(TEXT("BuildMenu.Category.Decoration"), TEXT("Decoration"), TEXT("BuildMenu.Categories"), [] { return true; });
+		Registry->RegisterNode(Node(TEXT("BuildMenu.Cards"), EHansaSemanticRole::Panel, TEXT("Building cards"), TEXT("BuildMenu.Root")));
+		RegisterButton(TEXT("BuildMenu.Card.Building_Road"), TEXT("Road · 25 pf · 1×1 · no workforce · road connection"), TEXT("BuildMenu.Cards"), [this] { return SelectRoadIntent(); });
+		RegisterButton(TEXT("BuildMenu.Card.Building_Warehouse"), TEXT("Warehouse · 2,500 pf · 2×3 · 12 laborers · cart ↔ storage"), TEXT("BuildMenu.Cards"), [this] { return SelectWarehouseIntent(); });
+		Registry->RegisterNode(Node(TEXT("BuildMenu.Recent"), EHansaSemanticRole::Panel, TEXT("Recently used"), TEXT("BuildMenu.Root")));
+		Registry->RegisterNode(Node(TEXT("BuildMenu.Favorites"), EHansaSemanticRole::Panel, TEXT("Favorites"), TEXT("BuildMenu.Root")));
 		RegisterButton(TEXT("BuildMode.Map.RoadTarget"), TEXT("Road target cell 18,16"), TEXT("BuildMode.Map"),
 			[this] { return TargetRoadCellIntent(); });
 		RegisterButton(TEXT("BuildMode.Map.InvalidTarget"), TEXT("Disconnected target cell 10,10"), TEXT("BuildMode.Map"),
 			[this] { return TargetInvalidCellIntent(); });
 		RegisterButton(TEXT("BuildMode.Map.ValidTarget"), TEXT("Road-adjacent target cell 16,16"), TEXT("BuildMode.Map"),
 			[this] { return TargetValidCellIntent(); });
+		Registry->RegisterNode(Node(TEXT("Placement.Root"), EHansaSemanticRole::Panel, TEXT("Placement"), TEXT("HUD.Root")));
+		RegisterButton(TEXT("Placement.Target.Road"), TEXT("Road target cell 18,16"), TEXT("Placement.Root"), [this] { return TargetRoadCellIntent(); });
+		RegisterButton(TEXT("Placement.Target.Disconnected"), TEXT("Disconnected target cell 10,10"), TEXT("Placement.Root"), [this] { return TargetInvalidCellIntent(); });
+		RegisterButton(TEXT("Placement.Target.Adjacent"), TEXT("Road-adjacent target cell 16,16"), TEXT("Placement.Root"), [this] { return TargetValidCellIntent(); });
+		Registry->RegisterNode(Node(TEXT("Placement.Preview"), EHansaSemanticRole::Status, TEXT("No placement preview"), TEXT("Placement.Root")));
+		Registry->RegisterNode(Node(TEXT("Placement.Footprint"), EHansaSemanticRole::Status, TEXT("No placement footprint"), TEXT("Placement.Preview")));
+		Registry->RegisterNode(Node(TEXT("Placement.Validation"), EHansaSemanticRole::Alert, TEXT("Choose a build card"), TEXT("Placement.Root")));
+		Registry->RegisterNode(Node(TEXT("Placement.Validation.Cause"), EHansaSemanticRole::Text, TEXT("No validation cause"), TEXT("Placement.Validation")));
+		Registry->RegisterNode(Node(TEXT("Placement.Validation.Remedy"), EHansaSemanticRole::Text, TEXT("Choose a target"), TEXT("Placement.Validation")));
 		Registry->RegisterNode(Node(TEXT("BuildMode.Placement.Preview"), EHansaSemanticRole::Status,
 			TEXT("No placement preview"), TEXT("BuildMode.Map")));
 		Registry->RegisterNode(Node(TEXT("BuildMode.Placement.Validation"), EHansaSemanticRole::Alert,
@@ -469,6 +502,12 @@ namespace Hansa::Automation
 			[this] { return ConfirmIntent(); });
 		RegisterButton(TEXT("BuildMode.Action.Cancel"), TEXT("Cancel"), TEXT("BuildMode.Toolbar"),
 			[this] { return CancelIntent(); });
+		RegisterButton(TEXT("Placement.Overlay.Grid"), TEXT("Grid overlay"), TEXT("Placement.Root"), [] { return true; });
+		RegisterButton(TEXT("Placement.Overlay.Road"), TEXT("Road overlay"), TEXT("Placement.Root"), [] { return true; });
+		RegisterButton(TEXT("Placement.Action.Rotate"), TEXT("Rotate"), TEXT("Placement.Root"), [this] { return RotateIntent(); });
+		RegisterButton(TEXT("Placement.Action.Repeat"), TEXT("Repeat"), TEXT("Placement.Root"), [this] { return ToggleRepeatIntent(); });
+		RegisterButton(TEXT("Placement.Action.Confirm"), TEXT("Confirm"), TEXT("Placement.Root"), [this] { return ConfirmIntent(); });
+		RegisterButton(TEXT("Placement.Action.Cancel"), TEXT("Cancel"), TEXT("Placement.Root"), [this] { return CancelIntent(); });
 		Registry->RegisterNode(Node(TEXT("BuildMode.Result.Building"), EHansaSemanticRole::Status,
 			TEXT("No committed building"), TEXT("BuildMode.Screen")));
 		Registry->RegisterNode(Node(TEXT("BuildMode.Construction.Status"), EHansaSemanticRole::Status,
@@ -679,6 +718,35 @@ namespace Hansa::Automation
 		if (!bLoaded || Registry == nullptr) return;
 		FHansaSemanticState Default;
 		UpdateSemanticState(TEXT("BuildMode.Screen"), Default);
+		UpdateSemanticState(TEXT("HUD.Root"), Default);
+		UpdateSemanticState(TEXT("HUD.BottomArea"), Default);
+		FHansaSemanticState BuildMenu = Default;
+		BuildMenu.ValueType = TEXT("open"); BuildMenu.Value = TEXT("true"); BuildMenu.bSelected = true;
+		UpdateSemanticState(TEXT("BuildMenu.Root"), BuildMenu);
+		UpdateSemanticState(TEXT("BuildMenu.Categories"), Default);
+		for (const TCHAR* Category : { TEXT("Roads"), TEXT("Residences"), TEXT("Production"), TEXT("Storage"), TEXT("Harbor"), TEXT("Civic"), TEXT("Decoration") })
+		{
+			FHansaSemanticState CategoryState = Default;
+			CategoryState.ValueType = TEXT("build-category"); CategoryState.Value = Category;
+			CategoryState.bSelected = (SelectedTool == ESelectedTool::Road && FCString::Strcmp(Category, TEXT("Roads")) == 0) ||
+				(SelectedTool == ESelectedTool::Warehouse && FCString::Strcmp(Category, TEXT("Storage")) == 0);
+			UpdateSemanticState(*FString::Printf(TEXT("BuildMenu.Category.%s"), Category), CategoryState);
+		}
+		UpdateSemanticState(TEXT("BuildMenu.Cards"), Default);
+		FHansaSemanticState RoadCard = Default;
+		RoadCard.bSelected = SelectedTool == ESelectedTool::Road; RoadCard.ValueType = TEXT("building-card");
+		RoadCard.Value = TEXT("id=Building.Road;cost=25 pf;workforce=none;footprint=1x1;flow=road connection");
+		UpdateSemanticState(TEXT("BuildMenu.Card.Building_Road"), RoadCard);
+		FHansaSemanticState WarehouseCard = Default;
+		WarehouseCard.bSelected = SelectedTool == ESelectedTool::Warehouse; WarehouseCard.ValueType = TEXT("building-card");
+		WarehouseCard.Value = TEXT("id=Building.Warehouse;cost=2500 pf;workforce=12 laborers;footprint=2x3;flow=cart-to-storage");
+		UpdateSemanticState(TEXT("BuildMenu.Card.Building_Warehouse"), WarehouseCard);
+		FHansaSemanticState Recent = Default; Recent.ValueType = TEXT("building-definition-id");
+		Recent.Value = SelectedTool == ESelectedTool::Road ? TEXT("Building.Road") :
+			(SelectedTool == ESelectedTool::Warehouse ? TEXT("Building.Warehouse") : TEXT(""));
+		UpdateSemanticState(TEXT("BuildMenu.Recent"), Recent);
+		FHansaSemanticState Favorites = Default; Favorites.ValueType = TEXT("count"); Favorites.Value = TEXT("0");
+		UpdateSemanticState(TEXT("BuildMenu.Favorites"), Favorites);
 		FHansaSemanticState Camera = Default;
 		Camera.ValueType = TEXT("strategy-camera");
 		Camera.Value = CameraStateValue;
@@ -725,6 +793,20 @@ namespace Hansa::Automation
 			bHasPreview ? FString::Printf(TEXT("%s — %s"), *Failure, *Remedy) : TEXT("Choose a target cell"));
 		UpdateSemanticState(TEXT("BuildMode.Placement.Validation.Cause"), Validation, Failure);
 		UpdateSemanticState(TEXT("BuildMode.Placement.Validation.Remedy"), Validation, Remedy);
+		UpdateSemanticState(TEXT("Placement.Preview"), Preview,
+			bHasPreview ? FString::Printf(TEXT("%s preview at %s"), *ToolName, *Anchor) : TEXT("No placement preview"));
+		FHansaSemanticState Footprint = Preview;
+		Footprint.ValueType = TEXT("placement-footprint");
+		Footprint.Value = FString::Printf(TEXT("shape=%s;status=%s"),
+			bHasPreview && !bPreviewCanPlace ? TEXT("striped") : TEXT("outline"), bPreviewCanPlace ? TEXT("valid") : TEXT("invalid"));
+		UpdateSemanticState(TEXT("Placement.Footprint"), Footprint);
+		UpdateSemanticState(TEXT("Placement.Validation"), Validation,
+			bHasPreview ? FString::Printf(TEXT("%s — %s"), *Failure, *Remedy) : TEXT("Choose a target cell"));
+		UpdateSemanticState(TEXT("Placement.Validation.Cause"), Validation, Failure);
+		UpdateSemanticState(TEXT("Placement.Validation.Remedy"), Validation, Remedy);
+		UpdateSemanticState(TEXT("Placement.Target.Road"), RoadTarget);
+		UpdateSemanticState(TEXT("Placement.Target.Disconnected"), InvalidTarget);
+		UpdateSemanticState(TEXT("Placement.Target.Adjacent"), ValidTarget);
 
 		UpdateSemanticState(TEXT("BuildMode.Toolbar"), Default);
 		FHansaSemanticState Road = Default;
@@ -755,6 +837,14 @@ namespace Hansa::Automation
 		FHansaSemanticState Cancel = Default;
 		Cancel.bEnabled = SelectedTool != ESelectedTool::None;
 		UpdateSemanticState(TEXT("BuildMode.Action.Cancel"), Cancel);
+		FHansaSemanticState GridOverlay = Default; GridOverlay.bSelected = true; GridOverlay.ValueType = TEXT("boolean"); GridOverlay.Value = TEXT("true");
+		UpdateSemanticState(TEXT("Placement.Overlay.Grid"), GridOverlay);
+		FHansaSemanticState RoadOverlay = GridOverlay;
+		UpdateSemanticState(TEXT("Placement.Overlay.Road"), RoadOverlay);
+		UpdateSemanticState(TEXT("Placement.Action.Rotate"), Rotate);
+		UpdateSemanticState(TEXT("Placement.Action.Repeat"), Repeat);
+		UpdateSemanticState(TEXT("Placement.Action.Confirm"), Confirm);
+		UpdateSemanticState(TEXT("Placement.Action.Cancel"), Cancel);
 
 		FHansaSemanticState Result = Default;
 		Result.bVisible = LastPlacedBuildingId.IsValid();

@@ -1,0 +1,43 @@
+{
+  "Body": {
+    "bounds_m": [
+      [
+        -4.0,
+        -4.194999694824219,
+        -0.014999451115727425
+      ],
+      [
+        4.0,
+        4.0,
+        13.027673721313477
+      ]
+    ],
+    "pivot_at_origin": true,
+    "vertex_colors": true,
+    "uvs": true
+  },
+  "Rotor": {
+    "bounds_m": [
+      [
+        -6.688296794891357,
+        -0.7489999532699585,
+        -6.688296794891357
+      ],
+      [
+        6.688296794891357,
+        1.2249997854232788,
+        6.688295364379883
+      ]
+    ],
+    "pivot_at_origin": true,
+    "vertex_colors": true,
+    "uvs": true
+  },
+  "glb": {
+    "quarter_turn_degrees": 90,
+    "loop_seconds": 10,
+    "stationary_body": true,
+    "pivot_fixed": true,
+    "loop_seam_verified": true
+  }
+}

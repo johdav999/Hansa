@@ -1,0 +1,342 @@
+{
+  "packed_images": [
+    {
+      "name": "tower--brick--worn--1254x1254--v1.png",
+      "packed": true,
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "name": "tower--masonry--worn--1254x1254--v1.png",
+      "packed": true,
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "name": "tower--paint--worn--1254x1254--v1.png",
+      "packed": true,
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "name": "tower--stone--worn--1254x1254--v1.png",
+      "packed": true,
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "name": "tower--timber--worn--1254x1254--v1.png",
+      "packed": true,
+      "dimensions": [
+        1254,
+        1254
+      ]
+    }
+  ],
+  "rotating_source_objects": 246,
+  "pivot_m": [
+    0.0,
+    -3.990000009536743,
+    10.819999694824219
+  ],
+  "sweep_samples": [
+    {
+      "angle_degrees": 0,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 5,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 10,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 15,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 20,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 25,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 30,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 35,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 40,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 45,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 50,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 55,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 60,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 65,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 70,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 75,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 80,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 85,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 90,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 95,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 100,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 105,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 110,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 115,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 120,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 125,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 130,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 135,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 140,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 145,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 150,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 155,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 160,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 165,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 170,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 175,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 180,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 185,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 190,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 195,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 200,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 205,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 210,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 215,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 220,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 225,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 230,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 235,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 240,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 245,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 250,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 255,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 260,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 265,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 270,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 275,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 280,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 285,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 290,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 295,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 300,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 305,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 310,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 315,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 320,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 325,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 330,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 335,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 340,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 345,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 350,
+      "triangle_overlaps": 0
+    },
+    {
+      "angle_degrees": 355,
+      "triangle_overlaps": 0
+    }
+  ],
+  "shaft_exclusion": "Windshaft intentionally enters the cap bearing; all other moving geometry tested against stationary building.",
+  "surface_collision_checks_passed": true
+}

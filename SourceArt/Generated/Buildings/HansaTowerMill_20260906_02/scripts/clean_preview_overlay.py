@@ -1,0 +1,3 @@
+from unreal_ops import Client,P
+import json
+c=Client();i=json.loads((P/'preview_actors.json').read_text());actor={'refPath':i['level']+'.L_TowerPreview:PersistentLevel.PostProcessVolume_0'};c.call('object','list_properties',{'instance':actor});v=c.call('object','get_properties',{'instance':actor,'properties':['bUnbound','rootComponent']});v=json.loads(v) if isinstance(v,str) else v;assert v['bUnbound'];root=v['rootComponent'];c.call('object','list_properties',{'instance':root});print(c.call('object','set_properties',{'instance':root,'values':json.dumps({'relativeLocation':{'x':0,'y':0,'z':-10000}})}));c.call('asset','save_assets',{'asset_paths':[i['level']]});print('UNBOUND_PREVIEW_VOLUME_MOVED_BELOW_REVIEW_STAGE')

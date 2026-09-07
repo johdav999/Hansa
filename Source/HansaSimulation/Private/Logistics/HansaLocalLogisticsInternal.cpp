@@ -15,7 +15,7 @@ namespace Hansa::Simulation
 			return FHansaSimulationTick::TryCreate(Tick.GetValue() + Offset).Value;
 		}
 
-		bool IsCompletedBuilding(
+		bool IsCompletedLogisticsBuilding(
 			const TConstArrayView<FHansaBuildingState> Buildings,
 			const FHansaBuildingId BuildingId)
 		{
@@ -145,7 +145,7 @@ namespace Hansa::Simulation
 		for (const FHansaProductionState& Production : Productions)
 		{
 			if (Production.Kind != EHansaProductionKind::BuildingRecipe || !Production.bActive ||
-				!IsCompletedBuilding(Buildings, Production.BuildingId))
+				!IsCompletedLogisticsBuilding(Buildings, Production.BuildingId))
 			{
 				continue;
 			}

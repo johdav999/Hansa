@@ -12,6 +12,8 @@
 #include "InputModifiers.h"
 #include "InputTriggers.h"
 #include "World/HansaBuildingWorldProjection.h"
+#include "World/HansaGameMode.h"
+#include "Net/UnrealNetwork.h"
 #include "World/HansaStrategyCameraPawn.h"
 
 namespace
@@ -43,6 +45,7 @@ namespace
 
 AHansaStrategyPlayerController::AHansaStrategyPlayerController()
 {
+	bReplicates = true;
 	bShowMouseCursor = true;
 	bEnableMouseOverEvents = true;
 	bEnableClickEvents = false;
@@ -85,6 +88,85 @@ void AHansaStrategyPlayerController::EndPlay(const EEndPlayReason::Type EndPlayR
 	Super::EndPlay(EndPlayReason);
 }
 
+void AHansaStrategyPlayerController::GetLifetimeReplicatedProps(
+	TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME_CONDITION(AHansaStrategyPlayerController, ClientProjection, COND_OwnerOnly);
+}
+
+void AHansaStrategyPlayerController::ServerSubmitHansaIntent_Implementation(
+	const FHansaClientCommandIntent& Intent)
+{
+	if (AHansaGameMode* Mode = GetWorld() != nullptr ? GetWorld()->GetAuthGameMode<AHansaGameMode>() : nullptr)
+	{
+		Mode->SubmitMultiplayerIntent(*this, Intent);
+	}
+}
+
+void AHansaStrategyPlayerController::ServerSetHansaInterest_Implementation(
+	const FHansaClientInterest& Interest)
+{
+	if (AHansaGameMode* Mode = GetWorld() != nullptr ? GetWorld()->GetAuthGameMode<AHansaGameMode>() : nullptr)
+	{
+		Mode->UpdateMultiplayerInterest(*this, Interest);
+	}
+}
+
+void AHansaStrategyPlayerController::ServerRequestHansaProjectionRefresh_Implementation(
+	const int64 ClientKnownRevision)
+{
+	if (AHansaGameMode* Mode = GetWorld() != nullptr ? GetWorld()->GetAuthGameMode<AHansaGameMode>() : nullptr)
+	{
+		Mode->RequestMultiplayerProjectionRefresh(*this, ClientKnownRevision);
+	}
+}
+
+void AHansaStrategyPlayerController::ClientReceiveHansaCommandFeedback_Implementation(
+	const FHansaClientCommandFeedback& Feedback)
+{
+	LastCommandFeedback = Feedback;
+	UE_LOG(LogHansa, Display,
+		TEXT("S11-P04 client feedback sequence=%lld accepted=%s rejection=%d serverOrder=%lld"),
+		static_cast<long long>(Feedback.ClientSequence),
+		Feedback.bAccepted ? TEXT("true") : TEXT("false"),
+		static_cast<int32>(Feedback.Rejection),
+		static_cast<long long>(Feedback.AcceptedGlobalSequence));
+}
+
+void AHansaStrategyPlayerController::SetServerAuthorityIdentity(
+	const uint64 PrincipalId, const int64 HouseId)
+{
+	if (!HasAuthority()) return;
+	AuthorityPrincipalId = PrincipalId;
+	AuthorityHouseId = HouseId;
+}
+
+void AHansaStrategyPlayerController::PublishServerProjection(
+	const FHansaClientProjectionSnapshot& Projection)
+{
+	if (!HasAuthority()) return;
+	ClientProjection = Projection;
+	ForceNetUpdate();
+}
+
+void AHansaStrategyPlayerController::PublishCommandFeedback(
+	const FHansaClientCommandFeedback& Feedback)
+{
+	if (!HasAuthority()) return;
+	ClientReceiveHansaCommandFeedback(Feedback);
+}
+
+void AHansaStrategyPlayerController::OnRep_HansaClientProjection()
+{
+	UE_LOG(LogHansa, Display,
+		TEXT("S11-P04 client projection revision=%lld full=%s tick=%lld authoritativeHash=%s projectionDigest=%s"),
+		static_cast<long long>(ClientProjection.Revision),
+		ClientProjection.bFullRefresh ? TEXT("true") : TEXT("false"),
+		static_cast<long long>(ClientProjection.ServerTick),
+		*ClientProjection.AuthoritativeHash,
+		*ClientProjection.ProjectionDigest);
+}
 void AHansaStrategyPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();

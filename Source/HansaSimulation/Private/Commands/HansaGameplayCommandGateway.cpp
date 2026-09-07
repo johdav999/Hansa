@@ -31,6 +31,10 @@ namespace Hansa::Simulation
 		case EHansaCommandGatewayError::ConstructionRefundUnavailable: return TEXT("ConstructionRefundUnavailable");
 		case EHansaCommandGatewayError::TargetHasDependents: return TEXT("TargetHasDependents");
 		case EHansaCommandGatewayError::ResidenceProgressionUnavailable: return TEXT("ResidenceProgressionUnavailable");
+		case EHansaCommandGatewayError::RouteRejected: return TEXT("RouteRejected");
+		case EHansaCommandGatewayError::RouteStateInvalid: return TEXT("RouteStateInvalid");
+		case EHansaCommandGatewayError::VehicleAlreadyAssigned: return TEXT("VehicleAlreadyAssigned");
+		case EHansaCommandGatewayError::ResearchRejected: return TEXT("ResearchRejected");
 		default: return TEXT("UnknownCommandGatewayError");
 		}
 	}

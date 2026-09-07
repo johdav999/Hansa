@@ -1,0 +1,6 @@
+{
+  "members": 180,
+  "reason": "Reduce identical knot phase across separate timber members",
+  "orientation": "preserved",
+  "maps": "same UV phase for color/roughness/normal"
+}

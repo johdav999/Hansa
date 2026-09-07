@@ -196,6 +196,12 @@ bool FHansaLubeckPlacementGridTest::RunTest(const FString& Parameters)
 	const FVector WorldCenter = Hansa::Game::LubeckPlacementGrid::GridToWorld(Coordinate);
 	TestTrue(TEXT("Grid/world conversion round-trips through native cell centers"),
 		Hansa::Game::LubeckPlacementGrid::WorldToGrid(WorldCenter) == Coordinate);
+	TestTrue(TEXT("The central harbor approach samples visible land"),
+		Hansa::Game::LubeckPlacementGrid::TerrainAt(FVector2D(-1000.0, -500.0)) == EHansaPlacementTerrain::Land);
+	TestTrue(TEXT("The central harbor edge samples the shared visible shore"),
+		Hansa::Game::LubeckPlacementGrid::TerrainAt(FVector2D(-200.0, -500.0)) == EHansaPlacementTerrain::Shore);
+	TestTrue(TEXT("The central harbor water side remains navigable water"),
+		Hansa::Game::LubeckPlacementGrid::TerrainAt(FVector2D(600.0, -500.0)) == EHansaPlacementTerrain::Water);
 	return !HasAnyErrors();
 }
 

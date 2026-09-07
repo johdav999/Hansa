@@ -10,7 +10,7 @@ namespace Hansa::Simulation
 {
 	namespace
 	{
-		const FHansaBuildingState* FindBuilding(
+		const FHansaBuildingState* FindProductionBuilding(
 			const TArray<FHansaBuildingState>& Buildings,
 			const FHansaBuildingId BuildingId)
 		{
@@ -358,7 +358,7 @@ namespace Hansa::Simulation
 			int32 CycleTicks = Production.SupplyCycleTicks;
 			if (Production.Kind == EHansaProductionKind::BuildingRecipe)
 			{
-				const FHansaBuildingState* Building = FindBuilding(Buildings, Production.BuildingId);
+				const FHansaBuildingState* Building = FindProductionBuilding(Buildings, Production.BuildingId);
 				if (Building == nullptr || Building->ConstructionProgress.GetPartsPerMillion() != FHansaRate::Scale)
 				{
 					SetBlocker(Production, Building == nullptr

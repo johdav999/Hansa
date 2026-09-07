@@ -14,14 +14,20 @@ public class HansaEditor : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"AssetRegistry",
+            "AssetTools",
+            "MeshDescription",
+            "StaticMeshDescription",
+            "RenderCore",
 			"Core",
 			"CoreUObject",
+			"DesktopPlatform",
 			"EditorFramework",
 			"Engine",
 			"Hansa",
 			"HansaSimulation",
 			"InputCore",
 			"Json",
+			"JsonUtilities",
 			"LevelEditor",
 			"PropertyEditor",
 			"Slate",
@@ -29,5 +35,10 @@ public class HansaEditor : ModuleRules
 			"ToolMenus",
 			"UnrealEd"
 		});
+
+		if (Target.Platform == UnrealTargetPlatform.Win64)
+		{
+			PublicSystemLibraries.AddRange(new string[] { "Advapi32.lib", "Bcrypt.lib" });
+		}
 	}
 }

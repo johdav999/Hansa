@@ -1,6 +1,10 @@
 #include "World/HansaBuildingWorldProjection.h"
 
 #include "Components/SceneComponent.h"
+#include "Components/ChildActorComponent.h"
+#include "Definitions/HansaEconomicDefinitions.h"
+#include "Definitions/HansaDefinitionBase.h"
+#include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/World.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -145,6 +149,10 @@ AHansaBuildingWorldProjectionActor::AHansaBuildingWorldProjectionActor()
 	BuildingMesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	BuildingMesh->ComponentTags.Add(TEXT("Hansa.Projection.Selectable"));
 
+	BuildingPresentation = CreateDefaultSubobject<UChildActorComponent>(TEXT("BuildingPresentation"));
+	BuildingPresentation->SetupAttachment(SceneRoot);
+	BuildingPresentation->SetMobility(EComponentMobility::Movable);
+
 	ConstructionPlaceholder = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ConstructionPlaceholder"));
 	ConstructionPlaceholder->SetupAttachment(SceneRoot);
 	ConstructionPlaceholder->SetStaticMesh(CubeMesh);
@@ -172,6 +180,11 @@ void AHansaBuildingWorldProjectionActor::EnsureMaterials()
 	}
 	for (UStaticMeshComponent* Component : { BuildingMesh, ConstructionPlaceholder, SelectionOutline, StatusMarker })
 	{
+		if (Component == BuildingMesh && BuildingMesh->GetStaticMesh() != CubeMesh)
+		{
+			DynamicMaterials.Add(nullptr);
+			continue;
+		}
 		UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create(BaseMaterial, this);
 		if (Material != nullptr)
 		{
@@ -189,7 +202,46 @@ void AHansaBuildingWorldProjectionActor::ApplyProjection(
 	BuildingId = Projection.BuildingId;
 	BuildingDefinitionId = Projection.Placement.BuildingDefinitionId.ToString();
 	WorldStatus = Projection.Status;
+	ProductionBlocker = Projection.ProductionBlocker;
 	bRoad = BuildingDefinitionId == TEXT("Building.Road");
+	if (PresentationDefinition == nullptr || PresentationDefinition->StableDefinitionId != BuildingDefinitionId)
+	{
+		PresentationDefinition = UHansaDefinitionBase::ResolveByStableId(BuildingDefinitionId);
+	}
+	const UHansaBuildingDefinition* BuildingDefinition = Cast<UHansaBuildingDefinition>(PresentationDefinition);
+	UClass* PresentationClass = BuildingDefinition != nullptr ? BuildingDefinition->LoadPresentationActorClass() : nullptr;
+	if (BuildingPresentation->GetChildActorClass() != PresentationClass)
+	{
+		BuildingPresentation->SetRelativeTransform(FTransform::Identity);
+		BuildingPresentation->SetChildActorClass(PresentationClass);
+		PresentationBounds = FBox(ForceInit);
+		if (AActor* Child = BuildingPresentation->GetChildActor())
+		{
+			PresentationBounds = Child->CalculateComponentsBoundingBoxInLocalSpace(true, true);
+			// The managed projection owns selection and navigation. Child art cannot intercept clicks.
+			TArray<UPrimitiveComponent*> Primitives;
+			Child->GetComponents<UPrimitiveComponent>(Primitives, true);
+			for (UPrimitiveComponent* Primitive : Primitives)
+			{
+				Primitive->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				Primitive->SetGenerateOverlapEvents(false);
+				Primitive->SetCanEverAffectNavigation(false);
+			}
+		}
+	}
+	const bool bAuthoredActor = BuildingPresentation->GetChildActor() != nullptr && PresentationBounds.IsValid;
+	UStaticMesh* AuthoredMesh = PresentationDefinition != nullptr ? PresentationDefinition->LoadPresentationMesh() : nullptr;
+	UStaticMesh* ResolvedMesh = !bAuthoredActor && AuthoredMesh != nullptr ? AuthoredMesh : CubeMesh.Get();
+	const bool bAuthoredMesh = ResolvedMesh != CubeMesh;
+	const bool bAuthoredVisual = bAuthoredMesh || bAuthoredActor;
+	const FBox VisualBounds = bAuthoredActor ? PresentationBounds : ResolvedMesh->GetBoundingBox();
+	if (BuildingMesh->GetStaticMesh() != ResolvedMesh)
+	{
+		BuildingMesh->EmptyOverrideMaterials();
+		DynamicMaterials.Reset();
+		BuildingMesh->SetStaticMesh(ResolvedMesh);
+	}
+	BuildingMesh->SetCastShadow(bAuthoredMesh);
 
 	int32 MinX = MAX_int32;
 	int32 MinY = MAX_int32;
@@ -203,28 +255,58 @@ void AHansaBuildingWorldProjectionActor::ApplyProjection(
 		MaxY = FMath::Max(MaxY, Cell.Y);
 	}
 
-	const double Height = bRoad ? 20.0 : 320.0;
-	const FVector FirstCenter = Hansa::Game::LubeckPlacementGrid::GridToWorld({ MinX, MinY });
-	const FVector LastCenter = Hansa::Game::LubeckPlacementGrid::GridToWorld({ MaxX, MaxY });
-	FVector LocalCenter = (FirstCenter + LastCenter) * 0.5;
-	LocalCenter.Z = 100.0 + Height * 0.5;
-	const FTransform LocalTransform(
-		FRotator(0.0, RotationYaw(Projection.Placement.Rotation), 0.0), LocalCenter);
-	SetActorTransform(LocalTransform * Foundation.GetActorTransform());
-
 	const double Width = FMath::Max(1, Projection.FootprintWidthCells) *
 		Hansa::Game::LubeckPlacementGrid::CellSize - 40.0;
 	const double Depth = FMath::Max(1, Projection.FootprintHeightCells) *
 		Hansa::Game::LubeckPlacementGrid::CellSize - 40.0;
-	BuildingMesh->SetRelativeScale3D(FVector(Width / 100.0, Depth / 100.0, Height / 100.0));
+	double MeshScale = 1.0;
+	FVector MeshCenter = FVector::ZeroVector;
+	if (bAuthoredVisual)
+	{
+		const FBox Bounds = VisualBounds;
+		const FVector Size = Bounds.GetSize();
+		MeshScale = FMath::Min(1.0, FMath::Min(Width / FMath::Max(1.0, Size.X), Depth / FMath::Max(1.0, Size.Y)));
+		MeshCenter = Bounds.GetCenter() * MeshScale;
+	}
+	BuildingMesh->SetRelativeLocation(bAuthoredMesh ? FVector(-MeshCenter.X, -MeshCenter.Y, 0.0) : FVector::ZeroVector);
+	double Height = bRoad ? 20.0 : 320.0;
+	double MeshBottom = 0.0;
+	if (bAuthoredVisual)
+	{
+		const FBox MeshBounds = VisualBounds;
+		Height = MeshBounds.GetSize().Z * MeshScale;
+		MeshBottom = MeshBounds.Min.Z * MeshScale;
+	}
+	const FVector FirstCenter = Hansa::Game::LubeckPlacementGrid::GridToWorld({ MinX, MinY });
+	const FVector LastCenter = Hansa::Game::LubeckPlacementGrid::GridToWorld({ MaxX, MaxY });
+	FVector LocalCenter = (FirstCenter + LastCenter) * 0.5;
+	LocalCenter.Z = bAuthoredVisual ? 100.0 - MeshBottom : 100.0 + Height * 0.5;
+	const FTransform LocalTransform(
+		FRotator(0.0, RotationYaw(Projection.Placement.Rotation), 0.0), LocalCenter);
+	SetActorTransform(LocalTransform * Foundation.GetActorTransform());
 
+	BuildingMesh->SetRelativeScale3D(bAuthoredMesh
+		? FVector(MeshScale)
+		: FVector(Width / 100.0, Depth / 100.0, Height / 100.0));
+
+	if (bAuthoredActor)
+	{
+		BuildingPresentation->SetRelativeLocation(FVector(-MeshCenter.X, -MeshCenter.Y, 0.0));
+		BuildingPresentation->SetRelativeScale3D(FVector(MeshScale));
+		// An invisible box remains a stable click target throughout the animation.
+		BuildingMesh->SetRelativeLocation(FVector(0.0, 0.0, MeshBottom + Height * 0.5));
+		BuildingMesh->SetRelativeScale3D(VisualBounds.GetSize() * MeshScale / 100.0);
+	}
 	const double PlaceholderHeight = bRoad ? 12.0 : 80.0;
-	ConstructionPlaceholder->SetRelativeLocation(FVector(0.0, 0.0, -(Height - PlaceholderHeight) * 0.5));
+	ConstructionPlaceholder->SetRelativeLocation(FVector(
+		0.0, 0.0, bAuthoredVisual ? MeshBottom + PlaceholderHeight * 0.5 : -(Height - PlaceholderHeight) * 0.5));
 	ConstructionPlaceholder->SetRelativeScale3D(
 		FVector(Width / 100.0, Depth / 100.0, PlaceholderHeight / 100.0));
-	SelectionOutline->SetRelativeLocation(FVector(0.0, 0.0, -Height * 0.5 - 3.0));
+	SelectionOutline->SetRelativeLocation(
+		FVector(0.0, 0.0, bAuthoredVisual ? MeshBottom - 3.0 : -Height * 0.5 - 3.0));
 	SelectionOutline->SetRelativeScale3D(FVector((Width + 40.0) / 100.0, (Depth + 40.0) / 100.0, 0.06));
-	StatusMarker->SetRelativeLocation(FVector(0.0, 0.0, Height * 0.5 + 100.0));
+	StatusMarker->SetRelativeLocation(
+		FVector(0.0, 0.0, bAuthoredVisual ? MeshBottom + Height + 100.0 : Height * 0.5 + 100.0));
 	StatusMarker->SetRelativeScale3D(FVector(0.45, 0.45, 0.8));
 
 	Tags.Reset();
@@ -257,7 +339,15 @@ void AHansaBuildingWorldProjectionActor::ApplyVisualState()
 	using namespace Hansa::Simulation;
 	const bool bConstructing = WorldStatus == EHansaBuildingWorldStatus::UnderConstruction;
 	const bool bBlocked = WorldStatus == EHansaBuildingWorldStatus::Blocked;
-	BuildingMesh->SetVisibility(!bConstructing, true);
+	AActor* Presentation = BuildingPresentation->GetChildActor();
+	BuildingMesh->SetVisibility(!bConstructing && (Presentation == nullptr || !PresentationBounds.IsValid), true);
+	if (Presentation != nullptr)
+	{
+		Presentation->SetActorHiddenInGame(bConstructing);
+		TArray<AActor*> PresentationChildren;
+		Presentation->GetAllChildActors(PresentationChildren, true);
+		for (AActor* Child : PresentationChildren) Child->SetActorHiddenInGame(bConstructing);
+	}
 	ConstructionPlaceholder->SetVisibility(bConstructing, true);
 	SelectionOutline->SetVisibility(bSelected, true);
 	StatusMarker->SetVisibility(bConstructing || bBlocked, true);
@@ -266,7 +356,10 @@ void AHansaBuildingWorldProjectionActor::ApplyVisualState()
 	if (DynamicMaterials.Num() == 4)
 	{
 		const FLinearColor BodyColor = bRoad ? HansaColor(TEXT("795137")) : HansaColor(TEXT("A44C3F"));
-		DynamicMaterials[0]->SetVectorParameterValue(TEXT("Color"), BodyColor);
+		if (DynamicMaterials[0] != nullptr)
+		{
+			DynamicMaterials[0]->SetVectorParameterValue(TEXT("Color"), BodyColor);
+		}
 		DynamicMaterials[1]->SetVectorParameterValue(TEXT("Color"), HansaColor(TEXT("D09132")));
 		DynamicMaterials[2]->SetVectorParameterValue(TEXT("Color"), HansaColor(TEXT("C19A52")));
 		DynamicMaterials[3]->SetVectorParameterValue(

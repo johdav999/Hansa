@@ -552,17 +552,23 @@ Execute S13-P01 from Docs/MVPSprintPlan.md. Implement the common staged asset wo
 Execute S13-P02 from Docs/MVPSprintPlan.md. Implement the live Tripo adapter in the external worker for one text/image-to-static-mesh harbor prop workflow, following Docs/EditorMVP.md. Add spend confirmation, polling/retry/cancel, bounded download, GLB/FBX validation and manifest provenance. In Unreal staging, validate centimeters, axes, pivot, triangle/material/texture limits and basic collision; preview in a deterministic scene and promote only after human approval. Add mock/recorded provider tests. Do not implement skeletal meshes, rigging, animations, automated retopology or live TRELLIS.
 ```
 
+Implementation: [Tripo static props](Development/TripoStaticProps.md). Validation and remaining gates: [S13-P02 evidence](Development/Evidence/S13P02-20260906.md).
+
 ### S13-P03 — ElevenLabs SFX and speech adapters
 
 ```text
 Execute S13-P03 from Docs/MVPSprintPlan.md. Implement worker adapters for one short non-looping UI/harbor SFX and one short single-speaker English line, with at most two variants each. Require rights/voice acknowledgement and spend confirmation. Validate decoding, duration, channels, sample rate, clipping and leading/trailing silence; attach stable SFX/dialogue line IDs and subtitle text; preview and promote approved takes with provider/model/settings/output-hash provenance. Use mocks/recordings in CI and do not add voice cloning, multi-speaker dialogue or localization batches.
 ```
 
+Implementation: [ElevenLabs audio takes](Development/ElevenLabsAudioTakes.md). Validation and remaining gates: [S13-P03 evidence](Development/Evidence/S13P03-20260906.md).
+
 ### S13-P04 — Media pipeline acceptance and recovery
 
 ```text
 Execute S13-P04 from Docs/MVPSprintPlan.md. Build editor automation and a clean manual demo for mock-first Tripo, ElevenLabs SFX and ElevenLabs speech jobs: submit, observe progress, cancel/retry one case, restart/resume, validate, preview, approve, promote and verify final references. Add optional explicitly enabled live smoke instructions without embedding credentials or making acceptance depend on provider availability. Capture provenance/evidence and prove that deleting transient Saved job state does not invalidate promoted asset provenance stored under the approved source/content paths.
 ```
+
+Implementation: [Media acceptance and recovery](Development/MediaAcceptance.md). Validation and remaining gates: [S13-P04 evidence](Development/Evidence/S13P04-20260906.md).
 
 ### Sprint 13 exit gate
 
@@ -583,11 +589,15 @@ The complete MVP passes the clean-checkout authoring/play/automation demo, acces
 Execute S14-P01 from Docs/MVPSprintPlan.md. Implement the final golden MCP test required by Docs/MVP.md: start a development session, negotiate capabilities, load/reset the fixture, build the Lübeck slice, diagnose the grain shortage through semantic UI, establish a delivering route, unlock research, observe merchant AI, save/load, reach a valid victory and capture synchronized evidence. Use observable waits rather than sleeps, normal commands rather than shortcuts, and structural/query assertions alongside native screenshots. Bundle protocol versions, fixture/content hashes, seed, state hashes, semantic snapshots, events, logs and assertions for actionable failures.
 ```
 
+Implementation: [MVP golden MCP gate](Development/MvpGoldenMcp.md). Validation and current release blocker: [S14-P01 evidence](Development/Evidence/S14P01-20260907.md).
+
 ### S14-P02 — UI UAT, accessibility and resolution pass
 
 ```text
 Execute S14-P02 from Docs/MVPSprintPlan.md. Run evidence-led UAT on the MVP golden flows and fix verified priority defects in HUD, build mode, inspector, city overview, market, route editor, research, scenario/victory and save/load UI. Validate mouse/keyboard, complete controller golden path, focus restoration, localization expansion, high contrast, large text, reduced motion, color redundancy and safe areas. Capture true native 1280x720 and 1920x1080 screenshots; never resize raster assets or captures. Keep changes component-based and update semantic coverage with every UI fix.
 ```
+
+Implementation and validation: [S14-P02 UI UAT evidence](Development/Evidence/S14P02-20260907.md). Runtime-backed build-mode validation remains explicitly blocked by the reviewed registry hash mismatch recorded there.
 
 ### S14-P03 — Determinism, performance, networking and security hardening
 
@@ -595,11 +605,15 @@ Execute S14-P02 from Docs/MVPSprintPlan.md. Run evidence-led UAT on the MVP gold
 Execute S14-P03 from Docs/MVPSprintPlan.md. Profile and harden the MVP against the budgets in Docs/TechnicalArchitecture.md. Run long deterministic simulations, repeated fixture hashes, inventory conservation, market bounds, AI cadence, list/widget update costs, Actor/projection counts, save size/time, two-client replication and reconnect. Fuzz or boundary-test command/protocol/schema inputs. Audit secret redaction, upload confirmation, file/path limits and disabled automation. Fix measured MVP blockers and record deferred non-blockers with evidence; do not broaden feature scope.
 ```
 
+Implementation and validation: [S14-P03 hardening evidence](Development/Evidence/S14P03-20260907.md). Runtime, reviewed-fixture and windmill-provenance release blockers remain explicit there.
+
 ### S14-P04 — Clean-checkout release gate and handoff
 
 ```text
 Execute S14-P04 from Docs/MVPSprintPlan.md. From a clean-checkout-equivalent state, run the documented build, automated tests, editor authoring demo with mocks, integrated gameplay demo, MCP golden test, save/multiplayer fixtures and Shipping package audit. Verify no Shipping reference or package contains HansaEditor, HansaAutomation, Tools workers, provider credentials/config, Generated/Staging, Developer preview content or test-only fixtures. Update README and developer/provider/test documentation to match verified commands. Produce an MVP acceptance report mapping every Docs/MVP.md gate to evidence, with unresolved items explicitly blocking release rather than being silently waived.
 ```
+
+Implementation and release verdict: [S14-P04 MVP acceptance](Development/Evidence/S14P04-20260907.md). The runner/docs handoff is implemented; the MVP remains release-blocked by the explicit items in that report.
 
 ### Sprint 14 exit gate
 

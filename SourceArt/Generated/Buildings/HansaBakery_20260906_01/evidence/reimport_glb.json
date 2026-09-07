@@ -1,0 +1,443 @@
+{
+  "format": "glb",
+  "bounds_m": [
+    -4.8368964195251465,
+    -7.985000133514404,
+    0.019999995827674866,
+    5.169795989990234,
+    11.5,
+    16.66499900817871
+  ],
+  "mesh_count": 1,
+  "material_slots": [
+    [
+      "PBR_Lime_Plaster",
+      "PBR_Limestone",
+      "PBR_Weathered_Oak",
+      "PBR_Lime_Mortar",
+      "PBR_Brick_0",
+      "PBR_Damp_Lime",
+      "PBR_Brick_1",
+      "PBR_Brick_2",
+      "PBR_Oven_Soot",
+      "PBR_Lead_Roofing",
+      "PBR_Clay_2",
+      "PBR_Clay_0",
+      "PBR_Clay_1",
+      "PBR_Window_Glass",
+      "PBR_Forged_Iron",
+      "PBR_Rye_Crust",
+      "PBR_Flour_Linen"
+    ]
+  ],
+  "images": [
+    {
+      "name": "Brick_0_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Brick_0_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Brick_0_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Brick_1_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Brick_1_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Brick_1_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Brick_2_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Brick_2_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Brick_2_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Clay_0_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Clay_0_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Clay_0_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Clay_1_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Clay_1_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Clay_1_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Clay_2_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Clay_2_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Clay_2_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Damp_Lime_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Damp_Lime_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Damp_Lime_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Flour_Linen_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Flour_Linen_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Flour_Linen_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Forged_Iron_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Forged_Iron_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Forged_Iron_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Lead_Roofing_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Lead_Roofing_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Lead_Roofing_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Lime_Mortar_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Lime_Mortar_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Lime_Mortar_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Lime_Plaster_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Lime_Plaster_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Lime_Plaster_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Limestone_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Limestone_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Limestone_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Oven_Soot_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Oven_Soot_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Oven_Soot_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Rye_Crust_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Rye_Crust_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Rye_Crust_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Weathered_Oak_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Weathered_Oak_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Weathered_Oak_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Window_Glass_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Window_Glass_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "Window_Glass_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    }
+  ]
+}

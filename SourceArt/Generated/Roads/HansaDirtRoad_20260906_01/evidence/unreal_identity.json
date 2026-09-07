@@ -1,0 +1,11 @@
+{
+  "project": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+  "level": "/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP.L_Lubeck_MVP",
+  "dirty_maps": [],
+  "existing": [
+    "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad",
+    "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Textures/T_DirtRoad_BaseColor.T_DirtRoad_BaseColor",
+    "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Textures/T_DirtRoad_Normal.T_DirtRoad_Normal",
+    "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Textures/T_DirtRoad_Roughness.T_DirtRoad_Roughness"
+  ]
+}

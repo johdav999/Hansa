@@ -1,0 +1,145 @@
+{
+  "meshes": [
+    {
+      "name": "SM_DirtRoad_Corner90_R6m",
+      "bounds_cm": {
+        "min": [
+          3.1472198315896094e-05,
+          -7.343513425439596e-05,
+          -8.265462875366211
+        ],
+        "max": [
+          839.9999389648438,
+          839.9999389648438,
+          5.327385902404785
+        ]
+      },
+      "material": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad",
+      "vertices": 4753,
+      "uv_channels": 1
+    },
+    {
+      "name": "SM_DirtRoad_Crossroads_12m",
+      "bounds_cm": {
+        "min": [
+          -600.0,
+          -600.0,
+          -8.366937637329102
+        ],
+        "max": [
+          600.0,
+          600.0,
+          5.394791603088379
+        ]
+      },
+      "material": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad",
+      "vertices": 9517,
+      "uv_channels": 1
+    },
+    {
+      "name": "SM_DirtRoad_End_5m",
+      "bounds_cm": {
+        "min": [
+          -250.00001525878906,
+          -244.47647094726562,
+          -17.5
+        ],
+        "max": [
+          250.00001525878906,
+          244.4764862060547,
+          5.018808841705322
+        ]
+      },
+      "material": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad",
+      "vertices": 3969,
+      "uv_channels": 1
+    },
+    {
+      "name": "SM_DirtRoad_Straight_8m",
+      "bounds_cm": {
+        "min": [
+          -400.0000305175781,
+          -246.1241912841797,
+          -8.214238166809082
+        ],
+        "max": [
+          400.0000305175781,
+          246.1241912841797,
+          5.291560173034668
+        ]
+      },
+      "material": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad",
+      "vertices": 3969,
+      "uv_channels": 1
+    },
+    {
+      "name": "SM_DirtRoad_TJunction_12m",
+      "bounds_cm": {
+        "min": [
+          -600.0,
+          -600.0,
+          -8.367018699645996
+        ],
+        "max": [
+          600.0,
+          256.25,
+          5.394791603088379
+        ]
+      },
+      "material": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad",
+      "vertices": 7779,
+      "uv_channels": 1
+    }
+  ],
+  "spline_components": [
+    {
+      "path": "/Game/Hansa/Developer/GenerationPreview/HansaDirtRoad_20260906_01/L_DirtRoad_Review.L_DirtRoad_Review:PersistentLevel.BP_DirtRoad_SplineExample_C_1.RoadSegment0",
+      "mesh": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m.SM_DirtRoad_Straight_8m",
+      "start": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        700.0,
+        180.0,
+        50.0
+      ],
+      "forward": "<SplineMeshAxis.X: 0>",
+      "registered": "unknown"
+    },
+    {
+      "path": "/Game/Hansa/Developer/GenerationPreview/HansaDirtRoad_20260906_01/L_DirtRoad_Review.L_DirtRoad_Review:PersistentLevel.BP_DirtRoad_SplineExample_C_1.RoadSegment1",
+      "mesh": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m.SM_DirtRoad_Straight_8m",
+      "start": [
+        700.0,
+        180.0,
+        50.0
+      ],
+      "end": [
+        1400.0,
+        -100.0,
+        100.0
+      ],
+      "forward": "<SplineMeshAxis.X: 0>",
+      "registered": "unknown"
+    },
+    {
+      "path": "/Game/Hansa/Developer/GenerationPreview/HansaDirtRoad_20260906_01/L_DirtRoad_Review.L_DirtRoad_Review:PersistentLevel.BP_DirtRoad_SplineExample_C_1.RoadSegment2",
+      "mesh": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m.SM_DirtRoad_Straight_8m",
+      "start": [
+        1400.0,
+        -100.0,
+        100.0
+      ],
+      "end": [
+        2100.0,
+        0.0,
+        0.0
+      ],
+      "forward": "<SplineMeshAxis.X: 0>",
+      "registered": "unknown"
+    }
+  ],
+  "dirty_maps": []
+}

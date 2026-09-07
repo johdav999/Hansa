@@ -62,6 +62,19 @@ namespace Hansa::Simulation
 		}
 	}
 
+	const TCHAR* LexToString(const EHansaMarketInformationState State)
+	{
+		switch (State)
+		{
+		case EHansaMarketInformationState::Current: return TEXT("Current");
+		case EHansaMarketInformationState::Recent: return TEXT("Recent");
+		case EHansaMarketInformationState::Stale: return TEXT("Stale");
+		case EHansaMarketInformationState::Estimated: return TEXT("Estimated");
+		case EHansaMarketInformationState::Unknown: return TEXT("Unknown");
+		default: return TEXT("Unknown");
+		}
+	}
+
 	namespace
 	{
 		constexpr int32 BasisPointScale = 10000;
@@ -286,6 +299,73 @@ namespace Hansa::Simulation
 			return FHansaQuantity::FromRaw(Total);
 		}
 
+		int64 DepositBackgroundProduction(FHansaCityMarketState& Market, FHansaInventoryLedger& Inventories,
+			const FHansaSimulationTick Tick)
+		{
+			int64 Remaining = Market.BackgroundProductionPerUpdate.GetRawValue();
+			int64 Applied = 0;
+			const FName SourceId(*FString::Printf(TEXT("MarketBackground.%s.Production"), *Market.CityId.ToString()));
+			for (const FHansaInventoryId InventoryId : Market.InventoryIds)
+			{
+				if (Remaining <= 0) break;
+				const TOptional<FHansaInventoryProjection> Inventory =
+					Inventories.CreateReadOnlyAccess().QueryInventory(InventoryId);
+				if (!Inventory.IsSet()) continue;
+				const int64 Quantity = FMath::Min(Remaining, Inventory->FreeCapacity.GetRawValue());
+				if (Quantity <= 0) continue;
+				const FHansaInventoryTransactionResult Result = Inventories.TryTransfer(
+					FHansaInventoryEndpoint::Source(SourceId), FHansaInventoryEndpoint::Inventory(InventoryId),
+					Market.GoodId, FHansaQuantity::FromRaw(Quantity), Tick,
+					Inventories.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
+				if (!Result.IsSuccess()) continue;
+				Applied = SafeAdd(Applied, Result.AppliedQuantity.GetRawValue());
+				Remaining -= Result.AppliedQuantity.GetRawValue();
+			}
+			return Applied;
+		}
+
+		int64 WithdrawBackgroundDemand(FHansaCityMarketState& Market, FHansaInventoryLedger& Inventories,
+			const FHansaQuantity Requested, const TCHAR* DemandKind, const FHansaSimulationTick Tick)
+		{
+			int64 Remaining = Requested.GetRawValue();
+			int64 Applied = 0;
+			const FName SinkId(*FString::Printf(TEXT("MarketBackground.%s.%s"), *Market.CityId.ToString(), DemandKind));
+			for (const FHansaInventoryId InventoryId : Market.InventoryIds)
+			{
+				if (Remaining <= 0) break;
+				const TOptional<FHansaInventoryStockProjection> Stock =
+					Inventories.CreateReadOnlyAccess().QueryStock(InventoryId, Market.GoodId);
+				if (!Stock.IsSet()) continue;
+				const int64 Quantity = FMath::Min(Remaining, Stock->Available.GetRawValue());
+				if (Quantity <= 0) continue;
+				const FHansaInventoryTransactionResult Result = Inventories.TryTransfer(
+					FHansaInventoryEndpoint::Inventory(InventoryId), FHansaInventoryEndpoint::Sink(SinkId),
+					Market.GoodId, FHansaQuantity::FromRaw(Quantity), Tick,
+					Inventories.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
+				if (!Result.IsSuccess()) continue;
+				Applied = SafeAdd(Applied, Result.AppliedQuantity.GetRawValue());
+				Remaining -= Result.AppliedQuantity.GetRawValue();
+			}
+			return Applied;
+		}
+
+		void PublishReport(FHansaCityMarketState& Market, const FHansaSimulationTick Tick)
+		{
+			Market.Report.bAvailable = true;
+			Market.Report.ReportTick = Tick.GetValue();
+			Market.Report.MarketUpdateTick = Market.LastUpdateTick;
+			Market.Report.Stock = Market.CurrentStock;
+			Market.Report.DesiredReserve = Market.DesiredReserve;
+			Market.Report.CitizenDemand = Market.CitizenDemand;
+			Market.Report.IndustrialDemand = Market.IndustrialDemand;
+			Market.Report.RecentLocalProduction = Market.RecentLocalProduction;
+			Market.Report.ExpectedIncomingSupply = Market.ExpectedIncomingSupply;
+			Market.Report.UnmetDemand = Market.UnmetDemand;
+			Market.Report.PriceMilliMarks = Market.CurrentPriceMilliMarks;
+			Market.Report.Factors = Market.Factors;
+			Market.Report.PriceHistory = Market.PriceHistory;
+		}
+
 		void UpdatePrice(FHansaCityMarketState& Market, const FHansaMarketSettings& Settings,
 			const FHansaCompiledGoodDefinition& Good)
 		{
@@ -340,7 +420,7 @@ namespace Hansa::Simulation
 	}
 
 	void FHansaMarketExecutor::AdvanceOneTick(TArray<FHansaCityMarketState>& Markets, const FHansaMarketSettings& Settings,
-		const FHansaInventoryLedger& InventoryLedger, const TArray<FHansaProductionState>& Productions,
+		FHansaInventoryLedger& InventoryLedger, const TArray<FHansaProductionState>& Productions,
 		const TArray<FHansaPopulationCohortState>& PopulationCohorts,
 		const FHansaEconomicRegistry& Registry, const FHansaSimulationTick Tick)
 	{
@@ -358,7 +438,6 @@ namespace Hansa::Simulation
 		{
 			return;
 		}
-		const FHansaInventoryReadOnlyAccess Inventories = InventoryLedger.CreateReadOnlyAccess();
 		for (FHansaCityMarketState& Market : Markets)
 		{
 			const FHansaCompiledGoodDefinition* Good = Registry.FindGood(Market.GoodId.ToString());
@@ -366,17 +445,36 @@ namespace Hansa::Simulation
 			{
 				continue;
 			}
-			Market.CurrentStock = SumStock(Market, Inventories);
-			Market.CitizenDemand = SumCitizenDemand(Market, PopulationCohorts);
-			Market.IndustrialDemand = SumIndustrialDemand(Market, Productions, Registry);
-			Market.RecentLocalProduction = Market.AccumulatedLocalProductionSinceUpdate;
+			if (Market.bMarketOnly)
+			{
+				const int64 Produced = DepositBackgroundProduction(Market, InventoryLedger, Tick);
+				const int64 CitizenConsumed = WithdrawBackgroundDemand(Market, InventoryLedger,
+					Market.BackgroundCitizenDemandPerUpdate, TEXT("CitizenDemand"), Tick);
+				const int64 IndustrialConsumed = WithdrawBackgroundDemand(Market, InventoryLedger,
+					Market.BackgroundIndustrialDemandPerUpdate, TEXT("IndustrialDemand"), Tick);
+				Market.CurrentStock = SumStock(Market, InventoryLedger.CreateReadOnlyAccess());
+				Market.CitizenDemand = Market.BackgroundCitizenDemandPerUpdate;
+				Market.IndustrialDemand = Market.BackgroundIndustrialDemandPerUpdate;
+				Market.RecentLocalProduction = FHansaQuantity::FromRaw(Produced);
+				Market.UnmetDemand = FHansaQuantity::FromRaw(SafeAdd(
+					FMath::Max<int64>(0, Market.BackgroundCitizenDemandPerUpdate.GetRawValue() - CitizenConsumed),
+					FMath::Max<int64>(0, Market.BackgroundIndustrialDemandPerUpdate.GetRawValue() - IndustrialConsumed)));
+			}
+			else
+			{
+				const FHansaInventoryReadOnlyAccess Inventories = InventoryLedger.CreateReadOnlyAccess();
+				Market.CurrentStock = SumStock(Market, Inventories);
+				Market.CitizenDemand = SumCitizenDemand(Market, PopulationCohorts);
+				Market.IndustrialDemand = SumIndustrialDemand(Market, Productions, Registry);
+				Market.RecentLocalProduction = Market.AccumulatedLocalProductionSinceUpdate;
+				Market.UnmetDemand = FHansaQuantity::FromRaw(SafeAdd(
+					SumUnmetCitizenDemand(Market, PopulationCohorts).GetRawValue(),
+						SumUnmetIndustrialDemand(Market, Productions, Registry).GetRawValue()));
+			}
 			Market.AccumulatedLocalProductionSinceUpdate = FHansaQuantity();
 			Market.ExpectedIncomingSupply = Market.ConfirmedIncomingSupplyPerUpdate;
-			Market.UnmetDemand = FHansaQuantity::FromRaw(SafeAdd(
-				SumUnmetCitizenDemand(Market, PopulationCohorts).GetRawValue(),
-					SumUnmetIndustrialDemand(Market, Productions, Registry).GetRawValue()));
-			Market.MinimumConsumerAffordabilityBasisPoints =
-				MinimumConsumerAffordability(Market, PopulationCohorts);
+			Market.MinimumConsumerAffordabilityBasisPoints = Market.bMarketOnly
+				? 10000 : MinimumConsumerAffordability(Market, PopulationCohorts);
 			UpdatePrice(Market, Settings, *Good);
 			Market.LastUpdateTick = Tick.GetValue();
 			UpdateAlertOnset(Market.UnmetDemand.GetRawValue() > 0, Tick.GetValue(), Market.ShortageSinceTick);
@@ -401,6 +499,11 @@ namespace Hansa::Simulation
 			if (Market.PriceHistory.Num() > Settings.PriceHistoryCapacity)
 			{
 				Market.PriceHistory.RemoveAt(0, Market.PriceHistory.Num() - Settings.PriceHistoryCapacity);
+			}
+			if (Market.ReportPolicy.ReportCadenceTicks > 0 &&
+				Tick.GetValue() % Market.ReportPolicy.ReportCadenceTicks == 0)
+			{
+				PublishReport(Market, Tick);
 			}
 		}
 	}

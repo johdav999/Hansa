@@ -1,0 +1,201 @@
+{
+  "format": "fbx",
+  "bounds_m": [
+    [
+      -6.688296794891357,
+      -4.194999694824219,
+      -0.014999451115727425
+    ],
+    [
+      6.688296794891357,
+      4.0,
+      17.608295440673828
+    ]
+  ],
+  "mesh_count": 1,
+  "vertex_color_layers": [
+    [
+      "Weathering"
+    ]
+  ],
+  "images": [
+    {
+      "name": "T_Mill_Fieldstone_BaseColor",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Fieldstone_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Fieldstone_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_ForgedIron_BaseColor",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_ForgedIron_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_ForgedIron_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Masonry_BaseColor",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Masonry_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Masonry_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_OldBrick_BaseColor",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_OldBrick_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_OldBrick_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_RecessTimber_BaseColor",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_RecessTimber_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_RecessTimber_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_SagePaint_BaseColor",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_SagePaint_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_SagePaint_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_WeatheredTimber_BaseColor",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_WeatheredTimber_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_WeatheredTimber_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_WindowGlass_BaseColor",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_WindowGlass_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_WindowGlass_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "materials": [
+    "OldBrick",
+    "Masonry",
+    "SagePaint",
+    "WeatheredTimber",
+    "RecessTimber",
+    "Fieldstone",
+    "WindowGlass",
+    "ForgedIron"
+  ]
+}

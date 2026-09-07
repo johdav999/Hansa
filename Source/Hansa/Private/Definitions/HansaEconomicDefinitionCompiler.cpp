@@ -2,7 +2,11 @@
 
 #include "Definitions/HansaEconomicDefinitions.h"
 #include "Definitions/HansaMarketDefinitions.h"
+#include "Definitions/HansaMerchantAIDefinitions.h"
 #include "Definitions/HansaPopulationDefinitions.h"
+#include "Definitions/HansaResearchDefinitions.h"
+#include "Definitions/HansaScenarioDefinitions.h"
+#include "Definitions/HansaTradeDefinitions.h"
 
 namespace Hansa::Game::EconomicCompiler
 {
@@ -204,6 +208,13 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 	TSet<FString> BuildingIds;
 	TSet<FString> NeedIds;
 	TSet<FString> PopulationTierIds;
+	TSet<FString> CityIds;
+	TSet<FString> VehicleIds;
+	TSet<FString> RouteIds;
+	TSet<FString> TechnologyIds;
+	TSet<FString> ScenarioObjectiveIds;
+	TSet<FString> VictoryIds;
+	TSet<FString> ScenarioIds;
 	for (const UHansaDefinitionBase* Definition : SortedDefinitions)
 	{
 		Definition->ValidateDefinition(Result.Issues);
@@ -237,12 +248,40 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 		}
 		else if (Definition->IsA<UHansaCityMarketProfileDefinition>())
 		{
+			CityIds.Add(Definition->StableDefinitionId);
+		}
+		else if (Definition->IsA<UHansaVehicleDefinition>())
+		{
+			VehicleIds.Add(Definition->StableDefinitionId);
+		}
+		else if (Definition->IsA<UHansaRouteDefinition>())
+		{
+			RouteIds.Add(Definition->StableDefinitionId);
+		}
+		else if (Definition->IsA<UHansaTechnologyDefinition>())
+		{
+			TechnologyIds.Add(Definition->StableDefinitionId);
+		}
+		else if (Definition->IsA<UHansaMerchantAITuningDefinition>())
+		{
+		}
+		else if (Definition->IsA<UHansaScenarioObjectiveDefinition>())
+		{
+			ScenarioObjectiveIds.Add(Definition->StableDefinitionId);
+		}
+		else if (Definition->IsA<UHansaVictoryDefinition>())
+		{
+			VictoryIds.Add(Definition->StableDefinitionId);
+		}
+		else if (Definition->IsA<UHansaScenarioDefinition>())
+		{
+			ScenarioIds.Add(Definition->StableDefinitionId);
 		}
 		else
 		{
 			AddIssue(Result.Issues, TEXT("HSA-REGISTRY-002"), Definition->StableDefinitionId,
 				NSLOCTEXT("HansaEconomicCompiler", "UnsupportedDefinition", "The economic compiler received a non-economic definition type."),
-				NSLOCTEXT("HansaEconomicCompiler", "UnsupportedDefinitionRemedy", "Compile only good, recipe, building, need, population-tier and city-market definitions in this registry."));
+				NSLOCTEXT("HansaEconomicCompiler", "UnsupportedDefinitionRemedy", "Compile only supported economic, population, market, vehicle, and route definitions in this registry."));
 		}
 	}
 
@@ -398,6 +437,130 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 				}
 			}
 		}
+		else if (const UHansaRouteDefinition* Route = Cast<UHansaRouteDefinition>(Definition))
+		{
+			for (const FHansaRouteConnectionDefinition& Connection : Route->Connections)
+			{
+				if (!CityIds.Contains(Connection.SourceCityId) || !CityIds.Contains(Connection.DestinationCityId))
+				{
+					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-021"), Route->StableDefinitionId + TEXT(".Connections"),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingRouteCity", "Route connection references a city without a city-market definition in this registry."),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingRouteCityRemedy", "Add both referenced City.* market definitions or correct the route connection."));
+				}
+			}
+		}
+		else if (const UHansaTechnologyDefinition* Technology = Cast<UHansaTechnologyDefinition>(Definition))
+		{
+			for (const FString& PrerequisiteId : Technology->PrerequisiteTechnologyIds)
+			{
+				if (!TechnologyIds.Contains(PrerequisiteId))
+				{
+					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-022"), Technology->StableDefinitionId + TEXT(".PrerequisiteTechnologyIds"),
+						FText::Format(NSLOCTEXT("HansaEconomicCompiler", "MissingTechnologyPrerequisite", "Technology prerequisite {0} is missing."), FText::FromString(PrerequisiteId)),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingTechnologyPrerequisiteRemedy", "Add the referenced technology or correct the stable prerequisite ID."));
+				}
+			}
+			for (const FHansaResearchEffectDefinition& Effect : Technology->Effects)
+			{
+				if (!Effect.TargetStableId.IsEmpty() && !AllIds.Contains(Effect.TargetStableId))
+				{
+					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-023"), Technology->StableDefinitionId + TEXT(".Effects"),
+						FText::Format(NSLOCTEXT("HansaEconomicCompiler", "MissingTechnologyEffectTarget", "Technology effect target {0} is missing."), FText::FromString(Effect.TargetStableId)),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingTechnologyEffectTargetRemedy", "Choose a stable ID from the same accepted content set."));
+				}
+			}
+		}
+		else if (const UHansaMerchantAITuningDefinition* Tuning = Cast<UHansaMerchantAITuningDefinition>(Definition))
+		{
+			for (const FString& TechnologyId : Tuning->PreferredResearchTechnologyIds)
+			{
+				if (!TechnologyIds.Contains(TechnologyId))
+				{
+					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-027"), Tuning->StableDefinitionId + TEXT(".PreferredResearchTechnologyIds"),
+						FText::Format(NSLOCTEXT("HansaEconomicCompiler", "MissingAIResearch", "Merchant AI tuning references missing technology {0}."), FText::FromString(TechnologyId)),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingAIResearchRemedy", "Add the referenced technology or remove it from the priority list."));
+				}
+			}
+			for (const FHansaMerchantAITradePlanDefinition& Plan : Tuning->TradePlans)
+			{
+				if (!RouteIds.Contains(Plan.RouteDefinitionId) || !VehicleIds.Contains(Plan.VehicleDefinitionId) ||
+					!CityIds.Contains(Plan.SourceCityId) || !CityIds.Contains(Plan.DestinationCityId) || !GoodIds.Contains(Plan.GoodId))
+				{
+					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-028"), Tuning->StableDefinitionId + TEXT(".TradePlans"),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingAIPlanReference", "Merchant AI trade plan contains a missing route, vehicle, city, or good stable reference."),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingAIPlanReferenceRemedy", "Choose stable IDs from the same accepted registry content set."));
+				}
+				const UHansaRouteDefinition* RouteDefinition = nullptr;
+				const UHansaVehicleDefinition* VehicleDefinition = nullptr;
+				for (const UHansaDefinitionBase* Candidate : SortedDefinitions)
+				{
+					if (Candidate->StableDefinitionId == Plan.RouteDefinitionId) RouteDefinition = Cast<UHansaRouteDefinition>(Candidate);
+					if (Candidate->StableDefinitionId == Plan.VehicleDefinitionId) VehicleDefinition = Cast<UHansaVehicleDefinition>(Candidate);
+				}
+				if (RouteDefinition != nullptr && VehicleDefinition != nullptr && RouteDefinition->Mode != VehicleDefinition->Mode)
+				{
+					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-029"), Tuning->StableDefinitionId + TEXT(".TradePlans"),
+						NSLOCTEXT("HansaEconomicCompiler", "AIPlanModeMismatch", "Merchant AI route and vehicle definitions use different travel modes."),
+						NSLOCTEXT("HansaEconomicCompiler", "AIPlanModeMismatchRemedy", "Pair a sea route with a sea vehicle or a land route with a land vehicle."));
+				}
+			}
+		}
+		else if (const UHansaScenarioObjectiveDefinition* Objective = Cast<UHansaScenarioObjectiveDefinition>(Definition))
+		{
+			if (!Objective->CityId.IsEmpty() && !CityIds.Contains(Objective->CityId))
+			{
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-030"), Objective->StableDefinitionId + TEXT(".CityId"),
+					NSLOCTEXT("HansaEconomicCompiler", "MissingObjectiveCity", "Scenario objective references a missing city."),
+					NSLOCTEXT("HansaEconomicCompiler", "MissingObjectiveCityRemedy", "Choose a City.* definition from the accepted content set."));
+			}
+			if (!Objective->GoodId.IsEmpty() && !GoodIds.Contains(Objective->GoodId))
+			{
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-031"), Objective->StableDefinitionId + TEXT(".GoodId"),
+					NSLOCTEXT("HansaEconomicCompiler", "MissingObjectiveGood", "Scenario objective references a missing good."),
+					NSLOCTEXT("HansaEconomicCompiler", "MissingObjectiveGoodRemedy", "Choose a Good.* definition from the accepted content set."));
+			}
+		}
+		else if (const UHansaVictoryDefinition* Victory = Cast<UHansaVictoryDefinition>(Definition))
+		{
+			for (const FString& ObjectiveId : Victory->ObjectiveIds)
+			{
+				if (!ScenarioObjectiveIds.Contains(ObjectiveId))
+				{
+					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-032"), Victory->StableDefinitionId + TEXT(".ObjectiveIds"),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingVictoryObjective", "Victory path references a missing scenario objective."),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingVictoryObjectiveRemedy", "Choose a ScenarioObjective.* definition from the accepted content set."));
+				}
+			}
+		}
+		else if (const UHansaScenarioDefinition* Scenario = Cast<UHansaScenarioDefinition>(Definition))
+		{
+			if (!CityIds.Contains(Scenario->HomeCityId))
+			{
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-033"), Scenario->StableDefinitionId + TEXT(".HomeCityId"),
+					NSLOCTEXT("HansaEconomicCompiler", "MissingScenarioCity", "Scenario references a missing home city."),
+					NSLOCTEXT("HansaEconomicCompiler", "MissingScenarioCityRemedy", "Choose a City.* definition from the accepted content set."));
+			}
+			TSet<int32> Priorities;
+			for (const FString& VictoryId : Scenario->VictoryIds)
+			{
+				const UHansaVictoryDefinition* ResolvedVictory = nullptr;
+				for (const UHansaDefinitionBase* Candidate : SortedDefinitions)
+					if (Candidate->StableDefinitionId == VictoryId) { ResolvedVictory = Cast<UHansaVictoryDefinition>(Candidate); break; }
+				if (ResolvedVictory == nullptr)
+				{
+					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-034"), Scenario->StableDefinitionId + TEXT(".VictoryIds"),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingScenarioVictory", "Scenario references a missing victory path."),
+						NSLOCTEXT("HansaEconomicCompiler", "MissingScenarioVictoryRemedy", "Choose a Victory.* definition from the accepted content set."));
+				}
+				else if (Priorities.Contains(ResolvedVictory->EndingPriority))
+				{
+					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-035"), Scenario->StableDefinitionId + TEXT(".VictoryIds"),
+						NSLOCTEXT("HansaEconomicCompiler", "AmbiguousScenarioEnding", "Scenario victory paths share an ending priority and are ambiguous."),
+						NSLOCTEXT("HansaEconomicCompiler", "AmbiguousScenarioEndingRemedy", "Assign a unique ending priority to every enabled victory path."));
+				}
+				else Priorities.Add(ResolvedVictory->EndingPriority);
+			}
+		}
 	}
 
 	TMap<FString, const UHansaPopulationTierDefinition*> TiersById;
@@ -438,6 +601,31 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			NSLOCTEXT("HansaEconomicCompiler", "TierBaseCountRemedy", "Clear PreviousTierId on exactly one lowest tier and link all others toward it."));
 	}
 	ValidateProductionGraph(SortedDefinitions, GoodIds, Result.Issues);
+	if (!TechnologyIds.IsEmpty())
+	{
+		TArray<Hansa::Simulation::FHansaCompiledTechnologyDefinition> GraphTechnologies;
+		for (const UHansaDefinitionBase* Definition : SortedDefinitions)
+		{
+			if (const UHansaTechnologyDefinition* Technology = Cast<UHansaTechnologyDefinition>(Definition))
+			{
+				Hansa::Simulation::FHansaCompiledTechnologyDefinition Node;
+				Node.StableId = Technology->StableDefinitionId;
+				Node.PrerequisiteTechnologyIds = Technology->PrerequisiteTechnologyIds;
+				GraphTechnologies.Add(MoveTemp(Node));
+			}
+		}
+		const TArray<FString> Roots = {TEXT("Technology.Commerce.MarketReports"), TEXT("Technology.Production.ImprovedMilling"), TEXT("Technology.Logistics.WarehouseHandling")};
+		for (const Hansa::Simulation::FHansaResearchGraphDiagnostic& Diagnostic :
+			Hansa::Simulation::FHansaResearchGraphValidator::Validate(GraphTechnologies, Roots, AllIds))
+		{
+			if (Diagnostic.Issue == Hansa::Simulation::EHansaResearchGraphIssue::InvalidEffectReference ||
+				Diagnostic.Issue == Hansa::Simulation::EHansaResearchGraphIssue::MissingNode) continue;
+			AddIssue(Result.Issues,
+				Diagnostic.Issue == Hansa::Simulation::EHansaResearchGraphIssue::Cycle ? TEXT("HSA-REGISTRY-024") :
+				Diagnostic.Issue == Hansa::Simulation::EHansaResearchGraphIssue::Unreachable ? TEXT("HSA-REGISTRY-025") : TEXT("HSA-REGISTRY-026"),
+				Diagnostic.TechnologyId + TEXT(".PrerequisiteTechnologyIds"), FText::FromString(Diagnostic.Cause), FText::FromString(Diagnostic.Remedy));
+		}
+	}
 
 	if (!Result.IsValid())
 	{
@@ -450,6 +638,13 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 	TArray<Hansa::Simulation::FHansaCompiledNeedDefinition> CompiledNeeds;
 	TArray<Hansa::Simulation::FHansaCompiledPopulationTierDefinition> CompiledPopulationTiers;
 	TArray<Hansa::Simulation::FHansaCompiledCityMarketProfileDefinition> CompiledCityMarkets;
+	TArray<Hansa::Simulation::FHansaCompiledVehicleDefinition> CompiledVehicles;
+	TArray<Hansa::Simulation::FHansaCompiledRouteDefinition> CompiledRoutes;
+	TArray<Hansa::Simulation::FHansaCompiledTechnologyDefinition> CompiledTechnologies;
+	TArray<Hansa::Simulation::FHansaCompiledMerchantAITuning> CompiledMerchantAITunings;
+	TArray<Hansa::Simulation::FHansaCompiledScenarioObjective> CompiledScenarioObjectives;
+	TArray<Hansa::Simulation::FHansaCompiledVictoryDefinition> CompiledVictories;
+	TArray<Hansa::Simulation::FHansaCompiledScenarioDefinition> CompiledScenarios;
 	FString RegistryCanonicalData;
 	for (const UHansaDefinitionBase* Definition : SortedDefinitions)
 	{
@@ -545,16 +740,126 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			Compiled.TargetSmoothingBasisPoints = CityMarket->TargetSmoothingBasisPoints;
 			Compiled.MaximumMovementBasisPointsPerUpdate = CityMarket->MaximumMovementBasisPointsPerUpdate;
 			Compiled.StaleAfterTicks = CityMarket->StaleAfterTicks;
+			Compiled.bMarketOnly = CityMarket->bMarketOnly;
+			Compiled.ReportCadenceTicks = CityMarket->ReportCadenceTicks;
+			Compiled.CurrentReportMaxAgeTicks = CityMarket->CurrentReportMaxAgeTicks;
+			Compiled.RecentReportMaxAgeTicks = CityMarket->RecentReportMaxAgeTicks;
+			Compiled.StaleReportMaxAgeTicks = CityMarket->StaleReportMaxAgeTicks;
+			Compiled.EstimatedReportMaxAgeTicks = CityMarket->EstimatedReportMaxAgeTicks;
 			for (const FHansaMarketGoodProfile& Profile : CityMarket->Goods)
 			{
 				Compiled.Goods.Add({ Profile.GoodId, Profile.DesiredReserveMilliUnits,
-					Profile.ConfirmedIncomingSupplyMilliUnits, Profile.SeasonModifierBasisPoints,
+					Profile.ConfirmedIncomingSupplyMilliUnits, Profile.InitialStockMilliUnits,
+					Profile.BackgroundProductionMilliUnitsPerUpdate,
+					Profile.BackgroundCitizenDemandMilliUnitsPerUpdate,
+					Profile.BackgroundIndustrialDemandMilliUnitsPerUpdate, Profile.SeasonModifierBasisPoints,
 					Profile.CityModifierBasisPoints, Profile.MinimumPriceMilliMarks,
 					Profile.MaximumPriceMilliMarks, Profile.InitialPriceMilliMarks });
 			}
 			Compiled.Goods.Sort([](const auto& Left, const auto& Right) { return Left.GoodId < Right.GoodId; });
 			Compiled.ContentHash = ContentHash;
 			CompiledCityMarkets.Add(MoveTemp(Compiled));
+		}
+		else if (const UHansaVehicleDefinition* Vehicle = Cast<UHansaVehicleDefinition>(Definition))
+		{
+			CompiledVehicles.Add({ Vehicle->StableDefinitionId,
+				Vehicle->Mode == EHansaAuthoredRouteMode::Sea
+					? Hansa::Simulation::EHansaRouteMode::Sea : Hansa::Simulation::EHansaRouteMode::Land,
+				Vehicle->CargoCapacityMilliUnits, Vehicle->UpkeepPfennigPerTravelTick, ContentHash });
+		}
+		else if (const UHansaRouteDefinition* Route = Cast<UHansaRouteDefinition>(Definition))
+		{
+			Hansa::Simulation::FHansaCompiledRouteDefinition Compiled;
+			Compiled.StableId = Route->StableDefinitionId;
+			Compiled.Mode = Route->Mode == EHansaAuthoredRouteMode::Sea
+				? Hansa::Simulation::EHansaRouteMode::Sea : Hansa::Simulation::EHansaRouteMode::Land;
+			Compiled.CargoRuleSchemaVersion = Route->CargoRuleSchemaVersion;
+			for (const FHansaRouteConnectionDefinition& Connection : Route->Connections)
+			{
+				Compiled.Connections.Add({ Connection.SourceCityId, Connection.DestinationCityId,
+					Connection.TravelTicks });
+			}
+			Compiled.Connections.Sort([](const auto& Left, const auto& Right)
+			{
+				const FString LeftKey = Left.SourceCityId + TEXT("|") + Left.DestinationCityId;
+				const FString RightKey = Right.SourceCityId + TEXT("|") + Right.DestinationCityId;
+				return LeftKey < RightKey;
+			});
+			Compiled.ContentHash = ContentHash;
+			CompiledRoutes.Add(MoveTemp(Compiled));
+		}
+		else if (const UHansaTechnologyDefinition* Technology = Cast<UHansaTechnologyDefinition>(Definition))
+		{
+			Hansa::Simulation::FHansaCompiledTechnologyDefinition Compiled;
+			Compiled.StableId = Technology->StableDefinitionId;
+			Compiled.DisplayName = Technology->DisplayName.ToString();
+			Compiled.Branch = static_cast<Hansa::Simulation::EHansaResearchBranch>(Technology->Branch);
+			Compiled.PrerequisiteTechnologyIds = Technology->PrerequisiteTechnologyIds;
+			Compiled.PrerequisiteTechnologyIds.Sort();
+			Compiled.CostResearchPoints = Technology->CostResearchPoints;
+			Compiled.DurationTicks = Technology->DurationTicks;
+			Compiled.UnlockExplanation = Technology->UnlockExplanation.ToString();
+			for (const FHansaResearchEffectDefinition& Effect : Technology->Effects)
+			{
+				Compiled.Effects.Add({static_cast<Hansa::Simulation::EHansaResearchEffectKind>(Effect.Kind), Effect.TargetStableId, Effect.Magnitude});
+			}
+			Compiled.Effects.Sort([](const auto& Left, const auto& Right)
+			{
+				if (Left.Kind != Right.Kind) return static_cast<uint8>(Left.Kind) < static_cast<uint8>(Right.Kind);
+				if (Left.TargetStableId != Right.TargetStableId) return Left.TargetStableId < Right.TargetStableId;
+				return Left.Magnitude < Right.Magnitude;
+			});
+			Compiled.ContentHash = ContentHash;
+			CompiledTechnologies.Add(MoveTemp(Compiled));
+		}
+		else if (const UHansaMerchantAITuningDefinition* Tuning = Cast<UHansaMerchantAITuningDefinition>(Definition))
+		{
+			Hansa::Simulation::FHansaCompiledMerchantAITuning Compiled;
+			Compiled.StableId = Tuning->StableDefinitionId;
+			Compiled.DecisionCadenceTicks = Tuning->DecisionCadenceTicks;
+			Compiled.DecisionHistoryCapacity = Tuning->DecisionHistoryCapacity;
+			Compiled.MinimumDestinationDemandGapMilliUnits = Tuning->MinimumDestinationDemandGapMilliUnits;
+			Compiled.MinimumGrossMarginMilliMarks = Tuning->MinimumGrossMarginMilliMarks;
+			Compiled.ShortageUtilityPerUnit = Tuning->ShortageUtilityPerUnit;
+			Compiled.MarginUtilityPerMilliMark = Tuning->MarginUtilityPerMilliMark;
+			Compiled.ResearchUtility = Tuning->ResearchUtility;
+			Compiled.ProductionUtility = Tuning->ProductionUtility;
+			Compiled.TargetCompletedTradeLegs = Tuning->TargetCompletedTradeLegs;
+			Compiled.PreferredResearchTechnologyIds = Tuning->PreferredResearchTechnologyIds;
+			for (const FHansaMerchantAITradePlanDefinition& Plan : Tuning->TradePlans)
+			{
+				Compiled.TradePlans.Add({Plan.StablePlanId, Plan.RouteDefinitionId, Plan.VehicleDefinitionId,
+					Plan.SourceCityId, Plan.DestinationCityId, Plan.GoodId, Plan.QuantityLimitMilliUnits,
+					Plan.MinimumSourceReserveMilliUnits, Plan.UtilityBias});
+			}
+			Compiled.TradePlans.Sort([](const auto& Left, const auto& Right) { return Left.StablePlanId < Right.StablePlanId; });
+			Compiled.ContentHash = ContentHash;
+			CompiledMerchantAITunings.Add(MoveTemp(Compiled));
+		}
+		else if (const UHansaScenarioObjectiveDefinition* Objective = Cast<UHansaScenarioObjectiveDefinition>(Definition))
+		{
+			CompiledScenarioObjectives.Add({Objective->StableDefinitionId, Objective->DisplayName.ToString(),
+				static_cast<Hansa::Simulation::EHansaScenarioObjectiveMetric>(Objective->Metric), Objective->TargetValue,
+				Objective->CityId, Objective->GoodId, Objective->ProgressUnit.ToString(), ContentHash});
+		}
+		else if (const UHansaVictoryDefinition* Victory = Cast<UHansaVictoryDefinition>(Definition))
+		{
+			Hansa::Simulation::FHansaCompiledVictoryDefinition Compiled;
+			Compiled.StableId = Victory->StableDefinitionId;
+			Compiled.DisplayName = Victory->DisplayName.ToString();
+			Compiled.ObjectiveIds = Victory->ObjectiveIds;
+			Compiled.ObjectiveIds.Sort();
+			Compiled.SustainTicks = Victory->SustainTicks;
+			Compiled.EndingPriority = Victory->EndingPriority;
+			Compiled.Summary = Victory->Summary.ToString();
+			Compiled.ContentHash = ContentHash;
+			CompiledVictories.Add(MoveTemp(Compiled));
+		}
+		else if (const UHansaScenarioDefinition* Scenario = Cast<UHansaScenarioDefinition>(Definition))
+		{
+			CompiledScenarios.Add({Scenario->StableDefinitionId, Scenario->DisplayName.ToString(), Scenario->HomeCityId,
+				Scenario->VictoryIds, Scenario->InsolvencyThresholdPfennig, Scenario->FailureSustainTicks,
+				Scenario->Briefing.ToString(), ContentHash});
 		}
 	}
 
@@ -565,6 +870,13 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 		HashUtf8Fnv1a(RegistryCanonicalData),
 		MoveTemp(CompiledNeeds),
 		MoveTemp(CompiledPopulationTiers),
-		MoveTemp(CompiledCityMarkets));
+		MoveTemp(CompiledCityMarkets),
+		MoveTemp(CompiledVehicles),
+		MoveTemp(CompiledRoutes),
+		MoveTemp(CompiledTechnologies),
+		MoveTemp(CompiledMerchantAITunings),
+		MoveTemp(CompiledScenarioObjectives),
+		MoveTemp(CompiledVictories),
+		MoveTemp(CompiledScenarios));
 	return Result;
 }

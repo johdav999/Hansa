@@ -1,0 +1,135 @@
+{
+  "format": "glb",
+  "bounds_m": [
+    [
+      -4.722278118133545,
+      -3.2850000858306885,
+      -0.05332136154174805
+    ],
+    [
+      4.722278118133545,
+      7.647368431091309,
+      10.952279090881348
+    ]
+  ],
+  "mesh_count": 1,
+  "vertex_color_layers": [
+    [
+      "Col"
+    ]
+  ],
+  "images": [
+    {
+      "name": "T_Mill_ForgedIron_BaseColor_1024_v2",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_ForgedIron_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_ForgedIron_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Limestone_BaseColor_1024_v2",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Limestone_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Limestone_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Oak_BaseColor_1024_v2",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Oak_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_Oak_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_RoofTimber_BaseColor_1024_v2",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_RoofTimber_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_RoofTimber_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_ShelteredOak_BaseColor_1024_v2",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_ShelteredOak_Normal",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "T_Mill_ShelteredOak_Roughness",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "materials": [
+    "ShelteredOak",
+    "RoofTimber",
+    "Limestone",
+    "ForgedIron",
+    "Oak"
+  ]
+}

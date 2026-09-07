@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "fixtureVersion": 1,
+  "fixtureId": "two_player_authority_v1",
+  "contentHash": "runtime-compiled",
+  "seed": "91470745841716",
+  "initialTick": 0,
+  "scenarioId": "Scenario.LubeckGrainShortage",
+  "map": "/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP",
+  "processTopology": {
+    "authority": 1,
+    "clients": 2,
+    "reconnects": 1
+  },
+  "commands": [
+    {
+      "owner": 1,
+      "sequence": 1,
+      "nonce": 11001,
+      "command": "multiplayer.place_building",
+      "cityId": "City.Lubeck",
+      "buildingDefinitionId": "Building.Road",
+      "anchorX": 10,
+      "anchorY": 30,
+      "expected": "accepted"
+    },
+    {
+      "owner": 1,
+      "sequence": 2,
+      "nonce": 11002,
+      "command": "multiplayer.set_route_active",
+      "routeId": 3,
+      "active": true,
+      "expected": "NotAuthorized"
+    },
+    {
+      "owner": 2,
+      "sequence": 1,
+      "nonce": 22001,
+      "command": "multiplayer.set_route_active",
+      "routeId": 1,
+      "active": true,
+      "expected": "NotAuthorized"
+    },
+    {
+      "owner": 2,
+      "sequence": 2,
+      "nonce": 22002,
+      "command": "multiplayer.set_route_active",
+      "routeId": 3,
+      "active": true,
+      "expected": "accepted"
+    }
+  ],
+  "expectedCheckpoints": [
+    "server_ready",
+    "two_clients_ready",
+    "owner_commands_accepted",
+    "cross_owner_commands_rejected",
+    "authoritative_hash_shared",
+    "projection_digests_distinct",
+    "client_disconnected",
+    "client_reconnected",
+    "full_projection_resynchronized",
+    "native_screenshots_captured"
+  ],
+  "expectedFinalAuthoritativeHash": "2b9e8957c51b7c0e",
+  "evidence": {
+    "logs": ["server", "client1", "client2", "client2-reconnect"],
+    "correlations": true,
+    "nativeScreenshotSizes": ["1280x720", "1920x1080"],
+    "postCaptureResized": false
+  }
+}

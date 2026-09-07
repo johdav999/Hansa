@@ -1,0 +1,47 @@
+{
+  "fixtureId": "route_delivery_v1",
+  "schemaVersion": 1,
+  "fixtureVersion": 4,
+  "scenarioId": "Scenario.LubeckGrainShortageV1",
+  "seed": "4C554245434B4752",
+  "market": {
+    "shortageCityId": "City.Lubeck",
+    "supplyCityId": "City.Rostock",
+    "goodId": "Good.Grain",
+    "lubeckOpeningStockMilliUnits": 16000,
+    "lubeckDesiredReserveMilliUnits": 30000,
+    "rostockOpeningStockMilliUnits": 40000,
+    "rostockDesiredReserveMilliUnits": 30000,
+    "marketUpdateCadenceTicks": 5,
+    "remoteReportCadenceTicks": 20,
+    "staleReportAfterTicks": 10
+  },
+  "vehicles": [
+    { "vehicleId": 1, "definitionId": "Vehicle.Cog", "mode": "Sea", "capacityMilliUnits": 60000, "available": true },
+    { "vehicleId": 2, "definitionId": "Vehicle.Wagon", "mode": "Land", "capacityMilliUnits": 20000, "available": true }
+  ],
+  "reliefRoute": {
+    "routeId": 1,
+    "definitionId": "Route.BalticSea",
+    "vehicleId": 1,
+    "quantityLimitMilliUnits": 20000,
+    "minimumSourceReserveMilliUnits": 30000,
+    "outboundTravelTicks": 10,
+    "returnTravelTicks": 10,
+    "expected": {
+      "departureTick": 3,
+      "remoteArrivalTick": 13,
+      "returnDepartureTick": 14,
+      "lubeckArrivalTick": 24,
+      "deliveryTick": 25,
+      "deliveryTicksAfterActivation": 22,
+      "expectedInitialLoadMilliUnits": 14000
+    }
+  },
+  "evidence": {
+    "suiteId": "S09P04",
+    "routeScreenId": "RouteDelivery.RouteEditor",
+    "marketScreenId": "RouteDelivery.Market",
+    "requiredSynchronizedFields": ["stateHash", "eventCount", "simulationTick", "semanticRevision"]
+  }
+}

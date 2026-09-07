@@ -1,6 +1,8 @@
 #include "Definitions/HansaDefinitionBase.h"
 
 #include "Internationalization/Text.h"
+#include "Engine/AssetManager.h"
+#include "Engine/StaticMesh.h"
 #include "Model/HansaIds.h"
 #include "UObject/ObjectSaveContext.h"
 #include "UObject/UnrealType.h"
@@ -40,6 +42,33 @@ UHansaDefinitionBase::UHansaDefinitionBase()
 	, ContentSet(TEXT("Core"))
 {
 	SetFlags(RF_Transactional);
+}
+
+UHansaDefinitionBase* UHansaDefinitionBase::ResolveByStableId(const FString& StableId)
+{
+	UAssetManager* Manager = UAssetManager::GetIfInitialized();
+	if (Manager == nullptr || StableId.IsEmpty()) return nullptr;
+	TArray<FPrimaryAssetTypeInfo> Types;
+	Manager->GetPrimaryAssetTypeInfoList(Types);
+	UHansaDefinitionBase* Result = nullptr;
+	for (const FPrimaryAssetTypeInfo& Type : Types)
+	{
+		const FSoftObjectPath Path = Manager->GetPrimaryAssetPath(FPrimaryAssetId(Type.PrimaryAssetType, FName(*StableId)));
+		if (!Path.IsValid()) continue;
+		UHansaDefinitionBase* Candidate = Cast<UHansaDefinitionBase>(Path.TryLoad());
+		if (Candidate == nullptr || Candidate->StableDefinitionId != StableId) continue;
+		// Duplicate identities are invalid content, not an asset-discovery-order choice.
+		if (Result != nullptr && Result != Candidate) return nullptr;
+		Result = Candidate;
+	}
+	return Result;
+}
+
+UStaticMesh* UHansaDefinitionBase::LoadPresentationMesh() const
+{
+	const FString Path = PresentationMesh.ToSoftObjectPath().ToString();
+	if (Path.Contains(TEXT("/Generated/Staging/")) || Path.Contains(TEXT("/Developer/"))) return nullptr;
+	return PresentationMesh.LoadSynchronous();
 }
 
 FPrimaryAssetId UHansaDefinitionBase::GetPrimaryAssetId() const
@@ -117,6 +146,13 @@ void UHansaDefinitionBase::ValidateDefinition(TArray<FHansaDefinitionValidationI
 			NSLOCTEXT("HansaDefinition", "MissingOrganizationRemedy", "Assign an authoring category and stable content-set name."));
 	}
 
+	if (!PresentationMesh.IsNull() && LoadPresentationMesh() == nullptr)
+	{
+		AddIssue(OutIssues, EHansaDefinitionValidationSeverity::Error, TEXT("HSA-DEF-007"), TEXT("PresentationMesh"),
+			NSLOCTEXT("HansaDefinition", "InvalidPresentationMesh", "The assigned presentation mesh is missing or belongs to staging/development content."),
+			NSLOCTEXT("HansaDefinition", "InvalidPresentationMeshRemedy", "Assign an existing promoted static mesh, or clear the optional mesh on a non-spatial definition."));
+	}
+
 	if (bDeprecated)
 	{
 		const Hansa::Simulation::THansaValueResult<Hansa::Simulation::FHansaDefinitionId> Replacement =
@@ -174,6 +210,10 @@ void UHansaDefinitionBase::AppendDefinitionHashData(FString& InOutCanonicalData)
 		*ContentSet.ToString(),
 		bDeprecated ? 1 : 0,
 		*ReplacementDefinitionId);
+	if (!PresentationMesh.IsNull() && !UsesLegacyBuildingMeshHash())
+	{
+		InOutCanonicalData += TEXT("presentationMesh=") + PresentationMesh.ToSoftObjectPath().ToString() + TEXT("\n");
+	}
 	for (const FString& Tag : SortedTags)
 	{
 		InOutCanonicalData += TEXT("tag=") + Tag + TEXT("\n");

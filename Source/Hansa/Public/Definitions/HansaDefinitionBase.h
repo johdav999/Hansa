@@ -4,6 +4,8 @@
 
 #include "HansaDefinitionBase.generated.h"
 
+class UStaticMesh;
+
 UENUM()
 enum class EHansaDefinitionValidationSeverity : uint8
 {
@@ -32,6 +34,26 @@ class HANSA_API UHansaDefinitionBase : public UPrimaryDataAsset
 
 public:
 	UHansaDefinitionBase();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Definition|Presentation", meta = (
+		DisplayName = "Presentation mesh",
+		ToolTip = "Optional promoted mesh for this definition. Buildings require a mesh; non-spatial items may leave it empty. Stable identity never depends on this path.",
+		HansaRequired = "false",
+		HansaReference = "StaticMesh",
+		HansaBulkEditable = "false",
+		HansaAIAccess = "Never",
+		HansaMigration = "Compatible",
+		HansaSerialization = "Included",
+		HansaValidation = "OptionalAsset"))
+	TSoftObjectPtr<UStaticMesh> PresentationMesh;
+
+	/** Resolve any registered definition by stable ID; no asset filenames or per-item switches. */
+	UFUNCTION(BlueprintCallable, Category = "Hansa|Presentation")
+	static UHansaDefinitionBase* ResolveByStableId(const FString& StableId);
+
+	UFUNCTION(BlueprintCallable, Category = "Hansa|Presentation")
+	UStaticMesh* LoadPresentationMesh() const;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Definition|Identity", meta = (
 		DisplayName = "Stable definition ID",
@@ -188,5 +210,7 @@ public:
 #endif
 
 protected:
+	virtual bool UsesLegacyBuildingMeshHash() const { return false; }
+
 	virtual void AppendDefinitionHashData(FString& InOutCanonicalData) const;
 };

@@ -1,0 +1,33 @@
+{
+  "bounds_m": [
+    [
+      -6.688296794891357,
+      -4.194999694824219,
+      -0.014999866485595703
+    ],
+    [
+      6.688296794891357,
+      4.0,
+      17.5082950592041
+    ]
+  ],
+  "triangles": 284416,
+  "vertices": 146653,
+  "materials": [
+    "Masonry",
+    "RecessTimber",
+    "Fieldstone",
+    "WeatheredTimber",
+    "OldBrick",
+    "SagePaint",
+    "WindowGlass",
+    "ForgedIron"
+  ],
+  "uv_layers": [
+    "SurfaceMetres"
+  ],
+  "vertex_colors": [
+    "Weathering"
+  ],
+  "source_dimensions_inferred": true
+}

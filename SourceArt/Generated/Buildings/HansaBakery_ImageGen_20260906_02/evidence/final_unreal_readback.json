@@ -1,0 +1,137 @@
+[
+  {
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Brick_0.M_Bakery_Brick_0"
+    },
+    "color_connection": {
+      "texture": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Brick_0_ImageGen_BaseColor.T_Bakery_Brick_0_ImageGen_BaseColor"
+      }
+    },
+    "size": {
+      "x": 1254,
+      "y": 1254
+    },
+    "settings": "{\"sRGB\":true,\"mipGenSettings\":\"TMGS_NoMipmaps\",\"neverStream\":false,\"filter\":\"TF_Default\"}"
+  },
+  {
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Brick_1.M_Bakery_Brick_1"
+    },
+    "color_connection": {
+      "texture": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Brick_1_ImageGen_BaseColor.T_Bakery_Brick_1_ImageGen_BaseColor"
+      }
+    },
+    "size": {
+      "x": 1254,
+      "y": 1254
+    },
+    "settings": "{\"sRGB\":true,\"mipGenSettings\":\"TMGS_NoMipmaps\",\"neverStream\":false,\"filter\":\"TF_Default\"}"
+  },
+  {
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Brick_2.M_Bakery_Brick_2"
+    },
+    "color_connection": {
+      "texture": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Brick_2_ImageGen_BaseColor.T_Bakery_Brick_2_ImageGen_BaseColor"
+      }
+    },
+    "size": {
+      "x": 1254,
+      "y": 1254
+    },
+    "settings": "{\"sRGB\":true,\"mipGenSettings\":\"TMGS_NoMipmaps\",\"neverStream\":false,\"filter\":\"TF_Default\"}"
+  },
+  {
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Clay_0.M_Bakery_Clay_0"
+    },
+    "color_connection": {
+      "texture": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Clay_0_ImageGen_BaseColor.T_Bakery_Clay_0_ImageGen_BaseColor"
+      }
+    },
+    "size": {
+      "x": 1254,
+      "y": 1254
+    },
+    "settings": "{\"sRGB\":true,\"mipGenSettings\":\"TMGS_NoMipmaps\",\"neverStream\":false,\"filter\":\"TF_Default\"}"
+  },
+  {
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Clay_1.M_Bakery_Clay_1"
+    },
+    "color_connection": {
+      "texture": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Clay_1_ImageGen_BaseColor.T_Bakery_Clay_1_ImageGen_BaseColor"
+      }
+    },
+    "size": {
+      "x": 1254,
+      "y": 1254
+    },
+    "settings": "{\"sRGB\":true,\"mipGenSettings\":\"TMGS_NoMipmaps\",\"neverStream\":false,\"filter\":\"TF_Default\"}"
+  },
+  {
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Clay_2.M_Bakery_Clay_2"
+    },
+    "color_connection": {
+      "texture": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Clay_2_ImageGen_BaseColor.T_Bakery_Clay_2_ImageGen_BaseColor"
+      }
+    },
+    "size": {
+      "x": 1254,
+      "y": 1254
+    },
+    "settings": "{\"sRGB\":true,\"mipGenSettings\":\"TMGS_NoMipmaps\",\"neverStream\":false,\"filter\":\"TF_Default\"}"
+  },
+  {
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Damp_Lime.M_Bakery_Damp_Lime"
+    },
+    "color_connection": {
+      "texture": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Damp_Lime_ImageGen_BaseColor.T_Bakery_Damp_Lime_ImageGen_BaseColor"
+      }
+    },
+    "size": {
+      "x": 1254,
+      "y": 1254
+    },
+    "settings": "{\"sRGB\":true,\"mipGenSettings\":\"TMGS_NoMipmaps\",\"neverStream\":false,\"filter\":\"TF_Default\"}"
+  },
+  {
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Lime_Plaster.M_Bakery_Lime_Plaster"
+    },
+    "color_connection": {
+      "texture": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Lime_Plaster_ImageGen_BaseColor.T_Bakery_Lime_Plaster_ImageGen_BaseColor"
+      }
+    },
+    "size": {
+      "x": 1254,
+      "y": 1254
+    },
+    "settings": "{\"sRGB\":true,\"mipGenSettings\":\"TMGS_NoMipmaps\",\"neverStream\":false,\"filter\":\"TF_Default\"}"
+  },
+  {
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Weathered_Oak.M_Bakery_Weathered_Oak"
+    },
+    "color_connection": {
+      "texture": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Weathered_Oak_ImageGen_BaseColor.T_Bakery_Weathered_Oak_ImageGen_BaseColor"
+      }
+    },
+    "size": {
+      "x": 1254,
+      "y": 1254
+    },
+    "settings": "{\"sRGB\":true,\"mipGenSettings\":\"TMGS_NoMipmaps\",\"neverStream\":false,\"filter\":\"TF_Default\"}"
+  }
+]

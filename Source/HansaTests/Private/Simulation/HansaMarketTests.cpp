@@ -188,6 +188,64 @@ namespace Hansa::Tests::Market
 		return Require(FHansaSimulationState::TryCreate(MoveTemp(Initialization)));
 	}
 
+	FHansaSimulationState MakeIntercityKnowledgeState(const bool bSourceHasInitialReport)
+	{
+		FHansaSimulationInitialization Initialization;
+		Initialization.Clock = Require(FHansaSimulationClock::TryCreate(
+			Require(FHansaSimulationVersion::TryCreate(1)), Tick(0)));
+		Initialization.CampaignSeed = 0x53095001;
+		Initialization.MarketSettings.UpdateCadenceTicks = 1;
+		Initialization.MarketSettings.PriceHistoryCapacity = 64;
+		Initialization.MarketSettings.StaleAfterTicks = 10;
+		const FHansaCityDefinitionId Lubeck = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")));
+		const FHansaCityDefinitionId Rostock = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Rostock")));
+		Initialization.Cities = { { Lubeck, FHansaQuantity() }, { Rostock, FHansaQuantity() } };
+
+		for (const TPair<FHansaInventoryId, FHansaCityDefinitionId>& Entry : {
+			TPair<FHansaInventoryId, FHansaCityDefinitionId>(Entity<FHansaInventoryId>(1), Lubeck),
+			TPair<FHansaInventoryId, FHansaCityDefinitionId>(Entity<FHansaInventoryId>(2), Rostock) })
+		{
+			FHansaInventoryInitialization Inventory;
+			Inventory.Id = Entry.Key;
+			Inventory.OwnerKind = EHansaInventoryOwnerKind::City;
+			Inventory.CityId = Entry.Value;
+			Inventory.Capacity = FHansaQuantity::FromRaw(1'000'000);
+			Inventory.AcceptedGoods = { Good(TEXT("Good.Bread")) };
+			Inventory.InitialStock = { { Good(TEXT("Good.Bread")),
+				FHansaQuantity::FromRaw(Entry.Value == Rostock ? 20'000 : 5'000) } };
+			Initialization.Inventories.Add(MoveTemp(Inventory));
+		}
+
+		const auto AddMarket = [&Initialization, &Lubeck, &Rostock, bSourceHasInitialReport](const bool bSource)
+		{
+			FHansaCityMarketInitialization Market;
+			Market.CityId = bSource ? Rostock : Lubeck;
+			Market.GoodId = Good(TEXT("Good.Bread"));
+			Market.InventoryIds = { Entity<FHansaInventoryId>(bSource ? 2 : 1) };
+			Market.DesiredReserve = FHansaQuantity::FromRaw(10'000);
+			Market.bMarketOnly = bSource;
+			if (bSource)
+			{
+				Market.BackgroundProductionPerUpdate = FHansaQuantity::FromRaw(3'000);
+				Market.BackgroundCitizenDemandPerUpdate = FHansaQuantity::FromRaw(700);
+				Market.BackgroundIndustrialDemandPerUpdate = FHansaQuantity::FromRaw(300);
+			}
+			Market.ReportPolicy.ReportCadenceTicks = 20;
+			Market.ReportPolicy.CurrentMaxAgeTicks = 0;
+			Market.ReportPolicy.RecentMaxAgeTicks = 4;
+			Market.ReportPolicy.StaleMaxAgeTicks = 10;
+			Market.ReportPolicy.EstimatedMaxAgeTicks = 19;
+			Market.MinimumPriceMilliMarks = 100;
+			Market.MaximumPriceMilliMarks = 5'000;
+			Market.InitialPriceMilliMarks = bSource ? 800 : 1'200;
+			Market.InitialReportTick = bSource && !bSourceHasInitialReport ? -1 : 0;
+			Initialization.Markets.Add(MoveTemp(Market));
+		};
+		AddMarket(false);
+		AddMarket(true);
+		return Require(FHansaSimulationState::TryCreate(MoveTemp(Initialization)));
+	}
+
 	bool Step(FHansaSimulationState& State, const FHansaSimulationDefinitionContext& Definitions,
 		FHansaSimulationTransientCache& Cache)
 	{
@@ -418,6 +476,91 @@ bool FHansaMarketCausalQueriesTest::RunTest(const FString& Parameters)
 		TestEqual(TEXT("Producer exposes the recipe output quantity"),
 			Producers[0].NominalQuantityPerCycle.GetRawValue(), int64(1000));
 	}
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaIntercityMarketKnowledgeTest,
+	"Hansa.Simulation.Market.IntercityKnowledgeAndRemoteEvolution",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaIntercityMarketKnowledgeTest::RunTest(const FString& Parameters)
+{
+	using namespace Hansa::Simulation;
+	using namespace Hansa::Tests::Market;
+	const FHansaSimulationDefinitionContext Definitions = MakeDefinitions();
+	const FHansaCityDefinitionId Lubeck = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")));
+	const FHansaCityDefinitionId Rostock = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Rostock")));
+	const FHansaGoodId Bread = Good(TEXT("Good.Bread"));
+
+	FHansaSimulationState State = MakeIntercityKnowledgeState(true);
+	FHansaSimulationState Replay = MakeIntercityKnowledgeState(true);
+	FHansaSimulationTransientCache Cache;
+	FHansaSimulationTransientCache ReplayCache;
+	auto View = State.CreateReadOnlyAccess(Definitions);
+	auto Price = View.QueryKnownMarketPrice(Rostock, Bread);
+	TestTrue(TEXT("An initial remote report supplies a typed known-price result"), Price.IsSet());
+	TestTrue(TEXT("A current report carries a value"), Price.IsSet() &&
+		Price->InformationState == EHansaMarketInformationState::Current && Price->PriceMilliMarks.IsSet());
+	const auto Opportunity = View.CompareMarketOpportunity(Rostock, Lubeck, Bread);
+	TestTrue(TEXT("Known reports produce a comparable opportunity"), Opportunity.IsSet() && Opportunity->bComparable);
+	if (Opportunity.IsSet() && Opportunity->bComparable)
+	{
+		TestEqual(TEXT("Opportunity margin uses reported prices"), Opportunity->GrossMarginMilliMarks.GetValue(), int64(400));
+		TestEqual(TEXT("Opportunity exposes exportable stock above reserve"),
+			Opportunity->SourceAvailableAboveReserve.GetValue().GetRawValue(), int64(10'000));
+	}
+
+	TestTrue(TEXT("Remote evolution advances deterministically"), Step(State, Definitions, Cache));
+	TestTrue(TEXT("Replay remote evolution advances"), Step(Replay, Definitions, ReplayCache));
+	Price = State.CreateReadOnlyAccess(Definitions).QueryKnownMarketPrice(Rostock, Bread);
+	TestTrue(TEXT("One-tick-old report is recent"), Price.IsSet() &&
+		Price->InformationState == EHansaMarketInformationState::Recent);
+	for (int32 Index = 1; Index < 5; ++Index)
+	{
+		TestTrue(TEXT("Remote stale-age progression advances"), Step(State, Definitions, Cache));
+		TestTrue(TEXT("Replay stale-age progression advances"), Step(Replay, Definitions, ReplayCache));
+	}
+	Price = State.CreateReadOnlyAccess(Definitions).QueryKnownMarketPrice(Rostock, Bread);
+	TestTrue(TEXT("Five-tick-old report is stale"), Price.IsSet() &&
+		Price->InformationState == EHansaMarketInformationState::Stale);
+	for (int32 Index = 5; Index < 11; ++Index)
+	{
+		TestTrue(TEXT("Remote estimate-age progression advances"), Step(State, Definitions, Cache));
+		TestTrue(TEXT("Replay estimate-age progression advances"), Step(Replay, Definitions, ReplayCache));
+	}
+	Price = State.CreateReadOnlyAccess(Definitions).QueryKnownMarketPrice(Rostock, Bread);
+	TestTrue(TEXT("Eleven-tick-old report is explicitly estimated"), Price.IsSet() &&
+		Price->InformationState == EHansaMarketInformationState::Estimated);
+	for (int32 Index = 11; Index < 20; ++Index)
+	{
+		TestTrue(TEXT("Remote publication-cadence progression advances"), Step(State, Definitions, Cache));
+		TestTrue(TEXT("Replay publication-cadence progression advances"), Step(Replay, Definitions, ReplayCache));
+	}
+	const auto Components = State.CreateReadOnlyAccess(Definitions).QueryKnownMarketSupplyDemand(Rostock, Bread);
+	TestTrue(TEXT("The report refreshes on its deterministic cadence"), Components.IsSet() &&
+		Components->InformationState == EHansaMarketInformationState::Current && Components->Stock.IsSet());
+	if (Components.IsSet() && Components->Stock.IsSet())
+	{
+		TestEqual(TEXT("Fixed background production and demand evolve remote stock through the inventory ledger"),
+			Components->Stock.GetValue().GetRawValue(), int64(60'000));
+	}
+	TestEqual(TEXT("Identical remote evolution replays bit-for-bit"),
+		State.CreateReadOnlyAccess(Definitions).GetFingerprint().Value,
+		Replay.CreateReadOnlyAccess(Definitions).GetFingerprint().Value);
+
+	FHansaSimulationState UnknownState = MakeIntercityKnowledgeState(false);
+	const auto UnknownPrice = UnknownState.CreateReadOnlyAccess(Definitions).QueryKnownMarketPrice(Rostock, Bread);
+	const auto UnknownComponents = UnknownState.CreateReadOnlyAccess(Definitions).QueryKnownMarketSupplyDemand(Rostock, Bread);
+	const auto UnknownOpportunity = UnknownState.CreateReadOnlyAccess(Definitions).CompareMarketOpportunity(Rostock, Lubeck, Bread);
+	TestTrue(TEXT("A market can exist while its price report is unknown"), UnknownPrice.IsSet() &&
+		UnknownPrice->InformationState == EHansaMarketInformationState::Unknown);
+	TestTrue(TEXT("Unknown price is absent rather than encoded as zero"), UnknownPrice.IsSet() &&
+		!UnknownPrice->PriceMilliMarks.IsSet());
+	TestTrue(TEXT("Unknown supply and demand are absent rather than encoded as zero"), UnknownComponents.IsSet() &&
+		!UnknownComponents->Stock.IsSet() && !UnknownComponents->TotalDemand.IsSet());
+	TestTrue(TEXT("Opportunity comparison fails closed when either report is unknown"),
+		UnknownOpportunity.IsSet() && !UnknownOpportunity->bComparable &&
+		!UnknownOpportunity->GrossMarginMilliMarks.IsSet());
 	return !HasAnyErrors();
 }
 

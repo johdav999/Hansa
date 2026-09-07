@@ -2,6 +2,7 @@
 param(
     [switch]$GenerateProjectFiles,
     [string]$TestFilter = 'Hansa',
+    [string]$CookedRoot,
     [string]$EngineRoot,
     [string]$ArtifactsRoot
 )
@@ -16,6 +17,7 @@ $childArguments = @{
 
 & (Join-Path $PSScriptRoot 'VerifyRepositoryConventions.ps1') -ArtifactsRoot $context.ArtifactsRoot
 & (Join-Path $PSScriptRoot 'RunHansaMcpTests.ps1') -ArtifactsRoot $context.ArtifactsRoot
+& (Join-Path $PSScriptRoot 'RunGenerationWorkerTests.ps1') -ArtifactsRoot $context.ArtifactsRoot
 
 if ($GenerateProjectFiles) {
     & (Join-Path $PSScriptRoot 'GenerateProjectFiles.ps1') @childArguments
@@ -23,6 +25,17 @@ if ($GenerateProjectFiles) {
 
 & (Join-Path $PSScriptRoot 'Build.ps1') @childArguments -Target HansaEditor -Platform Win64 -Configuration Development
 & (Join-Path $PSScriptRoot 'RunAutomationTests.ps1') @childArguments -TestFilter $TestFilter -SkipBuild
+& (Join-Path $PSScriptRoot 'RunAutomationTests.ps1') @childArguments -TestFilter 'Hansa.Architecture.Automation.MvpGoldenEndToEnd' -SkipBuild
+& (Join-Path $PSScriptRoot 'RunMvpGoldenMcpTest.ps1') @childArguments -SkipBuild
+& (Join-Path $PSScriptRoot 'RunTwoPlayerAuthorityProof.ps1') @childArguments -SkipBuild
+& (Join-Path $PSScriptRoot 'RunAutomationTests.ps1') @childArguments -TestFilter 'Hansa.Architecture.StagedMedia.HarborPropPreview' -SkipBuild -WithRendering
+& (Join-Path $PSScriptRoot 'RunOpenAIAuthoringAcceptance.ps1') @childArguments -SkipBuild
+& (Join-Path $PSScriptRoot 'RunMediaAcceptance.ps1') @childArguments -SkipBuild
+if ([string]::IsNullOrWhiteSpace($CookedRoot)) {
+    & (Join-Path $PSScriptRoot 'RunMediaCookAudit.ps1') @childArguments
+} else {
+    & (Join-Path $PSScriptRoot 'VerifyMediaShipping.ps1') @childArguments -CookedRoot $CookedRoot -RequireCookedContent
+}
 & (Join-Path $PSScriptRoot 'Build.ps1') @childArguments -Target Hansa -Platform Win64 -Configuration Development
 & (Join-Path $PSScriptRoot 'VerifyShippingExclusion.ps1') @childArguments -Platform Win64
 
@@ -34,6 +47,14 @@ Write-HansaJsonArtifact -Path $summaryPath -Value ([ordered]@{
     GeneratedProjectFiles = [bool]$GenerateProjectFiles
     RepositoryConventionsChecked = $true
     HansaMcpContractTestsRun = $true
+    MvpGoldenGateRun = $true
+	MvpGoldenLiveMcpRun = $true
+    TwoPlayerAuthorityProofRun = $true
+    GenerationWorkerContractTestsRun = $true
+    HarborPropRenderProofRun = $true
+    MediaReferencesAndCookAudited = $true
+    OpenAIAuthoringMockRoundTripRun = $true
+    MediaMockRoundTripRun = $true
     TestFilter = $TestFilter
     ProjectFile = $context.ProjectFile
     EngineRoot = $context.EngineRoot

@@ -1,0 +1,32 @@
+{
+  "ShelteredOak": {
+    "sampled_surface_m2": 162.94813863871903,
+    "area_weighted_p10_px_per_m": 1023.9998290483126,
+    "median_px_per_m": 1023.9999890300275,
+    "minimum_sampled_px_per_m": 912.0790258958572
+  },
+  "Oak": {
+    "sampled_surface_m2": 312.18134161204296,
+    "area_weighted_p10_px_per_m": 1017.0904177037498,
+    "median_px_per_m": 1023.9999561708025,
+    "minimum_sampled_px_per_m": 873.1147566788347
+  },
+  "RoofTimber": {
+    "sampled_surface_m2": 103.15881539227858,
+    "area_weighted_p10_px_per_m": 1023.9993331040798,
+    "median_px_per_m": 1024.0000467264583,
+    "minimum_sampled_px_per_m": 1023.9811070578301
+  },
+  "Limestone": {
+    "sampled_surface_m2": 149.54380970138195,
+    "area_weighted_p10_px_per_m": 881.4914717471548,
+    "median_px_per_m": 986.8931418871817,
+    "minimum_sampled_px_per_m": 782.1227790597015
+  },
+  "ForgedIron": {
+    "sampled_surface_m2": 1.3979840846768898,
+    "area_weighted_p10_px_per_m": 984.2546401379839,
+    "median_px_per_m": 1023.9997574512983,
+    "minimum_sampled_px_per_m": 912.0819406416242
+  }
+}

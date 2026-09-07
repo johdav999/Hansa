@@ -160,6 +160,7 @@ namespace Hansa::Simulation
 		[[nodiscard]] const FHansaPlacedBuildingRecord* FindPlacement(FHansaBuildingId BuildingId) const;
 
 	private:
+		friend class FHansaSaveCodec;
 		friend class FHansaPlacementRules;
 		friend class FHansaSimulationPipeline;
 		friend class FHansaStateHasher;

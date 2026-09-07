@@ -14,7 +14,8 @@ namespace Hansa::Simulation
 	{
 		City = 0,
 		Building,
-		Warehouse
+		Warehouse,
+		Vehicle
 	};
 
 	enum class EHansaInventoryEndpointKind : uint8
@@ -77,6 +78,7 @@ namespace Hansa::Simulation
 		EHansaInventoryOwnerKind OwnerKind = EHansaInventoryOwnerKind::City;
 		FHansaCityDefinitionId CityId;
 		FHansaBuildingId BuildingId;
+		FHansaVehicleId VehicleId;
 		FHansaQuantity Capacity;
 		TArray<FHansaGoodId> AcceptedGoods;
 		TArray<FHansaInventoryStockInitialization> InitialStock;
@@ -104,6 +106,7 @@ namespace Hansa::Simulation
 		EHansaInventoryOwnerKind OwnerKind = EHansaInventoryOwnerKind::City;
 		FHansaCityDefinitionId CityId;
 		FHansaBuildingId BuildingId;
+		FHansaVehicleId VehicleId;
 		FHansaQuantity Capacity;
 		TArray<FHansaGoodId> AcceptedGoods;
 		TArray<FHansaInventoryStockRecord> Stocks;
@@ -153,6 +156,7 @@ namespace Hansa::Simulation
 		EHansaInventoryOwnerKind OwnerKind = EHansaInventoryOwnerKind::City;
 		FHansaCityDefinitionId CityId;
 		FHansaBuildingId BuildingId;
+		FHansaVehicleId VehicleId;
 		FHansaQuantity Capacity;
 		FHansaQuantity UsedCapacity;
 		FHansaQuantity FreeCapacity;
@@ -222,6 +226,7 @@ namespace Hansa::Simulation
 			uint64 Sequence);
 
 	private:
+		friend class FHansaSaveCodec;
 		friend class FHansaInventoryReadOnlyAccess;
 		friend class FHansaStateHasher;
 

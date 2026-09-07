@@ -1,0 +1,614 @@
+[
+  {
+    "name": "Brick_0",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Brick_0.M_Bakery_Brick_0"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_0_BaseColor.T_Bakery_Brick_0_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_0_Roughness.T_Bakery_Brick_0_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_0_Normal.T_Bakery_Brick_0_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Brick_0"
+  },
+  {
+    "name": "Brick_1",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Brick_1.M_Bakery_Brick_1"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_1_BaseColor.T_Bakery_Brick_1_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_1_Roughness.T_Bakery_Brick_1_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_1_Normal.T_Bakery_Brick_1_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Brick_1"
+  },
+  {
+    "name": "Brick_2",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Brick_2.M_Bakery_Brick_2"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_2_BaseColor.T_Bakery_Brick_2_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_2_Roughness.T_Bakery_Brick_2_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_2_Normal.T_Bakery_Brick_2_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Brick_2"
+  },
+  {
+    "name": "Clay_0",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Clay_0.M_Bakery_Clay_0"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_0_BaseColor.T_Bakery_Clay_0_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_0_Roughness.T_Bakery_Clay_0_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_0_Normal.T_Bakery_Clay_0_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Clay_0"
+  },
+  {
+    "name": "Clay_1",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Clay_1.M_Bakery_Clay_1"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_1_BaseColor.T_Bakery_Clay_1_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_1_Roughness.T_Bakery_Clay_1_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_1_Normal.T_Bakery_Clay_1_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Clay_1"
+  },
+  {
+    "name": "Clay_2",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Clay_2.M_Bakery_Clay_2"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_2_BaseColor.T_Bakery_Clay_2_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_2_Roughness.T_Bakery_Clay_2_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_2_Normal.T_Bakery_Clay_2_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Clay_2"
+  },
+  {
+    "name": "Damp_Lime",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Damp_Lime.M_Bakery_Damp_Lime"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Damp_Lime_BaseColor.T_Bakery_Damp_Lime_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Damp_Lime_Roughness.T_Bakery_Damp_Lime_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Damp_Lime_Normal.T_Bakery_Damp_Lime_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Damp_Lime"
+  },
+  {
+    "name": "Flour_Linen",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Flour_Linen.M_Bakery_Flour_Linen"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Flour_Linen_BaseColor.T_Bakery_Flour_Linen_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Flour_Linen_Roughness.T_Bakery_Flour_Linen_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Flour_Linen_Normal.T_Bakery_Flour_Linen_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Flour_Linen"
+  },
+  {
+    "name": "Forged_Iron",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Forged_Iron.M_Bakery_Forged_Iron"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Forged_Iron_BaseColor.T_Bakery_Forged_Iron_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Forged_Iron_Roughness.T_Bakery_Forged_Iron_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Forged_Iron_Normal.T_Bakery_Forged_Iron_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Forged_Iron"
+  },
+  {
+    "name": "Lead_Roofing",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Lead_Roofing.M_Bakery_Lead_Roofing"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lead_Roofing_BaseColor.T_Bakery_Lead_Roofing_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lead_Roofing_Roughness.T_Bakery_Lead_Roofing_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lead_Roofing_Normal.T_Bakery_Lead_Roofing_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Lead_Roofing"
+  },
+  {
+    "name": "Lime_Mortar",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Lime_Mortar.M_Bakery_Lime_Mortar"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Mortar_BaseColor.T_Bakery_Lime_Mortar_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Mortar_Roughness.T_Bakery_Lime_Mortar_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Mortar_Normal.T_Bakery_Lime_Mortar_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Lime_Mortar"
+  },
+  {
+    "name": "Lime_Plaster",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Lime_Plaster.M_Bakery_Lime_Plaster"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Plaster_BaseColor.T_Bakery_Lime_Plaster_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Plaster_Roughness.T_Bakery_Lime_Plaster_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Plaster_Normal.T_Bakery_Lime_Plaster_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Lime_Plaster"
+  },
+  {
+    "name": "Limestone",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Limestone.M_Bakery_Limestone"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Limestone_BaseColor.T_Bakery_Limestone_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Limestone_Roughness.T_Bakery_Limestone_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Limestone_Normal.T_Bakery_Limestone_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Limestone"
+  },
+  {
+    "name": "Oven_Soot",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Oven_Soot.M_Bakery_Oven_Soot"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Oven_Soot_BaseColor.T_Bakery_Oven_Soot_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Oven_Soot_Roughness.T_Bakery_Oven_Soot_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Oven_Soot_Normal.T_Bakery_Oven_Soot_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Oven_Soot"
+  },
+  {
+    "name": "Rye_Crust",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Rye_Crust.M_Bakery_Rye_Crust"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Rye_Crust_BaseColor.T_Bakery_Rye_Crust_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Rye_Crust_Roughness.T_Bakery_Rye_Crust_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Rye_Crust_Normal.T_Bakery_Rye_Crust_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Rye_Crust"
+  },
+  {
+    "name": "Weathered_Oak",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Weathered_Oak.M_Bakery_Weathered_Oak"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Weathered_Oak_BaseColor.T_Bakery_Weathered_Oak_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Weathered_Oak_Roughness.T_Bakery_Weathered_Oak_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Weathered_Oak_Normal.T_Bakery_Weathered_Oak_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Weathered_Oak"
+  },
+  {
+    "name": "Window_Glass",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Window_Glass.M_Bakery_Window_Glass"
+    },
+    "textures": {
+      "BaseColor": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Window_Glass_BaseColor.T_Bakery_Window_Glass_BaseColor"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Roughness": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Window_Glass_Roughness.T_Bakery_Window_Glass_Roughness"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      },
+      "Normal": {
+        "asset": {
+          "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Window_Glass_Normal.T_Bakery_Window_Glass_Normal"
+        },
+        "size": {
+          "x": 1024,
+          "y": 1024
+        }
+      }
+    },
+    "slot": "PBR_Window_Glass"
+  }
+]

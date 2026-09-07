@@ -6,7 +6,7 @@ namespace Hansa::Simulation
 	{
 		constexpr uint64 SplitMixIncrement = 0x9e3779b97f4a7c15ULL;
 		constexpr uint64 FnvOffsetBasis = 14695981039346656037ULL;
-		constexpr uint64 FnvPrime = 1099511628211ULL;
+		constexpr uint64 RandomFnvPrime = 1099511628211ULL;
 
 		bool IsAsciiLetter(const TCHAR Character)
 		{
@@ -128,7 +128,7 @@ namespace Hansa::Simulation
 		for (const TCHAR Character : StreamName)
 		{
 			Hash ^= static_cast<uint8>(Character);
-			Hash *= FnvPrime;
+			Hash *= RandomFnvPrime;
 		}
 		return Hash;
 	}

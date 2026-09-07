@@ -1,0 +1,16 @@
+{
+  "meshes": {
+    "SM_DirtRoad_Corner90_R6m": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Corner90_R6m.SM_DirtRoad_Corner90_R6m",
+    "SM_DirtRoad_Crossroads_12m": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Crossroads_12m.SM_DirtRoad_Crossroads_12m",
+    "SM_DirtRoad_End_5m": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_End_5m.SM_DirtRoad_End_5m",
+    "SM_DirtRoad_Straight_8m": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m.SM_DirtRoad_Straight_8m",
+    "SM_DirtRoad_TJunction_12m": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_TJunction_12m.SM_DirtRoad_TJunction_12m"
+  },
+  "material": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Materials/M_DirtRoad.M_DirtRoad",
+  "textures": {
+    "BaseColor": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Textures/T_DirtRoad_BaseColor.T_DirtRoad_BaseColor",
+    "Normal": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Textures/T_DirtRoad_Normal.T_DirtRoad_Normal",
+    "Roughness": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Textures/T_DirtRoad_Roughness.T_DirtRoad_Roughness"
+  },
+  "level": "/Game/Hansa/Developer/GenerationPreview/HansaDirtRoad_20260906_01/L_DirtRoad_Review"
+}

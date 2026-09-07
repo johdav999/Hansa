@@ -36,7 +36,21 @@ $forbiddenTokens = @(
     'HansaEditor'
     'HansaTests'
     'HansaMcp'
-    'HansaGenerationWorker'
+    'HansaGenerationWorker',
+    'HANSA_GENERATION_WORKER_TOKEN',
+    'Hansa/GenerationWorker'
+    'OpenAIResponsesProvider'
+    'OPENAI_API_KEY'
+    'HANSA_OPENAI_MODEL'
+    'api.openai.com'
+    'TripoStaticPropProvider'
+    'TRIPO_API_KEY'
+    'HANSA_TRIPO_ENABLED'
+    'openapi.tripo3d.ai'
+    'ElevenLabsAudioProvider'
+    'ELEVENLABS_API_KEY'
+    'HANSA_ELEVENLABS_ENABLED'
+    'api.elevenlabs.io'
     'WITH_HANSA_AUTOMATION'
 )
 

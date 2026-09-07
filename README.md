@@ -38,6 +38,11 @@ pwsh -File Scripts/VerifyRepositoryConventions.ps1
 pwsh -File Scripts/Build.ps1 -Target HansaEditor -Configuration Development
 pwsh -File Scripts/RunAutomationTests.ps1 -TestFilter Hansa
 pwsh -File Scripts/RunHansaMcpTests.ps1
+pwsh -File Scripts/RunOpenAIAuthoringAcceptance.ps1
+pwsh -File Scripts/RunMediaAcceptance.ps1
+pwsh -File Scripts/RunMvpGoldenMcpTest.ps1
+pwsh -File Scripts/RunTwoPlayerAuthorityProof.ps1
+pwsh -File Scripts/RunMediaCookAudit.ps1
 pwsh -File Scripts/VerifyShippingExclusion.ps1
 ```
 
@@ -48,6 +53,8 @@ pwsh -File Scripts/InvokeCI.ps1 -TestFilter Hansa
 ```
 
 Logs and machine-readable results are preserved under the ignored `Saved/BuildArtifacts/` directory. See [Build, test and CI entry points](Docs/Development/BuildAndTest.md) for configuration, failure behavior and the platform-neutral CI checklist.
+
+`InvokeCI.ps1` is fail-fast. For a release review, retain the artifact from every command above even when an earlier gate fails; a target/executable Shipping scan does not replace the required successful cook and expanded cooked-package audit. The current gate-by-gate verdict is recorded in [S14-P04 MVP acceptance](Docs/Development/Evidence/S14P04-20260907.md).
 
 Before adding code, assets, fixtures, configuration, generated content, or tests, follow the canonical [repository conventions](Docs/Development/RepositoryConventions.md). Developer and generated-staging assets are excluded from cook, transient staging/evidence is ignored, and binary/media assets—including PNG references—use Git LFS.
 

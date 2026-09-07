@@ -1,0 +1,28 @@
+{
+  "cause": "Cap was centred but its front/back half-depth 2.15 m was smaller than tower crown radius 2.55 m; lower cap edge also sat 0.06 m above crown.",
+  "before": {
+    "cap_half_depth_m": 2.15,
+    "tower_crown_radius_m": 2.55,
+    "cap_base_z_m": 8.76,
+    "tower_top_z_m": 8.7
+  },
+  "after": {
+    "cap_half_depth_m": 2.9,
+    "cap_half_width_m": 2.82,
+    "cap_base_z_m": 8.66,
+    "seating_curb_outer_radius_m": 2.6,
+    "curb_z_range_m": [
+      8.55,
+      8.74
+    ],
+    "sail_and_front_cap_window_shift_m": [
+      0,
+      -0.75,
+      -0.1
+    ]
+  },
+  "centre_unchanged_xy": [
+    0,
+    0
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "material": {
+    "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Weathered_Oak.M_Bakery_Weathered_Oak"
+  },
+  "sample_weight": 0.1,
+  "flat_weight": 0.9,
+  "reason": "Reduce overly strong retained grain relief under engine daylight; color input unchanged"
+}

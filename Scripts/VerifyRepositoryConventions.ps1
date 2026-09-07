@@ -78,7 +78,30 @@ try {
         'Tools/HansaMcp/package.json',
         'Tools/HansaMcp/package-lock.json',
         'Tools/HansaMcp/schemas/automation-wire.schema.json',
-        'Scripts/RunHansaMcpTests.ps1'
+        'Scripts/RunHansaMcpTests.ps1',
+        'Tools/HansaGenerationWorker/package.json',
+        'Tools/HansaGenerationWorker/package-lock.json',
+        'Tools/HansaGenerationWorker/schemas/generation-request-v1.schema.json',
+        'Tools/HansaGenerationWorker/schemas/generation-result-v1.schema.json',
+        'Tools/HansaGenerationWorker/schemas/worker-protocol-v1.schema.json',
+        'Tools/HansaGenerationWorker/schemas/generation-manifest-v1.schema.json',
+        'Tools/HansaGenerationWorker/src/proposal-contract.js',
+        'Tools/HansaGenerationWorker/src/providers/openai-responses-provider.js',
+        'Tools/HansaGenerationWorker/tests/openai-responses-provider.test.js',
+        'Tools/HansaGenerationWorker/tests/recordings/openai-definition-proposal-completed.json',
+        'Scripts/RunGenerationWorkerTests.ps1',
+        'Source/HansaEditor/Private/Generation/HansaGenerationWorkerBridge.h',
+        'Source/HansaEditor/Private/Generation/HansaGenerationWorkerBridge.cpp',
+        'Source/HansaEditor/Private/Studio/SHansaGenerationJobsPanel.h',
+        'Source/HansaEditor/Private/Studio/SHansaGenerationJobsPanel.cpp',
+        'Source/HansaEditor/Private/Tests/HansaGenerationWorkerBridgeTests.cpp',
+        'Docs/Development/GenerationWorkerEditorBridge.md',
+        'Docs/Development/OpenAIDefinitionProposals.md',
+        'Source/HansaEditor/Private/Generation/HansaDefinitionProposalReview.h',
+        'Source/HansaEditor/Private/Generation/HansaDefinitionProposalReview.cpp',
+        'Source/HansaEditor/Private/Tests/HansaOpenAIProposalTests.cpp',
+        'Source/HansaEditor/Private/Tests/HansaOpenAIAcceptanceTests.cpp',
+        'Docs/Development/OpenAIAuthoringAcceptance.md'
     )
     foreach ($requiredFile in $requiredFiles) {
         if (-not (Test-Path -LiteralPath (Join-Path $projectRoot $requiredFile) -PathType Leaf)) {
@@ -224,11 +247,43 @@ try {
         Add-HansaConventionPass 'External HansaMcp package is dependency-free and contains no Unreal header dependency.'
     }
 
+    $workerFailuresBefore = $failures.Count
+    $workerPackagePath = Join-Path $projectRoot 'Tools\HansaGenerationWorker\package.json'
+    try {
+        $workerPackage = Get-Content -Raw -LiteralPath $workerPackagePath | ConvertFrom-Json
+        if ($workerPackage.PSObject.Properties.Name -contains 'dependencies' -or
+            $workerPackage.PSObject.Properties.Name -contains 'devDependencies') {
+            Add-HansaConventionFailure 'Tools/HansaGenerationWorker must remain dependency-free for S12-P01.'
+        }
+        if ([string]$workerPackage.engines.node -ne '>=22') {
+            Add-HansaConventionFailure 'Tools/HansaGenerationWorker must declare the verified Node.js >=22 baseline.'
+        }
+        $workerSourceFiles = $allRepositoryFiles | Where-Object { $_ -like 'Tools/HansaGenerationWorker/src/*.js' -or $_ -like 'Tools/HansaGenerationWorker/src/**/*.js' }
+        foreach ($relativePath in $workerSourceFiles) {
+            $sourceContent = Get-HansaTextFileContent -RelativePath $relativePath
+            if ($sourceContent -match '#include\s*[<"]|CoreMinimal\.h|UnrealEd|Engine/') {
+                Add-HansaConventionFailure "External HansaGenerationWorker source must not depend on Unreal headers: $relativePath"
+            }
+        }
+        $ignoreText = Get-Content -Raw -LiteralPath (Join-Path $projectRoot '.gitignore')
+        if (-not $ignoreText.Contains('**/Saved/')) {
+            Add-HansaConventionFailure 'Saved/GenerationJobs must remain covered by the repository Saved ignore rule.'
+        }
+    }
+    catch {
+        Add-HansaConventionFailure "Tools/HansaGenerationWorker package boundary is invalid: $($_.Exception.Message)"
+    }
+    if ($failures.Count -eq $workerFailuresBefore) {
+        Add-HansaConventionPass 'External HansaGenerationWorker is dependency-free, ignored-state-only, and contains no Unreal header dependency.'
+    }
+
     $forbiddenProductionTokens = @(
         '/Game/Hansa/Developer',
         '/Game/Hansa/Generated/Staging',
         'Content/Hansa/Generated/Staging',
-        'Saved/GenerationJobs'
+        'Saved/GenerationJobs',
+        'HANSA_GENERATION_WORKER_TOKEN',
+        'HansaGenerationWorker'
     )
     $productionFiles = $allRepositoryFiles | Where-Object {
         $_ -eq 'Hansa.uproject' -or

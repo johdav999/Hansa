@@ -11,7 +11,7 @@ test("fake endpoint covers capability, session, semantic inspection, waits, capt
   const client = new HansaAutomationClient({ transport, authenticationToken: token, controllerId: "contract-test" });
 
   assert.equal((await client.ping()).pong, true);
-  assert.deepEqual((await client.capabilitiesGet()).capabilities.map(({ name }) => name), ["session", "capabilities", "health", "gameplay.query", "gameplay.command", "fixture.control", "semantic-ui", "screenshots", "wait-assertions"]);
+  assert.deepEqual((await client.capabilitiesGet()).capabilities.map(({ name }) => name), ["session", "capabilities", "health", "gameplay.query", "gameplay.command", "fixture.control", "semantic-ui", "screenshots", "wait-assertions", "evidence"]);
   const opened = await client.sessionStart();
   assert.equal(opened.controllerId, "contract-test");
   assert.equal(opened.openedAtMonotonicMs, 42);
@@ -41,6 +41,20 @@ test("production fixture requires explicit capabilities and advances determinist
   assert.equal((await client.gameplayQuery("production.get", { productionId: 1 })).production.completedCycles, "2");
 });
 
+test("route delivery fixture preserves cancellation, reserve, and stale-report evidence", async () => {
+  const client = new HansaAutomationClient({ transport: new FakeInProcessTransport(new FakeHansaEndpoint({ authenticationToken: token })), authenticationToken: token });
+  await client.sessionStart({ requestedPermission: "FixtureControl", requiredCapabilities: ["gameplay.query", "gameplay.command", "fixture.control", "semantic-ui", "screenshots", "wait-assertions"] });
+  assert.equal((await client.fixtureLoad("route_delivery_v1")).expectedDeliveryTick, 25);
+  await client.gameplayCommand("route.edit", { routeId: 1, sourceCityId: "City.Lubeck", destinationCityId: "City.Rostock", goodId: "Good.Grain", quantityMilliUnits: 20000, minimumReserveMilliUnits: 30000 });
+  await client.gameplayCommand("route.set_active", { routeId: 1, active: true });
+  assert.equal((await client.simulationRunUntil({ predicate: { kind: "route.arrived", routeId: 1 }, maximumTicks: 20 })).matched, true);
+  const cargo = await client.gameplayQuery("route.cargo", { routeId: 1 });
+  assert.ok(cargo.vehicle.cargoMilliUnits <= 10000);
+  assert.equal((await client.gameplayQuery("market.report_age", { cityId: "City.Rostock", goodId: "Good.Grain" })).informationState, "Estimated");
+  await client.gameplayCommand("route.cancel", { routeId: 1 });
+  assert.equal((await client.gameplayQuery("route.get", { routeId: 1 })).route.lifecycle, "Cancelled");
+});
+
 test("empty Lübeck placement flow proves invalid then valid authoritative construction", async () => {
   const endpoint = new FakeHansaEndpoint({ authenticationToken: token });
   const client = new HansaAutomationClient({ transport: new FakeInProcessTransport(endpoint), authenticationToken: token });
@@ -61,7 +75,7 @@ test("empty Lübeck placement flow proves invalid then valid authoritative const
   await client.uiActivate("BuildMode.Action.Confirm");
   assert.equal((await client.waitFor({ semanticId: "BuildMode.Result.Building", property: "selected" })).matched, true);
   assert.equal((await client.uiState("BuildMode.Result.Building")).node.state.value, "Building:2:0");
-  assert.match((await client.captureScreenshot({ width: 1280, height: 720, bundleId: "placement-flow" })).metadataPath, /S05P04/);
+  assert.match((await client.captureScreenshot({ width: 1280, height: 720, bundleId: "placement-flow" })).metadataPath, /S07P03/);
 });
 
 test("semantic actions require ControlledActions and update observable state", async () => {
@@ -106,4 +120,14 @@ test("fake endpoint forwards authentication and capability errors structurally",
   });
   await client.sessionStart({ requiredCapabilities: ["gameplay.query"] });
   await assert.rejects(() => client.fixtureLoad("mvp_production_chains_v1"), (error) => error.code === "MissingCapability");
+});
+
+test("client save round-trip API uses only fixed slot identifiers", async () => {
+  const client = new HansaAutomationClient({ transport: new FakeInProcessTransport(new FakeHansaEndpoint({ authenticationToken: token })), authenticationToken: token });
+  await client.sessionStart({ requestedPermission: "FixtureControl", requiredCapabilities: ["gameplay.query", "gameplay.command", "fixture.control", "wait-assertions"] });
+  await client.fixtureLoad("save_roundtrip_v1");
+  assert.equal((await client.saveCreate("autosave")).slotId, "autosave");
+  assert.equal((await client.saveWaitFor({ condition: "slot_exists", slotId: "autosave" })).matched, true);
+  assert.equal((await client.saveLoad("autosave")).deterministicContinuation, true);
+  assert.equal((await client.saveAssertRoundTrip()).coverage.routeCargo, true);
 });

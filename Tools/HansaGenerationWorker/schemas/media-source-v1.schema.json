@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hansa-media-source-v1",
+  "title": "Hansa retained source contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "jobId",
+    "revision",
+    "outputIndex",
+    "domain",
+    "mediaType",
+    "sha256",
+    "sizeBytes",
+    "manifestHash",
+    "manifestFileSha256",
+    "sourcePath",
+    "manifestPath",
+    "validation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "jobId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "outputIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 15
+    },
+    "domain": {
+      "enum": [
+        "Meshes",
+        "Audio"
+      ]
+    },
+    "mediaType": {
+      "enum": [
+        "model/gltf-binary",
+        "audio/wav"
+      ]
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sizeBytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 67108864
+    },
+    "manifestHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "manifestFileSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sourcePath": {
+      "type": "string",
+      "pattern": "^SourceArt/Generated/(Meshes|Audio)/[0-9a-f-]+/r[0-9]+/artifact-[0-9]+/source\\.(glb|wav)$"
+    },
+    "manifestPath": {
+      "type": "string",
+      "pattern": "^SourceArt/Generated/(Meshes|Audio)/[0-9a-f-]+/r[0-9]+/artifact-[0-9]+/job-manifest\\.json$"
+    },
+    "validation": {
+      "type": "object"
+    }
+  }
+}

@@ -9,6 +9,9 @@
 #include "Widgets/Views/SListView.h"
 
 class IDetailsView;
+class SHansaResearchGraphPanel;
+class SHansaGenerationJobsPanel;
+class SWidgetSwitcher;
 
 struct FHansaDefinitionListItem final
 {
@@ -59,6 +62,9 @@ private:
 	FReply RunGrainShortageFixture();
 	FReply Undo();
 	FReply Redo();
+	FReply ShowDefinitionDetails();
+	FReply ShowResearchGraph();
+	FReply ShowGenerationJobs();
 	bool CanUndo() const;
 	bool CanRedo() const;
 	void OnFinishedChangingProperties(const FPropertyChangedEvent& PropertyChangedEvent);
@@ -82,7 +88,11 @@ private:
 	TSharedPtr<SListView<TSharedPtr<FHansaDefinitionListItem>>> DefinitionListView;
 	TSharedPtr<SListView<TSharedPtr<FHansaStudioValidationItem>>> ValidationListView;
 	TSharedPtr<IDetailsView> DetailsView;
+	TSharedPtr<SHansaResearchGraphPanel> ResearchGraphPanel;
+	TSharedPtr<SHansaGenerationJobsPanel> GenerationJobsPanel;
+	TSharedPtr<SWidgetSwitcher> WorkspaceSwitcher;
 	FText FixturePreviewText;
 	bool bFixturePreviewRan = false;
 	bool bFixturePreviewSucceeded = false;
+	bool bGenerationWorkspace = false;
 };

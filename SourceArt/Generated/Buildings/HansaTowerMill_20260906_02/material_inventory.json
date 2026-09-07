@@ -1,0 +1,114 @@
+[
+  {
+    "name": "Masonry",
+    "maps": {
+      "BaseColor": "exports/T_Mill_Masonry_BaseColor.png",
+      "Roughness": "exports/T_Mill_Masonry_Roughness.png",
+      "Normal": "exports/T_Mill_Masonry_Normal.png"
+    },
+    "source": "//..\\textures\\tower--masonry--worn--1254x1254--v1.png",
+    "uv_coverage_m": 2.5,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 409.6,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "WeatheredTimber",
+    "maps": {
+      "BaseColor": "exports/T_Mill_WeatheredTimber_BaseColor.png",
+      "Roughness": "exports/T_Mill_WeatheredTimber_Roughness.png",
+      "Normal": "exports/T_Mill_WeatheredTimber_Normal.png"
+    },
+    "source": "//..\\textures\\tower--timber--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "SagePaint",
+    "maps": {
+      "BaseColor": "exports/T_Mill_SagePaint_BaseColor.png",
+      "Roughness": "exports/T_Mill_SagePaint_Roughness.png",
+      "Normal": "exports/T_Mill_SagePaint_Normal.png"
+    },
+    "source": "//..\\textures\\tower--paint--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "OldBrick",
+    "maps": {
+      "BaseColor": "exports/T_Mill_OldBrick_BaseColor.png",
+      "Roughness": "exports/T_Mill_OldBrick_Roughness.png",
+      "Normal": "exports/T_Mill_OldBrick_Normal.png"
+    },
+    "source": ".\\textures\\tower--brick--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "ForgedIron",
+    "maps": {
+      "BaseColor": "exports/T_Mill_ForgedIron_BaseColor.png",
+      "Roughness": "exports/T_Mill_ForgedIron_Roughness.png",
+      "Normal": "exports/T_Mill_ForgedIron_Normal.png"
+    },
+    "source": "Procedural small trim/metal/glass/recess material; no photographic texture required",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "WindowGlass",
+    "maps": {
+      "BaseColor": "exports/T_Mill_WindowGlass_BaseColor.png",
+      "Roughness": "exports/T_Mill_WindowGlass_Roughness.png",
+      "Normal": "exports/T_Mill_WindowGlass_Normal.png"
+    },
+    "source": "Procedural small trim/metal/glass/recess material; no photographic texture required",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "RecessTimber",
+    "maps": {
+      "BaseColor": "exports/T_Mill_RecessTimber_BaseColor.png",
+      "Roughness": "exports/T_Mill_RecessTimber_Roughness.png",
+      "Normal": "exports/T_Mill_RecessTimber_Normal.png"
+    },
+    "source": "Procedural small trim/metal/glass/recess material; no photographic texture required",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "Fieldstone",
+    "maps": {
+      "BaseColor": "exports/T_Mill_Fieldstone_BaseColor.png",
+      "Roughness": "exports/T_Mill_Fieldstone_Roughness.png",
+      "Normal": "exports/T_Mill_Fieldstone_Normal.png"
+    },
+    "source": ".\\textures\\tower--stone--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  }
+]

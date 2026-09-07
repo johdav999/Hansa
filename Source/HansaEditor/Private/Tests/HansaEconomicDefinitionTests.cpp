@@ -4,10 +4,13 @@
 #include "Definitions/HansaEconomicDefinitionCompiler.h"
 #include "Definitions/HansaEconomicDefinitions.h"
 #include "Definitions/HansaPopulationDefinitions.h"
+#include "Definitions/HansaResearchDefinitions.h"
+#include "Definitions/HansaScenarioDefinitions.h"
 #include "Definitions/HansaMarketDefinitions.h"
+#include "Definitions/HansaMerchantAIDefinitions.h"
+#include "Definitions/HansaTradeDefinitions.h"
 #include "Definitions/HansaEconomicDefinitionSeeder.h"
 #include "Editor.h"
-#include "Fixtures/HansaProductionFixture.h"
 #include "Misc/AutomationTest.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
@@ -15,6 +18,7 @@
 #include "Schema/HansaEditorSchemaRegistry.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
+#include "World/HansaLubeckScenarioInitializer.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 
@@ -70,7 +74,14 @@ bool FHansaEconomicSchemaCoverageTest::RunTest(const FString& Parameters)
 		UHansaBuildingDefinition::StaticClass(),
 		UHansaNeedDefinition::StaticClass(),
 		UHansaPopulationTierDefinition::StaticClass(),
-		UHansaCityMarketProfileDefinition::StaticClass() })
+		UHansaCityMarketProfileDefinition::StaticClass(),
+		UHansaVehicleDefinition::StaticClass(),
+		UHansaRouteDefinition::StaticClass(),
+		UHansaTechnologyDefinition::StaticClass(),
+		UHansaMerchantAITuningDefinition::StaticClass(),
+		UHansaScenarioObjectiveDefinition::StaticClass(),
+		UHansaVictoryDefinition::StaticClass(),
+		UHansaScenarioDefinition::StaticClass() })
 	{
 		const FHansaDefinitionClassSchema* Schema = Registry.FindSchema(DefinitionClass);
 		TestNotNull(*FString::Printf(TEXT("%s is discovered by the generic schema registry"), *DefinitionClass->GetName()), Schema);
@@ -78,8 +89,31 @@ bool FHansaEconomicSchemaCoverageTest::RunTest(const FString& Parameters)
 		{
 			TestTrue(*FString::Printf(TEXT("%s metadata is complete"), *DefinitionClass->GetName()), Schema->IsValid());
 			TestTrue(TEXT("Every economic schema exports reflected properties"), !Schema->Properties.IsEmpty());
+			const FHansaEditorSchemaProperty* MeshProperty = Schema->Properties.FindByPredicate(
+				[](const FHansaEditorSchemaProperty& Property) { return Property.Name == TEXT("PresentationMesh"); });
+			TestNotNull(TEXT("Every definition exposes the common presentation mesh field"), MeshProperty);
+			if (MeshProperty != nullptr)
+			{
+				TestEqual(TEXT("The editor provides a typed static mesh reference"), MeshProperty->ReferenceType, FString(TEXT("StaticMesh")));
+				TestEqual(TEXT("Mesh assignment remains human controlled"), MeshProperty->AIAccess, FString(TEXT("Never")));
+				TestEqual(TEXT("Inherited mesh assignment is a compatible migration"), MeshProperty->Migration, FString(TEXT("Compatible")));
+			}
+
 		}
 	}
+	const FHansaDefinitionClassSchema* BuildingSchema = Registry.FindSchema(UHansaBuildingDefinition::StaticClass());
+	const FHansaEditorSchemaProperty* ActorProperty = BuildingSchema != nullptr ? BuildingSchema->Properties.FindByPredicate(
+		[](const FHansaEditorSchemaProperty& Property) { return Property.Name == TEXT("PresentationActorClass"); }) : nullptr;
+	if (TestNotNull(TEXT("Building actor reference is exposed to authoring and schema export"), ActorProperty))
+	{
+		TestEqual(TEXT("Actor picker uses class references"), ActorProperty->ReferenceType, FString(TEXT("ActorClass")));
+		TestEqual(TEXT("Actor migration preserves existing mesh content"), ActorProperty->Migration, FString(TEXT("Compatible")));
+		TestEqual(TEXT("AI cannot substitute executable Blueprint classes"), ActorProperty->AIAccess, FString(TEXT("Never")));
+	}
+	TArray<FString> ExportedSchemas;
+	FString ExportError;
+	TestTrue(TEXT("Updated schemas export for every definition"), Registry.ExportAllJsonSchemas(
+		FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("TestEvidence/Presentation/Schemas")), ExportedSchemas, ExportError));
 	return !HasAnyErrors();
 }
 
@@ -101,6 +135,15 @@ bool FHansaEconomicRegistryTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("MVP needs count"), First.Registry.GetNeeds().Num(), 5);
 	TestEqual(TEXT("MVP population tiers count"), First.Registry.GetPopulationTiers().Num(), 2);
 	TestEqual(TEXT("MVP city market profiles count"), First.Registry.GetCityMarkets().Num(), 4);
+	TestEqual(TEXT("MVP vehicle definitions count"), First.Registry.GetVehicles().Num(), 2);
+	TestEqual(TEXT("MVP route definitions count"), First.Registry.GetRoutes().Num(), 2);
+	TestEqual(TEXT("MVP merchant AI tuning count"), First.Registry.GetMerchantAITunings().Num(), 1);
+	TestEqual(TEXT("MVP scenario objective count"), First.Registry.GetScenarioObjectives().Num(), 11);
+	TestEqual(TEXT("MVP victory path count"), First.Registry.GetVictories().Num(), 3);
+	TestEqual(TEXT("MVP scenario count"), First.Registry.GetScenarios().Num(), 1);
+	TestNotNull(TEXT("Lübeck shortage scenario is queryable by stable ID"), First.Registry.FindScenario(TEXT("Scenario.LubeckGrainShortageV1")));
+	TestNotNull(TEXT("Vehicle.Cog is queryable by stable ID"), First.Registry.FindVehicle(TEXT("Vehicle.Cog")));
+	TestNotNull(TEXT("Route.SaltRoad is queryable by stable ID"), First.Registry.FindRoute(TEXT("Route.SaltRoad")));
 	TestTrue(TEXT("Registry hash is non-zero"), First.Registry.GetRegistryHash() != 0);
 	TestNotNull(TEXT("Good.Grain is queryable by stable ID"), First.Registry.FindGood(TEXT("Good.Grain")));
 	TestNotNull(TEXT("Recipe.BrewBeer is queryable by stable ID"), First.Registry.FindRecipe(TEXT("Recipe.BrewBeer")));
@@ -117,6 +160,28 @@ bool FHansaEconomicRegistryTest::RunTest(const FString& Parameters)
 	TestNotNull(TEXT("Need.Bread is queryable by stable ID"), First.Registry.FindNeed(TEXT("Need.Bread")));
 	TestNotNull(TEXT("PopulationTier.Artisan is queryable by stable ID"), First.Registry.FindPopulationTier(TEXT("PopulationTier.Artisan")));
 	TestNotNull(TEXT("City.Lubeck market is queryable by stable ID"), First.Registry.FindCityMarket(TEXT("City.Lubeck")));
+	int32 MarketOnlyCityCount = 0;
+	for (const Hansa::Simulation::FHansaCompiledCityMarketProfileDefinition& City : First.Registry.GetCityMarkets())
+	{
+		TestEqual(*FString::Printf(TEXT("%s covers all ten MVP goods"), *City.StableId), City.Goods.Num(), 10);
+		if (!City.bMarketOnly) continue;
+		++MarketOnlyCityCount;
+		TestTrue(*FString::Printf(TEXT("%s has a delayed deterministic report cadence"), *City.StableId),
+			City.ReportCadenceTicks > City.UpdateCadenceTicks);
+		TestTrue(*FString::Printf(TEXT("%s has ordered report-age classifications"), *City.StableId),
+			City.CurrentReportMaxAgeTicks <= City.RecentReportMaxAgeTicks &&
+			City.RecentReportMaxAgeTicks <= City.StaleReportMaxAgeTicks &&
+			City.StaleReportMaxAgeTicks <= City.EstimatedReportMaxAgeTicks);
+		for (const Hansa::Simulation::FHansaCompiledMarketGoodProfile& Good : City.Goods)
+		{
+			TestTrue(*FString::Printf(TEXT("%s %s has explicit simulated stock or background flow"),
+				*City.StableId, *Good.GoodId), Good.InitialStockMilliUnits > 0 ||
+				Good.BackgroundProductionMilliUnitsPerUpdate > 0 ||
+				Good.BackgroundCitizenDemandMilliUnitsPerUpdate > 0 ||
+				Good.BackgroundIndustrialDemandMilliUnitsPerUpdate > 0);
+		}
+	}
+	TestEqual(TEXT("Hamburg, Lüneburg and Rostock are market-only cities"), MarketOnlyCityCount, 3);
 
 	Algo::Reverse(Forward);
 	const FHansaEconomicRegistryCompileResult Reversed = FHansaEconomicDefinitionCompiler::Compile(Forward);
@@ -134,6 +199,41 @@ bool FHansaEconomicRegistryTest::RunTest(const FString& Parameters)
 		TestTrue(TEXT("Temporary edited registry compiles"), Temporary.IsValid());
 		TestEqual(TEXT("Temporary compile never mutates saved/derived asset state"), Grain->ContentHash, StoredHash);
 		TestNotEqual(TEXT("Result-affecting edit changes registry hash"), Temporary.Registry.GetRegistryHash(), First.Registry.GetRegistryHash());
+	}
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FHansaCityMarketDefinitionValidationTest,
+	"Hansa.Content.Definitions.CityMarketSimulationAndReportingValidation",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaCityMarketDefinitionValidationTest::RunTest(const FString& Parameters)
+{
+	using namespace Hansa::Editor::Tests;
+	{
+		TArray<TStrongObjectPtr<UHansaDefinitionBase>> Definitions =
+			Hansa::Editor::EconomicDefinitions::CreateMvpDefinitionSet(GetTransientPackage());
+		auto* Rostock = CastChecked<UHansaCityMarketProfileDefinition>(FindDefinition(Definitions, TEXT("City.Rostock")));
+		Rostock->RecentReportMaxAgeTicks = Rostock->StaleReportMaxAgeTicks + 1;
+		const auto Result = FHansaEconomicDefinitionCompiler::Compile(RawDefinitions(Definitions));
+		TestFalse(TEXT("Misordered market information ages fail validation"), Result.IsValid());
+		TestTrue(TEXT("Report-policy validation uses a stable actionable code"),
+			ContainsIssueCode(Result, TEXT("HSA-MARKET-002")));
+	}
+	{
+		TArray<TStrongObjectPtr<UHansaDefinitionBase>> Definitions =
+			Hansa::Editor::EconomicDefinitions::CreateMvpDefinitionSet(GetTransientPackage());
+		auto* Hamburg = CastChecked<UHansaCityMarketProfileDefinition>(FindDefinition(Definitions, TEXT("City.Hamburg")));
+		FHansaMarketGoodProfile& Good = Hamburg->Goods[0];
+		Good.InitialStockMilliUnits = 0;
+		Good.BackgroundProductionMilliUnitsPerUpdate = 0;
+		Good.BackgroundCitizenDemandMilliUnitsPerUpdate = 0;
+		Good.BackgroundIndustrialDemandMilliUnitsPerUpdate = 0;
+		const auto Result = FHansaEconomicDefinitionCompiler::Compile(RawDefinitions(Definitions));
+		TestFalse(TEXT("Empty market-only activity fails validation"), Result.IsValid());
+		TestTrue(TEXT("Market-only activity validation uses a stable actionable code"),
+			ContainsIssueCode(Result, TEXT("HSA-MARKET-005")));
 	}
 	return !HasAnyErrors();
 }
@@ -248,14 +348,19 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 			LoadedDefinitions.Add(Definition);
 		}
 	}
-	TestEqual(TEXT("All authored MVP definition assets reload from disk"), LoadedDefinitions.Num(), 43);
+	TestEqual(TEXT("All authored MVP definition assets reload from disk"), LoadedDefinitions.Num(), 72);
 	const FHansaEconomicRegistryCompileResult CompileResult = FHansaEconomicDefinitionCompiler::Compile(LoadedDefinitions);
 	TestTrue(TEXT("Reloaded production assets compile"), CompileResult.IsValid());
-	TestEqual(TEXT("Headless fixture version pins the authored on-disk economic registry"),
-		CompileResult.Registry.GetRegistryHash(), Hansa::Simulation::FHansaProductionFixture::RegistryHash);
+	TestEqual(TEXT("The playable runtime pins the authored on-disk economic registry"),
+		CompileResult.Registry.GetRegistryHash(), FHansaLubeckScenarioInitializer::MvpRegistryHash);
 	TestEqual(TEXT("Reloaded goods count"), CompileResult.Registry.GetGoods().Num(), 10);
 	TestEqual(TEXT("Reloaded recipes count"), CompileResult.Registry.GetRecipes().Num(), 8);
 	TestEqual(TEXT("Reloaded buildings count"), CompileResult.Registry.GetBuildings().Num(), 14);
+	TestEqual(TEXT("Reloaded technology count"), CompileResult.Registry.GetTechnologies().Num(), 9);
+	TestEqual(TEXT("Reloaded merchant AI tuning count"), CompileResult.Registry.GetMerchantAITunings().Num(), 1);
+	TestEqual(TEXT("Reloaded scenario objective count"), CompileResult.Registry.GetScenarioObjectives().Num(), 11);
+	TestEqual(TEXT("Reloaded victory path count"), CompileResult.Registry.GetVictories().Num(), 3);
+	TestEqual(TEXT("Reloaded scenario count"), CompileResult.Registry.GetScenarios().Num(), 1);
 	for (const Hansa::Simulation::FHansaCompiledBuildingDefinition& Building : CompileResult.Registry.GetBuildings())
 	{
 		TestTrue(*FString::Printf(TEXT("Reloaded %s retains its S06 currency cost"), *Building.StableId),
@@ -265,8 +370,21 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 	}
 	const auto* LaborerResidence = CompileResult.Registry.FindBuilding(TEXT("Building.Residence.Laborer"));
 	const auto* ArtisanResidence = CompileResult.Registry.FindBuilding(TEXT("Building.Residence.Artisan"));
+	const UHansaBuildingDefinition* AuthoredLaborerResidence = nullptr;
+	for (const UHansaDefinitionBase* Definition : LoadedDefinitions)
+	{
+		if (Definition->StableDefinitionId == TEXT("Building.Residence.Laborer"))
+		{
+			AuthoredLaborerResidence = Cast<UHansaBuildingDefinition>(Definition);
+			break;
+		}
+	}
 	TestTrue(TEXT("Reloaded laborer residence retains its hosted tier"), LaborerResidence != nullptr &&
 		LaborerResidence->ResidentPopulationTierId == TEXT("PopulationTier.Laborer"));
+	TestTrue(TEXT("Reloaded laborer residence retains the approved presentation mesh"),
+		AuthoredLaborerResidence != nullptr &&
+		AuthoredLaborerResidence->PresentationMesh.ToSoftObjectPath().ToString() ==
+			TEXT("/Game/Mesh/LaborerResidence/Materials_R02/Meshes/SM_LaborerResidence.SM_LaborerResidence"));
 	TestTrue(TEXT("Reloaded artisan residence retains its hosted tier"), ArtisanResidence != nullptr &&
 		ArtisanResidence->ResidentPopulationTierId == TEXT("PopulationTier.Artisan"));
 	TestTrue(TEXT("Reloaded residence progression remains direct and authored"), LaborerResidence != nullptr &&
@@ -274,6 +392,8 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Reloaded needs count"), CompileResult.Registry.GetNeeds().Num(), 5);
 	TestEqual(TEXT("Reloaded population tier count"), CompileResult.Registry.GetPopulationTiers().Num(), 2);
 	TestEqual(TEXT("Reloaded city market profile count"), CompileResult.Registry.GetCityMarkets().Num(), 4);
+	TestEqual(TEXT("Reloaded vehicle count"), CompileResult.Registry.GetVehicles().Num(), 2);
+	TestEqual(TEXT("Reloaded route count"), CompileResult.Registry.GetRoutes().Num(), 2);
 	return !HasAnyErrors();
 }
 
@@ -478,6 +598,42 @@ bool FHansaEconomicTransactionsTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Building undo restores capacity"), Building->StorageCapacityMilliUnits, InitialCapacity);
 	TestTrue(TEXT("Building edit can be redone"), GEditor->RedoTransaction());
 	TestEqual(TEXT("Building redo restores edit"), Building->StorageCapacityMilliUnits, 125000);
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FHansaMvpResearchCatalogueTest,
+	"Hansa.Content.Research.MvpCatalogueAndGraphValidation",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaMvpResearchCatalogueTest::RunTest(const FString& Parameters)
+{
+	TArray<TStrongObjectPtr<UHansaDefinitionBase>> Definitions =
+		Hansa::Editor::EconomicDefinitions::CreateMvpDefinitionSet(GetTransientPackage());
+	const FHansaEconomicRegistryCompileResult Compiled = FHansaEconomicDefinitionCompiler::Compile(
+		Hansa::Editor::Tests::RawDefinitions(Definitions));
+	TestTrue(TEXT("The accepted MVP catalogue compiles"), Compiled.IsValid());
+	TestEqual(TEXT("The MVP contains exactly nine technologies"), Compiled.Registry.GetTechnologies().Num(), 9);
+	for (const Hansa::Simulation::EHansaResearchBranch Branch : {
+		Hansa::Simulation::EHansaResearchBranch::Commerce,
+		Hansa::Simulation::EHansaResearchBranch::Production,
+		Hansa::Simulation::EHansaResearchBranch::Logistics})
+	{
+		TestEqual(TEXT("Each branch contains exactly three technologies"),
+			Compiled.Registry.GetTechnologies().FilterByPredicate([Branch](const auto& Technology)
+			{
+				return Technology.Branch == Branch;
+			}).Num(), 3);
+	}
+
+	UHansaTechnologyDefinition* RouteScheduling = CastChecked<UHansaTechnologyDefinition>(
+		Hansa::Editor::Tests::FindDefinition(Definitions, TEXT("Technology.Logistics.RouteScheduling")));
+	RouteScheduling->PrerequisiteTechnologyIds = {TEXT("Technology.Missing")};
+	const FHansaEconomicRegistryCompileResult Broken = FHansaEconomicDefinitionCompiler::Compile(
+		Hansa::Editor::Tests::RawDefinitions(Definitions));
+	TestFalse(TEXT("Missing research nodes fail compilation"), Broken.IsValid());
+	TestTrue(TEXT("Missing prerequisite diagnostic is stable"),
+		Hansa::Editor::Tests::ContainsIssueCode(Broken, TEXT("HSA-REGISTRY-022")));
 	return !HasAnyErrors();
 }
 

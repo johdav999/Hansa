@@ -1,0 +1,41 @@
+{
+  "mesh": {
+    "refPath": "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Meshes/SM_HansaBakery_ImageGen.SM_HansaBakery_ImageGen"
+  },
+  "bounds_cm": {
+    "min": {
+      "x": -483.6896667480469,
+      "y": -1150,
+      "z": 1.9999995231628418
+    },
+    "max": {
+      "x": 516.9795532226562,
+      "y": 798.5,
+      "z": 1666.4998779296875
+    },
+    "isValid": true
+  },
+  "slots_verified": [
+    "PBR_Brick_0",
+    "PBR_Brick_1",
+    "PBR_Brick_2",
+    "PBR_Clay_0",
+    "PBR_Clay_1",
+    "PBR_Clay_2",
+    "PBR_Damp_Lime",
+    "PBR_Flour_Linen",
+    "PBR_Forged_Iron",
+    "PBR_Lead_Roofing",
+    "PBR_Lime_Mortar",
+    "PBR_Lime_Plaster",
+    "PBR_Limestone",
+    "PBR_Oven_Soot",
+    "PBR_Rye_Crust",
+    "PBR_Weathered_Oak",
+    "PBR_Window_Glass"
+  ],
+  "level_saved_reopened": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_ImageGen_20260906_02/L_BakeryPreview",
+  "revised_material_count": 9,
+  "normal_roughness": "retained original physical maps and prior engine normal adaptation",
+  "approval": "staging"
+}

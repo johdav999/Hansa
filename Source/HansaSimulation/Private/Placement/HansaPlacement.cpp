@@ -260,6 +260,7 @@ namespace Hansa::Simulation
 		const int32 Height = bSwapDimensions ? Building->FootprintWidthCells : Building->FootprintHeightCells;
 		Result.OccupiedCells.Reserve(Width * Height);
 		bool bTouchesShoreline = false;
+		bool bBridgesLandAndWater = false;
 		bool bTouchesRoad = false;
 
 		for (int32 XOffset = 0; XOffset < Width; ++XOffset)
@@ -315,7 +316,49 @@ namespace Hansa::Simulation
 		}
 		Result.OccupiedCells.Sort();
 
-		if (Building->bRequiresShoreline && !bTouchesShoreline)
+		if (Building->bRequiresShoreline && bTouchesShoreline)
+		{
+			const auto EdgeContainsTerrain = [&State, &Spec](
+				const FHansaGridCoordinate Start,
+				const FHansaGridCoordinate Step,
+				const int32 Length,
+				const EHansaPlacementTerrain Terrain)
+			{
+				for (int32 Index = 0; Index < Length; ++Index)
+				{
+					const FHansaGridCoordinate Coordinate {
+						Start.X + Step.X * Index,
+						Start.Y + Step.Y * Index
+					};
+					const FHansaPlacementGridCell* Cell = State.FindCell(Spec.CityId, Coordinate);
+					if (Cell != nullptr && Cell->Terrain == Terrain)
+					{
+						return true;
+					}
+				}
+				return false;
+			};
+
+			const bool bWaterWest = EdgeContainsTerrain(
+				{ Spec.Anchor.X - 1, Spec.Anchor.Y }, { 0, 1 }, Height, EHansaPlacementTerrain::Water);
+			const bool bWaterEast = EdgeContainsTerrain(
+				{ Spec.Anchor.X + Width, Spec.Anchor.Y }, { 0, 1 }, Height, EHansaPlacementTerrain::Water);
+			const bool bWaterSouth = EdgeContainsTerrain(
+				{ Spec.Anchor.X, Spec.Anchor.Y - 1 }, { 1, 0 }, Width, EHansaPlacementTerrain::Water);
+			const bool bWaterNorth = EdgeContainsTerrain(
+				{ Spec.Anchor.X, Spec.Anchor.Y + Height }, { 1, 0 }, Width, EHansaPlacementTerrain::Water);
+			const bool bLandWest = EdgeContainsTerrain(
+				{ Spec.Anchor.X - 1, Spec.Anchor.Y }, { 0, 1 }, Height, EHansaPlacementTerrain::Land);
+			const bool bLandEast = EdgeContainsTerrain(
+				{ Spec.Anchor.X + Width, Spec.Anchor.Y }, { 0, 1 }, Height, EHansaPlacementTerrain::Land);
+			const bool bLandSouth = EdgeContainsTerrain(
+				{ Spec.Anchor.X, Spec.Anchor.Y - 1 }, { 1, 0 }, Width, EHansaPlacementTerrain::Land);
+			const bool bLandNorth = EdgeContainsTerrain(
+				{ Spec.Anchor.X, Spec.Anchor.Y + Height }, { 1, 0 }, Width, EHansaPlacementTerrain::Land);
+			bBridgesLandAndWater = (bWaterWest && bLandEast) || (bWaterEast && bLandWest) ||
+				(bWaterSouth && bLandNorth) || (bWaterNorth && bLandSouth);
+		}
+		if (Building->bRequiresShoreline && (!bTouchesShoreline || !bBridgesLandAndWater))
 		{
 			AddReason(Result, EHansaPlacementFailure::ShorelineRequired, Spec.Anchor);
 		}

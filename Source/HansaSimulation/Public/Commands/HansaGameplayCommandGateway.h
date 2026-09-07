@@ -38,7 +38,11 @@ namespace Hansa::Simulation
 		ConstructionStateInvalid,
 		ConstructionRefundUnavailable,
 		TargetHasDependents,
-		ResidenceProgressionUnavailable
+		ResidenceProgressionUnavailable,
+		RouteRejected,
+		RouteStateInvalid,
+		VehicleAlreadyAssigned,
+		ResearchRejected
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaCommandGatewayError Error);
@@ -64,6 +68,7 @@ namespace Hansa::Simulation
 		{
 			return ConstructionCost;
 		}
+		[[nodiscard]] EHansaRoutePlanError GetRoutePlanError() const { return RoutePlanError; }
 
 	private:
 		friend class FHansaSimulationPipeline;
@@ -77,6 +82,7 @@ namespace Hansa::Simulation
 		TArray<FHansaDomainEvent> Events;
 		TOptional<FHansaPlacementValidationResult> PlacementValidation;
 		TOptional<FHansaConstructionCostProjection> ConstructionCost;
+		EHansaRoutePlanError RoutePlanError = EHansaRoutePlanError::None;
 	};
 
 	/** The sole public state-mutation entry point shared by player, AI, RPC and controlled automation callers. */

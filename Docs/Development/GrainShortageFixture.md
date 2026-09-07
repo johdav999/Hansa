@@ -2,6 +2,14 @@
 
 `lubeck_grain_shortage_v1` is the versioned, actor-free S04-P04 integration fixture. It is available only when `WITH_HANSA_AUTOMATION` is enabled and runs through the same fixed-tick pipeline and gameplay command gateway as the game.
 
+## Playable runtime scenario
+
+The normal Lübeck game mode now selects the separate runtime-safe `lubeck_grain_shortage_v1` initializer. It loads and validates the 43 cooked MVP definition assets through `UAssetManager`, seeds population, inventory, production, grain-market state, and completed building placements, and advances through the normal authoritative runtime host. The initializer is compiled into the `Hansa` runtime module and has no dependency on `HansaAutomation`, fixture services, editor modules, or provider integrations, so the same path is available in Development and Shipping builds.
+
+The playable scenario is the default when no URL option is supplied. Focused placement tests can select the retained zero-building scenario with `?Scenario=empty_lubeck_build_v1`; its construction stockpile exists only to let the normal placement and construction commands operate against the authored costs. A standalone build-menu presentation model also uses this empty scenario as its isolated placement-test seam, while the in-game HUD always receives the GameMode-owned selected scenario.
+
+The runtime scenario intentionally does not call `FHansaProductionFixture`. The automation fixture below remains immutable evidence with its own recovery controls and golden contract.
+
 ## Reviewed phases
 
 The deterministic baseline is Lübeck at tick 0 with one city inventory, 20 laborers, grain consumers, grain-using mill and brewery production, a 30,000 milli-unit desired reserve, and a 1,000 milli-mark grain price. The fixture begins with 16,000 milli-units of grain. The normal population and production systems deplete it; the cadence-five market report publishes the shortage at tick 5 with separate citizen demand, industrial demand, unmet demand, causal price factors, alerts, and consumer identities.

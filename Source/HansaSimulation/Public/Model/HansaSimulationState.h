@@ -10,8 +10,10 @@
 #include "Model/HansaIds.h"
 #include "Model/HansaSimulationTime.h"
 #include "Production/HansaProduction.h"
+#include "Research/HansaResearch.h"
 #include "Population/HansaPopulation.h"
 #include "Placement/HansaPlacement.h"
+#include "Trade/HansaTrade.h"
 
 namespace Hansa::Simulation
 {
@@ -43,22 +45,6 @@ namespace Hansa::Simulation
 		int32 ConstructionElapsedTicks = 0;
 	};
 
-	struct FHansaVehicleState
-	{
-		FHansaVehicleId Id;
-		FHansaVehicleDefinitionId DefinitionId;
-		FHansaHouseId OwnerId;
-		FHansaQuantity Cargo;
-	};
-
-	struct FHansaRouteState
-	{
-		FHansaRouteId Id;
-		FHansaHouseId OwnerId;
-		FHansaVehicleId VehicleId;
-		FHansaRate Progress;
-	};
-
 	/** Minimal lifecycle record used to prove the command/event contract before gameplay feature commands exist. */
 	struct FHansaTestEntityState
 	{
@@ -85,6 +71,7 @@ namespace Hansa::Simulation
 		TArray<FHansaBuildingState> Buildings;
 		TArray<FHansaVehicleState> Vehicles;
 		TArray<FHansaRouteState> Routes;
+		TArray<FHansaHouseResearchInitialization> Research;
 		TArray<FHansaTestEntityState> TestEntities;
 		FHansaPlacementInitialization Placement;
 		TArray<FHansaInventoryInitialization> Inventories;
@@ -104,7 +91,7 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaSimulationState final
 	{
 	public:
-		static constexpr uint32 DeterminismFingerprintVersion = 13;
+		static constexpr uint32 DeterminismFingerprintVersion = 16;
 		static constexpr uint32 CurrentSystemPipelineVersion = 1;
 		static constexpr uint64 EmptyCommandHistoryFingerprint = 14695981039346656037ULL;
 
@@ -117,6 +104,7 @@ namespace Hansa::Simulation
 			const FHansaSimulationDefinitionContext& Definitions) const;
 
 	private:
+		friend class FHansaSaveCodec;
 		friend class FHansaSimulationPipeline;
 		friend class FHansaSimulationReadOnlyAccess;
 		friend class FHansaStateHasher;
@@ -138,6 +126,7 @@ namespace Hansa::Simulation
 		TArray<FHansaBuildingState> Buildings;
 		TArray<FHansaVehicleState> Vehicles;
 		TArray<FHansaRouteState> Routes;
+		TArray<FHansaHouseResearchState> Research;
 		TArray<FHansaTestEntityState> TestEntities;
 		FHansaPlacementState Placement;
 		FHansaInventoryLedger InventoryLedger;

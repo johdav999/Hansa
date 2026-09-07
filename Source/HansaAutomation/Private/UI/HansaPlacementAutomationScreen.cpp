@@ -6,6 +6,7 @@
 #include "Gameplay/HansaPlacementAutomationFixture.h"
 #include "SemanticUI/HansaSemanticUiRegistry.h"
 #include "Styling/CoreStyle.h"
+#include "UI/HansaUiStyle.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Layout/SBox.h"
@@ -25,15 +26,15 @@ namespace Hansa::Automation
 {
 	namespace PlacementScreen
 	{
-		const FLinearColor BalticNavy = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("152A35")));
-		const FLinearColor HarborBlue = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("2B5364")));
-		const FLinearColor Ink = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("202628")));
-		const FLinearColor Linen = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("F2E9D8")));
-		const FLinearColor Parchment = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("DFCFAF")));
-		const FLinearColor Brass = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("C19A52")));
-		const FLinearColor Oxblood = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("7A2E2A")));
-		const FLinearColor Success = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("3F7353")));
-		const FLinearColor Chalk = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("FAF7EF")));
+		const FLinearColor BalticNavy = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::BalticNavy);
+		const FLinearColor HarborBlue = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::HarborSlate);
+		const FLinearColor Ink = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Ink);
+		const FLinearColor Linen = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Linen);
+		const FLinearColor Parchment = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Parchment);
+		const FLinearColor Brass = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Brass);
+		const FLinearColor Oxblood = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Oxblood);
+		const FLinearColor Success = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::ProsperityTeal);
+		const FLinearColor Chalk = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Chalk);
 
 		TSharedRef<SWidget> LabeledButton(
 			TSharedPtr<SWidget>& OutWidget,
@@ -221,13 +222,13 @@ namespace Hansa::Automation
 									SNew(SHorizontalBox)
 									+ SHorizontalBox::Slot().AutoWidth().Padding(4.0f)
 									[
-										LabeledButton(RoadTool, FText::FromString(TEXT("Road")),
+									LabeledButton(RoadTool, FText::FromString(TEXT("Road\n25 pf · 1×1 · no workforce")),
 											[this] { return InvokeIntent([this] { return Fixture->SelectRoadIntent(); }); }, true,
 											TAttribute<FSlateColor>::CreateLambda([this] { return ToolColor(Registry->FindNode(TEXT("BuildMode.Tool.Road"))->State.bSelected); }))
 									]
 									+ SHorizontalBox::Slot().AutoWidth().Padding(4.0f)
 									[
-										LabeledButton(WarehouseTool, FText::FromString(TEXT("Warehouse  2×3")),
+									LabeledButton(WarehouseTool, FText::FromString(TEXT("Warehouse\n2,500 pf · 12 laborers · 2×3\nCart ↔ storage")),
 											[this] { return InvokeIntent([this] { return Fixture->SelectWarehouseIntent(); }); }, true,
 											TAttribute<FSlateColor>::CreateLambda([this] { return ToolColor(Registry->FindNode(TEXT("BuildMode.Tool.Warehouse"))->State.bSelected); }))
 									]
@@ -286,6 +287,25 @@ namespace Hansa::Automation
 			{ TEXT("BuildMode.Action.Repeat"), RepeatAction }, { TEXT("BuildMode.Action.Confirm"), ConfirmAction },
 			{ TEXT("BuildMode.Action.Cancel"), CancelAction }, { TEXT("BuildMode.Result.Building"), ResultWidget }
 		};
+		TMap<FString, TSharedPtr<SWidget>> BuildMenuSemanticWidgets = {
+			{ TEXT("HUD.Root"), ScreenWidget }, { TEXT("HUD.BottomArea"), ToolbarWidget },
+			{ TEXT("BuildMenu.Root"), ToolbarWidget }, { TEXT("BuildMenu.Categories"), ToolbarWidget },
+			{ TEXT("BuildMenu.Category.Roads"), RoadTool }, { TEXT("BuildMenu.Category.Residences"), ToolbarWidget },
+			{ TEXT("BuildMenu.Category.Production"), ToolbarWidget }, { TEXT("BuildMenu.Category.Storage"), WarehouseTool },
+			{ TEXT("BuildMenu.Category.Harbor"), ToolbarWidget }, { TEXT("BuildMenu.Category.Civic"), ToolbarWidget },
+			{ TEXT("BuildMenu.Category.Decoration"), ToolbarWidget }, { TEXT("BuildMenu.Cards"), ToolbarWidget },
+			{ TEXT("BuildMenu.Card.Building_Road"), RoadTool }, { TEXT("BuildMenu.Card.Building_Warehouse"), WarehouseTool },
+			{ TEXT("BuildMenu.Recent"), ToolbarWidget }, { TEXT("BuildMenu.Favorites"), ToolbarWidget },
+			{ TEXT("Placement.Root"), MapWidget }, { TEXT("Placement.Target.Road"), RoadTarget },
+			{ TEXT("Placement.Target.Disconnected"), InvalidTarget }, { TEXT("Placement.Target.Adjacent"), ValidTarget },
+			{ TEXT("Placement.Preview"), PreviewWidget }, { TEXT("Placement.Footprint"), PreviewWidget },
+			{ TEXT("Placement.Validation"), ValidationWidget }, { TEXT("Placement.Validation.Cause"), CauseText },
+			{ TEXT("Placement.Validation.Remedy"), RemedyText }, { TEXT("Placement.Overlay.Grid"), ToolbarWidget },
+			{ TEXT("Placement.Overlay.Road"), ToolbarWidget }, { TEXT("Placement.Action.Rotate"), RotateAction },
+			{ TEXT("Placement.Action.Repeat"), RepeatAction }, { TEXT("Placement.Action.Confirm"), ConfirmAction },
+			{ TEXT("Placement.Action.Cancel"), CancelAction }
+		};
+		SemanticWidgets.Append(MoveTemp(BuildMenuSemanticWidgets));
 		CauseWidget = CauseText;
 		RemedyWidget = RemedyText;
 		SemanticWidgets[TEXT("BuildMode.Placement.Validation.Cause")] = CauseText;

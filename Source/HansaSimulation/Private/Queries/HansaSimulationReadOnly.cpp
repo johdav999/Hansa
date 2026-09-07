@@ -285,6 +285,31 @@ namespace Hansa::Simulation
 			return Sum ? Sum.Value : TNumericLimits<int64>::Max();
 		}
 
+		EHansaMarketInformationState InformationState(const FHansaCityMarketState& Market, const int64 CurrentTick)
+		{
+			if (!Market.Report.bAvailable || Market.Report.ReportTick < 0 || Market.Report.ReportTick > CurrentTick)
+			{
+				return EHansaMarketInformationState::Unknown;
+			}
+			const int64 Age = CurrentTick - Market.Report.ReportTick;
+			if (Age <= Market.ReportPolicy.CurrentMaxAgeTicks) return EHansaMarketInformationState::Current;
+			if (Age <= Market.ReportPolicy.RecentMaxAgeTicks) return EHansaMarketInformationState::Recent;
+			if (Age <= Market.ReportPolicy.StaleMaxAgeTicks) return EHansaMarketInformationState::Stale;
+			if (Age <= Market.ReportPolicy.EstimatedMaxAgeTicks) return EHansaMarketInformationState::Estimated;
+			return EHansaMarketInformationState::Unknown;
+		}
+
+		int64 AverageReportPrice(const FHansaMarketReportState& Report)
+		{
+			if (Report.PriceHistory.IsEmpty()) return Report.PriceMilliMarks;
+			int64 Total = 0;
+			for (const FHansaMarketPriceHistoryEntry& Entry : Report.PriceHistory)
+			{
+				Total = SafeAdd(Total, Entry.PriceMilliMarks);
+			}
+			return Total / Report.PriceHistory.Num();
+		}
+
 		FText MarketFactorLabel(const EHansaMarketExplanationFactor Factor)
 		{
 			switch (Factor)
@@ -594,6 +619,82 @@ namespace Hansa::Simulation
 		return State->Routes;
 	}
 
+	TConstArrayView<FHansaHouseResearchState> FHansaSimulationReadOnlyAccess::GetResearch() const
+	{
+		check(State != nullptr);
+		return State->Research;
+	}
+
+	TOptional<FHansaVehicleProjection> FHansaSimulationReadOnlyAccess::QueryVehicle(
+		const FHansaVehicleId VehicleId) const
+	{
+		const FHansaVehicleState* Vehicle = State->Vehicles.FindByPredicate(
+			[VehicleId](const FHansaVehicleState& Value) { return Value.Id == VehicleId; });
+		if (Vehicle == nullptr) return TOptional<FHansaVehicleProjection>();
+		FHansaVehicleProjection Projection;
+		Projection.Id = Vehicle->Id;
+		Projection.DefinitionId = Vehicle->DefinitionId;
+		Projection.OwnerId = Vehicle->OwnerId;
+		Projection.CargoInventoryId = Vehicle->CargoInventoryId;
+		Projection.Mode = Vehicle->Mode;
+		Projection.CurrentCityId = Vehicle->CurrentCityId;
+		Projection.Cargo = Vehicle->Cargo;
+		Projection.Capacity = Vehicle->Capacity;
+		Projection.FreeCapacity = FHansaQuantity::FromRaw(FMath::Max<int64>(
+			0, Vehicle->Capacity.GetRawValue() - Vehicle->Cargo.GetRawValue()));
+		Projection.UpkeepPfennigPerTravelTick = Vehicle->UpkeepPfennigPerTravelTick;
+		Projection.AccruedUpkeepPfennig = Vehicle->AccruedUpkeepPfennig;
+		return TOptional<FHansaVehicleProjection>(MoveTemp(Projection));
+	}
+
+	TArray<FHansaVehicleProjection> FHansaSimulationReadOnlyAccess::BuildVehicleProjection() const
+	{
+		TArray<FHansaVehicleProjection> Result;
+		Result.Reserve(State->Vehicles.Num());
+		for (const FHansaVehicleState& Vehicle : State->Vehicles)
+		{
+			const TOptional<FHansaVehicleProjection> Projection = QueryVehicle(Vehicle.Id);
+			if (Projection.IsSet()) Result.Add(Projection.GetValue());
+		}
+		return Result;
+	}
+
+	TOptional<FHansaRouteProjection> FHansaSimulationReadOnlyAccess::QueryRoute(const FHansaRouteId RouteId) const
+	{
+		const FHansaRouteState* Route = State->Routes.FindByPredicate(
+			[RouteId](const FHansaRouteState& Value) { return Value.Id == RouteId; });
+		if (Route == nullptr) return TOptional<FHansaRouteProjection>();
+		FHansaRouteProjection Projection;
+		Projection.Id = Route->Id;
+		Projection.OwnerId = Route->OwnerId;
+		Projection.VehicleId = Route->VehicleId;
+		Projection.RouteDefinitionId = Route->RouteDefinitionId;
+		Projection.Mode = Route->Mode;
+		Projection.Lifecycle = Route->Lifecycle;
+		Projection.Stops = Route->Stops;
+		Projection.CurrentStopIndex = Route->CurrentStopIndex;
+		Projection.NextStopIndex = Route->NextStopIndex;
+		Projection.RemainingTravelTicks = Route->RemainingTravelTicks;
+		Projection.TotalTravelTicks = Route->TotalTravelTicks;
+		Projection.Progress = Route->Progress;
+		Projection.CompletedLegCount = Route->CompletedLegCount;
+		Projection.MissedCargoActionCount = Route->MissedCargoActionCount;
+		Projection.LastTransfer = Route->LastTransfer;
+		return TOptional<FHansaRouteProjection>(MoveTemp(Projection));
+	}
+
+	TArray<FHansaRouteProjection> FHansaSimulationReadOnlyAccess::BuildRouteProjection() const
+	{
+		TArray<FHansaRouteProjection> Result;
+		Result.Reserve(State->Routes.Num());
+		for (const FHansaRouteState& Route : State->Routes)
+		{
+			const TOptional<FHansaRouteProjection> Projection = QueryRoute(Route.Id);
+			if (Projection.IsSet()) Result.Add(Projection.GetValue());
+		}
+		return Result;
+	}
+
 	TConstArrayView<FHansaTestEntityState> FHansaSimulationReadOnlyAccess::GetTestEntities() const
 	{
 		return State->TestEntities;
@@ -718,9 +819,18 @@ namespace Hansa::Simulation
 		}
 		const FHansaProductionState* Production = State->Productions.FindByPredicate(
 			[ProductionId](const FHansaProductionState& Value) { return Value.Id == ProductionId; });
-		return Production != nullptr
-			? BuildOneProductionProjection(*Production, State->Buildings, Definitions->GetEconomicRegistry())
-			: TOptional<FHansaProductionProjection>();
+		if (Production == nullptr)
+		{
+			return TOptional<FHansaProductionProjection>();
+		}
+		TOptional<FHansaProductionProjection> Projection =
+			BuildOneProductionProjection(*Production, State->Buildings, Definitions->GetEconomicRegistry());
+		if (Projection.IsSet() && !Projection->CityId.IsValid())
+		{
+			Projection->CityId = ResolveProductionCity(
+				*Production, State->Placement, State->InventoryLedger.CreateReadOnlyAccess());
+		}
+		return Projection;
 	}
 
 	TArray<FHansaProductionProjection> FHansaSimulationReadOnlyAccess::BuildProductionProjection() const
@@ -729,10 +839,15 @@ namespace Hansa::Simulation
 		Result.Reserve(State->Productions.Num());
 		for (const FHansaProductionState& Production : State->Productions)
 		{
-			const TOptional<FHansaProductionProjection> Projection =
+			TOptional<FHansaProductionProjection> Projection =
 				BuildOneProductionProjection(Production, State->Buildings, Definitions->GetEconomicRegistry());
 			if (Projection.IsSet())
 			{
+				if (!Projection->CityId.IsValid())
+				{
+					Projection->CityId = ResolveProductionCity(
+						Production, State->Placement, State->InventoryLedger.CreateReadOnlyAccess());
+				}
 				Result.Add(Projection.GetValue());
 			}
 		}
@@ -881,6 +996,106 @@ namespace Hansa::Simulation
 		Result.bIsStale = Market->bIsStale;
 		Result.History = Market->PriceHistory;
 		return TOptional<FHansaMarketPriceProjection>(MoveTemp(Result));
+	}
+
+	TOptional<FHansaMarketReportAgeProjection> FHansaSimulationReadOnlyAccess::QueryMarketReportAge(
+		const FHansaCityDefinitionId CityId, const FHansaGoodId GoodId) const
+	{
+		const FHansaCityMarketState* Market = FindMarket(State->Markets, CityId, GoodId);
+		if (Market == nullptr) return TOptional<FHansaMarketReportAgeProjection>();
+		FHansaMarketReportAgeProjection Result;
+		Result.CityId = CityId;
+		Result.GoodId = GoodId;
+		Result.InformationState = InformationState(*Market, State->Clock.GetTick().GetValue());
+		if (Market->Report.bAvailable)
+		{
+			Result.ReportTick = Market->Report.ReportTick;
+			Result.MarketUpdateTick = Market->Report.MarketUpdateTick;
+			Result.AgeTicks = FMath::Max<int64>(0, State->Clock.GetTick().GetValue() - Market->Report.ReportTick);
+		}
+		return TOptional<FHansaMarketReportAgeProjection>(MoveTemp(Result));
+	}
+
+	TOptional<FHansaKnownMarketPriceProjection> FHansaSimulationReadOnlyAccess::QueryKnownMarketPrice(
+		const FHansaCityDefinitionId CityId, const FHansaGoodId GoodId) const
+	{
+		const FHansaCityMarketState* Market = FindMarket(State->Markets, CityId, GoodId);
+		if (Market == nullptr) return TOptional<FHansaKnownMarketPriceProjection>();
+		FHansaKnownMarketPriceProjection Result;
+		Result.CityId = CityId;
+		Result.GoodId = GoodId;
+		Result.InformationState = InformationState(*Market, State->Clock.GetTick().GetValue());
+		if (Result.InformationState != EHansaMarketInformationState::Unknown)
+		{
+			Result.PriceMilliMarks = Market->Report.PriceMilliMarks;
+			Result.RecentAveragePriceMilliMarks = AverageReportPrice(Market->Report);
+			Result.ReportTick = Market->Report.ReportTick;
+			Result.ReportAgeTicks = FMath::Max<int64>(0,
+				State->Clock.GetTick().GetValue() - Market->Report.ReportTick);
+		}
+		return TOptional<FHansaKnownMarketPriceProjection>(MoveTemp(Result));
+	}
+
+	TOptional<FHansaKnownMarketSupplyDemandProjection> FHansaSimulationReadOnlyAccess::QueryKnownMarketSupplyDemand(
+		const FHansaCityDefinitionId CityId, const FHansaGoodId GoodId) const
+	{
+		const FHansaCityMarketState* Market = FindMarket(State->Markets, CityId, GoodId);
+		if (Market == nullptr) return TOptional<FHansaKnownMarketSupplyDemandProjection>();
+		FHansaKnownMarketSupplyDemandProjection Result;
+		Result.CityId = CityId;
+		Result.GoodId = GoodId;
+		Result.InformationState = InformationState(*Market, State->Clock.GetTick().GetValue());
+		if (Result.InformationState != EHansaMarketInformationState::Unknown)
+		{
+			Result.Stock = Market->Report.Stock;
+			Result.DesiredReserve = Market->Report.DesiredReserve;
+			Result.CitizenDemand = Market->Report.CitizenDemand;
+			Result.IndustrialDemand = Market->Report.IndustrialDemand;
+			Result.TotalDemand = FHansaQuantity::FromRaw(SafeAdd(
+				Market->Report.CitizenDemand.GetRawValue(), Market->Report.IndustrialDemand.GetRawValue()));
+			Result.RecentLocalProduction = Market->Report.RecentLocalProduction;
+			Result.ExpectedIncomingSupply = Market->Report.ExpectedIncomingSupply;
+			Result.UnmetDemand = Market->Report.UnmetDemand;
+		}
+		return TOptional<FHansaKnownMarketSupplyDemandProjection>(MoveTemp(Result));
+	}
+
+	TOptional<FHansaMarketOpportunityComparisonProjection> FHansaSimulationReadOnlyAccess::CompareMarketOpportunity(
+		const FHansaCityDefinitionId SourceCityId,
+		const FHansaCityDefinitionId DestinationCityId,
+		const FHansaGoodId GoodId) const
+	{
+		if (SourceCityId == DestinationCityId) return TOptional<FHansaMarketOpportunityComparisonProjection>();
+		const TOptional<FHansaKnownMarketPriceProjection> SourcePrice = QueryKnownMarketPrice(SourceCityId, GoodId);
+		const TOptional<FHansaKnownMarketPriceProjection> DestinationPrice = QueryKnownMarketPrice(DestinationCityId, GoodId);
+		const TOptional<FHansaKnownMarketSupplyDemandProjection> SourceSupply =
+			QueryKnownMarketSupplyDemand(SourceCityId, GoodId);
+		const TOptional<FHansaKnownMarketSupplyDemandProjection> DestinationDemand =
+			QueryKnownMarketSupplyDemand(DestinationCityId, GoodId);
+		if (!SourcePrice.IsSet() || !DestinationPrice.IsSet() || !SourceSupply.IsSet() || !DestinationDemand.IsSet())
+		{
+			return TOptional<FHansaMarketOpportunityComparisonProjection>();
+		}
+		FHansaMarketOpportunityComparisonProjection Result;
+		Result.SourceCityId = SourceCityId;
+		Result.DestinationCityId = DestinationCityId;
+		Result.GoodId = GoodId;
+		Result.SourceInformationState = SourcePrice->InformationState;
+		Result.DestinationInformationState = DestinationPrice->InformationState;
+		Result.bComparable = SourcePrice->PriceMilliMarks.IsSet() && DestinationPrice->PriceMilliMarks.IsSet() &&
+			SourceSupply->Stock.IsSet() && SourceSupply->DesiredReserve.IsSet() &&
+			DestinationDemand->TotalDemand.IsSet() && DestinationDemand->Stock.IsSet();
+		if (Result.bComparable)
+		{
+			Result.SourcePriceMilliMarks = SourcePrice->PriceMilliMarks.GetValue();
+			Result.DestinationPriceMilliMarks = DestinationPrice->PriceMilliMarks.GetValue();
+			Result.GrossMarginMilliMarks = DestinationPrice->PriceMilliMarks.GetValue() - SourcePrice->PriceMilliMarks.GetValue();
+			Result.SourceAvailableAboveReserve = FHansaQuantity::FromRaw(FMath::Max<int64>(0,
+				SourceSupply->Stock.GetValue().GetRawValue() - SourceSupply->DesiredReserve.GetValue().GetRawValue()));
+			Result.DestinationDemandGap = FHansaQuantity::FromRaw(FMath::Max<int64>(0,
+				DestinationDemand->TotalDemand.GetValue().GetRawValue() - DestinationDemand->Stock.GetValue().GetRawValue()));
+		}
+		return TOptional<FHansaMarketOpportunityComparisonProjection>(MoveTemp(Result));
 	}
 
 	TArray<FHansaMarketPriceHistoryEntry> FHansaSimulationReadOnlyAccess::QueryMarketPriceHistory(
@@ -1094,6 +1309,7 @@ namespace Hansa::Simulation
 		Snapshot.Buildings = State->Buildings;
 		Snapshot.Vehicles = State->Vehicles;
 		Snapshot.Routes = State->Routes;
+		Snapshot.Research = State->Research;
 		Snapshot.TestEntities = State->TestEntities;
 		Snapshot.Inventories = State->InventoryLedger.CreateReadOnlyAccess().CaptureSnapshot();
 		Snapshot.Productions.NextReservationValue = State->NextProductionReservationValue;
@@ -1135,6 +1351,9 @@ namespace Hansa::Simulation
 			HouseProjection.Money = House.Money;
 			Projection.Houses.Add(HouseProjection);
 		}
+		Projection.Vehicles = BuildVehicleProjection();
+		Projection.Routes = BuildRouteProjection();
+		Projection.Research = State->Research;
 		Projection.Inventories = State->InventoryLedger.CreateReadOnlyAccess().BuildProjection();
 		Projection.Productions = BuildProductionProjection();
 		Projection.PopulationCohorts = BuildPopulationProjection();
@@ -1145,6 +1364,19 @@ namespace Hansa::Simulation
 			Projection.TotalWorkforceSupply += Cohort.WorkforceSupply;
 		}
 		Projection.Markets = BuildMarketProjection();
+		for (const FHansaCityMarketProjection& Market : Projection.Markets)
+		{
+			if (const TOptional<FHansaMarketReserveProjection> Reserve = QueryMarketReserveDays(Market.CityId, Market.GoodId); Reserve.IsSet())
+			{
+				Projection.MarketReserves.Add(Reserve.GetValue());
+			}
+			if (const TOptional<FHansaMarketExplanationProjection> Explanation = QueryMarketExplanation(Market.CityId, Market.GoodId); Explanation.IsSet())
+			{
+				Projection.MarketExplanations.Add(Explanation.GetValue());
+			}
+			Projection.MarketConsumers.Append(QueryMarketConsumers(Market.CityId, Market.GoodId));
+			Projection.MarketProducers.Append(QueryMarketProducers(Market.CityId, Market.GoodId));
+		}
 		Projection.ActiveMarketAlerts = BuildActiveMarketAlerts();
 		Projection.Placements.Append(State->Placement.GetPlacements());
 		Projection.Constructions = BuildConstructionProjection();

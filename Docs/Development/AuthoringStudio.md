@@ -52,6 +52,10 @@ Accepted MVP content is stored as Primary Data Assets below:
 
 The explicit `HansaEconomicDefinitionSeed` Editor commandlet creates only missing reviewed MVP assets. Existing assets are skipped unless a deliberate replacement workflow is added; the current `-Replace` path fails closed rather than overwriting a possibly loaded designer asset. It is not a startup, build, or CI hook, so it cannot silently change subsequent designer edits.
 
+## Research graph workspace
+
+The Authoring Studio `Research graph` workspace presents the nine MVP `UHansaTechnologyDefinition` assets in bounded Commerce, Production and Logistics lanes. It uses the same deterministic graph validator as registry compilation and CI, so missing prerequisite nodes, cycles, unreachable nodes, missing declared roots and invalid stable effect targets produce the same cause/remedy diagnostics before content promotion. Technology details remain schema-driven and transactional in the Data workspace.
+
 Population needs and tiers use the same generic browser, reflected Details panel, transactions, validation list and registry compiler as goods, recipes and buildings. See [Population.md](Population.md) for the S04-P01 contracts.
 
 S04-P02 adds four `UHansaCityMarketProfileDefinition` assets through that same generic path. Each profile owns per-good reserve, incoming-supply, modifiers and price bounds plus the shared report cadence/history policy. Cross-asset compilation rejects missing goods and the Studio status reports the compiled city-market count. See [Market.md](Market.md).
@@ -81,3 +85,14 @@ UE 5.8 headless startup can otherwise abort Win64 automation while validating un
 ## Visual references
 
 The component/state specification and five built-in ImageGen references are under `Docs/Images/UI/AuthoringStudio/`. They are native-size design references only. The shipping interface is reconstructed from Slate/Property Editor controls; no generated raster is imported into `Content/`.
+
+## Generation jobs workspace
+
+S12-P02 adds the full-width **Generation jobs** workspace and the Editor-only bridge to `Tools/HansaGenerationWorker`. It displays provider-neutral capabilities and pinned models, hashes every exact outbound file preview, requires rights acknowledgement, obtains a read-only estimate, and requires an identified spend approval before queueing. The virtualized queue exposes progress, cancellation and fresh-approval retry. Selection shows staged outputs, QA, actual spend, immutable manifest hash and provider/model/adapter/task provenance.
+
+Credentials resolve only from the shared worker environment or Windows Generic Credential `Hansa/GenerationWorker`; they never enter Unreal config, assets, logs, request payloads or manifests. Generated outputs remain drafts in worker staging and cannot be promoted from this screen. See [GenerationWorkerEditorBridge.md](GenerationWorkerEditorBridge.md) for protocol, security, workflow, validation, and visual-reference details.
+
+S12-P03 adds bounded definition proposals to this workspace. The selected definition supplies a deterministic exported-schema hash, current revision/content hash, exact AI-writable fields, and known stable references. Review rows can be accepted independently; a transient clone and registry compile preview the chosen patch before one explicit transactional apply. Stale proposals, prose, unknown data/references, and schema mismatches fail closed. See [OpenAIDefinitionProposals.md](OpenAIDefinitionProposals.md).
+
+
+S12-P04 completes the acceptance path with a deterministic two-field mock proposal, independent field rejection, typed lubeck_grain_shortage_v1 current/proposed metrics, one-transaction apply, Undo/Redo, and registry-hash verification. See [OpenAIAuthoringAcceptance.md](OpenAIAuthoringAcceptance.md) for the zero-credit demo and recovery guide.

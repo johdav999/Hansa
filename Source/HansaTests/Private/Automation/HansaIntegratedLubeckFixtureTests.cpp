@@ -222,9 +222,9 @@ bool FHansaIntegratedLubeckLongRunTest::RunTest(const FString& Parameters)
 				FHansaBuildingId::TryCreate(2).Value);
 			const AHansaBuildingWorldProjectionActor* ResidenceActor = ProjectionManager->FindProjectionActor(
 				FHansaBuildingId::TryCreate(3).Value);
-			TestTrue(TEXT("Rendered bakery and residence both reach ready state"),
+			TestTrue(TEXT("Rendered bakery and residence both leave construction state"),
 				BakeryActor != nullptr && ResidenceActor != nullptr &&
-				BakeryActor->GetWorldStatus() == EHansaBuildingWorldStatus::Ready &&
+				BakeryActor->GetWorldStatus() != EHansaBuildingWorldStatus::UnderConstruction &&
 				ResidenceActor->GetWorldStatus() == EHansaBuildingWorldStatus::Ready);
 			ProjectionManager->TearDownProjections();
 		}

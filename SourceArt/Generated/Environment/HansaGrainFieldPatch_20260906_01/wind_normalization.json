@@ -1,0 +1,18 @@
+[
+  {
+    "master": "GrainFieldPatch_Animated_Source.blend",
+    "sampled_pose_equivalence_error_m": 2.384185791015625e-07,
+    "morph_weight_range": [
+      0,
+      1
+    ]
+  },
+  {
+    "master": "GrainFieldPatch_Animated_Portable.blend",
+    "sampled_pose_equivalence_error_m": 2.384185791015625e-07,
+    "morph_weight_range": [
+      0,
+      1
+    ]
+  }
+]

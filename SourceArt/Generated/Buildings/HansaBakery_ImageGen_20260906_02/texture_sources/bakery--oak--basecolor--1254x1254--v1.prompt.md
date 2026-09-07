@@ -1,0 +1,6 @@
+# ImageGen oak input
+Mode: built-in generate. Intended use: oak base color; synthetic artwork, not scan.
+Native dimensions: 1254 x 1254, unchanged. Physical extent: 2 x 2 m, vertical grain. No image inputs. Revision v1: original image inspected, shader verification pending.
+
+Final prompt:
+Generate a single square seamless base-color texture for aged oak on an early-modern Hanseatic bakery door, shutters and beams. Native 1024 square if supported. A continuous flat wood surface with NO board divisions, joints, nails, framing or scene. Fine irregular longitudinal grain aligned strictly vertically, slight natural meander and restrained fine checks, very sparse subtle knots with no huge focal knot. Dark weathered warm grey-brown oak around #795137, slightly desaturated, unvarnished, no golden-orange fresh lumber, no zebra stripes. Physical coverage 2 x 2 metres, fine grain rather than wide grooves. Photorealistic surface-color detail, uniform diffuse albedo-like illumination, straight-on orthographic, frame filling, no shadows, highlights, AO, vignette, directional gradient or perspective. Seamless opposite edges especially top and bottom, no text or borders. Geometry will provide planks and depth; only timber surface color is needed.

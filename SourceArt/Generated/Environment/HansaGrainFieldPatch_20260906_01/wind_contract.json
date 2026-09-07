@@ -1,0 +1,15 @@
+{
+  "duration_seconds": 8,
+  "fps": 24,
+  "frames": 192,
+  "amplitude_m": [
+    0.11,
+    0.035
+  ],
+  "root_motion": false,
+  "phase": "2*pi*(local_x+local_y)/4; periodic across 4m edges",
+  "root_weight": "clamp(z/1.35,0,1)^2",
+  "portable_animation": "GLB morph targets",
+  "unreal_animation": "world-position-offset material using the same analytical wave; requires verified UE implementation",
+  "FBX": "static geometry; wind material required"
+}

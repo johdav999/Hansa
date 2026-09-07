@@ -11,7 +11,7 @@ namespace Hansa::Simulation
 	{
 	public:
 		static void AdvanceOneTick(TArray<FHansaCityMarketState>& Markets, const FHansaMarketSettings& Settings,
-			const FHansaInventoryLedger& InventoryLedger, const TArray<FHansaProductionState>& Productions,
+			FHansaInventoryLedger& InventoryLedger, const TArray<FHansaProductionState>& Productions,
 			const TArray<FHansaPopulationCohortState>& PopulationCohorts,
 			const FHansaEconomicRegistry& Registry, FHansaSimulationTick Tick);
 	};

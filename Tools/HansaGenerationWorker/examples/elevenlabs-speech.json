@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "idempotencyKey": "replace-with-unique-speech-action",
+  "providerId": "elevenlabs",
+  "modelVersion": "eleven_flash_v2_5",
+  "capability": "TextToSpeech",
+  "intendedAssetRole": "SpeechLine",
+  "prompt": "Welcome to the harbor.",
+  "inputArtifacts": [],
+  "rights": {
+    "acknowledged": false,
+    "declaration": "Replace with actual source and usage rights.",
+    "voiceAcknowledged": false,
+    "englishTextAcknowledged": false
+  },
+  "budgets": {
+    "currency": "USD",
+    "maximumCostMinorUnits": 0,
+    "maximumOutputBytes": 4194304
+  },
+  "outputContract": {
+    "version": 1,
+    "maximumArtifacts": 2,
+    "allowedMediaTypes": [
+      "audio/wav"
+    ]
+  },
+  "parameters": {
+    "audioTake": {
+      "version": 1,
+      "kind": "Speech",
+      "stableId": "Dialogue.DockGreeting",
+      "variants": 2,
+      "minimumDurationMs": 500,
+      "maximumDurationMs": 10000,
+      "maximumLeadingSilenceMs": 100,
+      "maximumTrailingSilenceMs": 300,
+      "subtitle": "Welcome to the harbor.",
+      "speakerId": "Speaker.Dockworker",
+      "language": "en",
+      "loop": false
+    },
+    "voiceId": "ReplaceWithApprovedVoice",
+    "voiceSettings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0
+    }
+  },
+  "timeoutMs": 120000,
+  "spendApproval": {
+    "approved": false
+  }
+}

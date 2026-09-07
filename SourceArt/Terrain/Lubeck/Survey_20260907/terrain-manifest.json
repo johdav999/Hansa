@@ -1,0 +1,279 @@
+{
+  "schema_version": 1,
+  "city_id": "City.Lubeck",
+  "status": "survey-source-prepared-not-imported",
+  "historical_target": "modern measured base; historical reconstruction pending",
+  "source_crs": "EPSG:25832",
+  "source_vertical_datum": "pending verification against publisher metadata",
+  "bounds_projected_m": [
+    608850.5,
+    5967914.5,
+    612882.5,
+    5971946.5
+  ],
+  "origin_projected_m": [
+    610866,
+    5969930,
+    0
+  ],
+  "heightmap_file": "lubeck-survey--2017x2017--2m.r16",
+  "width_vertices": 2017,
+  "height_vertices": 2017,
+  "metres_per_vertex": 2,
+  "row_order": "north to south",
+  "landscape_xy_scale_cm": 200,
+  "landscape_z_scale": 25.0,
+  "landscape_actor_z_cm": 3200.0,
+  "component_quads": 126,
+  "components_x": 16,
+  "components_y": 16,
+  "resampling": "exact selection of source samples on aligned 2m vertex grid; no interpolation",
+  "encoded_nominal_min_elevation_m": -32.0,
+  "encoded_nominal_max_elevation_m": 96.0,
+  "source_min_m": -2.0899999141693115,
+  "source_max_m": 21.360000610351562,
+  "missing_vertices": 0,
+  "max_encoding_error_m": 0.00093841552734375,
+  "heightmap_sha256": "8085a2b26f786da64a6ae329ce3d163dbf8182ab9889cb9c1ed24e758b3ea298",
+  "source_index_url": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/single.php?file=DGM1_SH__Massendownload.geojson&id=4",
+  "sources": [
+    {
+      "kachel": "326095970",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_609_5970_1_sh_2022.xyz&id=2&live=2022&km=32600_5970",
+      "sha256": "d894920474bf187fa095abc279a6c9684f8403d2b3802803ec977e7c091dda9d",
+      "file": "sources\\326095970.download",
+      "bytes": 27944719
+    },
+    {
+      "kachel": "326095971",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_609_5971_1_sh_2022.xyz&id=2&live=2022&km=32600_5970",
+      "sha256": "b6c9d5eac58ff65c7abca18d0a125bd87e2243475dfc6ebcb878231f8fbb5989",
+      "file": "sources\\326095971.download",
+      "bytes": 27992829
+    },
+    {
+      "kachel": "326105969",
+      "datum": "2022-01-28",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_610_5969_1_sh_2022.xyz&id=2&live=2022&km=32610_5960",
+      "sha256": "de0deb4aab0144092055203c8bf214128c8ef37b55f8a4483dd3d50420b4f34a",
+      "file": "sources\\326105969.download",
+      "bytes": 27190870
+    },
+    {
+      "kachel": "326115967",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_611_5967_1_sh_2022.xyz&id=2&live=2022&km=32610_5960",
+      "sha256": "4230c1895e0dc2b24a829ae56ca400b13c5218dad09a1cdbe9d5bc5cbcc87481",
+      "file": "sources\\326115967.download",
+      "bytes": 27999786
+    },
+    {
+      "kachel": "326125967",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_612_5967_1_sh_2022.xyz&id=2&live=2022&km=32610_5960",
+      "sha256": "a4ca6e3bbe6afea0c1885dff350831681e9a06136c3404c675f2bcd026a45590",
+      "file": "sources\\326125967.download",
+      "bytes": 27566350
+    },
+    {
+      "kachel": "326125968",
+      "datum": "2022-01-28",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_612_5968_1_sh_2022.xyz&id=2&live=2022&km=32610_5960",
+      "sha256": "f6b51769321ff9e4c965e8ca2208ff83ab46151871090ef0166ded3770751627",
+      "file": "sources\\326125968.download",
+      "bytes": 27430383
+    },
+    {
+      "kachel": "326125969",
+      "datum": "2022-01-28",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_612_5969_1_sh_2022.xyz&id=2&live=2022&km=32610_5960",
+      "sha256": "1bd84ed06ddd6e517032690ce652825c71024044a5691533e9f32e59bfc3ce26",
+      "file": "sources\\326125969.download",
+      "bytes": 27788072
+    },
+    {
+      "kachel": "326105971",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_610_5971_1_sh_2022.xyz&id=2&live=2022&km=32610_5970",
+      "sha256": "2736383c70c533ddde25232f2d14727edea58d71b03c5f1b26757a1f860dfb06",
+      "file": "sources\\326105971.download",
+      "bytes": 27594224
+    },
+    {
+      "kachel": "326115971",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_611_5971_1_sh_2022.xyz&id=2&live=2022&km=32610_5970",
+      "sha256": "f273e26c0fd7f7dbbec0170a5f3cdbcca443a51001daaf8e49381eba0b831034",
+      "file": "sources\\326115971.download",
+      "bytes": 27227933
+    },
+    {
+      "kachel": "326125970",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_612_5970_1_sh_2022.xyz&id=2&live=2022&km=32610_5970",
+      "sha256": "25fe15c8f045dbda7289880c39c59e4e292ad49f6d7fe95ca9bd3d105023e983",
+      "file": "sources\\326125970.download",
+      "bytes": 27583123
+    },
+    {
+      "kachel": "326125971",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_612_5971_1_sh_2022.xyz&id=2&live=2022&km=32610_5970",
+      "sha256": "56d477a96c4d1a668a1b5be35095cd24c418fcd7fd2e5ab1438366d1d5a842a8",
+      "file": "sources\\326125971.download",
+      "bytes": 27238449
+    },
+    {
+      "kachel": "326085967",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_608_5967_1_sh_2022.xyz&id=2&live=2022&km=32600_5960",
+      "sha256": "3a1db34f6736d6886f925e1fc43d2cbf1963c29cc59357223048405ccad4657b",
+      "file": "sources\\326085967.download",
+      "bytes": 27148673
+    },
+    {
+      "kachel": "326085968",
+      "datum": "2022-01-28",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_608_5968_1_sh_2022.xyz&id=2&live=2022&km=32600_5960",
+      "sha256": "85b8a7abdfbeacd2fbad74b8e57ed3ad10798280136053622904fa88fc6552f1",
+      "file": "sources\\326085968.download",
+      "bytes": 27628031
+    },
+    {
+      "kachel": "326085969",
+      "datum": "2022-01-28",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_608_5969_1_sh_2022.xyz&id=2&live=2022&km=32600_5960",
+      "sha256": "81a6d7fac8d6c8008f55c8319d1de4eb5bb295fdca36cbe2754ddf0da8c607eb",
+      "file": "sources\\326085969.download",
+      "bytes": 27935326
+    },
+    {
+      "kachel": "326095967",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_609_5967_1_sh_2022.xyz&id=2&live=2022&km=32600_5960",
+      "sha256": "c13ce0315e214ce3855a3e224c2fa15ec6d03039edce782164b86c3670ad3284",
+      "file": "sources\\326095967.download",
+      "bytes": 27166080
+    },
+    {
+      "kachel": "326095969",
+      "datum": "2022-01-28",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_609_5969_1_sh_2022.xyz&id=2&live=2022&km=32600_5960",
+      "sha256": "765faa980be602891ddd17354d64dfef0e12fc0ca117256a0af254fef0a334d3",
+      "file": "sources\\326095969.download",
+      "bytes": 27408091
+    },
+    {
+      "kachel": "326085970",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_608_5970_1_sh_2022.xyz&id=2&live=2022&km=32600_5970",
+      "sha256": "636aca82ab20d038ec1ee0be4522ec9a9797759f3aaf62150bb1170a10e9c5ba",
+      "file": "sources\\326085970.download",
+      "bytes": 28000760
+    },
+    {
+      "kachel": "326085971",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_608_5971_1_sh_2022.xyz&id=2&live=2022&km=32600_5970",
+      "sha256": "29fc28ac56fedf6c3b85138371d8fea0f56bd8aed86564ff10d08143584071de",
+      "file": "sources\\326085971.download",
+      "bytes": 28000760
+    },
+    {
+      "kachel": "326095968",
+      "datum": "2022-01-28",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_609_5968_1_sh_2022.xyz&id=2&live=2022&km=32600_5960",
+      "sha256": "7c57965f606ed5291708d1e26bc240c3c05262924427da2affd600e681450726",
+      "file": "sources\\326095968.download",
+      "bytes": 27348829
+    },
+    {
+      "kachel": "326105968",
+      "datum": "2022-01-28",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_610_5968_1_sh_2022.xyz&id=2&live=2022&km=32610_5960",
+      "sha256": "98d8652d707c72cf4a3ef57cc0a611bba0348cf62a078acbb6608007126ef227",
+      "file": "sources\\326105968.download",
+      "bytes": 27140108
+    },
+    {
+      "kachel": "326115968",
+      "datum": "2022-01-28",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_611_5968_1_sh_2022.xyz&id=2&live=2022&km=32610_5960",
+      "sha256": "922c91325296dd1d7322e5b8254b81acfe073da487b90e87b1a7a24fd4cfbff3",
+      "file": "sources\\326115968.download",
+      "bytes": 27604218
+    },
+    {
+      "kachel": "326115969",
+      "datum": "2022-01-28",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_611_5969_1_sh_2022.xyz&id=2&live=2022&km=32610_5960",
+      "sha256": "d177fbdc3d124a6e6fc7ac7e0be13b785e478c9426c8f40d5042360b3480984f",
+      "file": "sources\\326115969.download",
+      "bytes": 27025513
+    },
+    {
+      "kachel": "326105970",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_610_5970_1_sh_2022.xyz&id=2&live=2022&km=32610_5970",
+      "sha256": "3898f1b6a39b66ce63e402d9e0adeb451aaee28043a7540b17ca5d4058a66c10",
+      "file": "sources\\326105970.download",
+      "bytes": 27226734
+    },
+    {
+      "kachel": "326115970",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_611_5970_1_sh_2022.xyz&id=2&live=2022&km=32610_5970",
+      "sha256": "559efca0a22849fe1d4d658607e64838b43f912d426a209348bb9c7038a466e7",
+      "file": "sources\\326115970.download",
+      "bytes": 27127602
+    },
+    {
+      "kachel": "326105967",
+      "datum": "2022-02-11",
+      "link_data": "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/massen.php?file=dgm1_32_610_5967_1_sh_2022.xyz&id=2&live=2022&km=32610_5960",
+      "sha256": "286fc3d8381e57c6d27c8e43dd2095f5ab36b11bc1ced6e3db68fd56cb43e7a5",
+      "file": "sources\\326105967.download",
+      "bytes": 27616026
+    }
+  ],
+  "license_status": "publisher terms to verify before promotion",
+  "control_samples": [
+    {
+      "row": 0,
+      "column": 0,
+      "easting": 608850.5,
+      "northing": 5971946.5,
+      "elevation_m": 19.09000015258789
+    },
+    {
+      "row": 0,
+      "column": 2016,
+      "easting": 612882.5,
+      "northing": 5971946.5,
+      "elevation_m": 2.940000057220459
+    },
+    {
+      "row": 2016,
+      "column": 0,
+      "easting": 608850.5,
+      "northing": 5967914.5,
+      "elevation_m": 7.679999828338623
+    },
+    {
+      "row": 2016,
+      "column": 2016,
+      "easting": 612882.5,
+      "northing": 5967914.5,
+      "elevation_m": 9.989999771118164
+    },
+    {
+      "row": 1008,
+      "column": 1008,
+      "easting": 610866.5,
+      "northing": 5969930.5,
+      "elevation_m": 11.109999656677246
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 #include "Model/HansaIds.h"
 #include "Model/HansaSimulationTime.h"
 #include "Placement/HansaPlacement.h"
+#include "Trade/HansaTrade.h"
 
 namespace Hansa::Simulation
 {
@@ -26,7 +27,7 @@ namespace Hansa::Simulation
 
 	struct FHansaCommandHeader
 	{
-		static constexpr uint16 CurrentSchemaVersion = 4;
+		static constexpr uint16 CurrentSchemaVersion = 6;
 
 		FHansaCommandId CommandId;
 		FHansaCommandAuthorityContext Authority;
@@ -81,6 +82,39 @@ namespace Hansa::Simulation
 		FHansaBuildingId BuildingId;
 	};
 
+	struct FHansaCreateRouteCommand
+	{
+		FHansaRouteId RouteId;
+		FHansaVehicleId VehicleId;
+		FHansaRouteDefinitionId RouteDefinitionId;
+		TArray<FHansaRouteStop> Stops;
+		bool bActivate = false;
+	};
+
+	/** Replaces the ordered stop/action plan while an owned route is inactive at a stop. */
+	struct FHansaEditRouteCommand
+	{
+		FHansaRouteId RouteId;
+		TArray<FHansaRouteStop> Stops;
+	};
+
+	struct FHansaSetRouteActiveCommand
+	{
+		FHansaRouteId RouteId;
+		bool bActive = true;
+	};
+
+	struct FHansaCancelRouteCommand
+	{
+		FHansaRouteId RouteId;
+	};
+
+	/** Enqueues one stable technology in the issuing house's authoritative MVP research slot. */
+	struct FHansaQueueResearchCommand
+	{
+		FString TechnologyId;
+	};
+
 	enum class EHansaGameplayCommandType : uint8
 	{
 		CreateTestEntity = 0,
@@ -90,7 +124,12 @@ namespace Hansa::Simulation
 		PlaceBuilding,
 		CancelConstruction,
 		RemoveBuilding,
-		UpgradeResidence
+		UpgradeResidence,
+		CreateRoute,
+		EditRoute,
+		SetRouteActive,
+		CancelRoute,
+		QueueResearch
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaGameplayCommandType Type);
@@ -126,6 +165,11 @@ namespace Hansa::Simulation
 		static FHansaGameplayCommand Create(
 			const FHansaCommandHeader& Header,
 			const FHansaUpgradeResidenceCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaCreateRouteCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaEditRouteCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaSetRouteActiveCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaCancelRouteCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaQueueResearchCommand& Payload);
 
 		[[nodiscard]] const FHansaCommandHeader& GetHeader() const { return Header; }
 		[[nodiscard]] EHansaGameplayCommandType GetType() const { return Type; }
@@ -137,9 +181,15 @@ namespace Hansa::Simulation
 		[[nodiscard]] const FHansaCancelConstructionCommand& GetCancelConstruction() const;
 		[[nodiscard]] const FHansaRemoveBuildingCommand& GetRemoveBuilding() const;
 		[[nodiscard]] const FHansaUpgradeResidenceCommand& GetUpgradeResidence() const;
+		[[nodiscard]] const FHansaCreateRouteCommand& GetCreateRoute() const;
+		[[nodiscard]] const FHansaEditRouteCommand& GetEditRoute() const;
+		[[nodiscard]] const FHansaSetRouteActiveCommand& GetSetRouteActive() const;
+		[[nodiscard]] const FHansaCancelRouteCommand& GetCancelRoute() const;
+		[[nodiscard]] const FHansaQueueResearchCommand& GetQueueResearch() const;
 		[[nodiscard]] uint64 ComputeStableFingerprint() const;
 
 	private:
+		friend class FHansaSaveCodec;
 		FHansaCommandHeader Header;
 		EHansaGameplayCommandType Type = EHansaGameplayCommandType::NoOpTest;
 		FHansaCreateTestEntityCommand CreateTestEntity;
@@ -150,5 +200,10 @@ namespace Hansa::Simulation
 		FHansaCancelConstructionCommand CancelConstruction;
 		FHansaRemoveBuildingCommand RemoveBuilding;
 		FHansaUpgradeResidenceCommand UpgradeResidence;
+		FHansaCreateRouteCommand CreateRoute;
+		FHansaEditRouteCommand EditRoute;
+		FHansaSetRouteActiveCommand SetRouteActive;
+		FHansaCancelRouteCommand CancelRoute;
+		FHansaQueueResearchCommand QueueResearch;
 	};
 }

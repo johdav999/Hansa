@@ -1,0 +1,20 @@
+# Material gap ledger
+
+R01 is the architectural photograph. It is the reference for visible frontage material families, not proof of unseen rear construction. Comparison page: COMPARISONS.html. Original lighting and pixels are not altered. Cameras and framing differ between the photograph, Blender and Unreal.
+
+| Family / view | Reference observation | Final render observation | Gap / uncertainty | Correction and final evidence |
+|---|---|---|---|---|
+| Brick / gable | Irregular fired-red masonry, lime joints, projecting mouldings | Individual bevelled bricks, recessed mortar, 3 restrained brick families | Courses and piers are more regular and simplified than photographed fabric | Recesses, winding and UVs repaired; portable_Hero.png, unreal_Hero.png. Adaptation, not conservation replica |
+| Plaster / shop | Pale, relatively restrained lower render | Pale lime with restrained fine variation; small local repairs | Original period finish unknown; minimal age and damage treatment | Reduced bump and cloud contrast; r3_Detail_Shop.png to r5_Detail_Shop.png and reimport_fbx_Detail_Shop.png |
+| Clay / main roof | Photo provides small coping details; full roof not visible | Separate overlapping clay shells, varied whole-tile colors and solid ridge shells | Full roof pattern inferred; repetition still visible at very close range | Replaced sheet and ridge hoops; reimport_glb_Detail_Roof.png and unreal_Roof.png |
+| Stone / sills and foundation | Pale recess trim contrasts with brick | Shallow relief, bevelled blocks and explicit sills | Stone species and inferred foundation dimensions are not surveyed | Added sills and corner detailing; shop close-ups. No scan claim |
+| Oak / door and shutters | Modern lower openings cannot establish historic timber detailing | Planked timber, directional grain, hinges, projecting shop shutters | Grain is procedural and comparatively regular, not a scanned aged surface | Grain reoriented, contrast restrained and boards separated; reimport_fbx_Detail_Shop.png, unreal_Shop.png |
+| Iron and lead / fittings | Metal-tipped piers visible; shop hardware not documented | Matte hardware, controlled metallic response, lead-colored caps | Small hardware inferred; close-range patina simplified | Darkened cap response and added rivets; shop and gable review views |
+| Glass / openings | Dark recessed glazing and pale reveals | Dark reflective panes with native mullions and lead lines | Portable opaque glass approximation; no full playable interior | Explicit portable and Unreal material handling; no default checker materials in inspected final views |
+| Bread and linen / bakery | No source-photo evidence for these reconstructed props | Smooth bread forms, scoring and sacks establish bakery use | Props are inferred and retain simplified close-range surface detail | Replaced faceting; r3_Detail_Shop.png to r5_Detail_Shop.png |
+
+Technical acceptance: geometry, scale, nonzero UV density, map dimensions, slot assignments, clean reimports and saved/reopened staging preview verified. Artistic status: reference-grounded exterior review draft, with regularized procedural surfaces; not a photogrammetric replica or an assertion of museum-grade photorealism. Human appearance approval and runtime optimization remain separate.
+
+## Final Unreal surface adaptation
+
+Baked normal response was too strong under direct engine daylight. Nine masonry/clay/lime material families now blend 25% sampled tangent normal with 75% flat tangent normal. This is an engine-specific material adaptation; original maps and Blender source shaders are preserved. Before capture: renders/unreal_Hero_before_normal_fix.png. Final capture: renders/unreal_Hero.png. Some regularized brick and tile repetition remains visible; the result is still an exterior review draft. The sun source angle is 6.9 degrees to match the soft source-review lighting, with 12000 lux and fixed EV100 11.5. All 17 slot assignments and 51 native texture sizes were read back again after saving/reopening; see evidence/final_unreal_verification.json.

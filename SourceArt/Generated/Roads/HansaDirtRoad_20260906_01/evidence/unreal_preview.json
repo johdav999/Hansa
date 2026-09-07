@@ -1,0 +1,73 @@
+{
+  "level": "/Game/Hansa/Developer/GenerationPreview/HansaDirtRoad_20260906_01/L_DirtRoad_Review",
+  "blueprint": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/BP_DirtRoad_SplineExample.BP_DirtRoad_SplineExample",
+  "samples": [
+    {
+      "start": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "end": [
+        700.0,
+        180.0,
+        50.0
+      ],
+      "start_tangent": [
+        700.0,
+        180.0,
+        50.0
+      ],
+      "end_tangent": [
+        700.0,
+        -50.0,
+        50.0
+      ]
+    },
+    {
+      "start": [
+        700.0,
+        180.0,
+        50.0
+      ],
+      "end": [
+        1400.0,
+        -100.0,
+        100.0
+      ],
+      "start_tangent": [
+        700.0,
+        -50.0,
+        50.0
+      ],
+      "end_tangent": [
+        700.0,
+        -90.0,
+        -25.0
+      ]
+    },
+    {
+      "start": [
+        1400.0,
+        -100.0,
+        100.0
+      ],
+      "end": [
+        2100.0,
+        0.0,
+        0.0
+      ],
+      "start_tangent": [
+        700.0,
+        -90.0,
+        -25.0
+      ],
+      "end_tangent": [
+        700.0,
+        100.0,
+        -100.0
+      ]
+    }
+  ],
+  "sun_rotation": "<Struct 'Rotator' (0x0000028FADB17B20) {pitch: -48.000000, yaw: -32.000000, roll: -0.000000}>"
+}

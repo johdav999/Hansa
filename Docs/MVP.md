@@ -374,6 +374,7 @@ It may not directly set money, stock, price, ownership, research completion or v
 | --- | --- |
 | `empty_lubeck_build_v1` | Placement, construction, road connection and build UI |
 | `lubeck_grain_shortage_v1` | Complete market/production/trade/research/victory golden path |
+| `route_delivery_v1` | Focused cog/wagon availability, reserve-protected relief route, delivery timing and market-response evidence |
 | `route_delivery_v1` | Sea/land loading, travel, unloading, inventory and price effect |
 | `save_roundtrip_v1` | Save/load checksum and UI restoration |
 | `two_player_authority_v1` | Ownership, private data, rejection and late join |

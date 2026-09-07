@@ -1,0 +1,18 @@
+{
+  "revision": 0,
+  "stalks": 1024,
+  "footprint_m": [
+    4,
+    4
+  ],
+  "pivot": [
+    0,
+    0,
+    0
+  ],
+  "triangles": 159744,
+  "vertices": 446464,
+  "height_m": 1.273141860961914,
+  "tile_step_cm": 400,
+  "material_slots": 3
+}

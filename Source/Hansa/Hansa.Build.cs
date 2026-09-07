@@ -12,13 +12,15 @@ public class Hansa : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
-			"HansaSimulation"
+			"HansaSimulation",
+			"SlateCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"EnhancedInput",
-			"InputCore"
+			"InputCore",
+			"Slate"
 		});
 	}
 }

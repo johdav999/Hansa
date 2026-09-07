@@ -35,11 +35,15 @@ void UHansaCityMarketProfileDefinition::ValidateDefinition(TArray<FHansaDefiniti
 	if (UpdateCadenceTicks <= 0 || PriceHistoryCapacity <= 0 || PriceHistoryCapacity > 4096 ||
 		TargetSmoothingBasisPoints <= 0 || TargetSmoothingBasisPoints > 10000 ||
 		MaximumMovementBasisPointsPerUpdate <= 0 || MaximumMovementBasisPointsPerUpdate > 10000 ||
-		StaleAfterTicks < UpdateCadenceTicks)
+		StaleAfterTicks < UpdateCadenceTicks || ReportCadenceTicks <= 0 ||
+		ReportCadenceTicks % FMath::Max(1, UpdateCadenceTicks) != 0 ||
+		CurrentReportMaxAgeTicks < 0 || RecentReportMaxAgeTicks < CurrentReportMaxAgeTicks ||
+		StaleReportMaxAgeTicks < RecentReportMaxAgeTicks ||
+		EstimatedReportMaxAgeTicks < StaleReportMaxAgeTicks)
 	{
 		AddMarketIssue(OutIssues, TEXT("HSA-MARKET-002"), TEXT("UpdateCadenceTicks"),
-			NSLOCTEXT("HansaMarketDefinition", "SettingsRange", "Market cadence, history, smoothing, movement or stale-report settings are outside deterministic bounds."),
-			NSLOCTEXT("HansaMarketDefinition", "SettingsRangeRemedy", "Use positive cadence/history, 1–10000 basis-point controls, and a stale threshold at least as long as cadence."));
+			NSLOCTEXT("HansaMarketDefinition", "SettingsRange", "Market cadence, history, smoothing, movement or report-age settings are outside deterministic bounds."),
+			NSLOCTEXT("HansaMarketDefinition", "SettingsRangeRemedy", "Use positive cadence/history, 1–10000 basis-point controls, a report cadence divisible by market cadence, and ordered current/recent/stale/estimated age limits."));
 	}
 	if (Goods.IsEmpty())
 	{
@@ -53,6 +57,9 @@ void UHansaCityMarketProfileDefinition::ValidateDefinition(TArray<FHansaDefiniti
 		const FHansaMarketGoodProfile& Good = Goods[Index];
 		if (!HasDomain(Good.GoodId, TEXT("Good")) || SeenGoods.Contains(Good.GoodId) ||
 			Good.DesiredReserveMilliUnits < 0 || Good.ConfirmedIncomingSupplyMilliUnits < 0 ||
+			Good.InitialStockMilliUnits < 0 || Good.BackgroundProductionMilliUnitsPerUpdate < 0 ||
+			Good.BackgroundCitizenDemandMilliUnitsPerUpdate < 0 ||
+			Good.BackgroundIndustrialDemandMilliUnitsPerUpdate < 0 ||
 			Good.SeasonModifierBasisPoints < -5000 || Good.SeasonModifierBasisPoints > 5000 ||
 			Good.CityModifierBasisPoints < -5000 || Good.CityModifierBasisPoints > 5000 ||
 			Good.MinimumPriceMilliMarks <= 0 || Good.MaximumPriceMilliMarks < Good.MinimumPriceMilliMarks ||
@@ -65,14 +72,26 @@ void UHansaCityMarketProfileDefinition::ValidateDefinition(TArray<FHansaDefiniti
 		}
 		SeenGoods.Add(Good.GoodId);
 	}
+	if (bMarketOnly && Goods.ContainsByPredicate([](const FHansaMarketGoodProfile& Good)
+	{
+		return Good.InitialStockMilliUnits == 0 && Good.BackgroundProductionMilliUnitsPerUpdate == 0 &&
+			Good.BackgroundCitizenDemandMilliUnitsPerUpdate == 0 &&
+			Good.BackgroundIndustrialDemandMilliUnitsPerUpdate == 0;
+	}))
+	{
+		AddMarketIssue(OutIssues, TEXT("HSA-MARKET-005"), TEXT("Goods"),
+			NSLOCTEXT("HansaMarketDefinition", "EmptyMarketOnlyRow", "Every good in a market-only city requires authored starting stock or background activity."),
+			NSLOCTEXT("HansaMarketDefinition", "EmptyMarketOnlyRowRemedy", "Set starting stock, background production, citizen demand or industrial demand for each simulated good."));
+	}
 }
 
 void UHansaCityMarketProfileDefinition::AppendDefinitionHashData(FString& InOutCanonicalData) const
 {
 	Super::AppendDefinitionHashData(InOutCanonicalData);
-	InOutCanonicalData += FString::Printf(TEXT("cadence=%d\nhistory=%d\nsmoothing=%d\nmaxMovement=%d\nstaleAfter=%d\n"),
+	InOutCanonicalData += FString::Printf(TEXT("cadence=%d\nhistory=%d\nsmoothing=%d\nmaxMovement=%d\nstaleAfter=%d\nmarketOnly=%d\nreportCadence=%d\nreportAges=%d:%d:%d:%d\n"),
 		UpdateCadenceTicks, PriceHistoryCapacity, TargetSmoothingBasisPoints,
-		MaximumMovementBasisPointsPerUpdate, StaleAfterTicks);
+		MaximumMovementBasisPointsPerUpdate, StaleAfterTicks, bMarketOnly ? 1 : 0, ReportCadenceTicks,
+		CurrentReportMaxAgeTicks, RecentReportMaxAgeTicks, StaleReportMaxAgeTicks, EstimatedReportMaxAgeTicks);
 	TArray<FHansaMarketGoodProfile> Sorted = Goods;
 	Sorted.Sort([](const FHansaMarketGoodProfile& Left, const FHansaMarketGoodProfile& Right)
 	{
@@ -80,9 +99,13 @@ void UHansaCityMarketProfileDefinition::AppendDefinitionHashData(FString& InOutC
 	});
 	for (const FHansaMarketGoodProfile& Good : Sorted)
 	{
-		InOutCanonicalData += FString::Printf(TEXT("good=%s:%lld:%lld:%d:%d:%lld:%lld:%lld\n"), *Good.GoodId,
+		InOutCanonicalData += FString::Printf(TEXT("good=%s:%lld:%lld:%lld:%lld:%lld:%lld:%d:%d:%lld:%lld:%lld\n"), *Good.GoodId,
 			static_cast<long long>(Good.DesiredReserveMilliUnits),
-			static_cast<long long>(Good.ConfirmedIncomingSupplyMilliUnits), Good.SeasonModifierBasisPoints,
+			static_cast<long long>(Good.ConfirmedIncomingSupplyMilliUnits),
+			static_cast<long long>(Good.InitialStockMilliUnits),
+			static_cast<long long>(Good.BackgroundProductionMilliUnitsPerUpdate),
+			static_cast<long long>(Good.BackgroundCitizenDemandMilliUnitsPerUpdate),
+			static_cast<long long>(Good.BackgroundIndustrialDemandMilliUnitsPerUpdate), Good.SeasonModifierBasisPoints,
 			Good.CityModifierBasisPoints, static_cast<long long>(Good.MinimumPriceMilliMarks),
 			static_cast<long long>(Good.MaximumPriceMilliMarks), static_cast<long long>(Good.InitialPriceMilliMarks));
 	}

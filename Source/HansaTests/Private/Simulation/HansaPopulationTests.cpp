@@ -29,6 +29,7 @@ namespace Hansa::Tests::Population
 	{
 		FHansaCompiledGoodDefinition Bread;
 		Bread.StableId = TEXT("Good.Bread");
+		Bread.BaseValueMilliMarks = 1000;
 		TArray<FHansaCompiledGoodDefinition> Goods { Bread };
 
 		FHansaCompiledNeedDefinition BreadNeed;
@@ -106,7 +107,8 @@ namespace Hansa::Tests::Population
 		Residence.DefinitionId = BuildingType(FCString::Strcmp(TierId, TEXT("PopulationTier.Artisan")) == 0
 			? TEXT("Building.Residence.Artisan") : TEXT("Building.Residence.Laborer"));
 		Residence.OwnerId = Entity<FHansaHouseId>(1);
-		Residence.ConstructionProgress = FHansaRate::FromPartsPerMillion(FHansaRate::Scale);
+		Residence.ConstructionProgress = FHansaRate::FromPartsPerMillion(
+			bConstructionComplete ? FHansaRate::Scale : 0);
 		Residence.ConstructionState = bConstructionComplete
 			? EHansaConstructionState::Completed : EHansaConstructionState::UnderConstruction;
 		Initialization.Buildings.Add(Residence);
@@ -170,6 +172,9 @@ namespace Hansa::Tests::Population
 			Initialization.Productions.Add(Production);
 		}
 		FHansaCityMarketInitialization Market;
+		// Population fixtures need a current market projection after each step. Market cadence itself
+		// is covered separately by Hansa.Simulation.Market.CadenceHistoryAndStaleness.
+		Initialization.MarketSettings.UpdateCadenceTicks = 1;
 		Market.CityId = City;
 		Market.GoodId = Good(TEXT("Good.Bread"));
 		Market.InventoryIds.Add(Entity<FHansaInventoryId>(1));

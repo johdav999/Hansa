@@ -16,6 +16,10 @@ namespace Hansa::Automation
 	class FHansaProductionFixtureService;
 	class FHansaPlacementAutomationFixture;
 	class FHansaPlacementAutomationScreenHost;
+	class FHansaRouteDeliveryAutomationScreenHost;
+	class FHansaStrategicAutomationFixture;
+	class FHansaStrategicAutomationScreenHost;
+	class FHansaMultiplayerAutomationService;
 
 	/**
 	 * Explicitly enabled, single-controller Windows named-pipe endpoint.
@@ -49,7 +53,16 @@ namespace Hansa::Automation
 		TUniquePtr<FHansaProductionFixtureService> ProductionFixtureService;
 		TUniquePtr<FHansaPlacementAutomationFixture> PlacementFixture;
 		TUniquePtr<FHansaPlacementAutomationScreenHost> PlacementScreenHost;
+		TUniquePtr<FHansaRouteDeliveryAutomationScreenHost> RouteDeliveryScreenHost;
+		TUniquePtr<FHansaStrategicAutomationFixture> StrategicFixture;
+		TUniquePtr<FHansaStrategicAutomationScreenHost> StrategicScreenHost;
+		TUniquePtr<FHansaMultiplayerAutomationService> MultiplayerService;
 		bool bPlacementFixtureActive = false;
+		bool bRouteDeliveryFixtureActive = false;
+		bool bStrategicFixtureActive = false;
+		FString ActiveFixtureId;
+		TArray<FString> CapturedScreenshotPaths;
+		TArray<FString> CapturedScreenshotHashes;
 		void* PipeHandle = nullptr;
 		bool bClientConnected = false;
 		TArray<uint8> ReceiveBuffer;

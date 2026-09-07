@@ -1,5 +1,6 @@
 import readline from "node:readline";
 import { HansaWireError } from "./protocol.js";
+import { runGoldenMvpFlow } from "./golden-flow.js";
 
 const LATEST_MCP_VERSION = "2025-11-25";
 const SUPPORTED_MCP_VERSIONS = new Set([LATEST_MCP_VERSION, "2025-06-18", "2025-03-26", "2024-11-05"]);
@@ -11,11 +12,17 @@ const SEMANTIC_ARGUMENT = {
   properties: { semanticId: SEMANTIC_ID },
   additionalProperties: false,
 };
-const FIXTURE_ID = { type: "string", enum: ["mvp_production_chains_v1", "lubeck_grain_shortage_v1", "empty_lubeck_build_v1", "integrated_lubeck_city_v1"] };
+const FIXTURE_ID = { type: "string", enum: ["mvp_production_chains_v1", "lubeck_grain_shortage_v1", "route_delivery_v1", "empty_lubeck_build_v1", "integrated_lubeck_city_v1", "strategic_vertical_slice_seed_alpha_v1", "strategic_vertical_slice_seed_beta_v1", "save_roundtrip_v1"] };
 const CITY_ID = { type: "string", pattern: "^City\\.[A-Za-z0-9]+$", maxLength: 64 };
 const GOOD_ID = { type: "string", pattern: "^Good\\.[A-Za-z0-9]+$", maxLength: 64 };
 const RUN_UNTIL_PREDICATE = {
   oneOf: [
+	{
+	  type: "object",
+	  required: ["kind", "routeId"],
+	  properties: { kind: { type: "string", enum: ["route.departed", "route.arrived", "route.delivered"] }, routeId: { type: "integer", minimum: 1 } },
+	  additionalProperties: false,
+	},
     {
       type: "object",
       required: ["kind", "productionId", "minimumCompletedCycles"],
@@ -64,6 +71,24 @@ const RUN_UNTIL_PREDICATE = {
       type: "object",
       required: ["kind"],
       properties: { kind: { type: "string", enum: ["integrated.construction_completed", "integrated.inventory_moved", "integrated.production_completed", "integrated.population_grown", "integrated.bread_consumed"] } },
+      additionalProperties: false,
+    },
+    {
+      type: "object",
+      required: ["kind"],
+      properties: { kind: { type: "string", enum: ["strategic.building_placed", "strategic.building_completed", "strategic.shortage_diagnosed", "strategic.route_recovered", "strategic.route_delivered", "strategic.route_cargo_in_transit", "strategic.victory"] }, victoryId: { type: "string", pattern: "^Victory\\.[A-Za-z0-9.]+$", maxLength: 96 } },
+      additionalProperties: false,
+    },
+    {
+      type: "object",
+      required: ["kind", "technologyId"],
+      properties: { kind: { const: "strategic.research_completed" }, technologyId: { type: "string", pattern: "^Technology\\.[A-Za-z0-9.]+$", maxLength: 96 } },
+      additionalProperties: false,
+    },
+    {
+      type: "object",
+      required: ["kind", "minimumDecisions"],
+      properties: { kind: { const: "strategic.ai_progressed" }, minimumDecisions: { type: "integer", minimum: 1, maximum: 128 } },
       additionalProperties: false,
     },
   ],
@@ -134,6 +159,47 @@ export const TOOLS = [
     annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
   },
   {
+    name: "fixture_reset",
+    title: "Reset active Hansa fixture",
+    description: "Reload the exact active allowlisted fixture and seed, clearing all play-session mutations.",
+    inputSchema: NO_ARGUMENTS,
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+  },
+  {
+    name: "save_list",
+    title: "List Hansa save slots",
+    description: "List the fixed manual and autosave slots with compatibility metadata; no path or filename is accepted.",
+    inputSchema: NO_ARGUMENTS,
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  {
+    name: "save_create",
+    title: "Create Hansa save",
+    description: "Capture the active save_roundtrip_v1 state into the selected fixed slot.",
+    inputSchema: { type: "object", required: ["slotId"], properties: { slotId: { type: "string", enum: ["manual", "autosave"] } }, additionalProperties: false },
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
+  },
+  {
+    name: "save_load",
+    title: "Load Hansa save",
+    description: "Restore one fixed slot and verify authoritative hash, projections, and deterministic continuation.",
+    inputSchema: { type: "object", required: ["slotId"], properties: { slotId: { type: "string", enum: ["manual", "autosave"] } }, additionalProperties: false },
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
+  },
+  {
+    name: "save_wait_for",
+    title: "Wait for Hansa save state",
+    description: "Wait for an allowlisted slot or round-trip verification condition.",
+    inputSchema: { type: "object", required: ["condition"], properties: { condition: { type: "string", enum: ["slot_exists", "roundtrip_verified"] }, slotId: { type: "string", enum: ["manual", "autosave"] } }, additionalProperties: false },
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  {
+    name: "save_assert_roundtrip",
+    title: "Assert Hansa save round trip",
+    description: "Assert equivalence for authoritative state, projections, deterministic continuation, and all required gameplay slices.",
+    inputSchema: NO_ARGUMENTS,
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },  {
     name: "gameplay_query",
     title: "Query Hansa gameplay state",
     description: "Read allowlisted fixture, integrated-city, construction, production, population, inventory, or causal market projections without exposing mutable state.",
@@ -141,13 +207,16 @@ export const TOOLS = [
       type: "object",
       required: ["query"],
       properties: {
-        query: { type: "string", enum: ["fixture.summary", "integrated.summary", "construction.list", "construction.get", "construction.cost", "production.list", "production.get", "population.cohort", "city.population", "inventory.stock", "market.price", "market.history", "market.components", "market.reserve", "market.explanation", "market.consumers", "market.producers", "market.alerts"] },
+        query: { type: "string", enum: ["fixture.summary", "integrated.summary", "strategic.summary", "strategic.evidence", "research.state", "scenario.progress", "ai.decision_history", "construction.list", "construction.get", "construction.cost", "production.list", "production.get", "route.list", "route.get", "route.cargo", "route.events", "vehicle.list", "population.cohort", "city.population", "inventory.stock", "market.price", "market.history", "market.components", "market.reserve", "market.explanation", "market.consumers", "market.producers", "market.alerts", "market.diagnosis", "market.known_price", "market.report_age", "market.known_components", "market.opportunity"] },
         buildingId: { type: "integer", minimum: 1 },
         buildingDefinitionId: { type: "string", pattern: "^Building\\.[A-Za-z0-9.]+$" },
         productionId: { type: "integer", minimum: 1 },
         populationCohortId: { type: "integer", minimum: 1 },
         inventoryId: { type: "integer", minimum: 1 },
+        routeId: { type: "integer", minimum: 1 },
         cityId: CITY_ID,
+        sourceCityId: CITY_ID,
+        destinationCityId: CITY_ID,
         goodId: GOOD_ID,
       },
       additionalProperties: false,
@@ -163,6 +232,11 @@ export const TOOLS = [
         { type: "object", required: ["command", "productionId", "active"], properties: { command: { const: "production.set_active" }, productionId: { type: "integer", minimum: 1 }, active: { type: "boolean" } }, additionalProperties: false },
         { type: "object", required: ["command", "buildingId"], properties: { command: { const: "residence.upgrade" }, buildingId: { type: "integer", minimum: 1 } }, additionalProperties: false },
         { type: "object", required: ["command", "buildingId"], properties: { command: { type: "string", enum: ["construction.cancel", "building.remove"] }, buildingId: { type: "integer", minimum: 1 } }, additionalProperties: false },
+		{ type: "object", required: ["command", "routeId", "sourceCityId", "destinationCityId", "goodId", "quantityMilliUnits", "minimumReserveMilliUnits"], properties: { command: { const: "route.edit" }, routeId: { type: "integer", minimum: 1 }, sourceCityId: CITY_ID, destinationCityId: CITY_ID, goodId: GOOD_ID, quantityMilliUnits: { type: "integer", minimum: 1 }, minimumReserveMilliUnits: { type: "integer", minimum: 0 } }, additionalProperties: false },
+        { type: "object", required: ["command", "routeId", "active"], properties: { command: { const: "route.set_active" }, routeId: { type: "integer", minimum: 1 }, active: { type: "boolean" } }, additionalProperties: false },
+		{ type: "object", required: ["command", "routeId"], properties: { command: { const: "route.cancel" }, routeId: { type: "integer", minimum: 1 } }, additionalProperties: false },
+        { type: "object", required: ["command", "buildingDefinitionId", "x", "y"], properties: { command: { const: "building.place" }, buildingDefinitionId: { type: "string", pattern: "^Building\\.[A-Za-z0-9.]+$" }, x: { type: "integer" }, y: { type: "integer" } }, additionalProperties: false },
+        { type: "object", required: ["command", "technologyId"], properties: { command: { const: "research.queue" }, technologyId: { type: "string", pattern: "^Technology\\.[A-Za-z0-9.]+$" } }, additionalProperties: false },
       ],
     },
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
@@ -172,6 +246,48 @@ export const TOOLS = [
     title: "Assert Hansa gameplay predicate",
     description: "Evaluate an allowlisted production or market predicate without advancing the simulation.",
     inputSchema: { type: "object", required: ["predicate"], properties: { predicate: RUN_UNTIL_PREDICATE }, additionalProperties: false },
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  {
+    name: "route_configure_relief",
+    title: "Configure Lübeck relief route",
+    description: "Edit the route_delivery_v1 cog route through the ordinary authoritative route command with explicit cargo cap and Rostock reserve protection.",
+    inputSchema: { type: "object", properties: { quantityMilliUnits: { type: "integer", minimum: 1, maximum: 60000, default: 20000 }, minimumReserveMilliUnits: { type: "integer", minimum: 0, default: 30000 } }, additionalProperties: false },
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  {
+    name: "route_set_active",
+    title: "Start or pause relief route",
+    description: "Start or pause route 1 through the ordinary authoritative route command.",
+    inputSchema: { type: "object", required: ["active"], properties: { active: { type: "boolean" } }, additionalProperties: false },
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+  },
+  {
+    name: "route_cancel",
+    title: "Cancel relief route",
+    description: "Cancel route 1 through the ordinary authoritative cancellation command while preserving any cargo already aboard.",
+    inputSchema: NO_ARGUMENTS,
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
+  },
+  {
+    name: "route_wait_for_phase",
+    title: "Wait for route phase",
+    description: "Advance route_delivery_v1 until route 1 departs, arrives, or delivers cargo, bounded by deterministic simulation ticks.",
+    inputSchema: { type: "object", required: ["phase"], properties: { phase: { type: "string", enum: ["departed", "arrived", "delivered"] }, maximumTicks: { type: "integer", minimum: 1, maximum: 10000, default: 64 } }, additionalProperties: false },
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+  },
+  {
+    name: "route_query_delivery",
+    title: "Query route delivery",
+    description: "Read route 1 cargo, synchronized route events, and the authoritative Lübeck grain market effect.",
+    inputSchema: NO_ARGUMENTS,
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  {
+    name: "route_assert_lubeck_response",
+    title: "Assert Lübeck response",
+    description: "Assert that delivery occurred and that Lübeck grain stock and price meet explicit response thresholds.",
+    inputSchema: { type: "object", required: ["minimumStockMilliUnits", "maximumPriceMilliMarks"], properties: { minimumStockMilliUnits: { type: "integer", minimum: 0 }, maximumPriceMilliMarks: { type: "integer", minimum: 1 } }, additionalProperties: false },
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   },
   {
@@ -256,6 +372,36 @@ export const TOOLS = [
     },
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
   },
+  {
+    name: "logs_get",
+    title: "Get synchronized Hansa logs",
+    description: "Read a bounded structured log projection correlated with the active fixture tick and causal events.",
+    inputSchema: { type: "object", properties: { maximumEntries: { type: "integer", minimum: 1, maximum: 512, default: 256 } }, additionalProperties: false },
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  {
+    name: "evidence_bundle_create",
+    title: "Create Hansa evidence bundle",
+    description: "Persist synchronized protocol, fixture, hash, semantic, event, log, screenshot, and assertion manifests for the active golden run.",
+    inputSchema: {
+      type: "object",
+      required: ["bundleId", "testId"],
+      properties: {
+        bundleId: { type: "string", minLength: 1, maxLength: 64, pattern: "^[A-Za-z0-9_-]+$" },
+        testId: { const: "s14-p01-mvp-golden" },
+		assertions: { type: "array", maxItems: 128, items: { type: "object", required: ["id", "passed"], properties: { id: { type: "string", minLength: 1, maxLength: 64, pattern: "^[A-Za-z0-9._-]+$" }, passed: { type: "boolean" } }, additionalProperties: false } },
+      },
+      additionalProperties: false,
+    },
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  {
+    name: "test_run",
+    title: "Run Hansa MVP golden test",
+    description: "Run S14-P01 through the same public MCP client operations, semantic actions, normal commands, observable waits, and evidence APIs used independently.",
+    inputSchema: { type: "object", required: ["testId"], properties: { testId: { const: "s14-p01-mvp-golden" }, bundleId: { type: "string", minLength: 1, maxLength: 64, pattern: "^[A-Za-z0-9_-]+$" }, captureScreenshots: { type: "boolean", default: true } }, additionalProperties: false },
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
+  },
 ];
 
 function jsonRpcError(id, code, message, data) {
@@ -274,12 +420,17 @@ function validGameplayPredicate(predicate) {
   if (!predicate || typeof predicate !== "object" || Array.isArray(predicate)) return false;
   const keys = Object.keys(predicate);
   const marketIds = () => /^City\.[A-Za-z0-9]+$/.test(predicate.cityId ?? "") && /^Good\.[A-Za-z0-9]+$/.test(predicate.goodId ?? "");
+  if (["route.departed", "route.arrived", "route.delivered"].includes(predicate.kind)) return keys.length === 2 && Number.isInteger(predicate.routeId) && predicate.routeId > 0;
   if (predicate.kind === "production.completed_cycles_at_least") return keys.length === 3 && Number.isInteger(predicate.productionId) && predicate.productionId > 0 && Number.isInteger(predicate.minimumCompletedCycles) && predicate.minimumCompletedCycles >= 0;
   if (predicate.kind === "production.blocker_equals") return keys.length === 3 && Number.isInteger(predicate.productionId) && predicate.productionId > 0 && typeof predicate.blocker === "string" && predicate.blocker.length >= 1 && predicate.blocker.length <= 64;
   if (predicate.kind === "market.alert_active") return keys.length === 4 && marketIds() && ["Shortage", "LowReserve", "Affordability"].includes(predicate.alertType);
   if (predicate.kind === "market.stock_at_least") return keys.length === 4 && marketIds() && Number.isInteger(predicate.minimumStockMilliUnits) && predicate.minimumStockMilliUnits >= 0;
   if (predicate.kind === "market.price_at_most") return keys.length === 4 && marketIds() && Number.isInteger(predicate.maximumPriceMilliMarks) && predicate.maximumPriceMilliMarks > 0;
   if (["integrated.construction_completed", "integrated.inventory_moved", "integrated.production_completed", "integrated.population_grown", "integrated.bread_consumed"].includes(predicate.kind)) return keys.length === 1;
+  if (["strategic.building_placed", "strategic.building_completed", "strategic.shortage_diagnosed", "strategic.route_recovered", "strategic.route_delivered", "strategic.route_cargo_in_transit"].includes(predicate.kind)) return keys.length === 1;
+  if (predicate.kind === "strategic.victory") return (keys.length === 1 || (keys.length === 2 && /^Victory\.[A-Za-z0-9.]+$/.test(predicate.victoryId ?? "")));
+  if (predicate.kind === "strategic.research_completed") return keys.length === 2 && /^Technology\.[A-Za-z0-9.]+$/.test(predicate.technologyId ?? "");
+  if (predicate.kind === "strategic.ai_progressed") return keys.length === 2 && Number.isInteger(predicate.minimumDecisions) && predicate.minimumDecisions >= 1 && predicate.minimumDecisions <= 128;
   return predicate.kind === "market.reserve_recovered" && keys.length === 3 && marketIds();
 }
 
@@ -301,28 +452,45 @@ function validToolArguments(name, args) {
     const supported = (args.width === 1280 && args.height === 720) || (args.width === 1920 && args.height === 1080);
     return supported && (args.bundleId === undefined || /^[A-Za-z0-9_-]{1,64}$/.test(args.bundleId));
   }
-  if (name === "fixture_load") return keys.length === 1 && ["mvp_production_chains_v1", "lubeck_grain_shortage_v1", "empty_lubeck_build_v1", "integrated_lubeck_city_v1"].includes(args.fixtureId);
+  if (["save_create", "save_load"].includes(name)) return keys.length === 1 && ["manual", "autosave"].includes(args.slotId);
+  if (name === "save_wait_for") return (args.condition === "roundtrip_verified" && keys.length === 1) || (args.condition === "slot_exists" && keys.length === 2 && ["manual", "autosave"].includes(args.slotId));
+  if (name === "fixture_load") return keys.length === 1 && ["mvp_production_chains_v1", "lubeck_grain_shortage_v1", "route_delivery_v1", "empty_lubeck_build_v1", "integrated_lubeck_city_v1", "strategic_vertical_slice_seed_alpha_v1", "strategic_vertical_slice_seed_beta_v1", "save_roundtrip_v1"].includes(args.fixtureId);
   if (name === "gameplay_query") {
-    if (keys.some((key) => !["query", "buildingId", "buildingDefinitionId", "productionId", "populationCohortId", "inventoryId", "cityId", "goodId"].includes(key))) return false;
-    if (["fixture.summary", "integrated.summary", "construction.list", "production.list"].includes(args.query)) return keys.length === 1;
+    if (keys.some((key) => !["query", "buildingId", "buildingDefinitionId", "productionId", "populationCohortId", "inventoryId", "routeId", "cityId", "sourceCityId", "destinationCityId", "goodId"].includes(key))) return false;
+    if (["fixture.summary", "integrated.summary", "strategic.summary", "strategic.evidence", "research.state", "scenario.progress", "ai.decision_history", "construction.list", "production.list", "route.list", "vehicle.list"].includes(args.query)) return keys.length === 1;
+	if (["route.get", "route.cargo", "route.events"].includes(args.query)) return keys.length === 2 && Number.isInteger(args.routeId) && args.routeId > 0;
     if (args.query === "construction.get") return keys.length === 2 && Number.isInteger(args.buildingId) && args.buildingId > 0;
     if (args.query === "construction.cost") return keys.length === 2 && /^Building\.[A-Za-z0-9.]+$/.test(args.buildingDefinitionId ?? "");
     if (args.query === "production.get") return keys.length === 2 && Number.isInteger(args.productionId) && args.productionId > 0;
     if (args.query === "population.cohort") return keys.length === 2 && Number.isInteger(args.populationCohortId) && args.populationCohortId > 0;
     if (args.query === "city.population") return keys.length === 2 && /^City\.[A-Za-z0-9]+$/.test(args.cityId ?? "");
     if (args.query === "inventory.stock") return keys.length === 3 && Number.isInteger(args.inventoryId) && args.inventoryId > 0 && /^Good\.[A-Za-z0-9]+$/.test(args.goodId ?? "");
-    return ["market.price", "market.history", "market.components", "market.reserve", "market.explanation", "market.consumers", "market.producers", "market.alerts"].includes(args.query) && keys.length === 3 && /^City\.[A-Za-z0-9]+$/.test(args.cityId ?? "") && /^Good\.[A-Za-z0-9]+$/.test(args.goodId ?? "");
+    if (args.query === "market.opportunity") return keys.length === 4 && /^City\.[A-Za-z0-9]+$/.test(args.sourceCityId ?? "") && /^City\.[A-Za-z0-9]+$/.test(args.destinationCityId ?? "") && args.sourceCityId !== args.destinationCityId && /^Good\.[A-Za-z0-9]+$/.test(args.goodId ?? "");
+    return ["market.price", "market.history", "market.components", "market.reserve", "market.explanation", "market.consumers", "market.producers", "market.alerts", "market.diagnosis", "market.known_price", "market.report_age", "market.known_components"].includes(args.query) && keys.length === 3 && /^City\.[A-Za-z0-9]+$/.test(args.cityId ?? "") && /^Good\.[A-Za-z0-9]+$/.test(args.goodId ?? "");
   }
   if (name === "gameplay_command") {
     if (args.command === "production.set_active") return keys.length === 3 && Number.isInteger(args.productionId) && args.productionId > 0 && typeof args.active === "boolean";
+	if (args.command === "route.edit") return keys.length === 7 && Number.isInteger(args.routeId) && args.routeId > 0 && /^City\.[A-Za-z0-9]+$/.test(args.sourceCityId ?? "") && /^City\.[A-Za-z0-9]+$/.test(args.destinationCityId ?? "") && /^Good\.[A-Za-z0-9]+$/.test(args.goodId ?? "") && Number.isInteger(args.quantityMilliUnits) && args.quantityMilliUnits > 0 && Number.isInteger(args.minimumReserveMilliUnits) && args.minimumReserveMilliUnits >= 0;
+	if (args.command === "route.set_active") return keys.length === 3 && Number.isInteger(args.routeId) && args.routeId > 0 && typeof args.active === "boolean";
+	if (args.command === "route.cancel") return keys.length === 2 && Number.isInteger(args.routeId) && args.routeId > 0;
+    if (args.command === "building.place") return keys.length === 4 && /^Building\.[A-Za-z0-9.]+$/.test(args.buildingDefinitionId ?? "") && Number.isInteger(args.x) && Number.isInteger(args.y);
+    if (args.command === "research.queue") return keys.length === 2 && /^Technology\.[A-Za-z0-9.]+$/.test(args.technologyId ?? "");
     return keys.length === 2 && ["residence.upgrade", "construction.cancel", "building.remove"].includes(args.command) && Number.isInteger(args.buildingId) && args.buildingId > 0;
   }
+	if (name === "route_configure_relief") return keys.every((key) => ["quantityMilliUnits", "minimumReserveMilliUnits"].includes(key)) && (args.quantityMilliUnits === undefined || (Number.isInteger(args.quantityMilliUnits) && args.quantityMilliUnits >= 1 && args.quantityMilliUnits <= 60000)) && (args.minimumReserveMilliUnits === undefined || (Number.isInteger(args.minimumReserveMilliUnits) && args.minimumReserveMilliUnits >= 0));
+	if (name === "route_set_active") return keys.length === 1 && typeof args.active === "boolean";
+	if (name === "route_cancel" || name === "route_query_delivery") return keys.length === 0;
+	if (name === "route_wait_for_phase") return keys.every((key) => ["phase", "maximumTicks"].includes(key)) && ["departed", "arrived", "delivered"].includes(args.phase) && (args.maximumTicks === undefined || (Number.isInteger(args.maximumTicks) && args.maximumTicks >= 1 && args.maximumTicks <= 10000));
+	if (name === "route_assert_lubeck_response") return keys.length === 2 && Number.isInteger(args.minimumStockMilliUnits) && args.minimumStockMilliUnits >= 0 && Number.isInteger(args.maximumPriceMilliMarks) && args.maximumPriceMilliMarks > 0;
   if (name === "gameplay_assert") return keys.length === 1 && validGameplayPredicate(args.predicate);
   if (name === "simulation_run") return keys.length === 1 && Number.isInteger(args.tickCount) && args.tickCount >= 1 && args.tickCount <= 10000;
   if (name === "simulation_run_until") {
     if (keys.length !== 2 || !Number.isInteger(args.maximumTicks) || args.maximumTicks < 1 || args.maximumTicks > 10000 || !args.predicate || typeof args.predicate !== "object" || Array.isArray(args.predicate)) return false;
     return validGameplayPredicate(args.predicate);
   }
+  if (name === "logs_get") return keys.length <= 1 && (args.maximumEntries === undefined || (Number.isInteger(args.maximumEntries) && args.maximumEntries >= 1 && args.maximumEntries <= 512));
+	if (name === "evidence_bundle_create") return keys.length >= 2 && keys.every((key) => ["bundleId", "testId", "assertions"].includes(key)) && /^[A-Za-z0-9_-]{1,64}$/.test(args.bundleId ?? "") && args.testId === "s14-p01-mvp-golden" && (args.assertions === undefined || (Array.isArray(args.assertions) && args.assertions.length <= 128 && args.assertions.every((item) => item && typeof item === "object" && !Array.isArray(item) && Object.keys(item).length === 2 && /^[A-Za-z0-9._-]{1,64}$/.test(item.id ?? "") && typeof item.passed === "boolean")));
+  if (name === "test_run") return keys.every((key) => ["testId", "bundleId", "captureScreenshots"].includes(key)) && args.testId === "s14-p01-mvp-golden" && (args.bundleId === undefined || /^[A-Za-z0-9_-]{1,64}$/.test(args.bundleId)) && (args.captureScreenshots === undefined || typeof args.captureScreenshots === "boolean");
   if (name !== "session_start") return keys.length === 0;
   if (keys.some((key) => key !== "requestedPermission" && key !== "requiredCapabilities")) return false;
   if (args.requestedPermission !== undefined && !["ReadOnly", "ControlledActions", "FixtureControl"].includes(args.requestedPermission)) return false;
@@ -339,6 +507,7 @@ export class HansaMcpServer {
     this.logger = logger;
     this.initializeAnswered = false;
     this.initialized = false;
+	this.negotiatedProtocolVersion = LATEST_MCP_VERSION;
   }
 
   async handle(message) {
@@ -354,6 +523,7 @@ export class HansaMcpServer {
     if (message.method === "initialize") {
       const requestedVersion = message.params?.protocolVersion;
       const protocolVersion = SUPPORTED_MCP_VERSIONS.has(requestedVersion) ? requestedVersion : LATEST_MCP_VERSION;
+	  this.negotiatedProtocolVersion = protocolVersion;
       this.initializeAnswered = true;
       return {
         jsonrpc: "2.0",
@@ -388,9 +558,31 @@ export class HansaMcpServer {
         health: () => this.client.health(),
         fixture_list: () => this.client.fixtureList(),
         fixture_load: () => this.client.fixtureLoad(args.fixtureId),
+        fixture_reset: () => this.client.fixtureReset(),
+        save_list: () => this.client.saveList(),
+        save_create: () => this.client.saveCreate(args.slotId),
+        save_load: () => this.client.saveLoad(args.slotId),
+        save_wait_for: () => this.client.saveWaitFor(args),
+        save_assert_roundtrip: () => this.client.saveAssertRoundTrip(),
         gameplay_query: () => this.client.gameplayQuery(args.query, Object.fromEntries(Object.entries(args).filter(([key]) => key !== "query"))),
         gameplay_command: () => this.client.gameplayCommand(args.command, Object.fromEntries(Object.entries(args).filter(([key]) => key !== "command"))),
         gameplay_assert: () => this.client.gameplayAssert(args.predicate),
+		route_configure_relief: () => this.client.gameplayCommand("route.edit", { routeId: 1, sourceCityId: "City.Lubeck", destinationCityId: "City.Rostock", goodId: "Good.Grain", quantityMilliUnits: args.quantityMilliUnits ?? 20000, minimumReserveMilliUnits: args.minimumReserveMilliUnits ?? 30000 }),
+		route_set_active: () => this.client.gameplayCommand("route.set_active", { routeId: 1, active: args.active }),
+		route_cancel: () => this.client.gameplayCommand("route.cancel", { routeId: 1 }),
+		route_wait_for_phase: () => this.client.simulationRunUntil({ predicate: { kind: `route.${args.phase}`, routeId: 1 }, maximumTicks: args.maximumTicks ?? 64 }),
+		route_query_delivery: async () => ({
+		  summary: await this.client.gameplayQuery("fixture.summary"),
+		  cargo: await this.client.gameplayQuery("route.cargo", { routeId: 1 }),
+		  events: await this.client.gameplayQuery("route.events", { routeId: 1 }),
+		  lubeckMarket: await this.client.gameplayQuery("market.price", { cityId: "City.Lubeck", goodId: "Good.Grain" }),
+		  rostockReport: await this.client.gameplayQuery("market.report_age", { cityId: "City.Rostock", goodId: "Good.Grain" }),
+		}),
+		route_assert_lubeck_response: async () => ({
+		  delivered: await this.client.gameplayAssert({ kind: "route.delivered", routeId: 1 }),
+		  stock: await this.client.gameplayAssert({ kind: "market.stock_at_least", cityId: "City.Lubeck", goodId: "Good.Grain", minimumStockMilliUnits: args.minimumStockMilliUnits }),
+		  price: await this.client.gameplayAssert({ kind: "market.price_at_most", cityId: "City.Lubeck", goodId: "Good.Grain", maximumPriceMilliMarks: args.maximumPriceMilliMarks }),
+		}),
         simulation_step: () => this.client.simulationStep(),
         simulation_run: () => this.client.simulationRun(args.tickCount),
         simulation_run_until: () => this.client.simulationRunUntil(args),
@@ -400,6 +592,9 @@ export class HansaMcpServer {
         ui_focus: () => this.client.uiFocus(args.semanticId),
         wait_for: () => this.client.waitFor(args),
         capture_screenshot: () => this.client.captureScreenshot(args),
+        logs_get: () => this.client.logsGet(args),
+		evidence_bundle_create: () => this.client.evidenceBundleCreate({ ...args, mcpProtocolVersion: this.negotiatedProtocolVersion }),
+		test_run: () => runGoldenMvpFlow(this.client, { bundleId: args.bundleId, captureScreenshots: args.captureScreenshots, mcpProtocolVersion: this.negotiatedProtocolVersion }),
       }[name];
       if (!call) return jsonRpcError(message.id, -32602, `Unknown tool: ${String(name)}`);
       if (!validToolArguments(name, args)) return jsonRpcError(message.id, -32602, `Invalid arguments for tool: ${name}`);
@@ -407,9 +602,18 @@ export class HansaMcpServer {
         const value = await call();
         return { jsonrpc: "2.0", id: message.id, result: toolResult(value) };
       } catch (error) {
-        const structured = error instanceof HansaWireError
-          ? error.toJSON()
-          : new HansaWireError("SidecarError", "The sidecar failed to complete the tool call.").toJSON();
+		const structured = error instanceof HansaWireError
+		  ? error.toJSON()
+		  : error?.goldenFailure
+			? {
+				code: "GoldenTestFailed",
+				correlationId: "",
+				message: `The S14-P01 golden test failed during ${error.goldenFailure.phase}.`,
+				remedy: `Inspect checkpoint ${error.goldenFailure.checkpoint} and the incomplete failure evidence bundle.`,
+				retryable: false,
+				failure: error.goldenFailure,
+			  }
+			: new HansaWireError("SidecarError", "The sidecar failed to complete the tool call.").toJSON();
         this.logger?.log("warn", "tool.failed", { tool: name, error: structured });
         return { jsonrpc: "2.0", id: message.id, result: toolResult({ error: structured }, true) };
       }

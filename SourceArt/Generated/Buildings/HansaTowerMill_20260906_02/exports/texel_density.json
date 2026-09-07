@@ -1,0 +1,50 @@
+{
+  "Masonry": {
+    "sampled_surface_m2": 357.63802278966966,
+    "area_weighted_p10_px_per_m": 375.3936478684263,
+    "median_px_per_m": 409.6006381989802,
+    "minimum_sampled_px_per_m": 306.93475660267774
+  },
+  "RecessTimber": {
+    "sampled_surface_m2": 156.45723238495455,
+    "area_weighted_p10_px_per_m": 960.9518041282759,
+    "median_px_per_m": 1023.999992893397,
+    "minimum_sampled_px_per_m": 165.24727753669885
+  },
+  "Fieldstone": {
+    "sampled_surface_m2": 39.84163330153291,
+    "area_weighted_p10_px_per_m": 881.0429668363911,
+    "median_px_per_m": 976.424122373719,
+    "minimum_sampled_px_per_m": 72.87696867847882
+  },
+  "WeatheredTimber": {
+    "sampled_surface_m2": 416.73724650901465,
+    "area_weighted_p10_px_per_m": 1023.9992016075627,
+    "median_px_per_m": 1024.0002488463545,
+    "minimum_sampled_px_per_m": 757.170176922372
+  },
+  "OldBrick": {
+    "sampled_surface_m2": 17.9012299907942,
+    "area_weighted_p10_px_per_m": 1889.9392991255193,
+    "median_px_per_m": 2047.9979415950932,
+    "minimum_sampled_px_per_m": 1741.6144748466916
+  },
+  "SagePaint": {
+    "sampled_surface_m2": 10.343864973046585,
+    "area_weighted_p10_px_per_m": 1023.9991906348374,
+    "median_px_per_m": 1024.0000213542157,
+    "minimum_sampled_px_per_m": 893.8683732057224
+  },
+  "WindowGlass": {
+    "sampled_surface_m2": 4.275463102851627,
+    "area_weighted_p10_px_per_m": 1023.9996996539898,
+    "median_px_per_m": 1023.9999827263171,
+    "minimum_sampled_px_per_m": 872.9106889380911
+  },
+  "ForgedIron": {
+    "sampled_surface_m2": 2.4704496714455395,
+    "area_weighted_p10_px_per_m": 426.6668201914341,
+    "median_px_per_m": 1024.000088848106,
+    "minimum_sampled_px_per_m": 426.6668201914209
+  }
+}

@@ -4,6 +4,7 @@
 #include "Containers/ArrayView.h"
 #include "Internationalization/Text.h"
 #include "Math/HansaFixedPoint.h"
+#include "Misc/Optional.h"
 #include "Model/HansaIds.h"
 #include "Model/HansaSimulationTime.h"
 #include "Production/HansaProduction.h"
@@ -57,12 +58,23 @@ namespace Hansa::Simulation
 		IncreaseAffordableSupply
 	};
 
+	/** Age/provenance of information available to a player or automation client. */
+	enum class EHansaMarketInformationState : uint8
+	{
+		Current = 0,
+		Recent,
+		Stale,
+		Estimated,
+		Unknown
+	};
+
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaMarketExplanationFactor Factor);
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaMarketAlertType Type);
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaMarketAlertSeverity Severity);
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaMarketConsumerKind Kind);
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaMarketProducerKind Kind);
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaMarketSuggestedActionType Action);
+	HANSASIMULATION_API const TCHAR* LexToString(EHansaMarketInformationState State);
 
 	struct HANSASIMULATION_API FHansaMarketAlertPolicy final
 	{
@@ -80,6 +92,15 @@ namespace Hansa::Simulation
 		int32 StaleAfterTicks = 10;
 	};
 
+	struct HANSASIMULATION_API FHansaMarketReportPolicy final
+	{
+		int32 ReportCadenceTicks = 5;
+		int32 CurrentMaxAgeTicks = 0;
+		int32 RecentMaxAgeTicks = 5;
+		int32 StaleMaxAgeTicks = 10;
+		int32 EstimatedMaxAgeTicks = 20;
+	};
+
 	struct HANSASIMULATION_API FHansaCityMarketInitialization final
 	{
 		FHansaCityDefinitionId CityId;
@@ -87,12 +108,18 @@ namespace Hansa::Simulation
 		TArray<FHansaInventoryId> InventoryIds;
 		FHansaQuantity DesiredReserve;
 		FHansaQuantity ConfirmedIncomingSupplyPerUpdate;
+		bool bMarketOnly = false;
+		FHansaQuantity BackgroundProductionPerUpdate;
+		FHansaQuantity BackgroundCitizenDemandPerUpdate;
+		FHansaQuantity BackgroundIndustrialDemandPerUpdate;
+		FHansaMarketReportPolicy ReportPolicy;
 		int32 SeasonModifierBasisPoints = 0;
 		int32 CityModifierBasisPoints = 0;
 		int64 MinimumPriceMilliMarks = 1;
 		int64 MaximumPriceMilliMarks = 1'000'000'000;
 		int64 InitialPriceMilliMarks = 0;
 		int64 InitialLastUpdateTick = -1;
+		int64 InitialReportTick = -1;
 	};
 
 	struct HANSASIMULATION_API FHansaMarketPriceFactors final
@@ -120,6 +147,24 @@ namespace Hansa::Simulation
 		int64 PriceMilliMarks = 0;
 	};
 
+	/** Immutable values captured when a city publishes a report. */
+	struct HANSASIMULATION_API FHansaMarketReportState final
+	{
+		bool bAvailable = false;
+		int64 ReportTick = -1;
+		int64 MarketUpdateTick = -1;
+		FHansaQuantity Stock;
+		FHansaQuantity DesiredReserve;
+		FHansaQuantity CitizenDemand;
+		FHansaQuantity IndustrialDemand;
+		FHansaQuantity RecentLocalProduction;
+		FHansaQuantity ExpectedIncomingSupply;
+		FHansaQuantity UnmetDemand;
+		int64 PriceMilliMarks = 0;
+		FHansaMarketPriceFactors Factors;
+		TArray<FHansaMarketPriceHistoryEntry> PriceHistory;
+	};
+
 	struct HANSASIMULATION_API FHansaCityMarketState final
 	{
 		FHansaCityDefinitionId CityId;
@@ -127,6 +172,11 @@ namespace Hansa::Simulation
 		TArray<FHansaInventoryId> InventoryIds;
 		FHansaQuantity DesiredReserve;
 		FHansaQuantity ConfirmedIncomingSupplyPerUpdate;
+		bool bMarketOnly = false;
+		FHansaQuantity BackgroundProductionPerUpdate;
+		FHansaQuantity BackgroundCitizenDemandPerUpdate;
+		FHansaQuantity BackgroundIndustrialDemandPerUpdate;
+		FHansaMarketReportPolicy ReportPolicy;
 		int32 SeasonModifierBasisPoints = 0;
 		int32 CityModifierBasisPoints = 0;
 		int64 MinimumPriceMilliMarks = 1;
@@ -146,6 +196,58 @@ namespace Hansa::Simulation
 		int64 AffordabilitySinceTick = -1;
 		FHansaMarketPriceFactors Factors;
 		TArray<FHansaMarketPriceHistoryEntry> PriceHistory;
+		FHansaMarketReportState Report;
+	};
+
+	struct HANSASIMULATION_API FHansaMarketReportAgeProjection final
+	{
+		FHansaCityDefinitionId CityId;
+		FHansaGoodId GoodId;
+		EHansaMarketInformationState InformationState = EHansaMarketInformationState::Unknown;
+		TOptional<int64> ReportTick;
+		TOptional<int64> MarketUpdateTick;
+		TOptional<int64> AgeTicks;
+	};
+
+	struct HANSASIMULATION_API FHansaKnownMarketPriceProjection final
+	{
+		FHansaCityDefinitionId CityId;
+		FHansaGoodId GoodId;
+		EHansaMarketInformationState InformationState = EHansaMarketInformationState::Unknown;
+		TOptional<int64> PriceMilliMarks;
+		TOptional<int64> RecentAveragePriceMilliMarks;
+		TOptional<int64> ReportTick;
+		TOptional<int64> ReportAgeTicks;
+	};
+
+	struct HANSASIMULATION_API FHansaKnownMarketSupplyDemandProjection final
+	{
+		FHansaCityDefinitionId CityId;
+		FHansaGoodId GoodId;
+		EHansaMarketInformationState InformationState = EHansaMarketInformationState::Unknown;
+		TOptional<FHansaQuantity> Stock;
+		TOptional<FHansaQuantity> DesiredReserve;
+		TOptional<FHansaQuantity> CitizenDemand;
+		TOptional<FHansaQuantity> IndustrialDemand;
+		TOptional<FHansaQuantity> TotalDemand;
+		TOptional<FHansaQuantity> RecentLocalProduction;
+		TOptional<FHansaQuantity> ExpectedIncomingSupply;
+		TOptional<FHansaQuantity> UnmetDemand;
+	};
+
+	struct HANSASIMULATION_API FHansaMarketOpportunityComparisonProjection final
+	{
+		FHansaCityDefinitionId SourceCityId;
+		FHansaCityDefinitionId DestinationCityId;
+		FHansaGoodId GoodId;
+		EHansaMarketInformationState SourceInformationState = EHansaMarketInformationState::Unknown;
+		EHansaMarketInformationState DestinationInformationState = EHansaMarketInformationState::Unknown;
+		bool bComparable = false;
+		TOptional<int64> SourcePriceMilliMarks;
+		TOptional<int64> DestinationPriceMilliMarks;
+		TOptional<int64> GrossMarginMilliMarks;
+		TOptional<FHansaQuantity> SourceAvailableAboveReserve;
+		TOptional<FHansaQuantity> DestinationDemandGap;
 	};
 
 	/** One localized, ordered contribution to the authoritative target multiplier. */

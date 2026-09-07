@@ -26,6 +26,7 @@ namespace Hansa::Simulation
 		Market,
 		Placement,
 		Logistics,
+		Research,
 		NotApplicable = 255
 	};
 

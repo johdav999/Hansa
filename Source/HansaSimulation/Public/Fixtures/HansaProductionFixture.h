@@ -15,11 +15,16 @@ namespace Hansa::Simulation
 	public:
 		static constexpr const TCHAR* StableFixtureId = TEXT("mvp_production_chains_v1");
 		static constexpr const TCHAR* GrainShortageFixtureId = TEXT("lubeck_grain_shortage_v1");
-		static constexpr uint32 FixtureVersion = 3;
+		static constexpr const TCHAR* RouteDeliveryFixtureId = TEXT("route_delivery_v1");
+		static constexpr uint32 FixtureVersion = 4;
 		static constexpr uint64 RegistryHash = 0xB0481C9F740D6C18ULL;
 
 		[[nodiscard]] static THansaValueResult<FHansaProductionFixture> TryCreate();
 		[[nodiscard]] static THansaValueResult<FHansaProductionFixture> TryCreateGrainShortage();
+		/** Builds the same named fixture against a validated temporary registry for Editor balance previews. */
+		[[nodiscard]] static THansaValueResult<FHansaProductionFixture> TryCreateGrainShortageWithRegistry(
+			FHansaEconomicRegistry EconomicRegistry);
+		[[nodiscard]] static THansaValueResult<FHansaProductionFixture> TryCreateRouteDelivery();
 
 		[[nodiscard]] const FString& GetFixtureId() const { return FixtureId; }
 		[[nodiscard]] uint32 GetFixtureVersion() const { return FixtureVersion; }
@@ -36,6 +41,10 @@ namespace Hansa::Simulation
 		[[nodiscard]] FHansaCommandGatewayResult SetProductionActive(FHansaProductionId ProductionId, bool bActive);
 		/** Exercises the same explicit residence-progression command available to every command origin. */
 		[[nodiscard]] FHansaCommandGatewayResult UpgradeResidence(FHansaBuildingId BuildingId);
+		/** Ordinary typed route commands used by controlled automation and the native route editor. */
+		[[nodiscard]] FHansaCommandGatewayResult EditRoute(FHansaRouteId RouteId, TArray<FHansaRouteStop> Stops);
+		[[nodiscard]] FHansaCommandGatewayResult SetRouteActive(FHansaRouteId RouteId, bool bActive);
+		[[nodiscard]] FHansaCommandGatewayResult CancelRoute(FHansaRouteId RouteId);
 
 	private:
 		FString FixtureId = StableFixtureId;

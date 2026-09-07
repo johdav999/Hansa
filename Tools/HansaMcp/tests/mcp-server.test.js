@@ -30,9 +30,92 @@ test("MCP lifecycle negotiates protocol and exposes the bounded production tools
   const list = await server.handle(request(3, "tools/list"));
   assert.deepEqual(list.result.tools.map(({ name }) => name), [
     "capabilities_get", "session_start", "session_get", "session_stop", "ping", "health",
-    "fixture_list", "fixture_load", "gameplay_query", "gameplay_command", "gameplay_assert", "simulation_step", "simulation_run", "simulation_run_until",
-    "ui_find", "ui_state", "ui_activate", "ui_focus", "wait_for", "capture_screenshot",
+    "fixture_list", "fixture_load", "fixture_reset", "save_list", "save_create", "save_load", "save_wait_for", "save_assert_roundtrip", "gameplay_query", "gameplay_command", "gameplay_assert", "route_configure_relief", "route_set_active", "route_cancel", "route_wait_for_phase", "route_query_delivery", "route_assert_lubeck_response", "simulation_step", "simulation_run", "simulation_run_until",
+    "ui_find", "ui_state", "ui_activate", "ui_focus", "wait_for", "capture_screenshot", "logs_get", "evidence_bundle_create", "test_run",
   ]);
+});
+
+test("MCP test_run executes the full S14-P01 flow through public operations", async () => {
+  const server = createServer();
+  await server.handle(request(1, "initialize", { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: {} }));
+  await server.handle({ jsonrpc: "2.0", method: "notifications/initialized" });
+  const response = await server.handle(request(2, "tools/call", {
+    name: "test_run",
+    arguments: { testId: "s14-p01-mvp-golden", bundleId: "mcp-golden-contract", captureScreenshots: true },
+  }));
+  assert.equal(response.result.isError, undefined);
+  const result = response.result.structuredContent;
+  assert.equal(result.phase, "complete");
+  assert.equal(result.protocols.mcp, "2025-06-18");
+  assert.equal(result.fixture.loaded.fixtureId, "lubeck_grain_shortage_v1");
+  assert.equal(result.stateHashes.initial, result.stateHashes.reset);
+  assert.equal(result.final.objectiveState.outcome, "Victory");
+  assert.equal(result.roundTrip.matched, true);
+  assert.equal(result.evidenceBundle.complete, true);
+  assert.equal(result.evidenceBundle.protocols.mcp, "2025-06-18");
+  assert.deepEqual(result.captures.map(({ width, height, postCaptureResized }) => [width, height, postCaptureResized]), [
+    [1280, 720, false], [1280, 720, false], [1920, 1080, false],
+  ]);
+});
+
+test("MCP test_run preserves the failing golden phase and checkpoint", async () => {
+  const server = new HansaMcpServer({
+    client: { capabilitiesGet: async () => ({ protocolVersion: { major: 1, minor: 0 }, capabilities: [] }) },
+  });
+  await server.handle(request(1, "initialize", { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: {} }));
+  await server.handle({ jsonrpc: "2.0", method: "notifications/initialized" });
+  const response = await server.handle(request(2, "tools/call", {
+    name: "test_run",
+    arguments: { testId: "s14-p01-mvp-golden", captureScreenshots: false },
+  }));
+  assert.equal(response.result.isError, true);
+  assert.equal(response.result.structuredContent.error.code, "GoldenTestFailed");
+  assert.equal(response.result.structuredContent.error.failure.phase, "capability-negotiation");
+  assert.equal(response.result.structuredContent.error.failure.checkpoint, "capability.session");
+});
+
+test("MCP fixture negotiation preserves the S04 profile unless evidence is requested", async () => {
+  const ordinary = createServer();
+  await ordinary.handle(request(1, "initialize", { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: {} }));
+  await ordinary.handle({ jsonrpc: "2.0", method: "notifications/initialized" });
+  await ordinary.handle(request(2, "tools/call", { name: "session_start", arguments: { requestedPermission: "FixtureControl", requiredCapabilities: ["gameplay.query", "gameplay.command", "fixture.control"] } }));
+  const ordinaryList = await ordinary.handle(request(3, "tools/call", { name: "fixture_list", arguments: {} }));
+  const ordinaryDescriptor = ordinaryList.result.structuredContent.fixtures.find(({ fixtureId }) => fixtureId === "lubeck_grain_shortage_v1");
+  assert.equal(ordinaryDescriptor.fixtureVersion, 1);
+  const ordinaryLoad = await ordinary.handle(request(4, "tools/call", { name: "fixture_load", arguments: { fixtureId: "lubeck_grain_shortage_v1" } }));
+  assert.equal(ordinaryLoad.result.structuredContent.fixtureVersion, 1);
+
+  const golden = createServer();
+  await golden.handle(request(1, "initialize", { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: {} }));
+  await golden.handle({ jsonrpc: "2.0", method: "notifications/initialized" });
+  await golden.handle(request(2, "tools/call", { name: "session_start", arguments: { requestedPermission: "FixtureControl", requiredCapabilities: ["gameplay.query", "gameplay.command", "fixture.control", "evidence"] } }));
+  const goldenList = await golden.handle(request(3, "tools/call", { name: "fixture_list", arguments: {} }));
+  const matching = goldenList.result.structuredContent.fixtures.filter(({ fixtureId }) => fixtureId === "lubeck_grain_shortage_v1");
+  assert.equal(matching.length, 1);
+  assert.deepEqual([matching[0].fixtureVersion, matching[0].registryHash], [4, "724BD5DE8DB9C292"]);
+  const goldenLoad = await golden.handle(request(4, "tools/call", { name: "fixture_load", arguments: { fixtureId: "lubeck_grain_shortage_v1" } }));
+  assert.equal(goldenLoad.result.structuredContent.fixtureVersion, 4);
+});
+
+test("MCP route tools configure, deliver, query, assert, and capture synchronized evidence", async () => {
+  const server = createServer();
+  await server.handle(request(1, "initialize", { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: {} }));
+  await server.handle({ jsonrpc: "2.0", method: "notifications/initialized" });
+  await server.handle(request(2, "tools/call", { name: "session_start", arguments: { requestedPermission: "FixtureControl", requiredCapabilities: ["gameplay.query", "gameplay.command", "fixture.control", "semantic-ui", "screenshots", "wait-assertions"] } }));
+  await server.handle(request(3, "tools/call", { name: "fixture_load", arguments: { fixtureId: "route_delivery_v1" } }));
+  assert.equal((await server.handle(request(4, "tools/call", { name: "route_configure_relief", arguments: {} }))).result.structuredContent.command, "route.edit");
+  await server.handle(request(5, "tools/call", { name: "route_set_active", arguments: { active: true } }));
+  const delivered = await server.handle(request(6, "tools/call", { name: "route_wait_for_phase", arguments: { phase: "delivered", maximumTicks: 64 } }));
+  assert.equal(delivered.result.structuredContent.matched, true);
+  const queried = await server.handle(request(7, "tools/call", { name: "route_query_delivery", arguments: {} }));
+  assert.ok(queried.result.structuredContent.events.events.some(({ type }) => type === "RouteCargoTransferred"));
+  assert.equal(queried.result.structuredContent.summary.stateHash, queried.result.structuredContent.events.stateHash);
+  const asserted = await server.handle(request(8, "tools/call", { name: "route_assert_lubeck_response", arguments: { minimumStockMilliUnits: 1, maximumPriceMilliMarks: 1100 } }));
+  assert.equal(asserted.result.structuredContent.delivered.matched, true);
+  await server.handle(request(9, "tools/call", { name: "ui_activate", arguments: { semanticId: "RouteDelivery.Tab.Market" } }));
+  const captured = await server.handle(request(10, "tools/call", { name: "capture_screenshot", arguments: { width: 1280, height: 720, bundleId: "route-market" } }));
+  assert.match(captured.result.structuredContent.metadataPath, /S09P04/);
+  assert.match(captured.result.structuredContent.querySnapshotPath, /query-snapshot\.json$/);
 });
 
 test("MCP drives the Lübeck shortage through causal queries, controlled production, and assertions", async () => {
@@ -52,6 +135,24 @@ test("MCP drives the Lübeck shortage through causal queries, controlled product
   assert.equal(recovered.result.structuredContent.matched, true);
   const price = await server.handle(request(10, "tools/call", { name: "gameplay_query", arguments: { query: "market.price", cityId: "City.Lubeck", goodId: "Good.Grain" } }));
   assert.ok(price.result.structuredContent.market.priceMilliMarks < 1100);
+});
+
+test("MCP exposes aged remote reports and typed opportunity comparisons", async () => {
+  const server = createServer();
+  await server.handle(request(1, "initialize", { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: {} }));
+  await server.handle({ jsonrpc: "2.0", method: "notifications/initialized" });
+  await server.handle(request(2, "tools/call", { name: "session_start", arguments: { requestedPermission: "FixtureControl", requiredCapabilities: ["gameplay.query", "gameplay.command", "fixture.control"] } }));
+  await server.handle(request(3, "tools/call", { name: "fixture_load", arguments: { fixtureId: "lubeck_grain_shortage_v1" } }));
+  const price = await server.handle(request(4, "tools/call", { name: "gameplay_query", arguments: { query: "market.known_price", cityId: "City.Rostock", goodId: "Good.Grain" } }));
+  assert.deepEqual([price.result.structuredContent.informationState, price.result.structuredContent.known, price.result.structuredContent.priceMilliMarks], ["Current", true, 850]);
+  await server.handle(request(5, "tools/call", { name: "simulation_run", arguments: { tickCount: 11 } }));
+  const age = await server.handle(request(6, "tools/call", { name: "gameplay_query", arguments: { query: "market.report_age", cityId: "City.Rostock", goodId: "Good.Grain" } }));
+  assert.deepEqual([age.result.structuredContent.informationState, age.result.structuredContent.ageTicks], ["Estimated", 11]);
+  const components = await server.handle(request(7, "tools/call", { name: "gameplay_query", arguments: { query: "market.known_components", cityId: "City.Rostock", goodId: "Good.Grain" } }));
+  assert.equal(components.result.structuredContent.totalDemandMilliUnits, 1000);
+  const opportunity = await server.handle(request(8, "tools/call", { name: "gameplay_query", arguments: { query: "market.opportunity", sourceCityId: "City.Rostock", destinationCityId: "City.Lubeck", goodId: "Good.Grain" } }));
+  assert.equal(opportunity.result.structuredContent.comparable, true);
+  assert.equal(opportunity.result.structuredContent.grossMarginMilliMarks, opportunity.result.structuredContent.destinationPriceMilliMarks - 850);
 });
 
 test("MCP routes named production fixture queries and bounded advancement", async () => {
@@ -175,4 +276,22 @@ test("MCP tools return structured content and tool-level errors", async () => {
   assert.equal(missing.result.structuredContent.error.code, "NoActiveSession");
   const malformed = await server.handle(request(6, "tools/call", { name: "ping", arguments: { unexpected: true } }));
   assert.equal(malformed.error.code, -32602);
+});
+
+test("MCP save tools prove bounded round-trip equivalence without path arguments", async () => {
+  const server = createServer();
+  await server.handle(request(1, "initialize", { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: {} }));
+  await server.handle({ jsonrpc: "2.0", method: "notifications/initialized" });
+  await server.handle(request(2, "tools/call", { name: "session_start", arguments: { requestedPermission: "FixtureControl", requiredCapabilities: ["gameplay.query", "gameplay.command", "fixture.control", "wait-assertions"] } }));
+  await server.handle(request(3, "tools/call", { name: "fixture_load", arguments: { fixtureId: "save_roundtrip_v1" } }));
+  const saved = await server.handle(request(4, "tools/call", { name: "save_create", arguments: { slotId: "manual" } }));
+  assert.equal(saved.result.structuredContent.compatible, true);
+  assert.equal((await server.handle(request(5, "tools/call", { name: "save_wait_for", arguments: { condition: "slot_exists", slotId: "manual" } }))).result.structuredContent.matched, true);
+  const loaded = await server.handle(request(6, "tools/call", { name: "save_load", arguments: { slotId: "manual" } }));
+  assert.deepEqual([loaded.result.structuredContent.authoritativeEquivalent, loaded.result.structuredContent.projectionEquivalent, loaded.result.structuredContent.deterministicContinuation], [true, true, true]);
+  assert.equal((await server.handle(request(7, "tools/call", { name: "save_wait_for", arguments: { condition: "roundtrip_verified" } }))).result.structuredContent.matched, true);
+  const proof = await server.handle(request(8, "tools/call", { name: "save_assert_roundtrip", arguments: {} }));
+  assert.equal(proof.result.structuredContent.matched, true);
+  assert.deepEqual(Object.values(proof.result.structuredContent.coverage), [true, true, true, true, true, true, true]);
+  assert.equal((await server.handle(request(9, "tools/call", { name: "save_create", arguments: { slotId: "manual", path: "C:/escape" } }))).error.code, -32602);
 });

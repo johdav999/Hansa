@@ -3,6 +3,9 @@
 #include "Containers/Array.h"
 #include "Containers/Map.h"
 #include "Containers/UnrealString.h"
+#include "Research/HansaResearch.h"
+#include "Scenario/HansaScenario.h"
+#include "Trade/HansaTrade.h"
 
 namespace Hansa::Simulation
 {
@@ -96,6 +99,10 @@ namespace Hansa::Simulation
 		FString GoodId;
 		int64 DesiredReserveMilliUnits = 0;
 		int64 ConfirmedIncomingSupplyMilliUnits = 0;
+		int64 InitialStockMilliUnits = 0;
+		int64 BackgroundProductionMilliUnitsPerUpdate = 0;
+		int64 BackgroundCitizenDemandMilliUnitsPerUpdate = 0;
+		int64 BackgroundIndustrialDemandMilliUnitsPerUpdate = 0;
 		int32 SeasonModifierBasisPoints = 0;
 		int32 CityModifierBasisPoints = 0;
 		int64 MinimumPriceMilliMarks = 0;
@@ -111,7 +118,69 @@ namespace Hansa::Simulation
 		int32 TargetSmoothingBasisPoints = 0;
 		int32 MaximumMovementBasisPointsPerUpdate = 0;
 		int32 StaleAfterTicks = 0;
+		bool bMarketOnly = false;
+		int32 ReportCadenceTicks = 0;
+		int32 CurrentReportMaxAgeTicks = 0;
+		int32 RecentReportMaxAgeTicks = 0;
+		int32 StaleReportMaxAgeTicks = 0;
+		int32 EstimatedReportMaxAgeTicks = 0;
 		TArray<FHansaCompiledMarketGoodProfile> Goods;
+		uint64 ContentHash = 0;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledVehicleDefinition final
+	{
+		FString StableId;
+		EHansaRouteMode Mode = EHansaRouteMode::Sea;
+		int64 CargoCapacityMilliUnits = 0;
+		int64 UpkeepPfennigPerTravelTick = 0;
+		uint64 ContentHash = 0;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledRouteConnection final
+	{
+		FString SourceCityId;
+		FString DestinationCityId;
+		int32 TravelTicks = 0;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledRouteDefinition final
+	{
+		FString StableId;
+		EHansaRouteMode Mode = EHansaRouteMode::Sea;
+		int32 CargoRuleSchemaVersion = 1;
+		TArray<FHansaCompiledRouteConnection> Connections;
+		uint64 ContentHash = 0;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledMerchantAITradePlan final
+	{
+		FString StablePlanId;
+		FString RouteDefinitionId;
+		FString VehicleDefinitionId;
+		FString SourceCityId;
+		FString DestinationCityId;
+		FString GoodId;
+		int64 QuantityLimitMilliUnits = 0;
+		int64 MinimumSourceReserveMilliUnits = 0;
+		int64 UtilityBias = 0;
+	};
+
+	/** Provider-neutral, authored runtime tuning for one bounded merchant controller. */
+	struct HANSASIMULATION_API FHansaCompiledMerchantAITuning final
+	{
+		FString StableId;
+		int32 DecisionCadenceTicks = 1;
+		int32 DecisionHistoryCapacity = 32;
+		int64 MinimumDestinationDemandGapMilliUnits = 0;
+		int64 MinimumGrossMarginMilliMarks = 0;
+		int64 ShortageUtilityPerUnit = 1;
+		int64 MarginUtilityPerMilliMark = 1;
+		int64 ResearchUtility = 0;
+		int64 ProductionUtility = 0;
+		int64 TargetCompletedTradeLegs = 1;
+		TArray<FString> PreferredResearchTechnologyIds;
+		TArray<FHansaCompiledMerchantAITradePlan> TradePlans;
 		uint64 ContentHash = 0;
 	};
 
@@ -127,7 +196,14 @@ namespace Hansa::Simulation
 			uint64 InRegistryHash,
 			TArray<FHansaCompiledNeedDefinition> InNeeds = {},
 			TArray<FHansaCompiledPopulationTierDefinition> InPopulationTiers = {},
-			TArray<FHansaCompiledCityMarketProfileDefinition> InCityMarkets = {});
+			TArray<FHansaCompiledCityMarketProfileDefinition> InCityMarkets = {},
+			TArray<FHansaCompiledVehicleDefinition> InVehicles = {},
+			TArray<FHansaCompiledRouteDefinition> InRoutes = {},
+			TArray<FHansaCompiledTechnologyDefinition> InTechnologies = {},
+			TArray<FHansaCompiledMerchantAITuning> InMerchantAITunings = {},
+			TArray<FHansaCompiledScenarioObjective> InScenarioObjectives = {},
+			TArray<FHansaCompiledVictoryDefinition> InVictories = {},
+			TArray<FHansaCompiledScenarioDefinition> InScenarios = {});
 
 		[[nodiscard]] const TArray<FHansaCompiledGoodDefinition>& GetGoods() const { return Goods; }
 		[[nodiscard]] const TArray<FHansaCompiledRecipeDefinition>& GetRecipes() const { return Recipes; }
@@ -135,6 +211,13 @@ namespace Hansa::Simulation
 		[[nodiscard]] const TArray<FHansaCompiledNeedDefinition>& GetNeeds() const { return Needs; }
 		[[nodiscard]] const TArray<FHansaCompiledPopulationTierDefinition>& GetPopulationTiers() const { return PopulationTiers; }
 		[[nodiscard]] const TArray<FHansaCompiledCityMarketProfileDefinition>& GetCityMarkets() const { return CityMarkets; }
+		[[nodiscard]] const TArray<FHansaCompiledVehicleDefinition>& GetVehicles() const { return Vehicles; }
+		[[nodiscard]] const TArray<FHansaCompiledRouteDefinition>& GetRoutes() const { return Routes; }
+		[[nodiscard]] const TArray<FHansaCompiledTechnologyDefinition>& GetTechnologies() const { return Technologies; }
+		[[nodiscard]] const TArray<FHansaCompiledMerchantAITuning>& GetMerchantAITunings() const { return MerchantAITunings; }
+		[[nodiscard]] const TArray<FHansaCompiledScenarioObjective>& GetScenarioObjectives() const { return ScenarioObjectives; }
+		[[nodiscard]] const TArray<FHansaCompiledVictoryDefinition>& GetVictories() const { return Victories; }
+		[[nodiscard]] const TArray<FHansaCompiledScenarioDefinition>& GetScenarios() const { return Scenarios; }
 		[[nodiscard]] uint64 GetRegistryHash() const { return RegistryHash; }
 
 		[[nodiscard]] const FHansaCompiledGoodDefinition* FindGood(const FString& StableId) const;
@@ -143,6 +226,13 @@ namespace Hansa::Simulation
 		[[nodiscard]] const FHansaCompiledNeedDefinition* FindNeed(const FString& StableId) const;
 		[[nodiscard]] const FHansaCompiledPopulationTierDefinition* FindPopulationTier(const FString& StableId) const;
 		[[nodiscard]] const FHansaCompiledCityMarketProfileDefinition* FindCityMarket(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledVehicleDefinition* FindVehicle(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledRouteDefinition* FindRoute(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledTechnologyDefinition* FindTechnology(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledMerchantAITuning* FindMerchantAITuning(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledScenarioObjective* FindScenarioObjective(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledVictoryDefinition* FindVictory(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledScenarioDefinition* FindScenario(const FString& StableId) const;
 
 	private:
 		TArray<FHansaCompiledGoodDefinition> Goods;
@@ -151,12 +241,26 @@ namespace Hansa::Simulation
 		TArray<FHansaCompiledNeedDefinition> Needs;
 		TArray<FHansaCompiledPopulationTierDefinition> PopulationTiers;
 		TArray<FHansaCompiledCityMarketProfileDefinition> CityMarkets;
+		TArray<FHansaCompiledVehicleDefinition> Vehicles;
+		TArray<FHansaCompiledRouteDefinition> Routes;
+		TArray<FHansaCompiledTechnologyDefinition> Technologies;
+		TArray<FHansaCompiledMerchantAITuning> MerchantAITunings;
+		TArray<FHansaCompiledScenarioObjective> ScenarioObjectives;
+		TArray<FHansaCompiledVictoryDefinition> Victories;
+		TArray<FHansaCompiledScenarioDefinition> Scenarios;
 		TMap<FString, int32> GoodIndexes;
 		TMap<FString, int32> RecipeIndexes;
 		TMap<FString, int32> BuildingIndexes;
 		TMap<FString, int32> NeedIndexes;
 		TMap<FString, int32> PopulationTierIndexes;
 		TMap<FString, int32> CityMarketIndexes;
+		TMap<FString, int32> VehicleIndexes;
+		TMap<FString, int32> RouteIndexes;
+		TMap<FString, int32> TechnologyIndexes;
+		TMap<FString, int32> MerchantAITuningIndexes;
+		TMap<FString, int32> ScenarioObjectiveIndexes;
+		TMap<FString, int32> VictoryIndexes;
+		TMap<FString, int32> ScenarioIndexes;
 		uint64 RegistryHash = 0;
 	};
 }

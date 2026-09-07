@@ -56,6 +56,16 @@ namespace Hansa::Automation
 			return true;
 		}
 
+		bool ParseRouteId(const TSharedRef<FJsonObject>& Object, Hansa::Simulation::FHansaRouteId& OutId)
+		{
+			int64 Value = 0;
+			if (!TryIntegral(Object, TEXT("routeId"), Value) || Value <= 0) return false;
+			const auto Parsed = Hansa::Simulation::FHansaRouteId::TryCreate(static_cast<uint64>(Value));
+			if (!Parsed) return false;
+			OutId = Parsed.Value;
+			return true;
+		}
+
 		bool ParsePopulationCohortId(const TSharedRef<FJsonObject>& Object,
 			Hansa::Simulation::FHansaPopulationCohortId& OutId)
 		{
@@ -106,6 +116,30 @@ namespace Hansa::Automation
 			OutCityId = Parsed.Value;
 			return true;
 		}
+
+		bool ParseOpportunityIds(const TSharedRef<FJsonObject>& Object,
+			Hansa::Simulation::FHansaCityDefinitionId& OutSourceCityId,
+			Hansa::Simulation::FHansaCityDefinitionId& OutDestinationCityId,
+			Hansa::Simulation::FHansaGoodId& OutGoodId)
+		{
+			FString SourceText;
+			FString DestinationText;
+			FString GoodText;
+			if (!Object->TryGetStringField(TEXT("sourceCityId"), SourceText) ||
+				!Object->TryGetStringField(TEXT("destinationCityId"), DestinationText) ||
+				!Object->TryGetStringField(TEXT("goodId"), GoodText))
+			{
+				return false;
+			}
+			const auto Source = Hansa::Simulation::FHansaCityDefinitionId::TryParse(SourceText);
+			const auto Destination = Hansa::Simulation::FHansaCityDefinitionId::TryParse(DestinationText);
+			const auto Good = Hansa::Simulation::FHansaGoodId::TryParse(GoodText);
+			if (!Source || !Destination || !Good) return false;
+			OutSourceCityId = Source.Value;
+			OutDestinationCityId = Destination.Value;
+			OutGoodId = Good.Value;
+			return true;
+		}
 	}
 
 	TSharedRef<FJsonObject> FHansaProductionFixtureService::ListFixtures() const
@@ -123,6 +157,12 @@ namespace Hansa::Automation
 		Shortage->SetStringField(TEXT("registryHash"), Hex64(Hansa::Simulation::FHansaProductionFixture::RegistryHash));
 		Shortage->SetStringField(TEXT("purpose"), TEXT("Lubeck grain shortage onset, causal inspection, and controlled recovery"));
 		Fixtures.Add(MakeShared<FJsonValueObject>(Shortage));
+		TSharedRef<FJsonObject> RouteDelivery = MakeShared<FJsonObject>();
+		RouteDelivery->SetStringField(TEXT("fixtureId"), Hansa::Simulation::FHansaProductionFixture::RouteDeliveryFixtureId);
+		RouteDelivery->SetNumberField(TEXT("fixtureVersion"), Hansa::Simulation::FHansaProductionFixture::FixtureVersion);
+		RouteDelivery->SetStringField(TEXT("registryHash"), Hex64(Hansa::Simulation::FHansaProductionFixture::RegistryHash));
+		RouteDelivery->SetStringField(TEXT("purpose"), TEXT("Lubeck shortage relief by the Rostock cog route with deterministic delivery timing"));
+		Fixtures.Add(MakeShared<FJsonValueObject>(RouteDelivery));
 		TSharedRef<FJsonObject> Result = MakeShared<FJsonObject>();
 		Result->SetArrayField(TEXT("fixtures"), MoveTemp(Fixtures));
 		return Result;
@@ -134,14 +174,17 @@ namespace Hansa::Automation
 		FString& OutError)
 	{
 		if (FixtureId != Hansa::Simulation::FHansaProductionFixture::StableFixtureId &&
-			FixtureId != Hansa::Simulation::FHansaProductionFixture::GrainShortageFixtureId)
+			FixtureId != Hansa::Simulation::FHansaProductionFixture::GrainShortageFixtureId &&
+			FixtureId != Hansa::Simulation::FHansaProductionFixture::RouteDeliveryFixtureId)
 		{
 			OutError = TEXT("Unknown fixtureId; call fixture_list and use an exact allowlisted identifier.");
 			return false;
 		}
-		const auto Created = FixtureId == Hansa::Simulation::FHansaProductionFixture::GrainShortageFixtureId
-			? Hansa::Simulation::FHansaProductionFixture::TryCreateGrainShortage()
-			: Hansa::Simulation::FHansaProductionFixture::TryCreate();
+		const auto Created = FixtureId == Hansa::Simulation::FHansaProductionFixture::RouteDeliveryFixtureId
+			? Hansa::Simulation::FHansaProductionFixture::TryCreateRouteDelivery()
+			: FixtureId == Hansa::Simulation::FHansaProductionFixture::GrainShortageFixtureId
+				? Hansa::Simulation::FHansaProductionFixture::TryCreateGrainShortage()
+				: Hansa::Simulation::FHansaProductionFixture::TryCreate();
 		if (!Created)
 		{
 			OutError = TEXT("The named production fixture failed deterministic initialization.");
@@ -194,6 +237,15 @@ namespace Hansa::Automation
 		{
 			Result->SetNumberField(TEXT("tick"), static_cast<double>(Projection.Value.GetClock().GetTick().GetValue()));
 			Result->SetNumberField(TEXT("productionCount"), Projection.Value.GetProductions().Num());
+			Result->SetNumberField(TEXT("routeCount"), Projection.Value.GetRoutes().Num());
+			Result->SetNumberField(TEXT("vehicleCount"), Projection.Value.GetVehicles().Num());
+			if (Fixture->GetFixtureId() == Hansa::Simulation::FHansaProductionFixture::RouteDeliveryFixtureId)
+			{
+				Result->SetNumberField(TEXT("expectedRemoteArrivalTick"), 13);
+				Result->SetNumberField(TEXT("expectedLubeckArrivalTick"), 24);
+				Result->SetNumberField(TEXT("expectedDeliveryTick"), 25);
+				Result->SetNumberField(TEXT("expectedDeliveryTicksAfterActivation"), 22);
+			}
 		}
 		return Result;
 	}
@@ -217,6 +269,62 @@ namespace Hansa::Automation
 		Json->SetNumberField(TEXT("nextUpdateTick"), static_cast<double>(Market.NextUpdateTick));
 		Json->SetNumberField(TEXT("reportAgeTicks"), static_cast<double>(Market.ReportAgeTicks));
 		Json->SetBoolField(TEXT("stale"), Market.bIsStale);
+		return Json;
+	}
+
+	TSharedRef<FJsonObject> FHansaProductionFixtureService::MakeVehicle(
+		const Hansa::Simulation::FHansaVehicleProjection& Vehicle)
+	{
+		TSharedRef<FJsonObject> Json = MakeShared<FJsonObject>();
+		Json->SetNumberField(TEXT("vehicleId"), static_cast<double>(Vehicle.Id.GetValue()));
+		Json->SetStringField(TEXT("definitionId"), Vehicle.DefinitionId.ToString());
+		Json->SetStringField(TEXT("mode"), Hansa::Simulation::LexToString(Vehicle.Mode));
+		Json->SetStringField(TEXT("currentCityId"), Vehicle.CurrentCityId.ToString());
+		Json->SetNumberField(TEXT("cargoInventoryId"), static_cast<double>(Vehicle.CargoInventoryId.GetValue()));
+		Json->SetNumberField(TEXT("cargoMilliUnits"), Vehicle.Cargo.GetRawValue());
+		Json->SetNumberField(TEXT("capacityMilliUnits"), Vehicle.Capacity.GetRawValue());
+		Json->SetNumberField(TEXT("freeCapacityMilliUnits"), Vehicle.FreeCapacity.GetRawValue());
+		Json->SetNumberField(TEXT("accruedUpkeepPfennig"), static_cast<double>(Vehicle.AccruedUpkeepPfennig));
+		return Json;
+	}
+
+	TSharedRef<FJsonObject> FHansaProductionFixtureService::MakeRoute(
+		const Hansa::Simulation::FHansaRouteProjection& Route)
+	{
+		TSharedRef<FJsonObject> Json = MakeShared<FJsonObject>();
+		Json->SetNumberField(TEXT("routeId"), static_cast<double>(Route.Id.GetValue()));
+		Json->SetNumberField(TEXT("vehicleId"), static_cast<double>(Route.VehicleId.GetValue()));
+		Json->SetStringField(TEXT("definitionId"), Route.RouteDefinitionId.ToString());
+		Json->SetStringField(TEXT("mode"), Hansa::Simulation::LexToString(Route.Mode));
+		Json->SetStringField(TEXT("lifecycle"), Hansa::Simulation::LexToString(Route.Lifecycle));
+		Json->SetNumberField(TEXT("currentStopIndex"), Route.CurrentStopIndex);
+		Json->SetNumberField(TEXT("nextStopIndex"), Route.NextStopIndex);
+		Json->SetNumberField(TEXT("remainingTravelTicks"), Route.RemainingTravelTicks);
+		Json->SetNumberField(TEXT("totalTravelTicks"), Route.TotalTravelTicks);
+		Json->SetNumberField(TEXT("completedLegCount"), static_cast<double>(Route.CompletedLegCount));
+		Json->SetNumberField(TEXT("missedCargoActionCount"), static_cast<double>(Route.MissedCargoActionCount));
+		Json->SetNumberField(TEXT("lastTransferAppliedMilliUnits"), Route.LastTransfer.AppliedQuantity.GetRawValue());
+		Json->SetStringField(TEXT("lastTransferKind"), Hansa::Simulation::LexToString(Route.LastTransfer.Kind));
+		Json->SetStringField(TEXT("lastTransferCityId"), Route.LastTransfer.CityId.ToString());
+		TArray<TSharedPtr<FJsonValue>> Stops;
+		for (const Hansa::Simulation::FHansaRouteStop& Stop : Route.Stops)
+		{
+			TSharedRef<FJsonObject> StopJson = MakeShared<FJsonObject>();
+			StopJson->SetStringField(TEXT("cityId"), Stop.CityId.ToString());
+			TArray<TSharedPtr<FJsonValue>> Actions;
+			for (const Hansa::Simulation::FHansaRouteCargoAction& Action : Stop.Actions)
+			{
+				TSharedRef<FJsonObject> ActionJson = MakeShared<FJsonObject>();
+				ActionJson->SetStringField(TEXT("kind"), Hansa::Simulation::LexToString(Action.Kind));
+				ActionJson->SetStringField(TEXT("goodId"), Action.GoodId.ToString());
+				ActionJson->SetNumberField(TEXT("quantityLimitMilliUnits"), Action.QuantityLimit.GetRawValue());
+				ActionJson->SetNumberField(TEXT("minimumSourceReserveMilliUnits"), Action.MinimumSourceReserve.GetRawValue());
+				Actions.Add(MakeShared<FJsonValueObject>(ActionJson));
+			}
+			StopJson->SetArrayField(TEXT("actions"), MoveTemp(Actions));
+			Stops.Add(MakeShared<FJsonValueObject>(StopJson));
+		}
+		Json->SetArrayField(TEXT("stops"), MoveTemp(Stops));
 		return Json;
 	}
 
@@ -272,6 +380,54 @@ namespace Hansa::Automation
 				return false;
 			}
 			OutPayload->SetObjectField(TEXT("production"), MakeProduction(Found.GetValue()));
+			return true;
+		}
+		if (Query == TEXT("route.list"))
+		{
+			TArray<TSharedPtr<FJsonValue>> Routes;
+			for (const auto& Route : Projection.Value.GetRoutes()) Routes.Add(MakeShared<FJsonValueObject>(MakeRoute(Route)));
+			OutPayload->SetArrayField(TEXT("routes"), MoveTemp(Routes));
+			return true;
+		}
+		if (Query == TEXT("route.get") || Query == TEXT("route.cargo"))
+		{
+			Hansa::Simulation::FHansaRouteId RouteId;
+			if (!ParseRouteId(Request, RouteId)) { OutError = TEXT("route.get and route.cargo require a positive integral routeId."); return false; }
+			const auto Route = Fixture->GetState().CreateReadOnlyAccess(Fixture->GetDefinitions()).QueryRoute(RouteId);
+			if (!Route.IsSet()) { OutError = TEXT("The requested routeId does not exist."); return false; }
+			OutPayload->SetObjectField(TEXT("route"), MakeRoute(Route.GetValue()));
+			const auto Vehicle = Fixture->GetState().CreateReadOnlyAccess(Fixture->GetDefinitions()).QueryVehicle(Route->VehicleId);
+			if (Vehicle.IsSet()) OutPayload->SetObjectField(TEXT("vehicle"), MakeVehicle(Vehicle.GetValue()));
+			return true;
+		}
+		if (Query == TEXT("vehicle.list"))
+		{
+			TArray<TSharedPtr<FJsonValue>> Vehicles;
+			for (const auto& Vehicle : Projection.Value.GetVehicles()) Vehicles.Add(MakeShared<FJsonValueObject>(MakeVehicle(Vehicle)));
+			OutPayload->SetArrayField(TEXT("vehicles"), MoveTemp(Vehicles));
+			return true;
+		}
+		if (Query == TEXT("route.events"))
+		{
+			Hansa::Simulation::FHansaRouteId RouteId;
+			if (!ParseRouteId(Request, RouteId)) { OutError = TEXT("route.events requires a positive integral routeId."); return false; }
+			TArray<TSharedPtr<FJsonValue>> Events;
+			for (const auto& Event : Fixture->GetEvents())
+			{
+				if (Event.GetRouteId() != RouteId) continue;
+				TSharedRef<FJsonObject> Item = MakeShared<FJsonObject>();
+				Item->SetStringField(TEXT("sequence"), FString::Printf(TEXT("%llu"), static_cast<unsigned long long>(Event.GetGlobalSequence())));
+				Item->SetNumberField(TEXT("tick"), static_cast<double>(Event.GetTick().GetValue()));
+				Item->SetStringField(TEXT("type"), Hansa::Simulation::LexToString(Event.GetType()));
+				Item->SetStringField(TEXT("cityId"), Event.GetCityId().ToString());
+				Item->SetStringField(TEXT("goodId"), Event.GetGoodId().ToString());
+				Item->SetStringField(TEXT("cargoAction"), Hansa::Simulation::LexToString(Event.GetRouteCargoActionKind()));
+				Item->SetNumberField(TEXT("appliedMilliUnits"), static_cast<double>(Event.GetValue()));
+				Item->SetNumberField(TEXT("requestedMilliUnits"), static_cast<double>(Event.GetRelatedValue()));
+				Events.Add(MakeShared<FJsonValueObject>(Item));
+			}
+			OutPayload->SetStringField(TEXT("stateHash"), Hex64(Fixture->BuildStateHashes().GetOverallHash()));
+			OutPayload->SetArrayField(TEXT("events"), MoveTemp(Events));
 			return true;
 		}
 		if (Query == TEXT("inventory.stock"))
@@ -456,10 +612,92 @@ namespace Hansa::Automation
 		}
 		Hansa::Simulation::FHansaCityDefinitionId CityId;
 		Hansa::Simulation::FHansaGoodId GoodId;
+		if (Query == TEXT("market.opportunity"))
+		{
+			Hansa::Simulation::FHansaCityDefinitionId SourceCityId;
+			Hansa::Simulation::FHansaCityDefinitionId DestinationCityId;
+			if (!ParseOpportunityIds(Request, SourceCityId, DestinationCityId, GoodId))
+			{
+				OutError = TEXT("market.opportunity requires canonical sourceCityId, destinationCityId and goodId fields.");
+				return false;
+			}
+			const auto Opportunity = ReadOnly.CompareMarketOpportunity(SourceCityId, DestinationCityId, GoodId);
+			if (!Opportunity.IsSet())
+			{
+				OutError = TEXT("The requested market pair does not exist or names the same city twice.");
+				return false;
+			}
+			OutPayload->SetStringField(TEXT("sourceCityId"), SourceCityId.ToString());
+			OutPayload->SetStringField(TEXT("destinationCityId"), DestinationCityId.ToString());
+			OutPayload->SetStringField(TEXT("goodId"), GoodId.ToString());
+			OutPayload->SetStringField(TEXT("sourceInformationState"),
+				Hansa::Simulation::LexToString(Opportunity->SourceInformationState));
+			OutPayload->SetStringField(TEXT("destinationInformationState"),
+				Hansa::Simulation::LexToString(Opportunity->DestinationInformationState));
+			OutPayload->SetBoolField(TEXT("comparable"), Opportunity->bComparable);
+			if (Opportunity->SourcePriceMilliMarks.IsSet())
+				OutPayload->SetNumberField(TEXT("sourcePriceMilliMarks"), Opportunity->SourcePriceMilliMarks.GetValue());
+			if (Opportunity->DestinationPriceMilliMarks.IsSet())
+				OutPayload->SetNumberField(TEXT("destinationPriceMilliMarks"), Opportunity->DestinationPriceMilliMarks.GetValue());
+			if (Opportunity->GrossMarginMilliMarks.IsSet())
+				OutPayload->SetNumberField(TEXT("grossMarginMilliMarks"), Opportunity->GrossMarginMilliMarks.GetValue());
+			if (Opportunity->SourceAvailableAboveReserve.IsSet())
+				OutPayload->SetNumberField(TEXT("sourceAvailableAboveReserveMilliUnits"),
+					Opportunity->SourceAvailableAboveReserve.GetValue().GetRawValue());
+			if (Opportunity->DestinationDemandGap.IsSet())
+				OutPayload->SetNumberField(TEXT("destinationDemandGapMilliUnits"),
+					Opportunity->DestinationDemandGap.GetValue().GetRawValue());
+			return true;
+		}
 		if (Query.StartsWith(TEXT("market.")) && !ParseMarketIds(Request, CityId, GoodId))
 		{
 			OutError = TEXT("Market queries require canonical cityId and goodId fields.");
 			return false;
+		}
+		if (Query == TEXT("market.report_age"))
+		{
+			const auto Age = ReadOnly.QueryMarketReportAge(CityId, GoodId);
+			if (!Age.IsSet()) { OutError = TEXT("The requested city/good market does not exist."); return false; }
+			OutPayload->SetStringField(TEXT("cityId"), CityId.ToString());
+			OutPayload->SetStringField(TEXT("goodId"), GoodId.ToString());
+			OutPayload->SetStringField(TEXT("informationState"), Hansa::Simulation::LexToString(Age->InformationState));
+			OutPayload->SetBoolField(TEXT("hasReport"), Age->ReportTick.IsSet());
+			if (Age->ReportTick.IsSet()) OutPayload->SetNumberField(TEXT("reportTick"), Age->ReportTick.GetValue());
+			if (Age->MarketUpdateTick.IsSet()) OutPayload->SetNumberField(TEXT("marketUpdateTick"), Age->MarketUpdateTick.GetValue());
+			if (Age->AgeTicks.IsSet()) OutPayload->SetNumberField(TEXT("ageTicks"), Age->AgeTicks.GetValue());
+			return true;
+		}
+		if (Query == TEXT("market.known_price"))
+		{
+			const auto Price = ReadOnly.QueryKnownMarketPrice(CityId, GoodId);
+			if (!Price.IsSet()) { OutError = TEXT("The requested city/good market does not exist."); return false; }
+			OutPayload->SetStringField(TEXT("cityId"), CityId.ToString());
+			OutPayload->SetStringField(TEXT("goodId"), GoodId.ToString());
+			OutPayload->SetStringField(TEXT("informationState"), Hansa::Simulation::LexToString(Price->InformationState));
+			OutPayload->SetBoolField(TEXT("known"), Price->PriceMilliMarks.IsSet());
+			if (Price->PriceMilliMarks.IsSet()) OutPayload->SetNumberField(TEXT("priceMilliMarks"), Price->PriceMilliMarks.GetValue());
+			if (Price->RecentAveragePriceMilliMarks.IsSet()) OutPayload->SetNumberField(TEXT("averagePriceMilliMarks"), Price->RecentAveragePriceMilliMarks.GetValue());
+			if (Price->ReportTick.IsSet()) OutPayload->SetNumberField(TEXT("reportTick"), Price->ReportTick.GetValue());
+			if (Price->ReportAgeTicks.IsSet()) OutPayload->SetNumberField(TEXT("reportAgeTicks"), Price->ReportAgeTicks.GetValue());
+			return true;
+		}
+		if (Query == TEXT("market.known_components"))
+		{
+			const auto Components = ReadOnly.QueryKnownMarketSupplyDemand(CityId, GoodId);
+			if (!Components.IsSet()) { OutError = TEXT("The requested city/good market does not exist."); return false; }
+			OutPayload->SetStringField(TEXT("cityId"), CityId.ToString());
+			OutPayload->SetStringField(TEXT("goodId"), GoodId.ToString());
+			OutPayload->SetStringField(TEXT("informationState"), Hansa::Simulation::LexToString(Components->InformationState));
+			OutPayload->SetBoolField(TEXT("known"), Components->Stock.IsSet());
+			if (Components->Stock.IsSet()) OutPayload->SetNumberField(TEXT("stockMilliUnits"), Components->Stock.GetValue().GetRawValue());
+			if (Components->DesiredReserve.IsSet()) OutPayload->SetNumberField(TEXT("desiredReserveMilliUnits"), Components->DesiredReserve.GetValue().GetRawValue());
+			if (Components->CitizenDemand.IsSet()) OutPayload->SetNumberField(TEXT("citizenDemandMilliUnits"), Components->CitizenDemand.GetValue().GetRawValue());
+			if (Components->IndustrialDemand.IsSet()) OutPayload->SetNumberField(TEXT("industrialDemandMilliUnits"), Components->IndustrialDemand.GetValue().GetRawValue());
+			if (Components->TotalDemand.IsSet()) OutPayload->SetNumberField(TEXT("totalDemandMilliUnits"), Components->TotalDemand.GetValue().GetRawValue());
+			if (Components->RecentLocalProduction.IsSet()) OutPayload->SetNumberField(TEXT("localProductionMilliUnits"), Components->RecentLocalProduction.GetValue().GetRawValue());
+			if (Components->ExpectedIncomingSupply.IsSet()) OutPayload->SetNumberField(TEXT("incomingSupplyMilliUnits"), Components->ExpectedIncomingSupply.GetValue().GetRawValue());
+			if (Components->UnmetDemand.IsSet()) OutPayload->SetNumberField(TEXT("unmetDemandMilliUnits"), Components->UnmetDemand.GetValue().GetRawValue());
+			return true;
 		}
 		if (Query == TEXT("market.price") || Query == TEXT("market.components"))
 		{
@@ -579,7 +817,7 @@ namespace Hansa::Automation
 			OutPayload->SetArrayField(TEXT("producers"), MoveTemp(Producers));
 			return true;
 		}
-		OutError = TEXT("Query is not allowlisted. Use fixture.summary, production.*, inventory.stock, logistics.*, city.population, population.cohort, or documented market.* queries.");
+		OutError = TEXT("Query is not allowlisted. Use fixture.summary, production.*, route.*, vehicle.list, inventory.stock, logistics.*, city.population, population.cohort, or documented market.* queries.");
 		return false;
 	}
 
@@ -637,7 +875,54 @@ namespace Hansa::Automation
 			OutPayload->SetNumberField(TEXT("buildingId"), static_cast<double>(BuildingId.GetValue()));
 			return true;
 		}
-		OutError = TEXT("Command is not allowlisted. Use production.set_active or residence.upgrade.");
+		if (CommandName == TEXT("route.edit"))
+		{
+			Hansa::Simulation::FHansaRouteId RouteId;
+			FString SourceText, DestinationText, GoodText;
+			int64 Quantity = 0, Reserve = 0;
+			if (!ParseRouteId(Request, RouteId) || !Request->TryGetStringField(TEXT("sourceCityId"), SourceText) ||
+				!Request->TryGetStringField(TEXT("destinationCityId"), DestinationText) ||
+				!Request->TryGetStringField(TEXT("goodId"), GoodText) ||
+				!TryIntegral(Request, TEXT("quantityMilliUnits"), Quantity) || Quantity <= 0 ||
+				!TryIntegral(Request, TEXT("minimumReserveMilliUnits"), Reserve) || Reserve < 0)
+			{
+				OutError = TEXT("route.edit requires routeId, sourceCityId, destinationCityId, goodId, positive quantityMilliUnits and non-negative minimumReserveMilliUnits.");
+				return false;
+			}
+			const auto Source = Hansa::Simulation::FHansaCityDefinitionId::TryParse(SourceText);
+			const auto Destination = Hansa::Simulation::FHansaCityDefinitionId::TryParse(DestinationText);
+			const auto Good = Hansa::Simulation::FHansaGoodId::TryParse(GoodText);
+			if (!Source || !Destination || !Good) { OutError = TEXT("route.edit identifiers are invalid."); return false; }
+			Hansa::Simulation::FHansaRouteStop Home;
+			Home.CityId = Source.Value;
+			Home.Actions.Add({ Hansa::Simulation::EHansaRouteCargoActionKind::Unload,
+				Hansa::Simulation::EHansaRouteCargoCondition::Always, Good.Value,
+				Hansa::Simulation::FHansaQuantity::FromRaw(Quantity), Hansa::Simulation::FHansaQuantity() });
+			Hansa::Simulation::FHansaRouteStop Remote;
+			Remote.CityId = Destination.Value;
+			Remote.Actions.Add({ Hansa::Simulation::EHansaRouteCargoActionKind::Load,
+				Hansa::Simulation::EHansaRouteCargoCondition::Always, Good.Value,
+				Hansa::Simulation::FHansaQuantity::FromRaw(Quantity), Hansa::Simulation::FHansaQuantity::FromRaw(Reserve) });
+			const auto Result = Fixture->EditRoute(RouteId, { MoveTemp(Home), MoveTemp(Remote) });
+			if (!Result) { OutError = FString::Printf(TEXT("The authoritative route edit was rejected: %s/%s."),
+				Hansa::Simulation::LexToString(Result.GetError()), Hansa::Simulation::LexToString(Result.GetRoutePlanError())); return false; }
+			OutPayload = MakeSummary(1); OutPayload->SetStringField(TEXT("command"), CommandName);
+			OutPayload->SetNumberField(TEXT("routeId"), static_cast<double>(RouteId.GetValue()));
+			return true;
+		}
+		if (CommandName == TEXT("route.set_active") || CommandName == TEXT("route.cancel"))
+		{
+			Hansa::Simulation::FHansaRouteId RouteId;
+			bool bActive = true;
+			if (!ParseRouteId(Request, RouteId) || (CommandName == TEXT("route.set_active") && !Request->TryGetBoolField(TEXT("active"), bActive)))
+			{ OutError = TEXT("route.set_active requires routeId and active; route.cancel requires routeId."); return false; }
+			const auto Result = CommandName == TEXT("route.cancel") ? Fixture->CancelRoute(RouteId) : Fixture->SetRouteActive(RouteId, bActive);
+			if (!Result) { OutError = FString::Printf(TEXT("The authoritative route command was rejected: %s."), Hansa::Simulation::LexToString(Result.GetError())); return false; }
+			OutPayload = MakeSummary(1); OutPayload->SetStringField(TEXT("command"), CommandName);
+			OutPayload->SetNumberField(TEXT("routeId"), static_cast<double>(RouteId.GetValue()));
+			return true;
+		}
+		OutError = TEXT("Command is not allowlisted. Use production.set_active, residence.upgrade, route.edit, route.set_active, or route.cancel.");
 		return false;
 	}
 
@@ -709,6 +994,23 @@ namespace Hansa::Automation
 				return false;
 			}
 			return Expected == Hansa::Simulation::LexToString(Projection->Blocker);
+		}
+		if (Kind == TEXT("route.departed") || Kind == TEXT("route.arrived") || Kind == TEXT("route.delivered"))
+		{
+			Hansa::Simulation::FHansaRouteId RouteId;
+			if (!ParseRouteId(Predicate, RouteId)) { OutError = TEXT("Route predicates require a positive integral routeId."); return false; }
+			for (const auto& Event : Fixture->GetEvents())
+			{
+				if (Event.GetRouteId() != RouteId) continue;
+				if (Kind == TEXT("route.departed") && Event.GetType() == Hansa::Simulation::EHansaDomainEventType::RouteDeparted) return true;
+				if (Kind == TEXT("route.arrived") && Event.GetType() == Hansa::Simulation::EHansaDomainEventType::RouteArrived) return true;
+				if (Kind == TEXT("route.delivered") &&
+					(Event.GetType() == Hansa::Simulation::EHansaDomainEventType::RouteCargoTransferred ||
+					 Event.GetType() == Hansa::Simulation::EHansaDomainEventType::RouteCargoMissed) &&
+					Event.GetRouteCargoActionKind() == Hansa::Simulation::EHansaRouteCargoActionKind::Unload &&
+					Event.GetValue() > 0) return true;
+			}
+			return false;
 		}
 		Hansa::Simulation::FHansaCityDefinitionId CityId;
 		Hansa::Simulation::FHansaGoodId GoodId;

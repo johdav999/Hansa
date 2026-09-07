@@ -30,6 +30,34 @@ struct HANSA_API FHansaMarketGoodProfile
 		HansaUnit = "MilliUnitPerUpdate", HansaMin = "0", HansaMax = "9223372036854775807"))
 	int64 ConfirmedIncomingSupplyMilliUnits = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Simulation", meta = (
+		DisplayName = "Initial stock", ToolTip = "Starting stock for a simulated market-only city in milli-units.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "NonNegative",
+		HansaUnit = "MilliUnit", HansaMin = "0", HansaMax = "9223372036854775807"))
+	int64 InitialStockMilliUnits = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Simulation", meta = (
+		DisplayName = "Background production", ToolTip = "Fixed production added to a simulated market-only city during each market update.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "NonNegative",
+		HansaUnit = "MilliUnitPerUpdate", HansaMin = "0", HansaMax = "9223372036854775807"))
+	int64 BackgroundProductionMilliUnitsPerUpdate = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Simulation", meta = (
+		DisplayName = "Background citizen demand", ToolTip = "Fixed citizen demand consumed by a simulated market-only city during each market update.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "NonNegative",
+		HansaUnit = "MilliUnitPerUpdate", HansaMin = "0", HansaMax = "9223372036854775807"))
+	int64 BackgroundCitizenDemandMilliUnitsPerUpdate = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Simulation", meta = (
+		DisplayName = "Background industrial demand", ToolTip = "Fixed industrial demand consumed by a simulated market-only city during each market update.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "NonNegative",
+		HansaUnit = "MilliUnitPerUpdate", HansaMin = "0", HansaMax = "9223372036854775807"))
+	int64 BackgroundIndustrialDemandMilliUnitsPerUpdate = 0;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market", meta = (
 		DisplayName = "Season modifier", ToolTip = "Bounded seasonal contribution to the target price multiplier.", ClampMin = "-5000", ClampMax = "5000",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
@@ -69,7 +97,7 @@ struct HANSA_API FHansaMarketGoodProfile
 UCLASS(BlueprintType, meta = (
 	DisplayName = "City market profile definition",
 	HansaSchemaId = "Hansa.CityMarketProfileDefinition",
-	HansaSchemaVersion = "1"))
+	HansaSchemaVersion = "2"))
 class HANSA_API UHansaCityMarketProfileDefinition final : public UHansaDefinitionBase
 {
 	GENERATED_BODY()
@@ -111,6 +139,47 @@ public:
 		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "MarketStaleness",
 		HansaUnit = "SimulationTick", HansaMin = "1", HansaMax = "2147483647"))
 	int32 StaleAfterTicks = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Simulation", meta = (
+		DisplayName = "Market-only city", ToolTip = "Uses deterministic fixed background production and demand instead of buildable local simulation.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "false", HansaAIAccess = "Read",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "MarketMode"))
+	bool bMarketOnly = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Reporting", meta = (
+		DisplayName = "Report cadence", ToolTip = "Ticks between published reports; reports publish only on market update ticks.", ClampMin = "1",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "ReportPolicy",
+		HansaUnit = "SimulationTick", HansaMin = "1", HansaMax = "2147483647"))
+	int32 ReportCadenceTicks = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Reporting", meta = (
+		DisplayName = "Current through", ToolTip = "Maximum report age still classified as current.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "ReportPolicy",
+		HansaUnit = "SimulationTick", HansaMin = "0", HansaMax = "2147483647"))
+	int32 CurrentReportMaxAgeTicks = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Reporting", meta = (
+		DisplayName = "Recent through", ToolTip = "Maximum report age classified as recent before it becomes stale.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "ReportPolicy",
+		HansaUnit = "SimulationTick", HansaMin = "0", HansaMax = "2147483647"))
+	int32 RecentReportMaxAgeTicks = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Reporting", meta = (
+		DisplayName = "Stale through", ToolTip = "Maximum report age shown as stale before a hold-last-value estimate is required.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "ReportPolicy",
+		HansaUnit = "SimulationTick", HansaMin = "0", HansaMax = "2147483647"))
+	int32 StaleReportMaxAgeTicks = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Reporting", meta = (
+		DisplayName = "Estimate through", ToolTip = "Maximum report age for a deterministic hold-last-value estimate; older or absent reports are unknown.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "ReportPolicy",
+		HansaUnit = "SimulationTick", HansaMin = "0", HansaMax = "2147483647"))
+	int32 EstimatedReportMaxAgeTicks = 20;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Goods", meta = (
 		DisplayName = "Goods", ToolTip = "Per-good reserve, incoming supply, modifiers and price bounds for this city.",

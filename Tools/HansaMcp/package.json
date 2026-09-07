@@ -12,6 +12,10 @@
     "smoke:live": "node scripts/live-smoke.js",
     "smoke:placement": "node scripts/placement-flow.js",
     "smoke:integrated": "node scripts/integrated-flow.js",
-    "test": "node --test"
+    "smoke:route-delivery": "node scripts/route-delivery-flow.js",
+    "smoke:strategic": "node scripts/strategic-vertical-slice-flow.js",
+    "smoke:golden": "node scripts/golden-mvp-flow.js",
+    "test": "node --test",
+    "smoke:multiplayer": "powershell -ExecutionPolicy Bypass -File ../../Scripts/RunTwoPlayerAuthorityProof.ps1 -SkipBuild"
   }
 }

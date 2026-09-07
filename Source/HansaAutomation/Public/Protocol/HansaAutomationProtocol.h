@@ -36,7 +36,8 @@ namespace Hansa::Automation
 		FixtureControl,
 		SemanticUi,
 		Screenshots,
-		WaitAssertions
+		WaitAssertions,
+		Evidence
 	};
 
 	enum class EHansaAutomationOperation : uint8
@@ -50,7 +51,10 @@ namespace Hansa::Automation
 		SemanticUiRead,
 		SemanticUiAction,
 		ScreenshotCapture,
-		WaitFor
+		WaitFor,
+		FixtureReset,
+		EvidenceRead,
+		EvidenceWrite
 	};
 
 	enum class EHansaAutomationErrorCode : uint8

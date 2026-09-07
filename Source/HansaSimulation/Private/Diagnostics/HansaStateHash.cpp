@@ -93,6 +93,7 @@ namespace Hansa::Simulation
 		case EHansaStateHashSubsystem::Market: return TEXT("Market");
 		case EHansaStateHashSubsystem::Placement: return TEXT("Placement");
 		case EHansaStateHashSubsystem::Logistics: return TEXT("Logistics");
+		case EHansaStateHashSubsystem::Research: return TEXT("Research");
 		case EHansaStateHashSubsystem::NotApplicable: return TEXT("NotApplicable");
 		default: return TEXT("UnknownStateHashSubsystem");
 		}
@@ -228,6 +229,13 @@ namespace Hansa::Simulation
 					Builder.AddUInt64(Vehicle.OwnerId.GetValue());
 					Builder.AddUInt32(Vehicle.OwnerId.GetGeneration());
 					Builder.AddInt64(Vehicle.Cargo.GetRawValue());
+					Builder.AddUInt64(Vehicle.CargoInventoryId.GetValue());
+					Builder.AddUInt32(Vehicle.CargoInventoryId.GetGeneration());
+					Builder.AddUInt8(static_cast<uint8>(Vehicle.Mode));
+					Builder.AddInt64(Vehicle.Capacity.GetRawValue());
+					Builder.AddAsciiString(Vehicle.CurrentCityId.ToString());
+					Builder.AddInt64(Vehicle.UpkeepPfennigPerTravelTick);
+					Builder.AddInt64(Vehicle.AccruedUpkeepPfennig);
 				}
 			}));
 
@@ -243,6 +251,39 @@ namespace Hansa::Simulation
 					Builder.AddUInt64(Route.VehicleId.GetValue());
 					Builder.AddUInt32(Route.VehicleId.GetGeneration());
 					Builder.AddInt64(Route.Progress.GetPartsPerMillion());
+					Builder.AddAsciiString(Route.RouteDefinitionId.ToString());
+					Builder.AddUInt8(static_cast<uint8>(Route.Mode));
+					Builder.AddUInt32(static_cast<uint32>(Route.Stops.Num()));
+					for (const FHansaRouteStop& Stop : Route.Stops)
+					{
+						Builder.AddAsciiString(Stop.CityId.ToString());
+						Builder.AddUInt32(static_cast<uint32>(Stop.Actions.Num()));
+						for (const FHansaRouteCargoAction& Action : Stop.Actions)
+						{
+							Builder.AddUInt8(static_cast<uint8>(Action.Kind));
+							Builder.AddUInt8(static_cast<uint8>(Action.Condition));
+							Builder.AddAsciiString(Action.GoodId.ToString());
+							Builder.AddInt64(Action.QuantityLimit.GetRawValue());
+							Builder.AddInt64(Action.MinimumSourceReserve.GetRawValue());
+						}
+					}
+					Builder.AddUInt8(static_cast<uint8>(Route.Lifecycle));
+					Builder.AddInt32(Route.CurrentStopIndex);
+					Builder.AddInt32(Route.NextStopIndex);
+					Builder.AddInt32(Route.RemainingTravelTicks);
+					Builder.AddInt32(Route.TotalTravelTicks);
+					Builder.AddUInt8(Route.bPendingStopActions ? 1 : 0);
+					Builder.AddInt64(Route.CompletedLegCount);
+					Builder.AddInt64(Route.MissedCargoActionCount);
+					Builder.AddInt64(Route.LastTransfer.Tick.GetValue());
+					Builder.AddInt32(Route.LastTransfer.StopIndex);
+					Builder.AddInt32(Route.LastTransfer.ActionIndex);
+					Builder.AddUInt8(static_cast<uint8>(Route.LastTransfer.Kind));
+					Builder.AddAsciiString(Route.LastTransfer.CityId.ToString());
+					Builder.AddAsciiString(Route.LastTransfer.GoodId.ToString());
+					Builder.AddInt64(Route.LastTransfer.RequestedQuantity.GetRawValue());
+					Builder.AddInt64(Route.LastTransfer.AppliedQuantity.GetRawValue());
+					Builder.AddUInt8(static_cast<uint8>(Route.LastTransfer.Outcome));
 				}
 			}));
 
@@ -264,6 +305,8 @@ namespace Hansa::Simulation
 					Builder.AddAsciiString(Inventory.CityId.ToString());
 					Builder.AddUInt64(Inventory.BuildingId.GetValue());
 					Builder.AddUInt32(Inventory.BuildingId.GetGeneration());
+					Builder.AddUInt64(Inventory.VehicleId.GetValue());
+					Builder.AddUInt32(Inventory.VehicleId.GetGeneration());
 					Builder.AddInt64(Inventory.Capacity.GetRawValue());
 					Builder.AddUInt32(static_cast<uint32>(Inventory.AcceptedGoods.Num()));
 					for (const FHansaGoodId& GoodId : Inventory.AcceptedGoods)
@@ -420,7 +463,7 @@ namespace Hansa::Simulation
 		uint32 MarketRecordCount = static_cast<uint32>(State.Markets.Num());
 		for (const FHansaCityMarketState& Market : State.Markets)
 		{
-			MarketRecordCount += static_cast<uint32>(Market.PriceHistory.Num());
+			MarketRecordCount += static_cast<uint32>(Market.PriceHistory.Num() + Market.Report.PriceHistory.Num());
 		}
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Market, MarketRecordCount,
 			[&State](FNormalizedHashBuilder& Builder)
@@ -443,6 +486,15 @@ namespace Hansa::Simulation
 					}
 					Builder.AddInt64(Market.DesiredReserve.GetRawValue());
 					Builder.AddInt64(Market.ConfirmedIncomingSupplyPerUpdate.GetRawValue());
+					Builder.AddUInt8(Market.bMarketOnly ? 1 : 0);
+					Builder.AddInt64(Market.BackgroundProductionPerUpdate.GetRawValue());
+					Builder.AddInt64(Market.BackgroundCitizenDemandPerUpdate.GetRawValue());
+					Builder.AddInt64(Market.BackgroundIndustrialDemandPerUpdate.GetRawValue());
+					Builder.AddInt32(Market.ReportPolicy.ReportCadenceTicks);
+					Builder.AddInt32(Market.ReportPolicy.CurrentMaxAgeTicks);
+					Builder.AddInt32(Market.ReportPolicy.RecentMaxAgeTicks);
+					Builder.AddInt32(Market.ReportPolicy.StaleMaxAgeTicks);
+					Builder.AddInt32(Market.ReportPolicy.EstimatedMaxAgeTicks);
 					Builder.AddInt32(Market.SeasonModifierBasisPoints);
 					Builder.AddInt32(Market.CityModifierBasisPoints);
 					Builder.AddInt64(Market.MinimumPriceMilliMarks);
@@ -470,6 +522,38 @@ namespace Hansa::Simulation
 					Builder.AddInt32(Market.Factors.TargetMultiplierBasisPoints);
 					Builder.AddUInt32(static_cast<uint32>(Market.PriceHistory.Num()));
 					for (const FHansaMarketPriceHistoryEntry& Entry : Market.PriceHistory)
+					{
+						Builder.AddInt64(Entry.Tick.GetValue());
+						Builder.AddInt64(Entry.Stock.GetRawValue());
+						Builder.AddInt64(Entry.CitizenDemand.GetRawValue());
+						Builder.AddInt64(Entry.IndustrialDemand.GetRawValue());
+						Builder.AddInt64(Entry.LocalProduction.GetRawValue());
+						Builder.AddInt64(Entry.ExpectedIncomingSupply.GetRawValue());
+						Builder.AddInt64(Entry.UnmetDemand.GetRawValue());
+						Builder.AddInt32(Entry.MinimumConsumerAffordabilityBasisPoints);
+						Builder.AddInt64(Entry.PriceMilliMarks);
+					}
+					Builder.AddUInt8(Market.Report.bAvailable ? 1 : 0);
+					Builder.AddInt64(Market.Report.ReportTick);
+					Builder.AddInt64(Market.Report.MarketUpdateTick);
+					Builder.AddInt64(Market.Report.Stock.GetRawValue());
+					Builder.AddInt64(Market.Report.DesiredReserve.GetRawValue());
+					Builder.AddInt64(Market.Report.CitizenDemand.GetRawValue());
+					Builder.AddInt64(Market.Report.IndustrialDemand.GetRawValue());
+					Builder.AddInt64(Market.Report.RecentLocalProduction.GetRawValue());
+					Builder.AddInt64(Market.Report.ExpectedIncomingSupply.GetRawValue());
+					Builder.AddInt64(Market.Report.UnmetDemand.GetRawValue());
+					Builder.AddInt64(Market.Report.PriceMilliMarks);
+					Builder.AddInt32(Market.Report.Factors.ScarcityBasisPoints);
+					Builder.AddInt32(Market.Report.Factors.CitizenDemandBasisPoints);
+					Builder.AddInt32(Market.Report.Factors.IndustrialDemandBasisPoints);
+					Builder.AddInt32(Market.Report.Factors.IncomingSupplyBasisPoints);
+					Builder.AddInt32(Market.Report.Factors.UnmetDemandBasisPoints);
+					Builder.AddInt32(Market.Report.Factors.SeasonModifierBasisPoints);
+					Builder.AddInt32(Market.Report.Factors.CityModifierBasisPoints);
+					Builder.AddInt32(Market.Report.Factors.TargetMultiplierBasisPoints);
+					Builder.AddUInt32(static_cast<uint32>(Market.Report.PriceHistory.Num()));
+					for (const FHansaMarketPriceHistoryEntry& Entry : Market.Report.PriceHistory)
 					{
 						Builder.AddInt64(Entry.Tick.GetValue());
 						Builder.AddInt64(Entry.Stock.GetRawValue());
@@ -595,6 +679,35 @@ namespace Hansa::Simulation
 					Builder.AddInt64(Job.DeliveryTick.GetValue());
 					Builder.AddInt32(Job.RoadDistanceCells);
 					Builder.AddUInt8(static_cast<uint8>(Job.Status));
+				}
+			}));
+
+		uint32 ResearchRecordCount = static_cast<uint32>(State.Research.Num());
+		for (const FHansaHouseResearchState& Research : State.Research)
+		{
+			ResearchRecordCount += static_cast<uint32>(Research.CompletedTechnologyIds.Num() + Research.AppliedEffects.Num());
+		}
+		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Research, ResearchRecordCount,
+			[&State](FNormalizedHashBuilder& Builder)
+			{
+				Builder.AddUInt32(static_cast<uint32>(State.Research.Num()));
+				for (const FHansaHouseResearchState& Research : State.Research)
+				{
+					Builder.AddUInt64(Research.HouseId.GetValue());
+					Builder.AddUInt32(Research.HouseId.GetGeneration());
+					Builder.AddInt32(Research.AvailableResearchPoints);
+					Builder.AddAsciiString(Research.ActiveTechnologyId);
+					Builder.AddInt32(Research.ProgressTicks);
+					Builder.AddUInt32(static_cast<uint32>(Research.CompletedTechnologyIds.Num()));
+					for (const FString& TechnologyId : Research.CompletedTechnologyIds) Builder.AddAsciiString(TechnologyId);
+					Builder.AddUInt32(static_cast<uint32>(Research.AppliedEffects.Num()));
+					for (const FHansaAppliedResearchEffect& Effect : Research.AppliedEffects)
+					{
+						Builder.AddAsciiString(Effect.SourceTechnologyId);
+						Builder.AddUInt8(static_cast<uint8>(Effect.Kind));
+						Builder.AddAsciiString(Effect.TargetStableId);
+						Builder.AddInt32(Effect.Magnitude);
+					}
 				}
 			}));
 

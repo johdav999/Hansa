@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hansa-static-prop-v1",
+  "title": "Hansa HarborProp canonical profile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "role",
+    "stableId",
+    "heightCm",
+    "maximumTriangles",
+    "maximumMaterials",
+    "maximumTextureSize",
+    "forwardAxis",
+    "upAxis",
+    "pivot",
+    "collision"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "role": {
+      "const": "HarborProp"
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^Prop\\.[A-Za-z0-9_]+(?:\\.[A-Za-z0-9_]+)*$",
+      "maxLength": 100
+    },
+    "heightCm": {
+      "type": "integer",
+      "minimum": 10,
+      "maximum": 1000
+    },
+    "maximumTriangles": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50000
+    },
+    "maximumMaterials": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8
+    },
+    "maximumTextureSize": {
+      "type": "integer",
+      "minimum": 64,
+      "maximum": 4096
+    },
+    "forwardAxis": {
+      "const": "+X"
+    },
+    "upAxis": {
+      "const": "+Z"
+    },
+    "pivot": {
+      "const": "bottom-center"
+    },
+    "collision": {
+      "const": "box"
+    }
+  }
+}

@@ -72,6 +72,30 @@ pwsh -File Scripts/RunHansaMcpTests.ps1
 
 This engine-independent gate requires Node.js 22 or newer and runs the dependency-free sidecar's framing, fake endpoint, MCP lifecycle, structured-error, log-redaction and delayed named-pipe reconnect tests. It launches no game and makes no network or provider call. Results are retained under the normal ignored build-artifact root.
 
+### Run the mock authoring and media demonstrations
+
+```powershell
+pwsh -NoProfile -File Scripts/RunOpenAIAuthoringAcceptance.ps1
+pwsh -NoProfile -File Scripts/RunMediaAcceptance.ps1
+```
+
+Both commands are network-free acceptance gates. They use the deterministic mock worker, retain provenance and validation evidence, and fail if a live provider call or real spend is observed. The media runner proves staged promotion and a fresh-editor reload; human media review remains a separate explicit decision.
+
+### Run the integrated golden and authority processes
+
+```powershell
+pwsh -NoProfile -File Scripts/RunMvpGoldenMcpTest.ps1
+pwsh -NoProfile -File Scripts/RunTwoPlayerAuthorityProof.ps1
+```
+
+Each runner builds Development Editor unless `-SkipBuild` is supplied, owns and terminates its hidden Unreal processes, uses a fresh short-lived automation token, enforces a bounded timeout, and retains correlated logs/results. The two-player runner launches a listen server, two clients, and a reconnecting client.
+
+For true native UI evidence, use rendering explicitly:
+
+```powershell
+pwsh -NoProfile -File Scripts/RunAutomationTests.ps1 -TestFilter Hansa.UI.UAT.MvpGoldenFlows.NativeScreens -WithRendering
+```
+
 ### Build and audit Shipping exclusion
 
 ```powershell
@@ -80,7 +104,15 @@ pwsh -File Scripts/VerifyShippingExclusion.ps1
 
 This builds `Hansa Win64 Shipping`, verifies module host types and runtime dependency direction, then scans the Shipping target receipt and executable for representative editor/automation/test/tool markers. It writes hashes and scan results to `result.json`.
 
-This is a target-level gate. It does not yet replace the later packaged/cooked/depot audit required by ADR-0004.
+This is a target-level gate. It does not replace the packaged/cooked/depot audit required by ADR-0004.
+
+Run the Lübeck Shipping cook and expanded cooked-content scan separately:
+
+```powershell
+pwsh -NoProfile -File Scripts/RunMediaCookAudit.ps1
+```
+
+The cook gate must succeed before its output can be accepted as package evidence. A passing target receipt/executable scan cannot waive a failed cook.
 
 ### Run the current CI-equivalent sequence
 
@@ -88,7 +120,7 @@ This is a target-level gate. It does not yet replace the later packaged/cooked/d
 pwsh -File Scripts/InvokeCI.ps1 -TestFilter Hansa
 ```
 
-The sequence first verifies repository conventions, runs HansaMcp contract tests, then builds Development Editor, runs headless Hansa tests, builds the Development game, builds Shipping, and performs the exclusion audit. Add `-GenerateProjectFiles` only when a CI environment explicitly needs IDE files.
+The sequence verifies repository conventions, both external contract suites, Development Editor, the selected Unreal suite, native and live MCP golden flows, the rendered staged-media preview, the mock authoring/media flows, the multi-process authority proof, a Shipping cook/content audit, Development game, and a fresh Shipping target/executable audit. It is fail-fast and writes its summary only after every gate passes. Add `-GenerateProjectFiles` only when a CI environment explicitly needs IDE files.
 
 Use a different artifact root when a CI runner requires it:
 
@@ -119,7 +151,7 @@ A future Windows runner must:
 6. Treat the PowerShell process exit code as authoritative.
 7. Upload `Saved/BuildArtifacts/**`, `Saved/Logs/**` and relevant `Saved/Automation/**` output on success and failure.
 8. Keep normal CI free of OpenAI, Tripo, ElevenLabs, TRELLIS or other paid live calls.
-9. Add packaged Shipping cook/stage inspection when packaging is introduced; do not treat the current target-level audit as that future proof.
+9. Require `RunMediaCookAudit.ps1` to pass and inspect its expanded cooked tree; do not treat the target-level audit as packaged-content proof.
 10. Cache Derived Data Cache only with an engine/changelist/project-content-aware key and never commit the cache.
 11. Keep all credentials in the CI secret store and out of command output, `.ini`, source, assets and uploaded public logs.
 

@@ -16,7 +16,7 @@
         "schemaVersion": { "const": 1 },
         "requestId": { "$ref": "#/$defs/identifier" },
         "operation": {
-          "enum": ["ping", "capabilities_get", "session_start", "session_get", "session_stop", "health", "fixture_list", "fixture_load", "gameplay_query", "gameplay_command", "gameplay_assert", "simulation_step", "simulation_run", "simulation_run_until", "semantic_find", "semantic_state", "semantic_activate", "semantic_focus", "wait_for", "screenshot_capture"]
+          "enum": ["ping", "capabilities_get", "session_start", "session_get", "session_stop", "health", "fixture_list", "fixture_load", "fixture_reset", "save_list", "save_create", "save_load", "save_wait_for", "save_assert_roundtrip", "gameplay_query", "gameplay_command", "gameplay_assert", "simulation_step", "simulation_run", "simulation_run_until", "semantic_find", "semantic_state", "semantic_activate", "semantic_focus", "wait_for", "screenshot_capture", "logs_get", "evidence_bundle_create"]
         },
         "controllerId": { "type": "string", "maxLength": 64 },
         "sessionId": { "type": "string", "maxLength": 64 },

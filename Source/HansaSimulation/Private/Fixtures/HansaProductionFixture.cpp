@@ -192,6 +192,12 @@ namespace Hansa::Simulation
 			Result.TargetSmoothingBasisPoints = 2500;
 			Result.MaximumMovementBasisPointsPerUpdate = 1000;
 			Result.StaleAfterTicks = 10;
+			Result.bMarketOnly = City != TEXT("Lubeck");
+			Result.ReportCadenceTicks = Result.bMarketOnly ? 20 : 5;
+			Result.CurrentReportMaxAgeTicks = 0;
+			Result.RecentReportMaxAgeTicks = Result.bMarketOnly ? 4 : 5;
+			Result.StaleReportMaxAgeTicks = 10;
+			Result.EstimatedReportMaxAgeTicks = Result.bMarketOnly ? 19 : 20;
 			Result.Goods = {
 				MarketGood(TEXT("Good.Grain"), 1000, 30000, bRostock ? 4000 : 0),
 				MarketGood(TEXT("Good.Flour"), 1700, 20000),
@@ -204,6 +210,36 @@ namespace Hansa::Simulation
 				MarketGood(TEXT("Good.Tools"), 6500, 8000),
 				MarketGood(TEXT("Good.Beer"), 1500, 16000)
 			};
+			if (Result.bMarketOnly)
+			{
+				for (FHansaCompiledMarketGoodProfile& Good : Result.Goods)
+				{
+					Good.InitialStockMilliUnits = Good.DesiredReserveMilliUnits;
+					Good.BackgroundCitizenDemandMilliUnitsPerUpdate = 700;
+					Good.BackgroundIndustrialDemandMilliUnitsPerUpdate = 300;
+					Good.BackgroundProductionMilliUnitsPerUpdate = 1000;
+				}
+				const auto AddExportStrength = [&Result](const TCHAR* GoodId, const int64 OpeningSurplus,
+					const int64 AdditionalProduction)
+				{
+					FHansaCompiledMarketGoodProfile* Good = Result.Goods.FindByPredicate(
+						[GoodId](const FHansaCompiledMarketGoodProfile& Candidate) { return Candidate.GoodId == GoodId; });
+					check(Good != nullptr);
+					Good->InitialStockMilliUnits += OpeningSurplus;
+					Good->BackgroundProductionMilliUnitsPerUpdate += AdditionalProduction;
+				};
+				if (bHamburg)
+				{
+					AddExportStrength(TEXT("Good.Fish"), 8000, 1500);
+					AddExportStrength(TEXT("Good.Bread"), 4000, 750);
+				}
+				if (bLuneburg) AddExportStrength(TEXT("Good.Salt"), 12000, 2000);
+				if (bRostock)
+				{
+					AddExportStrength(TEXT("Good.Grain"), 10000, 2000);
+					AddExportStrength(TEXT("Good.Fish"), 6000, 1000);
+				}
+			}
 			return Result;
 		}
 
@@ -297,8 +333,25 @@ namespace Hansa::Simulation
 				CityMarket(TEXT("Hamburg")), CityMarket(TEXT("Lubeck")),
 				CityMarket(TEXT("Luneburg")), CityMarket(TEXT("Rostock"))
 			};
+			TArray<FHansaCompiledVehicleDefinition> Vehicles {
+				{ TEXT("Vehicle.Cog"), EHansaRouteMode::Sea, 60'000, 12, 0 },
+				{ TEXT("Vehicle.Wagon"), EHansaRouteMode::Land, 20'000, 5, 0 }
+			};
+			FHansaCompiledRouteDefinition BalticSea;
+			BalticSea.StableId = TEXT("Route.BalticSea");
+			BalticSea.Mode = EHansaRouteMode::Sea;
+			BalticSea.Connections = {
+				{ TEXT("City.Lubeck"), TEXT("City.Hamburg"), 8 },
+				{ TEXT("City.Lubeck"), TEXT("City.Rostock"), 10 }
+			};
+			FHansaCompiledRouteDefinition SaltRoad;
+			SaltRoad.StableId = TEXT("Route.SaltRoad");
+			SaltRoad.Mode = EHansaRouteMode::Land;
+			SaltRoad.Connections = { { TEXT("City.Lubeck"), TEXT("City.Luneburg"), 6 } };
+			TArray<FHansaCompiledRouteDefinition> Routes { MoveTemp(BalticSea), MoveTemp(SaltRoad) };
 			return FHansaEconomicRegistry(MoveTemp(Goods), MoveTemp(Recipes), MoveTemp(Buildings),
-				FHansaProductionFixture::RegistryHash, MoveTemp(Needs), MoveTemp(Tiers), MoveTemp(CityMarkets));
+				FHansaProductionFixture::RegistryHash, MoveTemp(Needs), MoveTemp(Tiers), MoveTemp(CityMarkets),
+				MoveTemp(Vehicles), MoveTemp(Routes));
 		}
 
 		bool AddBuildingProduction(
@@ -324,6 +377,139 @@ namespace Hansa::Simulation
 		FString Hex64(const uint64 Value)
 		{
 			return FString::Printf(TEXT("%016llX"), static_cast<unsigned long long>(Value));
+		}
+
+		bool AddRemoteMarketCities(FHansaSimulationInitialization& Initialization,
+			const FHansaEconomicRegistry& Registry)
+		{
+			struct FRemoteCity { const TCHAR* StableId; uint64 InventoryValue; };
+			const FRemoteCity Cities[] = {
+				{ TEXT("City.Hamburg"), 2 }, { TEXT("City.Luneburg"), 3 }, { TEXT("City.Rostock"), 4 }
+			};
+			for (const FRemoteCity& City : Cities)
+			{
+				const FHansaCompiledCityMarketProfileDefinition* Profile = Registry.FindCityMarket(City.StableId);
+				FHansaCityDefinitionId CityId;
+				FHansaInventoryId InventoryId;
+				if (Profile == nullptr || !Profile->bMarketOnly ||
+					!Assign(FHansaCityDefinitionId::TryParse(City.StableId), CityId) ||
+					!Entity(City.InventoryValue, InventoryId))
+				{
+					return false;
+				}
+				Initialization.Cities.Add({ CityId, FHansaQuantity() });
+				FHansaInventoryInitialization Inventory;
+				Inventory.Id = InventoryId;
+				Inventory.OwnerKind = EHansaInventoryOwnerKind::City;
+				Inventory.CityId = CityId;
+				Inventory.Capacity = FHansaQuantity::FromRaw(20'000'000);
+				for (const FHansaCompiledMarketGoodProfile& GoodProfile : Profile->Goods)
+				{
+					FHansaGoodId GoodId;
+					if (!Good(*GoodProfile.GoodId, GoodId)) return false;
+					Inventory.AcceptedGoods.Add(GoodId);
+					Inventory.InitialStock.Add({ GoodId, FHansaQuantity::FromRaw(GoodProfile.InitialStockMilliUnits) });
+				}
+				Initialization.Inventories.Add(MoveTemp(Inventory));
+				for (const FHansaCompiledMarketGoodProfile& GoodProfile : Profile->Goods)
+				{
+					FHansaCityMarketInitialization Market;
+					if (!Good(*GoodProfile.GoodId, Market.GoodId)) return false;
+					Market.CityId = CityId;
+					Market.InventoryIds.Add(InventoryId);
+					Market.DesiredReserve = FHansaQuantity::FromRaw(GoodProfile.DesiredReserveMilliUnits);
+					Market.ConfirmedIncomingSupplyPerUpdate = FHansaQuantity::FromRaw(GoodProfile.ConfirmedIncomingSupplyMilliUnits);
+					Market.bMarketOnly = true;
+					Market.BackgroundProductionPerUpdate = FHansaQuantity::FromRaw(GoodProfile.BackgroundProductionMilliUnitsPerUpdate);
+					Market.BackgroundCitizenDemandPerUpdate = FHansaQuantity::FromRaw(GoodProfile.BackgroundCitizenDemandMilliUnitsPerUpdate);
+					Market.BackgroundIndustrialDemandPerUpdate = FHansaQuantity::FromRaw(GoodProfile.BackgroundIndustrialDemandMilliUnitsPerUpdate);
+					Market.ReportPolicy.ReportCadenceTicks = Profile->ReportCadenceTicks;
+					Market.ReportPolicy.CurrentMaxAgeTicks = Profile->CurrentReportMaxAgeTicks;
+					Market.ReportPolicy.RecentMaxAgeTicks = Profile->RecentReportMaxAgeTicks;
+					Market.ReportPolicy.StaleMaxAgeTicks = Profile->StaleReportMaxAgeTicks;
+					Market.ReportPolicy.EstimatedMaxAgeTicks = Profile->EstimatedReportMaxAgeTicks;
+					Market.SeasonModifierBasisPoints = GoodProfile.SeasonModifierBasisPoints;
+					Market.CityModifierBasisPoints = GoodProfile.CityModifierBasisPoints;
+					Market.MinimumPriceMilliMarks = GoodProfile.MinimumPriceMilliMarks;
+					Market.MaximumPriceMilliMarks = GoodProfile.MaximumPriceMilliMarks;
+					Market.InitialPriceMilliMarks = GoodProfile.InitialPriceMilliMarks;
+					Market.InitialReportTick = 0;
+					Initialization.Markets.Add(MoveTemp(Market));
+				}
+			}
+			return true;
+		}
+
+		bool AddCanonicalTrade(FHansaSimulationInitialization& Initialization,
+			const FHansaHouseId HouseId, const FHansaEconomicRegistry& Registry)
+		{
+			struct FVehicleSpec
+			{
+				uint64 VehicleValue;
+				uint64 InventoryValue;
+				uint64 RouteValue;
+				const TCHAR* VehicleDefinition;
+				const TCHAR* RouteDefinition;
+				const TCHAR* Destination;
+				const TCHAR* GoodId;
+				EHansaRouteMode Mode;
+			};
+			const FVehicleSpec Specs[] = {
+				{ 1, 1001, 1, TEXT("Vehicle.Cog"), TEXT("Route.BalticSea"), TEXT("City.Rostock"), TEXT("Good.Grain"), EHansaRouteMode::Sea },
+				{ 2, 1002, 2, TEXT("Vehicle.Wagon"), TEXT("Route.SaltRoad"), TEXT("City.Luneburg"), TEXT("Good.Salt"), EHansaRouteMode::Land }
+			};
+			FHansaCityDefinitionId Lubeck;
+			if (!Assign(FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")), Lubeck)) return false;
+			for (const FVehicleSpec& Spec : Specs)
+			{
+				const FHansaCompiledVehicleDefinition* Definition = Registry.FindVehicle(Spec.VehicleDefinition);
+				FHansaVehicleState Vehicle;
+				FHansaRouteState Route;
+				FHansaInventoryInitialization Cargo;
+				FHansaCityDefinitionId Destination;
+				FHansaGoodId GoodId;
+				if (Definition == nullptr || !Entity(Spec.VehicleValue, Vehicle.Id) ||
+					!Assign(FHansaVehicleDefinitionId::TryParse(Spec.VehicleDefinition), Vehicle.DefinitionId) ||
+					!Entity(Spec.InventoryValue, Vehicle.CargoInventoryId) || !Entity(Spec.RouteValue, Route.Id) ||
+					!Assign(FHansaRouteDefinitionId::TryParse(Spec.RouteDefinition), Route.RouteDefinitionId) ||
+					!Assign(FHansaCityDefinitionId::TryParse(Spec.Destination), Destination) || !Good(Spec.GoodId, GoodId))
+				{
+					return false;
+				}
+				Vehicle.OwnerId = HouseId;
+				Vehicle.Mode = Spec.Mode;
+				Vehicle.Capacity = FHansaQuantity::FromRaw(Definition->CargoCapacityMilliUnits);
+				Vehicle.CurrentCityId = Lubeck;
+				Vehicle.UpkeepPfennigPerTravelTick = Definition->UpkeepPfennigPerTravelTick;
+				Cargo.Id = Vehicle.CargoInventoryId;
+				Cargo.OwnerKind = EHansaInventoryOwnerKind::Vehicle;
+				Cargo.VehicleId = Vehicle.Id;
+				Cargo.Capacity = Vehicle.Capacity;
+				for (const FHansaCompiledGoodDefinition& GoodDefinition : Registry.GetGoods())
+				{
+					FHansaGoodId Accepted;
+					if (!Good(*GoodDefinition.StableId, Accepted)) return false;
+					Cargo.AcceptedGoods.Add(Accepted);
+				}
+				Route.OwnerId = HouseId;
+				Route.VehicleId = Vehicle.Id;
+				Route.Mode = Spec.Mode;
+				Route.Lifecycle = EHansaRouteLifecycleState::Inactive;
+				FHansaRouteStop Source;
+				Source.CityId = Lubeck;
+				Source.Actions.Add({ EHansaRouteCargoActionKind::Unload, EHansaRouteCargoCondition::Always,
+					GoodId, FHansaQuantity::FromRaw(20'000), FHansaQuantity() });
+				FHansaRouteStop DestinationStop;
+				DestinationStop.CityId = Destination;
+				DestinationStop.Actions.Add({ EHansaRouteCargoActionKind::Load, EHansaRouteCargoCondition::Always,
+					GoodId, FHansaQuantity::FromRaw(20'000),
+					FHansaQuantity::FromRaw(Spec.Mode == EHansaRouteMode::Sea ? 30'000 : 12'000) });
+				Route.Stops = { MoveTemp(Source), MoveTemp(DestinationStop) };
+				Initialization.Vehicles.Add(MoveTemp(Vehicle));
+				Initialization.Inventories.Add(MoveTemp(Cargo));
+				Initialization.Routes.Add(MoveTemp(Route));
+			}
+			return true;
 		}
 	}
 
@@ -425,7 +611,9 @@ namespace Hansa::Simulation
 		Salt.SupplyCycleTicks = 3;
 		Initialization.Productions.Add(Salt);
 
-		if (!Assign(FHansaSimulationState::TryCreate(MoveTemp(Initialization)), Fixture.State))
+		if (!AddRemoteMarketCities(Initialization, *Fixture.Definitions.GetEconomicRegistry()) ||
+			!AddCanonicalTrade(Initialization, House, *Fixture.Definitions.GetEconomicRegistry()) ||
+			!Assign(FHansaSimulationState::TryCreate(MoveTemp(Initialization)), Fixture.State))
 		{
 			return THansaValueResult<FHansaProductionFixture>::Failure(EHansaValueError::InvalidFormat);
 		}
@@ -434,12 +622,18 @@ namespace Hansa::Simulation
 
 	THansaValueResult<FHansaProductionFixture> FHansaProductionFixture::TryCreateGrainShortage()
 	{
+		return TryCreateGrainShortageWithRegistry(ProductionFixture::BuildRegistry());
+	}
+
+	THansaValueResult<FHansaProductionFixture> FHansaProductionFixture::TryCreateGrainShortageWithRegistry(
+		FHansaEconomicRegistry EconomicRegistry)
+	{
 		using namespace ProductionFixture;
 		FHansaProductionFixture Fixture;
 		Fixture.FixtureId = GrainShortageFixtureId;
 		FHansaScenarioId Scenario;
 		if (!Assign(FHansaScenarioId::TryParse(TEXT("Scenario.LubeckGrainShortageV1")), Scenario) ||
-			!Assign(FHansaSimulationDefinitionContext::TryCreate(Scenario, RegistryHash, BuildRegistry()), Fixture.Definitions))
+			!Assign(FHansaSimulationDefinitionContext::TryCreate(Scenario, EconomicRegistry.GetRegistryHash(), MoveTemp(EconomicRegistry)), Fixture.Definitions))
 		{
 			return THansaValueResult<FHansaProductionFixture>::Failure(EHansaValueError::InvalidFormat);
 		}
@@ -568,13 +762,41 @@ namespace Hansa::Simulation
 		Market.MinimumPriceMilliMarks = 500;
 		Market.MaximumPriceMilliMarks = 4'000;
 		Market.InitialPriceMilliMarks = 1'000;
+		Market.ReportPolicy.ReportCadenceTicks = 5;
+		Market.ReportPolicy.CurrentMaxAgeTicks = 0;
+		Market.ReportPolicy.RecentMaxAgeTicks = 5;
+		Market.ReportPolicy.StaleMaxAgeTicks = 10;
+		Market.ReportPolicy.EstimatedMaxAgeTicks = 20;
+		Market.InitialReportTick = 0;
 		Initialization.Markets.Add(MoveTemp(Market));
 
-		if (!Assign(FHansaSimulationState::TryCreate(MoveTemp(Initialization)), Fixture.State))
+		if (!AddRemoteMarketCities(Initialization, *Fixture.Definitions.GetEconomicRegistry()) ||
+			!AddCanonicalTrade(Initialization, House, *Fixture.Definitions.GetEconomicRegistry()) ||
+			!Assign(FHansaSimulationState::TryCreate(MoveTemp(Initialization)), Fixture.State))
 		{
 			return THansaValueResult<FHansaProductionFixture>::Failure(EHansaValueError::InvalidFormat);
 		}
 		return THansaValueResult<FHansaProductionFixture>::Success(Fixture);
+	}
+
+	THansaValueResult<FHansaProductionFixture> FHansaProductionFixture::TryCreateRouteDelivery()
+	{
+		THansaValueResult<FHansaProductionFixture> Result = TryCreateGrainShortage();
+		if (Result)
+		{
+			Result.Value.FixtureId = RouteDeliveryFixtureId;
+			// The delivery fixture isolates route relief from industrial draw so the delivered
+			// reserve and subsequent price cadence are observable. Setup still uses normal commands.
+			const auto Mill = FHansaProductionId::TryCreate(2);
+			const auto Brewery = FHansaProductionId::TryCreate(7);
+			if (!Mill || !Brewery || !Result.Value.SetProductionActive(Mill.Value, false) ||
+				!Result.Value.SetProductionActive(Brewery.Value, false))
+			{
+				return THansaValueResult<FHansaProductionFixture>::Failure(EHansaValueError::InvalidFormat);
+			}
+			Result.Value.Events.Reset();
+		}
+		return Result;
 	}
 
 	FHansaStateHashReport FHansaProductionFixture::BuildStateHashes() const
@@ -672,6 +894,64 @@ namespace Hansa::Simulation
 		{
 			Events.Append(Result.GetEvents());
 		}
+		return Result;
+	}
+
+	namespace
+	{
+		FHansaCommandHeader MakeFixtureCommandHeader(const FHansaSimulationState& State,
+			const FHansaSimulationDefinitionContext& Definitions)
+		{
+			const FHansaSimulationReadOnlyAccess ReadOnly = State.CreateReadOnlyAccess(Definitions);
+			FHansaCommandHeader Header;
+			Header.CommandId = FHansaCommandId::TryCreate(ReadOnly.GetLastProcessedCommandId().IsValid()
+				? ReadOnly.GetLastProcessedCommandId().GetValue() + 1 : 1).Value;
+			Header.Authority.IssuingHouseId = FHansaHouseId::TryCreate(1).Value;
+			Header.Authority.PrincipalId = 0x524F555445ULL;
+			Header.Authority.Origin = EHansaCommandOrigin::ControlledAutomation;
+			Header.RequestedExecutionTick = ReadOnly.GetClock().GetTick();
+			Header.GlobalSequence = ReadOnly.GetLastProcessedCommandSequence() + 1;
+			return Header;
+		}
+	}
+
+	FHansaCommandGatewayResult FHansaProductionFixture::EditRoute(
+		const FHansaRouteId RouteId, TArray<FHansaRouteStop> Stops)
+	{
+		FHansaCommandGatewayResult Invalid;
+		if (!RouteId.IsValid() || Stops.IsEmpty()) return Invalid;
+		const TArray<FHansaGameplayCommand> Commands {
+			FHansaGameplayCommand::Create(MakeFixtureCommandHeader(State, Definitions),
+				FHansaEditRouteCommand { RouteId, MoveTemp(Stops) })
+		};
+		FHansaCommandGatewayResult Result = FHansaGameplayCommandGateway::ExecuteTick(State, Definitions, Commands, Cache);
+		if (Result) Events.Append(Result.GetEvents());
+		return Result;
+	}
+
+	FHansaCommandGatewayResult FHansaProductionFixture::SetRouteActive(
+		const FHansaRouteId RouteId, const bool bActive)
+	{
+		FHansaCommandGatewayResult Invalid;
+		if (!RouteId.IsValid()) return Invalid;
+		const TArray<FHansaGameplayCommand> Commands {
+			FHansaGameplayCommand::Create(MakeFixtureCommandHeader(State, Definitions),
+				FHansaSetRouteActiveCommand { RouteId, bActive })
+		};
+		FHansaCommandGatewayResult Result = FHansaGameplayCommandGateway::ExecuteTick(State, Definitions, Commands, Cache);
+		if (Result) Events.Append(Result.GetEvents());
+		return Result;
+	}
+
+	FHansaCommandGatewayResult FHansaProductionFixture::CancelRoute(const FHansaRouteId RouteId)
+	{
+		FHansaCommandGatewayResult Invalid;
+		if (!RouteId.IsValid()) return Invalid;
+		const TArray<FHansaGameplayCommand> Commands {
+			FHansaGameplayCommand::Create(MakeFixtureCommandHeader(State, Definitions), FHansaCancelRouteCommand { RouteId })
+		};
+		FHansaCommandGatewayResult Result = FHansaGameplayCommandGateway::ExecuteTick(State, Definitions, Commands, Cache);
+		if (Result) Events.Append(Result.GetEvents());
 		return Result;
 	}
 

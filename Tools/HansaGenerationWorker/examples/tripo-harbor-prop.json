@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "idempotencyKey": "replace-with-unique-harbor-prop-action",
+  "providerId": "tripo",
+  "modelVersion": "v3.1-20260211",
+  "capability": "TextToMesh",
+  "intendedAssetRole": "HarborProp",
+  "prompt": "One freestanding wooden cargo crate for a Hanseatic harbor. One rigid static object, weathered oak planks, simple iron straps, no writing, no people, no ground plane. Front toward +X.",
+  "negativePrompt": "animation, rig, text, logos, characters, ground plane",
+  "inputArtifacts": [],
+  "rights": {
+    "acknowledged": false,
+    "declaration": "Replace with the actual prompt and reference rights declaration."
+  },
+  "budgets": {
+    "currency": "USD",
+    "maximumCostMinorUnits": 0,
+    "maximumOutputBytes": 33554432
+  },
+  "outputContract": {
+    "version": 1,
+    "maximumArtifacts": 1,
+    "allowedMediaTypes": [
+      "model/gltf-binary"
+    ]
+  },
+  "parameters": {
+    "staticProp": {
+      "version": 1,
+      "role": "HarborProp",
+      "stableId": "Prop.HarborCrate",
+      "heightCm": 100,
+      "maximumTriangles": 20000,
+      "maximumMaterials": 4,
+      "maximumTextureSize": 2048,
+      "forwardAxis": "+X",
+      "upAxis": "+Z",
+      "pivot": "bottom-center",
+      "collision": "box"
+    }
+  },
+  "timeoutMs": 300000,
+  "spendApproval": {
+    "approved": false
+  }
+}

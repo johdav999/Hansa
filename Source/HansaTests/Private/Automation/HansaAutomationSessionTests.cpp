@@ -104,7 +104,14 @@ bool FHansaAutomationSessionLifecycleTest::RunTest(const FString& Parameters)
 
 	const FHansaAutomationCapabilityResult Capabilities = Service.DiscoverCapabilities(MakeContext(TEXT("lifecycle.capabilities")));
 	TestTrue(TEXT("Enabled service publishes capabilities"), Capabilities.IsSuccess());
-	TestEqual(TEXT("S03-P04 manifest exposes session, production and semantic evidence capabilities"), Capabilities.GetPayload().Capabilities.Num(), 9);
+	TestEqual(TEXT("Manifest exposes session, gameplay, semantic, screenshot, wait, and evidence capabilities"),
+		Capabilities.GetPayload().Capabilities.Num(), 10);
+	TestTrue(TEXT("S14 evidence capability is advertised by stable name"),
+		Capabilities.GetPayload().Capabilities.ContainsByPredicate([](const FHansaAutomationCapabilityDescriptor& Descriptor)
+		{
+			return Descriptor.Capability == EHansaAutomationCapability::Evidence &&
+				Descriptor.StableName == TEXT("evidence");
+		}));
 
 	const FHansaAutomationOpenSessionRequest OpenRequest = MakeOpenRequest();
 	const FHansaAutomationOpenSessionResult Open = Service.OpenSession(OpenRequest, MakeContext(TEXT("lifecycle.open")));
@@ -195,12 +202,20 @@ bool FHansaAutomationCapabilitiesAndPermissionsTest::RunTest(const FString& Para
 
 	FHansaAutomationOpenSessionRequest QueryCapability = MakeOpenRequest();
 	QueryCapability.RequiredCapabilities.Add(EHansaAutomationCapability::GameplayQueries);
+	QueryCapability.RequiredCapabilities.Add(EHansaAutomationCapability::Evidence);
 	const FHansaAutomationOpenSessionResult QueryResult = Service.OpenSession(
 		QueryCapability,
 		MakeContext(TEXT("capability.query")));
 	TestTrue(TEXT("Real gameplay query adapter can be negotiated read-only"), QueryResult.IsSuccess());
 	if (QueryResult)
 	{
+		TestTrue(TEXT("Structured evidence logs authorize as read-only"), Service.AuthorizeOperation(
+			QueryResult.GetPayload().SessionId, QueryCapability.ControllerId,
+			EHansaAutomationOperation::EvidenceRead, MakeContext(TEXT("capability.evidence-read"))).IsSuccess());
+		TestTrue(TEXT("Evidence bundle writes still require controlled permission"), Service.AuthorizeOperation(
+			QueryResult.GetPayload().SessionId, QueryCapability.ControllerId,
+			EHansaAutomationOperation::EvidenceWrite, MakeContext(TEXT("capability.evidence-write-rejected"))).GetError().Code ==
+				EHansaAutomationErrorCode::PermissionDenied);
 		Service.CloseSession(QueryResult.GetPayload().SessionId, QueryCapability.ControllerId, MakeContext(TEXT("capability.close")));
 	}
 

@@ -9,13 +9,27 @@ namespace Hansa::Simulation
 		const uint64 InRegistryHash,
 		TArray<FHansaCompiledNeedDefinition> InNeeds,
 		TArray<FHansaCompiledPopulationTierDefinition> InPopulationTiers,
-		TArray<FHansaCompiledCityMarketProfileDefinition> InCityMarkets)
+		TArray<FHansaCompiledCityMarketProfileDefinition> InCityMarkets,
+		TArray<FHansaCompiledVehicleDefinition> InVehicles,
+		TArray<FHansaCompiledRouteDefinition> InRoutes,
+		TArray<FHansaCompiledTechnologyDefinition> InTechnologies,
+		TArray<FHansaCompiledMerchantAITuning> InMerchantAITunings,
+		TArray<FHansaCompiledScenarioObjective> InScenarioObjectives,
+		TArray<FHansaCompiledVictoryDefinition> InVictories,
+		TArray<FHansaCompiledScenarioDefinition> InScenarios)
 		: Goods(MoveTemp(InGoods))
 		, Recipes(MoveTemp(InRecipes))
 		, Buildings(MoveTemp(InBuildings))
 		, Needs(MoveTemp(InNeeds))
 		, PopulationTiers(MoveTemp(InPopulationTiers))
 		, CityMarkets(MoveTemp(InCityMarkets))
+		, Vehicles(MoveTemp(InVehicles))
+		, Routes(MoveTemp(InRoutes))
+		, Technologies(MoveTemp(InTechnologies))
+		, MerchantAITunings(MoveTemp(InMerchantAITunings))
+		, ScenarioObjectives(MoveTemp(InScenarioObjectives))
+		, Victories(MoveTemp(InVictories))
+		, Scenarios(MoveTemp(InScenarios))
 		, RegistryHash(InRegistryHash)
 	{
 		for (int32 Index = 0; Index < Goods.Num(); ++Index)
@@ -41,6 +55,34 @@ namespace Hansa::Simulation
 		for (int32 Index = 0; Index < CityMarkets.Num(); ++Index)
 		{
 			CityMarketIndexes.Add(CityMarkets[Index].StableId, Index);
+		}
+		for (int32 Index = 0; Index < Vehicles.Num(); ++Index)
+		{
+			VehicleIndexes.Add(Vehicles[Index].StableId, Index);
+		}
+		for (int32 Index = 0; Index < Routes.Num(); ++Index)
+		{
+			RouteIndexes.Add(Routes[Index].StableId, Index);
+		}
+		for (int32 Index = 0; Index < Technologies.Num(); ++Index)
+		{
+			TechnologyIndexes.Add(Technologies[Index].StableId, Index);
+		}
+		for (int32 Index = 0; Index < MerchantAITunings.Num(); ++Index)
+		{
+			MerchantAITuningIndexes.Add(MerchantAITunings[Index].StableId, Index);
+		}
+		for (int32 Index = 0; Index < ScenarioObjectives.Num(); ++Index)
+		{
+			ScenarioObjectiveIndexes.Add(ScenarioObjectives[Index].StableId, Index);
+		}
+		for (int32 Index = 0; Index < Victories.Num(); ++Index)
+		{
+			VictoryIndexes.Add(Victories[Index].StableId, Index);
+		}
+		for (int32 Index = 0; Index < Scenarios.Num(); ++Index)
+		{
+			ScenarioIndexes.Add(Scenarios[Index].StableId, Index);
 		}
 	}
 
@@ -78,5 +120,47 @@ namespace Hansa::Simulation
 	{
 		const int32* Index = CityMarketIndexes.Find(StableId);
 		return Index != nullptr ? &CityMarkets[*Index] : nullptr;
+	}
+
+	const FHansaCompiledVehicleDefinition* FHansaEconomicRegistry::FindVehicle(const FString& StableId) const
+	{
+		const int32* Index = VehicleIndexes.Find(StableId);
+		return Index != nullptr ? &Vehicles[*Index] : nullptr;
+	}
+
+	const FHansaCompiledRouteDefinition* FHansaEconomicRegistry::FindRoute(const FString& StableId) const
+	{
+		const int32* Index = RouteIndexes.Find(StableId);
+		return Index != nullptr ? &Routes[*Index] : nullptr;
+	}
+
+	const FHansaCompiledTechnologyDefinition* FHansaEconomicRegistry::FindTechnology(const FString& StableId) const
+	{
+		const int32* Index = TechnologyIndexes.Find(StableId);
+		return Index != nullptr ? &Technologies[*Index] : nullptr;
+	}
+
+	const FHansaCompiledMerchantAITuning* FHansaEconomicRegistry::FindMerchantAITuning(const FString& StableId) const
+	{
+		const int32* Index = MerchantAITuningIndexes.Find(StableId);
+		return Index != nullptr ? &MerchantAITunings[*Index] : nullptr;
+	}
+
+	const FHansaCompiledScenarioObjective* FHansaEconomicRegistry::FindScenarioObjective(const FString& StableId) const
+	{
+		const int32* Index = ScenarioObjectiveIndexes.Find(StableId);
+		return Index != nullptr ? &ScenarioObjectives[*Index] : nullptr;
+	}
+
+	const FHansaCompiledVictoryDefinition* FHansaEconomicRegistry::FindVictory(const FString& StableId) const
+	{
+		const int32* Index = VictoryIndexes.Find(StableId);
+		return Index != nullptr ? &Victories[*Index] : nullptr;
+	}
+
+	const FHansaCompiledScenarioDefinition* FHansaEconomicRegistry::FindScenario(const FString& StableId) const
+	{
+		const int32* Index = ScenarioIndexes.Find(StableId);
+		return Index != nullptr ? &Scenarios[*Index] : nullptr;
 	}
 }

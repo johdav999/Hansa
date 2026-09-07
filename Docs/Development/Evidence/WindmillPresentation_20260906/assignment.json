@@ -1,0 +1,6 @@
+{
+  "definition": "/Game/Hansa/Core/Buildings/DA_Building_Mill.DA_Building_Mill",
+  "before": "None",
+  "after": "/Game/Hansa/Core/Buildings/BP_HansaWindmill_Animated.BP_HansaWindmill_Animated_C",
+  "revision": 2
+}

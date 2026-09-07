@@ -15,6 +15,7 @@ namespace Hansa::Automation
 		InvalidBundleId,
 		CaptureUnavailable,
 		UnexpectedPixelCount,
+		BlankCapture,
 		EvidenceWriteFailed
 	};
 
@@ -27,6 +28,9 @@ namespace Hansa::Automation
 		FString ScreenId = TEXT("AutomationProof.Screen");
 		FString CaptureMethod = TEXT("Slate.TakeScreenshot.NativeSize");
 		FString SemanticSnapshotJson;
+		FString QuerySnapshotJson;
+		FString LogSnapshotJson;
+		FString FixtureMetadataJson;
 		uint64 UiRevision = 0;
 		int64 SimulationTick = 0;
 		uint64 FrameNumber = 0;
@@ -34,6 +38,7 @@ namespace Hansa::Automation
 		FString FlowId;
 		TArray<FString> StructuralAssertions;
 		bool bStructuralAssertionsPassed = false;
+		bool bRequireVisualVariation = false;
 	};
 
 	struct HANSAAUTOMATION_API FHansaScreenshotResult final
@@ -43,6 +48,9 @@ namespace Hansa::Automation
 		FString ScreenshotPath;
 		FString MetadataPath;
 		FString SemanticSnapshotPath;
+		FString QuerySnapshotPath;
+		FString LogSnapshotPath;
+		FString FixtureMetadataPath;
 		FString ContentSha1;
 
 		[[nodiscard]] bool IsSuccess() const { return Error == EHansaScreenshotError::None; }

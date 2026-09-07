@@ -18,6 +18,16 @@ namespace Hansa::Simulation
 		case EHansaDomainEventType::ConstructionCancelled: return TEXT("ConstructionCancelled");
 		case EHansaDomainEventType::BuildingRemoved: return TEXT("BuildingRemoved");
 		case EHansaDomainEventType::ResidenceUpgraded: return TEXT("ResidenceUpgraded");
+		case EHansaDomainEventType::RouteCreated: return TEXT("RouteCreated");
+		case EHansaDomainEventType::RouteEdited: return TEXT("RouteEdited");
+		case EHansaDomainEventType::RouteActivationChanged: return TEXT("RouteActivationChanged");
+		case EHansaDomainEventType::RouteCancelled: return TEXT("RouteCancelled");
+		case EHansaDomainEventType::RouteDeparted: return TEXT("RouteDeparted");
+		case EHansaDomainEventType::RouteArrived: return TEXT("RouteArrived");
+		case EHansaDomainEventType::RouteCargoTransferred: return TEXT("RouteCargoTransferred");
+		case EHansaDomainEventType::RouteCargoMissed: return TEXT("RouteCargoMissed");
+		case EHansaDomainEventType::ResearchQueued: return TEXT("ResearchQueued");
+		case EHansaDomainEventType::ResearchCompleted: return TEXT("ResearchCompleted");
 		default: return TEXT("UnknownDomainEvent");
 		}
 	}
@@ -49,6 +59,21 @@ namespace Hansa::Simulation
 				*ProductionId.ToDebugString(),
 				*RecipeId.ToString(),
 				LexToString(ProductionBlocker));
+		}
+		if (Type >= EHansaDomainEventType::RouteCreated && Type <= EHansaDomainEventType::RouteCargoMissed)
+		{
+			return FString::Printf(
+				TEXT("DomainEvent[type=%s;sequence=%llu;tick=%lld;route=%s;vehicle=%s;city=%s;good=%s;value=%lld;related=%lld]"),
+				LexToString(Type), static_cast<unsigned long long>(GlobalSequence),
+				static_cast<long long>(Tick.GetValue()), *RouteId.ToDebugString(), *VehicleId.ToDebugString(),
+				*CityId.ToString(), *GoodId.ToString(), static_cast<long long>(Value),
+				static_cast<long long>(RelatedValue));
+		}
+		if (Type == EHansaDomainEventType::ResearchQueued || Type == EHansaDomainEventType::ResearchCompleted)
+		{
+			return FString::Printf(TEXT("DomainEvent[type=%s;sequence=%llu;tick=%lld;technology=%s;value=%lld]"),
+				LexToString(Type), static_cast<unsigned long long>(GlobalSequence), static_cast<long long>(Tick.GetValue()),
+				*TechnologyId, static_cast<long long>(Value));
 		}
 		return FString::Printf(
 			TEXT("DomainEvent[type=%s;sequence=%llu;tick=%lld;command=%s]"),

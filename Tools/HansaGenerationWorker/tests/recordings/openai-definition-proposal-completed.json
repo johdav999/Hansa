@@ -1,0 +1,20 @@
+{
+  "id": "resp_recorded_hansa_definition_001",
+  "object": "response",
+  "status": "completed",
+  "model": "gpt-6-astra",
+  "output": [
+    {
+      "type": "message",
+      "status": "completed",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "{\"proposalVersion\":1,\"schemaId\":\"Hansa.GoodDefinition\",\"schemaVersion\":1,\"sourceSchemaHash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"baseStableId\":\"Good.Grain\",\"baseRevision\":7,\"baseContentHash\":\"0123456789abcdef\",\"patch\":{\"BaseValueMilliMarks\":1250,\"DefinitionCategory\":null,\"RecipeIds\":[\"Recipe.Bread\"]}}"
+        }
+      ]
+    }
+  ],
+  "usage": { "input_tokens": 500, "output_tokens": 120, "total_tokens": 620 }
+}

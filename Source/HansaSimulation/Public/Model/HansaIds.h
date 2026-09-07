@@ -70,6 +70,7 @@ namespace Hansa::Simulation
 	HANSA_DEFINITION_ID_TRAITS(FHansaEventIdTraits, "Event", 19);
 	HANSA_DEFINITION_ID_TRAITS(FHansaVictoryIdTraits, "Victory", 20);
 	HANSA_DEFINITION_ID_TRAITS(FHansaScenarioIdTraits, "Scenario", 21);
+	HANSA_DEFINITION_ID_TRAITS(FHansaRouteDefinitionIdTraits, "Route", 22);
 
 #undef HANSA_DEFINITION_ID_TRAITS
 
@@ -138,6 +139,7 @@ namespace Hansa::Simulation
 	using FHansaEventId = THansaDefinitionId<FHansaEventIdTraits>;
 	using FHansaVictoryId = THansaDefinitionId<FHansaVictoryIdTraits>;
 	using FHansaScenarioId = THansaDefinitionId<FHansaScenarioIdTraits>;
+	using FHansaRouteDefinitionId = THansaDefinitionId<FHansaRouteDefinitionIdTraits>;
 
 #define HANSA_ENTITY_ID_TRAITS(TraitsName, DebugText, TagValue) \
 	struct TraitsName final \

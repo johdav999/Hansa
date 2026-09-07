@@ -1,0 +1,14 @@
+{
+  "date": "2026-09-06",
+  "runtimeCatalogHash": "724BD5DE8DB9C292",
+  "approvedBy": "Johan",
+  "checks": [
+    {"test":"Hansa.UI.World", "passed":5, "evidence":"Saved/BuildArtifacts/20260906-153658398-automation-Hansa.UI.World"},
+    {"test":"Hansa.Integration.Authoring.EconomicAssetReload", "passed":1, "evidence":"Saved/BuildArtifacts/20260906-153826452-automation-Hansa.Integration.Authoring.EconomicAssetReload"},
+    {"test":"Hansa.Architecture.Authoring.EconomicSchemaCoverage", "passed":1, "evidence":"Saved/BuildArtifacts/20260906-153905132-automation-Hansa.Architecture.Authoring.EconomicSchemaCoverage"},
+    {"test":"Shipping build and module exclusion audit", "passed":true, "evidence":"Saved/BuildArtifacts/20260906-153926676-shipping-exclusion-Win64/result.json"},
+    {"test":"Production recursive asset dependency closure", "passed":true, "assetCount":69, "stagingOrDeveloperReferences":0},
+    {"test":"Live PIE bakery mesh binding", "passed":true, "evidence":"runtime_meshes.json"}
+  ],
+  "limitations":["Full cooked distribution package was not verified", "Editor viewport capture cannot prove the PIE image; only live reflected mesh binding and transforms were verified"]
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "component": "RoadSegment0",
+    "position": [
+      -300.0,
+      -1900.0,
+      0.0
+    ],
+    "parent": "DefaultSceneRoot",
+    "mobility": "<ComponentMobility.MOVABLE: 2>"
+  },
+  {
+    "component": "RoadSegment1",
+    "position": [
+      -300.0,
+      -1900.0,
+      0.0
+    ],
+    "parent": "DefaultSceneRoot",
+    "mobility": "<ComponentMobility.MOVABLE: 2>"
+  },
+  {
+    "component": "RoadSegment2",
+    "position": [
+      -300.0,
+      -1900.0,
+      0.0
+    ],
+    "parent": "DefaultSceneRoot",
+    "mobility": "<ComponentMobility.MOVABLE: 2>"
+  }
+]

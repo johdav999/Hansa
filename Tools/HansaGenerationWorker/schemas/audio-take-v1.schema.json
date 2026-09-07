@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hansa-audio-take-v1",
+  "title": "Hansa short audio take profile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "stableId",
+    "variants",
+    "minimumDurationMs",
+    "maximumDurationMs",
+    "maximumLeadingSilenceMs",
+    "maximumTrailingSilenceMs",
+    "subtitle",
+    "speakerId",
+    "language",
+    "loop"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "kind": {
+      "enum": [
+        "SFX",
+        "Speech"
+      ]
+    },
+    "stableId": {
+      "type": "string",
+      "maxLength": 100,
+      "pattern": "^(SFX|Dialogue)\\.[A-Za-z0-9_]+(?:\\.[A-Za-z0-9_]+)*$"
+    },
+    "variants": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2
+    },
+    "minimumDurationMs": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 15000
+    },
+    "maximumDurationMs": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 15000
+    },
+    "maximumLeadingSilenceMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 500
+    },
+    "maximumTrailingSilenceMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000
+    },
+    "subtitle": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "speakerId": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "language": {
+      "enum": [
+        "",
+        "en"
+      ]
+    },
+    "loop": {
+      "const": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "Speech"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "stableId": {
+            "pattern": "^Dialogue\\."
+          },
+          "language": {
+            "const": "en"
+          },
+          "subtitle": {
+            "minLength": 1,
+            "pattern": "^[^\\r\\n\\[\\]]+$"
+          },
+          "speakerId": {
+            "pattern": "^Speaker\\.[A-Za-z0-9_]+(?:\\.[A-Za-z0-9_]+)*$"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "stableId": {
+            "pattern": "^SFX\\."
+          },
+          "subtitle": {
+            "const": ""
+          },
+          "speakerId": {
+            "const": ""
+          },
+          "language": {
+            "const": ""
+          }
+        }
+      }
+    }
+  ]
+}

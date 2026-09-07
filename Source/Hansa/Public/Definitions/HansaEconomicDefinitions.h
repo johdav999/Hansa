@@ -6,6 +6,7 @@
 #include "HansaEconomicDefinitions.generated.h"
 
 class UStaticMesh;
+class AActor;
 class UTexture2D;
 
 UENUM(BlueprintType)
@@ -265,6 +266,17 @@ class HANSA_API UHansaBuildingDefinition final : public UHansaDefinitionBase
 public:
 	UHansaBuildingDefinition();
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Presentation", meta = (
+		DisplayName = "Presentation actor",
+		ToolTip = "Optional promoted Actor Blueprint, used instead of the mesh while preserving the building identity and placement footprint. Empty preserves existing mesh-only content.",
+		HansaRequired = "false", HansaReference = "ActorClass", HansaBulkEditable = "false",
+		HansaAIAccess = "Never", HansaMigration = "Compatible", HansaSerialization = "Included",
+		HansaValidation = "OptionalAsset"))
+	TSoftClassPtr<AActor> PresentationActorClass;
+
+	UClass* LoadPresentationActorClass() const;
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction", meta = (
 		DisplayName = "Construction costs",
 		ToolTip = "Positive goods consumed when the building is constructed.",
@@ -482,20 +494,10 @@ public:
 		HansaValidation = "Boolean"))
 	bool bRequiresShoreline = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Presentation", meta = (
-		DisplayName = "Presentation mesh",
-		ToolTip = "Promoted static mesh used for initial presentation; stable identity never depends on this path.",
-		HansaRequired = "true",
-		HansaReference = "StaticMesh",
-		HansaBulkEditable = "false",
-		HansaAIAccess = "Never",
-		HansaMigration = "Compatible",
-		HansaSerialization = "Included",
-		HansaValidation = "RequiredAsset"))
-	TSoftObjectPtr<UStaticMesh> PresentationMesh;
 
 	virtual void ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const override;
 
 protected:
+	virtual bool UsesLegacyBuildingMeshHash() const override { return true; }
 	virtual void AppendDefinitionHashData(FString& InOutCanonicalData) const override;
 };

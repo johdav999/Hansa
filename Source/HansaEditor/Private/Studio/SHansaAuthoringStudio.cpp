@@ -6,6 +6,8 @@
 #include "Definitions/HansaEconomicDefinitionCompiler.h"
 #include "Definitions/HansaEconomicDefinitions.h"
 #include "Definitions/HansaPopulationDefinitions.h"
+#include "Definitions/HansaResearchDefinitions.h"
+#include "Definitions/HansaTradeDefinitions.h"
 #include "Definitions/HansaFoundationSampleDefinition.h"
 #include "Definitions/HansaMarketDefinitions.h"
 #include "Editor.h"
@@ -17,12 +19,16 @@
 #include "PropertyEditorModule.h"
 #include "Queries/HansaSimulationReadOnly.h"
 #include "Styling/AppStyle.h"
+#include "UI/HansaUiStyle.h"
+#include "Studio/SHansaResearchGraphPanel.h"
+#include "Studio/SHansaGenerationJobsPanel.h"
 #include "Widgets/Images/SImage.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SSearchBox.h"
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Layout/SSplitter.h"
+#include "Widgets/Layout/SWidgetSwitcher.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/Text/STextBlock.h"
 #include "Widgets/Views/SHeaderRow.h"
@@ -30,12 +36,12 @@
 
 namespace Hansa::Editor::Studio
 {
-	const FLinearColor BalticNavy = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("152A35")));
-	const FLinearColor HarborSlate = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("29424D")));
-	const FLinearColor Brass = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("C19A52")));
-	const FLinearColor ProsperityTeal = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("35766F")));
-	const FLinearColor WarningAmber = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("D09132")));
-	const FLinearColor Oxblood = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("762F32")));
+	const FLinearColor BalticNavy = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::BalticNavy);
+	const FLinearColor HarborSlate = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::HarborSlate);
+	const FLinearColor Brass = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Brass);
+	const FLinearColor ProsperityTeal = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::ProsperityTeal);
+	const FLinearColor WarningAmber = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::WarningAmber);
+	const FLinearColor Oxblood = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Oxblood);
 
 	EHansaSchemaDiagnosticSeverity ConvertSeverity(const EHansaDefinitionValidationSeverity Severity)
 	{
@@ -126,6 +132,26 @@ void SHansaAuthoringStudio::Construct(const FArguments& InArgs)
 					.AutoWidth()
 					.Padding(4.0f, 0.0f)
 					[
+						SNew(SButton).OnClicked(this, &SHansaAuthoringStudio::ShowDefinitionDetails)
+						[SNew(STextBlock).Text(NSLOCTEXT("HansaAuthoringStudio", "DataWorkspace", "Data"))]
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.Padding(4.0f, 0.0f)
+					[
+						SNew(SButton).OnClicked(this, &SHansaAuthoringStudio::ShowResearchGraph)
+						[SNew(STextBlock).Text(NSLOCTEXT("HansaAuthoringStudio", "ResearchWorkspace", "Research graph"))]
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.Padding(4.0f, 0.0f)
+					[
+						SNew(SButton).OnClicked(this, &SHansaAuthoringStudio::ShowGenerationJobs)
+						[SNew(STextBlock).Text(NSLOCTEXT("HansaAuthoringStudio", "GenerationWorkspace", "Generation jobs"))]
+					]					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.Padding(4.0f, 0.0f)
+					[
 						SNew(SButton)
 						.ToolTipText(NSLOCTEXT("HansaAuthoringStudio", "ValidateTip", "Validate reflected metadata and the selected definition. Errors identify cause and remedy."))
 						.OnClicked(this, &SHansaAuthoringStudio::ValidateSelectedDefinition)
@@ -188,6 +214,9 @@ void SHansaAuthoringStudio::Construct(const FArguments& InArgs)
 			+ SVerticalBox::Slot()
 			.FillHeight(0.75f)
 			[
+				SNew(SBox)
+				.Visibility_Lambda([this]{ return bGenerationWorkspace ? EVisibility::Collapsed : EVisibility::Visible; })
+				[
 				SNew(SSplitter)
 				.PhysicalSplitterHandleSize(4.0f)
 				+ SSplitter::Slot()
@@ -233,7 +262,9 @@ void SHansaAuthoringStudio::Construct(const FArguments& InArgs)
 					.BorderImage(FAppStyle::GetBrush(TEXT("ToolPanel.GroupBorder")))
 					.Padding(8.0f)
 					[
-						DetailsView.ToSharedRef()
+						SAssignNew(WorkspaceSwitcher, SWidgetSwitcher)
+						+ SWidgetSwitcher::Slot()[DetailsView.ToSharedRef()]
+						+ SWidgetSwitcher::Slot()[SAssignNew(ResearchGraphPanel, SHansaResearchGraphPanel)]
 					]
 				]
 				+ SSplitter::Slot()
@@ -288,6 +319,7 @@ void SHansaAuthoringStudio::Construct(const FArguments& InArgs)
 						]
 					]
 				]
+				]
 			]
 
 			+ SVerticalBox::Slot()
@@ -295,6 +327,9 @@ void SHansaAuthoringStudio::Construct(const FArguments& InArgs)
 			.MinHeight(180.0f)
 			.Padding(0.0f, 8.0f, 0.0f, 0.0f)
 			[
+				SNew(SBox)
+				.Visibility_Lambda([this]{ return bGenerationWorkspace ? EVisibility::Collapsed : EVisibility::Visible; })
+				[
 				SNew(SBorder)
 				.BorderImage(FAppStyle::GetBrush(TEXT("ToolPanel.GroupBorder")))
 				.Padding(4.0f)
@@ -313,6 +348,31 @@ void SHansaAuthoringStudio::Construct(const FArguments& InArgs)
 						+ SHeaderRow::Column(TEXT("Remedy")).DefaultLabel(NSLOCTEXT("HansaAuthoringStudio", "Remedy", "Remedy")).FillWidth(0.44f)
 					)
 				]
+				]
+			]
+
+
+
+
+			+ SVerticalBox::Slot()
+			.FillHeight(1.0f)
+			[
+				SNew(SBox)
+				.Visibility_Lambda([this]{ return bGenerationWorkspace ? EVisibility::Visible : EVisibility::Collapsed; })
+				[
+					SAssignNew(GenerationJobsPanel, SHansaGenerationJobsPanel)
+					.GetSelectedDefinition([this]() -> UHansaDefinitionBase*
+					{
+						return SelectedDefinition.IsValid() ? SelectedDefinition->Definition.Get() : nullptr;
+					})
+					.GetAllDefinitions([this]()
+					{
+						TArray<UHansaDefinitionBase*> Result;
+						for (const TSharedPtr<FHansaDefinitionListItem>& Item : AllDefinitions) if (Item.IsValid() && Item->Definition.IsValid()) Result.Add(Item->Definition.Get());
+						return Result;
+					})
+					.OnProposalApplied(FSimpleDelegate::CreateSP(this, &SHansaAuthoringStudio::RefreshAfterTransaction))
+				]
 			]
 		]
 	];
@@ -325,7 +385,12 @@ void SHansaAuthoringStudio::Construct(const FArguments& InArgs)
 	{
 		RebuildValidationResults();
 	}
+	if (ResearchGraphPanel.IsValid()) ResearchGraphPanel->Refresh(AllDefinitions);
 }
+
+FReply SHansaAuthoringStudio::ShowDefinitionDetails(){bGenerationWorkspace=false;if(WorkspaceSwitcher.IsValid())WorkspaceSwitcher->SetActiveWidgetIndex(0);return FReply::Handled();}
+FReply SHansaAuthoringStudio::ShowResearchGraph(){bGenerationWorkspace=false;if(ResearchGraphPanel.IsValid())ResearchGraphPanel->Refresh(AllDefinitions);if(WorkspaceSwitcher.IsValid())WorkspaceSwitcher->SetActiveWidgetIndex(1);return FReply::Handled();}
+FReply SHansaAuthoringStudio::ShowGenerationJobs(){bGenerationWorkspace=true;return FReply::Handled();}
 
 void SHansaAuthoringStudio::DiscoverDefinitions()
 {
@@ -640,7 +705,9 @@ void SHansaAuthoringStudio::RebuildValidationResults()
 			SelectedDefinition->Definition->IsA<UHansaBuildingDefinition>() ||
 			SelectedDefinition->Definition->IsA<UHansaNeedDefinition>() ||
 			SelectedDefinition->Definition->IsA<UHansaPopulationTierDefinition>() ||
-			SelectedDefinition->Definition->IsA<UHansaCityMarketProfileDefinition>())
+			SelectedDefinition->Definition->IsA<UHansaCityMarketProfileDefinition>() ||
+			SelectedDefinition->Definition->IsA<UHansaVehicleDefinition>() ||
+			SelectedDefinition->Definition->IsA<UHansaRouteDefinition>())
 		{
 			TArray<const UHansaDefinitionBase*> EconomicDefinitions;
 			for (const TSharedPtr<FHansaDefinitionListItem>& Item : AllDefinitions)
@@ -650,7 +717,9 @@ void SHansaAuthoringStudio::RebuildValidationResults()
 					Item->Definition->IsA<UHansaBuildingDefinition>() ||
 					Item->Definition->IsA<UHansaNeedDefinition>() ||
 					Item->Definition->IsA<UHansaPopulationTierDefinition>() ||
-					Item->Definition->IsA<UHansaCityMarketProfileDefinition>())
+					Item->Definition->IsA<UHansaCityMarketProfileDefinition>() ||
+					Item->Definition->IsA<UHansaVehicleDefinition>() ||
+					Item->Definition->IsA<UHansaRouteDefinition>())
 				{
 					EconomicDefinitions.Add(Item->Definition.Get());
 				}
@@ -673,13 +742,15 @@ void SHansaAuthoringStudio::RebuildValidationResults()
 					TEXT("HSA-REGISTRY-READY"),
 					TEXT("EconomicRegistry"),
 					FString::Printf(
-						TEXT("✓ Compiled %d goods, %d recipes, %d buildings, %d needs, %d population tiers and %d city markets — hash %016llx."),
+						TEXT("✓ Compiled %d goods, %d recipes, %d buildings, %d needs, %d population tiers, %d city markets, %d vehicles and %d routes — hash %016llx."),
 						CompileResult.Registry.GetGoods().Num(),
 						CompileResult.Registry.GetRecipes().Num(),
 						CompileResult.Registry.GetBuildings().Num(),
 						CompileResult.Registry.GetNeeds().Num(),
 						CompileResult.Registry.GetPopulationTiers().Num(),
 						CompileResult.Registry.GetCityMarkets().Num(),
+						CompileResult.Registry.GetVehicles().Num(),
+						CompileResult.Registry.GetRoutes().Num(),
 						static_cast<unsigned long long>(CompileResult.Registry.GetRegistryHash())),
 					TEXT("No action required.")
 				}));

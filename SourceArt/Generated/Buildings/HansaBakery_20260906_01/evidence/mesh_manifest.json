@@ -1,0 +1,44 @@
+{
+  "triangles": 863720,
+  "vertices": 496234,
+  "bounds_m": [
+    -4.8368964195251465,
+    -7.985000133514404,
+    0.019999995827674866,
+    5.169795989990234,
+    11.5,
+    16.66499900817871
+  ],
+  "dimensions_m": [
+    10.00669240951538,
+    19.485000133514404,
+    16.644999012351036
+  ],
+  "materials": [
+    "PBR_Lime_Plaster",
+    "PBR_Limestone",
+    "PBR_Weathered_Oak",
+    "PBR_Lime_Mortar",
+    "PBR_Brick_0",
+    "PBR_Damp_Lime",
+    "PBR_Brick_1",
+    "PBR_Brick_2",
+    "PBR_Oven_Soot",
+    "PBR_Lead_Roofing",
+    "PBR_Clay_2",
+    "PBR_Clay_0",
+    "PBR_Clay_1",
+    "PBR_Window_Glass",
+    "PBR_Forged_Iron",
+    "PBR_Rye_Crust",
+    "PBR_Flour_Linen"
+  ],
+  "uv_density": "512 px/m nominal planar projection; directional faces may have projection loss",
+  "intended_view_distance_m": 5,
+  "pivot": "ground-centred main house origin",
+  "forward": "-Y",
+  "up": "+Z",
+  "glass": "opaque reflective approximation in portable exports",
+  "collision": "not authored",
+  "LOD": "not authored"
+}

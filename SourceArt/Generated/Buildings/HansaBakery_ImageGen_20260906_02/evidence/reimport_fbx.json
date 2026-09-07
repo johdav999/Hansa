@@ -1,0 +1,443 @@
+{
+  "format": "fbx",
+  "bounds_m": [
+    -4.836896896362305,
+    -7.984999656677246,
+    0.019999995827674866,
+    5.169795513153076,
+    11.5,
+    16.66499900817871
+  ],
+  "mesh_count": 1,
+  "material_slots": [
+    [
+      "PBR_Lime_Plaster",
+      "PBR_Limestone",
+      "PBR_Weathered_Oak",
+      "PBR_Lime_Mortar",
+      "PBR_Brick_0",
+      "PBR_Damp_Lime",
+      "PBR_Brick_1",
+      "PBR_Brick_2",
+      "PBR_Oven_Soot",
+      "PBR_Lead_Roofing",
+      "PBR_Clay_2",
+      "PBR_Clay_0",
+      "PBR_Clay_1",
+      "PBR_Window_Glass",
+      "PBR_Forged_Iron",
+      "PBR_Rye_Crust",
+      "PBR_Flour_Linen"
+    ]
+  ],
+  "images": [
+    {
+      "name": "Brick_0_ImageGen_BaseColor",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": false
+    },
+    {
+      "name": "Brick_0_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Brick_0_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Brick_1_ImageGen_BaseColor",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": false
+    },
+    {
+      "name": "Brick_1_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Brick_1_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Brick_2_ImageGen_BaseColor",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": false
+    },
+    {
+      "name": "Brick_2_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Brick_2_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Clay_0_ImageGen_BaseColor",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": false
+    },
+    {
+      "name": "Clay_0_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Clay_0_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Clay_1_ImageGen_BaseColor",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": false
+    },
+    {
+      "name": "Clay_1_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Clay_1_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Clay_2_ImageGen_BaseColor",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": false
+    },
+    {
+      "name": "Clay_2_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Clay_2_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Damp_Lime_ImageGen_BaseColor",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": false
+    },
+    {
+      "name": "Damp_Lime_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Damp_Lime_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Flour_Linen_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Flour_Linen_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Flour_Linen_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Forged_Iron_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Forged_Iron_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Forged_Iron_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Lead_Roofing_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Lead_Roofing_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Lead_Roofing_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Lime_Mortar_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Lime_Mortar_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Lime_Mortar_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Lime_Plaster_ImageGen_BaseColor",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": false
+    },
+    {
+      "name": "Lime_Plaster_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Lime_Plaster_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Limestone_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Limestone_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Limestone_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Oven_Soot_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Oven_Soot_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Oven_Soot_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Rye_Crust_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Rye_Crust_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Rye_Crust_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Weathered_Oak_ImageGen_BaseColor",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": false
+    },
+    {
+      "name": "Weathered_Oak_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Weathered_Oak_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Window_Glass_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Window_Glass_Normal.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    },
+    {
+      "name": "Window_Glass_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": false
+    }
+  ]
+}

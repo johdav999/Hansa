@@ -76,6 +76,7 @@ namespace Hansa::Automation
 				OutPermission = EHansaAutomationPermissionLevel::ControlledActions;
 				return true;
 			case EHansaAutomationOperation::FixtureLoad:
+			case EHansaAutomationOperation::FixtureReset:
 				OutCapability = EHansaAutomationCapability::FixtureControl;
 				OutPermission = EHansaAutomationPermissionLevel::FixtureControl;
 				return true;
@@ -94,6 +95,14 @@ namespace Hansa::Automation
 			case EHansaAutomationOperation::WaitFor:
 				OutCapability = EHansaAutomationCapability::WaitAssertions;
 				OutPermission = EHansaAutomationPermissionLevel::ReadOnly;
+				return true;
+			case EHansaAutomationOperation::EvidenceRead:
+				OutCapability = EHansaAutomationCapability::Evidence;
+				OutPermission = EHansaAutomationPermissionLevel::ReadOnly;
+				return true;
+			case EHansaAutomationOperation::EvidenceWrite:
+				OutCapability = EHansaAutomationCapability::Evidence;
+				OutPermission = EHansaAutomationPermissionLevel::ControlledActions;
 				return true;
 			default:
 				return false;
@@ -119,7 +128,8 @@ namespace Hansa::Automation
 			MakeCapability(EHansaAutomationCapability::FixtureControl, EHansaAutomationPermissionLevel::FixtureControl, true),
 			MakeCapability(EHansaAutomationCapability::SemanticUi, EHansaAutomationPermissionLevel::ReadOnly, true),
 			MakeCapability(EHansaAutomationCapability::Screenshots, EHansaAutomationPermissionLevel::ReadOnly, false),
-			MakeCapability(EHansaAutomationCapability::WaitAssertions, EHansaAutomationPermissionLevel::ReadOnly, false)
+			MakeCapability(EHansaAutomationCapability::WaitAssertions, EHansaAutomationPermissionLevel::ReadOnly, false),
+			MakeCapability(EHansaAutomationCapability::Evidence, EHansaAutomationPermissionLevel::ReadOnly, false)
 		};
 		return Result;
 	}

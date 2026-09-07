@@ -20,7 +20,10 @@ public class HansaTests : ModuleRules
 			"Hansa",
 			"HansaAutomation",
 			"HansaSimulation",
-			"Json"
+			"InputCore",
+			"Json",
+			"Slate",
+			"SlateCore"
 		});
 	}
 }

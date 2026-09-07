@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Network/HansaMultiplayerTypes.h"
 
 #include "HansaStrategyPlayerController.generated.h"
 
@@ -14,7 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	AActor*, SelectedActor,
 	const FHitResult&, HitResult);
 
-/** Enhanced Input adapter and world-selection trace for the strategy camera. */
+/** Enhanced Input adapter, world selection, and owner-only multiplayer RPC/projection endpoint. */
 UCLASS(Blueprintable)
 class HANSA_API AHansaStrategyPlayerController : public APlayerController
 {
@@ -26,6 +27,27 @@ public:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void SetupInputComponent() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION(Server, Reliable)
+	void ServerSubmitHansaIntent(const FHansaClientCommandIntent& Intent);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetHansaInterest(const FHansaClientInterest& Interest);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestHansaProjectionRefresh(int64 ClientKnownRevision);
+
+	UFUNCTION(Client, Reliable)
+	void ClientReceiveHansaCommandFeedback(const FHansaClientCommandFeedback& Feedback);
+
+	void SetServerAuthorityIdentity(uint64 PrincipalId, int64 HouseId);
+	void PublishServerProjection(const FHansaClientProjectionSnapshot& Projection);
+	void PublishCommandFeedback(const FHansaClientCommandFeedback& Feedback);
+
+	[[nodiscard]] const FHansaClientProjectionSnapshot& GetClientProjection() const { return ClientProjection; }
+	[[nodiscard]] const FHansaClientCommandFeedback& GetLastCommandFeedback() const { return LastCommandFeedback; }
+	[[nodiscard]] uint64 GetAuthorityPrincipalId() const { return AuthorityPrincipalId; }
 
 	UFUNCTION(BlueprintCallable, Category = "Hansa|World|Selection")
 	bool TraceWorldSelection(FHitResult& OutHit) const;
@@ -61,6 +83,9 @@ public:
 	float SelectionTraceDistance = 200000.0f;
 
 private:
+	UFUNCTION()
+	void OnRep_HansaClientProjection();
+
 	void EnsureStrategyInputObjects();
 	void AddDefaultMappings();
 	class AHansaStrategyCameraPawn* GetStrategyCameraPawn() const;
@@ -75,6 +100,14 @@ private:
 	void HandleFastPanCompleted(const FInputActionValue& Value);
 	void HandleSelect(const FInputActionValue& Value);
 
+	UPROPERTY(ReplicatedUsing = OnRep_HansaClientProjection)
+	FHansaClientProjectionSnapshot ClientProjection;
+
+	UPROPERTY(Transient)
+	FHansaClientCommandFeedback LastCommandFeedback;
+
+	uint64 AuthorityPrincipalId = 0;
+	int64 AuthorityHouseId = 0;
 	TWeakObjectPtr<AActor> SelectedWorldActor;
 	bool bOwnsRuntimeMappingContext = false;
 };

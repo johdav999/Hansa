@@ -27,6 +27,7 @@ namespace Hansa::Automation
 		case EHansaAutomationCapability::SemanticUi: return TEXT("semantic-ui");
 		case EHansaAutomationCapability::Screenshots: return TEXT("screenshots");
 		case EHansaAutomationCapability::WaitAssertions: return TEXT("wait-assertions");
+		case EHansaAutomationCapability::Evidence: return TEXT("evidence");
 		default: return TEXT("unknown-capability");
 		}
 	}
@@ -45,6 +46,9 @@ namespace Hansa::Automation
 		case EHansaAutomationOperation::SemanticUiAction: return TEXT("semantic_ui_action");
 		case EHansaAutomationOperation::ScreenshotCapture: return TEXT("screenshot_capture");
 		case EHansaAutomationOperation::WaitFor: return TEXT("wait_for");
+		case EHansaAutomationOperation::FixtureReset: return TEXT("fixture_reset");
+		case EHansaAutomationOperation::EvidenceRead: return TEXT("evidence_read");
+		case EHansaAutomationOperation::EvidenceWrite: return TEXT("evidence_write");
 		default: return TEXT("unknown_operation");
 		}
 	}
@@ -105,7 +109,8 @@ namespace Hansa::Automation
 			EHansaAutomationCapability::FixtureControl,
 			EHansaAutomationCapability::SemanticUi,
 			EHansaAutomationCapability::Screenshots,
-			EHansaAutomationCapability::WaitAssertions })
+			EHansaAutomationCapability::WaitAssertions,
+			EHansaAutomationCapability::Evidence })
 		{
 			if (Text.Equals(LexToString(Candidate), ESearchCase::IgnoreCase))
 			{

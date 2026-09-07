@@ -1,7 +1,13 @@
 #include "World/HansaBuildingWorldProjection.h"
 
 #include "Definitions/HansaEconomicRegistry.h"
+#include "Definitions/HansaEconomicDefinitions.h"
+#include "Definitions/HansaTradeDefinitions.h"
 #include "Definitions/HansaSimulationDefinitionContext.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/ChildActorComponent.h"
+#include "GameFramework/RotatingMovementComponent.h"
+#include "Engine/StaticMesh.h"
 #include "Engine/World.h"
 #include "Misc/AutomationTest.h"
 #include "Queries/HansaSimulationReadOnly.h"
@@ -250,6 +256,187 @@ bool FHansaPlacementProjectionActorLifecycleTest::RunTest(const FString& Paramet
 	TestEqual(TEXT("Explicit teardown releases every managed mapping"), Manager->GetProjectionCount(), 0);
 	World->DestroyWorld(false);
 	return !HasAnyErrors();
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FHansaLaborerResidenceApprovedMeshTest,
+	"Hansa.UI.World.LaborerResidenceUsesApprovedMesh",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaLaborerResidenceApprovedMeshTest::RunTest(const FString& Parameters)
+{
+	using namespace Hansa::Simulation;
+	using namespace Hansa::Tests::WorldProjection;
+	(void)Parameters;
+
+	UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, TEXT("HansaLaborerResidenceMeshTestWorld"));
+	if (!TestNotNull(TEXT("Transient laborer-residence test world is created"), World))
+	{
+		return false;
+	}
+	AHansaLubeckWorldFoundation* Foundation = World->SpawnActor<AHansaLubeckWorldFoundation>();
+	AHansaBuildingWorldProjectionActor* Residence = World->SpawnActor<AHansaBuildingWorldProjectionActor>();
+	if (!TestNotNull(TEXT("Laborer residence projection prerequisites spawn"), Foundation) ||
+		!TestNotNull(TEXT("Laborer residence projection Actor spawns"), Residence))
+	{
+		World->DestroyWorld(false);
+		return false;
+	}
+
+	FHansaBuildingWorldProjection Projection = MakeWorldProjection(
+		3, TEXT("Building.Residence.Laborer"), 4, FHansaRate::Scale);
+	Projection.FootprintWidthCells = 2;
+	Projection.FootprintHeightCells = 2;
+	Projection.OccupiedCells = { { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 } };
+	Residence->ApplyProjection(Projection, *Foundation);
+
+	UStaticMesh* Mesh = Residence->BuildingMesh->GetStaticMesh();
+	TestTrue(TEXT("Ready laborer residence uses the approved R02 production mesh"),
+		Mesh != nullptr && Mesh->GetPathName() ==
+			TEXT("/Game/Mesh/LaborerResidence/Materials_R02/Meshes/SM_LaborerResidence.SM_LaborerResidence"));
+	TestTrue(TEXT("The approved residence renders at native scale with authored materials"),
+		Residence->BuildingMesh->GetRelativeScale3D().Equals(FVector::OneVector) &&
+		Residence->BuildingMesh->GetMaterial(0) != nullptr);
+
+	Projection.Status = EHansaBuildingWorldStatus::UnderConstruction;
+	Projection.ConstructionProgress = Require(FHansaRate::TryMakeNormalized(0));
+	Residence->ApplyProjection(Projection, *Foundation);
+	TestTrue(TEXT("The residence construction placeholder remains above the placement plane"),
+		Residence->ConstructionPlaceholder->IsVisible() &&
+		Residence->ConstructionPlaceholder->GetRelativeLocation().Z > 0.0);
+
+	World->DestroyWorld(false);
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FHansaDataDrivenPresentationTest,
+	"Hansa.UI.World.DataDrivenPresentation",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaDataDrivenPresentationTest::RunTest(const FString& Parameters)
+{
+	using namespace Hansa::Simulation;
+	using namespace Hansa::Tests::WorldProjection;
+	UHansaDefinitionBase* Definition = UHansaDefinitionBase::ResolveByStableId(TEXT("Building.Bakery"));
+	if (!TestNotNull(TEXT("Bakery resolves through Asset Manager stable identity"), Definition)) return false;
+	const TSoftObjectPtr<UStaticMesh> Original = Definition->PresentationMesh;
+	TestEqual(TEXT("Bakery data references the approved production mesh"), Original.ToSoftObjectPath().ToString(),
+		FString(TEXT("/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery.SM_HansaBakery")));
+	UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, TEXT("HansaDataDrivenMeshWorld"));
+	AHansaLubeckWorldFoundation* Foundation = World->SpawnActor<AHansaLubeckWorldFoundation>();
+	AHansaBuildingWorldProjectionActor* Actor = World->SpawnActor<AHansaBuildingWorldProjectionActor>();
+	FHansaBuildingWorldProjection Projection = MakeWorldProjection(6, TEXT("Building.Bakery"), 4, FHansaRate::Scale);
+	Projection.FootprintWidthCells = 3;
+	Projection.FootprintHeightCells = 2;
+	Projection.OccupiedCells = { {4,2}, {4,3}, {5,2}, {5,3}, {6,2}, {6,3} };
+	// Change the data in memory only: the actor must respond without a definition-ID mesh switch.
+	Definition->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Engine/BasicShapes/Sphere.Sphere")));
+	Actor->ApplyProjection(Projection, *Foundation);
+	TestEqual(TEXT("Assigned data selects the mesh"), Actor->BuildingMesh->GetStaticMesh().Get(), Definition->LoadPresentationMesh());
+	TestTrue(TEXT("Authored mesh retains its own material"), Actor->BuildingMesh->GetMaterial(0) == Definition->LoadPresentationMesh()->GetMaterial(0));
+	Definition->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Engine/BasicShapes/Cube.Cube")));
+	Actor->ApplyProjection(Projection, *Foundation);
+	TestTrue(TEXT("Changing data back rebuilds placeholder material state"), Actor->BuildingMesh->GetMaterial(0) != Definition->LoadPresentationMesh()->GetMaterial(0));
+	Definition->PresentationMesh = Original;
+	Actor->ApplyProjection(Projection, *Foundation);
+	const FVector Scale = Actor->BuildingMesh->GetRelativeScale3D();
+	if (Original.ToSoftObjectPath().ToString() != TEXT("/Engine/BasicShapes/Cube.Cube"))
+	{
+		TestTrue(TEXT("Authored mesh fitting preserves proportions"), FMath::IsNearlyEqual(Scale.X, Scale.Y) && FMath::IsNearlyEqual(Scale.Y, Scale.Z));
+		const FBox Bounds = Actor->BuildingMesh->GetStaticMesh()->GetBoundingBox();
+		TestTrue(TEXT("Mesh stays within the unrotated placement footprint"), Bounds.GetSize().X * Scale.X <= 1160.01 && Bounds.GetSize().Y * Scale.Y <= 760.01);
+	}
+	Projection.Status = EHansaBuildingWorldStatus::UnderConstruction;
+	Actor->ApplyProjection(Projection, *Foundation);
+	TestTrue(TEXT("Construction continues using the normal placeholder"), Actor->ConstructionPlaceholder->IsVisible() && !Actor->BuildingMesh->IsVisible());
+	World->DestroyWorld(false);
+
+	UHansaGoodDefinition* Good = NewObject<UHansaGoodDefinition>();
+	UHansaVehicleDefinition* Vehicle = NewObject<UHansaVehicleDefinition>();
+	const uint64 GoodHash = Good->ComputeDeterministicContentHash();
+	Good->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Engine/BasicShapes/Sphere.Sphere")));
+	Vehicle->PresentationMesh = Good->PresentationMesh;
+	TestNotNull(TEXT("Goods use the common mesh contract"), Good->LoadPresentationMesh());
+	TestEqual(TEXT("Vehicles use the same mesh contract"), Vehicle->LoadPresentationMesh(), Good->LoadPresentationMesh());
+	TestNotEqual(TEXT("Optional item mesh edits participate in content hashing"), Good->ComputeDeterministicContentHash(), GoodHash);
+	Good->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Game/Hansa/Generated/Staging/Draft.Draft")));
+	TestNull(TEXT("Staging meshes cannot be resolved for game presentation"), Good->LoadPresentationMesh());
+	TestNull(TEXT("Unknown stable identity has a safe fallback"), UHansaDefinitionBase::ResolveByStableId(TEXT("Building.DoesNotExist")));
+	return !HasAnyErrors();
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+ FHansaMillBlueprintPresentationTest,
+ "Hansa.UI.World.MillBlueprintPresentation",
+ EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaMillBlueprintPresentationTest::RunTest(const FString& Parameters)
+{
+ using namespace Hansa::Simulation;
+ using namespace Hansa::Tests::WorldProjection;
+ UHansaBuildingDefinition* Definition = Cast<UHansaBuildingDefinition>(UHansaDefinitionBase::ResolveByStableId(TEXT("Building.Mill")));
+ if (!TestNotNull(TEXT("Mill definition resolves"), Definition)) return false;
+ UClass* Class = Definition->LoadPresentationActorClass();
+ if (!TestNotNull(TEXT("Mill resolves its promoted Blueprint class"), Class)) return false;
+ TestEqual(TEXT("Mill uses the requested Blueprint"), Class->GetPathName(), FString(TEXT("/Game/Hansa/Core/Buildings/BP_HansaWindmill_Animated.BP_HansaWindmill_Animated_C")));
+ UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, TEXT("HansaAnimatedMillTest"));
+ AHansaLubeckWorldFoundation* Foundation = World->SpawnActor<AHansaLubeckWorldFoundation>();
+ AHansaBuildingWorldProjectionActor* Actor = World->SpawnActor<AHansaBuildingWorldProjectionActor>();
+ FHansaBuildingWorldProjection Projection = MakeWorldProjection(12, TEXT("Building.Mill"), 4, FHansaRate::Scale);
+ Projection.FootprintWidthCells = 3; Projection.FootprintHeightCells = 3;
+ Projection.OccupiedCells = { {4,2}, {4,3}, {4,4}, {5,2}, {5,3}, {5,4}, {6,2}, {6,3}, {6,4} };
+ Actor->ApplyProjection(Projection, *Foundation);
+ AActor* Mill = Actor->BuildingPresentation->GetChildActor();
+ if (TestNotNull(TEXT("Projection creates a live Blueprint actor"), Mill))
+ {
+  TestEqual(TEXT("Spawned visual has authored class"), Mill->GetClass(), Class);
+  TestFalse(TEXT("Proxy box is invisible"), Actor->BuildingMesh->IsVisible());
+  TestEqual(TEXT("Proxy remains selectable"), Actor->BuildingMesh->GetCollisionResponseToChannel(ECC_Visibility), ECR_Block);
+  UChildActorComponent* Sails = Mill->FindComponentByClass<UChildActorComponent>();
+  AActor* Rotor = Sails != nullptr ? Sails->GetChildActor() : nullptr;
+  if (TestNotNull(TEXT("Nested rotor is retained"), Rotor))
+  {
+   URotatingMovementComponent* Movement = Rotor->FindComponentByClass<URotatingMovementComponent>();
+   if (TestNotNull(TEXT("Native animation component survives game presentation"), Movement))
+   {
+    TestEqual(TEXT("Default speed is 6 rpm"), Movement->RotationRate.Pitch, 36.0);
+    Movement->SetUpdatedComponent(Rotor->GetRootComponent());
+    const FQuat Before = Rotor->GetActorQuat();
+    Movement->TickComponent(0.5f, LEVELTICK_All, nullptr);
+    TestFalse(TEXT("Sails turn during runtime tick"), Rotor->GetActorQuat().Equals(Before));
+    const FQuat Turned = Rotor->GetActorQuat();
+    Actor->ApplyProjection(Projection, *Foundation);
+    TestTrue(TEXT("Projection refresh preserves animation phase"), Rotor->GetActorQuat().Equals(Turned));
+   }
+   Projection.Status = EHansaBuildingWorldStatus::UnderConstruction;
+   Actor->ApplyProjection(Projection, *Foundation);
+   TestTrue(TEXT("Construction hides the complete nested visual"), Mill->IsHidden() && Rotor->IsHidden() && Actor->ConstructionPlaceholder->IsVisible());
+   Projection.Status = EHansaBuildingWorldStatus::Ready;
+   Actor->ApplyProjection(Projection, *Foundation);
+   TestTrue(TEXT("Completion reveals the same animated assembly"), !Mill->IsHidden() && !Rotor->IsHidden());
+  }
+  const FVector Scale = Actor->BuildingPresentation->GetRelativeScale3D();
+  TestTrue(TEXT("Blueprint fit preserves proportions"), Scale.X > 0 && FMath::IsNearlyEqual(Scale.X, Scale.Y) && FMath::IsNearlyEqual(Scale.Y, Scale.Z));
+  Actor->SetSelected(true);
+  TestTrue(TEXT("Selection outline remains on stable projection"), Actor->SelectionOutline->IsVisible());
+ }
+ Actor->Destroy();
+ TestFalse(TEXT("Destroying projection destroys its visual"), IsValid(Mill));
+ World->DestroyWorld(false);
+ UHansaBuildingDefinition* Draft = NewObject<UHansaBuildingDefinition>();
+ const uint64 LegacyHash = Draft->ComputeDeterministicContentHash();
+ Draft->PresentationActorClass = Definition->PresentationActorClass;
+ TestNotEqual(TEXT("Actor reference participates in content hash"), Draft->ComputeDeterministicContentHash(), LegacyHash);
+ Draft->PresentationActorClass.Reset();
+ TestEqual(TEXT("Clearing optional actor preserves legacy mesh hash"), Draft->ComputeDeterministicContentHash(), LegacyHash);
+ Draft->PresentationActorClass = TSoftClassPtr<AActor>(FSoftObjectPath(TEXT("/Game/Hansa/Generated/Staging/Draft.Draft_C")));
+ TestNull(TEXT("Staging actor classes cannot be loaded for game presentation"), Draft->LoadPresentationActorClass());
+ TArray<FHansaDefinitionValidationIssue> Issues; Draft->ValidateDefinition(Issues);
+ TestTrue(TEXT("Invalid actor reference receives an actionable validation issue"), Issues.ContainsByPredicate([](const FHansaDefinitionValidationIssue& Issue){ return Issue.Code == TEXT("HSA-BUILDING-009"); }));
+ return !HasAnyErrors();
 }
 
 #endif

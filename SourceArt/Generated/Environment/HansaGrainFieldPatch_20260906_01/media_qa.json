@@ -1,0 +1,156 @@
+{
+  "textures": [
+    {
+      "file": "field-soil--dry--1254x1254--v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "grain-straw--mature--1254x1254--v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Husk_BaseColor.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Husk_Normal.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Husk_Roughness.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Leaf_BaseColor.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Leaf_Normal.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Leaf_Roughness.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Soil_BaseColor.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Soil_Normal.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Soil_Roughness.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Straw_BaseColor.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Straw_Normal.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    },
+    {
+      "file": "M_Grain_Straw_Roughness.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB"
+    }
+  ],
+  "videos": [
+    {
+      "file": "wind.mp4",
+      "metadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "width": 800,
+            "height": 800,
+            "r_frame_rate": "24/1",
+            "nb_frames": "192"
+          }
+        ],
+        "format": {
+          "duration": "8.000000"
+        }
+      },
+      "decode": "passed"
+    },
+    {
+      "file": "turntable.mp4",
+      "metadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "width": 800,
+            "height": 800,
+            "r_frame_rate": "24/1",
+            "nb_frames": "96"
+          }
+        ],
+        "format": {
+          "duration": "4.000000"
+        }
+      },
+      "decode": "passed"
+    }
+  ]
+}

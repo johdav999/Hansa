@@ -1,0 +1,34 @@
+{
+  "seams": [
+    {
+      "position_error_cm": 0.0,
+      "tangent_error_cm": 0.0
+    },
+    {
+      "position_error_cm": 0.0,
+      "tangent_error_cm": 0.0
+    }
+  ],
+  "segments": [
+    {
+      "name": "RoadSegment0",
+      "bounds": "(<Struct 'Vector' (0x0000028F9F2EC0B0) {x: -400.000031, y: -246.124191, z: -8.214238}>, <Struct 'Vector' (0x0000028FAA398FB0) {x: 400.000031, y: 246.124191, z: 5.291560}>)",
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "mesh": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m.SM_DirtRoad_Straight_8m"
+    },
+    {
+      "name": "RoadSegment1",
+      "bounds": "(<Struct 'Vector' (0x0000028F9F2EC0B0) {x: -400.000031, y: -246.124191, z: -8.214238}>, <Struct 'Vector' (0x0000028FAA398FB0) {x: 400.000031, y: 246.124191, z: 5.291560}>)",
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "mesh": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m.SM_DirtRoad_Straight_8m"
+    },
+    {
+      "name": "RoadSegment2",
+      "bounds": "(<Struct 'Vector' (0x0000028F9F2EC0B0) {x: -400.000031, y: -246.124191, z: -8.214238}>, <Struct 'Vector' (0x0000028FAA398FB0) {x: 400.000031, y: 246.124191, z: 5.291560}>)",
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "mesh": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m.SM_DirtRoad_Straight_8m"
+    }
+  ],
+  "saved_blueprint": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/BP_DirtRoad_SplineExample",
+  "usage": "Saved native example; arbitrary path edits require rebuilding spline mesh segments."
+}

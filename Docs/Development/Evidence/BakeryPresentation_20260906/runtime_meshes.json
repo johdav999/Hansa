@@ -1,0 +1,167 @@
+[
+  {
+    "actor": {
+      "refPath": "/Game/Hansa/World/Cities/Lubeck/UEDPIE_0_L_Lubeck_MVP.L_Lubeck_MVP:PersistentLevel.HansaBuildingProjection_1_1"
+    },
+    "mesh": {
+      "staticMesh": {
+        "refPath": "/Engine/BasicShapes/Cube.Cube"
+      },
+      "relativeLocation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "relativeScale3D": {
+        "x": 15.6,
+        "y": 15.6,
+        "z": 3.2
+      },
+      "bVisible": true
+    },
+    "root": {
+      "relativeLocation": {
+        "x": -7200,
+        "y": 800,
+        "z": 260
+      },
+      "relativeRotation": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    }
+  },
+  {
+    "actor": {
+      "refPath": "/Game/Hansa/World/Cities/Lubeck/UEDPIE_0_L_Lubeck_MVP.L_Lubeck_MVP:PersistentLevel.HansaBuildingProjection_2_1"
+    },
+    "mesh": {
+      "staticMesh": {
+        "refPath": "/Engine/BasicShapes/Cube.Cube"
+      },
+      "relativeLocation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "relativeScale3D": {
+        "x": 11.6,
+        "y": 11.6,
+        "z": 3.2
+      },
+      "bVisible": true
+    },
+    "root": {
+      "relativeLocation": {
+        "x": -5400,
+        "y": 600,
+        "z": 260
+      },
+      "relativeRotation": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    }
+  },
+  {
+    "actor": {
+      "refPath": "/Game/Hansa/World/Cities/Lubeck/UEDPIE_0_L_Lubeck_MVP.L_Lubeck_MVP:PersistentLevel.HansaBuildingProjection_3_1"
+    },
+    "mesh": {
+      "staticMesh": {
+        "refPath": "/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery.SM_HansaBakery"
+      },
+      "relativeLocation": {
+        "x": -6.492253969900725,
+        "y": 68.5501667949705,
+        "z": 0
+      },
+      "relativeScale3D": {
+        "x": 0.39004362329997433,
+        "y": 0.39004362329997433,
+        "z": 0.39004362329997433
+      },
+      "bVisible": true
+    },
+    "root": {
+      "relativeLocation": {
+        "x": -3800,
+        "y": 400,
+        "z": 99.21991293938734
+      },
+      "relativeRotation": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    }
+  },
+  {
+    "actor": {
+      "refPath": "/Game/Hansa/World/Cities/Lubeck/UEDPIE_0_L_Lubeck_MVP.L_Lubeck_MVP:PersistentLevel.HansaBuildingProjection_7_1"
+    },
+    "mesh": {
+      "staticMesh": {
+        "refPath": "/Engine/BasicShapes/Cube.Cube"
+      },
+      "relativeLocation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "relativeScale3D": {
+        "x": 15.6,
+        "y": 11.6,
+        "z": 3.2
+      },
+      "bVisible": true
+    },
+    "root": {
+      "relativeLocation": {
+        "x": -2000,
+        "y": 600,
+        "z": 260
+      },
+      "relativeRotation": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    }
+  },
+  {
+    "actor": {
+      "refPath": "/Game/Hansa/World/Cities/Lubeck/UEDPIE_0_L_Lubeck_MVP.L_Lubeck_MVP:PersistentLevel.HansaBuildingProjection_9_1"
+    },
+    "mesh": {
+      "staticMesh": {
+        "refPath": "/Game/Mesh/LaborerResidence/Materials_R02/Meshes/SM_LaborerResidence.SM_LaborerResidence"
+      },
+      "relativeLocation": {
+        "x": 0.057464599609375,
+        "y": 3.0517578125e-05,
+        "z": 0
+      },
+      "relativeScale3D": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "bVisible": true
+    },
+    "root": {
+      "relativeLocation": {
+        "x": -800,
+        "y": 400,
+        "z": 100.59623342752457
+      },
+      "relativeRotation": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    }
+  }
+]

@@ -1,0 +1,5 @@
+material,color_input,physical_coverage,roughness,relief,portable_maps,color_space,normal_convention,native_dimensions,median_uv_density_px_per_m
+M_Grain_Straw,grain-straw--mature--1254x1254--v1.png,10cm source study; UV reuse on stems,0.72,independent procedural 0.15mm,BaseColor Roughness Normal,sRGB color; linear data,OpenGL +Y,1254x1254,31509
+M_Grain_Husk,grain-straw--mature--1254x1254--v1.png,10cm source study; reused over each small husk,0.79,independent procedural 0.15mm,BaseColor Roughness Normal,sRGB color; linear data,OpenGL +Y,1254x1254,45279
+M_Grain_Leaf,grain-straw--mature--1254x1254--v1.png,10cm source study; aligned along each leaf,0.81,independent procedural 0.15mm,BaseColor Roughness Normal,sRGB color; linear data,OpenGL +Y,1254x1254,20363
+M_Grain_Soil,field-soil--dry--1254x1254--v1.png,1m square repeating across 4m ground,0.94,independent procedural 0.15mm,BaseColor Roughness Normal,sRGB color; linear data,OpenGL +Y,1254x1254,1254

@@ -82,6 +82,29 @@ export class HansaAutomationClient {
     return this.#call("fixture_load", { fixtureId }, { sessionRequired: true });
   }
 
+  fixtureReset() {
+    return this.#call("fixture_reset", {}, { sessionRequired: true });
+  }
+
+  saveList() {
+    return this.#call("save_list", {}, { sessionRequired: true });
+  }
+
+  saveCreate(slotId) {
+    return this.#call("save_create", { slotId }, { sessionRequired: true });
+  }
+
+  saveLoad(slotId) {
+    return this.#call("save_load", { slotId }, { sessionRequired: true });
+  }
+
+  saveWaitFor(parameters) {
+    return this.#call("save_wait_for", parameters, { sessionRequired: true });
+  }
+
+  saveAssertRoundTrip() {
+    return this.#call("save_assert_roundtrip", {}, { sessionRequired: true });
+  }
   gameplayQuery(query, parameters = {}) {
     return this.#call("gameplay_query", { query, ...parameters }, { sessionRequired: true });
   }
@@ -131,6 +154,19 @@ export class HansaAutomationClient {
       width,
       height,
       ...(bundleId === undefined ? {} : { bundleId }),
+    }, { sessionRequired: true });
+  }
+
+  logsGet({ maximumEntries = 256 } = {}) {
+    return this.#call("logs_get", { maximumEntries }, { sessionRequired: true });
+  }
+
+  evidenceBundleCreate({ bundleId, testId, assertions = [], mcpProtocolVersion = "2025-11-25" }) {
+    return this.#call("evidence_bundle_create", {
+      bundleId,
+      testId,
+      assertions,
+      mcpProtocolVersion,
     }, { sessionRequired: true });
   }
 }

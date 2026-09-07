@@ -23,6 +23,8 @@ Architecture Decision Records (ADRs) capture durable technical decisions that im
 | [ADR-0008](0008-automation-session-and-capability-boundary.md) | Accepted | Opt-in authenticated automation sessions with negotiated capabilities and permissions |
 | [ADR-0009](0009-mcp-sidecar-and-framed-named-pipe.md) | Accepted | External MCP STDIO sidecar and bounded Windows named-pipe framing |
 | [ADR-0010](0010-semantic-ui-waits-and-native-evidence.md) | Accepted | Widget-neutral semantic UI, observable waits and native screenshot evidence |
+| [ADR-0011](0011-generic-replication-client-projections.md) | Accepted | Generic replication with server authority and owner-scoped client projections |
+| [ADR-0012](0012-generation-worker-protocol-and-store.md) | Accepted | External generation worker protocol, resumable job store, and provider contract |
 
 ## ADR rules
 
@@ -52,6 +54,9 @@ flowchart LR
 	A5 --> A8
 	A8 --> A9[ADR-0009\nMCP sidecar and pipe framing]
 	A9 --> A10[ADR-0010\nsemantic UI, waits and evidence]
+	A5 --> A11[ADR-0011\nserver authority and client projections]
+	A6 --> A11
+    A1 --> A12[ADR-0012\ngeneration worker and job store]
 ```
 
 The audited implementation status for these decisions is maintained in [Development/Baseline.md](../../Development/Baseline.md).

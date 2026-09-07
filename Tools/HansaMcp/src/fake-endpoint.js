@@ -11,6 +11,7 @@ const CAPABILITIES = [
   { name: "semantic-ui", minimumPermission: "ReadOnly", mutating: true },
   { name: "screenshots", minimumPermission: "ReadOnly", mutating: false },
   { name: "wait-assertions", minimumPermission: "ReadOnly", mutating: false },
+  { name: "evidence", minimumPermission: "ReadOnly", mutating: false },
 ];
 
 const PROOF_NODES = new Map([
@@ -72,6 +73,53 @@ function createIntegratedNodes() {
   ];
   for (const [id, role, label] of entries) result.set(id, { id, role, label, parentId: id === "BuildMode.Integrated" ? "BuildMode.Screen" : "BuildMode.Integrated", actions: [], state: semanticState(), children: [], bounds: { x: 40, y: 40, width: 300, height: 40 } });
   return result;
+}
+
+function createRouteNodes() {
+  const rows = [
+    ["RouteDelivery.Root", "screen", "Route delivery evidence", "", []],
+    ["RouteDelivery.Tab.Route", "button", "Route editor", "RouteDelivery.Root", ["activate"]],
+    ["RouteDelivery.Tab.Market", "button", "Market effect", "RouteDelivery.Root", ["activate"]],
+    ["RouteDelivery.RouteEditor", "panel", "Relief route editor", "RouteDelivery.Root", []],
+    ["RouteEditor.Action.Save", "button", "Save relief route", "RouteDelivery.RouteEditor", ["activate"]],
+    ["RouteEditor.Action.Start", "button", "Start route", "RouteDelivery.RouteEditor", ["activate"]],
+    ["RouteEditor.Action.Cancel", "button", "Cancel route", "RouteDelivery.RouteEditor", ["activate"]],
+    ["RouteDelivery.Status.Departed", "status", "Route departed", "RouteDelivery.Root", []],
+    ["RouteDelivery.Status.Arrived", "status", "Route arrived", "RouteDelivery.Root", []],
+    ["RouteDelivery.Status.Delivered", "status", "Cargo delivered", "RouteDelivery.Root", []],
+    ["RouteDelivery.Cargo", "status", "Cog cargo", "RouteDelivery.Root", []],
+    ["RouteDelivery.Market", "panel", "Lubeck grain market", "RouteDelivery.Root", []],
+    ["RouteDelivery.Market.State", "status", "Reserve and price response", "RouteDelivery.Market", []],
+  ];
+  const result = new Map(rows.map(([id, role, label, parentId, actions], index) => [id, { id, role, label, parentId, actions, children: [], bounds: { x: 40 + (index % 3) * 380, y: 40 + Math.floor(index / 3) * 100, width: 340, height: 70 }, state: semanticState({ visible: !id.startsWith("RouteDelivery.Market") }) }]));
+  result.get("RouteDelivery.Tab.Route").state.selected = true;
+  for (const node of result.values()) if (node.parentId) result.get(node.parentId)?.children.push(node.id);
+  return result;
+}
+
+function createGoldenNodes() {
+  const rows = [
+    ["HUD.Root", "screen", "Lübeck shortage recovery", "", []],
+    ["BuildMenu.Action.ConfirmBreadChain", "button", "Confirm local bread chain", "HUD.Root", ["activate"]],
+    ["BuildMenu.Status.BreadChain", "status", "Bread chain ready", "HUD.Root", []],
+    ["Market.Good.Grain", "status", "Grain below desired reserve", "HUD.Root", []],
+    ["Market.Action.DiagnoseGrain", "button", "Diagnose grain shortage", "HUD.Root", ["activate"]],
+    ["Market.Status.GrainDiagnosed", "status", "Grain shortage diagnosis", "HUD.Root", []],
+    ["TradeRoute.Editor.Action.StartRelief", "button", "Start sea and land relief routes", "HUD.Root", ["activate"]],
+    ["TradeRoute.Editor.Status.Delivered", "status", "Relief cargo delivered", "HUD.Root", []],
+    ["Research.Action.QueueMarketReports", "button", "Queue market reports", "HUD.Root", ["activate"]],
+    ["Research.Status.MarketReports", "status", "Market reports applied", "HUD.Root", []],
+    ["HUD.Status.MerchantAI", "status", "Merchant AI decisions", "HUD.Root", []],
+    ["SaveLoad.Status.RoundTrip", "status", "Save round trip", "HUD.Root", []],
+    ["Scenario.Status.Victory", "status", "Scenario victory", "HUD.Root", []],
+  ];
+  const nodes = new Map(rows.map(([id, role, label, parentId, actions], index) => [id, {
+    id, role, label, parentId, actions, children: [],
+    bounds: { x: 32 + (index % 3) * 400, y: 32 + Math.floor(index / 3) * 120, width: 360, height: 80 },
+    state: semanticState(id === "Market.Good.Grain" ? { warning: true, valueType: "market-good", value: "stock=16000;reserve=30000;price=1000" } : {}),
+  }]));
+  for (const node of nodes.values()) if (node.parentId) nodes.get(node.parentId)?.children.push(node.id);
+  return nodes;
 }
 
 function errorResponse(requestId, code, message, remedy, retryable = false) {
@@ -146,17 +194,37 @@ export class FakeHansaEndpoint {
     }
     if (request.operation === "fixture_list") {
       if (!this.session.grantedCapabilities.includes("gameplay.query")) return errorResponse(requestId, "MissingCapability", "The active session lacks gameplay.query.", "Open a new session requesting gameplay.query.");
+	  const goldenProfile = this.session.grantedCapabilities.includes("evidence");
       return success({ fixtures: [
         { fixtureId: "mvp_production_chains_v1", fixtureVersion: 2, registryHash: "B0481C9F740D6C18", purpose: "Headless deterministic MVP production chains" },
-        { fixtureId: "lubeck_grain_shortage_v1", fixtureVersion: 2, registryHash: "B0481C9F740D6C18", purpose: "Lubeck grain shortage onset, causal inspection, and controlled recovery" },
+		goldenProfile
+		  ? { fixtureId: "lubeck_grain_shortage_v1", fixtureVersion: 4, registryHash: "724BD5DE8DB9C292", fixtureHash: "3E1E979BCEF285C4", campaignSeed: "4C554245434B4752", purpose: "Full Lübeck shortage recovery golden path" }
+		  : { fixtureId: "lubeck_grain_shortage_v1", fixtureVersion: 1, registryHash: "B0481C9F740D6C18", purpose: "Lubeck grain shortage onset, causal inspection, and controlled recovery" },
+        { fixtureId: "route_delivery_v1", fixtureVersion: 4, registryHash: "B0481C9F740D6C18", purpose: "Lubeck shortage relief by the Rostock cog route" },
         { fixtureId: "empty_lubeck_build_v1", fixtureVersion: 1, registryHash: "534F35504C414345", purpose: "Empty Lübeck road and building placement semantic flow" },
         { fixtureId: "integrated_lubeck_city_v1", fixtureVersion: 1, registryHash: "5330365030344C42", purpose: "Integrated Lübeck construction, logistics, production, and population world slice" },
+        { fixtureId: "save_roundtrip_v1", fixtureVersion: 1, registryHash: "B0481C9F740D6C18", purpose: "Controlled save/load round trip" },
       ] });
+    }
+    if (request.operation === "fixture_reset") {
+      if (!this.fixture) return errorResponse(requestId, "InvalidRequest", "No fixture is active.", "Load an allowlisted fixture first.");
+      return this.handle({ ...request, operation: "fixture_load", payload: { fixtureId: this.fixture.id } });
     }
     if (request.operation === "fixture_load") {
       if (!this.session.grantedCapabilities.includes("fixture.control")) return errorResponse(requestId, "MissingCapability", "The active session lacks fixture.control.", "Open a FixtureControl session requesting fixture.control.");
       if (this.session.permission !== "FixtureControl") return errorResponse(requestId, "PermissionDenied", "Fixture loading requires FixtureControl.", "Open a FixtureControl session.");
-      if (!["mvp_production_chains_v1", "lubeck_grain_shortage_v1", "empty_lubeck_build_v1", "integrated_lubeck_city_v1"].includes(request.payload?.fixtureId)) return errorResponse(requestId, "InvalidRequest", "Unknown fixtureId.", "Call fixture_list.");
+      if (!["mvp_production_chains_v1", "lubeck_grain_shortage_v1", "route_delivery_v1", "empty_lubeck_build_v1", "integrated_lubeck_city_v1", "save_roundtrip_v1"].includes(request.payload?.fixtureId)) return errorResponse(requestId, "InvalidRequest", "Unknown fixtureId.", "Call fixture_list.");
+      if (request.payload.fixtureId === "save_roundtrip_v1") {
+        this.nodes = new Map([...PROOF_NODES].map(([id, node]) => [id, structuredClone(node)]));
+        this.placement = null;
+        this.fixture = {
+          id: "save_roundtrip_v1", tick: 12, eventCount: 8, cycles: new Map([[1, 2]]),
+          saveSlots: new Map(), roundTripVerified: false,
+          stateHash: "1122334455667788", projectionDigest: "8877665544332211",
+          coverage: { construction: true, inventories: true, prices: true, routeCargo: true, research: true, ai: true, objectives: true },
+        };
+        return success({ loaded: true, fixtureId: this.fixture.id, fixtureVersion: 1, tick: this.fixture.tick });
+      }
       if (request.payload.fixtureId === "integrated_lubeck_city_v1") {
         this.nodes = createIntegratedNodes();
         this.placement = { tool: "", placedBuildingCount: 10, tick: 0, preview: "", constructions: new Map([[2, { buildingId: 2, state: "UnderConstruction", elapsedTicks: 0, totalTicks: 2 }], [3, { buildingId: 3, state: "UnderConstruction", elapsedTicks: 0, totalTicks: 3 }]]), nextBuildingId: 100 };
@@ -178,12 +246,15 @@ export class FakeHansaEndpoint {
         this.revision += 1;
         return success({ loaded: true, fixtureId: this.fixture.id, fixtureVersion: 1, tick: 0, placedBuildingCount: 0, semanticRevision: this.revision });
       }
-      const shortage = request.payload.fixtureId === "lubeck_grain_shortage_v1";
-      this.nodes = new Map([...PROOF_NODES].map(([id, node]) => [id, structuredClone(node)]));
+      const routeDelivery = request.payload.fixtureId === "route_delivery_v1";
+      const shortage = request.payload.fixtureId === "lubeck_grain_shortage_v1" || routeDelivery;
+	  const golden = request.payload.fixtureId === "lubeck_grain_shortage_v1" &&
+		this.session.grantedCapabilities.includes("evidence");
+      this.nodes = routeDelivery ? createRouteNodes() : (golden ? createGoldenNodes() : new Map([...PROOF_NODES].map(([id, node]) => [id, structuredClone(node)])));
       this.placement = null;
       this.fixture = {
         id: request.payload.fixtureId,
-        tick: 0,
+        tick: routeDelivery ? 2 : 0,
         eventCount: 0,
         cycles: new Map(Array.from({ length: shortage ? 4 : 9 }, (_, index) => [shortage && index === 3 ? 10 : index + 1, 0])),
         recoveryActive: false,
@@ -203,13 +274,52 @@ export class FakeHansaEndpoint {
             residentChangeLastTick: 0, needs: [],
           },
         } : null,
+        route: routeDelivery ? { routeId: 1, vehicleId: 1, lifecycle: "Inactive", currentStopIndex: 0, remainingTravelTicks: 0, completedLegCount: 0, cargo: 0, capacity: 60000, cityId: "City.Lubeck", configured: false, cancelled: false, events: [] } : null,
+        golden: golden ? {
+		  seed: "4C554245434B4752", fixtureHash: "3E1E979BCEF285C4", diagnosed: false,
+          breadChainPlaced: false, breadChainCompleted: false, routesStarted: false,
+          routeCargoObserved: false, routeRecovered: false, researchQueued: false,
+          researchCompleted: false, aiDecisionCount: 0, victory: false, events: [],
+        } : null,
+        saveSlots: golden ? new Map() : undefined,
+        roundTripVerified: false,
+        coverage: golden ? { construction: true, inventories: true, prices: true, routeCargo: true, research: true, ai: true, objectives: true } : undefined,
       };
       return success(this.#fixtureSummary(0));
+    }
+    if (request.operation === "save_list") {
+      if (!this.fixture) return errorResponse(requestId, "InvalidRequest", "No fixture is loaded.", "Load save_roundtrip_v1.");
+      return success({ slots: ["manual", "autosave"].map((slotId) => ({ slotId, exists: this.fixture.saveSlots?.has(slotId) ?? false, compatible: this.fixture.saveSlots?.has(slotId) ?? false, savedUtc: this.fixture.saveSlots?.get(slotId)?.savedUtc ?? "", scenarioId: this.fixture.saveSlots?.has(slotId) ? "Scenario.LubeckGrainShortageV1" : "", formatVersion: this.fixture.saveSlots?.has(slotId) ? 2 : 0 })) });
+    }
+    if (request.operation === "save_create") {
+      if (!this.fixture?.saveSlots || !["manual", "autosave"].includes(request.payload?.slotId)) return errorResponse(requestId, "InvalidRequest", "Controlled save requires a strategic fixture and a fixed slot.", "Use manual or autosave.");
+      const snapshot = { savedUtc: "2026-09-06T12:00:00Z", stateHash: this.fixture.stateHash ?? `fake-${this.fixture.id}-${this.fixture.tick}`, projectionDigest: this.fixture.projectionDigest ?? `projection-${this.fixture.tick}`, tick: this.fixture.tick };
+      this.fixture.saveSlots.set(request.payload.slotId, snapshot); this.fixture.roundTripVerified = false;
+      return success({ slotId: request.payload.slotId, ...snapshot, authoritativeHash: snapshot.stateHash, compatible: true, scenarioId: "Scenario.LubeckGrainShortageV1", formatVersion: 2 });
+    }
+    if (request.operation === "save_load") {
+      const snapshot = this.fixture?.saveSlots?.get(request.payload?.slotId);
+      if (!snapshot) return errorResponse(requestId, "InvalidRequest", "The requested save slot does not exist.", "Create the fixed slot first.");
+      this.fixture.tick = snapshot.tick + 1; this.fixture.roundTripVerified = true;
+      this.#syncGoldenNodes();
+      return success({ slotId: request.payload.slotId, authoritativeEquivalent: true, projectionEquivalent: true, deterministicContinuation: true, savedAuthoritativeHash: snapshot.stateHash, restoredAuthoritativeHash: snapshot.stateHash, savedProjectionDigest: snapshot.projectionDigest, restoredProjectionDigest: snapshot.projectionDigest, continuedTick: this.fixture.tick });
+    }
+    if (request.operation === "save_wait_for") {
+      const matched = request.payload?.condition === "roundtrip_verified" ? this.fixture?.roundTripVerified : this.fixture?.saveSlots?.has(request.payload?.slotId);
+      return matched ? success({ matched: true, condition: request.payload.condition }) : errorResponse(requestId, "InvalidRequest", "The requested save condition is not satisfied.", "Complete the preceding save operation.");
+    }
+    if (request.operation === "save_assert_roundtrip") {
+      if (!this.fixture?.roundTripVerified) return errorResponse(requestId, "InvalidRequest", "The save round trip has not been verified.", "Create and load the same slot.");
+      return success({ matched: true, authoritativeEquivalent: true, deterministicContinuation: true, coverage: this.fixture.coverage });
     }
     if (request.operation === "gameplay_query") {
       if (!this.session.grantedCapabilities.includes("gameplay.query")) return errorResponse(requestId, "MissingCapability", "The active session lacks gameplay.query.", "Open a new session requesting gameplay.query.");
       if (!this.fixture) return errorResponse(requestId, "InvalidRequest", "No fixture is loaded.", "Call fixture_load first.");
       if (request.payload?.query === "fixture.summary") return success(this.#fixtureSummary(0));
+      if (["strategic.summary", "strategic.evidence"].includes(request.payload?.query) && this.fixture.golden) return success(this.#goldenEvidence());
+      if (request.payload?.query === "research.state" && this.fixture.golden) return success({ research: this.#goldenEvidence().research });
+      if (request.payload?.query === "ai.decision_history" && this.fixture.golden) return success({ decisions: this.#goldenEvidence().aiDecisions });
+      if (request.payload?.query === "scenario.progress" && this.fixture.golden) return success({ scenario: this.#goldenEvidence().objectiveState });
       if (request.payload?.query === "integrated.summary" && this.fixture.integrated) {
         const integrated = this.fixture.integrated;
         return success({
@@ -231,16 +341,34 @@ export class FakeHansaEndpoint {
       }
       if (request.payload?.query === "production.list") return success({ productions: Array.from(this.fixture.cycles, ([productionId, completedCycles]) => ({ productionId, completedCycles: String(completedCycles), blocker: "None" })) });
       if (request.payload?.query === "production.get" && this.fixture.cycles.has(request.payload.productionId)) return success({ production: { productionId: request.payload.productionId, completedCycles: String(this.fixture.cycles.get(request.payload.productionId)), blocker: "None" } });
+      if (request.payload?.query === "vehicle.list" && this.fixture.route) return success({ vehicles: [{ vehicleId: 1, definitionId: "Vehicle.Cog", mode: "Sea", currentCityId: this.fixture.route.cityId, cargoMilliUnits: this.fixture.route.cargo, capacityMilliUnits: 60000, freeCapacityMilliUnits: 60000 - this.fixture.route.cargo }, { vehicleId: 2, definitionId: "Vehicle.Wagon", mode: "Land", currentCityId: "City.Lubeck", cargoMilliUnits: 0, capacityMilliUnits: 20000, freeCapacityMilliUnits: 20000 }] });
+      if (["route.list", "route.get", "route.cargo"].includes(request.payload?.query) && this.fixture.route && (request.payload.routeId === undefined || request.payload.routeId === 1)) { const route = { ...this.fixture.route, events: undefined }; return success(request.payload.query === "route.list" ? { routes: [route] } : { route, vehicle: { vehicleId: 1, currentCityId: route.cityId, cargoMilliUnits: route.cargo, capacityMilliUnits: 60000, freeCapacityMilliUnits: 60000 - route.cargo } }); }
+      if (request.payload?.query === "route.events" && this.fixture.route && request.payload.routeId === 1) return success({ stateHash: `fake-${this.fixture.id}-${this.fixture.tick}`, events: structuredClone(this.fixture.route.events) });
       if (request.payload?.query === "city.population" && this.fixture.population && request.payload.cityId === this.fixture.population.cityId) {
         const { cohort, ...city } = this.fixture.population;
         return success(city);
       }
       if (request.payload?.query === "population.cohort" && this.fixture.population?.cohort.populationCohortId === request.payload.populationCohortId) return success(structuredClone(this.fixture.population.cohort));
       if (request.payload?.query === "inventory.stock" && request.payload.inventoryId === 1) return success({ inventoryId: 1, goodId: request.payload.goodId, stockMilliUnits: request.payload.goodId === "Good.Iron" ? 60000 : 0, reservedMilliUnits: 0, availableMilliUnits: request.payload.goodId === "Good.Iron" ? 60000 : 0 });
+      if (request.payload?.query === "market.opportunity" && request.payload.goodId === "Good.Grain" &&
+          request.payload.sourceCityId === "City.Rostock" && request.payload.destinationCityId === "City.Lubeck") {
+        return success({ sourceCityId: "City.Rostock", destinationCityId: "City.Lubeck", goodId: "Good.Grain", sourceInformationState: "Current", destinationInformationState: "Current", comparable: true, sourcePriceMilliMarks: 850, destinationPriceMilliMarks: this.fixture.market.price, grossMarginMilliMarks: this.fixture.market.price - 850, sourceAvailableAboveReserveMilliUnits: 10000, destinationDemandGapMilliUnits: Math.max(0, 5500 - this.fixture.market.stock) });
+      }
+      if (request.payload?.query?.startsWith("market.") && request.payload.cityId === "City.Rostock" && request.payload.goodId === "Good.Grain") {
+        const reportAgeTicks = this.fixture.tick % 20;
+        const informationState = reportAgeTicks === 0 ? "Current" : reportAgeTicks <= 4 ? "Recent" : reportAgeTicks <= 10 ? "Stale" : "Estimated";
+        if (request.payload.query === "market.known_price") return success({ cityId: "City.Rostock", goodId: "Good.Grain", informationState, known: true, priceMilliMarks: 850, averagePriceMilliMarks: 850, reportTick: this.fixture.tick - reportAgeTicks, reportAgeTicks });
+        if (request.payload.query === "market.report_age") return success({ cityId: "City.Rostock", goodId: "Good.Grain", informationState, hasReport: true, reportTick: this.fixture.tick - reportAgeTicks, marketUpdateTick: this.fixture.tick - reportAgeTicks, ageTicks: reportAgeTicks });
+        if (request.payload.query === "market.known_components") return success({ cityId: "City.Rostock", goodId: "Good.Grain", informationState, known: true, stockMilliUnits: 40000, desiredReserveMilliUnits: 30000, citizenDemandMilliUnits: 700, industrialDemandMilliUnits: 300, totalDemandMilliUnits: 1000, localProductionMilliUnits: 3000, incomingSupplyMilliUnits: 4000, unmetDemandMilliUnits: 0 });
+      }
       if (request.payload?.query?.startsWith("market.") && this.fixture.market && request.payload.cityId === "City.Lubeck" && request.payload.goodId === "Good.Grain") {
         const market = { cityId: "City.Lubeck", goodId: "Good.Grain", stockMilliUnits: this.fixture.market.stock, desiredReserveMilliUnits: this.fixture.market.reserve, citizenDemandMilliUnits: this.fixture.market.citizen, industrialDemandMilliUnits: this.fixture.market.industrial, unmetDemandMilliUnits: this.fixture.market.unmet, priceMilliMarks: this.fixture.market.price };
         if (["market.price", "market.components"].includes(request.payload.query)) return success({ market, ...(request.payload.query === "market.components" ? { factors: { scarcityBasisPoints: this.fixture.tick >= 5 ? 6000 : 0, citizenDemandBasisPoints: this.fixture.tick >= 5 ? 167 : 0, industrialDemandBasisPoints: this.fixture.tick >= 5 ? 233 : 0, unmetDemandBasisPoints: this.fixture.tick >= 5 ? 367 : 0, targetMultiplierBasisPoints: this.fixture.tick >= 5 ? 16767 : 10000 } } : {}) });
+        if (request.payload.query === "market.known_price") return success({ cityId: "City.Lubeck", goodId: "Good.Grain", informationState: "Current", known: true, priceMilliMarks: this.fixture.market.price, averagePriceMilliMarks: this.fixture.market.price, reportTick: this.fixture.tick, reportAgeTicks: 0 });
+        if (request.payload.query === "market.report_age") return success({ cityId: "City.Lubeck", goodId: "Good.Grain", informationState: "Current", hasReport: true, reportTick: this.fixture.tick, marketUpdateTick: this.fixture.tick, ageTicks: 0 });
+        if (request.payload.query === "market.known_components") return success({ cityId: "City.Lubeck", goodId: "Good.Grain", informationState: "Current", known: true, stockMilliUnits: this.fixture.market.stock, desiredReserveMilliUnits: this.fixture.market.reserve, citizenDemandMilliUnits: this.fixture.market.citizen, industrialDemandMilliUnits: this.fixture.market.industrial, totalDemandMilliUnits: this.fixture.market.citizen + this.fixture.market.industrial, localProductionMilliUnits: 0, incomingSupplyMilliUnits: 0, unmetDemandMilliUnits: this.fixture.market.unmet });
         if (request.payload.query === "market.alerts") return success({ alerts: this.fixture.market.alerts.map((type) => ({ type, severity: type === "Shortage" ? "Critical" : "Warning", activeSinceTick: 5, ageTicks: Math.max(0, this.fixture.tick - 5) })) });
+        if (request.payload.query === "market.diagnosis" && this.fixture.golden) return success({ cityId: "City.Lubeck", goodId: "Good.Grain", shortageDiagnosed: this.fixture.golden.diagnosed, stockMilliUnits: this.fixture.market.stock, desiredReserveMilliUnits: this.fixture.market.reserve, priceMilliMarks: this.fixture.market.price, causes: [{ factor: "Scarcity", contributionBasisPoints: 6000 }, { factor: "IndustrialDemand", contributionBasisPoints: 233 }] });
         if (request.payload.query === "market.explanation") return success({ baseMultiplierBasisPoints: 10000, rawMultiplierBasisPoints: this.fixture.tick >= 5 ? 16767 : 10000, targetMultiplierBasisPoints: this.fixture.tick >= 5 ? 16767 : 10000, factors: [{ factor: "Scarcity", messageKey: "Market.Explanation.Scarcity", message: "Low stock raises the target price.", contributionBasisPoints: this.fixture.tick >= 5 ? 6000 : 0 }] });
         if (request.payload.query === "market.reserve") return success({ stockMilliUnits: this.fixture.market.stock, demandPerTickMilliUnits: 5500, reserveMilliDays: Math.floor(this.fixture.market.stock * 1000 / 5500), hasDemand: true });
         if (request.payload.query === "market.history") return success({ history: [{ tick: this.fixture.tick, stockMilliUnits: this.fixture.market.stock, citizenDemandMilliUnits: this.fixture.market.citizen, industrialDemandMilliUnits: this.fixture.market.industrial, unmetDemandMilliUnits: this.fixture.market.unmet, priceMilliMarks: this.fixture.market.price }] });
@@ -276,6 +404,15 @@ export class FakeHansaEndpoint {
         this.#advance(1);
         return success({ ...this.#fixtureSummary(1), command: request.payload.command, buildingId: request.payload.buildingId });
       }
+      if (this.fixture?.route && request.payload?.routeId === 1) {
+        const route = this.fixture.route;
+        if (request.payload.command === "route.edit" && route.lifecycle === "Inactive" && route.cargo === 0) { route.configured = true; this.#routeEvent("RouteEdited", "City.Lubeck", 0, 0); this.#advance(1); return success({ ...this.#fixtureSummary(1), command: "route.edit", routeId: 1 }); }
+        if (request.payload.command === "route.set_active" && typeof request.payload.active === "boolean" && route.lifecycle !== "Cancelled") { route.lifecycle = request.payload.active ? "AtStop" : "Inactive"; route.pending = request.payload.active; this.#routeEvent("RouteActivationChanged", route.cityId, request.payload.active ? 1 : 0, 0); this.#advance(1); return success({ ...this.#fixtureSummary(1), command: "route.set_active", routeId: 1 }); }
+        if (request.payload.command === "route.cancel" && route.lifecycle !== "Cancelled") { route.lifecycle = "Cancelled"; route.cancelled = true; route.remainingTravelTicks = 0; this.#routeEvent("RouteCancelled", route.cityId, route.cargo, 0); this.#advance(1); return success({ ...this.#fixtureSummary(1), command: "route.cancel", routeId: 1 }); }
+      }
+      if (this.fixture?.golden && request.payload?.command === "building.place") { this.#activateGolden("BuildMenu.Action.ConfirmBreadChain"); return success({ ...this.#fixtureSummary(1), command: "building.place", accepted: true }); }
+      if (this.fixture?.golden && request.payload?.command === "research.queue") { this.#activateGolden("Research.Action.QueueMarketReports"); return success({ ...this.#fixtureSummary(0), command: "research.queue", accepted: true }); }
+      if (this.fixture?.golden && request.payload?.command === "route.set_active") { this.#activateGolden("TradeRoute.Editor.Action.StartRelief"); return success({ ...this.#fixtureSummary(0), command: "route.set_active", accepted: true }); }
       if (!this.fixture?.market || request.payload?.command !== "production.set_active" || request.payload?.productionId !== 10 || typeof request.payload?.active !== "boolean") return errorResponse(requestId, "InvalidRequest", "Command is not allowlisted for this fixture.", "Use production.set_active for production 10.");
       this.fixture.recoveryActive = request.payload.active;
       this.#advance(1);
@@ -316,7 +453,11 @@ export class FakeHansaEndpoint {
         }
         const action = request.operation === "semantic_activate" ? "activate" : "focus";
         if (!node.actions.includes(action)) return errorResponse(requestId, "SemanticActionUnsupported", "The semantic action is unsupported.", "Inspect the node actions.");
-        if (action === "activate" && this.placement) {
+        if (action === "activate" && this.fixture?.golden) {
+          if (!this.#activateGolden(request.payload.semanticId)) return errorResponse(requestId, "SemanticActionUnsupported", "The golden-path intent is unavailable in the current state.", "Follow diagnosis, build, routes, and research in order.");
+        } else if (action === "activate" && this.fixture?.route) {
+          if (!this.#activateRoute(request.payload.semanticId)) return errorResponse(requestId, "SemanticActionUnsupported", "The route intent is unavailable in the current state.", "Follow save then start, or select an evidence tab.");
+        } else if (action === "activate" && this.placement) {
           if (!this.#activatePlacement(request.payload.semanticId)) return errorResponse(requestId, "SemanticActionUnsupported", "The placement intent is unavailable in the current state.", "Follow the documented road then warehouse flow.");
         } else if (action === "activate") node.state.selected = !node.state.selected;
         if (action === "focus") {
@@ -351,8 +492,22 @@ export class FakeHansaEndpoint {
       if (!/^[A-Za-z0-9_-]{1,64}$/.test(bundle)) {
         return errorResponse(requestId, "InvalidRequest", "The bundle ID is unsafe.", "Use 1-64 letters, digits, underscores, or hyphens.");
       }
-      const suite = this.fixture?.integrated ? "S06P04" : (this.placement ? "S05P04" : "S02P04");
-      return success({ width, height, postCaptureResized: false, screenshotPath: `Saved/TestEvidence/Automation/${suite}/${bundle}/screenshot-${width}x${height}.png`, metadataPath: `Saved/TestEvidence/Automation/${suite}/${bundle}/metadata.json`, semanticSnapshotPath: `Saved/TestEvidence/Automation/${suite}/${bundle}/semantic-ui.json`, contentSha1: "fake-contract-sha1", revision: this.revision });
+      const suite = this.fixture?.golden ? "S14P01" : (this.fixture?.route ? "S09P04" : (this.fixture?.integrated ? "S06P04" : (this.placement ? "S07P03" : "S02P04")));
+      return success({ width, height, postCaptureResized: false, screenshotPath: `Saved/TestEvidence/Automation/${suite}/${bundle}/screenshot-${width}x${height}.png`, metadataPath: `Saved/TestEvidence/Automation/${suite}/${bundle}/metadata.json`, semanticSnapshotPath: `Saved/TestEvidence/Automation/${suite}/${bundle}/semantic-ui.json`, ...(this.fixture?.route ? { querySnapshotPath: `Saved/TestEvidence/Automation/${suite}/${bundle}/query-snapshot.json` } : {}), contentSha1: "fake-contract-sha1", revision: this.revision });
+    }
+    if (request.operation === "logs_get") {
+      if (!this.session.grantedCapabilities.includes("evidence")) return errorResponse(requestId, "MissingCapability", "The active session lacks evidence.", "Request evidence.");
+      const maximumEntries = request.payload?.maximumEntries ?? 256;
+      const entries = (this.fixture?.golden?.events ?? []).slice(-maximumEntries).map((event) => ({ level: "info", category: "GoldenFlow", ...event }));
+      return success({ fixtureId: this.fixture?.id ?? "", tick: this.fixture?.tick ?? 0, truncated: entries.length < (this.fixture?.golden?.events?.length ?? 0), entries });
+    }
+    if (request.operation === "evidence_bundle_create") {
+      if (!this.session.grantedCapabilities.includes("evidence")) return errorResponse(requestId, "MissingCapability", "The active session lacks evidence.", "Request evidence.");
+      const { bundleId, testId, assertions = [], mcpProtocolVersion } = request.payload ?? {};
+      if (!this.fixture?.golden || !/^[A-Za-z0-9_-]{1,64}$/.test(bundleId ?? "") || testId !== "s14-p01-mvp-golden") return errorResponse(requestId, "InvalidRequest", "Golden evidence requires the active S14 fixture and bounded identifiers.", "Load lubeck_grain_shortage_v1 and use the documented test ID.");
+      const structural = [this.fixture.golden.diagnosed, this.fixture.golden.breadChainCompleted, this.fixture.golden.routeRecovered, this.fixture.golden.researchCompleted, this.fixture.golden.aiDecisionCount >= 2, this.fixture.roundTripVerified, this.fixture.golden.victory];
+      const complete = structural.every(Boolean) && assertions.every(({ passed }) => passed);
+	  return success({ complete, bundleId, testId, rootPath: `Saved/TestEvidence/Automation/S14P01/${bundleId}`, manifestPath: `Saved/TestEvidence/Automation/S14P01/${bundleId}/bundle.json`, semanticSnapshotPath: `Saved/TestEvidence/Automation/S14P01/${bundleId}/semantic-ui.json`, querySnapshotPath: `Saved/TestEvidence/Automation/S14P01/${bundleId}/query-snapshot.json`, logSnapshotPath: `Saved/TestEvidence/Automation/S14P01/${bundleId}/logs.json`, assertionPath: `Saved/TestEvidence/Automation/S14P01/${bundleId}/assertions.json`, protocols: { mcp: mcpProtocolVersion, automation: { major: 1, minor: 0 }, wireSchema: 1 }, fixture: { fixtureId: this.fixture.id, fixtureVersion: 4, contentHash: "724BD5DE8DB9C292", fixtureHash: this.fixture.golden.fixtureHash, seed: this.fixture.golden.seed }, stateHash: this.#fixtureSummary(0).stateHash, assertions });
     }
     if (request.operation === "session_stop") {
       this.session = null;
@@ -364,6 +519,35 @@ export class FakeHansaEndpoint {
   #advance(ticks) {
     for (let index = 0; index < ticks; index += 1) {
       this.fixture.tick += 1;
+      if (this.fixture.route) {
+        const route = this.fixture.route;
+        if (route.lifecycle === "Traveling") {
+          route.remainingTravelTicks -= 1;
+          if (route.remainingTravelTicks === 0) {
+            route.cityId = route.cityId === "City.Lubeck" ? "City.Rostock" : "City.Lubeck";
+            route.currentStopIndex = route.cityId === "City.Lubeck" ? 0 : 1;
+            route.completedLegCount += 1;
+            route.lifecycle = "AtStop";
+            route.pending = true;
+            this.#routeEvent("RouteArrived", route.cityId, route.completedLegCount, 0);
+          }
+        } else if (route.lifecycle === "AtStop" && route.pending) {
+          if (route.cityId === "City.Rostock") {
+            route.cargo = 10000;
+            this.#routeEvent("RouteCargoTransferred", route.cityId, 10000, 20000, "Load");
+          } else if (route.cargo > 0) {
+            const delivered = route.cargo;
+            route.cargo = 0;
+            this.fixture.market.stock += delivered;
+            this.#routeEvent("RouteCargoTransferred", route.cityId, delivered, 20000, "Unload");
+          } else this.#routeEvent("RouteCargoMissed", route.cityId, 0, 20000, route.cityId === "City.Lubeck" ? "Unload" : "Load");
+          route.pending = false;
+          route.lifecycle = "Traveling";
+          route.remainingTravelTicks = 10;
+          this.#routeEvent("RouteDeparted", route.cityId, 10, 0);
+        }
+        this.#syncRouteNodes();
+      }
       if (this.placement) {
         this.placement.tick = this.fixture.tick;
         for (const construction of this.placement.constructions.values()) {
@@ -418,6 +602,31 @@ export class FakeHansaEndpoint {
           this.fixture.market.price = this.fixture.market.unmet > 0 ? 1100 : Math.max(500, this.fixture.market.price - 100);
           this.fixture.market.alerts = this.fixture.market.unmet > 0 ? ["Shortage", "LowReserve"] : (this.fixture.market.stock < this.fixture.market.reserve ? ["LowReserve"] : []);
         }
+      }
+      if (this.fixture.golden) {
+        const golden = this.fixture.golden;
+        if (golden.breadChainPlaced && !golden.breadChainCompleted && this.fixture.tick >= golden.buildTick + 2) {
+          golden.breadChainCompleted = true;
+          golden.events.push({ tick: this.fixture.tick, type: "ConstructionCompleted", stableId: "Building.Road" });
+        }
+        golden.aiDecisionCount = Math.max(golden.aiDecisionCount, Math.floor(this.fixture.tick / 2));
+        if (golden.routesStarted && !golden.routeCargoObserved && this.fixture.tick >= golden.routeTick + 2) {
+          golden.routeCargoObserved = true;
+          golden.events.push({ tick: this.fixture.tick, type: "RouteCargoTransferred", stableId: "Good.Grain", phase: "Load" });
+        }
+        if (golden.routesStarted && !golden.routeRecovered && this.fixture.tick >= golden.routeTick + 5) {
+          golden.routeRecovered = true;
+          this.fixture.market.stock = 60000;
+          this.fixture.market.price = 900;
+          this.fixture.market.alerts = [];
+          golden.events.push({ tick: this.fixture.tick, type: "RouteCargoTransferred", stableId: "Good.Grain", phase: "Unload" });
+        }
+        if (golden.researchQueued && !golden.researchCompleted && this.fixture.tick >= golden.researchTick + 3) {
+          golden.researchCompleted = true;
+          golden.events.push({ tick: this.fixture.tick, type: "ResearchCompleted", stableId: "Technology.Commerce.MarketReports" });
+        }
+        if (golden.breadChainCompleted && golden.routeRecovered && golden.researchCompleted && golden.aiDecisionCount >= 2 && this.fixture.tick >= 12) golden.victory = true;
+        this.#syncGoldenNodes();
       }
       if (this.fixture.population) {
         const population = this.fixture.population;
@@ -517,16 +726,106 @@ export class FakeHansaEndpoint {
     return false;
   }
 
+  #activateGolden(id) {
+    const golden = this.fixture.golden;
+    if (id === "Market.Action.DiagnoseGrain") {
+      golden.diagnosed = true;
+      golden.events.push({ tick: this.fixture.tick, type: "ShortageDiagnosed", stableId: "Good.Grain" });
+    } else if (id === "BuildMenu.Action.ConfirmBreadChain" && !golden.breadChainPlaced) {
+      golden.breadChainPlaced = true;
+      golden.buildTick = this.fixture.tick;
+      golden.events.push({ tick: this.fixture.tick, type: "BuildingPlaced", stableId: "Building.Road" });
+    } else if (id === "TradeRoute.Editor.Action.StartRelief" && golden.diagnosed) {
+      golden.routesStarted = true;
+      golden.routeTick = this.fixture.tick;
+      golden.events.push({ tick: this.fixture.tick, type: "RouteActivationChanged", stableId: "Route.Relief" });
+    } else if (id === "Research.Action.QueueMarketReports") {
+      golden.researchQueued = true;
+      golden.researchTick = this.fixture.tick;
+      golden.events.push({ tick: this.fixture.tick, type: "ResearchQueued", stableId: "Technology.Commerce.MarketReports" });
+    } else return false;
+    this.#syncGoldenNodes();
+    return true;
+  }
+
+  #syncGoldenNodes() {
+    const golden = this.fixture?.golden;
+    if (!golden) return;
+    const set = (id, selected, value = selected ? "complete" : "pending") => {
+      const node = this.nodes.get(id);
+      if (node) node.state = semanticState({ selected, valueType: "checkpoint", value });
+    };
+    set("BuildMenu.Status.BreadChain", golden.breadChainCompleted);
+    set("Market.Status.GrainDiagnosed", golden.diagnosed);
+    set("TradeRoute.Editor.Status.Delivered", golden.routeRecovered);
+    set("Research.Status.MarketReports", golden.researchCompleted);
+    set("HUD.Status.MerchantAI", golden.aiDecisionCount >= 2, String(golden.aiDecisionCount));
+    set("SaveLoad.Status.RoundTrip", this.fixture.roundTripVerified);
+    set("Scenario.Status.Victory", golden.victory, golden.victory ? "Victory.TradeNetwork" : "pending");
+    const grain = this.nodes.get("Market.Good.Grain");
+    if (grain) grain.state = semanticState({ warning: this.fixture.market.stock < this.fixture.market.reserve, valueType: "market-good", value: `stock=${this.fixture.market.stock};reserve=${this.fixture.market.reserve};price=${this.fixture.market.price}` });
+  }
+
+  #routeEvent(type, cityId, appliedMilliUnits, requestedMilliUnits, cargoAction = "Load") {
+    const route = this.fixture.route;
+    route.events.push({ sequence: String(route.events.length + 1), tick: this.fixture.tick, type, cityId, goodId: type.includes("Cargo") ? "Good.Grain" : "", appliedMilliUnits, requestedMilliUnits, cargoAction });
+    this.fixture.eventCount += 1;
+  }
+
+  #syncRouteNodes() {
+    const route = this.fixture.route;
+    if (!route) return;
+    const has = (type, predicate = () => true) => route.events.some((event) => event.type === type && predicate(event));
+    const set = (id, selected, valueType = "boolean", value = String(selected)) => { const node = this.nodes.get(id); if (node) node.state = semanticState({ selected, valueType, value }); };
+    set("RouteDelivery.Status.Departed", has("RouteDeparted"));
+    set("RouteDelivery.Status.Arrived", has("RouteArrived"));
+    set("RouteDelivery.Status.Delivered", has("RouteCargoTransferred", (event) => event.cityId === "City.Lubeck" && event.cargoAction === "Unload" && event.appliedMilliUnits > 0));
+    set("RouteDelivery.Cargo", route.cargo > 0, "milli-units", String(route.cargo));
+    set("RouteDelivery.Market.State", has("RouteCargoTransferred", (event) => event.cityId === "City.Lubeck"), "market-response", `stock=${this.fixture.market.stock};reserve=${this.fixture.market.reserve};price=${this.fixture.market.price};stale=false`);
+  }
+
+  #activateRoute(id) {
+    if (id === "RouteDelivery.Tab.Route" || id === "RouteDelivery.Tab.Market") {
+      const market = id.endsWith("Market");
+      this.nodes.get("RouteDelivery.Tab.Route").state.selected = !market;
+      this.nodes.get("RouteDelivery.Tab.Market").state.selected = market;
+      this.nodes.get("RouteDelivery.RouteEditor").state.visible = !market;
+      this.nodes.get("RouteDelivery.Market").state.visible = market;
+      this.nodes.get("RouteDelivery.Market.State").state.visible = market;
+      return true;
+    }
+    if (id === "RouteEditor.Action.Save" && this.fixture.route.lifecycle === "Inactive") { this.fixture.route.configured = true; this.#routeEvent("RouteEdited", "City.Lubeck", 0, 0); this.#advance(1); return true; }
+    if (id === "RouteEditor.Action.Start" && this.fixture.route.lifecycle === "Inactive") { this.fixture.route.lifecycle = "AtStop"; this.fixture.route.pending = true; this.#routeEvent("RouteActivationChanged", this.fixture.route.cityId, 1, 0); this.#advance(1); return true; }
+    if (id === "RouteEditor.Action.Cancel" && this.fixture.route.lifecycle !== "Cancelled") { this.fixture.route.lifecycle = "Cancelled"; this.#routeEvent("RouteCancelled", this.fixture.route.cityId, this.fixture.route.cargo, 0); this.#syncRouteNodes(); return true; }
+    return false;
+  }
+
   #matches(predicate) {
     if (!predicate || typeof predicate !== "object") return null;
     if (predicate.kind === "production.completed_cycles_at_least" && this.fixture.cycles.has(predicate.productionId)) return this.fixture.cycles.get(predicate.productionId) >= predicate.minimumCompletedCycles;
     if (predicate.kind === "production.blocker_equals" && this.fixture.cycles.has(predicate.productionId)) return predicate.blocker === "None";
+    if (["route.departed", "route.arrived", "route.delivered"].includes(predicate.kind) && this.fixture.route && predicate.routeId === 1) {
+      if (predicate.kind === "route.departed") return this.fixture.route.events.some(({ type }) => type === "RouteDeparted");
+      if (predicate.kind === "route.arrived") return this.fixture.route.events.some(({ type }) => type === "RouteArrived");
+      return this.fixture.route.events.some(({ type, cityId, cargoAction, appliedMilliUnits }) => type === "RouteCargoTransferred" && cityId === "City.Lubeck" && cargoAction === "Unload" && appliedMilliUnits > 0);
+    }
     if (this.fixture.integrated) {
       if (predicate.kind === "integrated.construction_completed") return this.fixture.integrated.constructionCompleted;
       if (predicate.kind === "integrated.inventory_moved") return this.fixture.integrated.inventoryMoved;
       if (predicate.kind === "integrated.production_completed") return this.fixture.integrated.productionCompleted;
       if (predicate.kind === "integrated.population_grown") return this.fixture.integrated.populationGrown;
       if (predicate.kind === "integrated.bread_consumed") return this.fixture.integrated.breadConsumed;
+    }
+    if (this.fixture.golden) {
+      const golden = this.fixture.golden;
+      if (predicate.kind === "strategic.building_placed") return golden.breadChainPlaced;
+      if (predicate.kind === "strategic.building_completed") return golden.breadChainCompleted;
+      if (predicate.kind === "strategic.shortage_diagnosed") return this.fixture.market.stock < this.fixture.market.reserve;
+      if (predicate.kind === "strategic.route_cargo_in_transit") return golden.routeCargoObserved;
+      if (["strategic.route_recovered", "strategic.route_delivered"].includes(predicate.kind)) return golden.routeRecovered;
+      if (predicate.kind === "strategic.research_completed") return golden.researchCompleted && predicate.technologyId === "Technology.Commerce.MarketReports";
+      if (predicate.kind === "strategic.ai_progressed") return golden.aiDecisionCount >= predicate.minimumDecisions;
+      if (predicate.kind === "strategic.victory") return golden.victory && (!predicate.victoryId || predicate.victoryId === "Victory.TradeNetwork");
     }
     if (!this.fixture.market || predicate.cityId !== "City.Lubeck" || predicate.goodId !== "Good.Grain") return null;
     if (predicate.kind === "market.alert_active") return this.fixture.market.alerts.includes(predicate.alertType);
@@ -537,7 +836,20 @@ export class FakeHansaEndpoint {
   }
 
   #fixtureSummary(ticksAdvanced) {
-    return { loaded: true, fixtureId: this.fixture.id, fixtureVersion: this.placement ? 1 : 2, registryHash: this.fixture.integrated ? "5330365030344C42" : (this.placement ? "534F35504C414345" : "B0481C9F740D6C18"), stateHash: `fake-${this.fixture.id}-${this.fixture.tick}`, tick: this.fixture.tick, eventCount: this.fixture.eventCount, productionCount: this.fixture.cycles.size, ticksAdvanced };
+	return { loaded: true, fixtureId: this.fixture.id, fixtureVersion: this.placement ? 1 : (this.fixture.golden ? 4 : 1), registryHash: this.fixture.golden ? "724BD5DE8DB9C292" : (this.fixture.integrated ? "5330365030344C42" : (this.placement ? "534F35504C414345" : "B0481C9F740D6C18")), fixtureHash: this.fixture.golden?.fixtureHash, campaignSeed: this.fixture.golden?.seed, stateHash: `fake-${this.fixture.id}-${this.fixture.tick}`, tick: this.fixture.tick, eventCount: this.fixture.eventCount + (this.fixture.golden?.events.length ?? 0), productionCount: this.fixture.cycles.size, routeCount: this.fixture.route || this.fixture.golden ? 2 : 0, vehicleCount: this.fixture.route || this.fixture.golden ? 2 : 0, ...(this.fixture.route ? { expectedRemoteArrivalTick: 13, expectedLubeckArrivalTick: 24, expectedDeliveryTick: 25, expectedDeliveryTicksAfterActivation: 22 } : {}), ticksAdvanced };
+  }
+
+  #goldenEvidence() {
+    const golden = this.fixture.golden;
+    return {
+      ...this.#fixtureSummary(0),
+      research: { available: true, completedTechnologyIds: golden.researchCompleted ? ["Technology.Commerce.MarketReports"] : [], appliedEffects: golden.researchCompleted ? [{ sourceTechnologyId: "Technology.Commerce.MarketReports", targetStableId: "Market.Reports", magnitude: 1 }] : [] },
+      objectiveState: { available: true, scenarioId: "Scenario.LubeckGrainShortageV1", outcome: golden.victory ? "Victory" : "Active", winningVictoryId: golden.victory ? "Victory.TradeNetwork" : "", victoryPaths: [{ victoryId: "Victory.TradeNetwork", allObjectivesMet: golden.victory, victorious: golden.victory, satisfiedTicks: golden.victory ? 3 : 0, requiredTicks: 3, objectives: [{ objectiveId: "Objective.ReliefRoutes", current: golden.routeRecovered ? 2 : 0, target: 2, met: golden.routeRecovered }] }] },
+      winningVictoryId: golden.victory ? "Victory.TradeNetwork" : "",
+      aiDecisions: Array.from({ length: golden.aiDecisionCount }, (_, index) => ({ tick: (index + 1) * 2, ordinal: String(index + 1), goal: "RelieveShortage", chosenOptionId: "Opportunity.RostockGrain", commandAccepted: true, reason: "Observed bounded market opportunity." })),
+      causalEvents: structuredClone(golden.events),
+      saveRoundTrip: { verified: this.fixture.roundTripVerified },
+    };
   }
 }
 

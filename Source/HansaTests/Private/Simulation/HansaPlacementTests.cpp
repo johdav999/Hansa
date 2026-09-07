@@ -87,8 +87,8 @@ namespace Hansa::Tests::Placement
 			{
 				FHansaPlacementGridCell Cell;
 				Cell.Coordinate = { X, Y };
-				Cell.Terrain = X == 7 ? EHansaPlacementTerrain::Water :
-					(Y == 0 ? EHansaPlacementTerrain::Shore : EHansaPlacementTerrain::Land);
+				Cell.Terrain = Y == 0 ? EHansaPlacementTerrain::Water :
+					(Y == 1 ? EHansaPlacementTerrain::Shore : EHansaPlacementTerrain::Land);
 				Cell.OwnerId = X == 6 ? HouseTwo : HouseOne;
 				Cell.bBlocked = X == 4 && Y == 4;
 				Map.Cells.Add(Cell);
@@ -257,10 +257,10 @@ bool FHansaPlacementValidationTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Fishery away from shore reports its terrain prerequisite"),
 		HasReason(View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Fishery"), 1, 2)),
 			EHansaPlacementFailure::ShorelineRequired));
-	TestTrue(TEXT("Fishery on the authored shore is valid"),
-		View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Fishery"), 1, 0)).CanPlace());
+	TestTrue(TEXT("Fishery bridging authored land and water across the shore is valid"),
+		View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Fishery"), 1, 1)).CanPlace());
 	TestTrue(TEXT("Water is not buildable terrain"),
-		HasReason(View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Road"), 7, 3)),
+		HasReason(View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Road"), 1, 0)),
 			EHansaPlacementFailure::TerrainNotBuildable));
 	TestTrue(TEXT("Authored collision blockers reject placement"),
 		HasReason(View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Warehouse"), 4, 4)),

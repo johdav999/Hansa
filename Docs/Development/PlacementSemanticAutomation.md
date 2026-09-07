@@ -39,7 +39,7 @@ The implemented flow exercises these states:
 
 ## Evidence
 
-Placement captures are written beneath `Saved/TestEvidence/Automation/S05P04/<bundle>/`. Metadata records the exact fixture, flow ID, native dimensions, `postCaptureResized=false`, simulation tick, UI revision, semantic snapshot, content hash, structural assertions and `structuralAssertionsPassed`. The structural evidence checks fixture load, authoritative placement count, camera/validation/result semantic existence and the selected result entity, so the flow cannot pass from pixels alone.
+Placement captures for the current full build-menu flow are written beneath `Saved/TestEvidence/Automation/S07P03/<bundle>/`. Metadata records the exact fixture, flow ID, native dimensions, `postCaptureResized=false`, simulation tick, UI revision, semantic snapshot, content hash, structural assertions and `structuralAssertionsPassed`. The structural evidence checks fixture load, authoritative placement count, build-card economics, camera/validation/result semantic existence and the selected result entity, so the flow cannot pass from pixels alone.
 
 ## Verification
 

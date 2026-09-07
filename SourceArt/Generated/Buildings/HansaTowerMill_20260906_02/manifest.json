@@ -1,0 +1,932 @@
+[
+  {
+    "file": "COMPARISONS.html",
+    "bytes": 2358,
+    "sha256": "13848adb3145af666c637b5aa01d2da2e163b618ec0181fd43109b616987cc93"
+  },
+  {
+    "file": "engine_identity.json",
+    "bytes": 94,
+    "sha256": "d698923ed6dbd4d3542f0f72e5632832c62196c8613780ef00ca088fccf3feb7"
+  },
+  {
+    "file": "EVALUATION.md",
+    "bytes": 1264,
+    "sha256": "25a74d0820206329c92d7f91ee56ad1f1175a4e9cc14aa8167d2755ad0d6b0d4"
+  },
+  {
+    "file": "image_integrity.json",
+    "bytes": 13459,
+    "sha256": "2e26d331eaef6c6bf72d3d5a3abe7aee4cd5d59ad979173bb99335c477f8c504"
+  },
+  {
+    "file": "ITERATIONS.md",
+    "bytes": 2523,
+    "sha256": "9c9e8b90c572e72156d0e6bfbd9ad79699662035e54f5c5848418e350dc46de9"
+  },
+  {
+    "file": "MATERIAL_ASSESSMENT.md",
+    "bytes": 2517,
+    "sha256": "763aa493eea83a2907d4b9dacba08394dc011d0f87b6d1b60637b6e0c7f80d8e"
+  },
+  {
+    "file": "material_inventory.json",
+    "bytes": 4205,
+    "sha256": "974d167a9ed600156306fb8ffaf327341035fa5c62b694958b32a0acfd27049b"
+  },
+  {
+    "file": "preview_actors.json",
+    "bytes": 269,
+    "sha256": "559135393c3ea0332d4da71c3fae27372d94e6bc2e2c5599eaf7bf865c41b869"
+  },
+  {
+    "file": "previous_master_hash.json",
+    "bytes": 260,
+    "sha256": "b256e0a532cf27995f479c9e39777b12fc498132389238cc42132a87e77ff372"
+  },
+  {
+    "file": "PROVENANCE.md",
+    "bytes": 1849,
+    "sha256": "03bcd8c056d86968602730203bbe8443b78dd05e50194c463861c879ec032789"
+  },
+  {
+    "file": "README.md",
+    "bytes": 5976,
+    "sha256": "19d6a636ebf189278c0a2e0046a52852b86d504126ae9a436b5bf8d209a1967b"
+  },
+  {
+    "file": "reference_manifest.csv",
+    "bytes": 842,
+    "sha256": "553066b06da26a66c176c7908b9f936964e74ec10720ead49f6569ac7694fd7c"
+  },
+  {
+    "file": "reference_manifest.json",
+    "bytes": 869,
+    "sha256": "7df869a6fdfa960e75458691a175d41e93a96aa7d48fbb4536220c3e3205b62a"
+  },
+  {
+    "file": "unreal_final_verification.json",
+    "bytes": 13101,
+    "sha256": "c6191fa0e6a4a4fd193db68643303f2e64b761c8ba3e9d99e7898f88cd145ee2"
+  },
+  {
+    "file": "unreal_import_options.json",
+    "bytes": 254,
+    "sha256": "541b1d90876b968d3fe87b4cef2e9d863b86f088b73a9706632c07a739b7025c"
+  },
+  {
+    "file": "unreal_import_properties.json",
+    "bytes": 167,
+    "sha256": "018922067ada0c1e73b1fc192e1e16b8d4fb3731bdf2775bfa8428637df8cdbf"
+  },
+  {
+    "file": "unreal_materials.json",
+    "bytes": 5941,
+    "sha256": "b420516a9c8ab2fa41074441276674d3ab9f8c5f008c0e8915ad94185d809fec"
+  },
+  {
+    "file": "unreal_mesh.json",
+    "bytes": 114,
+    "sha256": "891e28a68ba22a88288e05412e702a2f81510a34870da2e82ea60e86de611104"
+  },
+  {
+    "file": "exports\\geometry.json",
+    "bytes": 556,
+    "sha256": "d929f3cfa7f40cb2f629e059268e38db79e6dd90aefd6d0ddf94bc38b925f514"
+  },
+  {
+    "file": "exports\\HansaTowerMill.blend",
+    "bytes": 35365796,
+    "sha256": "f0d3b9af447694528c9e5a48578345d356c00aa46a710374e1f2f6c046c90889"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbx",
+    "bytes": 7591052,
+    "sha256": "29fd69b494087be18c3dd2352115817c4a2825de11ef1364a49f8abc8e579524"
+  },
+  {
+    "file": "exports\\HansaTowerMill.glb",
+    "bytes": 46380444,
+    "sha256": "5e063d44b4ed4dacf65cfc07cfaf6eb171ab48bf64bba9db8f92485ef0ba07c2"
+  },
+  {
+    "file": "exports\\HansaTowerMill_turntable.mp4",
+    "bytes": 399779,
+    "sha256": "c8ad1cbb2219331b284ef077f6c659e8a5951c96d0eb725aceb05042033cb195"
+  },
+  {
+    "file": "exports\\master_verification.json",
+    "bytes": 671,
+    "sha256": "ed5bd05270912d2f50f94835f55225bd8285fd776c0e9afbdba8fdf7ddeeb1d0"
+  },
+  {
+    "file": "exports\\reimport_fbx.json",
+    "bytes": 3417,
+    "sha256": "3d8a4262f28fce269e256331673dfb955c7890b09820e95cc71f3a146a4201cc"
+  },
+  {
+    "file": "exports\\reimport_glb.json",
+    "bytes": 3410,
+    "sha256": "1b77d8def2ebebd9e95ac520dc02b41202fdfa0cca2e328dd3cbb9e239a117db"
+  },
+  {
+    "file": "exports\\texel_density.json",
+    "bytes": 1770,
+    "sha256": "827b74c771759e17b34f47c97cd12244c05a2e0acdb26d025cdb935c4fd24f7d"
+  },
+  {
+    "file": "exports\\turntable_framing.json",
+    "bytes": 4449,
+    "sha256": "8cb5691d560ebfbdef30a5e86e4105cdcbf40b38dae289b5244b3d86d85ebbfd"
+  },
+  {
+    "file": "exports\\T_Mill_Fieldstone_BaseColor.png",
+    "bytes": 2100237,
+    "sha256": "90e418b3d0ba6ee135e7d200de250a506fbc347a050ed7900614db0380525113"
+  },
+  {
+    "file": "exports\\T_Mill_Fieldstone_Normal.png",
+    "bytes": 1133496,
+    "sha256": "38f4b6917a7e72400595aae5dab685f7ad4c0880b68e65198ae166c7a52fa7a4"
+  },
+  {
+    "file": "exports\\T_Mill_Fieldstone_Roughness.png",
+    "bytes": 15801,
+    "sha256": "70734e12c2e0e866270cf0926b141009f459e119676da5c0385ecdd6c4f70326"
+  },
+  {
+    "file": "exports\\T_Mill_ForgedIron_BaseColor.png",
+    "bytes": 15803,
+    "sha256": "d0b11eaeaec51aeb08e1cbaa5b87a614fc85af5ca943111f3e8d9febb814d5d7"
+  },
+  {
+    "file": "exports\\T_Mill_ForgedIron_Normal.png",
+    "bytes": 938186,
+    "sha256": "6a1f34ad3ecd015f4fc72b7b5e2719c59d02f99bf91bb8586072dbf523127442"
+  },
+  {
+    "file": "exports\\T_Mill_ForgedIron_Roughness.png",
+    "bytes": 712940,
+    "sha256": "0d7db94dc48dd60f3b3fb08cfbe704b112938801d839fd3956b396a10b30ff8b"
+  },
+  {
+    "file": "exports\\T_Mill_Masonry_BaseColor.png",
+    "bytes": 2104588,
+    "sha256": "27eae6d19048ec08610f1cf5c68ff55e1e20d77c35843fca134e4821597e3c8b"
+  },
+  {
+    "file": "exports\\T_Mill_Masonry_Normal.png",
+    "bytes": 1631770,
+    "sha256": "81cd6e0d0bf18d6e4eef436638f2569c47d6e4ce13d97209a2feb9f82e2b0276"
+  },
+  {
+    "file": "exports\\T_Mill_Masonry_Roughness.png",
+    "bytes": 698687,
+    "sha256": "5ad35336524b8260831e86a19c89a86eeee3386194fa90000991da08bb0a153f"
+  },
+  {
+    "file": "exports\\T_Mill_OldBrick_BaseColor.png",
+    "bytes": 2016607,
+    "sha256": "fcfeaff185cf66dc4d2ddfb5bfa226ed59ce9e514072d5f35d6bc7843b7055e8"
+  },
+  {
+    "file": "exports\\T_Mill_OldBrick_Normal.png",
+    "bytes": 1365615,
+    "sha256": "4ad1e937e0a5ad31925cd591cce758e128ffd3558c517f7ccf08207034f43963"
+  },
+  {
+    "file": "exports\\T_Mill_OldBrick_Roughness.png",
+    "bytes": 712791,
+    "sha256": "95c1afa7b143a8c19f45544b9f546775c09019ac3bb3e00937b719d271e5286e"
+  },
+  {
+    "file": "exports\\T_Mill_RecessTimber_BaseColor.png",
+    "bytes": 15803,
+    "sha256": "41a13e7aeddc48680b5da4b33a553d2b0b421bc576a86b81da226e58b76d13a7"
+  },
+  {
+    "file": "exports\\T_Mill_RecessTimber_Normal.png",
+    "bytes": 1167340,
+    "sha256": "45bba39be9139de291ba500312f38ece28b551934020e7a08f08cb1febdeda04"
+  },
+  {
+    "file": "exports\\T_Mill_RecessTimber_Roughness.png",
+    "bytes": 713067,
+    "sha256": "981371cf3070819692ad7bf1da31ddea7eb13f8020fb81ae3c306c48ca42d20c"
+  },
+  {
+    "file": "exports\\T_Mill_SagePaint_BaseColor.png",
+    "bytes": 1808310,
+    "sha256": "ae287429c0eff616162d88f0ee670edd652a8229afb195497f8839a48391532c"
+  },
+  {
+    "file": "exports\\T_Mill_SagePaint_Normal.png",
+    "bytes": 326423,
+    "sha256": "ecf86ddf315131707102682f166f9a38918c477ff140cc3381ca0ec4dc72a979"
+  },
+  {
+    "file": "exports\\T_Mill_SagePaint_Roughness.png",
+    "bytes": 279159,
+    "sha256": "84b37b2275e1861b385196d4af16729b845b904e1e2053d38fe84296a165c623"
+  },
+  {
+    "file": "exports\\T_Mill_WeatheredTimber_BaseColor.png",
+    "bytes": 1885297,
+    "sha256": "bb8fe46a1b57bc29767e89f50b77dba31a2dec326c6fa011ed09dacf10e845b7"
+  },
+  {
+    "file": "exports\\T_Mill_WeatheredTimber_Normal.png",
+    "bytes": 500121,
+    "sha256": "b283c8d6faa2fd902957beb617ae6003b883f7953f88af3bce0abb10dd966d86"
+  },
+  {
+    "file": "exports\\T_Mill_WeatheredTimber_Roughness.png",
+    "bytes": 278905,
+    "sha256": "47fbadbbc6bda45d09fffd79889f5e288ceaccd0243e40d02ff5bfd69853b53a"
+  },
+  {
+    "file": "exports\\T_Mill_WindowGlass_BaseColor.png",
+    "bytes": 15803,
+    "sha256": "2eb4cf615b22fcbbd38281ad07cba4c2150a9c8fcce928e9dc5f36de3022c400"
+  },
+  {
+    "file": "exports\\T_Mill_WindowGlass_Normal.png",
+    "bytes": 706019,
+    "sha256": "ab9b30cd015b11d6a43e14dde111a3012f0a696e6605abe6728305053b64d294"
+  },
+  {
+    "file": "exports\\T_Mill_WindowGlass_Roughness.png",
+    "bytes": 705270,
+    "sha256": "766f59de6be149f01a62bd753a26c2a268a0059e3e6ba3219f4d073c9717f186"
+  },
+  {
+    "file": "references\\user_reference.png",
+    "bytes": 882443,
+    "sha256": "272a498ffa9fecdf7a34f07f340206313e09deffaef8494fa6c8c0383209e966"
+  },
+  {
+    "file": "renders\\portable_Hero.png",
+    "bytes": 1418185,
+    "sha256": "717ca651a75c5096a6efa4062f8f8b3dfb1d2f74657db6909ac5b177c66317ab"
+  },
+  {
+    "file": "renders\\r0_Front.jpg",
+    "bytes": 176907,
+    "sha256": "126b2b37f86c3470473f30aeff29df10ebc454cef494d5cfe224381d653ddd0e"
+  },
+  {
+    "file": "renders\\r0_Front.png",
+    "bytes": 1525514,
+    "sha256": "1925af0eb1ad23f6e6db309cbf87b9ff8815c30145773a77b7b78425502e85f5"
+  },
+  {
+    "file": "renders\\r0_Hero.jpg",
+    "bytes": 138502,
+    "sha256": "876e0c28d920619ed24d203be88faa4664574e22a1d5fc4dedbda3772238be05"
+  },
+  {
+    "file": "renders\\r0_Hero.png",
+    "bytes": 1439065,
+    "sha256": "ed0779cd4efae6f2dfda87a7f51d1dc608cbd8eeda105288e71a0e015eb8d97b"
+  },
+  {
+    "file": "renders\\r1_Front.jpg",
+    "bytes": 171321,
+    "sha256": "4db4262cd5f87b7fe659cb9d7a0902a4065b01cc7c99ffd1bee9a61482bc2eca"
+  },
+  {
+    "file": "renders\\r1_Front.png",
+    "bytes": 1476321,
+    "sha256": "0e0302b367b66bae0578854265cb253048a4b8594b7ce4b2f633ea532e1b899a"
+  },
+  {
+    "file": "renders\\r1_Hero.jpg",
+    "bytes": 134545,
+    "sha256": "38e1a8dc2b3f7da226d2df255234663a84de4f3b42705d4e04d938a6bb115568"
+  },
+  {
+    "file": "renders\\r1_Hero.png",
+    "bytes": 1412079,
+    "sha256": "ca7a81108a48bc3fe4f31457591413b6e0c4c9d55d4854293b17b79a6aa2216c"
+  },
+  {
+    "file": "renders\\r2_Base_Detail.jpg",
+    "bytes": 339526,
+    "sha256": "c91e2479e263001c15685b0e12a0c41d436c6b9f02be37c5e1e75e0863247bee"
+  },
+  {
+    "file": "renders\\r2_Base_Detail.png",
+    "bytes": 1971426,
+    "sha256": "4c285e01a5b55dbc2a32d0ee62075626749085750e5ad06bcd7a0a927a852223"
+  },
+  {
+    "file": "renders\\r2_Front.jpg",
+    "bytes": 175141,
+    "sha256": "686e858f6a9afe7ab52a737269adbebe469dc6532cd3bf59e249f6b04e39cc67"
+  },
+  {
+    "file": "renders\\r2_Front.png",
+    "bytes": 1484226,
+    "sha256": "1418128d723fb7f0a3f1df31ba35f6048fdb4aef278da3a4e0bc742ea57c3369"
+  },
+  {
+    "file": "renders\\r3_Base_Detail.jpg",
+    "bytes": 369764,
+    "sha256": "e2f5104c40f530a5bf7c69f233a1a850574fff1ca8afbc527a2311c7e399e30a"
+  },
+  {
+    "file": "renders\\r3_Base_Detail.png",
+    "bytes": 2055076,
+    "sha256": "162ccb6b208d053bd25cc8ab5956e1f5523906357ab9f46b2d0b89ca46a15c4f"
+  },
+  {
+    "file": "renders\\r3_Front.jpg",
+    "bytes": 173848,
+    "sha256": "4b3c588d29f0087446f9d0b641490035cd2da1d9596b221a735b1aec2c065307"
+  },
+  {
+    "file": "renders\\r3_Front.png",
+    "bytes": 1484554,
+    "sha256": "5769792d342ca0f2d0fe850766997b2dd2b03681a565ed5b9674218acad7179e"
+  },
+  {
+    "file": "renders\\r3_Hero.jpg",
+    "bytes": 138268,
+    "sha256": "fe854edcb4f19addb190d88e49bcd9a49f0be2ea23c4acd5c7640cf9d68f09c8"
+  },
+  {
+    "file": "renders\\r3_Hero.png",
+    "bytes": 1414290,
+    "sha256": "102d30d25df4d480f5c2944e7a751e4073432a78f5db8c7bb58a186de1240866"
+  },
+  {
+    "file": "renders\\r3_Iron_Detail.jpg",
+    "bytes": 311029,
+    "sha256": "faa9ff6d52336a702a21302e8a3a393586861ae07a371b040b04748f4e088fd5"
+  },
+  {
+    "file": "renders\\r3_Iron_Detail.png",
+    "bytes": 1897686,
+    "sha256": "8907858fde726b8b127477211040d71076f2ac95846ef95666ac55d5c4e676b0"
+  },
+  {
+    "file": "renders\\r3_Rear.jpg",
+    "bytes": 122388,
+    "sha256": "ce5d9c19fdcec061738bab5e63814b204f37ba51da0777c4286aa3c70278eae3"
+  },
+  {
+    "file": "renders\\r3_Rear.png",
+    "bytes": 1372611,
+    "sha256": "f7a5800b5cae5b7ddb240a0722f5515568d9d7f408f05f40b2d185b7189cd4f5"
+  },
+  {
+    "file": "renders\\r3_Roof_Detail.jpg",
+    "bytes": 288253,
+    "sha256": "76df9ebf5998d0d9f8b402a0226cd01a5e8b2eaac6c7ae35818013c805f831cb"
+  },
+  {
+    "file": "renders\\r3_Roof_Detail.png",
+    "bytes": 1776536,
+    "sha256": "06f9b9bdd2124323ef6f885634bd460e40cc5a41f864803445736cf26960f3ed"
+  },
+  {
+    "file": "renders\\r4_Front.jpg",
+    "bytes": 173878,
+    "sha256": "74cd909d6cae67a87d06637a2000e565ecdebe252cea6ae235acf2278f53b68b"
+  },
+  {
+    "file": "renders\\r4_Front.png",
+    "bytes": 1485188,
+    "sha256": "ac001ed79a113b27baa780130dbc1f6dc21713a360e46f90fee53746778d61d2"
+  },
+  {
+    "file": "renders\\r4_Roof_Detail.jpg",
+    "bytes": 283210,
+    "sha256": "c9dcc0daed2127f030c7670ac5953bc73acfa634304ae9d05c6a58aef82c995c"
+  },
+  {
+    "file": "renders\\r4_Roof_Detail.png",
+    "bytes": 1770723,
+    "sha256": "987830ccc86e7f291424874c5a2f19dc028ca19cc9cf6298290723b4cacb5404"
+  },
+  {
+    "file": "renders\\reimport_fbx_Base_Detail.jpg",
+    "bytes": 364213,
+    "sha256": "0d46a2060281a90084ff7932a48992d6c30c9476f77b5d251f6e4e699548cb6e"
+  },
+  {
+    "file": "renders\\reimport_fbx_Base_Detail.png",
+    "bytes": 2050633,
+    "sha256": "876588eeea6cb7b51bfab3d70b4b236f648de961faa4b6d5007f51b3a438a43c"
+  },
+  {
+    "file": "renders\\reimport_fbx_Front.jpg",
+    "bytes": 172121,
+    "sha256": "a266b10254ed1596f08d63e7005b449d29b159404c61b27f3b24cb4eebbfb827"
+  },
+  {
+    "file": "renders\\reimport_fbx_Front.png",
+    "bytes": 1489981,
+    "sha256": "dd64a6f6558d2d576ba5769902160a80adf17e9085c5946ca6feb973fcece814"
+  },
+  {
+    "file": "renders\\reimport_glb_Base_Detail.jpg",
+    "bytes": 364214,
+    "sha256": "773990208911d40362f68c686d3f584aa0c5a5b8aaa12d15329b13643f001dd9"
+  },
+  {
+    "file": "renders\\reimport_glb_Base_Detail.png",
+    "bytes": 2050670,
+    "sha256": "1668507760acf3b6ada46ffa126571b6d19ba9dbf7de2629747d2c0a643077f3"
+  },
+  {
+    "file": "renders\\reimport_glb_Front.jpg",
+    "bytes": 172099,
+    "sha256": "2834a151bbc0c7f341becdafe33ea81d9176ab0168c47083506a3af1b694d0ac"
+  },
+  {
+    "file": "renders\\reimport_glb_Front.png",
+    "bytes": 1490329,
+    "sha256": "56829406ab8daa8acc3ba1b1001f81a02f25ef81abe3374be91a5442ddfeb26a"
+  },
+  {
+    "file": "renders\\swatch_Fieldstone.jpg",
+    "bytes": 69488,
+    "sha256": "c769231799e7013f89d465ad4a38db776653637ff943655f4a5604ea9b564e27"
+  },
+  {
+    "file": "renders\\swatch_Fieldstone.png",
+    "bytes": 1013598,
+    "sha256": "c8f6bdb6c1740a3656a228b603176d600cc7451c71cf453d8be44c3a75476f9b"
+  },
+  {
+    "file": "renders\\swatch_Masonry.jpg",
+    "bytes": 89283,
+    "sha256": "f141488e9171f597f3dea85726c7aa127d2382633a704413d32fc2a972fd38f4"
+  },
+  {
+    "file": "renders\\swatch_Masonry.png",
+    "bytes": 1252424,
+    "sha256": "43b5f6ed358cd1e01be0860292b79cd81fc7f834505bb3da0288433c25f8b623"
+  },
+  {
+    "file": "renders\\swatch_SagePaint.jpg",
+    "bytes": 62129,
+    "sha256": "4ceb982b69e56d3505025d854eb261e3394ad0ce82fbc71a630cb00eb7218153"
+  },
+  {
+    "file": "renders\\swatch_SagePaint.png",
+    "bytes": 993674,
+    "sha256": "97af4318d565f1ae3d360cacc97fb5c387cad76277f277754ddb6a40c3d7b97b"
+  },
+  {
+    "file": "renders\\swatch_WeatheredTimber.jpg",
+    "bytes": 76925,
+    "sha256": "cfd166867115b35b95f405f1bafcf95c1aa4ea8630671527adea3e62dae86432"
+  },
+  {
+    "file": "renders\\swatch_WeatheredTimber.png",
+    "bytes": 1009680,
+    "sha256": "28dd9d0952fdd08ea5ba4299dd2723bcec4afbbe93541136bb24930172fa4691"
+  },
+  {
+    "file": "renders\\turntable_000.jpg",
+    "bytes": 88523,
+    "sha256": "3c375d4d2394521c384f8534582d55a7aef6611651f9afca79be3551d94077d3"
+  },
+  {
+    "file": "renders\\turntable_000.png",
+    "bytes": 773607,
+    "sha256": "e3ca032da9738113207774eefbaf57c334d21be0ec427f2963b5944d4c39dd70"
+  },
+  {
+    "file": "renders\\turntable_012.jpg",
+    "bytes": 68964,
+    "sha256": "488dbbd4b0a2ce77e65c0c3f699392f97ddd52a1bc28e0743532d3e526f643f1"
+  },
+  {
+    "file": "renders\\turntable_012.png",
+    "bytes": 739624,
+    "sha256": "c3e3a267d990c91000554cf616495768fa26e62de51632b75b8f42021dfb796a"
+  },
+  {
+    "file": "renders\\turntable_024.jpg",
+    "bytes": 86578,
+    "sha256": "d4171b0336574a63a6a0ee3f8ad65d5a2e624366894c66c423a520a19800bf2c"
+  },
+  {
+    "file": "renders\\turntable_024.png",
+    "bytes": 769133,
+    "sha256": "d9b10e7d733acf1236876b5980b6d2e0c46bf4206ae0e3c0ed9767730097bfa5"
+  },
+  {
+    "file": "renders\\turntable_036.jpg",
+    "bytes": 68224,
+    "sha256": "f6ea093e8b4e968f4e4369099e42e5f28bf3bd1b81723c81286304ae8bdbc196"
+  },
+  {
+    "file": "renders\\turntable_036.png",
+    "bytes": 739466,
+    "sha256": "32aff782ddc357482199bc2902a317584b6c14c4e9c8066c851bf46ce1406a90"
+  },
+  {
+    "file": "renders\\unreal_Base.camera.json",
+    "bytes": 176,
+    "sha256": "5f74f35c70e4d715814b31698cc486256e5cbc9cde810351376e706690b11a8d"
+  },
+  {
+    "file": "renders\\unreal_Base.jpg",
+    "bytes": 260678,
+    "sha256": "e1843bdc0f2e9096c43685ef3f1ebd5efeb75b3c8c474dd2dd2bea163921ed61"
+  },
+  {
+    "file": "renders\\unreal_Base.png",
+    "bytes": 1455198,
+    "sha256": "29311bac279946ee6f6985179ddaef68229dc0a2ea87176cabdadc03eacc03e8"
+  },
+  {
+    "file": "renders\\unreal_Front.camera.json",
+    "bytes": 145,
+    "sha256": "f37d802f24430691e0944c22b022e90b6e9b73fc709a4f8029e568e53ce48ac6"
+  },
+  {
+    "file": "renders\\unreal_Front.jpg",
+    "bytes": 205621,
+    "sha256": "fe0918f03d3888e098976c6b4c0e3b0f8269c56b7a17570dd89de0f0d4b56dd6"
+  },
+  {
+    "file": "renders\\unreal_Front.png",
+    "bytes": 1315493,
+    "sha256": "a2b8e601759f2f5b6b12a674af41bec70a29099c40a974511b8c15199adae59b"
+  },
+  {
+    "file": "renders\\unreal_Hero.camera.json",
+    "bytes": 179,
+    "sha256": "6c21c0e1cfe063436ddfd5caec54d527ccdd6d7f74da323849388d8e27e7e0c5"
+  },
+  {
+    "file": "renders\\unreal_Hero.jpg",
+    "bytes": 165445,
+    "sha256": "4db506719bfb4e62b1fbc6bcf57692bbe879d53454d452a4928a55308df8683a"
+  },
+  {
+    "file": "renders\\unreal_Hero.png",
+    "bytes": 1227661,
+    "sha256": "96ef42a57a1160673ebdc30cc5350653227759511cbec4016ea23477c45bc530"
+  },
+  {
+    "file": "renders\\unreal_Iron.camera.json",
+    "bytes": 177,
+    "sha256": "4e96781359ff54194222f68b25acace006dcc0edd82baf5cd1ca25a48ae0d8d5"
+  },
+  {
+    "file": "renders\\unreal_Iron.jpg",
+    "bytes": 334749,
+    "sha256": "14c1d48ad38cb1f405df1005968a43292aa43c89820aaeb2cfc262348aa0e472"
+  },
+  {
+    "file": "renders\\unreal_Iron.png",
+    "bytes": 1586417,
+    "sha256": "df00d9f66709e2837ccd795521c88f2ca641d2786f3f47d7e85727be6e120fc6"
+  },
+  {
+    "file": "renders\\unreal_Rear.camera.json",
+    "bytes": 180,
+    "sha256": "328958c7fa60a2bb2f440f80c89cf453a3a8765aa35acdf292d26ede8088b349"
+  },
+  {
+    "file": "renders\\unreal_Rear.jpg",
+    "bytes": 142394,
+    "sha256": "bf41e6d3538417d1cd97291c1280b5055d0ab9afa286a43c224805a44b64f081"
+  },
+  {
+    "file": "renders\\unreal_Rear.png",
+    "bytes": 1193168,
+    "sha256": "4b918a4fdd8c967de176ce9cb1393505d79a5b17de441e462007711c6402c26e"
+  },
+  {
+    "file": "renders\\unreal_Roof.camera.json",
+    "bytes": 177,
+    "sha256": "94323b7ba1b327b1c224d1016c4cbb0f791033c46dd11ea6075f8551a78a04c3"
+  },
+  {
+    "file": "renders\\unreal_Roof.jpg",
+    "bytes": 246182,
+    "sha256": "ba8de6ec37eaa4c6c91ff29134cded87d83e9ab760a7265d7ddef173a6cbcc01"
+  },
+  {
+    "file": "renders\\unreal_Roof.png",
+    "bytes": 1392905,
+    "sha256": "ec5dd9633e171845dd536231e62d39b2294996761c63a9e9cedb981a94b2bae3"
+  },
+  {
+    "file": "scripts\\bake_export.py",
+    "bytes": 6466,
+    "sha256": "ccc7c1f14e36022b536bd37721c94e7e72f1be5656c2ff9392744ff1e3213c5d"
+  },
+  {
+    "file": "scripts\\build_tower.py",
+    "bytes": 13703,
+    "sha256": "0acd9bd0e2a1703f3d97fc16757e71e7af2c92ced771a27c57a5dc2ed675dcb5"
+  },
+  {
+    "file": "scripts\\call_tower.py",
+    "bytes": 1104,
+    "sha256": "00cde2111664c6f64289580157e180f5804c04e9ecc6528a444f77257ad0e723"
+  },
+  {
+    "file": "scripts\\capture_all.py",
+    "bytes": 903,
+    "sha256": "25149e4b1b6b6c1cbbb64b605f200797f533a002116a82769276ab6a0df501c7"
+  },
+  {
+    "file": "scripts\\capture_unreal.py",
+    "bytes": 1590,
+    "sha256": "7cb16ac0ac45d67d4e90aa666a921d2df47ad384aa9aa5650b19427f2bc2852d"
+  },
+  {
+    "file": "scripts\\check_import_options.py",
+    "bytes": 547,
+    "sha256": "8a1b6ff8fcd0bd1ea5f2fb5c55b436fd8656ab73db422f257ea53df4943078cb"
+  },
+  {
+    "file": "scripts\\clean_preview_overlay.py",
+    "bytes": 725,
+    "sha256": "2f7d4077cc1bd36d7b2aa348d155fb60af06ac6047d2e18a64e9dfd1ab33f65d"
+  },
+  {
+    "file": "scripts\\discover_engine.py",
+    "bytes": 743,
+    "sha256": "16067c9e2c1292c25c5335b6a005102d60fadfc4738a8b9e1aa4cdd46b291f7e"
+  },
+  {
+    "file": "scripts\\final_geometry.py",
+    "bytes": 1803,
+    "sha256": "ddbc59c80f8b9bf2008f2e3a931b32882d93ae6e1cf967cc5a6c5bd657bb2106"
+  },
+  {
+    "file": "scripts\\final_unreal_check.py",
+    "bytes": 2363,
+    "sha256": "f9ff756b8924ad738ef5cef26994ce41905156312884149bb5b9257f825c8846"
+  },
+  {
+    "file": "scripts\\finish_preview.py",
+    "bytes": 869,
+    "sha256": "9fff63ada4e6e5412eb2a33937acf019ef0dcf144801e8e48ea8ef6569d8f9cf"
+  },
+  {
+    "file": "scripts\\fix_delivery_uvs.py",
+    "bytes": 1393,
+    "sha256": "d0c5914070c4f991e903393e9351ebc158aa192c57311bc6120827a151a144cc"
+  },
+  {
+    "file": "scripts\\mcp_client.py",
+    "bytes": 1191,
+    "sha256": "fe8ddc645ab0adce8441990d634f872a0cc8d8398be28770c222a902b61edfbb"
+  },
+  {
+    "file": "scripts\\package_tower.py",
+    "bytes": 18843,
+    "sha256": "8abbbfb67e0cbc95198dc33d2fc560708eadaee0249710d10fadc674f9ce141d"
+  },
+  {
+    "file": "scripts\\prepare_capture.py",
+    "bytes": 476,
+    "sha256": "d6bbb62b89c13cf0ffb555753a361c9991f1aa9820a98a8931ec9f80affe473a"
+  },
+  {
+    "file": "scripts\\prepare_delivery_scripts.py",
+    "bytes": 2712,
+    "sha256": "e3767cea6ec7d8385de7a23be9faaf6cb5b187c55714822ee182540a5fb05034"
+  },
+  {
+    "file": "scripts\\record_inputs.py",
+    "bytes": 4958,
+    "sha256": "447d40c647913a52c3c4633fb49749d315203bd9d9ed6752e9a3c036dca8c2de"
+  },
+  {
+    "file": "scripts\\recover_checkpoint.py",
+    "bytes": 1060,
+    "sha256": "fb9223579defe93eb39c14be5983137f58fad8dbcf3ede239d18319efbe42f90"
+  },
+  {
+    "file": "scripts\\refine_preview.py",
+    "bytes": 785,
+    "sha256": "73e1c14e2013f8e4eea31407c7b8d2c1f0918fa288f53e6bcb7aea7b315d36d4"
+  },
+  {
+    "file": "scripts\\refine_r1.py",
+    "bytes": 893,
+    "sha256": "4a12b9ee7c022cda6296188666a43e1494d11e1ec16fd42ab3d5a5d70766ed2c"
+  },
+  {
+    "file": "scripts\\refine_tower_r2.py",
+    "bytes": 4658,
+    "sha256": "d8503247dcea7273e7634b91a480f2041250adbf0a4efc75882e46903ec119a9"
+  },
+  {
+    "file": "scripts\\refine_tower_r3.py",
+    "bytes": 3936,
+    "sha256": "fd4185921f4b0c9b31f5e5a76c4bde88f6ab7d13e7b941b5b219d08b13cfa026"
+  },
+  {
+    "file": "scripts\\repair_tool_discovery.py",
+    "bytes": 328,
+    "sha256": "d7e292923cbfe2286297845ce1b54008f62ca114f72ae6dd6d7688661ffbdcef"
+  },
+  {
+    "file": "scripts\\swatch_density.py",
+    "bytes": 2264,
+    "sha256": "6b53f0dedbe9f7d5814aaccc78e534d64d3e3279ff55aadc312c2d0f1bd6c873"
+  },
+  {
+    "file": "scripts\\tower_toolset.py",
+    "bytes": 5904,
+    "sha256": "a25c79d71d77bc1b159c5e8d69639161350b18e6874df31a7d2b5cbffc1ab7e7"
+  },
+  {
+    "file": "scripts\\turntable.py",
+    "bytes": 1552,
+    "sha256": "c0ce51dc204ecf3903bb109bb3435f0ed2451ca57cbf68d9c7af74379e6471d2"
+  },
+  {
+    "file": "scripts\\unreal_ops.py",
+    "bytes": 1153,
+    "sha256": "521a374b28e46ad86e13748a7712b991266d206f5263b0dd5432325edb599ecf"
+  },
+  {
+    "file": "scripts\\verify_exports.py",
+    "bytes": 2866,
+    "sha256": "abe79ea70235e3a0cedb4560ae8f12d7d0d8b7902577ef906da8a86f3fec8a29"
+  },
+  {
+    "file": "textures\\tower--brick--worn--1254x1254--v1.png",
+    "bytes": 3368542,
+    "sha256": "dc28418c3c61ed38f3e70dba11055a7169cc0298bd256812178852df6607eb72"
+  },
+  {
+    "file": "textures\\tower--brick--worn--1254x1254--v1.prompt.md",
+    "bytes": 1555,
+    "sha256": "39612d00bf948a33ec432f29147ceb51481e525c148dc24000888e86d5c0f3cd"
+  },
+  {
+    "file": "textures\\tower--masonry--worn--1254x1254--v1.png",
+    "bytes": 3616058,
+    "sha256": "c576e13e98de2baffe111c53d4f585cc1e1511d0888cf817b403b4fab2360e84"
+  },
+  {
+    "file": "textures\\tower--masonry--worn--1254x1254--v1.prompt.md",
+    "bytes": 1985,
+    "sha256": "efc8d3cc8404b63a56c183bc9e75d49bc7bda3b403533c2f683a94b302f2df4d"
+  },
+  {
+    "file": "textures\\tower--paint--worn--1254x1254--v1.png",
+    "bytes": 2919704,
+    "sha256": "b28048e33716e16024a709f1d5d1d9a2c1706303ab7c3ab9984a29223c2c450e"
+  },
+  {
+    "file": "textures\\tower--paint--worn--1254x1254--v1.prompt.md",
+    "bytes": 1719,
+    "sha256": "a9812611fd0745f36baade7577772b628a687601ef69f42156e143dc29ad83b0"
+  },
+  {
+    "file": "textures\\tower--stone--worn--1254x1254--v1.png",
+    "bytes": 3618396,
+    "sha256": "95befa38e7e85fc5855b16dff27369f9f283e000517436dd5315db41669c2c75"
+  },
+  {
+    "file": "textures\\tower--stone--worn--1254x1254--v1.prompt.md",
+    "bytes": 1691,
+    "sha256": "f3d484ffab724407e70a9f12cc6ad14da3975b5c4c19ae2d884f7cc45e424b8c"
+  },
+  {
+    "file": "textures\\tower--timber--worn--1254x1254--v1.png",
+    "bytes": 3102189,
+    "sha256": "ca99f68b47b72533598e6cadf2b6f055b04c478ce3149a0f5e1696d8dab86e64"
+  },
+  {
+    "file": "textures\\tower--timber--worn--1254x1254--v1.prompt.md",
+    "bytes": 1742,
+    "sha256": "6d98790bfb2858b2847fe262996c3f0a5ea4689665031fea8397b725d7e4e1c6"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_Fieldstone_BaseColor.png",
+    "bytes": 2100237,
+    "sha256": "90e418b3d0ba6ee135e7d200de250a506fbc347a050ed7900614db0380525113"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_Fieldstone_Normal.png",
+    "bytes": 1133496,
+    "sha256": "38f4b6917a7e72400595aae5dab685f7ad4c0880b68e65198ae166c7a52fa7a4"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_Fieldstone_Roughness.png",
+    "bytes": 15801,
+    "sha256": "70734e12c2e0e866270cf0926b141009f459e119676da5c0385ecdd6c4f70326"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_ForgedIron_BaseColor.png",
+    "bytes": 15803,
+    "sha256": "d0b11eaeaec51aeb08e1cbaa5b87a614fc85af5ca943111f3e8d9febb814d5d7"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_ForgedIron_Normal.png",
+    "bytes": 938186,
+    "sha256": "6a1f34ad3ecd015f4fc72b7b5e2719c59d02f99bf91bb8586072dbf523127442"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_ForgedIron_Roughness.png",
+    "bytes": 712940,
+    "sha256": "0d7db94dc48dd60f3b3fb08cfbe704b112938801d839fd3956b396a10b30ff8b"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_Masonry_BaseColor.png",
+    "bytes": 2104588,
+    "sha256": "27eae6d19048ec08610f1cf5c68ff55e1e20d77c35843fca134e4821597e3c8b"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_Masonry_Normal.png",
+    "bytes": 1631770,
+    "sha256": "81cd6e0d0bf18d6e4eef436638f2569c47d6e4ce13d97209a2feb9f82e2b0276"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_Masonry_Roughness.png",
+    "bytes": 698687,
+    "sha256": "5ad35336524b8260831e86a19c89a86eeee3386194fa90000991da08bb0a153f"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_OldBrick_BaseColor.png",
+    "bytes": 2016607,
+    "sha256": "fcfeaff185cf66dc4d2ddfb5bfa226ed59ce9e514072d5f35d6bc7843b7055e8"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_OldBrick_Normal.png",
+    "bytes": 1365615,
+    "sha256": "4ad1e937e0a5ad31925cd591cce758e128ffd3558c517f7ccf08207034f43963"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_OldBrick_Roughness.png",
+    "bytes": 712791,
+    "sha256": "95c1afa7b143a8c19f45544b9f546775c09019ac3bb3e00937b719d271e5286e"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_RecessTimber_BaseColor.png",
+    "bytes": 15803,
+    "sha256": "41a13e7aeddc48680b5da4b33a553d2b0b421bc576a86b81da226e58b76d13a7"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_RecessTimber_Normal.png",
+    "bytes": 1167340,
+    "sha256": "45bba39be9139de291ba500312f38ece28b551934020e7a08f08cb1febdeda04"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_RecessTimber_Roughness.png",
+    "bytes": 713067,
+    "sha256": "981371cf3070819692ad7bf1da31ddea7eb13f8020fb81ae3c306c48ca42d20c"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_SagePaint_BaseColor.png",
+    "bytes": 1808310,
+    "sha256": "ae287429c0eff616162d88f0ee670edd652a8229afb195497f8839a48391532c"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_SagePaint_Normal.png",
+    "bytes": 326423,
+    "sha256": "ecf86ddf315131707102682f166f9a38918c477ff140cc3381ca0ec4dc72a979"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_SagePaint_Roughness.png",
+    "bytes": 279159,
+    "sha256": "84b37b2275e1861b385196d4af16729b845b904e1e2053d38fe84296a165c623"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_WeatheredTimber_BaseColor.png",
+    "bytes": 1885297,
+    "sha256": "bb8fe46a1b57bc29767e89f50b77dba31a2dec326c6fa011ed09dacf10e845b7"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_WeatheredTimber_Normal.png",
+    "bytes": 500121,
+    "sha256": "b283c8d6faa2fd902957beb617ae6003b883f7953f88af3bce0abb10dd966d86"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_WeatheredTimber_Roughness.png",
+    "bytes": 278905,
+    "sha256": "47fbadbbc6bda45d09fffd79889f5e288ceaccd0243e40d02ff5bfd69853b53a"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_WindowGlass_BaseColor.png",
+    "bytes": 15803,
+    "sha256": "2eb4cf615b22fcbbd38281ad07cba4c2150a9c8fcce928e9dc5f36de3022c400"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_WindowGlass_Normal.png",
+    "bytes": 706019,
+    "sha256": "ab9b30cd015b11d6a43e14dde111a3012f0a696e6605abe6728305053b64d294"
+  },
+  {
+    "file": "exports\\HansaTowerMill.fbm\\T_Mill_WindowGlass_Roughness.png",
+    "bytes": 705270,
+    "sha256": "766f59de6be149f01a62bd753a26c2a268a0059e3e6ba3219f4d073c9717f186"
+  }
+]

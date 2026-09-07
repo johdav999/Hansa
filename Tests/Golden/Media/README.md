@@ -1,0 +1,1 @@
+Original deterministic test fixtures: triangle.glb is one indexed XY triangle with embedded positions/indices and no external resources; tone.wav is 0.25 seconds of mono 24 kHz 16-bit PCM, a 440 Hz sine with amplitude 8000. Both are test inputs, never production assets. They require no provider call or third-party rights.

@@ -6,6 +6,7 @@
 #include "Market/HansaMarketInternal.h"
 #include "Production/HansaProductionInternal.h"
 #include "Population/HansaPopulationInternal.h"
+#include "Trade/HansaTradeInternal.h"
 
 namespace Hansa::Simulation
 {
@@ -107,6 +108,31 @@ namespace Hansa::Simulation
 				}
 			}
 			return INDEX_NONE;
+		}
+
+		int32 FindRouteIndex(const TArray<FHansaRouteState>& Routes, const FHansaRouteId RouteId)
+		{
+			for (int32 Index = 0; Index < Routes.Num(); ++Index)
+			{
+				if (Routes[Index].Id == RouteId) return Index;
+				if (RouteId < Routes[Index].Id) break;
+			}
+			return INDEX_NONE;
+		}
+
+		int32 FindRouteInsertionIndex(const TArray<FHansaRouteState>& Routes, const FHansaRouteId RouteId)
+		{
+			int32 Index = 0;
+			while (Index < Routes.Num() && Routes[Index].Id < RouteId) ++Index;
+			return Index;
+		}
+
+		FHansaVehicleState* FindVehicle(TArray<FHansaVehicleState>& Vehicles, const FHansaVehicleId VehicleId)
+		{
+			return Vehicles.FindByPredicate([VehicleId](const FHansaVehicleState& Vehicle)
+			{
+				return Vehicle.Id == VehicleId;
+			});
 		}
 
 		const FHansaBuildingState* FindBuilding(const TArray<FHansaBuildingState>& Buildings, const FHansaBuildingId BuildingId)
@@ -283,7 +309,9 @@ namespace Hansa::Simulation
 			return MakeFailure(EHansaCommandGatewayError::CommandCountOverflow);
 		}
 		const uint64 MaximumSystemEventCount = static_cast<uint64>(State.Productions.Num()) +
-			static_cast<uint64>(State.Buildings.Num() + Input.Commands.Num()) * 2ULL;
+			static_cast<uint64>(State.Research.Num()) +
+			static_cast<uint64>(State.Buildings.Num() + Input.Commands.Num()) * 2ULL +
+			static_cast<uint64>(State.Routes.Num() + Input.Commands.Num()) * 64ULL;
 		if (CommandCount > TNumericLimits<uint64>::Max() - MaximumSystemEventCount ||
 			CommandCount + MaximumSystemEventCount > TNumericLimits<uint64>::Max() - State.PublishedDomainEventCount)
 		{
@@ -637,6 +665,199 @@ namespace Hansa::Simulation
 				Event.Value = Cohort->Residents;
 				break;
 			}
+			case EHansaGameplayCommandType::CreateRoute:
+			{
+				const FHansaCreateRouteCommand& Payload = Command.GetCreateRoute();
+				if (!Payload.RouteId.IsValid() || !Payload.VehicleId.IsValid() || !Payload.RouteDefinitionId.IsValid())
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				if (FindRouteIndex(Candidate.Routes, Payload.RouteId) != INDEX_NONE)
+				{
+					return MakeFailure(EHansaCommandGatewayError::TargetAlreadyExists, CommandIndex);
+				}
+				FHansaVehicleState* Vehicle = FindVehicle(Candidate.Vehicles, Payload.VehicleId);
+				if (Vehicle == nullptr)
+				{
+					FHansaCommandGatewayResult Failure = MakeFailure(EHansaCommandGatewayError::RouteRejected, CommandIndex);
+					Failure.RoutePlanError = EHansaRoutePlanError::VehicleNotFound;
+					return Failure;
+				}
+				if (Vehicle->OwnerId != Header.Authority.IssuingHouseId)
+				{
+					return MakeFailure(EHansaCommandGatewayError::NotAuthorized, CommandIndex);
+				}
+				if (Candidate.Routes.ContainsByPredicate([&Payload](const FHansaRouteState& Route)
+				{
+					return Route.VehicleId == Payload.VehicleId && Route.Lifecycle != EHansaRouteLifecycleState::Cancelled;
+				}))
+				{
+					return MakeFailure(EHansaCommandGatewayError::VehicleAlreadyAssigned, CommandIndex);
+				}
+				const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry();
+				if (Registry == nullptr)
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidDefinitionContext, CommandIndex);
+				}
+				const EHansaRoutePlanError PlanError = FHansaTradeExecutor::ValidatePlan(
+					*Vehicle, Payload.RouteDefinitionId, Payload.Stops, Candidate.Cities,
+					Candidate.InventoryLedger, *Registry);
+				if (PlanError != EHansaRoutePlanError::None || Payload.Stops.IsEmpty() ||
+					Vehicle->CurrentCityId != Payload.Stops[0].CityId)
+				{
+					FHansaCommandGatewayResult Failure = MakeFailure(EHansaCommandGatewayError::RouteRejected, CommandIndex);
+					Failure.RoutePlanError = PlanError != EHansaRoutePlanError::None
+						? PlanError : EHansaRoutePlanError::VehicleLocationMismatch;
+					return Failure;
+				}
+				FHansaRouteState Route;
+				Route.Id = Payload.RouteId;
+				Route.OwnerId = Header.Authority.IssuingHouseId;
+				Route.VehicleId = Vehicle->Id;
+				Route.RouteDefinitionId = Payload.RouteDefinitionId;
+				Route.Mode = Vehicle->Mode;
+				Route.Stops = Payload.Stops;
+				Route.Lifecycle = Payload.bActivate ? EHansaRouteLifecycleState::AtStop : EHansaRouteLifecycleState::Inactive;
+				Route.bPendingStopActions = Payload.bActivate;
+				Candidate.Routes.Insert(Route, FindRouteInsertionIndex(Candidate.Routes, Route.Id));
+				Event.Type = EHansaDomainEventType::RouteCreated;
+				Event.RouteId = Route.Id;
+				Event.VehicleId = Route.VehicleId;
+				Event.CityId = Vehicle->CurrentCityId;
+				Event.Value = Payload.bActivate ? 1 : 0;
+				break;
+			}
+			case EHansaGameplayCommandType::EditRoute:
+			{
+				const FHansaEditRouteCommand& Payload = Command.GetEditRoute();
+				const int32 RouteIndex = Payload.RouteId.IsValid()
+					? FindRouteIndex(Candidate.Routes, Payload.RouteId) : INDEX_NONE;
+				if (RouteIndex == INDEX_NONE)
+				{
+					return MakeFailure(Payload.RouteId.IsValid() ? EHansaCommandGatewayError::TargetNotFound
+						: EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				FHansaRouteState& Route = Candidate.Routes[RouteIndex];
+				if (Route.OwnerId != Header.Authority.IssuingHouseId)
+				{
+					return MakeFailure(EHansaCommandGatewayError::NotAuthorized, CommandIndex);
+				}
+				FHansaVehicleState* Vehicle = FindVehicle(Candidate.Vehicles, Route.VehicleId);
+				if (Route.Lifecycle != EHansaRouteLifecycleState::Inactive || Vehicle == nullptr ||
+					Vehicle->Cargo.GetRawValue() != 0)
+				{
+					return MakeFailure(EHansaCommandGatewayError::RouteStateInvalid, CommandIndex);
+				}
+				const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry();
+				if (Registry == nullptr) return MakeFailure(EHansaCommandGatewayError::InvalidDefinitionContext, CommandIndex);
+				const EHansaRoutePlanError PlanError = FHansaTradeExecutor::ValidatePlan(
+					*Vehicle, Route.RouteDefinitionId, Payload.Stops, Candidate.Cities,
+					Candidate.InventoryLedger, *Registry);
+				if (PlanError != EHansaRoutePlanError::None || Payload.Stops.IsEmpty() ||
+					Vehicle->CurrentCityId != Payload.Stops[0].CityId)
+				{
+					FHansaCommandGatewayResult Failure = MakeFailure(EHansaCommandGatewayError::RouteRejected, CommandIndex);
+					Failure.RoutePlanError = PlanError != EHansaRoutePlanError::None
+						? PlanError : EHansaRoutePlanError::VehicleLocationMismatch;
+					return Failure;
+				}
+				Route.Stops = Payload.Stops;
+				Route.CurrentStopIndex = 0;
+				Route.NextStopIndex = 1;
+				Route.Progress = FHansaRate();
+				Route.RemainingTravelTicks = 0;
+				Route.TotalTravelTicks = 0;
+				Route.bPendingStopActions = false;
+				Event.Type = EHansaDomainEventType::RouteEdited;
+				Event.RouteId = Route.Id;
+				Event.VehicleId = Route.VehicleId;
+				Event.CityId = Vehicle->CurrentCityId;
+				break;
+			}
+			case EHansaGameplayCommandType::SetRouteActive:
+			{
+				const FHansaSetRouteActiveCommand& Payload = Command.GetSetRouteActive();
+				const int32 RouteIndex = Payload.RouteId.IsValid()
+					? FindRouteIndex(Candidate.Routes, Payload.RouteId) : INDEX_NONE;
+				if (RouteIndex == INDEX_NONE)
+				{
+					return MakeFailure(Payload.RouteId.IsValid() ? EHansaCommandGatewayError::TargetNotFound
+						: EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				FHansaRouteState& Route = Candidate.Routes[RouteIndex];
+				if (Route.OwnerId != Header.Authority.IssuingHouseId)
+				{
+					return MakeFailure(EHansaCommandGatewayError::NotAuthorized, CommandIndex);
+				}
+				if (Route.Lifecycle == EHansaRouteLifecycleState::Cancelled ||
+					Route.Lifecycle == EHansaRouteLifecycleState::Traveling)
+				{
+					return MakeFailure(EHansaCommandGatewayError::RouteStateInvalid, CommandIndex);
+				}
+				FHansaVehicleState* Vehicle = FindVehicle(Candidate.Vehicles, Route.VehicleId);
+				if (Vehicle == nullptr || Route.Stops.IsEmpty() ||
+					Vehicle->CurrentCityId != Route.Stops[Route.CurrentStopIndex].CityId)
+				{
+					return MakeFailure(EHansaCommandGatewayError::RouteStateInvalid, CommandIndex);
+				}
+				Route.Lifecycle = Payload.bActive ? EHansaRouteLifecycleState::AtStop : EHansaRouteLifecycleState::Inactive;
+				Route.bPendingStopActions = Payload.bActive;
+				Event.Type = EHansaDomainEventType::RouteActivationChanged;
+				Event.RouteId = Route.Id;
+				Event.VehicleId = Route.VehicleId;
+				Event.CityId = Vehicle->CurrentCityId;
+				Event.Value = Payload.bActive ? 1 : 0;
+				break;
+			}
+			case EHansaGameplayCommandType::CancelRoute:
+			{
+				const FHansaCancelRouteCommand& Payload = Command.GetCancelRoute();
+				const int32 RouteIndex = Payload.RouteId.IsValid()
+					? FindRouteIndex(Candidate.Routes, Payload.RouteId) : INDEX_NONE;
+				if (RouteIndex == INDEX_NONE)
+				{
+					return MakeFailure(Payload.RouteId.IsValid() ? EHansaCommandGatewayError::TargetNotFound
+						: EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				FHansaRouteState& Route = Candidate.Routes[RouteIndex];
+				if (Route.OwnerId != Header.Authority.IssuingHouseId)
+				{
+					return MakeFailure(EHansaCommandGatewayError::NotAuthorized, CommandIndex);
+				}
+				if (Route.Lifecycle == EHansaRouteLifecycleState::Cancelled)
+				{
+					return MakeFailure(EHansaCommandGatewayError::RouteStateInvalid, CommandIndex);
+				}
+				Route.Lifecycle = EHansaRouteLifecycleState::Cancelled;
+				Route.Progress = FHansaRate();
+				Route.RemainingTravelTicks = 0;
+				Route.TotalTravelTicks = 0;
+				Route.bPendingStopActions = false;
+				Event.Type = EHansaDomainEventType::RouteCancelled;
+				Event.RouteId = Route.Id;
+				Event.VehicleId = Route.VehicleId;
+				Event.Value = Route.LastTransfer.AppliedQuantity.GetRawValue();
+				break;
+			}
+			case EHansaGameplayCommandType::QueueResearch:
+			{
+				const FHansaQueueResearchCommand& Payload = Command.GetQueueResearch();
+				const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry();
+				if (Payload.TechnologyId.IsEmpty() || Registry == nullptr)
+				{
+					return MakeFailure(EHansaCommandGatewayError::InvalidPayload, CommandIndex);
+				}
+				const FHansaResearchQueueResult Queue = FHansaResearchExecutor::TryQueue(
+					Candidate.Research, Header.Authority.IssuingHouseId, Payload.TechnologyId, Registry->GetTechnologies());
+				if (!Queue)
+				{
+					return MakeFailure(EHansaCommandGatewayError::ResearchRejected, CommandIndex);
+				}
+				Event.Type = EHansaDomainEventType::ResearchQueued;
+				Event.TechnologyId = Payload.TechnologyId;
+				Event.Value = Registry->FindTechnology(Payload.TechnologyId)->DurationTicks;
+				break;
+			}
 			default:
 				return MakeFailure(EHansaCommandGatewayError::InvalidPayload, CommandIndex);
 			}
@@ -657,7 +878,9 @@ namespace Hansa::Simulation
 			Candidate.PopulationCohorts.Num() + Candidate.Markets.Num() + Candidate.Placement.GetMaps().Num() +
 			Candidate.Placement.GetPlacements().Num() + Candidate.LocalLogisticsRequests.Num() +
 			Candidate.LocalLogisticsJobs.Num();
-		TransientCache.BeginStep(TickBefore, EntityCount);
+		// Research records are authoritative entities even while their one-item queue is empty.
+		const int64 AuthoritativeEntityCount = EntityCount + Candidate.Research.Num();
+		TransientCache.BeginStep(TickBefore, AuthoritativeEntityCount);
 		for (const EHansaSimulationPhase Phase : OrderedPhases)
 		{
 			TransientCache.RecordPhase(Phase);
@@ -669,6 +892,10 @@ namespace Hansa::Simulation
 			{
 				if (const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry())
 				{
+					FHansaTradeExecutor::AdvanceOneTick(
+						Candidate.Routes, Candidate.Vehicles, Candidate.Houses,
+						Candidate.InventoryLedger, *Registry, Candidate.Clock.GetTick(),
+						Candidate.PublishedDomainEventCount, PendingEvents);
 					FHansaLocalLogisticsExecutor::SynchronizeProductionRequests(
 						Candidate.LocalLogisticsRequests,
 						Candidate.Productions,
@@ -755,6 +982,26 @@ namespace Hansa::Simulation
 					FHansaMarketExecutor::AdvanceOneTick(Candidate.Markets, Candidate.MarketSettings,
 						Candidate.InventoryLedger, Candidate.Productions,
 						Candidate.PopulationCohorts, *Registry, Candidate.Clock.GetTick());
+				}
+			}
+			else if (Phase == EHansaSimulationPhase::ResearchPoliticsAndVictory)
+			{
+				if (const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry())
+				{
+					TArray<FHansaResearchCompletion> Completions;
+					FHansaResearchExecutor::AdvanceOneTick(Candidate.Research, Registry->GetTechnologies(), Completions);
+					for (const FHansaResearchCompletion& Completion : Completions)
+					{
+						FHansaDomainEvent CompletionEvent;
+						CompletionEvent.GlobalSequence = Candidate.PublishedDomainEventCount + 1;
+						CompletionEvent.Tick = Candidate.Clock.GetTick();
+						CompletionEvent.IssuingHouseId = Completion.HouseId;
+						CompletionEvent.Type = EHansaDomainEventType::ResearchCompleted;
+						CompletionEvent.TechnologyId = Completion.TechnologyId;
+						CompletionEvent.Value = Completion.AppliedEffects.Num();
+						++Candidate.PublishedDomainEventCount;
+						PendingEvents.Add(MoveTemp(CompletionEvent));
+					}
 				}
 			}
 			else if (Phase != EHansaSimulationPhase::ApplyCommands)

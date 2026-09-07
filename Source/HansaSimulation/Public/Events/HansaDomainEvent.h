@@ -4,10 +4,12 @@
 #include "Model/HansaSimulationTime.h"
 #include "Production/HansaProduction.h"
 #include "Placement/HansaPlacement.h"
+#include "Trade/HansaTrade.h"
 
 namespace Hansa::Simulation
 {
 	class FHansaConstructionExecutor;
+	class FHansaTradeExecutor;
 
 	enum class EHansaDomainEventType : uint8
 	{
@@ -22,7 +24,17 @@ namespace Hansa::Simulation
 		ConstructionCompleted,
 		ConstructionCancelled,
 		BuildingRemoved,
-		ResidenceUpgraded
+		ResidenceUpgraded,
+		RouteCreated,
+		RouteEdited,
+		RouteActivationChanged,
+		RouteCancelled,
+		RouteDeparted,
+		RouteArrived,
+		RouteCargoTransferred,
+		RouteCargoMissed,
+		ResearchQueued,
+		ResearchCompleted
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaDomainEventType Type);
@@ -39,15 +51,23 @@ namespace Hansa::Simulation
 		[[nodiscard]] FHansaTestEntityId GetTestEntityId() const { return TestEntityId; }
 		[[nodiscard]] FHansaProductionId GetProductionId() const { return ProductionId; }
 		[[nodiscard]] FHansaBuildingId GetBuildingId() const { return BuildingId; }
+		[[nodiscard]] FHansaRouteId GetRouteId() const { return RouteId; }
+		[[nodiscard]] FHansaVehicleId GetVehicleId() const { return VehicleId; }
+		[[nodiscard]] const FHansaCityDefinitionId& GetCityId() const { return CityId; }
+		[[nodiscard]] const FHansaGoodId& GetGoodId() const { return GoodId; }
+		[[nodiscard]] EHansaRouteCargoActionKind GetRouteCargoActionKind() const { return RouteCargoActionKind; }
 		[[nodiscard]] const FHansaRecipeId& GetRecipeId() const { return RecipeId; }
+		[[nodiscard]] const FString& GetTechnologyId() const { return TechnologyId; }
 		[[nodiscard]] EHansaProductionBlocker GetProductionBlocker() const { return ProductionBlocker; }
 		[[nodiscard]] const FHansaPlacementSpec& GetPlacement() const { return Placement; }
 		[[nodiscard]] int64 GetValue() const { return Value; }
+		[[nodiscard]] int64 GetRelatedValue() const { return RelatedValue; }
 		[[nodiscard]] FString ToDebugString() const;
 
 	private:
 		friend class FHansaConstructionExecutor;
 		friend class FHansaSimulationPipeline;
+		friend class FHansaTradeExecutor;
 
 		EHansaDomainEventType Type = EHansaDomainEventType::NoOpCommandAccepted;
 		uint64 GlobalSequence = 0;
@@ -57,9 +77,16 @@ namespace Hansa::Simulation
 		FHansaTestEntityId TestEntityId;
 		FHansaProductionId ProductionId;
 		FHansaBuildingId BuildingId;
+		FHansaRouteId RouteId;
+		FHansaVehicleId VehicleId;
+		FHansaCityDefinitionId CityId;
+		FHansaGoodId GoodId;
+		EHansaRouteCargoActionKind RouteCargoActionKind = EHansaRouteCargoActionKind::Load;
 		FHansaRecipeId RecipeId;
+		FString TechnologyId;
 		EHansaProductionBlocker ProductionBlocker = EHansaProductionBlocker::None;
 		FHansaPlacementSpec Placement;
 		int64 Value = 0;
+		int64 RelatedValue = 0;
 	};
 }

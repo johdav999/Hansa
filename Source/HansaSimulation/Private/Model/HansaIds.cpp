@@ -16,7 +16,10 @@ namespace Hansa::Simulation
 			TEXT("Technology"),
 			TEXT("Event"),
 			TEXT("Victory"),
-			TEXT("Scenario")
+			TEXT("Scenario"),
+			TEXT("ScenarioObjective"),
+			TEXT("Route"),
+			TEXT("AITuning")
 		};
 
 		bool IsAsciiLetter(const TCHAR Character)

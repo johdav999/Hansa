@@ -1,0 +1,3 @@
+from unreal_ops import Client,P
+import json
+c=Client();i=json.loads((P/'preview_actors.json').read_text());c.call('object','set_properties',{'instance':i['DirectionalLight_0_components'][0],'values':json.dumps({'intensity':12000})});c.call('object','set_properties',{'instance':i['postprocess'],'values':json.dumps({'settings':{'bOverride_AutoExposureMinBrightness':True,'bOverride_AutoExposureMaxBrightness':True,'bOverride_AutoExposureBias':True,'autoExposureMinBrightness':11.5,'autoExposureMaxBrightness':11.5,'autoExposureBias':0}})});c.call('asset','save_assets',{'asset_paths':[i['level']]});c.call('scene','load_level',{'level_path':i['level']})

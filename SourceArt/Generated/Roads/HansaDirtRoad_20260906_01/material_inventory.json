@@ -1,0 +1,55 @@
+{
+  "material": "M_DirtRoad",
+  "basecolor": {
+    "file": "textures/dirt-road--basecolor--v1.png",
+    "origin": "built-in ImageGen synthetic",
+    "size": [
+      1254,
+      1254
+    ],
+    "space": "sRGB",
+    "physical_tile_m": [
+      2,
+      2
+    ]
+  },
+  "normal": {
+    "file": "textures/Dirt_Normal.png",
+    "origin": "independent Blender procedural grain bake",
+    "size": [
+      1024,
+      1024
+    ],
+    "space": "linear",
+    "convention": "OpenGL +Y, flip green on Unreal import",
+    "source_strength": 0.5,
+    "unreal_xy_scale": 0.08
+  },
+  "roughness": {
+    "file": "textures/Dirt_Roughness.png",
+    "origin": "independent Blender procedural grain bake",
+    "size": [
+      1024,
+      1024
+    ],
+    "space": "linear",
+    "authored_range": [
+      0.77,
+      0.95
+    ]
+  },
+  "vertex_colors": "RoadColor controls soil wear / shoulder tint, multiplied into base color",
+  "consumers": [
+    "SM_DirtRoad_Straight_8m",
+    "SM_DirtRoad_Corner90_R6m",
+    "SM_DirtRoad_End_5m",
+    "SM_DirtRoad_TJunction_12m",
+    "SM_DirtRoad_Crossroads_12m"
+  ],
+  "geometry": "crowning, rut relief, depressed shoulders; no shader displacement required",
+  "runtime_limitations": [
+    "NPOT base color distant aliasing",
+    "single LOD",
+    "terrain blend not included"
+  ]
+}

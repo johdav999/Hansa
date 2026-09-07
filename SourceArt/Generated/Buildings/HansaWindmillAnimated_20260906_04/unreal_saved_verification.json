@@ -1,0 +1,53 @@
+{
+  "level": "/Game/Hansa/Developer/GenerationPreview/HansaWindmillAnimated_20260906_04/L_AnimatedWindmill",
+  "body": {
+    "path": "/Game/Hansa/Generated/Staging/HansaWindmillAnimated_20260906_04/Meshes/SM_Windmill_Body.SM_Windmill_Body",
+    "materials": [
+      "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_Masonry.M_Tower_Masonry",
+      "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_RecessTimber.M_Tower_RecessTimber",
+      "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_Fieldstone.M_Tower_Fieldstone",
+      "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_WeatheredTimber.M_Tower_WeatheredTimber",
+      "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_OldBrick.M_Tower_OldBrick",
+      "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_SagePaint.M_Tower_SagePaint",
+      "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_WindowGlass.M_Tower_WindowGlass",
+      "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_ForgedIron.M_Tower_ForgedIron"
+    ],
+    "bounds_origin": [
+      0.0,
+      9.749984741210938,
+      650.633755505085
+    ],
+    "bounds_extent": [
+      400.0,
+      409.74998474121094,
+      652.1337005496025
+    ]
+  },
+  "rotor": {
+    "path": "/Game/Hansa/Generated/Staging/HansaWindmillAnimated_20260906_04/Meshes/SM_Windmill_Rotor_Clearance.SM_Windmill_Rotor_Clearance",
+    "materials": [
+      "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_WeatheredTimber.M_Tower_WeatheredTimber",
+      "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_ForgedIron.M_Tower_ForgedIron"
+    ],
+    "bounds_origin": [
+      0.0,
+      -23.79999542236328,
+      -6.103515625e-05
+    ],
+    "bounds_extent": [
+      668.8296508789062,
+      98.69998931884766,
+      668.82958984375
+    ]
+  },
+  "pivot_cm": [
+    0.0,
+    399.0000009536743,
+    1081.9999694824219
+  ],
+  "rotation_rate": "<Struct 'Rotator' (0x000001F58B3D4C98) {pitch: 36.000000, yaw: 0.000000, roll: 0.000000}>",
+  "local_space": true,
+  "rotor_movable": true,
+  "auto_activate": true,
+  "game_mode": "/Script/Engine.GameModeBase"
+}

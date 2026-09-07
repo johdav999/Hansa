@@ -1,0 +1,114 @@
+[
+  {
+    "name": "Masonry",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_Masonry_BaseColor.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_Masonry_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_Masonry_Normal.png"
+    },
+    "source": "//..\\textures\\tower--masonry--worn--1254x1254--v1.png",
+    "uv_coverage_m": 2.5,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 409.6,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "WeatheredTimber",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_WeatheredTimber_BaseColor.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_WeatheredTimber_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_WeatheredTimber_Normal.png"
+    },
+    "source": "//..\\textures\\tower--timber--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "SagePaint",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_SagePaint_BaseColor.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_SagePaint_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_SagePaint_Normal.png"
+    },
+    "source": "//..\\textures\\tower--paint--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "OldBrick",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_OldBrick_BaseColor.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_OldBrick_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_OldBrick_Normal.png"
+    },
+    "source": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-mill_20260906_02\\textures\\tower--brick--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "ForgedIron",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_ForgedIron_BaseColor.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_ForgedIron_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_ForgedIron_Normal.png"
+    },
+    "source": "Procedural small trim/metal/glass/recess material; no photographic texture required",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "WindowGlass",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_WindowGlass_BaseColor.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_WindowGlass_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_WindowGlass_Normal.png"
+    },
+    "source": "Procedural small trim/metal/glass/recess material; no photographic texture required",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "RecessTimber",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_RecessTimber_BaseColor.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_RecessTimber_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_RecessTimber_Normal.png"
+    },
+    "source": "Procedural small trim/metal/glass/recess material; no photographic texture required",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  },
+  {
+    "name": "Fieldstone",
+    "maps": {
+      "BaseColor": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_Fieldstone_BaseColor.png",
+      "Roughness": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_Fieldstone_Roughness.png",
+      "Normal": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-capfit_20260906_03\\exports\\T_Mill_Fieldstone_Normal.png"
+    },
+    "source": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-tower-mill_20260906_02\\textures\\tower--stone--worn--1254x1254--v1.png",
+    "uv_coverage_m": 1,
+    "normal_convention": "OpenGL +Y",
+    "base_color_px_per_m": 1024,
+    "physical_px_per_m": 1024,
+    "weathering": "Weathering vertex colors multiplied separately"
+  }
+]

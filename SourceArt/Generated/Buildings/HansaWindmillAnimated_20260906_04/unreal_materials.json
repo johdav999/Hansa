@@ -1,0 +1,138 @@
+[
+  {
+    "name": "Masonry",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_Masonry.M_Tower_Masonry"
+    },
+    "textures": {
+      "BaseColor": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_Masonry_BaseColor.T_Tower_Masonry_BaseColor"
+      },
+      "Roughness": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_Masonry_Roughness.T_Tower_Masonry_Roughness"
+      },
+      "Normal": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_Masonry_Normal.T_Tower_Masonry_Normal"
+      }
+    }
+  },
+  {
+    "name": "WeatheredTimber",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_WeatheredTimber.M_Tower_WeatheredTimber"
+    },
+    "textures": {
+      "BaseColor": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_WeatheredTimber_BaseColor.T_Tower_WeatheredTimber_BaseColor"
+      },
+      "Roughness": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_WeatheredTimber_Roughness.T_Tower_WeatheredTimber_Roughness"
+      },
+      "Normal": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_WeatheredTimber_Normal.T_Tower_WeatheredTimber_Normal"
+      }
+    }
+  },
+  {
+    "name": "SagePaint",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_SagePaint.M_Tower_SagePaint"
+    },
+    "textures": {
+      "BaseColor": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_SagePaint_BaseColor.T_Tower_SagePaint_BaseColor"
+      },
+      "Roughness": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_SagePaint_Roughness.T_Tower_SagePaint_Roughness"
+      },
+      "Normal": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_SagePaint_Normal.T_Tower_SagePaint_Normal"
+      }
+    }
+  },
+  {
+    "name": "OldBrick",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_OldBrick.M_Tower_OldBrick"
+    },
+    "textures": {
+      "BaseColor": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_OldBrick_BaseColor.T_Tower_OldBrick_BaseColor"
+      },
+      "Roughness": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_OldBrick_Roughness.T_Tower_OldBrick_Roughness"
+      },
+      "Normal": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_OldBrick_Normal.T_Tower_OldBrick_Normal"
+      }
+    }
+  },
+  {
+    "name": "ForgedIron",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_ForgedIron.M_Tower_ForgedIron"
+    },
+    "textures": {
+      "BaseColor": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_ForgedIron_BaseColor.T_Tower_ForgedIron_BaseColor"
+      },
+      "Roughness": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_ForgedIron_Roughness.T_Tower_ForgedIron_Roughness"
+      },
+      "Normal": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_ForgedIron_Normal.T_Tower_ForgedIron_Normal"
+      }
+    }
+  },
+  {
+    "name": "WindowGlass",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_WindowGlass.M_Tower_WindowGlass"
+    },
+    "textures": {
+      "BaseColor": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_WindowGlass_BaseColor.T_Tower_WindowGlass_BaseColor"
+      },
+      "Roughness": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_WindowGlass_Roughness.T_Tower_WindowGlass_Roughness"
+      },
+      "Normal": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_WindowGlass_Normal.T_Tower_WindowGlass_Normal"
+      }
+    }
+  },
+  {
+    "name": "RecessTimber",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_RecessTimber.M_Tower_RecessTimber"
+    },
+    "textures": {
+      "BaseColor": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_RecessTimber_BaseColor.T_Tower_RecessTimber_BaseColor"
+      },
+      "Roughness": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_RecessTimber_Roughness.T_Tower_RecessTimber_Roughness"
+      },
+      "Normal": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_RecessTimber_Normal.T_Tower_RecessTimber_Normal"
+      }
+    }
+  },
+  {
+    "name": "Fieldstone",
+    "material": {
+      "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Materials/M_Tower_Fieldstone.M_Tower_Fieldstone"
+    },
+    "textures": {
+      "BaseColor": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_Fieldstone_BaseColor.T_Tower_Fieldstone_BaseColor"
+      },
+      "Roughness": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_Fieldstone_Roughness.T_Tower_Fieldstone_Roughness"
+      },
+      "Normal": {
+        "refPath": "/Game/Hansa/Generated/Staging/HansaTowerMill_20260906_02/Textures/T_Tower_Fieldstone_Normal.T_Tower_Fieldstone_Normal"
+      }
+    }
+  }
+]

@@ -1,0 +1,54 @@
+{
+  "model": {
+    "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview.L_BakeryPreview:PersistentLevel.StaticMeshActor_1"
+  },
+  "ground": {
+    "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview.L_BakeryPreview:PersistentLevel.StaticMeshActor_2"
+  },
+  "level": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview",
+  "ground_components": [
+    {
+      "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview.L_BakeryPreview:PersistentLevel.StaticMeshActor_2.StaticMeshComponent0"
+    }
+  ],
+  "DirectionalLight_0_components": [
+    {
+      "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview.L_BakeryPreview:PersistentLevel.DirectionalLight_0.LightComponent0"
+    },
+    {
+      "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview.L_BakeryPreview:PersistentLevel.DirectionalLight_0.ArrowComponent0"
+    },
+    {
+      "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview.L_BakeryPreview:PersistentLevel.DirectionalLight_0.BillboardComponent_0"
+    }
+  ],
+  "SkyLight_0_components": [
+    {
+      "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview.L_BakeryPreview:PersistentLevel.SkyLight_0.Sprite"
+    },
+    {
+      "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview.L_BakeryPreview:PersistentLevel.SkyLight_0.SkyLightComponent0"
+    },
+    {
+      "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview.L_BakeryPreview:PersistentLevel.SkyLight_0.BillboardComponent_0"
+    }
+  ],
+  "hero_pose": {
+    "location": {
+      "x": 2400,
+      "y": 3300,
+      "z": 2100
+    },
+    "rotation": {
+      "pitch": -18.36,
+      "yaw": -126.03,
+      "roll": 0
+    }
+  },
+  "ground_material": {
+    "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/M_Preview_Ground.M_Preview_Ground"
+  },
+  "postprocess": {
+    "refPath": "/Game/Hansa/Developer/GenerationPreview/HansaBakery_20260906_01/L_BakeryPreview.L_BakeryPreview:PersistentLevel.PostProcessVolume_0"
+  }
+}

@@ -1,0 +1,9 @@
+# Provenance
+
+The user explicitly requested a rebuild from the attached photograph using HansaModels and ImageGen worn/dirty shader textures. The photograph is preserved unaltered in references with its original watermark, native dimensions and checksum. Photographer, exact building identity, date and license are unknown. It is an architectural reference only; no photograph pixels were used in shaders or sent to ImageGen. No ownership or production texture license is asserted for that image.
+
+Four new color sources were generated with built-in ImageGen in this conversation: masonry/plaster, grey timber, sage paint and old brick. A fifth ImageGen stone input from the previous windmill job is reused. Exact prompts are beside the native originals; generator model version/seed and monetary usage were not exposed and are not invented. No API fallback, provider credentials, purchased asset, external 3D model, or paid service was used.
+
+All geometry, UVs, masks, procedural channels and Blender scripts were authored for this task. Native sources are 1254-square; portable maps are new native 1024 shader bakes, not resized images. Normal/roughness detail is authored independently of image luminance. Vertex colors encode per-member condition, base dampness and sill runoff. PNGs are authoritative; JPEG files are same-dimension transport/inspection encodings. No image was geometrically resampled. Turntable frames were rendered directly at 800 square.
+
+The old source master was preserved and hashed. New Unreal packages are confined to the unique staging root and developer preview level. Existing gameplay assets were not replaced. AGENTS.md requires explicit approval for promotion; the final runtime destination remains pending. Reference-context research is recorded separately and is not treated as identification evidence.

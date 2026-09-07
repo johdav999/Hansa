@@ -1,0 +1,16 @@
+{
+  "vertices": 496234,
+  "triangles": 863720,
+  "updated_materials": [
+    "Brick_0",
+    "Brick_1",
+    "Brick_2",
+    "Clay_0",
+    "Clay_1",
+    "Clay_2",
+    "Damp_Lime",
+    "Lime_Plaster",
+    "Weathered_Oak"
+  ],
+  "geometry_change": "none; brick/clay UV coverage changed to 0.5m"
+}

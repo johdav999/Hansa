@@ -202,15 +202,17 @@ namespace Hansa::Simulation
 		{
 			FHansaInventoryInitialization& Initialization = Initializations[InventoryIndex];
 			if (!Initialization.Id.IsValid() ||
-				Initialization.OwnerKind > EHansaInventoryOwnerKind::Warehouse ||
+				Initialization.OwnerKind > EHansaInventoryOwnerKind::Vehicle ||
 				Initialization.Capacity.GetRawValue() <= 0 ||
 				(InventoryIndex > 0 && Initializations[InventoryIndex - 1].Id == Initialization.Id))
 			{
 				return THansaValueResult<FHansaInventoryLedger>::Failure(EHansaValueError::InvalidFormat);
 			}
 			const bool bCityOwner = Initialization.OwnerKind == EHansaInventoryOwnerKind::City;
-			if ((bCityOwner && (!Initialization.CityId.IsValid() || Initialization.BuildingId.IsValid())) ||
-				(!bCityOwner && (!Initialization.BuildingId.IsValid() || Initialization.CityId.IsValid())))
+			const bool bVehicleOwner = Initialization.OwnerKind == EHansaInventoryOwnerKind::Vehicle;
+			if ((bCityOwner && (!Initialization.CityId.IsValid() || Initialization.BuildingId.IsValid() || Initialization.VehicleId.IsValid())) ||
+				(bVehicleOwner && (!Initialization.VehicleId.IsValid() || Initialization.CityId.IsValid() || Initialization.BuildingId.IsValid())) ||
+				(!bCityOwner && !bVehicleOwner && (!Initialization.BuildingId.IsValid() || Initialization.CityId.IsValid() || Initialization.VehicleId.IsValid())))
 			{
 				return THansaValueResult<FHansaInventoryLedger>::Failure(EHansaValueError::InvalidFormat);
 			}
@@ -238,19 +240,18 @@ namespace Hansa::Simulation
 			Record.OwnerKind = Initialization.OwnerKind;
 			Record.CityId = Initialization.CityId;
 			Record.BuildingId = Initialization.BuildingId;
+			Record.VehicleId = Initialization.VehicleId;
 			Record.Capacity = Initialization.Capacity;
 			Record.AcceptedGoods = MoveTemp(Initialization.AcceptedGoods);
 			if (Ledger.Inventories.ContainsByPredicate([&Record](const FHansaInventoryRecord& Existing)
 			{
-				const bool bExistingCity = Existing.OwnerKind == EHansaInventoryOwnerKind::City;
-				const bool bRecordCity = Record.OwnerKind == EHansaInventoryOwnerKind::City;
-				if (bExistingCity != bRecordCity)
+				if (Existing.OwnerKind != Record.OwnerKind)
 				{
 					return false;
 				}
-				return bRecordCity
-					? Existing.CityId == Record.CityId
-					: Existing.BuildingId == Record.BuildingId;
+				if (Record.OwnerKind == EHansaInventoryOwnerKind::City) return Existing.CityId == Record.CityId;
+				if (Record.OwnerKind == EHansaInventoryOwnerKind::Vehicle) return Existing.VehicleId == Record.VehicleId;
+				return Existing.BuildingId == Record.BuildingId;
 			}))
 			{
 				return THansaValueResult<FHansaInventoryLedger>::Failure(EHansaValueError::InvalidFormat);
@@ -653,6 +654,7 @@ namespace Hansa::Simulation
 		Projection.OwnerKind = Inventory.OwnerKind;
 		Projection.CityId = Inventory.CityId;
 		Projection.BuildingId = Inventory.BuildingId;
+		Projection.VehicleId = Inventory.VehicleId;
 		Projection.Capacity = Inventory.Capacity;
 		Projection.UsedCapacity = Used.Value;
 		Projection.FreeCapacity = FHansaQuantity::TrySubtract(Inventory.Capacity, Used.Value).Value;

@@ -5,6 +5,7 @@
 #include "Dom/JsonObject.h"
 #include "Fixtures/HansaDeterministicFixture.h"
 #include "HAL/FileManager.h"
+#include "HAL/PlatformTime.h"
 #include "Misc/AutomationTest.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
@@ -178,11 +179,11 @@ bool FHansaNormalizedStateHashTest::RunTest(const FString& Parameters)
 		Report.GetHashFormatVersion(), FHansaStateHashReport::CurrentHashFormatVersion);
 	TestEqual(TEXT("Normalization rules are explicitly versioned"),
 		Report.GetNormalizationVersion(), FHansaStateHashReport::CurrentNormalizationVersion);
-	TestEqual(TEXT("All current authoritative subsystems are reported"), Report.GetSubsystems().Num(), 15);
+	TestEqual(TEXT("All current authoritative subsystems are reported"), Report.GetSubsystems().Num(), 16);
 	TestEqual(TEXT("Global fingerprint is derived from the normalized report"),
 		View.GetFingerprint().Value, Report.GetOverallHash());
 	TestEqual(TEXT("Fingerprint contract advanced for normalized subsystem hashing"),
-		FHansaSimulationState::DeterminismFingerprintVersion, uint32(13));
+		FHansaSimulationState::DeterminismFingerprintVersion, uint32(16));
 	TestTrue(TEXT("Population is covered by a dedicated hash subsystem"),
 		Report.Find(EHansaStateHashSubsystem::Population) != nullptr);
 	TestTrue(TEXT("Markets are covered by a dedicated hash subsystem"),
@@ -191,6 +192,8 @@ bool FHansaNormalizedStateHashTest::RunTest(const FString& Parameters)
 		Report.Find(EHansaStateHashSubsystem::Placement) != nullptr);
 	TestTrue(TEXT("Local logistics is covered by a dedicated hash subsystem"),
 		Report.Find(EHansaStateHashSubsystem::Logistics) != nullptr);
+	TestTrue(TEXT("Research is covered by a dedicated hash subsystem"),
+		Report.Find(EHansaStateHashSubsystem::Research) != nullptr);
 	TestTrue(TEXT("A relevant subsystem can be located without parsing text"),
 		Report.Find(EHansaStateHashSubsystem::Houses) != nullptr);
 	TestTrue(TEXT("Compact summary names relevant subsystems"), Report.ToCompactDebugString().Contains(TEXT("Houses=")));
@@ -408,6 +411,53 @@ bool FHansaPipelineOrderDriftTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Order-drift values identify the two phase contracts"),
 		Comparison.GetLeftValue() != Comparison.GetRightValue());
 
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FHansaFoundationSoakBudgetTest,
+	"Hansa.Integration.Performance.FoundationDeterminismSoak",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaFoundationSoakBudgetTest::RunTest(const FString& Parameters)
+{
+	using namespace Hansa::Tests::Diagnostics;
+	(void)Parameters;
+	constexpr int32 RunCount = 8;
+	constexpr int32 TicksPerRun = 10'000;
+	uint64 ExpectedFingerprint = 0;
+	bool bAllRunsCompleted = true;
+	bool bAllFingerprintsEqual = true;
+	const double StartedAt = FPlatformTime::Seconds();
+	for (int32 RunIndex = 0; RunIndex < RunCount; ++RunIndex)
+	{
+		const FHansaFixtureRunResult Run =
+			FHansaDeterministicFixtureHarness::RunExactTicks(MakeDescriptor(), TicksPerRun);
+		bAllRunsCompleted &= Run.IsSuccess() && Run.GetTrace().GetTicks().Num() == TicksPerRun;
+		if (!Run)
+		{
+			continue;
+		}
+		const uint64 Fingerprint = Run.GetFinalProjection().GetFingerprint().Value;
+		if (RunIndex == 0)
+		{
+			ExpectedFingerprint = Fingerprint;
+		}
+		else
+		{
+			bAllFingerprintsEqual &= Fingerprint == ExpectedFingerprint;
+		}
+	}
+	const double ElapsedMilliseconds = (FPlatformTime::Seconds() - StartedAt) * 1000.0;
+	const int64 TotalTicks = static_cast<int64>(RunCount) * TicksPerRun;
+	AddInfo(FString::Printf(
+		TEXT("S14-P03 foundation soak: %lld ticks, %.3f ms total, %.6f ms/tick, final=%016llX"),
+		static_cast<long long>(TotalTicks), ElapsedMilliseconds,
+		ElapsedMilliseconds / static_cast<double>(TotalTicks),
+		static_cast<unsigned long long>(ExpectedFingerprint)));
+	TestTrue(TEXT("All exact-tick soak runs complete with one trace record per tick"), bAllRunsCompleted);
+	TestTrue(TEXT("Eight independent 10,000-tick runs produce one identical final fingerprint"),
+		bAllFingerprintsEqual && ExpectedFingerprint != 0);
 	return !HasAnyErrors();
 }
 

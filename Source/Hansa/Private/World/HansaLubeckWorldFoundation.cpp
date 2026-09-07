@@ -112,7 +112,7 @@ AHansaLubeckWorldFoundation::AHansaLubeckWorldFoundation()
 		TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
 	PlaceholderBaseMaterial = BasicShapeMaterial.Object;
 	const auto AddBox = [this](
-		const TCHAR* Name,
+		const FName Name,
 		const FVector& Location,
 		const FVector& Scale,
 		const FRotator& Rotation,
@@ -139,21 +139,20 @@ AHansaLubeckWorldFoundation::AHansaLubeckWorldFoundation()
 	AddBox(TEXT("Water"), FVector(0.0, 0.0, -175.0), FVector(240.0, 160.0, 1.0), FRotator::ZeroRotator,
 		TEXT("Hansa.World.Surface.Water"), false);
 
-	// Three overlapping masses form a non-rectangular western bank with room for every MVP chain.
-	AddBox(TEXT("LandCore"), FVector(-4200.0, 500.0, -25.0), FVector(78.0, 105.0, 2.0), FRotator::ZeroRotator,
-		TEXT("Hansa.World.Surface.Land"), true);
-	AddBox(TEXT("LandNorth"), FVector(-900.0, 4300.0, -25.0), FVector(62.0, 35.0, 2.0), FRotator(0.0, -8.0, 0.0),
-		TEXT("Hansa.World.Surface.Land"), true);
-	AddBox(TEXT("LandSouth"), FVector(-1700.0, -4300.0, -25.0), FVector(55.0, 34.0, 2.0), FRotator(0.0, 12.0, 0.0),
-		TEXT("Hansa.World.Surface.Land"), true);
-
-	// The shore separates generic land placement from shoreline-only fishery/dock validation in S05-P02.
-	AddBox(TEXT("ShoreNorth"), FVector(-50.0, 3100.0, 15.0), FVector(9.0, 35.0, 0.6), FRotator(0.0, -8.0, 0.0),
-		TEXT("Hansa.World.Surface.Shore"), true);
-	AddBox(TEXT("ShoreCentral"), FVector(-180.0, -150.0, 15.0), FVector(9.0, 34.0, 0.6), FRotator::ZeroRotator,
-		TEXT("Hansa.World.Surface.Shore"), true);
-	AddBox(TEXT("ShoreSouth"), FVector(-420.0, -3550.0, 15.0), FVector(9.0, 34.0, 0.6), FRotator(0.0, 12.0, 0.0),
-		TEXT("Hansa.World.Surface.Shore"), true);
+	// Render and authoritative sampling consume the same rotated geometry. The shore top is deliberately
+	// above the land placeholder so the validation strip remains visible at the land/water transition.
+	for (const Hansa::Game::LubeckPlacementGrid::FHansaSurfaceBox& Surface :
+		Hansa::Game::LubeckPlacementGrid::GetLandSurfaces())
+	{
+		AddBox(Surface.Name, Surface.Location, Surface.Scale, Surface.Rotation,
+			TEXT("Hansa.World.Surface.Land"), true);
+	}
+	for (const Hansa::Game::LubeckPlacementGrid::FHansaSurfaceBox& Surface :
+		Hansa::Game::LubeckPlacementGrid::GetShoreSurfaces())
+	{
+		AddBox(Surface.Name, Surface.Location, Surface.Scale, Surface.Rotation,
+			TEXT("Hansa.World.Surface.Shore"), true);
+	}
 
 	// Quay and two piers reserve a readable harbor connection without committing final environment art.
 	AddBox(TEXT("Quay"), FVector(390.0, -500.0, 65.0), FVector(5.0, 24.0, 1.0), FRotator::ZeroRotator,

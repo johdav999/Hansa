@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "idempotencyKey": "replace-with-unique-sfx-action",
+  "providerId": "elevenlabs",
+  "modelVersion": "eleven_text_to_sound_v2",
+  "capability": "TextToSoundEffect",
+  "intendedAssetRole": "HarborSFX",
+  "prompt": "One warm ship bell strike at a quiet Hanseatic harbor, short natural decay, no voices or music.",
+  "inputArtifacts": [],
+  "rights": {
+    "acknowledged": false,
+    "declaration": "Replace with actual source and usage rights."
+  },
+  "budgets": {
+    "currency": "USD",
+    "maximumCostMinorUnits": 0,
+    "maximumOutputBytes": 4194304
+  },
+  "outputContract": {
+    "version": 1,
+    "maximumArtifacts": 2,
+    "allowedMediaTypes": [
+      "audio/wav"
+    ]
+  },
+  "parameters": {
+    "audioTake": {
+      "version": 1,
+      "kind": "SFX",
+      "stableId": "SFX.HarborBell",
+      "variants": 2,
+      "minimumDurationMs": 500,
+      "maximumDurationMs": 4000,
+      "maximumLeadingSilenceMs": 100,
+      "maximumTrailingSilenceMs": 300,
+      "subtitle": "",
+      "speakerId": "",
+      "language": "",
+      "loop": false
+    },
+    "durationSeconds": 2,
+    "promptInfluence": 0.3
+  },
+  "timeoutMs": 120000,
+  "spendApproval": {
+    "approved": false
+  }
+}

@@ -37,6 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hansa|Camera|Intent")
 	void ClearCameraIntents();
 
+	UFUNCTION(BlueprintCallable, Category = "Hansa|Camera|Intent")
+	void FocusWorldLocationIntent(FVector WorldLocation);
+
 	UFUNCTION(BlueprintPure, Category = "Hansa|Camera")
 	FVector2D GetFocusLocation2D() const { return CameraState.Focus; }
 

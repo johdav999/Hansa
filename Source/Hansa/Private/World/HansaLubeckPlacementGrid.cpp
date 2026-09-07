@@ -8,32 +8,57 @@ namespace Hansa::Game::LubeckPlacementGrid
 	{
 		const FVector2D WorldOrigin(-12000.0, -8000.0);
 
-		bool InsideRectangle(
+		bool InsideSurface(
 			const FVector2D Point,
-			const FVector2D Center,
-			const FVector2D HalfExtent)
+			const FHansaSurfaceBox& Surface)
 		{
-			return FMath::Abs(Point.X - Center.X) <= HalfExtent.X &&
-				FMath::Abs(Point.Y - Center.Y) <= HalfExtent.Y;
+			const double Radians = FMath::DegreesToRadians(-Surface.Rotation.Yaw);
+			const double Cosine = FMath::Cos(Radians);
+			const double Sine = FMath::Sin(Radians);
+			const double DeltaX = Point.X - Surface.Location.X;
+			const double DeltaY = Point.Y - Surface.Location.Y;
+			const double LocalX = DeltaX * Cosine - DeltaY * Sine;
+			const double LocalY = DeltaX * Sine + DeltaY * Cosine;
+			// /Engine/BasicShapes/Cube is 100 cm wide, so its half extent is Scale * 50.
+			return FMath::Abs(LocalX) <= Surface.Scale.X * 50.0 &&
+				FMath::Abs(LocalY) <= Surface.Scale.Y * 50.0;
 		}
+	}
 
-		Hansa::Simulation::EHansaPlacementTerrain TerrainAt(const FVector2D Point)
+	TConstArrayView<FHansaSurfaceBox> GetLandSurfaces()
+	{
+		static const TArray<FHansaSurfaceBox> Surfaces {
+			{ TEXT("LandCore"), FVector(-4200.0, 500.0, -25.0), FVector(78.0, 105.0, 2.0), FRotator::ZeroRotator },
+			{ TEXT("LandNorth"), FVector(-900.0, 4300.0, -25.0), FVector(62.0, 35.0, 2.0), FRotator(0.0, -8.0, 0.0) },
+			{ TEXT("LandSouth"), FVector(-1700.0, -4300.0, -25.0), FVector(55.0, 34.0, 2.0), FRotator(0.0, 12.0, 0.0) }
+		};
+		return Surfaces;
+	}
+
+	TConstArrayView<FHansaSurfaceBox> GetShoreSurfaces()
+	{
+		static const TArray<FHansaSurfaceBox> Surfaces {
+			{ TEXT("ShoreNorth"), FVector(-50.0, 3100.0, 80.0), FVector(9.0, 35.0, 0.1), FRotator(0.0, -8.0, 0.0) },
+			{ TEXT("ShoreCentral"), FVector(-180.0, -150.0, 80.0), FVector(9.0, 34.0, 0.1), FRotator::ZeroRotator },
+			{ TEXT("ShoreSouth"), FVector(-420.0, -3550.0, 80.0), FVector(9.0, 34.0, 0.1), FRotator(0.0, 12.0, 0.0) }
+		};
+		return Surfaces;
+	}
+
+	Hansa::Simulation::EHansaPlacementTerrain TerrainAt(const FVector2D& LocalWorldLocation)
+	{
+		using namespace Hansa::Simulation;
+		if (GetShoreSurfaces().ContainsByPredicate([&LocalWorldLocation](const FHansaSurfaceBox& Surface)
 		{
-			using namespace Hansa::Simulation;
-			const bool bShore =
-				InsideRectangle(Point, FVector2D(-50.0, 3100.0), FVector2D(450.0, 3500.0)) ||
-				InsideRectangle(Point, FVector2D(-180.0, -150.0), FVector2D(450.0, 3400.0)) ||
-				InsideRectangle(Point, FVector2D(-420.0, -3550.0), FVector2D(450.0, 3400.0));
-			if (bShore)
-			{
-				return EHansaPlacementTerrain::Shore;
-			}
-			const bool bLand =
-				InsideRectangle(Point, FVector2D(-4200.0, 500.0), FVector2D(3900.0, 5250.0)) ||
-				InsideRectangle(Point, FVector2D(-900.0, 4300.0), FVector2D(3100.0, 1750.0)) ||
-				InsideRectangle(Point, FVector2D(-1700.0, -4300.0), FVector2D(2750.0, 1700.0));
-			return bLand ? EHansaPlacementTerrain::Land : EHansaPlacementTerrain::Water;
+			return InsideSurface(LocalWorldLocation, Surface);
+		}))
+		{
+			return EHansaPlacementTerrain::Shore;
 		}
+		return GetLandSurfaces().ContainsByPredicate([&LocalWorldLocation](const FHansaSurfaceBox& Surface)
+		{
+			return InsideSurface(LocalWorldLocation, Surface);
+		}) ? EHansaPlacementTerrain::Land : EHansaPlacementTerrain::Water;
 	}
 
 	Hansa::Simulation::FHansaGridCoordinate WorldToGrid(const FVector& LocalWorldLocation)

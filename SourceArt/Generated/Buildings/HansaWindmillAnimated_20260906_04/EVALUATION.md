@@ -1,0 +1,1 @@
+Verified: separate stationary and rotating meshes, aligned pivot, full source sweep, clean exported animation, native runtime speed/pause/reverse, corrected child actor template, saved/reopened level, material readback and actual Unreal captures. Runtime limitations are listed in README.md.

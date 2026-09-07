@@ -1,8 +1,11 @@
 [CmdletBinding()]
 param(
-    [string]$TestFilter = 'Hansa',
-    [switch]$SkipBuild,
-    [string]$EngineRoot,
+	[string]$TestFilter = 'Hansa',
+    [ValidateSet('Development', 'DebugGame')]
+    [string]$Configuration = 'Development',
+	[switch]$SkipBuild,
+	[switch]$WithRendering,
+	[string]$EngineRoot,
     [string]$ArtifactsRoot
 )
 
@@ -22,7 +25,7 @@ if (-not $SkipBuild) {
         -Arguments @(
             'HansaEditor'
             'Win64'
-            'Development'
+            $Configuration
             "-Project=$($context.ProjectFile)"
             '-WaitMutex'
             '-NoHotReloadFromIDE'
@@ -35,15 +38,18 @@ $unrealLogPath = Join-Path $artifactDirectory 'UnrealEditor.log'
 $wrapperLogPath = Join-Path $artifactDirectory 'AutomationCommand.log'
 $arguments = @(
     $context.ProjectFile
-    '-unattended'
-    '-nop4'
-    '-nosplash'
-    '-NullRHI'
-    '-NoSound'
+	'-unattended'
+	'-nop4'
+	'-nosplash'
+	'-NoSound'
     "-ExecCmds=Automation RunTests $TestFilter;Quit"
     '-TestExit=Automation Test Queue Empty'
-    "-AbsLog=$unrealLogPath"
+	"-AbsLog=$unrealLogPath"
 )
+if ($Configuration -eq 'DebugGame') { $arguments += '-debug' }
+if (-not $WithRendering) {
+	$arguments += '-NullRHI'
+}
 
 # UE 5.8's headless TargetPlatform startup otherwise validates every installed
 # platform descriptor and can abort Win64 tests on unrelated SDK.json entries.
@@ -88,8 +94,10 @@ Write-HansaJsonArtifact -Path (Join-Path $artifactDirectory 'result.json') -Valu
     Operation = 'RunAutomationTests'
     Status = 'Succeeded'
     Filter = $TestFilter
+    Configuration = $Configuration
     TestsFound = $testCount
-    EditorBuildSkipped = [bool]$SkipBuild
+	EditorBuildSkipped = [bool]$SkipBuild
+	RenderingEnabled = [bool]$WithRendering
     ProjectFile = $context.ProjectFile
     EngineRoot = $context.EngineRoot
     CompletedUtc = [DateTime]::UtcNow.ToString('o')

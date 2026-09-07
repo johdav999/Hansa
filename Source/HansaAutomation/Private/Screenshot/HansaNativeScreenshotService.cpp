@@ -86,6 +86,24 @@ namespace Hansa::Automation
 			Result.Error = EHansaScreenshotError::UnexpectedPixelCount;
 			return Result;
 		}
+		if (Context.bRequireVisualVariation)
+		{
+			const FColor FirstPixel = Pixels[0];
+			bool bHasVisualVariation = false;
+			for (const FColor Pixel : Pixels)
+			{
+				if (Pixel != FirstPixel)
+				{
+					bHasVisualVariation = true;
+					break;
+				}
+			}
+			if (!bHasVisualVariation)
+			{
+				Result.Error = EHansaScreenshotError::BlankCapture;
+				return Result;
+			}
+		}
 
 		const FString BundleRoot = FPaths::Combine(
 			FPaths::ProjectSavedDir(), TEXT("TestEvidence"), TEXT("Automation"), Context.EvidenceSuiteId, Context.BundleId);
@@ -99,6 +117,9 @@ namespace Hansa::Automation
 			FString::Printf(TEXT("screenshot-%dx%d.png"), RequestedSize.X, RequestedSize.Y));
 		Result.MetadataPath = FPaths::Combine(BundleRoot, TEXT("metadata.json"));
 		Result.SemanticSnapshotPath = FPaths::Combine(BundleRoot, TEXT("semantic-ui.json"));
+		Result.QuerySnapshotPath = FPaths::Combine(BundleRoot, TEXT("query-snapshot.json"));
+		Result.LogSnapshotPath = FPaths::Combine(BundleRoot, TEXT("uat-log.json"));
+		Result.FixtureMetadataPath = FPaths::Combine(BundleRoot, TEXT("fixture-metadata.json"));
 
 		TArray64<uint8> PngBytes;
 		FImageUtils::PNGCompressImageArray(
@@ -133,6 +154,9 @@ namespace Hansa::Automation
 		Metadata->SetStringField(TEXT("contentSha1"), Result.ContentSha1);
 		Metadata->SetStringField(TEXT("screenshot"), FPaths::GetCleanFilename(Result.ScreenshotPath));
 		Metadata->SetStringField(TEXT("semanticSnapshot"), FPaths::GetCleanFilename(Result.SemanticSnapshotPath));
+		if (!Context.QuerySnapshotJson.IsEmpty()) Metadata->SetStringField(TEXT("querySnapshot"), FPaths::GetCleanFilename(Result.QuerySnapshotPath));
+		if (!Context.LogSnapshotJson.IsEmpty()) Metadata->SetStringField(TEXT("uatLog"), FPaths::GetCleanFilename(Result.LogSnapshotPath));
+		if (!Context.FixtureMetadataJson.IsEmpty()) Metadata->SetStringField(TEXT("fixtureMetadata"), FPaths::GetCleanFilename(Result.FixtureMetadataPath));
 		Metadata->SetStringField(TEXT("flowId"), Context.FlowId);
 		TArray<TSharedPtr<FJsonValue>> Assertions;
 		for (const FString& Assertion : Context.StructuralAssertions)
@@ -141,10 +165,18 @@ namespace Hansa::Automation
 		}
 		Metadata->SetNumberField(TEXT("structuralAssertionCount"), Assertions.Num());
 		Metadata->SetBoolField(TEXT("structuralAssertionsPassed"), Context.bStructuralAssertionsPassed);
+		Metadata->SetBoolField(TEXT("visualVariationRequired"), Context.bRequireVisualVariation);
 		Metadata->SetArrayField(TEXT("structuralAssertions"), MoveTemp(Assertions));
 
-		if (!FFileHelper::SaveStringToFile(SerializeJson(Metadata), *Result.MetadataPath) ||
-			!FFileHelper::SaveStringToFile(Context.SemanticSnapshotJson, *Result.SemanticSnapshotPath))
+		auto SaveOptional = [](const FString& Json, const FString& Path)
+		{
+			return Json.IsEmpty() || FFileHelper::SaveStringToFile(Json, *Path, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+		};
+		if (!FFileHelper::SaveStringToFile(SerializeJson(Metadata), *Result.MetadataPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM) ||
+			!FFileHelper::SaveStringToFile(Context.SemanticSnapshotJson, *Result.SemanticSnapshotPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM) ||
+			!SaveOptional(Context.QuerySnapshotJson, Result.QuerySnapshotPath) ||
+			!SaveOptional(Context.LogSnapshotJson, Result.LogSnapshotPath) ||
+			!SaveOptional(Context.FixtureMetadataJson, Result.FixtureMetadataPath))
 		{
 			Result.Error = EHansaScreenshotError::EvidenceWriteFailed;
 		}

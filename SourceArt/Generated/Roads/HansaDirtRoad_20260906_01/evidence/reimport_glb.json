@@ -1,0 +1,72 @@
+[
+  {
+    "file": "SM_DirtRoad_Corner90_R6m.glb",
+    "dimensions_m": [
+      8.399999618530273,
+      8.399999618530273,
+      0.13592848181724548
+    ],
+    "triangles": 9216,
+    "materials": [
+      "M_DirtRoad"
+    ],
+    "uv_layers": 1,
+    "color_layers": 1
+  },
+  {
+    "file": "SM_DirtRoad_Crossroads_12m.glb",
+    "dimensions_m": [
+      12.0,
+      12.0,
+      0.13761728629469872
+    ],
+    "triangles": 18556,
+    "materials": [
+      "M_DirtRoad.001"
+    ],
+    "uv_layers": 1,
+    "color_layers": 1
+  },
+  {
+    "file": "SM_DirtRoad_End_5m.glb",
+    "dimensions_m": [
+      5.0,
+      4.889529705047607,
+      0.22518808767199516
+    ],
+    "triangles": 7680,
+    "materials": [
+      "M_DirtRoad.002"
+    ],
+    "uv_layers": 1,
+    "color_layers": 1
+  },
+  {
+    "file": "SM_DirtRoad_Straight_8m.glb",
+    "dimensions_m": [
+      8.0,
+      4.922483921051025,
+      0.1350579857826233
+    ],
+    "triangles": 7680,
+    "materials": [
+      "M_DirtRoad.003"
+    ],
+    "uv_layers": 1,
+    "color_layers": 1
+  },
+  {
+    "file": "SM_DirtRoad_TJunction_12m.glb",
+    "dimensions_m": [
+      12.0,
+      8.5625,
+      0.13761810585856438
+    ],
+    "triangles": 15148,
+    "materials": [
+      "M_DirtRoad.004"
+    ],
+    "uv_layers": 1,
+    "color_layers": 1
+  }
+]

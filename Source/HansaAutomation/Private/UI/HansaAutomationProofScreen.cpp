@@ -3,6 +3,7 @@
 #include "Framework/Application/SlateApplication.h"
 #include "SemanticUI/HansaSemanticUiRegistry.h"
 #include "Styling/CoreStyle.h"
+#include "UI/HansaUiStyle.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Layout/SBox.h"
@@ -15,15 +16,15 @@ namespace Hansa::Automation
 {
 	namespace
 	{
-		const FLinearColor BalticNavy = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("152A35")));
-		const FLinearColor Ink = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("202628")));
-		const FLinearColor MutedInk = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("596160")));
-		const FLinearColor Linen = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("F2E9D8")));
-		const FLinearColor Parchment = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("DFCFAF")));
-		const FLinearColor Brass = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("C19A52")));
-		const FLinearColor Brick = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("A44C3F")));
-		const FLinearColor WarningAmber = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("D09132")));
-		const FLinearColor Chalk = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("FAF7EF")));
+		const FLinearColor BalticNavy = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::BalticNavy);
+		const FLinearColor Ink = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Ink);
+		const FLinearColor MutedInk = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::MutedInk);
+		const FLinearColor Linen = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Linen);
+		const FLinearColor Parchment = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Parchment);
+		const FLinearColor Brass = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Brass);
+		const FLinearColor Brick = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::HanseaticBrick);
+		const FLinearColor WarningAmber = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::WarningAmber);
+		const FLinearColor Chalk = UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Chalk);
 
 		FHansaSemanticNode MakeNode(
 			const TCHAR* Id,

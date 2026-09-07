@@ -1,0 +1,369 @@
+{
+  "mesh": {
+    "refPath": "/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery.SM_HansaBakery"
+  },
+  "definition": {
+    "refPath": "/Game/Hansa/Core/Buildings/DA_Building_Bakery.DA_Building_Bakery"
+  },
+  "before": {
+    "presentationMesh": {
+      "refPath": "/Engine/BasicShapes/Cube.Cube"
+    },
+    "authoredRevision": 1
+  },
+  "approved_by": "Johan",
+  "authorization": "Approve production promotion and bakery assignment",
+  "created_assets": [
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_0_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_0_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_0_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_1_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_1_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_1_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_2_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_2_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_2_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_0_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_0_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_0_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_1_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_1_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_1_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_2_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_2_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_2_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Damp_Lime_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Damp_Lime_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Damp_Lime_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Flour_Linen_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Flour_Linen_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Flour_Linen_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Forged_Iron_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Forged_Iron_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Forged_Iron_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lead_Roofing_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lead_Roofing_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lead_Roofing_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Mortar_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Mortar_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Mortar_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Plaster_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Plaster_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Plaster_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Limestone_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Limestone_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Limestone_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Oven_Soot_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Oven_Soot_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Oven_Soot_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Rye_Crust_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Rye_Crust_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Rye_Crust_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Weathered_Oak_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Weathered_Oak_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Weathered_Oak_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Window_Glass_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Window_Glass_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Window_Glass_Normal",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Brick_0",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Brick_1",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Brick_2",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Clay_0",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Clay_1",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Clay_2",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Damp_Lime",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Flour_Linen",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Forged_Iron",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Lead_Roofing",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Lime_Mortar",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Lime_Plaster",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Limestone",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Oven_Soot",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Rye_Crust",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Weathered_Oak",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Window_Glass",
+    "/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery"
+  ],
+  "dependency_closure": [
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Brick_0",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Brick_1",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Brick_2",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Clay_0",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Clay_1",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Clay_2",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Damp_Lime",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Flour_Linen",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Forged_Iron",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Lead_Roofing",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Lime_Mortar",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Lime_Plaster",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Limestone",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Oven_Soot",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Rye_Crust",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Weathered_Oak",
+    "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Window_Glass",
+    "/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_0_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_0_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_0_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_1_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_1_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_1_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_2_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_2_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_2_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_0_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_0_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_0_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_1_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_1_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_1_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_2_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_2_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_2_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Damp_Lime_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Damp_Lime_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Damp_Lime_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Flour_Linen_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Flour_Linen_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Flour_Linen_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Forged_Iron_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Forged_Iron_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Forged_Iron_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lead_Roofing_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lead_Roofing_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lead_Roofing_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Mortar_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Mortar_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Mortar_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Plaster_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Plaster_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Plaster_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Limestone_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Limestone_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Limestone_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Oven_Soot_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Oven_Soot_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Oven_Soot_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Rye_Crust_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Rye_Crust_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Rye_Crust_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Weathered_Oak_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Weathered_Oak_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Weathered_Oak_Roughness",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Window_Glass_BaseColor",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Window_Glass_Normal",
+    "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Window_Glass_Roughness"
+  ],
+  "nanite": true,
+  "selection_collision": "one 16-vertex convex hull",
+  "mapping": {
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Brick_0_ImageGen_BaseColor.T_Bakery_Brick_0_ImageGen_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_0_BaseColor.T_Bakery_Brick_0_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_0_Roughness.T_Bakery_Brick_0_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_0_Roughness.T_Bakery_Brick_0_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_0_Normal.T_Bakery_Brick_0_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_0_Normal.T_Bakery_Brick_0_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Brick_1_ImageGen_BaseColor.T_Bakery_Brick_1_ImageGen_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_1_BaseColor.T_Bakery_Brick_1_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_1_Roughness.T_Bakery_Brick_1_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_1_Roughness.T_Bakery_Brick_1_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_1_Normal.T_Bakery_Brick_1_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_1_Normal.T_Bakery_Brick_1_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Brick_2_ImageGen_BaseColor.T_Bakery_Brick_2_ImageGen_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_2_BaseColor.T_Bakery_Brick_2_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_2_Roughness.T_Bakery_Brick_2_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_2_Roughness.T_Bakery_Brick_2_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Brick_2_Normal.T_Bakery_Brick_2_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Brick_2_Normal.T_Bakery_Brick_2_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Clay_0_ImageGen_BaseColor.T_Bakery_Clay_0_ImageGen_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_0_BaseColor.T_Bakery_Clay_0_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_0_Roughness.T_Bakery_Clay_0_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_0_Roughness.T_Bakery_Clay_0_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_0_Normal.T_Bakery_Clay_0_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_0_Normal.T_Bakery_Clay_0_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Clay_1_ImageGen_BaseColor.T_Bakery_Clay_1_ImageGen_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_1_BaseColor.T_Bakery_Clay_1_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_1_Roughness.T_Bakery_Clay_1_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_1_Roughness.T_Bakery_Clay_1_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_1_Normal.T_Bakery_Clay_1_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_1_Normal.T_Bakery_Clay_1_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Clay_2_ImageGen_BaseColor.T_Bakery_Clay_2_ImageGen_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_2_BaseColor.T_Bakery_Clay_2_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_2_Roughness.T_Bakery_Clay_2_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_2_Roughness.T_Bakery_Clay_2_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Clay_2_Normal.T_Bakery_Clay_2_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Clay_2_Normal.T_Bakery_Clay_2_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Damp_Lime_ImageGen_BaseColor.T_Bakery_Damp_Lime_ImageGen_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Damp_Lime_BaseColor.T_Bakery_Damp_Lime_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Damp_Lime_Roughness.T_Bakery_Damp_Lime_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Damp_Lime_Roughness.T_Bakery_Damp_Lime_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Damp_Lime_Normal.T_Bakery_Damp_Lime_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Damp_Lime_Normal.T_Bakery_Damp_Lime_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Flour_Linen_BaseColor.T_Bakery_Flour_Linen_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Flour_Linen_BaseColor.T_Bakery_Flour_Linen_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Flour_Linen_Roughness.T_Bakery_Flour_Linen_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Flour_Linen_Roughness.T_Bakery_Flour_Linen_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Flour_Linen_Normal.T_Bakery_Flour_Linen_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Flour_Linen_Normal.T_Bakery_Flour_Linen_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Forged_Iron_BaseColor.T_Bakery_Forged_Iron_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Forged_Iron_BaseColor.T_Bakery_Forged_Iron_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Forged_Iron_Roughness.T_Bakery_Forged_Iron_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Forged_Iron_Roughness.T_Bakery_Forged_Iron_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Forged_Iron_Normal.T_Bakery_Forged_Iron_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Forged_Iron_Normal.T_Bakery_Forged_Iron_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lead_Roofing_BaseColor.T_Bakery_Lead_Roofing_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lead_Roofing_BaseColor.T_Bakery_Lead_Roofing_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lead_Roofing_Roughness.T_Bakery_Lead_Roofing_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lead_Roofing_Roughness.T_Bakery_Lead_Roofing_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lead_Roofing_Normal.T_Bakery_Lead_Roofing_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lead_Roofing_Normal.T_Bakery_Lead_Roofing_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Mortar_BaseColor.T_Bakery_Lime_Mortar_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Mortar_BaseColor.T_Bakery_Lime_Mortar_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Mortar_Roughness.T_Bakery_Lime_Mortar_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Mortar_Roughness.T_Bakery_Lime_Mortar_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Mortar_Normal.T_Bakery_Lime_Mortar_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Mortar_Normal.T_Bakery_Lime_Mortar_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Lime_Plaster_ImageGen_BaseColor.T_Bakery_Lime_Plaster_ImageGen_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Plaster_BaseColor.T_Bakery_Lime_Plaster_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Plaster_Roughness.T_Bakery_Lime_Plaster_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Plaster_Roughness.T_Bakery_Lime_Plaster_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Lime_Plaster_Normal.T_Bakery_Lime_Plaster_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Lime_Plaster_Normal.T_Bakery_Lime_Plaster_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Limestone_BaseColor.T_Bakery_Limestone_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Limestone_BaseColor.T_Bakery_Limestone_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Limestone_Roughness.T_Bakery_Limestone_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Limestone_Roughness.T_Bakery_Limestone_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Limestone_Normal.T_Bakery_Limestone_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Limestone_Normal.T_Bakery_Limestone_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Oven_Soot_BaseColor.T_Bakery_Oven_Soot_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Oven_Soot_BaseColor.T_Bakery_Oven_Soot_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Oven_Soot_Roughness.T_Bakery_Oven_Soot_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Oven_Soot_Roughness.T_Bakery_Oven_Soot_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Oven_Soot_Normal.T_Bakery_Oven_Soot_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Oven_Soot_Normal.T_Bakery_Oven_Soot_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Rye_Crust_BaseColor.T_Bakery_Rye_Crust_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Rye_Crust_BaseColor.T_Bakery_Rye_Crust_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Rye_Crust_Roughness.T_Bakery_Rye_Crust_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Rye_Crust_Roughness.T_Bakery_Rye_Crust_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Rye_Crust_Normal.T_Bakery_Rye_Crust_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Rye_Crust_Normal.T_Bakery_Rye_Crust_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Textures/T_Bakery_Weathered_Oak_ImageGen_BaseColor.T_Bakery_Weathered_Oak_ImageGen_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Weathered_Oak_BaseColor.T_Bakery_Weathered_Oak_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Weathered_Oak_Roughness.T_Bakery_Weathered_Oak_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Weathered_Oak_Roughness.T_Bakery_Weathered_Oak_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Weathered_Oak_Normal.T_Bakery_Weathered_Oak_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Weathered_Oak_Normal.T_Bakery_Weathered_Oak_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Window_Glass_BaseColor.T_Bakery_Window_Glass_BaseColor": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Window_Glass_BaseColor.T_Bakery_Window_Glass_BaseColor"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Window_Glass_Roughness.T_Bakery_Window_Glass_Roughness": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Window_Glass_Roughness.T_Bakery_Window_Glass_Roughness"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Textures/T_Bakery_Window_Glass_Normal.T_Bakery_Window_Glass_Normal": {
+      "refPath": "/Game/Mesh/hansa-bakery/Textures/T_Bakery_Window_Glass_Normal.T_Bakery_Window_Glass_Normal"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Brick_0.M_Bakery_Brick_0": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Brick_0.M_Bakery_Brick_0"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Brick_1.M_Bakery_Brick_1": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Brick_1.M_Bakery_Brick_1"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Brick_2.M_Bakery_Brick_2": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Brick_2.M_Bakery_Brick_2"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Clay_0.M_Bakery_Clay_0": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Clay_0.M_Bakery_Clay_0"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Clay_1.M_Bakery_Clay_1": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Clay_1.M_Bakery_Clay_1"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Clay_2.M_Bakery_Clay_2": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Clay_2.M_Bakery_Clay_2"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Damp_Lime.M_Bakery_Damp_Lime": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Damp_Lime.M_Bakery_Damp_Lime"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Flour_Linen.M_Bakery_Flour_Linen": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Flour_Linen.M_Bakery_Flour_Linen"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Forged_Iron.M_Bakery_Forged_Iron": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Forged_Iron.M_Bakery_Forged_Iron"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Lead_Roofing.M_Bakery_Lead_Roofing": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Lead_Roofing.M_Bakery_Lead_Roofing"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Lime_Mortar.M_Bakery_Lime_Mortar": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Lime_Mortar.M_Bakery_Lime_Mortar"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Lime_Plaster.M_Bakery_Lime_Plaster": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Lime_Plaster.M_Bakery_Lime_Plaster"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Limestone.M_Bakery_Limestone": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Limestone.M_Bakery_Limestone"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Oven_Soot.M_Bakery_Oven_Soot": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Oven_Soot.M_Bakery_Oven_Soot"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Rye_Crust.M_Bakery_Rye_Crust": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Rye_Crust.M_Bakery_Rye_Crust"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Materials/M_Bakery_Weathered_Oak.M_Bakery_Weathered_Oak": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Weathered_Oak.M_Bakery_Weathered_Oak"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_20260906_01/Materials/M_Bakery_Window_Glass.M_Bakery_Window_Glass": {
+      "refPath": "/Game/Mesh/hansa-bakery/Materials/M_Bakery_Window_Glass.M_Bakery_Window_Glass"
+    },
+    "/Game/Hansa/Generated/Staging/HansaBakery_ImageGen_20260906_02/Meshes/SM_HansaBakery_ImageGen.SM_HansaBakery_ImageGen": {
+      "refPath": "/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery.SM_HansaBakery"
+    }
+  }
+}

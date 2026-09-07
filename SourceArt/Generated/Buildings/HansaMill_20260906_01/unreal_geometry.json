@@ -1,0 +1,26 @@
+{
+  "mesh": {
+    "refPath": "/Game/Hansa/Generated/Staging/HansaMill_20260906_01/Meshes/SM_HansaMill.SM_HansaMill"
+  },
+  "bounds_cm": {
+    "min": {
+      "x": -472.2278137207031,
+      "y": -764.7368774414062,
+      "z": -5.3321661949157715
+    },
+    "max": {
+      "x": 472.2278137207031,
+      "y": 328.4999084472656,
+      "z": 1095.2279052734375
+    },
+    "isValid": true
+  },
+  "triangles": 161764,
+  "slots": [
+    "ShelteredOak",
+    "Oak",
+    "RoofTimber",
+    "Limestone",
+    "ForgedIron"
+  ]
+}

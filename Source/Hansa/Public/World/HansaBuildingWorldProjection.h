@@ -8,11 +8,13 @@
 #include "HansaBuildingWorldProjection.generated.h"
 
 class AHansaLubeckWorldFoundation;
+class UHansaDefinitionBase;
 class UMaterialInstanceDynamic;
 class UMaterialInterface;
 class USceneComponent;
 class UStaticMesh;
 class UStaticMeshComponent;
+class UChildActorComponent;
 
 namespace Hansa::Game
 {
@@ -62,6 +64,7 @@ public:
 	[[nodiscard]] Hansa::Simulation::FHansaBuildingId GetBuildingId() const { return BuildingId; }
 	[[nodiscard]] const FString& GetBuildingDefinitionId() const { return BuildingDefinitionId; }
 	[[nodiscard]] Hansa::Simulation::EHansaBuildingWorldStatus GetWorldStatus() const { return WorldStatus; }
+	[[nodiscard]] Hansa::Simulation::EHansaProductionBlocker GetProductionBlocker() const { return ProductionBlocker; }
 	[[nodiscard]] bool IsSelected() const { return bSelected; }
 	[[nodiscard]] bool IsRoad() const { return bRoad; }
 
@@ -79,6 +82,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
 	TObjectPtr<UStaticMeshComponent> BuildingMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
+	TObjectPtr<UChildActorComponent> BuildingPresentation;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
 	TObjectPtr<UStaticMeshComponent> ConstructionPlaceholder;
@@ -103,6 +110,9 @@ private:
 	TObjectPtr<UStaticMesh> CubeMesh;
 
 	UPROPERTY()
+	TObjectPtr<UHansaDefinitionBase> PresentationDefinition;
+
+	UPROPERTY()
 	TObjectPtr<UStaticMesh> ConeMesh;
 
 	UPROPERTY()
@@ -115,8 +125,10 @@ private:
 	FString BuildingDefinitionId;
 	Hansa::Simulation::EHansaBuildingWorldStatus WorldStatus =
 		Hansa::Simulation::EHansaBuildingWorldStatus::UnderConstruction;
+	Hansa::Simulation::EHansaProductionBlocker ProductionBlocker = Hansa::Simulation::EHansaProductionBlocker::None;
 	bool bSelected = false;
 	bool bRoad = false;
+	FBox PresentationBounds = FBox(ForceInit);
 };
 
 /** Managed Actor projection layer; authoritative state remains exclusively in HansaSimulation. */

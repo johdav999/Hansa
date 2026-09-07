@@ -1,0 +1,242 @@
+[
+  {
+    "frame": 0,
+    "minimum_normalized": 0.15968204188991236,
+    "maximum_normalized": 0.8750290741791596
+  },
+  {
+    "frame": 1,
+    "minimum_normalized": 0.1524410763302365,
+    "maximum_normalized": 0.8820176253447661
+  },
+  {
+    "frame": 2,
+    "minimum_normalized": 0.1462393838006097,
+    "maximum_normalized": 0.8874653738898199
+  },
+  {
+    "frame": 3,
+    "minimum_normalized": 0.14118403357428472,
+    "maximum_normalized": 0.8912805093301309
+  },
+  {
+    "frame": 4,
+    "minimum_normalized": 0.13736101098962733,
+    "maximum_normalized": 0.9007189724896405
+  },
+  {
+    "frame": 5,
+    "minimum_normalized": 0.13483539787498683,
+    "maximum_normalized": 0.9212484101991396
+  },
+  {
+    "frame": 6,
+    "minimum_normalized": 0.13365070239917654,
+    "maximum_normalized": 0.9345707248997044
+  },
+  {
+    "frame": 7,
+    "minimum_normalized": 0.13382736412254542,
+    "maximum_normalized": 0.9404568027805638
+  },
+  {
+    "frame": 8,
+    "minimum_normalized": 0.13536161989779083,
+    "maximum_normalized": 0.9388071008630701
+  },
+  {
+    "frame": 9,
+    "minimum_normalized": 0.13822813291807434,
+    "maximum_normalized": 0.9296493530273438
+  },
+  {
+    "frame": 10,
+    "minimum_normalized": 0.1423777502936286,
+    "maximum_normalized": 0.9131398072113862
+  },
+  {
+    "frame": 11,
+    "minimum_normalized": 0.14773894645072316,
+    "maximum_normalized": 0.8895610860876135
+  },
+  {
+    "frame": 12,
+    "minimum_normalized": 0.15422006555505702,
+    "maximum_normalized": 0.8593175475661818
+  },
+  {
+    "frame": 13,
+    "minimum_normalized": 0.1438873136365736,
+    "maximum_normalized": 0.8895613696124103
+  },
+  {
+    "frame": 14,
+    "minimum_normalized": 0.13474072636784734,
+    "maximum_normalized": 0.9131396783364786
+  },
+  {
+    "frame": 15,
+    "minimum_normalized": 0.12693655168687973,
+    "maximum_normalized": 0.9296493272523623
+  },
+  {
+    "frame": 16,
+    "minimum_normalized": 0.12060835554793076,
+    "maximum_normalized": 0.9388070493131071
+  },
+  {
+    "frame": 17,
+    "minimum_normalized": 0.11586449597332926,
+    "maximum_normalized": 0.9404569574304529
+  },
+  {
+    "frame": 18,
+    "minimum_normalized": 0.1127863188047667,
+    "maximum_normalized": 0.9345705186998522
+  },
+  {
+    "frame": 19,
+    "minimum_normalized": 0.11142578640499629,
+    "maximum_normalized": 0.9212484875240842
+  },
+  {
+    "frame": 20,
+    "minimum_normalized": 0.11180707570668813,
+    "maximum_normalized": 0.9007190498145852
+  },
+  {
+    "frame": 21,
+    "minimum_normalized": 0.11392335633973816,
+    "maximum_normalized": 0.8733329257449588
+  },
+  {
+    "frame": 22,
+    "minimum_normalized": 0.11773828558019689,
+    "maximum_normalized": 0.8589644303192964
+  },
+  {
+    "frame": 23,
+    "minimum_normalized": 0.12318673004975189,
+    "maximum_normalized": 0.8527633048392631
+  },
+  {
+    "frame": 24,
+    "minimum_normalized": 0.13017510079048777,
+    "maximum_normalized": 0.8455221846296981
+  },
+  {
+    "frame": 25,
+    "minimum_normalized": 0.12318673004975189,
+    "maximum_normalized": 0.8527633048392631
+  },
+  {
+    "frame": 26,
+    "minimum_normalized": 0.11773828558019689,
+    "maximum_normalized": 0.8589644303192964
+  },
+  {
+    "frame": 27,
+    "minimum_normalized": 0.11392335633973816,
+    "maximum_normalized": 0.8640199351955105
+  },
+  {
+    "frame": 28,
+    "minimum_normalized": 0.09928095018541488,
+    "maximum_normalized": 0.8678429577801678
+  },
+  {
+    "frame": 29,
+    "minimum_normalized": 0.07875151247591583,
+    "maximum_normalized": 0.8703684677948823
+  },
+  {
+    "frame": 30,
+    "minimum_normalized": 0.06542948130014781,
+    "maximum_normalized": 0.8715537560952676
+  },
+  {
+    "frame": 31,
+    "minimum_normalized": 0.05954304256954707,
+    "maximum_normalized": 0.8713769397220096
+  },
+  {
+    "frame": 32,
+    "minimum_normalized": 0.061192950686892955,
+    "maximum_normalized": 0.8698423746469859
+  },
+  {
+    "frame": 33,
+    "minimum_normalized": 0.07035067274763779,
+    "maximum_normalized": 0.8669758358517209
+  },
+  {
+    "frame": 34,
+    "minimum_normalized": 0.08686032166352142,
+    "maximum_normalized": 0.8628264762259819
+  },
+  {
+    "frame": 35,
+    "minimum_normalized": 0.11043863038758972,
+    "maximum_normalized": 0.8574650480940536
+  },
+  {
+    "frame": 36,
+    "minimum_normalized": 0.1406824524338181,
+    "maximum_normalized": 0.8509836712399045
+  },
+  {
+    "frame": 37,
+    "minimum_normalized": 0.11043891391238653,
+    "maximum_normalized": 0.8613167324581662
+  },
+  {
+    "frame": 38,
+    "minimum_normalized": 0.08686019278861379,
+    "maximum_normalized": 0.870463345501874
+  },
+  {
+    "frame": 39,
+    "minimum_normalized": 0.07035064697265625,
+    "maximum_normalized": 0.8782673397579709
+  },
+  {
+    "frame": 40,
+    "minimum_normalized": 0.06119289913692988,
+    "maximum_normalized": 0.8845955616719015
+  },
+  {
+    "frame": 41,
+    "minimum_normalized": 0.05954319721943624,
+    "maximum_normalized": 0.8893399625211149
+  },
+  {
+    "frame": 42,
+    "minimum_normalized": 0.06542927510029561,
+    "maximum_normalized": 0.8924179850397883
+  },
+  {
+    "frame": 43,
+    "minimum_normalized": 0.07875158980086044,
+    "maximum_normalized": 0.8937781823647989
+  },
+  {
+    "frame": 44,
+    "minimum_normalized": 0.0992810275103595,
+    "maximum_normalized": 0.8933969961630331
+  },
+  {
+    "frame": 45,
+    "minimum_normalized": 0.12666722890493032,
+    "maximum_normalized": 0.8912805093301309
+  },
+  {
+    "frame": 46,
+    "minimum_normalized": 0.1462393838006097,
+    "maximum_normalized": 0.8874653738898199
+  },
+  {
+    "frame": 47,
+    "minimum_normalized": 0.1524410763302365,
+    "maximum_normalized": 0.8820176253447661
+  }
+]

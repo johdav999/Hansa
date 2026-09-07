@@ -10,7 +10,7 @@ namespace
 		OutIssues.Add({ EHansaDefinitionValidationSeverity::Error, Code, Path, Cause, Remedy });
 	}
 
-	bool HasDomain(const FString& StableId, const TCHAR* Domain)
+	bool HasPopulationDomain(const FString& StableId, const TCHAR* Domain)
 	{
 		const auto Parsed = Hansa::Simulation::FHansaDefinitionId::TryParse(StableId);
 		return Parsed && Parsed.Value.GetDomain() == Domain;
@@ -26,13 +26,13 @@ UHansaNeedDefinition::UHansaNeedDefinition()
 void UHansaNeedDefinition::ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const
 {
 	Super::ValidateDefinition(OutIssues);
-	if (!HasDomain(StableDefinitionId, TEXT("Need")))
+	if (!HasPopulationDomain(StableDefinitionId, TEXT("Need")))
 	{
 		AddPopulationIssue(OutIssues, TEXT("HSA-NEED-001"), TEXT("StableDefinitionId"),
 			NSLOCTEXT("HansaPopulationDefinition", "NeedDomain", "A need requires a canonical Need.* stable ID."),
 			NSLOCTEXT("HansaPopulationDefinition", "NeedDomainRemedy", "Assign a unique Need.* stable identity."));
 	}
-	if ((Kind == EHansaNeedKind::Good && !HasDomain(GoodId, TEXT("Good"))) ||
+	if ((Kind == EHansaNeedKind::Good && !HasPopulationDomain(GoodId, TEXT("Good"))) ||
 		(Kind == EHansaNeedKind::Service && !GoodId.IsEmpty()))
 	{
 		AddPopulationIssue(OutIssues, TEXT("HSA-NEED-002"), TEXT("GoodId"),
@@ -56,8 +56,8 @@ UHansaPopulationTierDefinition::UHansaPopulationTierDefinition()
 void UHansaPopulationTierDefinition::ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const
 {
 	Super::ValidateDefinition(OutIssues);
-	if (!HasDomain(StableDefinitionId, TEXT("PopulationTier")) ||
-		(!PreviousTierId.IsEmpty() && !HasDomain(PreviousTierId, TEXT("PopulationTier"))))
+	if (!HasPopulationDomain(StableDefinitionId, TEXT("PopulationTier")) ||
+		(!PreviousTierId.IsEmpty() && !HasPopulationDomain(PreviousTierId, TEXT("PopulationTier"))))
 	{
 		AddPopulationIssue(OutIssues, TEXT("HSA-TIER-001"), TEXT("StableDefinitionId"),
 			NSLOCTEXT("HansaPopulationDefinition", "TierDomain", "Tier identities and progression references must use the PopulationTier.* domain."),
@@ -73,7 +73,7 @@ void UHansaPopulationTierDefinition::ValidateDefinition(TArray<FHansaDefinitionV
 	for (int32 Index = 0; Index < Needs.Num(); ++Index)
 	{
 		const FHansaPopulationTierNeed& Need = Needs[Index];
-		if (!HasDomain(Need.NeedId, TEXT("Need")) || SeenNeeds.Contains(Need.NeedId) ||
+		if (!HasPopulationDomain(Need.NeedId, TEXT("Need")) || SeenNeeds.Contains(Need.NeedId) ||
 			Need.ConsumptionMilliUnitsPerResidentPerTick < 0 ||
 			Need.ImportanceBasisPoints <= 0 || Need.ImportanceBasisPoints > 10000)
 		{

@@ -33,17 +33,26 @@ bool FHansaPlacementSemanticFlowTest::RunTest(const FString& Parameters)
 		return Result.IsSuccess();
 	};
 
-	Activate(TEXT("BuildMode.Tool.Road"));
-	Activate(TEXT("BuildMode.Map.RoadTarget"));
+	const FHansaSemanticNode* BuildMenu = Registry.FindNode(TEXT("BuildMenu.Root"));
+	const FHansaSemanticNode* RoadCard = Registry.FindNode(TEXT("BuildMenu.Card.Building_Road"));
+	const FHansaSemanticNode* WarehouseCard = Registry.FindNode(TEXT("BuildMenu.Card.Building_Warehouse"));
+	TestTrue(TEXT("Empty Lübeck exposes the full build-menu semantic shell"), BuildMenu != nullptr &&
+		Registry.FindNode(TEXT("BuildMenu.Categories")) != nullptr && Registry.FindNode(TEXT("BuildMenu.Cards")) != nullptr);
+	TestTrue(TEXT("Road and warehouse cards expose complete typed summaries"), RoadCard != nullptr && WarehouseCard != nullptr &&
+		RoadCard->State.Value.Contains(TEXT("cost=")) && RoadCard->State.Value.Contains(TEXT("footprint=")) &&
+		WarehouseCard->State.Value.Contains(TEXT("workforce=")) && WarehouseCard->State.Value.Contains(TEXT("flow=")));
+
+	Activate(TEXT("BuildMenu.Card.Building_Road"));
+	Activate(TEXT("Placement.Target.Road"));
 	const FHansaSemanticNode* RoadPreview = Registry.FindNode(TEXT("BuildMode.Placement.Preview"));
 	TestTrue(TEXT("Road preview is typed and valid before confirmation"),
 		RoadPreview != nullptr && RoadPreview->State.bSelected && !RoadPreview->State.bError &&
 		RoadPreview->State.Value.Contains(TEXT("Building.Road")));
-	Activate(TEXT("BuildMode.Action.Confirm"));
+	Activate(TEXT("Placement.Action.Confirm"));
 	TestEqual(TEXT("Road confirmation reaches authoritative occupancy"), Fixture.GetPlacedBuildingCount(), 1);
 
-	Activate(TEXT("BuildMode.Tool.Warehouse"));
-	Activate(TEXT("BuildMode.Map.InvalidTarget"));
+	Activate(TEXT("BuildMenu.Card.Building_Warehouse"));
+	Activate(TEXT("Placement.Target.Disconnected"));
 	const FHansaSemanticNode* Invalid = Registry.FindNode(TEXT("BuildMode.Placement.Validation"));
 	const FHansaSemanticNode* Cause = Registry.FindNode(TEXT("BuildMode.Placement.Validation.Cause"));
 	const FHansaSemanticNode* Remedy = Registry.FindNode(TEXT("BuildMode.Placement.Validation.Remedy"));
@@ -53,12 +62,12 @@ bool FHansaPlacementSemanticFlowTest::RunTest(const FString& Parameters)
 		Remedy != nullptr && Remedy->Label == TEXT("Build next to a road"));
 	TestFalse(TEXT("Invalid preview cannot be confirmed"), Fixture.CanConfirm());
 
-	Activate(TEXT("BuildMode.Map.ValidTarget"));
+	Activate(TEXT("Placement.Target.Adjacent"));
 	const FHansaSemanticNode* Valid = Registry.FindNode(TEXT("BuildMode.Placement.Validation"));
 	TestTrue(TEXT("Road-adjacent warehouse becomes structurally valid"),
 		Valid != nullptr && Valid->State.bSelected && !Valid->State.bError &&
 		Valid->State.Value == TEXT("None") && Fixture.CanConfirm());
-	Activate(TEXT("BuildMode.Action.Confirm"));
+	Activate(TEXT("Placement.Action.Confirm"));
 	TestEqual(TEXT("Warehouse confirmation reaches authoritative occupancy"), Fixture.GetPlacedBuildingCount(), 2);
 	TestEqual(TEXT("The two accepted commands advance authoritative time"), Fixture.GetSimulationTick(), int64(2));
 	const FHansaSemanticNode* Result = Registry.FindNode(TEXT("BuildMode.Result.Building"));
@@ -76,18 +85,18 @@ bool FHansaPlacementSemanticFlowTest::RunTest(const FString& Parameters)
 	{
 		FHansaScreenshotContext Context;
 		Context.BundleId = Bundle;
-		Context.EvidenceSuiteId = TEXT("S05P04");
+		Context.EvidenceSuiteId = TEXT("S07P03");
 		Context.FixtureId = FHansaPlacementAutomationFixture::StableFixtureId;
 		Context.ScreenId = TEXT("BuildMode.Screen");
-		Context.FlowId = TEXT("empty-lubeck-road-warehouse-v1");
+		Context.FlowId = TEXT("empty-lubeck-full-build-menu-v1");
 		Context.SimulationTick = 2;
 		Context.CaptureMethod = TEXT("AutomationTest.NativeBufferContract");
 		Context.UiRevision = 1;
-		Context.SemanticSnapshotJson = TEXT("{\"schemaVersion\":1,\"nodes\":[{\"id\":\"BuildMode.Camera\"},{\"id\":\"BuildMode.Placement.Validation\"},{\"id\":\"BuildMode.Result.Building\"}]}");
+		Context.SemanticSnapshotJson = TEXT("{\"schemaVersion\":1,\"nodes\":[{\"id\":\"BuildMenu.Root\"},{\"id\":\"BuildMenu.Card.Building_Warehouse\"},{\"id\":\"Placement.Validation\"},{\"id\":\"BuildMode.Result.Building\"}]}");
 		Context.StructuralAssertions = {
 			TEXT("fixture.loaded=true"), TEXT("authoritative.placedBuildingCount=2"),
-			TEXT("semantic.BuildMode.Camera.exists=true"),
-			TEXT("semantic.BuildMode.Placement.Validation.exists=true"),
+			TEXT("semantic.BuildMenu.Root.exists=true"),
+			TEXT("semantic.Placement.Validation.exists=true"),
 			TEXT("semantic.BuildMode.Result.Building.selected=true")
 		};
 		Context.bStructuralAssertionsPassed = true;
@@ -99,12 +108,13 @@ bool FHansaPlacementSemanticFlowTest::RunTest(const FString& Parameters)
 		TestTrue(TEXT("Placement semantic snapshot is readable"), FFileHelper::LoadFileToString(Snapshot, *Capture.SemanticSnapshotPath));
 		TestTrue(TEXT("Metadata records fixture, flow, structural assertions, and no resize"),
 			Metadata.Contains(TEXT("\"fixtureId\":\"empty_lubeck_build_v1\"")) &&
-			Metadata.Contains(TEXT("\"flowId\":\"empty-lubeck-road-warehouse-v1\"")) &&
+			Metadata.Contains(TEXT("\"flowId\":\"empty-lubeck-full-build-menu-v1\"")) &&
 			Metadata.Contains(TEXT("\"structuralAssertionCount\":5")) &&
 			Metadata.Contains(TEXT("\"structuralAssertionsPassed\":true")) &&
 			Metadata.Contains(TEXT("\"postCaptureResized\":false")));
 		TestTrue(TEXT("Evidence is not pixel-only"),
-			Snapshot.Contains(TEXT("BuildMode.Camera")) && Snapshot.Contains(TEXT("BuildMode.Result.Building")));
+			Snapshot.Contains(TEXT("BuildMenu.Root")) && Snapshot.Contains(TEXT("Placement.Validation")) &&
+			Snapshot.Contains(TEXT("BuildMode.Result.Building")));
 	};
 	CaptureEvidence(FIntPoint(1280, 720), TEXT("contract-empty-lubeck-flow-720"));
 	CaptureEvidence(FIntPoint(1920, 1080), TEXT("contract-empty-lubeck-flow-1080"));

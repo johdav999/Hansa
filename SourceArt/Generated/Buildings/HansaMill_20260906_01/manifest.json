@@ -1,0 +1,937 @@
+[
+  {
+    "path": "COMPARISONS.html",
+    "bytes": 2427,
+    "sha256": "59f63928b2f027fa0e0e2324cfcf63d58d467a8badcff58384c896f4cf79a2c4"
+  },
+  {
+    "path": "EVALUATION.md",
+    "bytes": 3335,
+    "sha256": "7da6c6abff0b05d26d093a2eb8cbf1f1de538d6ae13b67e77d4aaa194b8d443a"
+  },
+  {
+    "path": "identity.json",
+    "bytes": 117,
+    "sha256": "6f4578e05ef27fdee52c2e6b5897c2c0dc86557c1c333c9943224659e311f332"
+  },
+  {
+    "path": "image_integrity.json",
+    "bytes": 12669,
+    "sha256": "8b8ce71852f4f2d1d20cc109a16d129ee8c29c0e1821dc4daa819b1f688d8104"
+  },
+  {
+    "path": "ITERATIONS.md",
+    "bytes": 3192,
+    "sha256": "465e68fd368c55c3ff5879a6396d322df411d75db0415d9dd778e42d4e95437e"
+  },
+  {
+    "path": "MATERIAL_ASSESSMENT.md",
+    "bytes": 3330,
+    "sha256": "f6a77771b90fd90cc3a7b5a64b932bfe2eee659dd4a5a3e551d1ef2a95b8eaf3"
+  },
+  {
+    "path": "material_inventory.json",
+    "bytes": 5675,
+    "sha256": "ca6a729d431e94328387effc6b7b5d3ec4b3c4d1c05863c7eb57191f252c8362"
+  },
+  {
+    "path": "preview_actors.json",
+    "bytes": 1827,
+    "sha256": "9bb5cf02844e6620139995f3d737b5fc3118717c6501cb73a49aa294853ea600"
+  },
+  {
+    "path": "PROVENANCE.md",
+    "bytes": 2651,
+    "sha256": "1a5617b1f0f8b6fc8729f534fc6a92ddffe9b55e7a5e2826bc9aeb4c7fdda0cd"
+  },
+  {
+    "path": "README.md",
+    "bytes": 6745,
+    "sha256": "7a2d98c0fd3bbe6206401ee7b8ba8a79e82515e107889d00fd41c27a857531bb"
+  },
+  {
+    "path": "reference_manifest.csv",
+    "bytes": 1440,
+    "sha256": "c8432a6280b04f00a5e13b61b447e36f5a61be7327ff160399cbdf0433d62fc4"
+  },
+  {
+    "path": "unreal_final_verification.json",
+    "bytes": 8410,
+    "sha256": "4303daa53d8afb3cd031f99d8ebe997221a1e424debb900b833722064f015aba"
+  },
+  {
+    "path": "unreal_geometry.json",
+    "bytes": 535,
+    "sha256": "ffff307c526bd642507a338e113fdab2e01ee5a061883b16700b4c8fae2f80e6"
+  },
+  {
+    "path": "unreal_identity.json",
+    "bytes": 300,
+    "sha256": "514ac55f719dd87aad965e14e74844e3a92bdf090009f71d38e42e39bc2e2df0"
+  },
+  {
+    "path": "unreal_import_options.json",
+    "bytes": 254,
+    "sha256": "541b1d90876b968d3fe87b4cef2e9d863b86f088b73a9706632c07a739b7025c"
+  },
+  {
+    "path": "unreal_import_properties.json",
+    "bytes": 172,
+    "sha256": "a8dd536174a75c85d4c521cdc78379036f05eba93b8f67b228b744853d40ecae"
+  },
+  {
+    "path": "unreal_materials.json",
+    "bytes": 4497,
+    "sha256": "9a135eabb407e21e344b61f8aa331fc6c55cb69bdbe488886e5b7b825b3c1b67"
+  },
+  {
+    "path": "unreal_mesh.json",
+    "bytes": 119,
+    "sha256": "6a51b2674daf4f2b44f3f0aecec075eab3553558e517ae83091638429b4cfd56"
+  },
+  {
+    "path": "exports\\geometry.json",
+    "bytes": 496,
+    "sha256": "3487658478a3a2bed30c2db4c84be6c46bd954218d314bd4f31162c9d762171f"
+  },
+  {
+    "path": "exports\\HansaMill.blend",
+    "bytes": 19417996,
+    "sha256": "8bce60e93f2a847c6314712e0ec0ee2bd8fd7590c01d2876c08b98f81fb0537f"
+  },
+  {
+    "path": "exports\\HansaMill.fbx",
+    "bytes": 4606988,
+    "sha256": "680defeda5c1c898ad027888a0f0d3fb5b5576ec5fb808a1053a7f1348ef4cf0"
+  },
+  {
+    "path": "exports\\HansaMill.glb",
+    "bytes": 28427724,
+    "sha256": "5968d19dc011026f7de802247720654536e6011820bf6198fb5ab83fbaecad48"
+  },
+  {
+    "path": "exports\\HansaMill_turntable.mp4",
+    "bytes": 695469,
+    "sha256": "cbb84e3d4243bbb05d04d8f1371a501dbbba6a26ccf59f3dd804ee287f9c84e7"
+  },
+  {
+    "path": "exports\\master_verification.json",
+    "bytes": 564,
+    "sha256": "f9e3f316b2085802e6f804940b93be0e33f88076522b96df356d84a6a2c63611"
+  },
+  {
+    "path": "exports\\reimport_fbx.json",
+    "bytes": 2313,
+    "sha256": "f08f1afc1b52993224a3eb2641d1352f5fd4062c3e9d151b76d9f684b3310f1a"
+  },
+  {
+    "path": "exports\\reimport_glb.json",
+    "bytes": 2286,
+    "sha256": "4c56d7f94ae968c8166736acb3a31932cefa0bea6b9d62dce8439cf3a6b15279"
+  },
+  {
+    "path": "exports\\texel_density.json",
+    "bytes": 1105,
+    "sha256": "b01e08a016279b03c16ef7e2db1f73c36fc53888ca26ed690b8bc40ba165d762"
+  },
+  {
+    "path": "exports\\turntable_framing.json",
+    "bytes": 5888,
+    "sha256": "d9a933595f8f54cd767b249c27b99ce13f98543862a47ebded4da0b21d71d657"
+  },
+  {
+    "path": "exports\\T_Mill_ForgedIron_BaseColor_1024_v2.png",
+    "bytes": 15803,
+    "sha256": "2d66e0af9229d594b105083331bcc06b70b5982e5b82b7026865a10f4741ab24"
+  },
+  {
+    "path": "exports\\T_Mill_ForgedIron_Normal.png",
+    "bytes": 838503,
+    "sha256": "84eb8eb1cc91c2371a72a4b4992ee5153fb63cf13e0c3b7ce1d0b24e3776ce76"
+  },
+  {
+    "path": "exports\\T_Mill_ForgedIron_Roughness.png",
+    "bytes": 697613,
+    "sha256": "b25d1c7e51a7325191d98265f645030469e2cb901bfd81cb3f4863819cd4b80f"
+  },
+  {
+    "path": "exports\\T_Mill_Limestone_BaseColor_1024_v2.png",
+    "bytes": 2093236,
+    "sha256": "c6bef547b655b5c1e74d8387082883e24a7d04b3e2c6c59f6dd4c3046593e1ce"
+  },
+  {
+    "path": "exports\\T_Mill_Limestone_Normal.png",
+    "bytes": 1188575,
+    "sha256": "558d4efe5084072dcaf0b0d3e4d005f5eb5b3e2efe3d13479b82a937a17e2753"
+  },
+  {
+    "path": "exports\\T_Mill_Limestone_Roughness.png",
+    "bytes": 648768,
+    "sha256": "f2ccc9eefb567a4c4216a2ff0d52bcfa6d0973e2524610319db2c4e7cc01462d"
+  },
+  {
+    "path": "exports\\T_Mill_Oak_BaseColor_1024_v2.png",
+    "bytes": 1915278,
+    "sha256": "544a0b1202a5750f553e0268b55b5f8ef9f645ec069a4886fb4aea9cd94ffdd3"
+  },
+  {
+    "path": "exports\\T_Mill_Oak_Normal.png",
+    "bytes": 441129,
+    "sha256": "1ec41cf723a418ed7b7434b0ebb833d13de1f7ea6a1112ab570b5b5e30ca8940"
+  },
+  {
+    "path": "exports\\T_Mill_Oak_Roughness.png",
+    "bytes": 275702,
+    "sha256": "09e5c37dd12649e7b96c1800999ffe0f24f855caab6b07e631389774a358ef6c"
+  },
+  {
+    "path": "exports\\T_Mill_RoofTimber_BaseColor_1024_v2.png",
+    "bytes": 2013266,
+    "sha256": "fe2a9e61f8b69e9edd0dfe3f0c91ea8f7a359dc8c323ddc46728c362d0e9a630"
+  },
+  {
+    "path": "exports\\T_Mill_RoofTimber_Normal.png",
+    "bytes": 514976,
+    "sha256": "c3c6717a64ed01de37e4347c6dde5d2d5e5042314f631a868ce4473816ac1ab1"
+  },
+  {
+    "path": "exports\\T_Mill_RoofTimber_Roughness.png",
+    "bytes": 275345,
+    "sha256": "7ae5efe923ca2e7c2c77d61f11dd668aacf208d4ae262987e719e85f1dfa1c70"
+  },
+  {
+    "path": "exports\\T_Mill_ShelteredOak_BaseColor_1024_v2.png",
+    "bytes": 1736037,
+    "sha256": "7034bfdcc7955f4e60caa3716aaeb033a2bf534f097180846ea3216518c54f33"
+  },
+  {
+    "path": "exports\\T_Mill_ShelteredOak_Normal.png",
+    "bytes": 441125,
+    "sha256": "e82eb6ca7db4c29b0e0af8d65ecddecc79de7b7c889c675bed27b46a6e8f25a1"
+  },
+  {
+    "path": "exports\\T_Mill_ShelteredOak_Roughness.png",
+    "bytes": 275702,
+    "sha256": "09e5c37dd12649e7b96c1800999ffe0f24f855caab6b07e631389774a358ef6c"
+  },
+  {
+    "path": "references\\vilidu_oblique_Rutake_2014.jpg",
+    "bytes": 1577657,
+    "sha256": "25f8d172002dc4f33d615f8a137c1ff44e5bbcf81297e4c93ea8f2c94a66192b"
+  },
+  {
+    "path": "renders\\daylight_Base_Detail.jpg",
+    "bytes": 290682,
+    "sha256": "a13e4e0a35b2c84e893014b8c5aaec0865eaddfed76089cc2f8b444bd9266814"
+  },
+  {
+    "path": "renders\\daylight_Base_Detail.png",
+    "bytes": 1775089,
+    "sha256": "5c75975b58625254b91d836501c06e6ecb854ad43f9d57db2e20fe11228ff623"
+  },
+  {
+    "path": "renders\\daylight_Hero.jpg",
+    "bytes": 116011,
+    "sha256": "b16ab006b5624ce43a027e7850ae5884d4b5711cf40eb74b521aa6771c0500f5"
+  },
+  {
+    "path": "renders\\daylight_Hero.png",
+    "bytes": 1577301,
+    "sha256": "af3d7bb6a15d576687d9662f90eff476f6a5c103886d0ed66c4b16a5e1e68d27"
+  },
+  {
+    "path": "renders\\daylight_Iron_Detail.jpg",
+    "bytes": 398284,
+    "sha256": "a3cd471ace631303ee5aca1beea3b9134befaf2371c3bcf11aa26b4c3a7a941f"
+  },
+  {
+    "path": "renders\\daylight_Iron_Detail.png",
+    "bytes": 2065921,
+    "sha256": "426587696a1447321a844f777bd9d1b562fff32a1a1f5ff0db7f21d4e88df892"
+  },
+  {
+    "path": "renders\\daylight_Rear.jpg",
+    "bytes": 121182,
+    "sha256": "7c478e47a70445089d4771e5c314e3f4216da5b1ad25b0925339e13a673bee52"
+  },
+  {
+    "path": "renders\\daylight_Rear.png",
+    "bytes": 1337769,
+    "sha256": "75db7604052e07e18e0bdc3ecc4ff9cdb53a297305262f92325eeca913cd197d"
+  },
+  {
+    "path": "renders\\daylight_Roof_Detail.jpg",
+    "bytes": 323518,
+    "sha256": "13b245644ea46c21a6218bc7b9d93c6b85214a0f3444e4d44c4988eb5bf99dc8"
+  },
+  {
+    "path": "renders\\daylight_Roof_Detail.png",
+    "bytes": 1860715,
+    "sha256": "c9eb711ca4c3aa86a4f976536658dbe2cf8dd3948c3b57fba55f49c35cb33204"
+  },
+  {
+    "path": "renders\\daylight_Timber_Detail.jpg",
+    "bytes": 386526,
+    "sha256": "914491c5f829623e35c5278e09d0edb2bf920fdd22cb95472bd22c2298639fbf"
+  },
+  {
+    "path": "renders\\daylight_Timber_Detail.png",
+    "bytes": 1985652,
+    "sha256": "32840b6dda5ea84691e8a3fb2cce73edbec62a6dc1742a08d9accd0f5b90cc8a"
+  },
+  {
+    "path": "renders\\portable_1024_Hero.png",
+    "bytes": 1535570,
+    "sha256": "54e3298660e71a888b3a06cc549c64d810c37bba1eef05b990f4f6c6add53cce"
+  },
+  {
+    "path": "renders\\portable_Hero.png",
+    "bytes": 1534580,
+    "sha256": "f00f5409a327c32a1ec767fff78cfef44be3be3485b60ed13d0627af954b21d9"
+  },
+  {
+    "path": "renders\\r0_Hero.png",
+    "bytes": 1538015,
+    "sha256": "e9268c31f0711e8c96b356636248104391a10cea05c9398fb181dbc1a7202586"
+  },
+  {
+    "path": "renders\\r0_Rear.png",
+    "bytes": 1569976,
+    "sha256": "3aec2d7333d4fc15a3be8b26c878e6a997e0a7a0ac3205b90e4727b9ae7c0b0e"
+  },
+  {
+    "path": "renders\\r1_Hero.png",
+    "bytes": 1533009,
+    "sha256": "5544d09dff59f45202910662bfde4083a99a6ca88a6566bd303195c7bda745e1"
+  },
+  {
+    "path": "renders\\r1_Roof_Detail.png",
+    "bytes": 2115632,
+    "sha256": "43919efb48d372df2e4ac6c87624e53826847842aab9ad20589a811dff734bea"
+  },
+  {
+    "path": "renders\\r2_Base_Detail.png",
+    "bytes": 2119801,
+    "sha256": "9a1955b61b46afcbc9fcc2a882788bdedc93cdb7eab6865351a0c4b564cde527"
+  },
+  {
+    "path": "renders\\r2_Rear.png",
+    "bytes": 1563494,
+    "sha256": "8960f796c9600df1bebcbeb836986735fbcac349cf9676dd81e5c453ae6ea562"
+  },
+  {
+    "path": "renders\\r3_Base_Detail.jpg",
+    "bytes": 399937,
+    "sha256": "d152926cf80d1451f338acdf20fcc2d437017fa90e4ecb4c9484667946d21293"
+  },
+  {
+    "path": "renders\\r3_Base_Detail.png",
+    "bytes": 2115028,
+    "sha256": "4a8900d01d3cca47d3ec3c720b4b39d12c0c12e6d9186710f47cb49b56169780"
+  },
+  {
+    "path": "renders\\r3_Hero.jpg",
+    "bytes": 173616,
+    "sha256": "e91cf79fcb50556fe85b5cab7b96a7749a6640039d2c690763d19a0e8730b48e"
+  },
+  {
+    "path": "renders\\r3_Hero.png",
+    "bytes": 1534742,
+    "sha256": "ec6ff2ae07a3bfb5ade8fe913247e480499b923b4ddb0b9c5d2ffa6a97b5c8df"
+  },
+  {
+    "path": "renders\\r3_Iron_Detail.jpg",
+    "bytes": 525554,
+    "sha256": "09158b79c25ca4a9640728c1dd58e06b06ef7394876eff85eff583bbeb679494"
+  },
+  {
+    "path": "renders\\r3_Iron_Detail.png",
+    "bytes": 2368052,
+    "sha256": "8d5184dd0cca34c94a0119e4c9f91281e526aeaf392a70a4bb1279f3a23d340f"
+  },
+  {
+    "path": "renders\\r3_Rear.jpg",
+    "bytes": 181079,
+    "sha256": "1dadde570d416fa0fd829d15f9dce58bd66e448bbfc57d45fe66765bd724f1b9"
+  },
+  {
+    "path": "renders\\r3_Rear.png",
+    "bytes": 1565479,
+    "sha256": "b8373d2bfae16a38f62c26320bda9da545420c068c0f0c4107565770475e569b"
+  },
+  {
+    "path": "renders\\r3_Roof_Detail.jpg",
+    "bytes": 435757,
+    "sha256": "914f1743e4228ab29046de7c448958110917a00935e3f1a40eb231d6a175fba0"
+  },
+  {
+    "path": "renders\\r3_Roof_Detail.png",
+    "bytes": 2115726,
+    "sha256": "ceb2cd78e0281128bdf8844ed418b21f94617792a33ee9041fbaca9bcade7756"
+  },
+  {
+    "path": "renders\\r3_Timber_Detail.jpg",
+    "bytes": 505644,
+    "sha256": "960146b0410a8cce8887f43bdbeeb393cc379efc5872d6ea0d1491a61b20d169"
+  },
+  {
+    "path": "renders\\r3_Timber_Detail.png",
+    "bytes": 2312638,
+    "sha256": "da22bc068710ea00677be0ef7105452d59df28bc7e0c3ef207e7dd70a21cc4a2"
+  },
+  {
+    "path": "renders\\reimport_fbx_Base_Detail.jpg",
+    "bytes": 434959,
+    "sha256": "687515eaae126c338b076631157aeba099f08322b7e7900781f316f1dd94909f"
+  },
+  {
+    "path": "renders\\reimport_fbx_Base_Detail.png",
+    "bytes": 2180516,
+    "sha256": "87ed22bb0c0d627f577f133c4c72f6b9ba5b60d2496556b06099d08676a57ba8"
+  },
+  {
+    "path": "renders\\reimport_fbx_Hero.jpg",
+    "bytes": 174830,
+    "sha256": "cb3bbf66067ecbad75c814d7e696a54d531126b0fd2227f266c1f17efaa8595e"
+  },
+  {
+    "path": "renders\\reimport_fbx_Hero.png",
+    "bytes": 1541917,
+    "sha256": "75d10174db9e7aed317d90144c79295ef0df0d905187b53a5441fc7b32bc80d1"
+  },
+  {
+    "path": "renders\\reimport_fbx_Roof_Detail.jpg",
+    "bytes": 455430,
+    "sha256": "24147a52ae7d7acdd979ad225673c9f47ed980eeff0f237ae1abe0ea8a1a8aa4"
+  },
+  {
+    "path": "renders\\reimport_fbx_Roof_Detail.png",
+    "bytes": 2158870,
+    "sha256": "0e89f58fd68e085b5743bb4df0c04845cbc579b5bc190cddb75c759ac34acaaf"
+  },
+  {
+    "path": "renders\\reimport_glb_Base_Detail.jpg",
+    "bytes": 403665,
+    "sha256": "f59f64abc6380fc0a5b4e1e9a8a128526aef987da831ef108ca5e9502f189d5f"
+  },
+  {
+    "path": "renders\\reimport_glb_Base_Detail.png",
+    "bytes": 2122430,
+    "sha256": "dae5c8bee61e313d7ff153df0c7ba8e2ca325f0786a3b4f56c7cff1da9fb2e23"
+  },
+  {
+    "path": "renders\\reimport_glb_Hero.jpg",
+    "bytes": 173760,
+    "sha256": "4ffd15e672a4e935ae5a6a5fc238764f38566e2f8553ce615f464343776f7da7"
+  },
+  {
+    "path": "renders\\reimport_glb_Hero.png",
+    "bytes": 1535148,
+    "sha256": "08722ca22cd56027aa0dad6d0d38f1148878c43d77051cf00650a3bc1360b2e5"
+  },
+  {
+    "path": "renders\\reimport_glb_Roof_Detail.jpg",
+    "bytes": 446035,
+    "sha256": "20604a8a01036b1957815f529ba2fa194f7c22675cac0b395592345dc8fe544e"
+  },
+  {
+    "path": "renders\\reimport_glb_Roof_Detail.png",
+    "bytes": 2137820,
+    "sha256": "de670c5e87a7d8c8a7cf59bb2ef1d17c5333c0cfd73fb6bfebf075e764cc7e2b"
+  },
+  {
+    "path": "renders\\swatch_ForgedIron.jpg",
+    "bytes": 26093,
+    "sha256": "6fad621a59abf66e79ea57f30ce0ddebe5b2040e63e4f5680e34197cb690eb82"
+  },
+  {
+    "path": "renders\\swatch_ForgedIron.png",
+    "bytes": 789812,
+    "sha256": "34f82ae25a0a7837f5c0e65687e4e64f259f535acddc3e2b12b942f060776886"
+  },
+  {
+    "path": "renders\\swatch_Limestone.jpg",
+    "bytes": 69043,
+    "sha256": "a4eb125261880d843c8974bb0a027611d8f55c40f6cd61aba1e7945e478051a5"
+  },
+  {
+    "path": "renders\\swatch_Limestone.png",
+    "bytes": 985966,
+    "sha256": "a197272299c819906d6ccc4d58250cb73cfabb7a4f97ef70386c73465457b8fb"
+  },
+  {
+    "path": "renders\\swatch_Oak.jpg",
+    "bytes": 80344,
+    "sha256": "28c06cf6f0658321274d0b6364d1098f42d80dc3f7666011966e4532521cb4e7"
+  },
+  {
+    "path": "renders\\swatch_Oak.png",
+    "bytes": 1159626,
+    "sha256": "a18e12982f7400403c2e07231ea99e3ef4c6516725b44e2adc3e24e15f296ec6"
+  },
+  {
+    "path": "renders\\swatch_RoofTimber.jpg",
+    "bytes": 99192,
+    "sha256": "986c72321d18bed046dbffed8a8139550e3081030a177fa9e53453c87ef34fea"
+  },
+  {
+    "path": "renders\\swatch_RoofTimber.png",
+    "bytes": 1051565,
+    "sha256": "5799567fc24bd329b262530d00be45a06a5feafacc0efc0af3cfe702142a2db4"
+  },
+  {
+    "path": "renders\\turntable_000.jpg",
+    "bytes": 56822,
+    "sha256": "7e5b6143abc256efe299726c815c70e72f700c606895c4593ca6f8f8322dfd48"
+  },
+  {
+    "path": "renders\\turntable_000.png",
+    "bytes": 737014,
+    "sha256": "5b683f190b9afdc3ee810ccd269b271c349240c3c0e7cf84696ecf11c49879fb"
+  },
+  {
+    "path": "renders\\turntable_012.jpg",
+    "bytes": 55482,
+    "sha256": "620bb38029ce4d5b38b126baf46f57ef86085e2457c0e5b25dcfc05cd33e20e3"
+  },
+  {
+    "path": "renders\\turntable_012.png",
+    "bytes": 609791,
+    "sha256": "d18817a46d09c2a4f006263fdec1a070824d998c18bda3965c84f3e8b7a10b16"
+  },
+  {
+    "path": "renders\\turntable_024.jpg",
+    "bytes": 60157,
+    "sha256": "2a4731c469ec152f693c1f22370b8599dccc38b0d68cbc3741468a562d06e85f"
+  },
+  {
+    "path": "renders\\turntable_024.png",
+    "bytes": 621286,
+    "sha256": "387a88acce73f181c4206a090c8272c9e50c9753e35caba8f8c167885de4eaf7"
+  },
+  {
+    "path": "renders\\turntable_036.jpg",
+    "bytes": 56425,
+    "sha256": "1e9a914f693cc2a4b3248b02ae9e2dac81a3af64913960d9c121719926d01705"
+  },
+  {
+    "path": "renders\\turntable_036.png",
+    "bytes": 612658,
+    "sha256": "31f22a146d3e0fa6a03359c34fd611f19e54325a9a94d841011d742dd3bc3cb7"
+  },
+  {
+    "path": "renders\\unreal_Base.camera.json",
+    "bytes": 174,
+    "sha256": "6f122d7034edffa6f188cacf1e5c7b8c0dd1900bcb8e9c4029585d2b0f0d0180"
+  },
+  {
+    "path": "renders\\unreal_Base.jpg",
+    "bytes": 218761,
+    "sha256": "af970d79473c1917ff98f2ad8bcaa6882a86f508283fab8c2636d85cfcf55fed"
+  },
+  {
+    "path": "renders\\unreal_Base.png",
+    "bytes": 1162236,
+    "sha256": "eb63cd8e917aa38aaae47431f5703f38584a6d9f19e541b13aed409a874aa019"
+  },
+  {
+    "path": "renders\\unreal_before_exposure.jpg",
+    "bytes": 203634,
+    "sha256": "dfaa181f496d1c973a34723eef07bed1551fd3b68430298d0e74df986aa8189e"
+  },
+  {
+    "path": "renders\\unreal_before_exposure.png",
+    "bytes": 1234892,
+    "sha256": "56b4044e6512046c0d559c6fe29953fc62f19cf6d5659add909838c2a17939e7"
+  },
+  {
+    "path": "renders\\unreal_Hero.camera.json",
+    "bytes": 177,
+    "sha256": "5b7f5348d2a41fbbc1be1deae0c2d68a19f9f5406f9a560560a8d85fdc2a7b18"
+  },
+  {
+    "path": "renders\\unreal_Hero.jpg",
+    "bytes": 166814,
+    "sha256": "9c26caf437c7c49a956bdb889c0b7b3f09b81ad47a16c61a90130233f4164abd"
+  },
+  {
+    "path": "renders\\unreal_Hero.png",
+    "bytes": 965206,
+    "sha256": "7c91cdd28c7b5b274fcc10cc6941279dda8ea9ad867036cc57512e047059bfea"
+  },
+  {
+    "path": "renders\\unreal_Iron.camera.json",
+    "bytes": 176,
+    "sha256": "8a0f4ede23c735df93abf7de5d4eb13398a381b7f7b7ba3ff4aa8ec4eb5706e6"
+  },
+  {
+    "path": "renders\\unreal_Iron.jpg",
+    "bytes": 353479,
+    "sha256": "5c7147c0a41dce577f39af75c41e088b5d6af65d47c8e6e79af053493c135c52"
+  },
+  {
+    "path": "renders\\unreal_Iron.png",
+    "bytes": 1486632,
+    "sha256": "1e24d1dc9f99f7232750e5008f2b2ec936ab5f7c029f7167cb89028f05cb59c8"
+  },
+  {
+    "path": "renders\\unreal_Rear.camera.json",
+    "bytes": 177,
+    "sha256": "48038d01afc5f2a54c8670c4190f29cc4c9385b64684867e1d31da42faddbb62"
+  },
+  {
+    "path": "renders\\unreal_Rear.jpg",
+    "bytes": 160225,
+    "sha256": "723e3cec63b5d3892fc160784d434887c9a11213eee8e17ecab8c315231f5bd4"
+  },
+  {
+    "path": "renders\\unreal_Rear.png",
+    "bytes": 1004725,
+    "sha256": "58dfa16ae0174e280017525ec528c353253275bd35bc2768463ca3c4e1cbf266"
+  },
+  {
+    "path": "renders\\unreal_Roof.camera.json",
+    "bytes": 174,
+    "sha256": "f8d4ba8323efff282ae47c33b6e81b3decdaa7c1d57567ae657f7f6a5fff4d26"
+  },
+  {
+    "path": "renders\\unreal_Roof.jpg",
+    "bytes": 202340,
+    "sha256": "8a9f8cdf61c3e8238a12a8d01f41466e4190115b6d74f3a4911b85569a7c0eb7"
+  },
+  {
+    "path": "renders\\unreal_Roof.png",
+    "bytes": 1075690,
+    "sha256": "808edc994366909e1d24485d10485cc21130fe5836267b9c63df96a4ea339c6d"
+  },
+  {
+    "path": "renders\\unreal_Timber.camera.json",
+    "bytes": 175,
+    "sha256": "b49548b2ac5621c6b494604bf906c3d250342ba8e44a56bd2eed1047a5480e99"
+  },
+  {
+    "path": "renders\\unreal_Timber.jpg",
+    "bytes": 225376,
+    "sha256": "22b8f099d6ed8342ae5d4812be3788397f10e0d4b334d6d565811e1d2d22453d"
+  },
+  {
+    "path": "renders\\unreal_Timber.png",
+    "bytes": 1139429,
+    "sha256": "e1041a16bf2f21d74dcd85a28284c6b6e7c5cca5342ade126aa4a16ac7cbe1a4"
+  },
+  {
+    "path": "scripts\\bake_export.py",
+    "bytes": 6311,
+    "sha256": "6dde6af39e284491734a50c73750e25ccfca4186053e60beb664afa4791bf46a"
+  },
+  {
+    "path": "scripts\\bake_mip_variant.py",
+    "bytes": 2809,
+    "sha256": "07cadfd94b027a6d035c8e037e9e28615f9ffbf1af0d23bd0287e38b5fd3db4f"
+  },
+  {
+    "path": "scripts\\build_mill.py",
+    "bytes": 14786,
+    "sha256": "9911dd1a08ffa8fa96cee5f93823389f5089ef542e52f04046085f4841cc5ee9"
+  },
+  {
+    "path": "scripts\\call_weathering_tool.py",
+    "bytes": 435,
+    "sha256": "76a19b4635735e921995741939afb3652f858946235be42881913484411dfa0e"
+  },
+  {
+    "path": "scripts\\capture_unreal.py",
+    "bytes": 1592,
+    "sha256": "abad7ffe31f6fabbb1890a51cf97ac18ce8cf36ad1930ea3be491eff2c277d81"
+  },
+  {
+    "path": "scripts\\check_import_options.py",
+    "bytes": 547,
+    "sha256": "8a1b6ff8fcd0bd1ea5f2fb5c55b436fd8656ab73db422f257ea53df4943078cb"
+  },
+  {
+    "path": "scripts\\commit_weathered_preview.py",
+    "bytes": 659,
+    "sha256": "4c4e2010f9148bca8064afe377677ece8362ddd103c32837870d8af4e3c9106f"
+  },
+  {
+    "path": "scripts\\connect_mip_variant.py",
+    "bytes": 2156,
+    "sha256": "2f7baed9493217206e982323242eda5f8e9019025b183d2c92dc22a05a6ba134"
+  },
+  {
+    "path": "scripts\\discover_mcp.py",
+    "bytes": 374,
+    "sha256": "3384131bfa34a518c896a5c1b05d125373dd36548ea0b682a04f3230fac988e3"
+  },
+  {
+    "path": "scripts\\discover_slate.py",
+    "bytes": 405,
+    "sha256": "77c1c5b022d28f0b6693dff99fed1ce70cdc948cb24eb8157b9602ecca27a20a"
+  },
+  {
+    "path": "scripts\\exposure.py",
+    "bytes": 532,
+    "sha256": "2e06117288df714f482fd711de66bbca51f6f926034a06eb88abe891b305812a"
+  },
+  {
+    "path": "scripts\\final_report_corrections.py",
+    "bytes": 1348,
+    "sha256": "e6b5fe6c84c22f36d0f867d56aee591b1bddd3e4ff1b1dc6e7eb50a5bf646373"
+  },
+  {
+    "path": "scripts\\final_review.py",
+    "bytes": 2287,
+    "sha256": "585cfb4d5a79cc4072b36d9d28cc82b0b4cec174543b982f63e16bc27db066cc"
+  },
+  {
+    "path": "scripts\\final_unreal_check.py",
+    "bytes": 2363,
+    "sha256": "f9ff756b8924ad738ef5cef26994ce41905156312884149bb5b9257f825c8846"
+  },
+  {
+    "path": "scripts\\finish_turntable.py",
+    "bytes": 1072,
+    "sha256": "0df322bbddbdb8366596b589ed6165e6f4b8f4d0cba8a1b00a18ffa0ab8516a7"
+  },
+  {
+    "path": "scripts\\fix_material_resume.py",
+    "bytes": 585,
+    "sha256": "546f60531dd9e398f93e4ef9720ca351a9d2aec5c3a39c37a396b1805f014087"
+  },
+  {
+    "path": "scripts\\image_qa.py",
+    "bytes": 801,
+    "sha256": "e014021e223e6427fa88d52a32530489731476b4afb8afa1e144ec692d498c03"
+  },
+  {
+    "path": "scripts\\import_materials.py",
+    "bytes": 3410,
+    "sha256": "def8a8ee06e198e912f87f616d66a92b6e10a8aa39b2d96de7625e68dc6075d3"
+  },
+  {
+    "path": "scripts\\import_mesh.py",
+    "bytes": 1159,
+    "sha256": "9b871b67fd4ab6eb2def4016753715dcfb59952bd95687e801981c25b355d583"
+  },
+  {
+    "path": "scripts\\inspect_nodes.py",
+    "bytes": 626,
+    "sha256": "f1b3f774ca4b13e80ffd25624c90ab96c01440b49300219d64591f7f2683621c"
+  },
+  {
+    "path": "scripts\\light_scene.py",
+    "bytes": 1661,
+    "sha256": "870d1a9f4c4402efea7644cd236aee5c6272ef2bdcd5ea636c79d8cf8c1236dd"
+  },
+  {
+    "path": "scripts\\mcp_client.py",
+    "bytes": 1191,
+    "sha256": "06fbc9f039cb4af02d3f0d686fa0c4440da6686e06517fe5aa8ac8afb3f8ad68"
+  },
+  {
+    "path": "scripts\\mill_weathering_tool.py",
+    "bytes": 2056,
+    "sha256": "3d7a60118c2a56f0ab2dd67d4923bd4a30b8cfb141aa816728380021b1ffc830"
+  },
+  {
+    "path": "scripts\\package_sources.py",
+    "bytes": 5309,
+    "sha256": "125266d8d392902496cb852a48dba01b437c71c0e3f120ecebee036254f590d6"
+  },
+  {
+    "path": "scripts\\prepare_scene.py",
+    "bytes": 1625,
+    "sha256": "31ee407aca41200c0f1f360158223c88d08ca88d7279315409047110e3c493b3"
+  },
+  {
+    "path": "scripts\\prepare_unreal.py",
+    "bytes": 1047,
+    "sha256": "14a0e5df26ac97cdeaff953604ba3d3a6cd4634800d5f458a48a6eae09f61cbd"
+  },
+  {
+    "path": "scripts\\read_schemas.py",
+    "bytes": 729,
+    "sha256": "b44f3d9270c8ac208142ac451a15c5a7b02c96ad7936d78d502403d56131b1fd"
+  },
+  {
+    "path": "scripts\\recover_materials.py",
+    "bytes": 437,
+    "sha256": "487d52fca4b9f1ef056ebdd532d52a09412424734663f2109e7bb97dcd6d84a8"
+  },
+  {
+    "path": "scripts\\refine_r2.py",
+    "bytes": 825,
+    "sha256": "f1712cf1dece40186173ac625fceb50ba3cbde5c9229f71ecc3b13a36c14628c"
+  },
+  {
+    "path": "scripts\\refine_r3.py",
+    "bytes": 802,
+    "sha256": "5e90b0b7befafa82585cb38d3483b9e3c474b8cc770fbff6218bf70ba4f08310"
+  },
+  {
+    "path": "scripts\\refine_source.py",
+    "bytes": 2349,
+    "sha256": "f691aeeed88cf0ef94d5dc221de549d8bac6e44ddf1307fb132fe96c41f18300"
+  },
+  {
+    "path": "scripts\\resume_scene.py",
+    "bytes": 630,
+    "sha256": "e99b7c8216e2334df2f2b8ed6976cebb4d6f1de30456824e537d0854a210617d"
+  },
+  {
+    "path": "scripts\\scene_discovery.py",
+    "bytes": 497,
+    "sha256": "8eb8a8913585ed5025c004f44e9e3420bb1ea393c14f48123edb289938479d83"
+  },
+  {
+    "path": "scripts\\set_exposure.py",
+    "bytes": 1046,
+    "sha256": "6a1ea6eebdd9bb4f4fd776965682770731f745248ce7ec829cadddcd69e6421e"
+  },
+  {
+    "path": "scripts\\slate_mill.py",
+    "bytes": 250,
+    "sha256": "6626a0b43c4c48ad349151ed5b889676d167b15a1609edf22f1e956d3efa703c"
+  },
+  {
+    "path": "scripts\\swatch_density.py",
+    "bytes": 2239,
+    "sha256": "0f7d5bfcf2f8a09059a28c7e629293c68b06f682077a49427656e4a06c39ec27"
+  },
+  {
+    "path": "scripts\\toolsets.json",
+    "bytes": 13318,
+    "sha256": "c726f081438c967a77ea30d46c2ca649496c96016846ff3bd27819b463cb4956"
+  },
+  {
+    "path": "scripts\\turntable_final.py",
+    "bytes": 1858,
+    "sha256": "04799edf8923ba47439946b1175ea509184f67c7f1631cc8818a64e4daa69be3"
+  },
+  {
+    "path": "scripts\\unreal_ops.py",
+    "bytes": 1153,
+    "sha256": "521a374b28e46ad86e13748a7712b991266d206f5263b0dd5432325edb599ecf"
+  },
+  {
+    "path": "scripts\\update_weathered_preview.py",
+    "bytes": 330,
+    "sha256": "228b5a9d8618f860e370e526e678b79ab67176282df94fc95b8e115d4274ef28"
+  },
+  {
+    "path": "scripts\\verify_exports.py",
+    "bytes": 2153,
+    "sha256": "034b64401f62c9a710688cf39c9313aaeb1c1bc22de9eda42b5d222e97256050"
+  },
+  {
+    "path": "scripts\\write_report.py",
+    "bytes": 20635,
+    "sha256": "d8a473afd5f294197e1e854bb7eb8d788b8096a976e319110d115ba921f813bc"
+  },
+  {
+    "path": "textures\\mill--oak--worn--1254x1254--v1.png",
+    "bytes": 3171268,
+    "sha256": "32cdf2108a949088f86076c63b8da5ba20272bd37dd72c7a6a50f3b8cbc4e19e"
+  },
+  {
+    "path": "textures\\mill--oak--worn--1254x1254--v1.prompt.md",
+    "bytes": 1976,
+    "sha256": "661afe7131be62b5b156f6855569e889cc4937d6def909cc49f420331aa0a447"
+  },
+  {
+    "path": "textures\\mill--roof--worn--1254x1254--v1.png",
+    "bytes": 3318719,
+    "sha256": "bed002d683b8048c02c127ad3406ebbab7ee77278d78fde838f3c4794f006ed6"
+  },
+  {
+    "path": "textures\\mill--roof--worn--1254x1254--v1.prompt.md",
+    "bytes": 1960,
+    "sha256": "82184654295de9c09e4d7494996748f505c354077665cf936be5e5b9bbaad75b"
+  },
+  {
+    "path": "textures\\mill--stone--worn--1254x1254--v1.png",
+    "bytes": 3618396,
+    "sha256": "95befa38e7e85fc5855b16dff27369f9f283e000517436dd5315db41669c2c75"
+  },
+  {
+    "path": "textures\\mill--stone--worn--1254x1254--v1.prompt.md",
+    "bytes": 1953,
+    "sha256": "a47a1268955178af9d7d4d76020bf2db4ed20f2d66018b7d4521e3477c7dc437"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_ForgedIron_BaseColor_1024_v2.png",
+    "bytes": 15803,
+    "sha256": "2d66e0af9229d594b105083331bcc06b70b5982e5b82b7026865a10f4741ab24"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_ForgedIron_Normal.png",
+    "bytes": 838503,
+    "sha256": "84eb8eb1cc91c2371a72a4b4992ee5153fb63cf13e0c3b7ce1d0b24e3776ce76"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_ForgedIron_Roughness.png",
+    "bytes": 697613,
+    "sha256": "b25d1c7e51a7325191d98265f645030469e2cb901bfd81cb3f4863819cd4b80f"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_Limestone_BaseColor_1024_v2.png",
+    "bytes": 2093236,
+    "sha256": "c6bef547b655b5c1e74d8387082883e24a7d04b3e2c6c59f6dd4c3046593e1ce"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_Limestone_Normal.png",
+    "bytes": 1188575,
+    "sha256": "558d4efe5084072dcaf0b0d3e4d005f5eb5b3e2efe3d13479b82a937a17e2753"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_Limestone_Roughness.png",
+    "bytes": 648768,
+    "sha256": "f2ccc9eefb567a4c4216a2ff0d52bcfa6d0973e2524610319db2c4e7cc01462d"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_Oak_BaseColor_1024_v2.png",
+    "bytes": 1915278,
+    "sha256": "544a0b1202a5750f553e0268b55b5f8ef9f645ec069a4886fb4aea9cd94ffdd3"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_Oak_Normal.png",
+    "bytes": 441129,
+    "sha256": "1ec41cf723a418ed7b7434b0ebb833d13de1f7ea6a1112ab570b5b5e30ca8940"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_Oak_Roughness.png",
+    "bytes": 275702,
+    "sha256": "09e5c37dd12649e7b96c1800999ffe0f24f855caab6b07e631389774a358ef6c"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_RoofTimber_BaseColor_1024_v2.png",
+    "bytes": 2013266,
+    "sha256": "fe2a9e61f8b69e9edd0dfe3f0c91ea8f7a359dc8c323ddc46728c362d0e9a630"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_RoofTimber_Normal.png",
+    "bytes": 514976,
+    "sha256": "c3c6717a64ed01de37e4347c6dde5d2d5e5042314f631a868ce4473816ac1ab1"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_RoofTimber_Roughness.png",
+    "bytes": 275345,
+    "sha256": "7ae5efe923ca2e7c2c77d61f11dd668aacf208d4ae262987e719e85f1dfa1c70"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_ShelteredOak_BaseColor_1024_v2.png",
+    "bytes": 1736037,
+    "sha256": "7034bfdcc7955f4e60caa3716aaeb033a2bf534f097180846ea3216518c54f33"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_ShelteredOak_Normal.png",
+    "bytes": 441125,
+    "sha256": "e82eb6ca7db4c29b0e0af8d65ecddecc79de7b7c889c675bed27b46a6e8f25a1"
+  },
+  {
+    "path": "exports\\HansaMill.fbm\\T_Mill_ShelteredOak_Roughness.png",
+    "bytes": 275702,
+    "sha256": "09e5c37dd12649e7b96c1800999ffe0f24f855caab6b07e631389774a358ef6c"
+  }
+]

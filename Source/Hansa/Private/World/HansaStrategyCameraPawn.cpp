@@ -95,6 +95,17 @@ void AHansaStrategyCameraPawn::ClearCameraIntents()
 	PendingIntent = Hansa::Game::FHansaStrategyCameraIntent();
 }
 
+void AHansaStrategyCameraPawn::FocusWorldLocationIntent(const FVector WorldLocation)
+{
+	if (!WorldLocation.ContainsNaN())
+	{
+		CameraState.Focus.X = FMath::Clamp(WorldLocation.X, MapBoundsMin.X, MapBoundsMax.X);
+		CameraState.Focus.Y = FMath::Clamp(WorldLocation.Y, MapBoundsMin.Y, MapBoundsMax.Y);
+		PendingIntent.Pan = FVector2D::ZeroVector;
+		ApplyCameraState();
+	}
+}
+
 FVector2D AHansaStrategyCameraPawn::GetMouseEdgePanIntent() const
 {
 	if (!bEnableMouseEdgePan || EdgePanMarginPixels <= 0.0f)
