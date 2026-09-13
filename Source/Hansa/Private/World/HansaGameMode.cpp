@@ -1,4 +1,5 @@
 #include "World/HansaGameMode.h"
+#include "World/HansaCargoProjectionManager.h"
 
 #include "EngineUtils.h"
 #include "Engine/World.h"
@@ -10,6 +11,7 @@
 #include "World/HansaBuildingWorldProjection.h"
 #include "World/HansaGameState.h"
 #include "World/HansaLubeckWorldFoundation.h"
+#include "World/HansaLubeckPlacementGrid.h"
 #include "World/HansaPlayerState.h"
 #include "World/HansaRuntimeSimulationHost.h"
 #include "World/HansaStrategyCameraPawn.h"
@@ -60,6 +62,8 @@ void AHansaGameMode::Tick(const float DeltaSeconds)
 	{
 		const int64 Before = Host->GetSimulationTick();
 		Host->AdvanceRealTime(DeltaSeconds);
+        for (TActorIterator<AHansaCargoProjectionManager> It(GetWorld()); It; ++It) It->Sample(Host->GetPresentationTickFraction());
+        for (TActorIterator<AHansaBuildingWorldProjectionActor> It(GetWorld()); It; ++It) It->SampleProduction(Host->GetPresentationTickFraction());
 		if (Host->GetSimulationTick() != Before) RefreshMultiplayerProjections(false);
 	}
 }
@@ -252,8 +256,9 @@ void AHansaGameMode::RefreshMultiplayerProjections(const bool bForceFullRefresh)
 
 UHansaRuntimeSimulationHost* AHansaGameMode::GetSimulationHost()
 {
-	if (SimulationHost == nullptr)
+	if (SimulationHost == nullptr && !bSimulationHostInitializationAttempted)
 	{
+		bSimulationHostInitializationAttempted = true;
 		SimulationHost = NewObject<UHansaRuntimeSimulationHost>(this, TEXT("LubeckRuntimeSimulation"));
 		FString Error;
 		if (!SimulationHost->InitializeForLubeck(
@@ -320,7 +325,17 @@ void AHansaGameMode::EnsureLubeckWorldComposition()
 			AHansaPlacementProjectionManager::StaticClass(), FTransform::Identity, Parameters);
 	}
 
-	for (TActorIterator<AHansaLubeckAutomationStart> It(World); It; ++It) return;
+    bool bHasCargoManager = false;
+    for (TActorIterator<AHansaCargoProjectionManager> It(World); It; ++It) {bHasCargoManager=true; break;}
+    if (!bHasCargoManager) World->SpawnActor<AHansaCargoProjectionManager>();
+
+	for (TActorIterator<AHansaLubeckAutomationStart> It(World); It; ++It)
+	{
+		// The saved map may still contain the inland prototype PlayerStart.
+		if (Foundation && Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(World))
+			It->SetActorTransform(Foundation->GetAutomationStartTransform());
+		return;
+	}
 
 	FActorSpawnParameters Parameters;
 	Parameters.Name = TEXT("LubeckAutomationStart");

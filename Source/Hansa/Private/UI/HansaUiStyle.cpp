@@ -1,6 +1,8 @@
 #include "UI/HansaUiStyle.h"
 
 #include "Brushes/SlateRoundedBoxBrush.h"
+#include "Fonts/CompositeFont.h"
+#include "Misc/Paths.h"
 #include "Styling/CoreStyle.h"
 #include "Styling/SlateStyle.h"
 #include "Styling/SlateStyleRegistry.h"
@@ -113,7 +115,7 @@ namespace Hansa::UI::Private
 		const FLinearColor Foreground,
 		const FLinearColor DisabledForeground)
 	{
-		const FLinearColor DisabledFill = Normal.CopyWithNewOpacity(0.38f);
+		const FLinearColor DisabledFill = Normal; // Keep disabled text readable on an opaque surface.
 		return FButtonStyle()
 			.SetNormal(Rounded(Normal, 4.0f, UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Oak), 1.0f))
 			.SetHovered(Rounded(Hovered, 4.0f, UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Brass), 2.0f))
@@ -122,7 +124,7 @@ namespace Hansa::UI::Private
 			.SetNormalForeground(Foreground)
 			.SetHoveredForeground(Foreground)
 			.SetPressedForeground(Foreground)
-			.SetDisabledForeground(DisabledForeground)
+			.SetDisabledForeground(Foreground)
 			.SetNormalPadding(FMargin(16.0f, 10.0f))
 			.SetPressedPadding(FMargin(16.0f, 11.0f, 16.0f, 9.0f));
 	}
@@ -268,7 +270,7 @@ FSlateFontInfo UHansaUiStyleLibrary::GetTypography(const EHansaUiTypographyToken
 {
 	const bool bSerifRole = Token == EHansaUiTypographyToken::Display ||
 		Token == EHansaUiTypographyToken::Heading1 || Token == EHansaUiTypographyToken::Heading2;
-	const TCHAR* Typeface = bSerifRole ? TEXT("Bold") : TEXT("Regular");
+	const bool bTabularRole = Token == EHansaUiTypographyToken::Data;
 	int32 Size = 16;
 	switch (Token)
 	{
@@ -280,7 +282,23 @@ FSlateFontInfo UHansaUiStyleLibrary::GetTypography(const EHansaUiTypographyToken
 	case EHansaUiTypographyToken::Caption: Size = 13; break;
 	default: break;
 	}
-	return FCoreStyle::GetDefaultFontStyle(Typeface, Size);
+	// Licensed project fonts; Data uses verified equal-width lining digits.
+	auto MakeProjectFont = [](const TCHAR* File) -> TSharedRef<const FCompositeFont>
+	{
+		auto Font = MakeShared<FCompositeFont>(FName(TEXT("Regular")),
+			FPaths::ProjectContentDir() / TEXT("Hansa/UI/Fonts") / File,
+			EFontHinting::Default, EFontLoadingPolicy::LazyLoad);
+		Font->FallbackTypeface.Typeface.AppendFont(FName(TEXT("Regular")),
+			FPaths::ProjectContentDir() / TEXT("Hansa/UI/Fonts/NotoSansSymbols2-Regular.ttf"),
+			EFontHinting::Default, EFontLoadingPolicy::LazyLoad);
+		return Font;
+	};
+	static const TSharedRef<const FCompositeFont> DisplayFont = MakeProjectFont(TEXT("SourceSerif4-Semibold.ttf"));
+	static const TSharedRef<const FCompositeFont> BodyFont = MakeProjectFont(TEXT("AtkinsonHyperlegible-Regular.ttf"));
+	// The design brief specifies pixels at the 1080p reference scale. Slate font
+	// sizes are points at 96 DPI: convert once here, before application/UI scaling.
+	const float PointSize = static_cast<float>(Size) * 72.f / 96.f;
+	return FSlateFontInfo(bSerifRole || bTabularRole ? DisplayFont : BodyFont, PointSize, FName(TEXT("Regular")));
 }
 
 float UHansaUiStyleLibrary::GetSpacing(const EHansaUiSpacingToken Token)

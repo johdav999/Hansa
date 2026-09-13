@@ -163,6 +163,24 @@ namespace Hansa::Simulation
 				Building.ConstructionCostPfennig = 2200;
 				Building.BuildTicks = 220;
 			}
+			else if (Building.StableId == TEXT("Building.HopFarm"))
+			{
+				Building.ConstructionCosts = { Amount(TEXT("Good.Timber"), 3000), Amount(TEXT("Good.Tools"), 500) };
+				Building.ConstructionCostPfennig = 1100;
+				Building.BuildTicks = 140;
+			}
+			else if (Building.StableId == TEXT("Building.MaltHouse"))
+			{
+				Building.ConstructionCosts = { Amount(TEXT("Good.Timber"), 3000), Amount(TEXT("Good.Planks"), 3000), Amount(TEXT("Good.Tools"), 1000) };
+				Building.ConstructionCostPfennig = 1600;
+				Building.BuildTicks = 160;
+			}
+			else if (Building.StableId == TEXT("Building.Cooperage"))
+			{
+				Building.ConstructionCosts = { Amount(TEXT("Good.Timber"), 4000), Amount(TEXT("Good.Planks"), 2000), Amount(TEXT("Good.Tools"), 1000) };
+				Building.ConstructionCostPfennig = 1800;
+				Building.BuildTicks = 180;
+			}
 		}
 
 		FHansaCompiledMarketGoodProfile MarketGood(const TCHAR* GoodId, const int64 BasePrice,
@@ -201,6 +219,8 @@ namespace Hansa::Simulation
 			Result.Goods = {
 				MarketGood(TEXT("Good.Grain"), 1000, 30000, bRostock ? 4000 : 0),
 				MarketGood(TEXT("Good.Flour"), 1700, 20000),
+				MarketGood(TEXT("Good.Hops"), 1800, 8000),
+				MarketGood(TEXT("Good.Malt"), 1400, 12000),
 				MarketGood(TEXT("Good.Bread"), 800, 24000, bHamburg ? 2000 : 0),
 				MarketGood(TEXT("Good.Fish"), 1800, 18000, (bHamburg || bRostock) ? 3000 : 0),
 				MarketGood(TEXT("Good.Salt"), 2200, 12000, bLuneburg ? 5000 : 0, bLuneburg ? -500 : 0),
@@ -208,6 +228,7 @@ namespace Hansa::Simulation
 				MarketGood(TEXT("Good.Planks"), 1300, 18000),
 				MarketGood(TEXT("Good.Iron"), 2600, 10000),
 				MarketGood(TEXT("Good.Tools"), 6500, 8000),
+				MarketGood(TEXT("Good.Barrels"), 2500, 6000),
 				MarketGood(TEXT("Good.Beer"), 1500, 16000)
 			};
 			if (Result.bMarketOnly)
@@ -247,18 +268,21 @@ namespace Hansa::Simulation
 		{
 			TArray<FHansaCompiledGoodDefinition> Goods;
 			for (const TCHAR* StableId : {
-				TEXT("Good.Beer"), TEXT("Good.Bread"), TEXT("Good.Fish"), TEXT("Good.Flour"), TEXT("Good.Grain"),
-				TEXT("Good.Iron"), TEXT("Good.Planks"), TEXT("Good.Salt"), TEXT("Good.Timber"), TEXT("Good.Tools") })
+				TEXT("Good.Barrels"), TEXT("Good.Beer"), TEXT("Good.Bread"), TEXT("Good.Fish"), TEXT("Good.Flour"), TEXT("Good.Grain"),
+				TEXT("Good.Hops"), TEXT("Good.Iron"), TEXT("Good.Malt"), TEXT("Good.Planks"), TEXT("Good.Salt"), TEXT("Good.Timber"), TEXT("Good.Tools") })
 			{
 				FHansaCompiledGoodDefinition Definition;
 				Definition.StableId = StableId;
 				Definition.Unit = TEXT("milli-unit");
-				if (Definition.StableId == TEXT("Good.Beer")) Definition.BaseValueMilliMarks = 1500;
+				if (Definition.StableId == TEXT("Good.Barrels")) Definition.BaseValueMilliMarks = 2500;
+				else if (Definition.StableId == TEXT("Good.Beer")) Definition.BaseValueMilliMarks = 1500;
 				else if (Definition.StableId == TEXT("Good.Bread")) Definition.BaseValueMilliMarks = 800;
 				else if (Definition.StableId == TEXT("Good.Fish")) Definition.BaseValueMilliMarks = 1800;
 				else if (Definition.StableId == TEXT("Good.Flour")) Definition.BaseValueMilliMarks = 1700;
 				else if (Definition.StableId == TEXT("Good.Grain")) Definition.BaseValueMilliMarks = 1000;
+				else if (Definition.StableId == TEXT("Good.Hops")) Definition.BaseValueMilliMarks = 1800;
 				else if (Definition.StableId == TEXT("Good.Iron")) Definition.BaseValueMilliMarks = 2600;
+				else if (Definition.StableId == TEXT("Good.Malt")) Definition.BaseValueMilliMarks = 1400;
 				else if (Definition.StableId == TEXT("Good.Planks")) Definition.BaseValueMilliMarks = 1300;
 				else if (Definition.StableId == TEXT("Good.Salt")) Definition.BaseValueMilliMarks = 2200;
 				else if (Definition.StableId == TEXT("Good.Timber")) Definition.BaseValueMilliMarks = 700;
@@ -268,10 +292,13 @@ namespace Hansa::Simulation
 
 			TArray<FHansaCompiledRecipeDefinition> Recipes = {
 				RecipeDefinition(TEXT("Recipe.BakeBread"), { Amount(TEXT("Good.Flour"), 2'000) }, { Amount(TEXT("Good.Bread"), 3'000) }, 2, 4, 2),
-				RecipeDefinition(TEXT("Recipe.BrewBeer"), { Amount(TEXT("Good.Grain"), 3'000) }, { Amount(TEXT("Good.Beer"), 5'000) }, 2, 4, 2),
+				RecipeDefinition(TEXT("Recipe.BrewBeer"), { Amount(TEXT("Good.Malt"), 3'000), Amount(TEXT("Good.Hops"), 1'000), Amount(TEXT("Good.Barrels"), 1'000) }, { Amount(TEXT("Good.Beer"), 5'000) }, 2, 4, 2),
 				RecipeDefinition(TEXT("Recipe.CatchFish"), {}, { Amount(TEXT("Good.Fish"), 4'000) }, 2, 8, 0),
 				RecipeDefinition(TEXT("Recipe.FellTimber"), {}, { Amount(TEXT("Good.Timber"), 6'000) }, 2, 8, 0),
 				RecipeDefinition(TEXT("Recipe.GrowGrain"), {}, { Amount(TEXT("Good.Grain"), 6'000) }, 3, 8, 0),
+				RecipeDefinition(TEXT("Recipe.GrowHops"), {}, { Amount(TEXT("Good.Hops"), 4'000) }, 2, 4, 0),
+				RecipeDefinition(TEXT("Recipe.MaltGrain"), { Amount(TEXT("Good.Grain"), 4'000) }, { Amount(TEXT("Good.Malt"), 3'000) }, 2, 3, 1),
+				RecipeDefinition(TEXT("Recipe.MakeBarrels"), { Amount(TEXT("Good.Timber"), 3'000) }, { Amount(TEXT("Good.Barrels"), 1'000) }, 2, 3, 2),
 				RecipeDefinition(TEXT("Recipe.MillFlour"), { Amount(TEXT("Good.Grain"), 4'000) }, { Amount(TEXT("Good.Flour"), 3'000) }, 2, 4, 1),
 				RecipeDefinition(TEXT("Recipe.SawPlanks"), { Amount(TEXT("Good.Timber"), 5'000) }, { Amount(TEXT("Good.Planks"), 3'500) }, 2, 6, 1),
 				RecipeDefinition(TEXT("Recipe.SmithTools"), { Amount(TEXT("Good.Iron"), 3'000) }, { Amount(TEXT("Good.Tools"), 1'000) }, 2, 4, 4)
@@ -281,7 +308,10 @@ namespace Hansa::Simulation
 				BuildingDefinition(TEXT("Building.Brewery"), TEXT("Recipe.BrewBeer"), 4, 2),
 				BuildingDefinition(TEXT("Building.Fishery"), TEXT("Recipe.CatchFish"), 8, 0),
 				BuildingDefinition(TEXT("Building.GrainFarm"), TEXT("Recipe.GrowGrain"), 8, 0),
+				BuildingDefinition(TEXT("Building.HopFarm"), TEXT("Recipe.GrowHops"), 4, 0),
 				BuildingDefinition(TEXT("Building.LumberCamp"), TEXT("Recipe.FellTimber"), 8, 0),
+				BuildingDefinition(TEXT("Building.MaltHouse"), TEXT("Recipe.MaltGrain"), 3, 1),
+				BuildingDefinition(TEXT("Building.Cooperage"), TEXT("Recipe.MakeBarrels"), 3, 2),
 				BuildingDefinition(TEXT("Building.Mill"), TEXT("Recipe.MillFlour"), 4, 1),
 				BuildingDefinition(TEXT("Building.Sawmill"), TEXT("Recipe.SawPlanks"), 6, 1),
 				BuildingDefinition(TEXT("Building.Smithy"), TEXT("Recipe.SmithTools"), 4, 4)
@@ -374,7 +404,7 @@ namespace Hansa::Simulation
 			return true;
 		}
 
-		FString Hex64(const uint64 Value)
+		FString ProductionFixtureHex64(const uint64 Value)
 		{
 			return FString::Printf(TEXT("%016llX"), static_cast<unsigned long long>(Value));
 		}
@@ -545,7 +575,8 @@ namespace Hansa::Simulation
 
 		const TCHAR* BuildingIds[] = {
 			TEXT("Building.GrainFarm"), TEXT("Building.Mill"), TEXT("Building.Bakery"), TEXT("Building.LumberCamp"),
-			TEXT("Building.Sawmill"), TEXT("Building.Smithy"), TEXT("Building.Brewery"), TEXT("Building.Fishery")
+			TEXT("Building.Sawmill"), TEXT("Building.Smithy"), TEXT("Building.Brewery"), TEXT("Building.Fishery"),
+			TEXT("Building.HopFarm"), TEXT("Building.MaltHouse"), TEXT("Building.Cooperage")
 		};
 		for (uint64 Index = 0; Index < UE_ARRAY_COUNT(BuildingIds); ++Index)
 		{
@@ -573,8 +604,8 @@ namespace Hansa::Simulation
 		Inventory.CityId = City;
 		Inventory.Capacity = FHansaQuantity::FromRaw(2'000'000);
 		for (const TCHAR* GoodId : {
-			TEXT("Good.Beer"), TEXT("Good.Bread"), TEXT("Good.Fish"), TEXT("Good.Flour"), TEXT("Good.Grain"),
-			TEXT("Good.Iron"), TEXT("Good.Planks"), TEXT("Good.Salt"), TEXT("Good.Timber"), TEXT("Good.Tools") })
+			TEXT("Good.Barrels"), TEXT("Good.Beer"), TEXT("Good.Bread"), TEXT("Good.Fish"), TEXT("Good.Flour"), TEXT("Good.Grain"),
+			TEXT("Good.Hops"), TEXT("Good.Iron"), TEXT("Good.Malt"), TEXT("Good.Planks"), TEXT("Good.Salt"), TEXT("Good.Timber"), TEXT("Good.Tools") })
 		{
 			FHansaGoodId Parsed;
 			if (!Good(GoodId, Parsed))
@@ -595,12 +626,15 @@ namespace Hansa::Simulation
 			!AddBuildingProduction(Initialization, 5, TEXT("Recipe.SawPlanks"), 6, 1) ||
 			!AddBuildingProduction(Initialization, 6, TEXT("Recipe.SmithTools"), 4, 4) ||
 			!AddBuildingProduction(Initialization, 7, TEXT("Recipe.BrewBeer"), 4, 2) ||
-			!AddBuildingProduction(Initialization, 8, TEXT("Recipe.CatchFish"), 8, 0))
+			!AddBuildingProduction(Initialization, 8, TEXT("Recipe.CatchFish"), 8, 0) ||
+			!AddBuildingProduction(Initialization, 9, TEXT("Recipe.GrowHops"), 4, 0) ||
+			!AddBuildingProduction(Initialization, 10, TEXT("Recipe.MaltGrain"), 3, 1) ||
+			!AddBuildingProduction(Initialization, 11, TEXT("Recipe.MakeBarrels"), 3, 2))
 		{
 			return THansaValueResult<FHansaProductionFixture>::Failure(EHansaValueError::InvalidFormat);
 		}
 		FHansaProductionInitialization Salt;
-		if (!Entity(9, Salt.Id) || !Entity(1, Salt.OutputInventoryId) ||
+		if (!Entity(12, Salt.Id) || !Entity(1, Salt.OutputInventoryId) ||
 			!Good(TEXT("Good.Salt"), Salt.SupplyGoodId))
 		{
 			return THansaValueResult<FHansaProductionFixture>::Failure(EHansaValueError::InvalidFormat);
@@ -694,8 +728,8 @@ namespace Hansa::Simulation
 		Inventory.CityId = City;
 		Inventory.Capacity = FHansaQuantity::FromRaw(2'000'000);
 		for (const TCHAR* GoodText : {
-			TEXT("Good.Beer"), TEXT("Good.Bread"), TEXT("Good.Fish"), TEXT("Good.Flour"), TEXT("Good.Grain"),
-			TEXT("Good.Iron"), TEXT("Good.Planks"), TEXT("Good.Salt"), TEXT("Good.Timber"), TEXT("Good.Tools") })
+			TEXT("Good.Barrels"), TEXT("Good.Beer"), TEXT("Good.Bread"), TEXT("Good.Fish"), TEXT("Good.Flour"), TEXT("Good.Grain"),
+			TEXT("Good.Hops"), TEXT("Good.Iron"), TEXT("Good.Malt"), TEXT("Good.Planks"), TEXT("Good.Salt"), TEXT("Good.Timber"), TEXT("Good.Tools") })
 		{
 			FHansaGoodId Parsed;
 			if (!Good(GoodText, Parsed))
@@ -967,9 +1001,9 @@ namespace Hansa::Simulation
 		Json += FString::Printf(TEXT("  \"evidenceSchemaVersion\": %u,\n"), EvidenceSchemaVersion);
 		Json += FString::Printf(TEXT("  \"fixtureId\": \"%s\",\n"), *Fixture.GetFixtureId());
 		Json += FString::Printf(TEXT("  \"fixtureVersion\": %u,\n"), Fixture.GetFixtureVersion());
-		Json += FString::Printf(TEXT("  \"registryHash\": \"%s\",\n"), *Hex64(Fixture.GetRegistryHash()));
-		Json += FString::Printf(TEXT("  \"initialStateHash\": \"%s\",\n"), *Hex64(InitialState.GetOverallHash()));
-		Json += FString::Printf(TEXT("  \"finalStateHash\": \"%s\",\n"), *Hex64(FinalState.GetOverallHash()));
+		Json += FString::Printf(TEXT("  \"registryHash\": \"%s\",\n"), *ProductionFixtureHex64(Fixture.GetRegistryHash()));
+		Json += FString::Printf(TEXT("  \"initialStateHash\": \"%s\",\n"), *ProductionFixtureHex64(InitialState.GetOverallHash()));
+		Json += FString::Printf(TEXT("  \"finalStateHash\": \"%s\",\n"), *ProductionFixtureHex64(FinalState.GetOverallHash()));
 		Json += FString::Printf(TEXT("  \"ticksRun\": %d,\n"), TicksRun);
 		Json += TEXT("  \"events\": [\n");
 		const TConstArrayView<FHansaDomainEvent> Events = Fixture.GetEvents();

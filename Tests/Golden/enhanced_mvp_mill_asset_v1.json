@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "prompt": "EMVP-P09",
+  "definition": "Building.Mill",
+  "outputGood": "Good.Flour",
+  "blueprint": "/Game/Hansa/Core/Buildings/BP_HansaWindmill_Animated",
+  "assetRoot": "/Game/Mesh/hansa-mill/P09/Meshes/",
+  "sourceRoot": "SourceArt/Generated/Buildings/HansaMill_P09_20260907",
+  "body": "SM_Mill_Body",
+  "rotor": "SM_Mill_Rotor",
+  "runtimeScale": [1, 1, 1],
+  "groundedFootprintLimitCm": [1160, 1160],
+  "groundToleranceCm": 2,
+  "rotorPivotCm": [0, 399, 1083.5],
+  "entranceAxisException": "+Y",
+  "motionAxis": "local Y / Pitch",
+  "readyDegreesPerSecond": 36,
+  "blockedDegreesPerSecond": 0,
+  "lodCount": 3,
+  "lodThresholds": [1, 0.32, 0.12],
+  "sourceMasterPreviousSha256": "12632D639C5968D52B72C73AED067ADBB0297CED613F21556C6B716E7B9F20D9",
+  "nativePbrDimensions": [1024, 1024],
+  "nativeImageGenDimensions": [1254, 1254],
+  "nativeSourceReviewDimensions": [900, 900],
+  "requiredTests": [
+    "Hansa.UI.World.MillBlueprintPresentation",
+    "Hansa.UI.World.PlacementGhostAuthoredPresentation",
+    "Hansa.Integration.Save.RoundTripContinuation"
+  ],
+  "broaderGate": "Hansa.Integration.Authoring.EconomicAssetReload",
+  "fullShippingCookProven": false
+}

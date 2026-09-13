@@ -5,6 +5,12 @@ public class Hansa : ModuleRules
 	public Hansa(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		RuntimeDependencies.Add("$(ProjectDir)/Content/Hansa/UI/Icons/*.png", StagedFileType.UFS);
+        RuntimeDependencies.Add("$(ProjectDir)/Content/Hansa/UI/Production/*.png", StagedFileType.UFS);
+        RuntimeDependencies.Add("$(ProjectDir)/Content/Hansa/UI/Residence/*.png", StagedFileType.UFS);
+		// Slate reads these through the platform file API in packaged games.
+		RuntimeDependencies.Add("$(ProjectDir)/Content/Hansa/UI/Fonts/*.ttf", StagedFileType.UFS);
+		RuntimeDependencies.Add("$(ProjectDir)/Content/Hansa/UI/Fonts/*OFL*", StagedFileType.UFS);
 		PublicDefinitions.Add($"WITH_HANSA_AUTOMATION={(Target.Configuration != UnrealTargetConfiguration.Shipping && Target.bBuildDeveloperTools ? 1 : 0)}");
 
 		PublicDependencyModuleNames.AddRange(new string[]
@@ -13,14 +19,17 @@ public class Hansa : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"HansaSimulation",
-			"SlateCore"
+			"SlateCore",
+			"Slate"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
+			"Landscape",
+            "RenderCore",
+            "RHI",
 			"EnhancedInput",
-			"InputCore",
-			"Slate"
+			"InputCore"
 		});
 	}
 }

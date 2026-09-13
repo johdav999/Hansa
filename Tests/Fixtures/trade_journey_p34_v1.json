@@ -1,0 +1,10 @@
+{
+  "scenario": "Scenario.LubeckGrainShortageV1",
+  "catalog": "production-v8",
+  "good": "Good.Bread",
+  "source": "City.Rostock",
+  "destination": "City.Lubeck",
+  "reserveMilliUnits": 5000,
+  "waitLimitTicks": 80,
+  "actions": ["TradeMap.Stop.0", "TradeMap.Editor.Quantity.Increase", "TradeMap.Editor.Quantity.Increase", "TradeMap.Stop.1", "TradeMap.Editor.Quantity.Increase", "TradeMap.Editor.Quantity.Increase", "TradeMap.Creator.Review", "TradeMap.Creator.Activate"]
+}

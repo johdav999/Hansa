@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "assetId": "mill",
+  "sourceBlend": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/SourceArt/Generated/Buildings/HansaWindmillAnimated_20260906_04/exports/HansaWindmill_Animated.blend",
+  "blenderVersion": "3.5.1",
+  "unitSystem": "METRIC",
+  "lengthUnit": "METERS",
+  "scaleLength": 1.0,
+  "renderVisibleMeshObjects": 2220,
+  "evaluatedVertices": 146653,
+  "evaluatedTriangles": 284416,
+  "boundsMeters": {
+    "min": [
+      -6.689937,
+      -4.739,
+      -0.015
+    ],
+    "max": [
+      6.689937,
+      4.0,
+      17.509935
+    ],
+    "size": [
+      13.379874,
+      8.739,
+      17.524935
+    ]
+  },
+  "groundPivotOffsetMeters": -0.015,
+  "meshObjectsWithUv0": 2220,
+  "materialCount": 8,
+  "materials": [
+    "Fieldstone",
+    "ForgedIron",
+    "Masonry",
+    "OldBrick",
+    "RecessTimber",
+    "SagePaint",
+    "WeatheredTimber",
+    "WindowGlass"
+  ],
+  "packedImageCount": 5,
+  "packedImages": [
+    "tower--brick--worn--1254x1254--v1.png",
+    "tower--masonry--worn--1254x1254--v1.png",
+    "tower--paint--worn--1254x1254--v1.png",
+    "tower--stone--worn--1254x1254--v1.png",
+    "tower--timber--worn--1254x1254--v1.png"
+  ],
+  "externalConsumedImages": [],
+  "unappliedObjectScaleCount": 1555,
+  "unappliedObjectScaleSamples": [
+    {
+      "object": "Windshaft",
+      "scale": [
+        1.0,
+        1.0,
+        1.48
+      ]
+    },
+    {
+      "object": "Cap_underboarding",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.001",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.002",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.003",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.004",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.005",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.006",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.007",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.008",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.009",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.010",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.011",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.012",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.013",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.014",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.015",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.016",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.017",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.018",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.019",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.020",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.021",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.022",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    },
+    {
+      "object": "Cap_front_shingle.023",
+      "scale": [
+        1.0,
+        1.348837,
+        1.0
+      ]
+    }
+  ],
+  "passed": true
+}

@@ -51,10 +51,19 @@ public:
 	[[nodiscard]] const TArray<FHansaSaveSlotMetadata>& GetSlots() const { return Slots; }
 	[[nodiscard]] const FHansaSaveSlotMetadata* FindSlot(EHansaSaveSlotId SlotId) const;
 	FHansaSaveSlotsChanged& OnChanged() { return Changed; }
+    FHansaSaveSlotsChanged& OnLoaded() { return Loaded; }
+#if WITH_DEV_AUTOMATION_TESTS
+    bool WriteAutomationSlot(EHansaSaveSlotId SlotId,TConstArrayView<uint8> Bytes);
+    void UseIsolatedAutomationSlots() { AutomationSlotDirectory = FGuid::NewGuid().ToString(EGuidFormats::Digits); Refresh(); }
+#endif
 private:
 	[[nodiscard]] FString SlotPath(EHansaSaveSlotId SlotId) const;
 	FHansaSaveSlotMetadata Inspect(EHansaSaveSlotId SlotId) const;
 	TWeakObjectPtr<UHansaRuntimeSimulationHost> Host;
 	UPROPERTY(Transient) TArray<FHansaSaveSlotMetadata> Slots;
 	FHansaSaveSlotsChanged Changed;
+    FHansaSaveSlotsChanged Loaded;
+#if WITH_DEV_AUTOMATION_TESTS
+    FString AutomationSlotDirectory;
+#endif
 };

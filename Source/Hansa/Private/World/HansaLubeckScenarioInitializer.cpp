@@ -4,9 +4,12 @@
 #include "Definitions/HansaEconomicDefinitionCompiler.h"
 #include "Engine/AssetManager.h"
 #include "HansaLog.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 #include "Inventory/HansaInventory.h"
 #include "Market/HansaMarket.h"
 #include "Population/HansaPopulation.h"
+#include "Queries/HansaSimulationReadOnly.h"
 #include "Production/HansaProduction.h"
 
 using namespace Hansa::Simulation;
@@ -58,7 +61,7 @@ namespace
 	{
 		FHansaProductionInitialization Production;
 		if (!Entity(Value, Production.Id) || !Assign(FHansaRecipeId::TryParse(RecipeText), Production.RecipeId) ||
-			!Entity(1, Production.InputInventoryId) || !Entity(1, Production.OutputInventoryId))
+			!Entity(100 + Value, Production.InputInventoryId) || !Entity(100 + Value, Production.OutputInventoryId))
 		{
 			return false;
 		}
@@ -67,6 +70,27 @@ namespace
 		Production.AllocatedArtisanWorkforce = Artisans;
 		Production.bActive = bActive;
 		Initialization.Productions.Add(MoveTemp(Production));
+		return true;
+	}
+
+	bool AddBuildingInventory(FHansaSimulationInitialization& Initialization,
+		const FHansaBuildingState& Building, const uint64 InventoryValue,
+		const FHansaEconomicRegistry& Registry)
+	{
+		const FHansaCompiledBuildingDefinition* Definition = Registry.FindBuilding(Building.DefinitionId.ToString());
+		FHansaInventoryInitialization Inventory;
+		if (Definition == nullptr || Definition->StorageCapacityMilliUnits <= 0 ||
+			!Entity(InventoryValue, Inventory.Id)) return false;
+		Inventory.OwnerKind = EHansaInventoryOwnerKind::Building;
+		Inventory.BuildingId = Building.Id;
+		Inventory.Capacity = FHansaQuantity::FromRaw(Definition->StorageCapacityMilliUnits);
+		for (const FHansaCompiledGoodDefinition& GoodDefinition : Registry.GetGoods())
+		{
+			FHansaGoodId GoodId;
+			if (!Assign(FHansaGoodId::TryParse(GoodDefinition.StableId), GoodId)) return false;
+			Inventory.AcceptedGoods.Add(GoodId);
+		}
+		Initialization.Inventories.Add(MoveTemp(Inventory));
 		return true;
 	}
 
@@ -279,20 +303,25 @@ namespace
 	{
 		const FHansaCompiledCityMarketProfileDefinition* CityMarket = Registry.FindCityMarket(TEXT("City.Lubeck"));
 		if (CityMarket == nullptr) return false;
+		const bool bEnhanced = Registry.GetRegistryHash() == FHansaLubeckScenarioInitializer::P33CandidateRegistryHash;
 
 		FHansaBuildingState* GrainFarm = nullptr;
 		FHansaBuildingState* Mill = nullptr;
 		FHansaBuildingState* Bakery = nullptr;
 		FHansaBuildingState* Brewery = nullptr;
 		FHansaBuildingState* Residence = nullptr;
+		FHansaBuildingState* MarketBuilding = nullptr;
+		FHansaBuildingState* Dock = nullptr;
 		// AddBuilding returns pointers into this array. Reserve the complete scenario set so later adds cannot
 		// invalidate those pointers before production and placement records are assembled.
-		Initialization.Buildings.Reserve(5);
+		Initialization.Buildings.Reserve(80);
 		if (!AddBuilding(Initialization, 1, TEXT("Building.GrainFarm"), HouseId, GrainFarm) ||
 			!AddBuilding(Initialization, 2, TEXT("Building.Mill"), HouseId, Mill) ||
 			!AddBuilding(Initialization, 3, TEXT("Building.Bakery"), HouseId, Bakery) ||
-			!AddBuilding(Initialization, 7, TEXT("Building.Brewery"), HouseId, Brewery) ||
-			!AddBuilding(Initialization, 9, TEXT("Building.Residence.Laborer"), HouseId, Residence))
+			(!bEnhanced && !AddBuilding(Initialization, 7, TEXT("Building.Brewery"), HouseId, Brewery)) ||
+			!AddBuilding(Initialization, 9, TEXT("Building.Residence.Laborer"), HouseId, Residence) ||
+			!AddBuilding(Initialization, 14, TEXT("Building.Market"), HouseId, MarketBuilding) ||
+			!AddBuilding(Initialization, 15, TEXT("Building.Dock"), HouseId, Dock))
 		{
 			return false;
 		}
@@ -301,16 +330,33 @@ namespace
 			(!AddPlacement(Initialization.Placement, *GrainFarm, CityId, Registry, 10, 20) ||
 			 !AddPlacement(Initialization.Placement, *Mill, CityId, Registry, 15, 20) ||
 			 !AddPlacement(Initialization.Placement, *Bakery, CityId, Registry, 19, 20) ||
-			 !AddPlacement(Initialization.Placement, *Brewery, CityId, Registry, 23, 20) ||
-			 !AddPlacement(Initialization.Placement, *Residence, CityId, Registry, 27, 20)))
+			 (!bEnhanced && !AddPlacement(Initialization.Placement, *Brewery, CityId, Registry, 23, 20)) ||
+			 !AddPlacement(Initialization.Placement, *Residence, CityId, Registry, 27, 20) ||
+			 !AddPlacement(Initialization.Placement, *MarketBuilding, CityId, Registry, 10, 15) ||
+			 !AddPlacement(Initialization.Placement, *Dock, CityId, Registry, 26, 15)))
 		{
 			return false;
+		}
+		if (!Initialization.Placement.Maps.IsEmpty())
+		{
+			uint64 RoadBuildingValue = 20;
+			const auto AddRoadCell = [&](const int32 X, const int32 Y)
+			{
+				FHansaBuildingState* Road = nullptr;
+				return AddBuilding(Initialization, RoadBuildingValue++, TEXT("Building.Road"), HouseId, Road) &&
+					AddPlacement(Initialization.Placement, *Road, CityId, Registry, X, Y);
+			};
+			for (int32 X = 10; X <= 30; ++X) if (!AddRoadCell(X, 18)) return false;
+			for (int32 X = 10; X <= 29; ++X) if (!AddRoadCell(X, 19)) return false;
+			for (int32 Y = 20; Y <= 24; ++Y) if (!AddRoadCell(22, Y)) return false;
+			for (int32 X = 23; X <= 30; ++X) if (!AddRoadCell(X, 24)) return false;
 		}
 
 		FHansaInventoryInitialization Inventory;
 		if (!Entity(1, Inventory.Id)) return false;
 		Inventory.OwnerKind = EHansaInventoryOwnerKind::City;
 		Inventory.CityId = CityId;
+		Inventory.BuildingId = MarketBuilding->Id;
 		Inventory.Capacity = FHansaQuantity::FromRaw(2'000'000);
 		for (const FHansaCompiledGoodDefinition& GoodDefinition : Registry.GetGoods())
 		{
@@ -324,17 +370,24 @@ namespace
 			if (MarketProfile == nullptr) return false;
 			// Keep every non-shortage good safely above its authored reserve so all ten rows receive
 			// meaningful reports without manufacturing unrelated opening alerts.
-			const int64 InitialStock = GoodDefinition.StableId == TEXT("Good.Grain")
+			const int64 InitialStock = bEnhanced ? MarketProfile->InitialStockMilliUnits : GoodDefinition.StableId == TEXT("Good.Grain")
 				? 16'000
 				: MarketProfile->DesiredReserveMilliUnits + 10'000;
 			Inventory.InitialStock.Add({ GoodId, FHansaQuantity::FromRaw(InitialStock) });
 		}
 		Initialization.Inventories.Add(MoveTemp(Inventory));
+		if (!AddBuildingInventory(Initialization, *GrainFarm, 101, Registry) ||
+			!AddBuildingInventory(Initialization, *Mill, 102, Registry) ||
+			!AddBuildingInventory(Initialization, *Bakery, 103, Registry) ||
+			(!bEnhanced && !AddBuildingInventory(Initialization, *Brewery, 107, Registry)))
+		{
+			return false;
+		}
 
 		if (!AddProduction(Initialization, 1, GrainFarm->Id, TEXT("Recipe.GrowGrain"), 8, 0, false) ||
 			!AddProduction(Initialization, 2, Mill->Id, TEXT("Recipe.MillFlour"), 4, 1, true) ||
 			!AddProduction(Initialization, 3, Bakery->Id, TEXT("Recipe.BakeBread"), 4, 2, true) ||
-			!AddProduction(Initialization, 7, Brewery->Id, TEXT("Recipe.BrewBeer"), 4, 2, true))
+			(!bEnhanced && !AddProduction(Initialization, 7, Brewery->Id, TEXT("Recipe.BrewBeer"), 4, 2, true)))
 		{
 			return false;
 		}
@@ -347,9 +400,44 @@ namespace
 		}
 		Cohort.ResidenceBuildingId = Residence->Id;
 		Cohort.CityId = CityId;
-		Cohort.Residents = 12;
+		Cohort.Residents = bEnhanced ? 10 : 12;
 		Cohort.ResidenceCapacity = 12;
 		Initialization.PopulationCohorts.Add(MoveTemp(Cohort));
+		if (bEnhanced)
+		{
+			for (auto& Production : Initialization.Productions) Production.bUsesCityWorkforce = true;
+			for (uint64 Id = 10; Id <= 12; ++Id)
+			{
+				const bool bArtisan = Id == 12;
+				FHansaBuildingState* Home = nullptr;
+				if (!AddBuilding(Initialization, Id, bArtisan ? TEXT("Building.Residence.Artisan") : TEXT("Building.Residence.Laborer"), HouseId, Home)) return false;
+				if (!Initialization.Placement.Maps.IsEmpty() && !AddPlacement(Initialization.Placement, *Home, CityId, Registry, 23 + int32(Id - 10) * 3, 25)) return false;
+				FHansaPopulationCohortInitialization NewCohort;
+				if (!Entity(Id, NewCohort.Id) || !Entity(1, NewCohort.ConsumptionInventoryId) ||
+					!Assign(FHansaPopulationTierId::TryParse(bArtisan ? TEXT("PopulationTier.Artisan") : TEXT("PopulationTier.Laborer")), NewCohort.TierId)) return false;
+				NewCohort.ResidenceBuildingId = Home->Id;
+				NewCohort.CityId = CityId;
+				NewCohort.Residents = bArtisan ? 8 : 10;
+				NewCohort.ResidenceCapacity = bArtisan ? 8 : 12;
+				Initialization.PopulationCohorts.Add(NewCohort);
+			}
+		}
+
+
+        // A completed, selectable home beside the starting road. Keep it empty
+        // initially so adding an inspection target does not grant extra workforce.
+        FHansaBuildingState* StarterHome = nullptr;
+        if (!AddBuilding(Initialization, 13, TEXT("Building.Residence.Laborer"), HouseId, StarterHome) ||
+            (!Initialization.Placement.Maps.IsEmpty() &&
+             !AddPlacement(Initialization.Placement, *StarterHome, CityId, Registry, 15, 16))) return false;
+        FHansaPopulationCohortInitialization StarterCohort;
+        if (!Entity(13, StarterCohort.Id) || !Entity(1, StarterCohort.ConsumptionInventoryId) ||
+            !Assign(FHansaPopulationTierId::TryParse(TEXT("PopulationTier.Laborer")), StarterCohort.TierId)) return false;
+        StarterCohort.ResidenceBuildingId = StarterHome->Id;
+        StarterCohort.CityId = CityId;
+        StarterCohort.Residents = 0;
+        StarterCohort.ResidenceCapacity = 12;
+        Initialization.PopulationCohorts.Add(MoveTemp(StarterCohort));
 
 		Initialization.MarketSettings.UpdateCadenceTicks = CityMarket->UpdateCadenceTicks;
 		Initialization.MarketSettings.PriceHistoryCapacity = CityMarket->PriceHistoryCapacity;
@@ -409,6 +497,10 @@ bool FHansaLubeckScenarioInitializer::TryLoadMvpRegistry(
 		TEXT("HansaMerchantAITuningDefinition"), TEXT("HansaScenarioObjectiveDefinition"),
 		TEXT("HansaVictoryDefinition"), TEXT("HansaScenarioDefinition")
 	};
+	bool bP33Candidate = false;
+#if !UE_BUILD_SHIPPING
+	bP33Candidate = FParse::Param(FCommandLine::Get(), TEXT("P33Candidate"));
+#endif
 	TArray<const UHansaDefinitionBase*> Definitions;
 	for (const FPrimaryAssetType& Type : Types)
 	{
@@ -422,6 +514,14 @@ bool FHansaLubeckScenarioInitializer::TryLoadMvpRegistry(
 		{
 			const FSoftObjectPath AssetPath = AssetManager->GetPrimaryAssetPath(AssetId);
 			const UHansaDefinitionBase* Definition = Cast<UHansaDefinitionBase>(AssetPath.TryLoad());
+#if !UE_BUILD_SHIPPING
+			if (bP33Candidate && Definition)
+			{
+				const FString Name = TEXT("DA_") + Definition->StableDefinitionId.Replace(TEXT("."), TEXT("_"));
+				const FString CandidatePath = TEXT("/Game/Hansa/Generated/Staging/EconomyP33/") + Name + TEXT(".") + Name;
+				Definition = Cast<UHansaDefinitionBase>(FSoftObjectPath(CandidatePath).TryLoad());
+			}
+#endif
 			if (Definition == nullptr)
 			{
 				OutError = FString::Printf(TEXT("Unable to load authored definition %s."), *AssetId.ToString());
@@ -430,9 +530,9 @@ bool FHansaLubeckScenarioInitializer::TryLoadMvpRegistry(
 			Definitions.Add(Definition);
 		}
 	}
-	if (Definitions.Num() != 72)
+	if (Definitions.Num() != 81)
 	{
-		OutError = FString::Printf(TEXT("Expected 72 cooked MVP definitions, including the authored scenario, objectives, victories, technologies and merchant AI tuning, but found %d."), Definitions.Num());
+		OutError = FString::Printf(TEXT("Expected 81 cooked MVP definitions, including the expanded Beer chain, authored scenario, objectives, victories, technologies and merchant AI tuning, but found %d."), Definitions.Num());
 		return false;
 	}
 	FHansaEconomicRegistryCompileResult Compiled = FHansaEconomicDefinitionCompiler::Compile(Definitions);
@@ -450,11 +550,12 @@ bool FHansaLubeckScenarioInitializer::TryLoadMvpRegistry(
 		UE_LOG(LogHansa, Error, TEXT("%s"), *OutError);
 		return false;
 	}
-	if (Compiled.Registry.GetRegistryHash() != MvpRegistryHash)
+	if (Compiled.Registry.GetRegistryHash() != (bP33Candidate ? P33CandidateRegistryHash : MvpRegistryHash))
 	{
 		OutError = FString::Printf(
-			TEXT("The cooked MVP registry hash %016llX does not match reviewed runtime hash %016llX."),
+			TEXT("The cooked MVP registry hash %016llX does not match reviewed catalog v%d hash %016llX. Run Hansa.Integration.Authoring.EconomicAssetReload for per-definition evidence."),
 			static_cast<unsigned long long>(Compiled.Registry.GetRegistryHash()),
+			MvpCatalogVersion,
 			static_cast<unsigned long long>(MvpRegistryHash));
 		return false;
 	}
@@ -468,7 +569,8 @@ bool FHansaLubeckScenarioInitializer::TryCreate(
 	FHansaPlacementInitialization Placement,
 	FHansaLubeckScenarioState& OutState,
 	FString& OutError,
-	const uint64 CampaignSeedOverride)
+	const uint64 CampaignSeedOverride,
+    const bool bEmptyPlayerCity)
 {
 	FHansaSimulationInitialization Initialization;
 	Initialization.Placement = MoveTemp(Placement);
@@ -500,17 +602,59 @@ bool FHansaLubeckScenarioInitializer::TryCreate(
 		return false;
 	}
 
+    if (bEmptyPlayerCity && Scenario == EHansaRuntimeScenario::LubeckGrainShortage)
+    {
+        // New Game starts with land and supplies. The historical shortage setup remains
+        // available to explicit scenario fixtures; existing saves retain their own state.
+        Initialization.Buildings.Reset();
+        Initialization.Placement.Placements.Reset();
+        Initialization.Productions.RemoveAll([](const auto& P) { return P.BuildingId.IsValid(); });
+        Initialization.PopulationCohorts.Reset();
+        Initialization.Inventories.RemoveAll([](const auto& I) {
+            return I.OwnerKind == EHansaInventoryOwnerKind::Building || I.OwnerKind == EHansaInventoryOwnerKind::Warehouse;
+        });
+        for (auto& Inventory : Initialization.Inventories)
+            if (Inventory.OwnerKind == EHansaInventoryOwnerKind::City)
+            {
+                Inventory.BuildingId = FHansaBuildingId();
+                if (Inventory.CityId == OutState.CityId)
+                {
+                    // New Game grants a construction stockpile across thirteen goods. Keep the
+                    // shared city inventory large enough for that grant and the retuned costs.
+                    Inventory.Capacity = FHansaQuantity::FromRaw(20'000'000);
+                    for (auto& Stock : Inventory.InitialStock)
+                        if (Stock.GoodId.ToString() == TEXT("Good.Planks"))
+                            Stock.Quantity = FHansaQuantity::FromRaw(
+                                Stock.Quantity.GetRawValue() * 4 + 1'000'000);
+                        else if (Stock.GoodId.ToString() == TEXT("Good.Timber"))
+                            Stock.Quantity = FHansaQuantity::FromRaw(
+                                Stock.Quantity.GetRawValue() + 100'000);
+                        else if (Stock.GoodId.ToString() == TEXT("Good.Tools"))
+                            Stock.Quantity = FHansaQuantity::FromRaw(
+                                Stock.Quantity.GetRawValue() + 1'000'000);
+                }
+            }
+        Initialization.LocalLogisticsRequests.Reset();
+    }
+
 	FHansaScenarioId ScenarioId;
 	const TCHAR* ScenarioStableId = Scenario == EHansaRuntimeScenario::LubeckGrainShortage
 		? TEXT("Scenario.LubeckGrainShortageV1") : TEXT("Scenario.EmptyLubeckBuildV1");
-	if (!Assign(FHansaScenarioId::TryParse(ScenarioStableId), ScenarioId) ||
+	TMap<uint64, FString> DefinitionMigrations;
+	// Catalogs 11 and 16 change consumption/staffing and staple batch economics. Do not silently
+	// reinterpret in-flight production or old consumption history; preserve old saves on disk.
+	auto CreatedTopology = FHansaPlacementTopology::TryCreate(MoveTemp(Initialization.Placement.Maps));
+	if (!CreatedTopology ||
+		!Assign(FHansaScenarioId::TryParse(ScenarioStableId), ScenarioId) ||
 		!Assign(FHansaSimulationDefinitionContext::TryCreate(
-			ScenarioId, Registry.GetRegistryHash(), MoveTemp(Registry)), OutState.Definitions))
+			ScenarioId, Registry.GetRegistryHash(), MoveTemp(Registry), MoveTemp(CreatedTopology.Value),
+			MoveTemp(DefinitionMigrations)), OutState.Definitions))
 	{
 		OutError = TEXT("Unable to validate the authoritative Lübeck scenario definitions.");
 		return false;
 	}
-	auto CreatedState = FHansaSimulationState::TryCreate(MoveTemp(Initialization));
+	auto CreatedState = FHansaSimulationState::TryCreate(
+		MoveTemp(Initialization), OutState.Definitions.GetPlacementTopologyShared());
 	if (!CreatedState)
 	{
 		OutError = FString::Printf(TEXT("Unable to validate the authoritative Lübeck scenario state: %s."),
@@ -518,6 +662,8 @@ bool FHansaLubeckScenarioInitializer::TryCreate(
 		return false;
 	}
 	OutState.State = MoveTemp(CreatedState.Value);
-	OutState.NextBuildingId = Scenario == EHansaRuntimeScenario::LubeckGrainShortage ? 10 : 1;
+	OutState.NextBuildingId = 1;
+	for (const auto& Building : OutState.State.CreateReadOnlyAccess(OutState.Definitions).GetBuildings())
+		OutState.NextBuildingId = FMath::Max(OutState.NextBuildingId, Building.Id.GetValue() + 1);
 	return true;
 }

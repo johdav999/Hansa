@@ -144,7 +144,7 @@ namespace Hansa::Editor::Generation::Tests
 		}
 	};
 
-	FString Serialize(const TSharedRef<FJsonObject>& Json)
+	FString GenerationWorkerBridgeTestsSerialize(const TSharedRef<FJsonObject>& Json)
 	{
 		FString Text;
 		const TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> Writer =
@@ -196,7 +196,7 @@ bool FHansaGenerationEditorBridgeTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Mock captured job.submit payload"), SubmitPayload != nullptr && SubmitPayload->IsValid());
 	if (SubmitPayload != nullptr && SubmitPayload->IsValid())
 	{
-		const FString Json = Serialize(SubmitPayload->ToSharedRef());
+		const FString Json = GenerationWorkerBridgeTestsSerialize(SubmitPayload->ToSharedRef());
 		TestFalse(TEXT("Editor payload contains no authentication token"), Json.Contains(TEXT("authToken")));
 		TestFalse(TEXT("Editor payload contains no provider credential fields"), Json.Contains(TEXT("apiKey")) || Json.Contains(TEXT("clientSecret")));
 		TestTrue(TEXT("Rights declaration crosses only with the exact upload"), Json.Contains(TEXT("Owned test fixture")));

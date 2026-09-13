@@ -141,6 +141,16 @@ bool FHansaMediaPaths::RunTest(const FString&)
         TestFalse(TEXT("Reject unsafe destination"), FHansaStagedMedia::IsProductionDestination(Path));
     TestTrue(TEXT("Staging root forbidden"), FHansaStagedMedia::IsForbiddenPackage(TEXT("/game/hansa/generated/staging")));
     TestTrue(TEXT("Developer forbidden"), FHansaStagedMedia::IsForbiddenPackage(TEXT("/Game/Hansa/Developer/Test")));
+    for (const TCHAR* Path : {TEXT("/Game/__ExternalActors__/Hansa/Generated/Staging/Map/A/Actor"),
+        TEXT("/game/__externalobjects__/hansa/generated/staging/Map/Object"),
+        TEXT("/Game/__ExternalActors__/Developers/User/Map/Actor"),
+        TEXT("/Game/__ExternalObjects__/Hansa/Developer/Map/Object")})
+        TestTrue(TEXT("Staging and developer external packages forbidden"), FHansaStagedMedia::IsForbiddenPackage(Path));
+    for (const TCHAR* Path : {TEXT("/Game/__ExternalActors__/Hansa/Maps/Lubeck/A/Actor"),
+        TEXT("/Game/__ExternalObjects__/Hansa/Maps/Lubeck/Object"),
+        TEXT("/Game/__ExternalActors__/Hansa/Generated/StagingEvil/Actor"),
+        TEXT("/Game/Hansa/Generated/StagingEvil/Asset")})
+        TestFalse(TEXT("Production and prefix near-misses remain audited sources"), FHansaStagedMedia::IsForbiddenPackage(Path));
     return true;
 }
 

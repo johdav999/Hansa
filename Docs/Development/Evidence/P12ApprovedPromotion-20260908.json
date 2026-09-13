@@ -1,0 +1,218 @@
+{
+  "prompt": "P12",
+  "approvalDate": "2026-09-08",
+  "approval": "I approve promoting P11, P12 and P13",
+  "status": "promoted-and-bound; playable/Shipping acceptance remains open",
+  "productionRoot": "/Game/Mesh/hansa-lumber-camp",
+  "catalogVersion": 5,
+  "registryHash": "DAA463F7043FD66F",
+  "economicsUnchanged": true,
+  "stagingDependenciesFound": 0,
+  "definitions": [
+    {
+      "path": "/Game/Hansa/Core/Buildings/DA_Building_LumberCamp",
+      "stableId": "Building.LumberCamp",
+      "before": {
+        "revision": 1,
+        "mesh": {
+          "refPath": "/Engine/BasicShapes/Cube.Cube"
+        },
+        "actor": "None"
+      },
+      "after": {
+        "revision": 2,
+        "mesh": {
+          "refPath": "/Game/Mesh/hansa-lumber-camp/MeshesCM/SM_HansaLumberCamp.SM_HansaLumberCamp"
+        },
+        "actor": {
+          "refPath": "/Game/Mesh/hansa-lumber-camp/BP_LumberCamp_Review.BP_LumberCamp_Review_C"
+        }
+      },
+      "sha256": "372EFDB49A09D21B9F4BC79C72D84FFF82B6A5795FD0844334ACD4F83066C749"
+    }
+  ],
+  "assets": [
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/BP_LumberCamp_Review",
+      "sourceSha256": "3d4a57a368d8c72eaa769ea43163fba745240a2e4718b887315c81977fd56b67",
+      "destination": "/Game/Mesh/hansa-lumber-camp/BP_LumberCamp_Review",
+      "class": "Blueprint",
+      "sha256": "62D2F4C34CF4806AB07CE7144F393CA84583448097B82AD70FE39876BDEB4C1F"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/MeshesCM/SM_HansaLumberCamp",
+      "sourceSha256": "71ecbdcde01b3555b6f8916ee1092e77faafd764ec7b3264f630b20a4808fc36",
+      "destination": "/Game/Mesh/hansa-lumber-camp/MeshesCM/SM_HansaLumberCamp",
+      "class": "StaticMesh",
+      "sha256": "A4712E87178635956C65D6E161ECF27E0B71D2E2B5955E0D2490FF8CAFBC0A78"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Materials/M_Lumber_WeatheredOak",
+      "sourceSha256": "53901f3d0b846ebc78f8fab7695f15eeca32fb5598215d7fcbfa841e30ce7ae3",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Materials/M_Lumber_WeatheredOak",
+      "class": "Material",
+      "sha256": "D5641267ACEC2010EF99570B76183431462EC4DE0E008A613ED0A4B687366F05"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_WeatheredOak_Roughness",
+      "sourceSha256": "6cae12fbf0dc052e81e5be8ec0dccc9a5e9c5699d867d546c6cbe81e616900f3",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_WeatheredOak_Roughness",
+      "class": "Texture2D",
+      "sha256": "8B311B64CD967B516CC20F96CD01F4466E03E84F2146B6FDC3030893249DDCB9"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_WeatheredOak_Normal",
+      "sourceSha256": "f636bd3714db09d0d9284982f6a127be9cbd910847d7319c2c5dc8abe69c3d7f",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_WeatheredOak_Normal",
+      "class": "Texture2D",
+      "sha256": "F8573D6FB910A1728E0292090E9E0622519C4458616BB11FAB6F156A718390E0"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_WeatheredOak_BaseColor",
+      "sourceSha256": "2052230db487b4b91e6f0401cf5a5e9895d58a23cd702f4281fab185e35eb26c",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_WeatheredOak_BaseColor",
+      "class": "Texture2D",
+      "sha256": "708E7D7CDB5336CA04CBD649C92FE3D535F1ED2669C5F89FAA3BB7BCB61D6F5D"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Materials/M_Lumber_FreshOak",
+      "sourceSha256": "2b952a413acfad42eade9d5384f5b258d1ff980b0d4d930d21c19102d6e4c9cd",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Materials/M_Lumber_FreshOak",
+      "class": "Material",
+      "sha256": "693BD7A7C28461836DAEC105FBE41FEBAB3792FDC9124C1A443EEF141D0304B1"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_FreshOak_Roughness",
+      "sourceSha256": "c5339fccbf2c6e1fdcd02c564d1b327e0993ba11a284d8ca66e8d84e3bd2ea90",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_FreshOak_Roughness",
+      "class": "Texture2D",
+      "sha256": "7F34FCB196142A1262E5A33A8F8B4A3E10C036395A7F4036F7985C3EEA48EDFB"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_FreshOak_Normal",
+      "sourceSha256": "792feda41e5200326c0ffa63c877fd909a0978134048d2cc73600c27e8d64d51",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_FreshOak_Normal",
+      "class": "Texture2D",
+      "sha256": "9D12154FDF0B8D34C8A8665D222E4DBB3A3997890F49136706D4D48D9A95E8AE"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_FreshOak_BaseColor",
+      "sourceSha256": "2eeebe1af0cfaeb21a9cbef74cdca5aa8e4a8e69fccb26055e7e68a8a9a34c38",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_FreshOak_BaseColor",
+      "class": "Texture2D",
+      "sha256": "9BCD1F13503E732135CC578373232687044E7D8BF34F661726936BB239376D39"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/MeshesCM/SM_HansaLumber_ToolShelter",
+      "sourceSha256": "e89ea074dbf1e68b4ea69ddfe6cb82e63b41bb5155f91e580f50d94a26da9f1c",
+      "destination": "/Game/Mesh/hansa-lumber-camp/MeshesCM/SM_HansaLumber_ToolShelter",
+      "class": "StaticMesh",
+      "sha256": "31CB39CAF1BDF5DC2E2FA815E996B687EBBA889B23E09F5F4A9AC216938B07FC"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Materials/M_Lumber_ForgedIron",
+      "sourceSha256": "7d48c755f16e2c6fd7fbd66436a9ef4c287feb916800cdc657acc93c5beab67c",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Materials/M_Lumber_ForgedIron",
+      "class": "Material",
+      "sha256": "0839916DB37A4B3A1FD9518F75BE97A58A2B9227C9B9ABD4FB0B665C8D300545"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_ForgedIron_Roughness",
+      "sourceSha256": "3aa353ea6c642e84f97f1439776d4b78db0737bb4fca494d011770e9f4bcadc1",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_ForgedIron_Roughness",
+      "class": "Texture2D",
+      "sha256": "6687DC69ACBE9136A35A10D52FC410377ABEB8FFEF9BD7FA0077F4B4C3939D59"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_ForgedIron_Normal",
+      "sourceSha256": "7d41966887a5e8ea6425b4fca1ce0fded2b88a1112fa290701c1c16ce0095664",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_ForgedIron_Normal",
+      "class": "Texture2D",
+      "sha256": "5C8CF40A886DF8E06E88E6420F7B0ED37B01B189E02501BA577533965D96041D"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_ForgedIron_BaseColor",
+      "sourceSha256": "2afd015996b31ccd22f32a83c2b9e427d91eac1bdb9cb91a8af5851f04f1ed15",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_ForgedIron_BaseColor",
+      "class": "Texture2D",
+      "sha256": "A3C9B0298EAA3B6A274C9DC1919FDCC5B5138B17A57AD573791D8D7FE3DF1750"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/MeshesCM/SM_HansaLumber_StumpSlash",
+      "sourceSha256": "6a00850b041240bb85951a18623fde24d42ec1b472e8594cd1afc6cc7f394ffd",
+      "destination": "/Game/Mesh/hansa-lumber-camp/MeshesCM/SM_HansaLumber_StumpSlash",
+      "class": "StaticMesh",
+      "sha256": "CF0C350222A3BFB3DEAB158EBD5518D128AC3906E952EF73806C4575352AADC4"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Materials/M_Lumber_EndGrain",
+      "sourceSha256": "c1d0157a434632f0a57a196906c005b6253ffd647239299da16aae61404e50d9",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Materials/M_Lumber_EndGrain",
+      "class": "Material",
+      "sha256": "64AF50DEFB170792525249418002F5792458EE8CC9DCE15E560286D79540B0FE"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_EndGrain_Roughness",
+      "sourceSha256": "b7d1ef46e09c0bd2bb1f38c0c2e4af5b0acd985880c1ab654686d6961675cd4b",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_EndGrain_Roughness",
+      "class": "Texture2D",
+      "sha256": "BD61D8291B531E620CE959178C71BD3239102E0B3752E5F25C0FCEB47C2F7D6F"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_EndGrain_Normal",
+      "sourceSha256": "11abe4e60218678f52cffe4c6796bb93546dd56efd08beaea7e83647fec9e580",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_EndGrain_Normal",
+      "class": "Texture2D",
+      "sha256": "FEC12660AC0DC6C6B36578B2429CDB3CA86B6B59404C8BD029FAC1553676F188"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_EndGrain_BaseColor",
+      "sourceSha256": "de4d84ae43e050cb594e4617bf0762a1ac29120f83ad6208d81b3edfb1d0953d",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_EndGrain_BaseColor",
+      "class": "Texture2D",
+      "sha256": "B3299AAC2A60FD9C6492C42AB22211981E45BF0BE7BFDBCE754BF8A790943419"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Materials/M_Lumber_Bark",
+      "sourceSha256": "9896379762a184f1aaefda60e15a9749f1748a1729a380475e8bfb7a4dec1215",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Materials/M_Lumber_Bark",
+      "class": "Material",
+      "sha256": "2525EE0C62C03CB99088BE6E385DA2DB9F28C1DD42F922CE5ECD142FC891B58E"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_Bark_Roughness",
+      "sourceSha256": "1043df832740e7d8942e90385545d26dff75bd2b3d97878a5d260bcb4e1eb741",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_Bark_Roughness",
+      "class": "Texture2D",
+      "sha256": "2F25118A666174331B7B5DA0D9DA8A2C8CFCE840EC95006BE4683A5D706C0A89"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_Bark_Normal",
+      "sourceSha256": "dcc1624dafef079f1085cd71d5a2b6d3962b620c2962680edf189d74563bcd38",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_Bark_Normal",
+      "class": "Texture2D",
+      "sha256": "A35C3E0C8E4CDCD6DC1D411612C3D531F9F6C2EE8D67892293A6E9768FBBE94B"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/Textures/T_Lumber_Bark_BaseColor",
+      "sourceSha256": "5fab56716e9ac9f1e3eeb1190690622e8963dbf529bc42177b057c5e28d2b185",
+      "destination": "/Game/Mesh/hansa-lumber-camp/Textures/T_Lumber_Bark_BaseColor",
+      "class": "Texture2D",
+      "sha256": "7897ED75DCD3578EAF9C861B946FFC3543FC271B8BE8356DF9854242A6A33805"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/MeshesCM/SM_HansaLumber_LogPile",
+      "sourceSha256": "7e694b43eaf389902fabc19ed82bdb4fcd35febab1e68a9c8eea0077815fecc3",
+      "destination": "/Game/Mesh/hansa-lumber-camp/MeshesCM/SM_HansaLumber_LogPile",
+      "class": "StaticMesh",
+      "sha256": "D33BE37572BD1BC4A68EF79DDDD17970DDDC308308F30166605BC8FDB98B02D5"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/LumberCamp_P12/MeshesCM/SM_HansaLumber_CutTimber",
+      "sourceSha256": "85d818851beb2094a698f7662ea2eaeb589aa33a9e069e1399b96df559d7ce99",
+      "destination": "/Game/Mesh/hansa-lumber-camp/MeshesCM/SM_HansaLumber_CutTimber",
+      "class": "StaticMesh",
+      "sha256": "4B31F31A4481D284544F60CDCBB24871AADE97FADC817CDD29ACB2C33E6372EB"
+    }
+  ]
+}

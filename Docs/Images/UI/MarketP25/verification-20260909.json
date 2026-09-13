@@ -1,0 +1,44 @@
+{
+  "build": "20260909-122720629-build-HansaEditor-Win64-Development",
+  "regressionBeforeFix": "20260909-122150201-gui-repair-1280-720",
+  "beforeResult": "Failed: Slate SButton.cpp:339 Reply.IsEventHandled assertion on no-change keyboard activation",
+  "finalRuns": [
+    {
+      "path": "20260909-122742112-gui-repair-1280-720",
+      "tests": [
+        "Hansa.UI.MarketPolish.RealViewport"
+      ]
+    },
+    {
+      "path": "20260909-122742517-gui-repair-1920-1080",
+      "tests": [
+        "Hansa.UI.MarketPolish.RealViewport"
+      ]
+    },
+    {
+      "path": "20260909-122743704-automation-Hansa.UI.Market",
+      "tests": [
+        "Hansa.UI.MarketTable.NativeResolutionEvidence",
+        "Hansa.UI.MarketTable.ProductionConsumptionAndBuildingContract",
+        "Hansa.UI.MarketTable.SortFilterSearchAndStableSelection",
+        "Hansa.UI.MarketTable.TenGoodsProjectionAndReportStates",
+        "Hansa.UI.MarketTable.VirtualizationSemanticsAndCityIntegration"
+      ]
+    },
+    {
+      "path": "20260909-122802901-automation-Hansa.UI.SelectedGood",
+      "tests": [
+        "Hansa.UI.SelectedGood.ActionsPersistenceAndSemanticData",
+        "Hansa.UI.SelectedGood.AuthoritativeCausalProjectionAndBoundedHistory"
+      ]
+    },
+    {
+      "path": "20260909-122818928-automation-Hansa.Integration.Performance.MarketListRefreshBudget",
+      "tests": [
+        "Hansa.Integration.Performance.MarketListRefreshBudget"
+      ]
+    }
+  ],
+  "generatedAssets": "Existing three ImageGen references retained; no new generated images or production imports",
+  "nativeCaptures": 20
+}

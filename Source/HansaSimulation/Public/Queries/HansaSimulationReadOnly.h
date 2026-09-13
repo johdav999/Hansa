@@ -103,6 +103,18 @@ namespace Hansa::Simulation
 		FHansaRate ConstructionProgress;
 		EHansaBuildingWorldStatus Status = EHansaBuildingWorldStatus::UnderConstruction;
 		EHansaProductionBlocker ProductionBlocker = EHansaProductionBlocker::None;
+		bool bRequiresRoad = false;
+		bool bHasRoadAccess = false;
+		EHansaLogisticsRoadPathFailure RoadAccessFailure = EHansaLogisticsRoadPathFailure::None;
+		bool bHasMarketAccess = false;
+		EHansaLogisticsRoadPathFailure MarketAccessFailure = EHansaLogisticsRoadPathFailure::None;
+		FName MarketAccessMessageKey;
+		FName MarketAccessRemedyKey;
+		FHansaBuildingId SelectedMarketBuildingId;
+		int32 MarketRoadDistanceCells = 0;
+		bool bDeliveryBlocked = false;
+		int32 BlockedDeliveryCount = 0;
+		EHansaLogisticsRoadPathFailure DeliveryFailure = EHansaLogisticsRoadPathFailure::None;
 
 		friend bool operator==(const FHansaBuildingWorldProjection& Left, const FHansaBuildingWorldProjection& Right)
 		{
@@ -117,7 +129,19 @@ namespace Hansa::Simulation
 				Left.FootprintHeightCells == Right.FootprintHeightCells &&
 				Left.ConstructionProgress == Right.ConstructionProgress &&
 				Left.Status == Right.Status &&
-				Left.ProductionBlocker == Right.ProductionBlocker;
+				Left.ProductionBlocker == Right.ProductionBlocker &&
+				Left.bRequiresRoad == Right.bRequiresRoad &&
+				Left.bHasRoadAccess == Right.bHasRoadAccess &&
+				Left.RoadAccessFailure == Right.RoadAccessFailure &&
+				Left.bHasMarketAccess == Right.bHasMarketAccess &&
+				Left.MarketAccessFailure == Right.MarketAccessFailure &&
+				Left.MarketAccessMessageKey == Right.MarketAccessMessageKey &&
+				Left.MarketAccessRemedyKey == Right.MarketAccessRemedyKey &&
+				Left.SelectedMarketBuildingId == Right.SelectedMarketBuildingId &&
+				Left.MarketRoadDistanceCells == Right.MarketRoadDistanceCells &&
+				Left.bDeliveryBlocked == Right.bDeliveryBlocked &&
+				Left.BlockedDeliveryCount == Right.BlockedDeliveryCount &&
+				Left.DeliveryFailure == Right.DeliveryFailure;
 		}
 
 		friend bool operator!=(const FHansaBuildingWorldProjection& Left, const FHansaBuildingWorldProjection& Right)
@@ -151,6 +175,7 @@ namespace Hansa::Simulation
 		[[nodiscard]] TConstArrayView<FHansaProductionProjection> GetProductions() const { return Productions; }
 		[[nodiscard]] TConstArrayView<FHansaPopulationCohortProjection> GetPopulationCohorts() const { return PopulationCohorts; }
 		[[nodiscard]] TConstArrayView<FHansaCityPopulationProjection> GetCityPopulations() const { return CityPopulations; }
+		[[nodiscard]] const FHansaConsumptionProjection& GetCitizenConsumption() const { return CitizenConsumption; }
 		[[nodiscard]] int32 GetTotalResidents() const { return TotalResidents; }
 		[[nodiscard]] int32 GetTotalWorkforceSupply() const { return TotalWorkforceSupply; }
 		[[nodiscard]] TConstArrayView<FHansaCityMarketProjection> GetMarkets() const { return Markets; }
@@ -188,6 +213,7 @@ namespace Hansa::Simulation
 		TArray<FHansaInventoryProjection> Inventories;
 		TArray<FHansaProductionProjection> Productions;
 		TArray<FHansaPopulationCohortProjection> PopulationCohorts;
+		FHansaConsumptionProjection CitizenConsumption;
 		TArray<FHansaCityPopulationProjection> CityPopulations;
 		int32 TotalResidents = 0;
 		int32 TotalWorkforceSupply = 0;

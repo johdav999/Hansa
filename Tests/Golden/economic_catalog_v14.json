@@ -1,0 +1,418 @@
+{
+	"schemaVersion": 1,
+	"catalogVersion": 14,
+	"reverseOrderVerified": true,
+	"registryHash": "73EC37D013D49BA0",
+	"previousCatalogVersion": 13,
+	"previousRegistryHash": "8586FD71211B707C",
+	"compatibility": "new-game-required",
+	"definitions": [
+		{
+			"stableId": "AITuning.MerchantRival",
+			"classPath": "/Script/Hansa.HansaMerchantAITuningDefinition",
+			"contentHash": "08792B7922ADAB1A"
+		},
+		{
+			"stableId": "Building.Bakery",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "74981B933F74E82E"
+		},
+		{
+			"stableId": "Building.Brewery",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "B7B0E24B4E3CFF1B"
+		},
+		{
+			"stableId": "Building.Cooperage",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "73FCF44A761A046A"
+		},
+		{
+			"stableId": "Building.Dock",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "56A02685E5715533"
+		},
+		{
+			"stableId": "Building.Fishery",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "FD1E35FB9954C135"
+		},
+		{
+			"stableId": "Building.GrainFarm",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "41314BF2AA78E47D"
+		},
+		{
+			"stableId": "Building.HopFarm",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "4FD343B232CACAFA"
+		},
+		{
+			"stableId": "Building.LumberCamp",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "7A7630E823E76028"
+		},
+		{
+			"stableId": "Building.MaltHouse",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "E37ECA0D72F9C1DC"
+		},
+		{
+			"stableId": "Building.Market",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "2327B192D7DDD874"
+		},
+		{
+			"stableId": "Building.Mill",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "B213C75D881CA603"
+		},
+		{
+			"stableId": "Building.Residence.Artisan",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "6D78AF560826A7D8"
+		},
+		{
+			"stableId": "Building.Residence.Laborer",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "DFCE9E1B2B778FD6"
+		},
+		{
+			"stableId": "Building.Road",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "FB79F1BE67547054"
+		},
+		{
+			"stableId": "Building.Sawmill",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "B75E527EFD78CC4F"
+		},
+		{
+			"stableId": "Building.Smithy",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "2E4F7A137573C36E"
+		},
+		{
+			"stableId": "Building.Warehouse",
+			"classPath": "/Script/Hansa.HansaBuildingDefinition",
+			"contentHash": "B7AC51DE335F5E73"
+		},
+		{
+			"stableId": "City.Hamburg",
+			"classPath": "/Script/Hansa.HansaCityMarketProfileDefinition",
+			"contentHash": "F1D832BC038EBD07"
+		},
+		{
+			"stableId": "City.Lubeck",
+			"classPath": "/Script/Hansa.HansaCityMarketProfileDefinition",
+			"contentHash": "46AF3448B967CFCB"
+		},
+		{
+			"stableId": "City.Luneburg",
+			"classPath": "/Script/Hansa.HansaCityMarketProfileDefinition",
+			"contentHash": "BAADA8CFEE4BAE0E"
+		},
+		{
+			"stableId": "City.Rostock",
+			"classPath": "/Script/Hansa.HansaCityMarketProfileDefinition",
+			"contentHash": "BA0DC2D190A57F6C"
+		},
+		{
+			"stableId": "Good.Barrels",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "2E74196AA61E1083"
+		},
+		{
+			"stableId": "Good.Beer",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "1F4AE1B6F6627F8D"
+		},
+		{
+			"stableId": "Good.Bread",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "D43E72E128D930AB"
+		},
+		{
+			"stableId": "Good.Fish",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "151944329AA434D2"
+		},
+		{
+			"stableId": "Good.Flour",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "F98A986B598AECEC"
+		},
+		{
+			"stableId": "Good.Grain",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "574858DAAB2D4423"
+		},
+		{
+			"stableId": "Good.Hops",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "E19D50E813F3A389"
+		},
+		{
+			"stableId": "Good.Iron",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "27146CC91F1DF41A"
+		},
+		{
+			"stableId": "Good.Malt",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "D577052D06285983"
+		},
+		{
+			"stableId": "Good.Planks",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "83611B41406C8F85"
+		},
+		{
+			"stableId": "Good.Salt",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "96B12CF763C04EFE"
+		},
+		{
+			"stableId": "Good.Timber",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "67CE9584ABEF16C8"
+		},
+		{
+			"stableId": "Good.Tools",
+			"classPath": "/Script/Hansa.HansaGoodDefinition",
+			"contentHash": "3EAFB51F74C1149F"
+		},
+		{
+			"stableId": "Need.BasicServices",
+			"classPath": "/Script/Hansa.HansaNeedDefinition",
+			"contentHash": "5217C5DF2A6AFD7A"
+		},
+		{
+			"stableId": "Need.Beer",
+			"classPath": "/Script/Hansa.HansaNeedDefinition",
+			"contentHash": "D89506CD70CF93DB"
+		},
+		{
+			"stableId": "Need.Bread",
+			"classPath": "/Script/Hansa.HansaNeedDefinition",
+			"contentHash": "E575CA605C077DA9"
+		},
+		{
+			"stableId": "Need.Fish",
+			"classPath": "/Script/Hansa.HansaNeedDefinition",
+			"contentHash": "516E08C392A81692"
+		},
+		{
+			"stableId": "Need.Tools",
+			"classPath": "/Script/Hansa.HansaNeedDefinition",
+			"contentHash": "AF96662DB853DDD4"
+		},
+		{
+			"stableId": "PopulationTier.Artisan",
+			"classPath": "/Script/Hansa.HansaPopulationTierDefinition",
+			"contentHash": "C26151FE7F36A4B1"
+		},
+		{
+			"stableId": "PopulationTier.Laborer",
+			"classPath": "/Script/Hansa.HansaPopulationTierDefinition",
+			"contentHash": "6436636B50ECE3E0"
+		},
+		{
+			"stableId": "Recipe.BakeBread",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "D03E16CA5CF4616C"
+		},
+		{
+			"stableId": "Recipe.BrewBeer",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "C1C4C1CC9AB011DB"
+		},
+		{
+			"stableId": "Recipe.CatchFish",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "D2E2F995840B0EBD"
+		},
+		{
+			"stableId": "Recipe.FellTimber",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "AD03F90E9D225BBA"
+		},
+		{
+			"stableId": "Recipe.GrowGrain",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "020FB34712F39ED0"
+		},
+		{
+			"stableId": "Recipe.GrowHops",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "5E127AF4A0FC1E04"
+		},
+		{
+			"stableId": "Recipe.MakeBarrels",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "501332D439E974BC"
+		},
+		{
+			"stableId": "Recipe.MaltGrain",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "B56FBA5E36657BE9"
+		},
+		{
+			"stableId": "Recipe.MillFlour",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "3DBFE29669BF3533"
+		},
+		{
+			"stableId": "Recipe.SawPlanks",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "97EC4D2E57C45E4B"
+		},
+		{
+			"stableId": "Recipe.SmithTools",
+			"classPath": "/Script/Hansa.HansaRecipeDefinition",
+			"contentHash": "F842BD7B37B20BDF"
+		},
+		{
+			"stableId": "Route.BalticSea",
+			"classPath": "/Script/Hansa.HansaRouteDefinition",
+			"contentHash": "07108D84E75E6F87"
+		},
+		{
+			"stableId": "Route.SaltRoad",
+			"classPath": "/Script/Hansa.HansaRouteDefinition",
+			"contentHash": "A9BC1234E34AA54E"
+		},
+		{
+			"stableId": "Scenario.LubeckGrainShortageV1",
+			"classPath": "/Script/Hansa.HansaScenarioDefinition",
+			"contentHash": "7B1414BDBB15C6FA"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveLandRoute",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "1E52FCBEF0935246"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveProductionEconomy",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "C505209D20697D9B"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveSeaRoute",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "B0F4479A8A784F42"
+		},
+		{
+			"stableId": "ScenarioObjective.AffordableBread",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "862635CF1DCD119C"
+		},
+		{
+			"stableId": "ScenarioObjective.CivicSatisfaction",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "204B3B6DC6A9B259"
+		},
+		{
+			"stableId": "ScenarioObjective.CompletedResearch",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "D841CB81CFEF9256"
+		},
+		{
+			"stableId": "ScenarioObjective.CompletedTradeLegs",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "26571207A4E45780"
+		},
+		{
+			"stableId": "ScenarioObjective.SafeBreadReserve",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "7BA38F95AB9B5864"
+		},
+		{
+			"stableId": "ScenarioObjective.SafeGrainReserve",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "0CC2C92A699EBE55"
+		},
+		{
+			"stableId": "ScenarioObjective.SolventHouse",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "26767D09E92E24D3"
+		},
+		{
+			"stableId": "ScenarioObjective.StablePopulation",
+			"classPath": "/Script/Hansa.HansaScenarioObjectiveDefinition",
+			"contentHash": "A6493808DB007B94"
+		},
+		{
+			"stableId": "Technology.Commerce.MarketReports",
+			"classPath": "/Script/Hansa.HansaTechnologyDefinition",
+			"contentHash": "B7ADB33E5434797E"
+		},
+		{
+			"stableId": "Technology.Commerce.ReserveAutomation",
+			"classPath": "/Script/Hansa.HansaTechnologyDefinition",
+			"contentHash": "63BEEF03B6D5642E"
+		},
+		{
+			"stableId": "Technology.Commerce.TransactionFriction",
+			"classPath": "/Script/Hansa.HansaTechnologyDefinition",
+			"contentHash": "15C731216683A1D8"
+		},
+		{
+			"stableId": "Technology.Logistics.CartCapacity",
+			"classPath": "/Script/Hansa.HansaTechnologyDefinition",
+			"contentHash": "9B207DF9B5B905DE"
+		},
+		{
+			"stableId": "Technology.Logistics.RouteScheduling",
+			"classPath": "/Script/Hansa.HansaTechnologyDefinition",
+			"contentHash": "ABD1FBDDA7C4C7C6"
+		},
+		{
+			"stableId": "Technology.Logistics.WarehouseHandling",
+			"classPath": "/Script/Hansa.HansaTechnologyDefinition",
+			"contentHash": "0DB457D256A80CC6"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedMilling",
+			"classPath": "/Script/Hansa.HansaTechnologyDefinition",
+			"contentHash": "59D4572FB4A779CB"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedSawmilling",
+			"classPath": "/Script/Hansa.HansaTechnologyDefinition",
+			"contentHash": "7D08F2E536623283"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedSmithing",
+			"classPath": "/Script/Hansa.HansaTechnologyDefinition",
+			"contentHash": "1AA384B311EDA522"
+		},
+		{
+			"stableId": "Vehicle.Cog",
+			"classPath": "/Script/Hansa.HansaVehicleDefinition",
+			"contentHash": "DCD93805FB2F658F"
+		},
+		{
+			"stableId": "Vehicle.Wagon",
+			"classPath": "/Script/Hansa.HansaVehicleDefinition",
+			"contentHash": "6950B7FF81C608BE"
+		},
+		{
+			"stableId": "Victory.ProsperityEconomic",
+			"classPath": "/Script/Hansa.HansaVictoryDefinition",
+			"contentHash": "22F7B7557A9C72EA"
+		},
+		{
+			"stableId": "Victory.ResearchCivic",
+			"classPath": "/Script/Hansa.HansaVictoryDefinition",
+			"contentHash": "E02C5A4034030B46"
+		},
+		{
+			"stableId": "Victory.TradeNetwork",
+			"classPath": "/Script/Hansa.HansaVictoryDefinition",
+			"contentHash": "972B848DD37EA304"
+		}
+	],
+	"approval": "Johan: approve brewery production promotion and add it into game data so it is used in game",
+	"change": "Building.Brewery revision 4: approved production mesh and 4x4 footprint; economics unchanged"
+}

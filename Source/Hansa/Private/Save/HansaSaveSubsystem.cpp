@@ -33,6 +33,9 @@ void UHansaSaveSubsystem::BindRuntime(UHansaRuntimeSimulationHost* InHost) { Hos
 FString UHansaSaveSubsystem::SlotPath(const EHansaSaveSlotId SlotId) const
 {
 	const TCHAR* File = SlotId == EHansaSaveSlotId::Manual ? TEXT("manual.hansa") : TEXT("autosave.hansa");
+#if WITH_DEV_AUTOMATION_TESTS
+    if (!AutomationSlotDirectory.IsEmpty()) return FPaths::ProjectSavedDir()/TEXT("Automation/Session")/AutomationSlotDirectory/File;
+#endif
 	return FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("SaveGames"), TEXT("Hansa"), File);
 }
 
@@ -116,7 +119,10 @@ bool UHansaSaveSubsystem::Load(const EHansaSaveSlotId SlotId, FText& OutError, F
 	}
 	const FHansaSaveResult Restored = Host->RestoreSaveBytes(Bytes);
 	if (!Restored) { DescribeError(Restored.Error, Restored.Message, OutError, OutRemedy); Refresh(); return false; }
-	Refresh(); return true;
+	Refresh(); Loaded.Broadcast(); return true;
 }
 
+#if WITH_DEV_AUTOMATION_TESTS
+bool UHansaSaveSubsystem::WriteAutomationSlot(EHansaSaveSlotId SlotId,TConstArrayView<uint8> Bytes){if(AutomationSlotDirectory.IsEmpty())return false;const FString Path=SlotPath(SlotId);IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path),true);return FFileHelper::SaveArrayToFile(Bytes,*Path);}
+#endif
 #undef LOCTEXT_NAMESPACE

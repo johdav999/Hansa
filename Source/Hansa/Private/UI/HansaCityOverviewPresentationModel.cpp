@@ -2,6 +2,7 @@
 
 #include "Definitions/HansaEconomicRegistry.h"
 #include "Market/HansaMarket.h"
+#include "World/HansaRuntimeSimulationHost.h"
 #include "Population/HansaPopulation.h"
 #include "Production/HansaProduction.h"
 #include "Queries/HansaSimulationReadOnly.h"
@@ -18,6 +19,7 @@ namespace
 		int32 Separator = INDEX_NONE;
 		if (Result.FindLastChar(TEXT('.'), Separator)) Result.RightChopInline(Separator + 1);
 		Result.ReplaceInline(TEXT("_"), TEXT(" "));
+        for(int32 I=Result.Len()-1;I>0;--I)if(FChar::IsUpper(Result[I]) && FChar::IsLower(Result[I-1]))Result.InsertAt(I,TEXT(' '));
 		return FText::FromString(Result);
 	}
 
@@ -90,7 +92,9 @@ namespace
 		const Hansa::Simulation::FHansaPopulationNeedState* Result = nullptr;
 		for (const Hansa::Simulation::FHansaPopulationNeedState& Need : Cohort.Needs)
 		{
-			if (Result == nullptr || Need.SatisfactionBasisPoints < Result->SatisfactionBasisPoints) Result = &Need;
+			if (Result == nullptr || Need.SatisfactionBasisPoints < Result->SatisfactionBasisPoints ||
+                (Need.SatisfactionBasisPoints==Result->SatisfactionBasisPoints && Need.GoodId.IsValid() &&
+                 (!Result->GoodId.IsValid() || Need.ReserveMilliDays<Result->ReserveMilliDays))) Result = &Need;
 		}
 		return Result;
 	}
@@ -136,12 +140,12 @@ void UHansaCityOverviewPresentationModel::InitializeDefaults()
 	Snapshot.CityStableId = TEXT("City.Lubeck");
 	Snapshot.CityTitle = LOCTEXT("DefaultTitle", "Lübeck City Overview");
 	Snapshot.HeaderSummaries = {
-		Summary(TEXT("PopulationTrend"), LOCTEXT("PopulationTrend", "Population trend"), LOCTEXT("NoPopulation", "No residents"), LOCTEXT("Stable", "→ Stable")),
+		Summary(TEXT("PopulationTrend"), LOCTEXT("PopulationTrend", "Population trend"), LOCTEXT("NoPopulation", "No residents"), LOCTEXT("Stable", "Stable")),
 		Summary(TEXT("TreasuryContribution"), LOCTEXT("TreasuryContribution", "Treasury contribution"), Money(0), LOCTEXT("PerTick", "per simulation tick")),
 		Summary(TEXT("Satisfaction"), LOCTEXT("Satisfaction", "Satisfaction"), LOCTEXT("NoSatisfaction", "—"), LOCTEXT("NoCohorts", "No cohorts")),
 		Summary(TEXT("Workforce"), LOCTEXT("Workforce", "Workforce"), LOCTEXT("NoWorkforce", "0 available"), LOCTEXT("NoAssigned", "0 assigned")),
 		Summary(TEXT("StapleReserve"), LOCTEXT("StapleReserve", "Staple reserve"), ReserveDays(0), LOCTEXT("NoDemand", "No current demand")),
-		Summary(TEXT("Alerts"), LOCTEXT("Alerts", "Alerts"), LOCTEXT("NoAlerts", "0 active"), LOCTEXT("AllClear", "✓ All clear"))
+		Summary(TEXT("Alerts"), LOCTEXT("Alerts", "Alerts"), LOCTEXT("NoAlerts", "0 active"), LOCTEXT("AllClear", "All clear"))
 	};
 	Snapshot.StateTitle = LOCTEXT("EmptyTitle", "No city records yet");
 	Snapshot.StateDetail = LOCTEXT("EmptyDetail", "Build or connect eligible buildings to populate this view.");
@@ -154,7 +158,7 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
 	const Hansa::Simulation::FHansaEconomicRegistry& Registry,
 	const Hansa::Simulation::FHansaCityDefinitionId CityId,
 	FText CityDisplayName,
-	const int64 TreasuryContributionMilliMarks)
+	const int64 TreasuryContributionMilliMarks, const UHansaRuntimeSimulationHost* KnowledgeSource)
 {
 	using namespace Hansa::Simulation;
 	if (!CityId.IsValid()) return false;
@@ -163,7 +167,7 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
 	const EHansaCityOverviewTab ActiveTab = Snapshot.ActiveTab;
 	const FName FocusOrigin = Snapshot.FocusOriginSemanticId;
 	const FName Focused = Snapshot.FocusedSemanticId;
-	const FName Selected = Snapshot.SelectedRowStableId;
+	const FName Selected = Snapshot.CityStableId==FName(*CityId.ToString())?Snapshot.SelectedRowStableId:NAME_None;
 	Snapshot = {};
 	Snapshot.bOpen = bWasOpen;
 	Snapshot.ActiveTab = ActiveTab;
@@ -171,12 +175,14 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
 	Snapshot.FocusedSemanticId = Focused;
 	Snapshot.SelectedRowStableId = Selected;
 	Snapshot.CityStableId = FName(*CityId.ToString());
+    const bool Remote = Snapshot.CityStableId != TEXT("City.Lubeck");
+    Snapshot.LastActionResult = Previous.LastActionResult;
 	Snapshot.CityTitle = FText::Format(LOCTEXT("CityTitleFormat", "{0} City Overview"), CityDisplayName.IsEmpty() ? StableLabel(CityId.ToString()) : CityDisplayName);
 
 	const FHansaCityPopulationProjection* CityPopulation = nullptr;
 	for (const FHansaCityPopulationProjection& Item : Projection.GetCityPopulations())
 	{
-		if (Item.CityId == CityId) { CityPopulation = &Item; break; }
+		if (!Remote && Item.CityId == CityId) { CityPopulation = &Item; break; }
 	}
 	int32 AlertCount = 0;
 	bool bCriticalAlert = false;
@@ -189,14 +195,14 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
 
 	if (CityPopulation != nullptr)
 	{
-		const TCHAR* TrendGlyph = CityPopulation->Trend == EHansaPopulationTrend::Growing ? TEXT("↑") :
-			(CityPopulation->Trend == EHansaPopulationTrend::Declining ? TEXT("↓") : TEXT("→"));
+		const TCHAR* TrendGlyph = CityPopulation->Trend == EHansaPopulationTrend::Growing ? TEXT("") :
+			(CityPopulation->Trend == EHansaPopulationTrend::Declining ? TEXT("") : TEXT(""));
 		FHansaCityOverviewSummaryPresentation PopulationSummary = Summary(TEXT("PopulationTrend"), LOCTEXT("PopulationTrend", "Population trend"),
 			FText::AsNumber(CityPopulation->TotalResidents), FText::FromString(FString::Printf(TEXT("%s %s (%+d)"), TrendGlyph,
 				LexToString(CityPopulation->Trend), CityPopulation->ResidentChangeLastTick)));
 		PopulationSummary.bWarning = CityPopulation->Trend == EHansaPopulationTrend::Declining;
 		FHansaCityOverviewSummaryPresentation SatisfactionSummary = Summary(TEXT("Satisfaction"), LOCTEXT("Satisfaction", "Satisfaction"),
-			Percent(CityPopulation->SatisfactionBasisPoints), CityPopulation->SatisfactionBasisPoints >= 8000 ? LOCTEXT("Satisfied", "✓ Stable") : LOCTEXT("NeedsAttention", "△ Needs attention"));
+			Percent(CityPopulation->SatisfactionBasisPoints), CityPopulation->SatisfactionBasisPoints >= 8000 ? LOCTEXT("Satisfied", "Stable") : LOCTEXT("NeedsAttention", "Needs attention"));
 		SatisfactionSummary.bWarning = CityPopulation->SatisfactionBasisPoints < 8000;
 		FHansaCityOverviewSummaryPresentation ReserveSummary = Summary(TEXT("StapleReserve"), LOCTEXT("StapleReserve", "Staple reserve"),
 			ReserveDays(CityPopulation->StapleReserveMilliDays), LOCTEXT("StapleDetail", "bread and fish safety"));
@@ -210,7 +216,7 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
 				FText::Format(LOCTEXT("WorkforceAssigned", "{0} assigned"), FText::AsNumber(CityPopulation->LaborerWorkforceAssigned + CityPopulation->ArtisanWorkforceAssigned))),
 			MoveTemp(ReserveSummary),
 			Summary(TEXT("Alerts"), LOCTEXT("Alerts", "Alerts"), FText::Format(LOCTEXT("AlertCount", "{0} active"), FText::AsNumber(AlertCount)),
-				AlertCount == 0 ? LOCTEXT("AllClear", "✓ All clear") : (bCriticalAlert ? LOCTEXT("CriticalAlerts", "! Critical") : LOCTEXT("WarningAlerts", "△ Warning")))
+				AlertCount == 0 ? LOCTEXT("AllClear", "All clear") : (bCriticalAlert ? LOCTEXT("CriticalAlerts", "! Critical") : LOCTEXT("WarningAlerts", "Warning")))
 		};
 		Snapshot.HeaderSummaries.Last().bWarning = AlertCount > 0;
 		Snapshot.HeaderSummaries.Last().bError = bCriticalAlert;
@@ -218,20 +224,30 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
 	else
 	{
 		Snapshot.HeaderSummaries = {
-			Summary(TEXT("PopulationTrend"), LOCTEXT("PopulationTrend", "Population trend"), LOCTEXT("NoPopulation", "No residents"), LOCTEXT("Stable", "→ Stable")),
+			Summary(TEXT("PopulationTrend"), LOCTEXT("PopulationTrend", "Population trend"), LOCTEXT("NoPopulation", "No residents"), LOCTEXT("Stable", "Stable")),
 			Summary(TEXT("TreasuryContribution"), LOCTEXT("TreasuryContribution", "Treasury contribution"), Money(TreasuryContributionMilliMarks), LOCTEXT("PerTick", "per simulation tick")),
 			Summary(TEXT("Satisfaction"), LOCTEXT("Satisfaction", "Satisfaction"), LOCTEXT("NoSatisfaction", "—"), LOCTEXT("NoCohorts", "No cohorts")),
 			Summary(TEXT("Workforce"), LOCTEXT("Workforce", "Workforce"), LOCTEXT("NoWorkforce", "0 available"), LOCTEXT("NoAssigned", "0 assigned")),
 			Summary(TEXT("StapleReserve"), LOCTEXT("StapleReserve", "Staple reserve"), ReserveDays(0), LOCTEXT("NoDemand", "No current demand")),
-			Summary(TEXT("Alerts"), LOCTEXT("Alerts", "Alerts"), FText::Format(LOCTEXT("AlertCount", "{0} active"), FText::AsNumber(AlertCount)), AlertCount == 0 ? LOCTEXT("AllClear", "✓ All clear") : LOCTEXT("WarningAlerts", "△ Warning"))
+			Summary(TEXT("Alerts"), LOCTEXT("Alerts", "Alerts"), FText::Format(LOCTEXT("AlertCount", "{0} active"), FText::AsNumber(AlertCount)), AlertCount == 0 ? LOCTEXT("AllClear", "All clear") : LOCTEXT("WarningAlerts", "Warning"))
 		};
 		Snapshot.HeaderSummaries.Last().bWarning = AlertCount > 0;
 		Snapshot.HeaderSummaries.Last().bError = bCriticalAlert;
 	}
 
+    if (!CityPopulation) for(auto& Card:Snapshot.HeaderSummaries) {
+        Card.Value=LOCTEXT("Unavailable","Unavailable");
+        Card.Detail=Remote?LOCTEXT("RemoteUnavailable","No civic report received"):LOCTEXT("NoCivicProjection","No population report available");
+    }
+    if (CityPopulation) {
+        Snapshot.HeaderSummaries[0].Detail=FText::Format(LOCTEXT("TierTrend","{0} · Laborers {1} / Artisans {2}"),Snapshot.HeaderSummaries[0].Detail,FText::AsNumber(CityPopulation->LaborerResidents),FText::AsNumber(CityPopulation->ArtisanResidents));
+        Snapshot.HeaderSummaries[3].Detail=FText::Format(LOCTEXT("TierEmployment","Assigned / supplied · Laborers {0}/{1} · Artisans {2}/{3}"),FText::AsNumber(CityPopulation->LaborerWorkforceAssigned),FText::AsNumber(CityPopulation->LaborerWorkforceSupply),FText::AsNumber(CityPopulation->ArtisanWorkforceAssigned),FText::AsNumber(CityPopulation->ArtisanWorkforceSupply));
+        Snapshot.HeaderSummaries[1].Value=LOCTEXT("Unavailable","Unavailable");
+        Snapshot.HeaderSummaries[1].Detail=LOCTEXT("NoTreasuryProjection","City contribution is not reported");
+    }
 	for (const FHansaPopulationCohortProjection& Cohort : Projection.GetPopulationCohorts())
 	{
-		if (Cohort.CityId != CityId) continue;
+		if (Remote || Cohort.CityId != CityId) continue;
 		FHansaCityOverviewRowPresentation Row;
 		Row.StableId = PopulationRowId(Cohort);
 		Row.Kind = EHansaCityOverviewRowKind::Population;
@@ -254,10 +270,24 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
 				Quantity(Need->ConsumedLastTick.GetRawValue()), ReserveDays(Need->ReserveMilliDays))));
 			Row.bWarning = Need->SatisfactionBasisPoints < 8000;
 			Row.bError = Need->SatisfactionBasisPoints < 4000;
-			Row.Status = Row.bError ? LOCTEXT("CriticalNeed", "! Critical need") : (Row.bWarning ? LOCTEXT("WarningNeed", "△ Need warning") : LOCTEXT("StableNeed", "✓ Needs stable"));
+			Row.Status = Row.bError ? LOCTEXT("CriticalNeed", "! Critical need") : (Row.bWarning ? LOCTEXT("WarningNeed", "Need warning") : LOCTEXT("StableNeed", "Needs stable"));
 			if (Need->GoodId.IsValid()) Row.RelatedSemanticId = FName(*FString::Printf(TEXT("CityOverview.Production.Good.%s"), *SemanticSuffix(Need->GoodId.ToString())));
 		}
-		else Row.Status = LOCTEXT("NoNeeds", "No configured needs");
+        else Row.Status = LOCTEXT("NoNeeds", "No configured needs");
+        for(const auto& Need:Cohort.Needs) {
+            if(&Need==WeakestNeed(Cohort))continue;
+            auto Entry=Field(TEXT("Need"),StableLabel(Need.NeedId.ToString()),FText::Format(LOCTEXT("NeedBreakdown", "access {0} · affordability {1} · reliability {2} · consumed {3} · reserve {4}"),Percent(Need.AccessBasisPoints),Percent(Need.AffordabilityBasisPoints),Percent(Need.ReliabilityBasisPoints),Quantity(Need.ConsumedLastTick.GetRawValue()),ReserveDays(Need.ReserveMilliDays)));
+            if(!Need.GoodId.IsValid())Entry.Value=FText::Format(LOCTEXT("ServiceNeed","access {0} · affordability {1} · reliability {2} · service need"),Percent(Need.AccessBasisPoints),Percent(Need.AffordabilityBasisPoints),Percent(Need.ReliabilityBasisPoints));
+            Entry.StableId=FName(*SemanticSuffix(Need.NeedId.ToString()));Row.Fields.Add(Entry);
+        }
+        Row.Fields.Add(Field(TEXT("GrowthCause"),LOCTEXT("GrowthCause","Growth / decline context"),
+            !Cohort.bResidenceOperational?LOCTEXT("ResidenceNotReady","Residence is not operational"):
+            !Cohort.bHasMarketAccess?LOCTEXT("NoGrowthAccess","Market access is missing"):
+            Cohort.ResidentChangeLastTick<0?LOCTEXT("DeclineContext","Residents declined; inspect the weakest need and its access, affordability and reliability"):
+            Cohort.Residents>=Cohort.ResidenceCapacity?LOCTEXT("AtCapacity","Housing capacity reached"):
+            Cohort.ResidentChangeLastTick>0?LOCTEXT("GrowingContext","Residents increased; needs and housing permit growth"):
+            LOCTEXT("StableContext","No migration this tick; inspect needs and available housing")));
+
 		Row.CausalActionLabel = LOCTEXT("RevealSupplyingChain", "Reveal supplying chain");
 		Row.bCausalActionEnabled = !Row.RelatedSemanticId.IsNone();
 		if (!Row.bCausalActionEnabled) Row.CausalActionDisabledReason = LOCTEXT("NoSupplyingChain", "No supplying chain is available for this need.");
@@ -266,7 +296,7 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
 
 	for (const FHansaProductionProjection& Production : Projection.GetProductions())
 	{
-		if (Production.CityId != CityId) continue;
+		if (Remote || Production.CityId != CityId) continue;
 		FHansaCityOverviewRowPresentation Row;
 		Row.StableId = ProductionRowId(Production);
 		Row.Kind = EHansaCityOverviewRowKind::Production;
@@ -291,7 +321,7 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
 				FText::AsNumber(Production.AllocatedArtisanWorkforce), FText::AsNumber(Production.RequiredArtisanWorkforce))));
 		Row.bWarning = Production.Blocker != EHansaProductionBlocker::None;
 		Row.bError = Production.Blocker == EHansaProductionBlocker::InventoryTransactionFailed;
-		Row.Status = !Row.bWarning ? LOCTEXT("ProductionReady", "✓ Operating") : FText::Format(LOCTEXT("ProductionBlocked", "△ {0}"), FText::FromString(LexToString(Production.Blocker)));
+		Row.Status = !Row.bWarning ? LOCTEXT("ProductionReady", "Operating") : FText::Format(LOCTEXT("ProductionBlocked", "{0}"), FText::FromString(LexToString(Production.Blocker)));
 		Row.CausalActionLabel = LOCTEXT("RevealBuildings", "Reveal buildings");
 		Row.bCausalActionEnabled = Production.BuildingId.IsValid();
 		Row.RelatedSemanticId = Row.bCausalActionEnabled ? FName(*FString::Printf(TEXT("Inspector.Building.%lld"), Row.BuildingValue)) : Row.RelatedSemanticId;
@@ -307,19 +337,57 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
 		Row.Kind = EHansaCityOverviewRowKind::Market;
 		Row.GoodStableId = FName(*Market.GoodId.ToString());
 		Row.Title = StableLabel(Market.GoodId.ToString());
-		Row.Subtitle = Market.bIsStale ? LOCTEXT("StaleMarket", "◷ Stale local report") : LOCTEXT("CurrentMarket", "● Current local report");
+		Row.Subtitle = Market.bIsStale ? LOCTEXT("StaleMarket", "Stale local report") : LOCTEXT("CurrentMarket", "Current local report");
 		Row.Fields = {
 			Field(TEXT("Stock"), LOCTEXT("Stock", "Stock / desired reserve"), FText::Format(LOCTEXT("StockValue", "{0} / {1}"), Quantity(Market.CurrentStock.GetRawValue()), Quantity(Market.DesiredReserve.GetRawValue()))),
 			Field(TEXT("Demand"), LOCTEXT("Demand", "Citizen / industrial demand"), FText::Format(LOCTEXT("DemandValue", "{0} / {1}"), Quantity(Market.CitizenDemand.GetRawValue()), Quantity(Market.IndustrialDemand.GetRawValue()))),
 			Field(TEXT("Incoming"), LOCTEXT("Incoming", "Confirmed incoming"), Quantity(Market.ExpectedIncomingSupply.GetRawValue())),
 			Field(TEXT("Price"), LOCTEXT("Price", "Local price / recent average"), FText::Format(LOCTEXT("PriceValue", "{0} / {1}"), Money(Market.CurrentPriceMilliMarks), Money(Market.RecentAveragePriceMilliMarks)))
 		};
-		const bool bBelowReserve = Market.CurrentStock.GetRawValue() < Market.DesiredReserve.GetRawValue();
+		int64 Produced = 0;
+        bool bProductionKnown = true;
+        for (const auto& Production : Projection.GetProductions())
+        {
+            if (Production.CityId != CityId || Production.Kind != EHansaProductionKind::BuildingRecipe) continue;
+            for (const auto& Output : Production.Outputs)
+            {
+                if (Output.GoodId != Market.GoodId) continue;
+                const int64 PerCycle = Output.NominalQuantityPerCycle.GetRawValue();
+                if (PerCycle <= 0) continue;
+                if (Production.CompletedCycles > uint64((MAX_int64 - Produced) / PerCycle))
+                {
+                    bProductionKnown = false;
+                    break;
+                }
+                Produced += int64(Production.CompletedCycles) * PerCycle;
+            }
+            if (!bProductionKnown) break;
+        }
+        Row.Fields.Add(Field(TEXT("Produced"), LOCTEXT("Produced", "Produced so far (local buildings)"),
+            bProductionKnown ? Quantity(Produced) : LOCTEXT("ProducedUnknown", "Unavailable")));
+        Row.Fields.Add(Field(TEXT("StockMeaning"), LOCTEXT("StockMeaning", "Stock accounting"),
+            LOCTEXT("StockMeaningValue", "Available now; excludes consumed, exported and reserved goods")));
+        const bool bBelowReserve = Market.CurrentStock.GetRawValue() < Market.DesiredReserve.GetRawValue();
 		Row.bWarning = bBelowReserve || Market.bIsStale;
-		Row.Status = bBelowReserve ? LOCTEXT("LowReserve", "△ Low reserve") : (Market.bIsStale ? LOCTEXT("Stale", "◷ Stale") : LOCTEXT("MarketStable", "✓ Stable"));
+		Row.Status = bBelowReserve ? LOCTEXT("LowReserve", "Low reserve") : (Market.bIsStale ? LOCTEXT("Stale", "Stale") : LOCTEXT("MarketStable", "Stable"));
 		Row.CausalActionLabel = LOCTEXT("ReviewSupply", "Review supply");
 		Row.RelatedSemanticId = FName(*FString::Printf(TEXT("CityOverview.Production.Good.%s"), *SemanticSuffix(Market.GoodId.ToString())));
 		Row.bCausalActionEnabled = true;
+        if(Remote) {
+            const auto Price=KnowledgeSource?KnowledgeSource->QueryKnownMarketPrice(CityId,Market.GoodId):TOptional<FHansaKnownMarketPriceProjection>();
+            const auto Supply=KnowledgeSource?KnowledgeSource->QueryKnownMarketSupply(CityId,Market.GoodId):TOptional<FHansaKnownMarketSupplyDemandProjection>();
+            const auto Info=Price.IsSet()?Price->InformationState:EHansaMarketInformationState::Unknown;
+            Row.Subtitle=FText::Format(LOCTEXT("RemoteReport","Rostock · {0} · report age {1}"),FText::FromString(LexToString(Info)),Price.IsSet() && Price->ReportAgeTicks.IsSet()?FText::Format(LOCTEXT("TicksOld","{0} ticks"),FText::AsNumber(Price->ReportAgeTicks.GetValue())):LOCTEXT("Unavailable","Unavailable"));
+            const FText Unknown=LOCTEXT("Unavailable","Unavailable");
+            Row.Fields={Field(TEXT("Stock"),LOCTEXT("ReportedStock","Reported stock"),Supply.IsSet() && Supply->Stock.IsSet()?Quantity(Supply->Stock->GetRawValue()):Unknown),
+                Field(TEXT("Demand"),LOCTEXT("ReportedDemand","Reported total demand"),Supply.IsSet() && Supply->TotalDemand.IsSet()?Quantity(Supply->TotalDemand->GetRawValue()):Unknown),
+                Field(TEXT("Price"),LOCTEXT("ReportedPrice","Reported price"),Price.IsSet() && Price->PriceMilliMarks.IsSet()?Money(Price->PriceMilliMarks.GetValue()):Unknown)};
+            Row.Status=Info==EHansaMarketInformationState::Unknown?LOCTEXT("UnknownReport","No recent report"):
+                Info==EHansaMarketInformationState::Estimated?LOCTEXT("EstimatedReport","Estimated · indicative values"):
+                Info==EHansaMarketInformationState::Stale?LOCTEXT("StaleReport","Stale · historical values"):LOCTEXT("KnownReport","Known report");
+            Row.bWarning=Info==EHansaMarketInformationState::Stale || Info==EHansaMarketInformationState::Estimated;
+            Row.bCausalActionEnabled=false;Row.RelatedSemanticId=NAME_None;Row.CausalActionDisabledReason=LOCTEXT("RemoteNoChain","Remote production buildings are not reported");
+        }
 		Snapshot.MarketRows.Add(MoveTemp(Row));
 	}
 
@@ -374,7 +442,7 @@ bool UHansaCityOverviewPresentationModel::SelectTabIntent(const EHansaCityOvervi
 	Snapshot.SelectedRowStableId = NAME_None;
 	Snapshot.FocusedSemanticId = FName(Tab == EHansaCityOverviewTab::Population ? TEXT("CityOverview.Tab.Population") :
 		(Tab == EHansaCityOverviewTab::Production ? TEXT("CityOverview.Tab.Production") : TEXT("CityOverview.Tab.Market")));
-	UpdateStateForActiveRows();
+	if(Previous.LoadState==EHansaCityOverviewLoadState::Ready || Previous.LoadState==EHansaCityOverviewLoadState::Empty)UpdateStateForActiveRows();
 	PublishIfChanged(Previous);
 	return true;
 }
@@ -389,7 +457,7 @@ bool UHansaCityOverviewPresentationModel::CycleTabIntent(const int32 Direction)
 
 bool UHansaCityOverviewPresentationModel::SelectRowIntent(const FName RowStableId)
 {
-	if (!Snapshot.bOpen || FindActiveRow(RowStableId) == nullptr) return false;
+	if (!Snapshot.bOpen || Snapshot.LoadState!=EHansaCityOverviewLoadState::Ready || FindActiveRow(RowStableId) == nullptr) return false;
 	const FHansaCityOverviewSnapshot Previous = Snapshot;
 	Snapshot.SelectedRowStableId = RowStableId;
 	Snapshot.FocusedSemanticId = FName(*FString::Printf(TEXT("CityOverview.Row.%s"), *SemanticSuffix(RowStableId.ToString())));
@@ -400,7 +468,7 @@ bool UHansaCityOverviewPresentationModel::SelectRowIntent(const FName RowStableI
 bool UHansaCityOverviewPresentationModel::ActivateCausalIntent(const FName RowStableId)
 {
 	const FHansaCityOverviewRowPresentation* Row = FindActiveRow(RowStableId);
-	if (!Snapshot.bOpen || Row == nullptr || !Row->bCausalActionEnabled || Row->RelatedSemanticId.IsNone()) return false;
+	if (!Snapshot.bOpen || Snapshot.LoadState!=EHansaCityOverviewLoadState::Ready || Row == nullptr || !Row->bCausalActionEnabled || Row->RelatedSemanticId.IsNone()) return false;
 	const FHansaCityOverviewSnapshot Previous = Snapshot;
 	Snapshot.SelectedRowStableId = RowStableId;
 	const FName RelatedId = Row->RelatedSemanticId;
@@ -421,7 +489,7 @@ bool UHansaCityOverviewPresentationModel::ActivateCausalIntent(const FName RowSt
 	{
 		Snapshot.FocusedSemanticId = FName(*FString::Printf(TEXT("CityOverview.Row.%s.Reveal"), *SemanticSuffix(RowStableId.ToString())));
 	}
-	Snapshot.LastActionResult = FText::Format(LOCTEXT("OpenedRelated", "Opened related view · {0}"), FText::FromName(RelatedId));
+	Snapshot.LastActionResult = RelatedId.ToString().StartsWith(TEXT("CityOverview.Production.Good."))?LOCTEXT("SupplySelected","Supplying production selected"):LOCTEXT("BuildingOpened","Building details opened");
 	PublishIfChanged(Previous);
 	RelatedTargetRequested.Broadcast(RelatedId, BuildingValue);
 	return true;
@@ -431,6 +499,7 @@ bool UHansaCityOverviewPresentationModel::RetryIntent()
 {
 	if (!Snapshot.bOpen || Snapshot.LoadState != EHansaCityOverviewLoadState::Error) return false;
 	SetLoading(Snapshot.CityTitle);
+    RefreshRequested.Broadcast();
 	return true;
 }
 
@@ -447,7 +516,7 @@ void UHansaCityOverviewPresentationModel::SetLoading(FText CityDisplayName)
 	if (!CityDisplayName.IsEmpty()) Snapshot.CityTitle = MoveTemp(CityDisplayName);
 	Snapshot.LoadState = EHansaCityOverviewLoadState::Loading;
 	Snapshot.StateTitle = LOCTEXT("LoadingTitle", "Loading city data");
-	Snapshot.StateDetail = LOCTEXT("LoadingDetail", "The latest Lübeck report is being prepared.");
+	Snapshot.StateDetail = LOCTEXT("LoadingDetail", "The latest city report is being prepared.");
 	PublishIfChanged(Previous);
 }
 
@@ -466,7 +535,7 @@ void UHansaCityOverviewPresentationModel::UpdateStateForActiveRows()
 	{
 		Snapshot.LoadState = EHansaCityOverviewLoadState::Empty;
 		Snapshot.StateTitle = LOCTEXT("EmptyTitle", "No city records yet");
-		Snapshot.StateDetail = LOCTEXT("EmptyDetail", "Build or connect eligible buildings to populate this view.");
+		Snapshot.StateDetail = Snapshot.CityStableId==TEXT("City.Lubeck")?LOCTEXT("EmptyDetail", "Build or connect eligible buildings to populate this view."):LOCTEXT("RemoteEmpty","This civic report is unavailable. Open Market to inspect known trade reports. Rostock does not permit construction.");
 	}
 	else
 	{
@@ -475,6 +544,17 @@ void UHansaCityOverviewPresentationModel::UpdateStateForActiveRows()
 		Snapshot.StateDetail = FText::GetEmpty();
 		if (!Snapshot.SelectedRowStableId.IsNone() && FindActiveRow(Snapshot.SelectedRowStableId) == nullptr) Snapshot.SelectedRowStableId = NAME_None;
 	}
+}
+
+bool UHansaCityOverviewPresentationModel::SelectCityIntent(FName CityId)
+{
+    if(!Snapshot.bOpen || (CityId!=TEXT("City.Lubeck") && CityId!=TEXT("City.Rostock")) || CityId==Snapshot.CityStableId)return false;
+    const auto Previous=Snapshot;Snapshot.CityStableId=CityId;Snapshot.SelectedRowStableId=NAME_None;
+    Snapshot.PopulationRows.Reset();Snapshot.ProductionRows.Reset();Snapshot.MarketRows.Reset();Snapshot.HeaderSummaries.Reset();
+    Snapshot.CityTitle=CityId==TEXT("City.Rostock")?LOCTEXT("RostockTitle","Rostock City Overview"):LOCTEXT("DefaultTitle","Lübeck City Overview");
+    Snapshot.LoadState=EHansaCityOverviewLoadState::Loading;Snapshot.StateTitle=LOCTEXT("LoadingTitle","Loading city data");
+    Snapshot.FocusedSemanticId=CityId==TEXT("City.Rostock")?TEXT("CityOverview.City.Rostock"):TEXT("CityOverview.City.Lubeck");
+    PublishIfChanged(Previous);RefreshRequested.Broadcast();return true;
 }
 
 void UHansaCityOverviewPresentationModel::PublishIfChanged(const FHansaCityOverviewSnapshot& Previous)
@@ -487,3 +567,6 @@ void UHansaCityOverviewPresentationModel::PublishIfChanged(const FHansaCityOverv
 }
 
 #undef LOCTEXT_NAMESPACE
+
+bool UHansaCityOverviewPresentationModel::VisitCityIntent(){return Snapshot.bOpen && VisitRequested && VisitRequested(Snapshot.CityStableId);}
+void UHansaCityOverviewPresentationModel::SetVisitStatus(FText Status){const auto Previous=Snapshot;Snapshot.LastActionResult=Status;PublishIfChanged(Previous);}

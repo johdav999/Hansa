@@ -136,6 +136,24 @@ namespace Hansa::Simulation
 		}
 	}
 
+	bool FHansaInventoryLedger::TryAddEmptyInventory(FHansaInventoryInitialization Inventory)
+	{
+		if (!bInitialized || !Inventory.InitialStock.IsEmpty() ||
+			FindInventoryIndex(Inventories, Inventory.Id) != INDEX_NONE ||
+            Inventories.ContainsByPredicate([&](const auto& Existing) {
+                if (Existing.OwnerKind != Inventory.OwnerKind) return false;
+                if (Inventory.OwnerKind == EHansaInventoryOwnerKind::City)
+                    return Existing.CityId == Inventory.CityId && Existing.BuildingId == Inventory.BuildingId;
+                if (Inventory.OwnerKind == EHansaInventoryOwnerKind::Vehicle) return Existing.VehicleId == Inventory.VehicleId;
+                return Existing.BuildingId == Inventory.BuildingId;
+            })) return false;
+		auto Validated = TryCreate({ MoveTemp(Inventory) }, MovementCapacity);
+		if (!Validated) return false;
+		Inventories.Add(MoveTemp(Validated.Value.Inventories[0]));
+		Inventories.Sort([](const auto& A, const auto& B) { return A.Id < B.Id; });
+		return true;
+	}
+
 	const TCHAR* LexToString(const EHansaInventoryTransactionError Error)
 	{
 		switch (Error)
@@ -210,7 +228,7 @@ namespace Hansa::Simulation
 			}
 			const bool bCityOwner = Initialization.OwnerKind == EHansaInventoryOwnerKind::City;
 			const bool bVehicleOwner = Initialization.OwnerKind == EHansaInventoryOwnerKind::Vehicle;
-			if ((bCityOwner && (!Initialization.CityId.IsValid() || Initialization.BuildingId.IsValid() || Initialization.VehicleId.IsValid())) ||
+			if ((bCityOwner && (!Initialization.CityId.IsValid() || Initialization.VehicleId.IsValid())) ||
 				(bVehicleOwner && (!Initialization.VehicleId.IsValid() || Initialization.CityId.IsValid() || Initialization.BuildingId.IsValid())) ||
 				(!bCityOwner && !bVehicleOwner && (!Initialization.BuildingId.IsValid() || Initialization.CityId.IsValid() || Initialization.VehicleId.IsValid())))
 			{
@@ -249,7 +267,11 @@ namespace Hansa::Simulation
 				{
 					return false;
 				}
-				if (Record.OwnerKind == EHansaInventoryOwnerKind::City) return Existing.CityId == Record.CityId;
+				if (Record.OwnerKind == EHansaInventoryOwnerKind::City)
+				{
+					return Existing.CityId == Record.CityId &&
+						Existing.BuildingId == Record.BuildingId;
+				}
 				if (Record.OwnerKind == EHansaInventoryOwnerKind::Vehicle) return Existing.VehicleId == Record.VehicleId;
 				return Existing.BuildingId == Record.BuildingId;
 			}))

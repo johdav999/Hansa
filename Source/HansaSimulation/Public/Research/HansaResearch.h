@@ -142,7 +142,12 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaResearchExecutor final
 	{
 	public:
-		[[nodiscard]] static FHansaResearchQueueResult TryQueue(
+        /** Read-only eligibility uses exactly the same rules as command execution. */
+        [[nodiscard]] static FHansaResearchQueueResult CanQueue(
+            const FHansaHouseResearchState& State, const FString& TechnologyId,
+            TConstArrayView<FHansaCompiledTechnologyDefinition> Technologies);
+
+        [[nodiscard]] static FHansaResearchQueueResult TryQueue(
 			TArray<FHansaHouseResearchState>& States,
 			FHansaHouseId HouseId,
 			const FString& TechnologyId,

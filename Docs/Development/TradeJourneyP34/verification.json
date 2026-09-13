@@ -1,0 +1,5073 @@
+{
+  "schemaVersion": 1,
+  "scope": "EMVP-P34 production-v8 gameplay; staged P31 Rostock visual quarter",
+  "passed": true,
+  "nativeCaptures": 72,
+  "rasterResampling": false,
+  "captures": [
+    {
+      "state": "opportunity",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "2e63f8b9b4b497bf56856ea679523b95a0a94206fc1c2cbb46524e244e1475c8",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-opportunity.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "source-report",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "4fbf764c28b6f14eed8d9c6ecc43bafc566eb89c21e3969fb4fe0172754bc078",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-source-report.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "import-draft",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "8351588fb485022fb35582794cb9c8e1ee2f3e8cd7f8ffb327fe95fcc04514e9",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-import-draft.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "review",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "f7e4a519354b402f30ccef84483a549c7481c9a3a4c642fca10333203b0b1bd5",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-review.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "loading",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "5a2cdbbb8a3e9737809e157254cc3e219071881cf0a620547e4ba5ff630ad3f0",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-loading.png",
+      "tick": "12",
+      "fingerprint": "6484748698193240376",
+      "events": "12",
+      "lubeckBread": "19600",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "1",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "departing",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "bc566b5d7ca8b9d0e23726bd7b492617789e82ae506c5369ba1687c86035d895",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-departing.png",
+      "tick": "13",
+      "fingerprint": "8031890472285960193",
+      "events": "12",
+      "lubeckBread": "18400",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "2",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "traveling",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "11a19a3f507f91b59fbb1f0841f7417a24d696998a57ef58c95c5406cd27badd",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-traveling.png",
+      "tick": "15",
+      "fingerprint": "3649418448639255139",
+      "events": "13",
+      "lubeckBread": "16000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "802",
+      "rostockPrice": "885",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "3",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "arriving",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "abfa80b2eb86c337197d5363cc7b7ecc3f950274e9cb3e5373e237e7c0511fe1",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-arriving.png",
+      "tick": "20",
+      "fingerprint": "391048008736278544",
+      "events": "18",
+      "lubeckBread": "10000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "4",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "unloading",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "9b0ff997424d1dd4fc9bda2e68cba1fe1c1852da5b9547a7fba94c2fd0342b2f",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-unloading.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "market-feedback",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "22def8911ae471f313bbcd5610d7e227bb5e97afa37b7ff4038db63859b48841",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-market-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "needs-feedback",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "eabba6fc7cdfc431c987a4e4e020d8584120968d4bdd8da572e8abee560d9a3d",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-needs-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "cancelled",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.0",
+      "sha256": "4c3138d425e1379411268112335be4e7ffbcd02a6d4e206eb687e04137d1a5f5",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.0-cancelled.png",
+      "tick": "36",
+      "fingerprint": "4383529881022925611",
+      "events": "28",
+      "lubeckBread": "9800",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "915",
+      "rostockPrice": "1093",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "8",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "25",
+          "33",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "3"
+        ],
+        [
+          "26",
+          "33",
+          "RouteActivationChanged",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "27",
+          "34",
+          "RouteEdited",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "28",
+          "35",
+          "RouteCancelled",
+          "",
+          "",
+          "19000"
+        ]
+      ]
+    },
+    {
+      "state": "opportunity",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "7b6e09e7717859553c460e669a8d2b9cae856cc1762ea91f98b15582ca730910",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-opportunity.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "source-report",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "fe7ad0c5621d53f114f84ed357a75b870e213c646f619353a1bcc45de7daa97a",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-source-report.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "import-draft",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "dfc9e5d32fbf38508ee915b2160696e3ec4295dc73cf005ef4990a4379d85056",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-import-draft.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "review",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "3b834dbcacf2b3245f6a57841f5206b7ec479e62da0173b85d69d1bf02c554cf",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-review.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "loading",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "83996543fbba67cf1cc8e96266c9decc1ae2daa8f645dc416fa8a56560dc3c61",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-loading.png",
+      "tick": "12",
+      "fingerprint": "6484748698193240376",
+      "events": "12",
+      "lubeckBread": "19600",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "1",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "departing",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "65cfaea8550530b6984b6ff6d8016995c842385a15f449590a15b81bcb275d1f",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-departing.png",
+      "tick": "13",
+      "fingerprint": "8031890472285960193",
+      "events": "12",
+      "lubeckBread": "18400",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "2",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "traveling",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "493895dddf62436df8b87d8a2a8a47978ccad567fc75feaa72cc7e63f140cc73",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-traveling.png",
+      "tick": "15",
+      "fingerprint": "3649418448639255139",
+      "events": "13",
+      "lubeckBread": "16000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "802",
+      "rostockPrice": "885",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "3",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "arriving",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "9052e024b8e25acb40df4490e1533cfb06b4bcd7125b7d739626eee368283eee",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-arriving.png",
+      "tick": "20",
+      "fingerprint": "391048008736278544",
+      "events": "18",
+      "lubeckBread": "10000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "4",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "unloading",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "98e69f00890ba1694ef5c88ff59b36f10a7b2da716154c18078408829d376da2",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-unloading.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "market-feedback",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "9400e21f64689cae580c1a63c8f46c0db75c89723f1f1b060884bd098bcbe9d8",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-market-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "needs-feedback",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "5eea3fc2b519acd9ee7ff0abbd8d8619c254cae8760a6de868e6e57eaea88670",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-needs-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "cancelled",
+      "width": 1920,
+      "height": 1080,
+      "scale": "1.0",
+      "sha256": "1b9b20a5ddb9fdca359a8ab5baf364abb9d9e8515ade919223c75d9a1024fcaa",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1920x1080-1.0-cancelled.png",
+      "tick": "36",
+      "fingerprint": "4383529881022925611",
+      "events": "28",
+      "lubeckBread": "9800",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "915",
+      "rostockPrice": "1093",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "8",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "25",
+          "33",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "3"
+        ],
+        [
+          "26",
+          "33",
+          "RouteActivationChanged",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "27",
+          "34",
+          "RouteEdited",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "28",
+          "35",
+          "RouteCancelled",
+          "",
+          "",
+          "19000"
+        ]
+      ]
+    },
+    {
+      "state": "opportunity",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "bdb9901cc3317d1bde118c98042a52112c1eadcf7019c9bb2fc60923dcbaca10",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-opportunity.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "source-report",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "3ea7802c32405dba1fc0089cdcca2dae32fc9101fe9b4eb759fc5b608db0caae",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-source-report.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "import-draft",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "41f6ea91ac01ef14486fe1bbb81b42ea475aa3b9db23b17b1456b3825da89c2d",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-import-draft.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "review",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "d537c01e6ac946bfe6e99a51319901b5467b17dfcdd5012ce02b2a0519e3301b",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-review.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "loading",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "eca462b25924c50fbf1af6df1a4fc57aab42cf1902b7306b604e5432633b01de",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-loading.png",
+      "tick": "12",
+      "fingerprint": "6484748698193240376",
+      "events": "12",
+      "lubeckBread": "19600",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "1",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "departing",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "2475fd6d73669580d8f05e22cb0d0e3bd2589b731af6c694883ab17357c66751",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-departing.png",
+      "tick": "13",
+      "fingerprint": "8031890472285960193",
+      "events": "12",
+      "lubeckBread": "18400",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "2",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "traveling",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "7c40ba71db9f13777d212b7ffbd042abf744ad0804560a93efbca0a843b666f6",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-traveling.png",
+      "tick": "15",
+      "fingerprint": "3649418448639255139",
+      "events": "13",
+      "lubeckBread": "16000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "802",
+      "rostockPrice": "885",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "3",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "arriving",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "4db6e05e338f457171a9c262783a0983ade069eaabb28cd3d70c59024d7d9d17",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-arriving.png",
+      "tick": "20",
+      "fingerprint": "391048008736278544",
+      "events": "18",
+      "lubeckBread": "10000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "4",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "unloading",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "8eaeb4b38267912ed854c09152883c9021ca054087661598238c6ba38b6c5e9a",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-unloading.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "market-feedback",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "6f293111452280df077612c2ebc8001a1d60fa2144c5da0bb3c5615c15d37133",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-market-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "needs-feedback",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "bc5aa6d0f07122ffe8d4a470bc627d72e942aeadc1b9e905dc488de27d8f8fa9",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-needs-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "cancelled",
+      "width": 2560,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "cf27726d721bfa961114484e4244e8a7e00d9822733671355cc810e1f4907777",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-2560x1440-1.0-cancelled.png",
+      "tick": "36",
+      "fingerprint": "4383529881022925611",
+      "events": "28",
+      "lubeckBread": "9800",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "915",
+      "rostockPrice": "1093",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "8",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "25",
+          "33",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "3"
+        ],
+        [
+          "26",
+          "33",
+          "RouteActivationChanged",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "27",
+          "34",
+          "RouteEdited",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "28",
+          "35",
+          "RouteCancelled",
+          "",
+          "",
+          "19000"
+        ]
+      ]
+    },
+    {
+      "state": "opportunity",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "a1def993d2f5bc859a4cc1a297bb547156bb4cb7b5171da45815c19044dfd435",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-opportunity.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "source-report",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "91d98c10e17b2d2ba75d0661a98f97a34507d298d7cb74aa4fc808a32cb13f41",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-source-report.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "import-draft",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "7438cf411c739d3841087aa47d58b843bc8d21dc9113f3610b35c3603d2ef532",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-import-draft.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "review",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "b12645e911d8c362b0278921cedcf8ad04d1b3df3278ac49c10b77761aa695db",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-review.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "loading",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "85e1b67db0af6c513f71024bf8dfdfae7577aa691e2652e323bd2754f1aaf6ae",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-loading.png",
+      "tick": "12",
+      "fingerprint": "6484748698193240376",
+      "events": "12",
+      "lubeckBread": "19600",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "1",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "departing",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "77f022fa5279b49922cca59dee514c66a4b21507f5e5142f2aef3e416c569fd9",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-departing.png",
+      "tick": "13",
+      "fingerprint": "8031890472285960193",
+      "events": "12",
+      "lubeckBread": "18400",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "2",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "traveling",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "a2dc38537b4ac7e6544e58d1542f89ed40b82fcca050addb4312cfcfd62bdf79",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-traveling.png",
+      "tick": "15",
+      "fingerprint": "3649418448639255139",
+      "events": "13",
+      "lubeckBread": "16000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "802",
+      "rostockPrice": "885",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "3",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "arriving",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "dd252e7fe1279eb749dfa793192ef5ac38db85d38e3106dbf02504c49d6eb16f",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-arriving.png",
+      "tick": "20",
+      "fingerprint": "391048008736278544",
+      "events": "18",
+      "lubeckBread": "10000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "4",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "unloading",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "686f7454a0eddb266297fbd02b2556c37b11d6d0e6a7b61e0a5023a6ac51d77e",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-unloading.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "market-feedback",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "e546e0100f0a7d36136c290f72e2e3bd7e8807796d479bbe58293b81cd2db6fd",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-market-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "needs-feedback",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "1dc83cf106b2ee89170900d0f51d175ab05b7e418914a6fb2d91441d095e5738",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-needs-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "cancelled",
+      "width": 3440,
+      "height": 1440,
+      "scale": "1.0",
+      "sha256": "0b3222af7c80dca314cf556a85b9ed4e5f205206f2c28b41482c73e627efe0c3",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-3440x1440-1.0-cancelled.png",
+      "tick": "36",
+      "fingerprint": "4383529881022925611",
+      "events": "28",
+      "lubeckBread": "9800",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "915",
+      "rostockPrice": "1093",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "8",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "25",
+          "33",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "3"
+        ],
+        [
+          "26",
+          "33",
+          "RouteActivationChanged",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "27",
+          "34",
+          "RouteEdited",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "28",
+          "35",
+          "RouteCancelled",
+          "",
+          "",
+          "19000"
+        ]
+      ]
+    },
+    {
+      "state": "opportunity",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "59c70b599766f7f8c7f162b463ae3f8858f77e5837679cdcb0d00cc255a458e5",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-opportunity.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "source-report",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "a94950e0a7fba56e45fd02034c020c53cbcfdad52b260b6951b6c229f940991f",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-source-report.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "import-draft",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "da20087f4cc1a6fc51353feb34ec8914d38c19915eddf328444a643e4bc165c0",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-import-draft.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "review",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "88c56f1240c21599a46a570cbcc5e651129fd106919eee1f9be3658850029f6e",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-review.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "loading",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "d1ddf013bb7bb99641d89e00f1727da14d704aa1ad17c23c6b69eb7ed7adb243",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-loading.png",
+      "tick": "12",
+      "fingerprint": "6484748698193240376",
+      "events": "12",
+      "lubeckBread": "19600",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "1",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "departing",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "1047152a81d16469c63658de5ae234087735ad588bf3dda46e890b96e983813f",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-departing.png",
+      "tick": "13",
+      "fingerprint": "8031890472285960193",
+      "events": "12",
+      "lubeckBread": "18400",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "2",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "traveling",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "d3111c357b28e5e24fc5239e72d16e35f0dcbdf3601ec6ee0ca2341b98a3274b",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-traveling.png",
+      "tick": "15",
+      "fingerprint": "3649418448639255139",
+      "events": "13",
+      "lubeckBread": "16000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "802",
+      "rostockPrice": "885",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "3",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "arriving",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "e6d9146ad032f2bcab1a782e24629ebf004a6976eb44f2d20d5fc614f36a9c7a",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-arriving.png",
+      "tick": "20",
+      "fingerprint": "391048008736278544",
+      "events": "18",
+      "lubeckBread": "10000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "4",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "unloading",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "5bea321632691e3b787b5e94c504425b193e64372f88bc2c70ae90b6151ebedd",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-unloading.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "market-feedback",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "9080bcd93e39adba1a521eb97231789e2aac30f9b1041809b340045dc669d95a",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-market-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "needs-feedback",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "079c8af144dc6b41f5c7ae856821dc39f5d690648a73f0d3fe536cfe6c69e83a",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-needs-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "cancelled",
+      "width": 1280,
+      "height": 720,
+      "scale": "0.8",
+      "sha256": "24ee035414312ede5d8fc70b9213bf9bcc1c0c6f50eec5b7eef0176b56dd84b1",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-0.8-cancelled.png",
+      "tick": "36",
+      "fingerprint": "4383529881022925611",
+      "events": "28",
+      "lubeckBread": "9800",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "915",
+      "rostockPrice": "1093",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "8",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "25",
+          "33",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "3"
+        ],
+        [
+          "26",
+          "33",
+          "RouteActivationChanged",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "27",
+          "34",
+          "RouteEdited",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "28",
+          "35",
+          "RouteCancelled",
+          "",
+          "",
+          "19000"
+        ]
+      ]
+    },
+    {
+      "state": "opportunity",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "50361000819ec79d72df681ba4a586edb0cb8bdfe7fadbdaa9952baa4e56cb51",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-opportunity.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "source-report",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "e16419ede55ccb29d59e63d10d9454c0bc394c544ea0e0784d1557862676b489",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-source-report.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "import-draft",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "65a606e6a11c7581c55d262d90cf1a0a597f0f7309586671a1f2a0b5c043bb52",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-import-draft.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "review",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "6cf0df2df203eaa9ebe0ac7fb0cf7c3c625014339cd3a6527ff9500428515b21",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-review.png",
+      "tick": "0",
+      "fingerprint": "6519455959296703690",
+      "events": "0",
+      "lubeckBread": "34000",
+      "rostockBread": "24000",
+      "cargoBread": "0",
+      "breadConsumed": "0",
+      "lubeckPrice": "800",
+      "rostockPrice": "800",
+      "semantic": "None",
+      "phase": "0",
+      "worldCargo": "0",
+      "worldTransfer": "0",
+      "worldTransferTick": "-1",
+      "domainEvents": []
+    },
+    {
+      "state": "loading",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "2961b511b6d89c94bf4f23b75e31e09c7efce04453b5c7a2eeb906b1eff8255f",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-loading.png",
+      "tick": "12",
+      "fingerprint": "6484748698193240376",
+      "events": "12",
+      "lubeckBread": "19600",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "1",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "departing",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "0fabc0285e90b24bb53e302746d094f5479520bbe2822b4bd6fd07793a285053",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-departing.png",
+      "tick": "13",
+      "fingerprint": "8031890472285960193",
+      "events": "12",
+      "lubeckBread": "18400",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "799",
+      "rostockPrice": "804",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "2",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "traveling",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "e3bfd26d22f0ac3e5c9fb855c678f8d9cbf08731de47c1821821b9be674dc945",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-traveling.png",
+      "tick": "15",
+      "fingerprint": "3649418448639255139",
+      "events": "13",
+      "lubeckBread": "16000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "802",
+      "rostockPrice": "885",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "3",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "arriving",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "5315ae4f8864bde6239cb98c48a0335feb32f8ea9df7dab60e16ef012a1347d3",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-arriving.png",
+      "tick": "20",
+      "fingerprint": "391048008736278544",
+      "events": "18",
+      "lubeckBread": "10000",
+      "rostockBread": "5000",
+      "cargoBread": "19000",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "12",
+      "transferCity": "City.Rostock",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "0",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "4",
+      "worldCargo": "19000",
+      "worldTransfer": "19000",
+      "worldTransferTick": "12",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "unloading",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "11835d34585e86dc2cea92b58c70f7453002247d11dab89bbbbdba0396a1a3e7",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-unloading.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "market-feedback",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "d036da8c224a139aa5c7f2d8265b95d0cd57ff099a33dd9c2cd3db9d3300a2fb",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-market-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "needs-feedback",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "4f1a8824a4f70134c97c2f232d9abbf623bcbce061e15ca6f9043c0e56727b90",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-needs-feedback.png",
+      "tick": "23",
+      "fingerprint": "9922370190597557647",
+      "events": "21",
+      "lubeckBread": "25400",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "835",
+      "rostockPrice": "961",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "5",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ]
+      ]
+    },
+    {
+      "state": "cancelled",
+      "width": 1280,
+      "height": 720,
+      "scale": "1.4",
+      "sha256": "4fdce18c4f7eef5694252b3edfca590cf26062d60a89ca842468b0ae0ae4993f",
+      "capture": "Docs/Images/UI/TradeJourneyP34/journey-1280x720-1.4-cancelled.png",
+      "tick": "36",
+      "fingerprint": "4383529881022925611",
+      "events": "28",
+      "lubeckBread": "9800",
+      "rostockBread": "5000",
+      "cargoBread": "0",
+      "breadConsumed": "1200",
+      "lubeckPrice": "915",
+      "rostockPrice": "1093",
+      "route": "4",
+      "transferTick": "23",
+      "transferCity": "City.Lubeck",
+      "transferGood": "Good.Bread",
+      "transferMilli": "19000",
+      "transferKind": "1",
+      "semantic": "World.Cargo.Vehicle.1.0",
+      "phase": "8",
+      "worldCargo": "0",
+      "worldTransfer": "19000",
+      "worldTransferTick": "23",
+      "domainEvents": [
+        [
+          "2",
+          "0",
+          "RouteCreated",
+          "City.Lubeck",
+          "",
+          "1"
+        ],
+        [
+          "3",
+          "1",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "0"
+        ],
+        [
+          "4",
+          "1",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "10",
+          "11",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "1"
+        ],
+        [
+          "11",
+          "12",
+          "RouteCargoMissed",
+          "City.Rostock",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "12",
+          "12",
+          "RouteDeparted",
+          "City.Rostock",
+          "",
+          "10"
+        ],
+        [
+          "19",
+          "22",
+          "RouteArrived",
+          "City.Lubeck",
+          "",
+          "2"
+        ],
+        [
+          "20",
+          "23",
+          "RouteCargoMissed",
+          "City.Lubeck",
+          "Good.Bread",
+          "19000"
+        ],
+        [
+          "21",
+          "23",
+          "RouteDeparted",
+          "City.Lubeck",
+          "",
+          "10"
+        ],
+        [
+          "25",
+          "33",
+          "RouteArrived",
+          "City.Rostock",
+          "",
+          "3"
+        ],
+        [
+          "26",
+          "33",
+          "RouteActivationChanged",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "27",
+          "34",
+          "RouteEdited",
+          "City.Rostock",
+          "",
+          "0"
+        ],
+        [
+          "28",
+          "35",
+          "RouteCancelled",
+          "",
+          "",
+          "19000"
+        ]
+      ]
+    }
+  ]
+}

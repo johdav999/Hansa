@@ -1,6 +1,8 @@
 # MVP golden MCP gate
 
-S14-P01 is the final development-only MCP golden path for the integrated MVP. Its stable test ID is `s14-p01-mvp-golden`; its exact fixture is `lubeck_grain_shortage_v1` version 4 with the fixed Lübeck campaign seed. The game remains authoritative. The sidecar sequences public operations but cannot set stock, prices, progression, AI state, objectives, or save hashes.
+> **Historical foundation gate:** this S14-P01 flow proves the original simulation/editor/automation journey. EMVP-P00 supersedes it as the final playable-MVP acceptance contract. It remains useful regression evidence, but its fixed target actions, market-only Rostock state, isolated screenshot surfaces, and scripted sequence cannot satisfy the enhanced requirement-to-evidence matrix in [MVP.md](../MVP.md) by themselves. EMVP-P37–P39 must replace or version this flow rather than silently reinterpreting its immutable fixture contract.
+
+S14-P01 was the final development-only MCP golden path for the original integrated-MVP plan. Its stable test ID is `s14-p01-mvp-golden`; its exact fixture is `lubeck_grain_shortage_v1` version 4 with the fixed Lübeck campaign seed. The game remains authoritative. The sidecar sequences public operations but cannot set stock, prices, progression, AI state, objectives, or save hashes.
 
 The fixture ID also names the immutable S04 actor-free market-recovery contract. To preserve that supported API, an ordinary session without `evidence` continues to list/load its original headless profile. Explicitly negotiating `evidence` selects the version-4 playable-runtime golden profile under the same canonical scenario identity. `fixture_list` advertises exactly one descriptor matching the negotiated profile; it never returns duplicate IDs. Reset retains the active profile because the capability set is fixed for the session.
 

@@ -1,4 +1,0 @@
-from unreal_ops import Client,P
-import json
-c=Client();rec=json.loads((P/'unreal_animation.json').read_text());assert c.call('scene','get_current_level')==rec['preview'];old=c.call('scene','find_actors',{'tag':'HansaAnimatedWindmill','name':'','collision_channels':[]});assert len(old)==1
-actor_tool='editor_toolset.toolsets.actor.ActorTools';transform=c.call(actor_tool,'get_actor_transform',{'actor':old[0]});new=c.call('scene','add_to_scene_from_asset',{'asset_path':rec['blueprint'],'name':'Hansa Windmill Animated Sails','xform':transform,'snap_to_ground':False});c.call(actor_tool,'add_tag',{'actor':new,'tag':'HansaAnimatedWindmill'});assert c.call('scene','remove_from_scene',{'actor':old[0]});assert c.call('asset','save_assets',{'asset_paths':[rec['preview']]});c.call('scene','load_level',{'level_path':rec['preview']});print(new)

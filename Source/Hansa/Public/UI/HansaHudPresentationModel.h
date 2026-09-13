@@ -10,6 +10,7 @@
 namespace Hansa::Simulation
 {
 	class FHansaSimulationProjection;
+    struct FHansaCityMarketProjection;
 }
 
 UENUM(BlueprintType)
@@ -78,6 +79,17 @@ struct HANSA_API FHansaHudNotificationPresentation final
 	}
 };
 
+USTRUCT(BlueprintType)
+struct HANSA_API FHansaHudProductSummary final
+{
+    GENERATED_BODY()
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|HUD") FName GoodId;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|HUD") FText Value;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|HUD") FText Tooltip;
+    friend bool operator==(const FHansaHudProductSummary& A, const FHansaHudProductSummary& B)
+    { return A.GoodId==B.GoodId && A.Value.EqualTo(B.Value) && A.Tooltip.EqualTo(B.Tooltip); }
+};
+
 /** Immutable-at-the-widget-boundary state delivered to the root HUD after gameplay events. */
 USTRUCT(BlueprintType)
 struct HANSA_API FHansaHudPresentationSnapshot final
@@ -95,9 +107,13 @@ struct HANSA_API FHansaHudPresentationSnapshot final
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|HUD")
 	FText Workforce;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|HUD") FText WealthyCitizens;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|HUD") FText MoneyTrendTooltip;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|HUD") TArray<FHansaHudProductSummary> TopProducts;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|HUD")
 	FText CityBreadcrumb;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|HUD") bool bRemoteCityView=false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|HUD")
 	FText DateAndSeason;
@@ -154,6 +170,7 @@ class HANSA_API UHansaHudPresentationModel final : public UObject
 
 public:
 	void InitializeDefaults();
+    void ResetCashHistory();
 	bool ApplySnapshot(const FHansaHudPresentationSnapshot& NewSnapshot);
 
 	UFUNCTION(BlueprintCallable, Category = "Hansa|UI|HUD")
@@ -170,6 +187,8 @@ public:
 
 	void SetFocusedSemanticId(FName SemanticId);
 	void SetSelection(FText SelectionSummary, FText InspectorTitle, FText InspectorSummary, bool bOpenInspector);
+	void ApplyRuntimeStatus(const Hansa::Simulation::FHansaSimulationProjection& Projection,
+        Hansa::Simulation::FHansaCityDefinitionId CityId,Hansa::Simulation::FHansaHouseId HouseId);
 	bool ApplyMarketAlerts(
 		const Hansa::Simulation::FHansaSimulationProjection& Projection,
 		Hansa::Simulation::FHansaCityDefinitionId CityId,
@@ -181,12 +200,17 @@ public:
 	[[nodiscard]] uint64 GetRevision() const { return Revision; }
 	FHansaHudPresentationChanged& OnChanged() { return PresentationChanged; }
 
+    static FHansaHudProductSummary BuildBreadBalance(const Hansa::Simulation::FHansaCityMarketProjection* Market, uint16 MinutesPerTick);
+
 private:
 	void BroadcastChange();
 
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|UI|HUD")
 	FHansaHudPresentationSnapshot Snapshot;
 
+    struct FCashSample { int64 Minute; int64 MilliMarks; };
+    TArray<FCashSample> CashHistory;
+    Hansa::Simulation::FHansaHouseId CashHistoryHouse;
 	uint64 Revision = 0;
 	FHansaHudPresentationChanged PresentationChanged;
 };

@@ -17,6 +17,7 @@ namespace Hansa::Simulation
 {
 	class FHansaEconomicRegistry;
 	struct FHansaCompiledBuildingDefinition;
+	struct FHansaLogisticsRoadPathProjection;
 }
 struct FHansaRuntimeSimulationState;
 
@@ -47,14 +48,19 @@ public:
 		UWorld* World,
 		FString& OutError,
 		EHansaRuntimeScenario Scenario = EHansaRuntimeScenario::LubeckGrainShortage,
-		uint64 CampaignSeedOverride = 0);
+		uint64 CampaignSeedOverride = 0,
+        bool bEmptyPlayerCity = false);
+	bool StartNewGame(FString& OutError);
+    Hansa::Simulation::FHansaCommandGatewayResult CancelRoute(Hansa::Simulation::FHansaRouteId RouteId);
 	[[nodiscard]] EHansaRuntimeScenario GetScenario() const;
 	void SetSpeed(EHansaRuntimeSimulationSpeed NewSpeed);
 	[[nodiscard]] EHansaRuntimeSimulationSpeed GetSpeed() const { return Speed; }
 	[[nodiscard]] bool IsReady() const;
 
-	/** Frame-time adapter used by the game mode. It preserves fractional tick debt across frames. */
+	/** Frame-time adapter used by the game mode. Runs at most one tick per frame and drops overload catch-up debt. */
 	bool AdvanceRealTime(double DeltaSeconds);
+    /** Fractional simulation time for read-only visual interpolation, frozen when paused. */
+    double GetPresentationTickFraction() const { return FMath::Clamp(TickAccumulator, 0.0, 0.999999); }
 	/** Deterministic explicit stepping seam for automation and focused presenter tests. */
 	bool AdvanceTicks(int32 TickCount);
 
@@ -63,8 +69,17 @@ public:
 	[[nodiscard]] const Hansa::Simulation::FHansaPlacementMapInitialization* FindPlacementMap() const;
 	[[nodiscard]] Hansa::Simulation::FHansaPlacementValidationResult ValidatePlacement(
 		const Hansa::Simulation::FHansaPlacementSpec& Spec) const;
+	[[nodiscard]] bool IsOwnedRoadCell(Hansa::Simulation::FHansaGridCoordinate Cell) const;
+	[[nodiscard]] Hansa::Simulation::FHansaConstructionCostProjection QueryConstructionCost(
+		const FString& BuildingStableId) const;
+	[[nodiscard]] bool IsTechnologyCompleted(const FString& TechnologyId) const;
 	Hansa::Simulation::FHansaCommandGatewayResult PlaceBuildings(
 		TConstArrayView<Hansa::Simulation::FHansaPlacementSpec> Specs);
+    /** Creates a new route; a stopped empty Cog may be reassigned atomically with explicit player consent. */
+    Hansa::Simulation::FHansaCommandGatewayResult CreateTradeRoute(
+        Hansa::Simulation::FHansaVehicleId VehicleId, TConstArrayView<Hansa::Simulation::FHansaRouteStop> Stops,
+        const FString& Name, bool bReassignStopped, bool bPreview, uint64& OutRouteValue);
+    FString GetRouteLabel(uint64 RouteValue) const;
 	Hansa::Simulation::FHansaCommandGatewayResult EditRoute(
 		Hansa::Simulation::FHansaRouteId RouteId,
 		TConstArrayView<Hansa::Simulation::FHansaRouteStop> Stops);
@@ -74,6 +89,19 @@ public:
 	Hansa::Simulation::FHansaCommandGatewayResult SetProductionActive(
 		Hansa::Simulation::FHansaProductionId ProductionId,
 		bool bActive);
+	/** Read-only command preflights use the same gateway on an isolated state copy. */
+	[[nodiscard]] Hansa::Simulation::FHansaCommandGatewayResult PreviewCancelConstruction(
+		Hansa::Simulation::FHansaBuildingId BuildingId) const;
+	[[nodiscard]] Hansa::Simulation::FHansaCommandGatewayResult PreviewRemoveBuilding(
+		Hansa::Simulation::FHansaBuildingId BuildingId) const;
+	[[nodiscard]] Hansa::Simulation::FHansaCommandGatewayResult PreviewUpgradeResidence(
+		Hansa::Simulation::FHansaBuildingId BuildingId) const;
+	Hansa::Simulation::FHansaCommandGatewayResult CancelConstruction(
+		Hansa::Simulation::FHansaBuildingId BuildingId);
+	Hansa::Simulation::FHansaCommandGatewayResult RemoveBuilding(
+		Hansa::Simulation::FHansaBuildingId BuildingId);
+	Hansa::Simulation::FHansaCommandGatewayResult UpgradeResidence(
+		Hansa::Simulation::FHansaBuildingId BuildingId);
 	Hansa::Simulation::FHansaCommandGatewayResult QueueResearch(const FString& TechnologyId);
 
 	/** Server-only seams that derive command identity, tick and global ordering after principal authorization. */
@@ -95,6 +123,11 @@ public:
 	[[nodiscard]] uint64 GetLastProcessedCommandSequence() const;
 	[[nodiscard]] FString GetBuildingWorldStatus(int64 BuildingValue) const;
 	[[nodiscard]] Hansa::Simulation::THansaValueResult<Hansa::Simulation::FHansaSimulationProjection> BuildProjection() const;
+	[[nodiscard]] Hansa::Simulation::FHansaLogisticsRoadPathProjection QueryLocalRoadPath(
+		Hansa::Simulation::FHansaInventoryId SourceInventoryId,
+		Hansa::Simulation::FHansaInventoryId DestinationInventoryId) const;
+    TOptional<Hansa::Simulation::FHansaKnownMarketPriceProjection> QueryKnownMarketPrice(Hansa::Simulation::FHansaCityDefinitionId City, Hansa::Simulation::FHansaGoodId Good) const;
+    TOptional<Hansa::Simulation::FHansaKnownMarketSupplyDemandProjection> QueryKnownMarketSupply(Hansa::Simulation::FHansaCityDefinitionId City, Hansa::Simulation::FHansaGoodId Good) const;
 	[[nodiscard]] const Hansa::Simulation::FHansaEconomicRegistry* GetEconomicRegistry() const;
 	[[nodiscard]] Hansa::Simulation::FHansaHouseId GetRivalHouseId() const;
 	void SetMerchantAIEnabled(bool bEnabled);
@@ -116,6 +149,7 @@ public:
 	FHansaRuntimeSimulationAdvanced& OnSimulationAdvanced() { return SimulationAdvanced; }
 
 private:
+	void LogEconomyDiagnostics();
 	bool PublishStateChange(TConstArrayView<Hansa::Simulation::FHansaDomainEvent> Events);
 	double TicksPerSecond() const;
 

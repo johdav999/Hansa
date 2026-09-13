@@ -10,6 +10,18 @@ class AActor;
 class UTexture2D;
 
 UENUM(BlueprintType)
+enum class EHansaConstructionMenuCategory : uint8
+{
+	Roads,
+	Residences,
+	Production,
+	Storage,
+	Harbor,
+	Civic,
+	Decoration
+};
+
+UENUM(BlueprintType)
 enum class EHansaGoodUnit : uint8
 {
 	Kilogram,
@@ -258,7 +270,7 @@ protected:
 UCLASS(BlueprintType, meta = (
 	DisplayName = "Building definition",
 	HansaSchemaId = "Hansa.BuildingDefinition",
-	HansaSchemaVersion = "2"))
+	HansaSchemaVersion = "5"))
 class HANSA_API UHansaBuildingDefinition final : public UHansaDefinitionBase
 {
 	GENERATED_BODY()
@@ -276,6 +288,78 @@ public:
 
 	UClass* LoadPresentationActorClass() const;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction Menu", meta = (
+		DisplayName = "Show in construction menu",
+		ToolTip = "Includes this stable building definition in the player construction catalog.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true",
+		HansaAIAccess = "Generate", HansaMigration = "RequiresMigration", HansaSerialization = "Included",
+		HansaValidation = "Boolean"))
+	bool bShowInConstructionMenu = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction Menu", meta = (
+		DisplayName = "Construction category",
+		ToolTip = "Player-facing construction category. This controls grouping, never gameplay identity.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true",
+		HansaAIAccess = "Generate", HansaMigration = "RequiresMigration", HansaSerialization = "Included",
+		HansaValidation = "Enum"))
+	EHansaConstructionMenuCategory ConstructionMenuCategory = EHansaConstructionMenuCategory::Production;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction Menu", meta = (
+		DisplayName = "Construction menu order",
+		ToolTip = "Stable ascending order within the category or production chain.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true",
+		HansaAIAccess = "Generate", HansaMigration = "RequiresMigration", HansaSerialization = "Included",
+		HansaValidation = "NonNegative", HansaUnit = "Ordinal", HansaMin = "0", HansaMax = "2147483647"))
+	int32 ConstructionMenuOrder = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction Menu", meta = (
+		DisplayName = "Production chain output",
+		ToolTip = "Final Good.* output whose chain selector exposes this production building; empty outside Production.",
+		HansaRequired = "false", HansaReference = "Good", HansaBulkEditable = "false",
+		HansaAIAccess = "Generate", HansaMigration = "RequiresMigration", HansaSerialization = "Included",
+		HansaValidation = "ConstructionChain"))
+	FString ConstructionChainOutputGoodId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction Menu", meta = (
+		DisplayName = "Production chain stage",
+		ToolTip = "One-based position in the selected production chain.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true",
+		HansaAIAccess = "Generate", HansaMigration = "RequiresMigration", HansaSerialization = "Included",
+		HansaValidation = "ConstructionChain", HansaUnit = "Ordinal", HansaMin = "0", HansaMax = "32"))
+	int32 ConstructionChainStage = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction Menu", meta = (
+		DisplayName = "Production chain stage count",
+		ToolTip = "Expected member count for completeness validation; zero outside a production chain.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true",
+		HansaAIAccess = "Generate", HansaMigration = "RequiresMigration", HansaSerialization = "Included",
+		HansaValidation = "ConstructionChain", HansaUnit = "Count", HansaMin = "0", HansaMax = "32"))
+	int32 ConstructionChainStageCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction Menu", meta = (
+		DisplayName = "Required technology",
+		ToolTip = "Optional Technology.* that must be completed before direct construction is available.",
+		HansaRequired = "false", HansaReference = "Technology", HansaBulkEditable = "false",
+		HansaAIAccess = "Generate", HansaMigration = "RequiresMigration", HansaSerialization = "Included",
+		HansaValidation = "OptionalStableReference"))
+	FString RequiredConstructionTechnologyId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction Menu", meta = (
+		DisplayName = "Upgrade only",
+		ToolTip = "Shows the card and its causal lock reason but requires upgrade from another building rather than direct placement.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true",
+		HansaAIAccess = "Generate", HansaMigration = "RequiresMigration", HansaSerialization = "Included",
+		HansaValidation = "Boolean"))
+	bool bUpgradeOnly = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction Menu", meta = (
+		DisplayName = "Presentation purpose",
+		ToolTip = "Localized purpose text for buildings without recipes; recipe flows are always derived from Recipe definitions.",
+		HansaRequired = "false", HansaReference = "None", HansaBulkEditable = "true",
+		HansaAIAccess = "Suggest", HansaMigration = "Compatible", HansaSerialization = "Included",
+		HansaValidation = "Optional"))
+	FText ConstructionPresentationPurpose;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction", meta = (
 		DisplayName = "Construction costs",
@@ -284,7 +368,7 @@ public:
 		HansaReference = "Good",
 		HansaBulkEditable = "false",
 		HansaAIAccess = "Generate",
-		HansaMigration = "Compatible",
+		HansaMigration = "RequiresMigration",
 		HansaSerialization = "Included",
 		HansaValidation = "GoodAmounts"))
 	TArray<FHansaGoodAmount> ConstructionCosts;
@@ -477,10 +561,22 @@ public:
 		HansaReference = "None",
 		HansaBulkEditable = "true",
 		HansaAIAccess = "Generate",
-		HansaMigration = "Compatible",
+		HansaMigration = "RequiresMigration",
 		HansaSerialization = "Included",
 		HansaValidation = "Boolean"))
 	bool bRequiresRoad = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Logistics", meta = (
+		DisplayName = "Provides market access",
+		ToolTip = "Marks this completed building as a physical local-market hub. Its bound city inventory and adjacent connected roads become eligible endpoints for local deliveries and citizen access.",
+		HansaRequired = "true",
+		HansaReference = "None",
+		HansaBulkEditable = "true",
+		HansaAIAccess = "Generate",
+		HansaMigration = "RequiresMigration",
+		HansaSerialization = "Included",
+		HansaValidation = "MarketAccessProvider"))
+	bool bProvidesMarketAccess = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Placement", meta = (
 		DisplayName = "Requires shoreline",

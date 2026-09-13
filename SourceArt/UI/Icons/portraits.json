@@ -1,0 +1,34 @@
+[
+  {
+    "name": "worker",
+    "prompt": "Hansa production GUI portrait of a Hanseatic dock worker wearing a plain linen cap and simple work tunic, shoulders and head, short beard. Calm dignified expression, front three-quarter view. Original historical illustration, finely drawn engraved ink and warm sepia wash with restrained color. Palette Ink#202628, Oak#795137, Brass#C19A52, Linen#F2E9D8, Parchment#DFCFAF. Soft upper-left lighting. Isolated bust, real transparent alpha around complete silhouette, shoulder cut at bottom. No background rectangle or frame, no writing, no scene, no external shadow. Intended display112x112 pixels, choose closest supported native square size. Face readable at56px. Match existing Hansa citizen engraving style. ImageGen artwork will be proportionally resized and reviewed.",
+    "path": "C:\\Users\\Johan\\.codex\\generated_images\\01a08c0c-eb33-7c21-a40c-72e1bcc75b50\\exec-f6f80382-e288-45e2-8825-695544fdb8f4.png",
+    "master": "SourceArt\\UI\\Production\\production--worker-portrait--default--1254x1254--v2.png",
+    "native_size": [
+      1254,
+      1254
+    ],
+    "variants": [
+      56,
+      80,
+      112,
+      160
+    ]
+  },
+  {
+    "name": "citizen",
+    "prompt": "Hansa production GUI portrait of a Hanseatic town citizen wearing a plain linen cap and modest merchant tunic, shoulders and head, clean-shaven. Calm dignified expression, front three-quarter view. Original historical illustration, finely drawn engraved ink and warm sepia wash with restrained color. Palette Ink#202628, Oak#795137, Brass#C19A52, Linen#F2E9D8, Parchment#DFCFAF. Soft upper-left lighting. Isolated bust, real transparent alpha around complete silhouette, shoulder cut at bottom. No background rectangle or frame, no writing, no scene, no external shadow. Intended display112x112 pixels, choose closest supported native square size. Face readable at56px. Match existing Hansa citizen engraving style. ImageGen artwork will be proportionally resized and reviewed.",
+    "path": "C:\\Users\\Johan\\.codex\\generated_images\\01a08c0c-eb33-7c21-a40c-72e1bcc75b50\\exec-649fd8d7-0fb2-4e38-8853-c4d01c3af34c.png",
+    "master": "SourceArt\\UI\\Residence\\residence--citizen-portrait--default--1254x1254--v2.png",
+    "native_size": [
+      1254,
+      1254
+    ],
+    "variants": [
+      56,
+      80,
+      112,
+      160
+    ]
+  }
+]

@@ -25,6 +25,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hansa|Camera|Intent")
 	void SetPanIntent(FVector2D Value);
 
+    /** Screen delta is in pixels (positive Y down). Release clears pending drag. */
+    UFUNCTION(BlueprintCallable, Category = "Hansa|Camera|Intent")
+    void SetDragPanIntent(FVector2D PixelDelta, bool bActive);
+
+    UFUNCTION(BlueprintCallable, Category = "Hansa|Camera|Intent")
+    void SetDragRotateIntent(float HorizontalPixelDelta, bool bActive);
+
+    /** Ctrl+RMB orbit: X changes yaw, negative screen Y tilts the view upward. */
+    UFUNCTION(BlueprintCallable, Category = "Hansa|Camera|Intent")
+    void SetDragOrbitIntent(FVector2D PixelDelta, bool bActive);
+
 	UFUNCTION(BlueprintCallable, Category = "Hansa|Camera|Intent")
 	void SetRotateIntent(float Value);
 
@@ -47,6 +58,9 @@ public:
 	float GetCameraYawDegrees() const { return CameraState.YawDegrees; }
 
 	UFUNCTION(BlueprintPure, Category = "Hansa|Camera")
+	float GetCameraPitchDegrees() const { return CameraState.PitchDegrees; }
+
+	UFUNCTION(BlueprintPure, Category = "Hansa|Camera")
 	float GetZoomDistance() const { return CameraState.ZoomDistance; }
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|Camera", meta = (ClampMin = "0.0"))
@@ -57,6 +71,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|Camera", meta = (ClampMin = "0.0"))
 	float PanUnitsPerSecond = 2400.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|Camera", meta = (ClampMin = "0.0"))
+    float DragPanUnitsPerPixel = 10.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|Camera", meta = (ClampMin = "0.0"))
+    float DragRotationDegreesPerPixel = 0.25f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|Camera", meta = (ClampMin = "1.0"))
 	float FastPanMultiplier = 2.5f;
@@ -79,6 +99,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|Camera")
 	TObjectPtr<UCameraComponent> Camera;
 
+    Hansa::Game::FHansaStrategyCameraState GetViewState() const { return CameraState; }
+    void RestoreViewState(const Hansa::Game::FHansaStrategyCameraState& State);
+    void SetViewBounds(FVector2D Min, FVector2D Max);
+    void RestoreHomeBounds();
 private:
 	FVector2D GetMouseEdgePanIntent() const;
 	void ResolveMapBounds();
@@ -89,6 +113,9 @@ private:
 
 	Hansa::Game::FHansaStrategyCameraState CameraState;
 	Hansa::Game::FHansaStrategyCameraIntent PendingIntent;
+    bool bDragPanActive = false;
+    bool bDragRotateActive = false;
+    double LastCameraYawDiagnosticTime = -1.0;
 	FVector2D MapBoundsMin = FVector2D(-12000.0f, -8000.0f);
 	FVector2D MapBoundsMax = FVector2D(12000.0f, 8000.0f);
 };

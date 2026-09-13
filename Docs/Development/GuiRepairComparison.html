@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hansa GUI reference comparison</title>
+<style>
+body{margin:0;background:#152a35;color:#faf7ef;font:16px system-ui,sans-serif}header{padding:16px 24px;border-bottom:1px solid #c19a52}h1{font:26px Georgia,serif;margin:0 0 12px}p{max-width:100ch;line-height:1.5}select{font:inherit;padding:10px;margin:0 16px 8px 8px;background:#f2e9d8;color:#202628;border:1px solid #795137}select:focus-visible{outline:3px solid #c19a52}main{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px}section{min-width:0}h2{font-size:16px;font-weight:500;margin:0 0 8px}.pane{overflow:auto;height:65vh;background:#202628;border:1px solid #795137}.pane img{display:block;max-width:none;width:auto;height:auto}a{color:#dfcfaf}#finding{color:#dfcfaf}footer{padding:0 24px 20px}
+</style>
+<header>
+<h1>Hansa GUI reference comparison</h1>
+<label>Screen <select id="screen"></select></label>
+<label>Native capture <select id="profile"><option value="1920x1080-scale100-default">1080p · 100% · default</option><option value="1280x720-scale140-accessible">720p · 140% · high contrast, large text, reduced motion</option></select></label>
+<p id="finding"></p>
+<p>Both images retain their original pixel dimensions. Scroll each pane to inspect; no image is resized. Concept references have different aspect ratios and illustrative data, so this is a hierarchy and component comparison, not a pixel-difference test.</p>
+</header>
+<main><section><h2>Generated reference</h2><div class="pane"><img id="reference" alt="Generated visual reference"></div></section><section><h2>Native game capture</h2><div class="pane"><img id="native" alt="Actual native game GUI"></div></section></main>
+<footer><a href="GuiRepairSession.md">Implementation, evidence and open acceptance gates</a><p>Passing automation does not grant artistic approval or replace player usability testing. Generated reference pixels are not imported as shipping GUI.</p></footer>
+<script>
+const root='../Images/UI/';
+const screens=[
+['hud','HUD','GuiRepair/guirepair--screen--healthy--1536x1024--v1.png','Shared navy strip and compact action targets; live treasury, population, workforce, calendar and objective values. The reference’s extra minimap and invented data are not implemented.'],
+['inspector','Building inspector','GuiRepair/guirepair--inspector--healthy--1024x1536--v1.png','Navy identity header, result-first summary, flat groups, optional healthy diagnostics, one primary action and grouped secondary actions. Native values use the simulation recipe rather than the generated recipe.'],
+['construction','Construction','Construction/construction--composed--default--1536x1024--v2.png','Three native chain cards, arrows, resource selection and category tray. Native glyphs replace the reference’s painted building portraits; existing model and world-art quality is a separate gate.'],
+['city','City Overview','CityOverview/city-overview--composed--population-warning--1672x941--v1.png','Six compact summary cells and a two-column field layout. Detailed needs remain explicit text rather than invented meters. The reference’s tier illustrations and richly formatted needs ledger are not visually equivalent to the current implementation.'],
+['market','Market and selected good','MarketP25/market--screen--selected--1536x1024--v1.png','Native market rows, sortable controls, selected-good supply/demand and chart. Flexible scrolling reserves space for goods at small sizes; capped controls avoid blank space on larger displays. Reference food illustrations and dense ledger detailing remain an art/conformance difference.'],
+['trade','Trade network','hansa-ui-trade-map.png','Opaque native shell, actual route selection and scrollable stop controls. The current data supports a four-city schematic, not the geographic European map, coastline, route schedule and extra cities depicted in the reference.'],
+['research','Research','Research/research--composed--selected-active--1536x1024--v1.png','Three independently scrollable branches, live selected-node details and queue; stable native focus on refresh. Shared navy header and compact panel. Reference prerequisite connectors and illustrative symbols are not reproduced.'],
+['scenario','Scenario','Scenario/scenario--composed--active-progress--1536x1024--v1.png','Three victory-path cards and themed native progress bars; content scrolls beneath the header, while the main action stays available. The reference is an active-state concept; the capture opens the scenario briefing.'],
+['saveload','Save/load and preferences','SaveLoad/save-load--screen--selected-compatible--1536x1024--v1.png','Slot rail and selected metadata with persistent actions, shared header, settings and isolated confirmation navigation. Empty slots show an honest empty state; the concept’s screenshot thumbnails are not present.']
+];
+const choice=document.getElementById('screen');for(const [id,label] of screens){const o=document.createElement('option');o.value=id;o.textContent=label;choice.append(o);}
+function update(){const s=screens.find(x=>x[0]===choice.value);document.getElementById('reference').src=root+s[2];document.getElementById('native').src=root+'GuiRepair/Native/gui-'+document.getElementById('profile').value+'-'+s[0]+'.png';document.getElementById('finding').textContent=s[3];for(const p of document.querySelectorAll('.pane'))p.scrollTo(0,0);}
+choice.addEventListener('change',update);document.getElementById('profile').addEventListener('change',update);update();
+</script>
+</html>

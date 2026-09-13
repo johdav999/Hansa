@@ -38,6 +38,9 @@ bool FHansaResearchScreenSemanticFocusTest::RunTest(const FString&)
 	const auto Focus=Screen->GetControllerFocusOrder();
 	TestEqual(TEXT("Close is the first controller focus stop"),Focus[0],FString(TEXT("Research.Close")));
 	TestEqual(TEXT("Queue action is the final controller focus stop"),Focus.Last(),FString(TEXT("Research.Action.Queue")));
+    TestTrue(TEXT("Semantic branch selects the same root as its native tab"),Screen->ActivateSemanticId(TEXT("Research.Branch.1")));
+    TestEqual(TEXT("Production branch selects its technology"),Model->GetSnapshot().SelectedTechnologyId,FString(TEXT("Technology.Production.ImprovedMilling")));
+    TestFalse(TEXT("Unknown branch cannot mutate navigation"),Screen->ActivateSemanticId(TEXT("Research.Branch.9")));
 	TestTrue(TEXT("Semantic selection works"),Screen->ActivateSemanticId(TEXT("Research.Node.Technology_Commerce_MarketReports")));
 	TestTrue(TEXT("Queue semantic submits authoritative intent"),Screen->ActivateSemanticId(TEXT("Research.Action.Queue")));
 	TestEqual(TEXT("Queue intent carries stable technology ID"),Requested,FString(TEXT("Technology.Commerce.MarketReports")));

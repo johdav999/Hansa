@@ -1,0 +1,25 @@
+{
+  "cameraLocation": {
+    "x": 0,
+    "y": -120000,
+    "z": 1000000
+  },
+  "cameraRotation": {
+    "pitch": -83.14704469359518,
+    "yaw": 90.00000000000021,
+    "roll": 2.6655300211358345e-14
+  },
+  "cameraFOV": 90,
+  "grid": {
+    "spacingCm": 0,
+    "extentCm": 0,
+    "height": 0
+  },
+  "labeledActors": [],
+  "nativeDimensions": [
+    2825,
+    722
+  ],
+  "bytes": 1858978,
+  "status": "survey geometry baseline; no production materials, water, or city assembly"
+}

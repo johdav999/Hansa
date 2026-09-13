@@ -4,6 +4,7 @@
 #include "Containers/ArrayView.h"
 #include "Math/HansaFixedPoint.h"
 #include "Model/HansaIds.h"
+#include "Population/HansaConsumptionHistory.h"
 
 namespace Hansa::Simulation
 {
@@ -66,6 +67,7 @@ namespace Hansa::Simulation
 		int32 ConsecutiveDeclineTicks = 0;
 		int32 ResidentChangeLastTick = 0;
 		TArray<FHansaPopulationNeedState> Needs;
+        FHansaConsumptionHistory ConsumptionHistory;
 	};
 
 	/** Owning, explainable UI/automation view of one residence cohort. */
@@ -87,6 +89,7 @@ namespace Hansa::Simulation
 		int32 SatisfactionBasisPoints = 0;
 		int32 ResidentChangeLastTick = 0;
 		TArray<FHansaPopulationNeedState> Needs;
+        FHansaConsumptionProjection Consumption;
 	};
 
 	/** City-level population loop summary consumed directly by HUD, automation and diagnostics. */

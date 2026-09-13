@@ -18,7 +18,7 @@ namespace Hansa::Tests::Inventory
 	}
 
 	template <typename TEntityId>
-	TEntityId Entity(const uint64 Value)
+	TEntityId InventoryTestsEntity(const uint64 Value)
 	{
 		const THansaValueResult<TEntityId> Result = TEntityId::TryCreate(Value);
 		return Require(Result);
@@ -43,7 +43,7 @@ namespace Hansa::Tests::Inventory
 		TArray<FHansaInventoryStockInitialization> Stock = {})
 	{
 		FHansaInventoryInitialization Result;
-		Result.Id = Entity<FHansaInventoryId>(InventoryValue);
+		Result.Id = InventoryTestsEntity<FHansaInventoryId>(InventoryValue);
 		Result.OwnerKind = EHansaInventoryOwnerKind::City;
 		Result.CityId = Require(FHansaCityDefinitionId::TryParse(CityId));
 		Result.Capacity = FHansaQuantity::FromRaw(Capacity);
@@ -61,9 +61,9 @@ namespace Hansa::Tests::Inventory
 		TArray<FHansaInventoryStockInitialization> Stock = {})
 	{
 		FHansaInventoryInitialization Result;
-		Result.Id = Entity<FHansaInventoryId>(InventoryValue);
+		Result.Id = InventoryTestsEntity<FHansaInventoryId>(InventoryValue);
 		Result.OwnerKind = Kind;
-		Result.BuildingId = Entity<FHansaBuildingId>(BuildingValue);
+		Result.BuildingId = InventoryTestsEntity<FHansaBuildingId>(BuildingValue);
 		Result.Capacity = FHansaQuantity::FromRaw(Capacity);
 		Result.AcceptedGoods = MoveTemp(Accepted);
 		Result.InitialStock = MoveTemp(Stock);
@@ -180,13 +180,13 @@ bool FHansaInventoryInitializationAndQueriesTest::RunTest(const FString& Paramet
 	TestEqual(TEXT("Discovery order is canonicalized by inventory ID"), Projection[0].Id.GetValue(), static_cast<uint64>(1));
 	TestEqual(TEXT("City used capacity is projected"), Projection[0].UsedCapacity.GetRawValue(), static_cast<int64>(6'000));
 	TestEqual(TEXT("City free capacity is projected"), Projection[0].FreeCapacity.GetRawValue(), static_cast<int64>(4'000));
-	const TOptional<FHansaQuantity> Capacity = Access.QueryCapacity(Entity<FHansaInventoryId>(1));
+	const TOptional<FHansaQuantity> Capacity = Access.QueryCapacity(InventoryTestsEntity<FHansaInventoryId>(1));
 	TestTrue(TEXT("Typed capacity query resolves an inventory"), Capacity.IsSet());
 	if (Capacity.IsSet())
 	{
 		TestEqual(TEXT("Typed capacity query returns fixed-point capacity"), Capacity->GetRawValue(), static_cast<int64>(10'000));
 	}
-	const TOptional<FHansaQuantity> Reserved = Access.QueryReservedAmount(Entity<FHansaInventoryId>(1));
+	const TOptional<FHansaQuantity> Reserved = Access.QueryReservedAmount(InventoryTestsEntity<FHansaInventoryId>(1));
 	TestTrue(TEXT("Typed reserved-amount query resolves an inventory"), Reserved.IsSet());
 	if (Reserved.IsSet())
 	{
@@ -194,7 +194,7 @@ bool FHansaInventoryInitializationAndQueriesTest::RunTest(const FString& Paramet
 	}
 
 	const TOptional<FHansaInventoryStockProjection> Grain = Access.QueryStock(
-		Entity<FHansaInventoryId>(1), Good(TEXT("Good.Grain")));
+		InventoryTestsEntity<FHansaInventoryId>(1), Good(TEXT("Good.Grain")));
 	TestTrue(TEXT("Typed stock query resolves accepted stock"), Grain.IsSet());
 	if (Grain.IsSet())
 	{
@@ -202,10 +202,10 @@ bool FHansaInventoryInitializationAndQueriesTest::RunTest(const FString& Paramet
 		TestEqual(TEXT("Initial reserved amount is zero"), Grain->Reserved.GetRawValue(), static_cast<int64>(0));
 	}
 	const TOptional<FHansaInventoryStockProjection> AcceptedButEmpty = Access.QueryStock(
-		Entity<FHansaInventoryId>(2), Good(TEXT("Good.Bread")));
+		InventoryTestsEntity<FHansaInventoryId>(2), Good(TEXT("Good.Bread")));
 	TestTrue(TEXT("Accepted goods without stock return a zero-valued projection"), AcceptedButEmpty.IsSet());
 	const TOptional<FHansaInventoryStockProjection> NotAccepted = Access.QueryStock(
-		Entity<FHansaInventoryId>(2), Good(TEXT("Good.Fish")));
+		InventoryTestsEntity<FHansaInventoryId>(2), Good(TEXT("Good.Fish")));
 	TestFalse(TEXT("Goods not accepted by an inventory do not resolve as stock"), NotAccepted.IsSet());
 	TestProjectionInvariants(*this, Access);
 	return !HasAnyErrors();
@@ -274,8 +274,8 @@ bool FHansaInventoryAtomicTransfersTest::RunTest(const FString& Parameters)
 	using namespace Hansa::Simulation;
 	using namespace Hansa::Tests::Inventory;
 	FHansaInventoryLedger Ledger = MakeLedger();
-	const FHansaInventoryId City = Entity<FHansaInventoryId>(1);
-	const FHansaInventoryId Warehouse = Entity<FHansaInventoryId>(2);
+	const FHansaInventoryId City = InventoryTestsEntity<FHansaInventoryId>(1);
+	const FHansaInventoryId Warehouse = InventoryTestsEntity<FHansaInventoryId>(2);
 	const FHansaGoodId Grain = Good(TEXT("Good.Grain"));
 	const FHansaGoodId Fish = Good(TEXT("Good.Fish"));
 
@@ -355,11 +355,11 @@ bool FHansaInventoryCompetingReservationsTest::RunTest(const FString& Parameters
 	using namespace Hansa::Simulation;
 	using namespace Hansa::Tests::Inventory;
 	FHansaInventoryLedger Ledger = MakeLedger();
-	const FHansaInventoryId City = Entity<FHansaInventoryId>(1);
-	const FHansaInventoryId Warehouse = Entity<FHansaInventoryId>(2);
+	const FHansaInventoryId City = InventoryTestsEntity<FHansaInventoryId>(1);
+	const FHansaInventoryId Warehouse = InventoryTestsEntity<FHansaInventoryId>(2);
 	const FHansaGoodId Grain = Good(TEXT("Good.Grain"));
-	const FHansaReservationId FirstReservation = Entity<FHansaReservationId>(1);
-	const FHansaReservationId SecondReservation = Entity<FHansaReservationId>(2);
+	const FHansaReservationId FirstReservation = InventoryTestsEntity<FHansaReservationId>(1);
+	const FHansaReservationId SecondReservation = InventoryTestsEntity<FHansaReservationId>(2);
 
 	TestTrue(TEXT("First reservation claims stock"), Ledger.TryReserve(
 		City, FirstReservation, Grain, FHansaQuantity::FromRaw(3'000), Tick(20), 1).IsSuccess());
@@ -415,8 +415,8 @@ bool FHansaInventoryPropertyInvariantTest::RunTest(const FString& Parameters)
 	using namespace Hansa::Tests::Inventory;
 	FHansaInventoryLedger Forward = MakeLedger(false, 16);
 	FHansaInventoryLedger Reversed = MakeLedger(true, 16);
-	const FHansaInventoryId City = Entity<FHansaInventoryId>(1);
-	const FHansaInventoryId Warehouse = Entity<FHansaInventoryId>(2);
+	const FHansaInventoryId City = InventoryTestsEntity<FHansaInventoryId>(1);
+	const FHansaInventoryId Warehouse = InventoryTestsEntity<FHansaInventoryId>(2);
 	const FHansaGoodId Grain = Good(TEXT("Good.Grain"));
 	uint64 RandomState = 0x9e3779b97f4a7c15ULL;
 	int64 ExplicitlyCreated = 0;
@@ -497,14 +497,14 @@ bool FHansaInventorySimulationIntegrationTest::RunTest(const FString& Parameters
 			FHansaSimulationClock::TryCreate(Version, Tick(0));
 		Initialization.Clock = Require(ClockResult);
 		Initialization.CampaignSeed = 77;
-		Initialization.Houses.Add({ Entity<FHansaHouseId>(1), FHansaMoney::FromRaw(100'000) });
+		Initialization.Houses.Add({ InventoryTestsEntity<FHansaHouseId>(1), FHansaMoney::FromRaw(100'000) });
 		Initialization.Cities.Add({
 			Require(FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck"))),
 			FHansaQuantity::FromRaw(6'000) });
 		Initialization.Buildings.Add({
-			Entity<FHansaBuildingId>(10),
+			InventoryTestsEntity<FHansaBuildingId>(10),
 			Require(FHansaBuildingTypeId::TryParse(TEXT("Building.Warehouse"))),
-			Entity<FHansaHouseId>(1),
+			InventoryTestsEntity<FHansaHouseId>(1),
 			FHansaRate::FromPartsPerMillion(FHansaRate::Scale) });
 		const FHansaGoodId Grain = Good(TEXT("Good.Grain"));
 		FHansaInventoryInitialization City = CityInventory(

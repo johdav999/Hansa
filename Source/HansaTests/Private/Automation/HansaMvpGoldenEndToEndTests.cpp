@@ -73,6 +73,35 @@ bool FHansaMvpGoldenEndToEndTest::RunTest(const FString& Parameters)
 		return false;
 	}
 	TestEqual(TEXT("Reset reproduces the initial state hash"), Reset->GetStringField(TEXT("stateHash")), InitialHash);
+	TSharedRef<FJsonObject> QueryPayload = MakeShared<FJsonObject>();
+	TSharedRef<FJsonObject> QueryResult = MakeShared<FJsonObject>();
+	QueryPayload->SetStringField(TEXT("query"), TEXT("building.market_access"));
+	QueryPayload->SetNumberField(TEXT("buildingId"), 3);
+	if (!TestTrue(TEXT("Automation reads proactive bakery market access from the authoritative projection"),
+		Fixture.Query(QueryPayload, QueryResult, Error)))
+	{
+		AddError(Error);
+		return false;
+	}
+	const TSharedPtr<FJsonObject> BakeryAccess = QueryResult->GetObjectField(TEXT("building"));
+	TestTrue(TEXT("Typed building access reports the selected physical market"),
+		BakeryAccess->GetBoolField(TEXT("connected")) &&
+		BakeryAccess->GetIntegerField(TEXT("selectedMarketBuildingId")) == 14 &&
+		BakeryAccess->GetIntegerField(TEXT("roadDistanceCells")) > 0);
+	QueryPayload = MakeShared<FJsonObject>(); QueryResult = MakeShared<FJsonObject>();
+	QueryPayload->SetStringField(TEXT("query"), TEXT("logistics.path"));
+	QueryPayload->SetNumberField(TEXT("sourceInventoryId"), 103);
+	QueryPayload->SetNumberField(TEXT("destinationInventoryId"), 1);
+	TestTrue(TEXT("Automation reads the same local road path from the runtime host"),
+		Fixture.Query(QueryPayload, QueryResult, Error));
+	TestTrue(TEXT("Typed logistics path includes route cells and the selected market"),
+		QueryResult->GetBoolField(TEXT("connected")) &&
+		QueryResult->GetIntegerField(TEXT("selectedMarketBuildingId")) == 14 &&
+		!QueryResult->GetArrayField(TEXT("routeCells")).IsEmpty());
+	QueryPayload = MakeShared<FJsonObject>(); QueryResult = MakeShared<FJsonObject>();
+	QueryPayload->SetStringField(TEXT("query"), TEXT("logistics.jobs"));
+	TestTrue(TEXT("Automation exposes typed local-delivery jobs"), Fixture.Query(QueryPayload, QueryResult, Error));
+	TestTrue(TEXT("Job query is an explicit array even before advancement"), QueryResult->HasTypedField<EJson::Array>(TEXT("jobs")));
 
 	FHansaSemanticUiRegistry Registry;
 	TSharedRef<SHansaStrategicAutomationScreen> Screen = SNew(SHansaStrategicAutomationScreen, Fixture, Registry);

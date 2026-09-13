@@ -5,6 +5,7 @@
 #include "Styling/SlateTypes.h"
 #include "UI/HansaCityOverviewPresentationModel.h"
 #include "UI/HansaHudSemantics.h"
+#include "UI/HansaUiComponents.h"
 #include "Widgets/SCompoundWidget.h"
 #include "Widgets/Views/SListView.h"
 
@@ -27,13 +28,17 @@ namespace Hansa::UI
 			SLATE_ARGUMENT(UHansaCityOverviewPresentationModel*, Model)
 			SLATE_ARGUMENT(UHansaMarketTablePresentationModel*, MarketTableModel)
 			SLATE_ARGUMENT(FIntPoint, InitialViewportSize)
+            SLATE_ARGUMENT(FUiPreferences, Preferences)
 		SLATE_END_ARGS()
 
 		~SHansaCityOverview();
 		void Construct(const FArguments& Arguments);
 		void SetPresentationSize(FIntPoint Size);
+		bool IsFullMarket() const { return bFullMarket; }
 		bool ActivateSemanticId(const FString& SemanticId);
+        TSharedPtr<SHansaMarketTable> GetMarketTable() const { return MarketTableWidget; }
 		bool FocusSemanticId(const FString& SemanticId);
+        TSharedPtr<SWidget> ResolveSemanticWidget(const FString& Id) const;
 		[[nodiscard]] TArray<FHansaHudSemanticNode> GetSemanticSnapshot() const;
 		[[nodiscard]] TArray<FString> GetControllerFocusOrder() const;
 #if WITH_DEV_AUTOMATION_TESTS
@@ -44,6 +49,7 @@ namespace Hansa::UI
 		virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
 
 	private:
+        TSharedPtr<class SHansaAction> VisitButton; 
 		void Refresh(const FHansaCityOverviewSnapshot& Snapshot, uint64 Revision);
 		TSharedRef<ITableRow> GenerateRow(TSharedPtr<FHansaCityOverviewRowPresentation> Item, const TSharedRef<STableViewBase>& OwnerTable);
 		void RebuildListItems(const FHansaCityOverviewSnapshot& Snapshot);
@@ -58,7 +64,15 @@ namespace Hansa::UI
 		static FString RevealSemanticId(FName StableId);
 		static FString TabSemanticId(EHansaCityOverviewTab Tab);
 
-		TWeakObjectPtr<UHansaCityOverviewPresentationModel> Model;
+		FUiPreferences Preferences;
+        FTableRowStyle RowStyle;
+        FTableViewStyle ListStyle;
+        FString PendingFocus;
+        bool bFullMarket=false;
+        TSharedPtr<SHansaAction> MarketDetailToggle;
+        TSharedPtr<SHansaAction> LubeckButton, RostockButton;
+        TSharedPtr<STextBlock> ReportText;
+        TWeakObjectPtr<UHansaCityOverviewPresentationModel> Model;
 		TWeakObjectPtr<UHansaMarketTablePresentationModel> MarketTableModel;
 		FDelegateHandle ChangedHandle;
 		uint64 PresentedRevision = 0;

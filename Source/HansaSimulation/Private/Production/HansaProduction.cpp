@@ -8,6 +8,73 @@
 
 namespace Hansa::Simulation
 {
+	bool FHansaProductionExecutor::SynchronizeCompletedBuildings(
+		TArray<FHansaProductionState>& Productions,
+		const TArray<FHansaBuildingState>& Buildings,
+		const FHansaPlacementState& Placement,
+		FHansaInventoryLedger& InventoryLedger,
+		const FHansaEconomicRegistry& Registry)
+	{
+		for (const auto& Building : Buildings)
+		{
+			// Scenario-authored prebuilt units have their own explicit production setup.
+			// Only buildings that actually passed through player construction need activation/repair.
+			if (Building.ConstructionState != EHansaConstructionState::Completed || Building.ConstructionElapsedTicks <= 0 ||
+				Productions.ContainsByPredicate([&](const auto& P) { return P.BuildingId == Building.Id; })) continue;
+			const auto* Definition = Registry.FindBuilding(Building.DefinitionId.ToString());
+			const auto* Placed = Placement.FindPlacement(Building.Id);
+			if (!Definition || Definition->RecipeIds.IsEmpty() || !Placed) continue;
+			// The first authored recipe is the default for a newly activated building.
+			// Existing scenario/save recipe choices, activity and progress are preserved.
+			const auto RecipeId = FHansaRecipeId::TryParse(Definition->RecipeIds[0]);
+			if (!RecipeId || !Registry.FindRecipe(Definition->RecipeIds[0]) ||
+				Definition->StorageCapacityMilliUnits <= 0) return false;
+			uint64 ProductionValue = 0;
+			for (const auto& P : Productions) ProductionValue = FMath::Max(ProductionValue, P.Id.GetValue());
+			if (ProductionValue == TNumericLimits<uint64>::Max()) return false;
+			const auto ProductionId = FHansaProductionId::TryCreate(ProductionValue + 1);
+			if (!ProductionId) return false;
+			const auto Inventories = InventoryLedger.CreateReadOnlyAccess().BuildProjection();
+			FHansaInventoryId BufferId;
+			uint64 InventoryValue = 0;
+			for (const auto& I : Inventories)
+			{
+				InventoryValue = FMath::Max(InventoryValue, I.Id.GetValue());
+				if (!BufferId.IsValid() && I.OwnerKind == EHansaInventoryOwnerKind::Building &&
+					I.BuildingId == Building.Id) BufferId = I.Id;
+			}
+			if (!BufferId.IsValid())
+			{
+				if (InventoryValue == TNumericLimits<uint64>::Max()) return false;
+				const auto NewId = FHansaInventoryId::TryCreate(InventoryValue + 1);
+				if (!NewId) return false;
+				FHansaInventoryInitialization Buffer;
+				Buffer.Id = NewId.Value;
+				Buffer.OwnerKind = EHansaInventoryOwnerKind::Building;
+				Buffer.BuildingId = Building.Id;
+				Buffer.Capacity = FHansaQuantity::FromRaw(Definition->StorageCapacityMilliUnits);
+				for (const auto& Good : Registry.GetGoods())
+				{
+					const auto Id = FHansaGoodId::TryParse(Good.StableId);
+					if (!Id) return false;
+					Buffer.AcceptedGoods.Add(Id.Value);
+				}
+				if (!InventoryLedger.TryAddEmptyInventory(MoveTemp(Buffer))) return false;
+				BufferId = NewId.Value;
+			}
+			FHansaProductionState Production;
+			Production.Id = ProductionId.Value;
+			Production.BuildingId = Building.Id;
+			// Building-recipe city is derived from placement; CityId is reserved for background supply.
+			Production.RecipeId = RecipeId.Value;
+			Production.InputInventoryId = BufferId;
+			Production.OutputInventoryId = BufferId;
+			Production.bUsesCityWorkforce = true;
+			Productions.Add(MoveTemp(Production)); // Monotonic IDs retain canonical ordering.
+		}
+		return true;
+	}
+
 	namespace
 	{
 		const FHansaBuildingState* FindProductionBuilding(
@@ -332,6 +399,26 @@ namespace Hansa::Simulation
 		}
 	}
 
+	int32 CalculateWorkforceAdjustedCycleTicks(
+		const int32 BaseCycleTicks,
+		const int32 AllocatedLaborerWorkforce,
+		const int32 RequiredLaborerWorkforce,
+		const int32 AllocatedArtisanWorkforce,
+		const int32 RequiredArtisanWorkforce)
+	{
+		if (BaseCycleTicks <= 0) return 0;
+		const int64 Required = static_cast<int64>(FMath::Max(0, RequiredLaborerWorkforce)) +
+			FMath::Max(0, RequiredArtisanWorkforce);
+		if (Required <= 0) return BaseCycleTicks;
+		const int64 Allocated = static_cast<int64>(FMath::Clamp(
+			AllocatedLaborerWorkforce, 0, FMath::Max(0, RequiredLaborerWorkforce))) +
+			FMath::Clamp(AllocatedArtisanWorkforce, 0, FMath::Max(0, RequiredArtisanWorkforce));
+		if (Allocated <= 0) return 0;
+		const int64 Numerator = static_cast<int64>(BaseCycleTicks) * Required;
+		const int64 Adjusted = (Numerator + Allocated - 1) / Allocated;
+		return static_cast<int32>(FMath::Min<int64>(Adjusted, TNumericLimits<int32>::Max()));
+	}
+
 	void FHansaProductionExecutor::AdvanceOneTick(
 		TArray<FHansaProductionState>& Productions,
 		uint64& NextReservationValue,
@@ -377,21 +464,23 @@ namespace Hansa::Simulation
 					AddBlockerEventIfChanged(PreviousBlocker, Production, OutEvents);
 					continue;
 				}
-				CycleTicks = Recipe->CycleTicks;
 				const int32 RequiredLaborers = FMath::Max(Recipe->LaborerWorkforce, BuildingDefinition->LaborerWorkforce);
 				const int32 RequiredArtisans = FMath::Max(Recipe->ArtisanWorkforce, BuildingDefinition->ArtisanWorkforce);
-				if (Production.AllocatedLaborerWorkforce < RequiredLaborers)
+				const int32 AllocatedWorkforce =
+					FMath::Min(FMath::Max(0, Production.AllocatedLaborerWorkforce), RequiredLaborers) +
+					FMath::Min(FMath::Max(0, Production.AllocatedArtisanWorkforce), RequiredArtisans);
+				if (RequiredLaborers + RequiredArtisans > 0 && AllocatedWorkforce <= 0)
 				{
-					SetBlocker(Production, EHansaProductionBlocker::InsufficientLaborerWorkforce);
+					SetBlocker(Production, RequiredLaborers > 0
+						? EHansaProductionBlocker::InsufficientLaborerWorkforce
+						: EHansaProductionBlocker::InsufficientArtisanWorkforce);
 					AddBlockerEventIfChanged(PreviousBlocker, Production, OutEvents);
 					continue;
 				}
-				if (Production.AllocatedArtisanWorkforce < RequiredArtisans)
-				{
-					SetBlocker(Production, EHansaProductionBlocker::InsufficientArtisanWorkforce);
-					AddBlockerEventIfChanged(PreviousBlocker, Production, OutEvents);
-					continue;
-				}
+				CycleTicks = CalculateWorkforceAdjustedCycleTicks(
+					Recipe->CycleTicks,
+					Production.AllocatedLaborerWorkforce, RequiredLaborers,
+					Production.AllocatedArtisanWorkforce, RequiredArtisans);
 				if (Production.ProgressTicks == 0 && !Recipe->Inputs.IsEmpty() &&
 					!TryReserveInputs(Production, *Recipe, InventoryLedger, NextReservationValue, Tick))
 				{

@@ -1,0 +1,280 @@
+{
+  "capture": "Unreal Slate native viewport; no resampling",
+  "date": "2026-09-09",
+  "resolutions": [
+    [
+      1280,
+      720
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "runs": [
+    "20260909-071747786-p23-native-1280-720",
+    "20260909-071816240-p23-native-1920-1080"
+  ],
+  "files": [
+    {
+      "file": "hud-1280x720-accessible.png",
+      "bytes": 833350,
+      "sha256": "425318333752aa6a32ac503448e6affd4eb0c6e6ca72a428c1294f6ee2da55b2"
+    },
+    {
+      "file": "hud-1280x720-accessible.tsv",
+      "bytes": 7180,
+      "sha256": "45225c9219a4c07439d5e6b88da11fbd461d4adb78a07e7b07f992ac180b7c9a"
+    },
+    {
+      "file": "hud-1280x720-actions.png",
+      "bytes": 857588,
+      "sha256": "0b0a09baee775ffdb5afc906a6fcd920cedcdc29dac77ce6e593b55c1d0feff0"
+    },
+    {
+      "file": "hud-1280x720-actions.tsv",
+      "bytes": 9550,
+      "sha256": "ca5a0b2bc52b3deca0a1212ef8a24d33e59260e927a9f08f85465e9d2a548ac0"
+    },
+    {
+      "file": "hud-1280x720-alert.png",
+      "bytes": 845187,
+      "sha256": "15f183d5941411fd188f566b71a281015aa7f22f1fc55d0ccad3d1ee4f8d016d"
+    },
+    {
+      "file": "hud-1280x720-alert.tsv",
+      "bytes": 6658,
+      "sha256": "f5743239364a5007956ae196a71ae6d0717c34b5583e3f102ec635eddf8cebbd"
+    },
+    {
+      "file": "hud-1280x720-cause.png",
+      "bytes": 864250,
+      "sha256": "576d03703024f8cdb6079503b37fe54182390e7f688fae47b321c942fa9e25a9"
+    },
+    {
+      "file": "hud-1280x720-cause.tsv",
+      "bytes": 9552,
+      "sha256": "72edabcdcb7a955d07fbb4b53c429a26d08b80723fdbbf264838ce46857d1e91"
+    },
+    {
+      "file": "hud-1280x720-default.png",
+      "bytes": 918326,
+      "sha256": "49e265b8c0f4c491b1db3d169899456c80cbd2e4bc817359fbfd7dfae3cbc308"
+    },
+    {
+      "file": "hud-1280x720-default.tsv",
+      "bytes": 7624,
+      "sha256": "86e1bbe599acc6961f5482ca071d25f01f5f3142b102b2736445540d38f6d295"
+    },
+    {
+      "file": "hud-1280x720-empty.png",
+      "bytes": 817565,
+      "sha256": "8247fea76373518408b175116238b4eeb5883b879cf3a646d64de1a952fadfe0"
+    },
+    {
+      "file": "hud-1280x720-empty.tsv",
+      "bytes": 5794,
+      "sha256": "d2dfa84e3caf64617d8f7da514598bb67431469fbb8cbd54c0b353a022bbb927"
+    },
+    {
+      "file": "hud-1280x720-error.png",
+      "bytes": 822340,
+      "sha256": "57091f1fdf99a6c9de712a6a849439f9c2a3ad2ec80fd614aa9fee949b6688a4"
+    },
+    {
+      "file": "hud-1280x720-error.tsv",
+      "bytes": 6004,
+      "sha256": "9c98a9e35a61ab57690b245083b3cd9b91a040bbb5bcf77d003d6144687ff825"
+    },
+    {
+      "file": "hud-1280x720-history.png",
+      "bytes": 853004,
+      "sha256": "5f4bc0b16c5527abe0c32200b3f720ed5e0f8762cc5d9a919e56f813f91bec9e"
+    },
+    {
+      "file": "hud-1280x720-history.tsv",
+      "bytes": 9608,
+      "sha256": "afad03aa821e725eb61aaf134856d93b984d7fac9ba44c60a385808cf6ca89d9"
+    },
+    {
+      "file": "hud-1280x720-loading.png",
+      "bytes": 820771,
+      "sha256": "d11beee92386d981d6b4039ef5d533b43012dacd13dfa2857b71ca673adf95dd"
+    },
+    {
+      "file": "hud-1280x720-loading.tsv",
+      "bytes": 5934,
+      "sha256": "c66c1e592df7a4adffab5d54fd16a99d4f70565e625ddf8e18586a103c1d99a7"
+    },
+    {
+      "file": "hud-1280x720-localized.png",
+      "bytes": 825969,
+      "sha256": "64149cb8cfd5b34197f0d52e642f7553075dd96355aa2808d3aacd4422ef4dcd"
+    },
+    {
+      "file": "hud-1280x720-localized.tsv",
+      "bytes": 7266,
+      "sha256": "c2fc011a39c877f1384e9640f87b2cc3e55209c784eb8fd5209baf463cfbc601"
+    },
+    {
+      "file": "hud-1280x720-production.png",
+      "bytes": 870551,
+      "sha256": "3a32fe3bbdc6c1e9d06b6705de622c5583fa6b3db0c04ade9ccb831943d770bc"
+    },
+    {
+      "file": "hud-1280x720-production.tsv",
+      "bytes": 9552,
+      "sha256": "72edabcdcb7a955d07fbb4b53c429a26d08b80723fdbbf264838ce46857d1e91"
+    },
+    {
+      "file": "hud-1280x720-residence.png",
+      "bytes": 849460,
+      "sha256": "3ec6fd1c201c9235cf2269571be034f5842c8048b630df4c19ac44d664f49c1c"
+    },
+    {
+      "file": "hud-1280x720-residence.tsv",
+      "bytes": 10452,
+      "sha256": "4571f01ea31c797423f2df62edefc4593461e69c82154c4fdf6d3f9b9405b80e"
+    },
+    {
+      "file": "hud-1280x720-speed.png",
+      "bytes": 916774,
+      "sha256": "25f7939c6c02ee7b4bb6a3823e49a838b230db4494758e7b4fe7d92217f6f7ae"
+    },
+    {
+      "file": "hud-1280x720-speed.tsv",
+      "bytes": 7626,
+      "sha256": "6044fa9323abad08ba27e28b6e940524a1d40c8ebbc707f68b48353a7aa09909"
+    },
+    {
+      "file": "hud-1920x1080-accessible.png",
+      "bytes": 1710088,
+      "sha256": "3f3ff3efed207297145275c8fba49a210e446d11d08fbe769664169bcb8bbd3c"
+    },
+    {
+      "file": "hud-1920x1080-accessible.tsv",
+      "bytes": 7230,
+      "sha256": "c1013de03d80edb7cdc99b378927db723263e330aae2d5e48b86868fc74ffdf5"
+    },
+    {
+      "file": "hud-1920x1080-actions.png",
+      "bytes": 1768165,
+      "sha256": "6ce356ac4cac843ed3667c4778e900e5e5473c1715d8f7b53e324234f714dad2"
+    },
+    {
+      "file": "hud-1920x1080-actions.tsv",
+      "bytes": 9656,
+      "sha256": "e9df653e4371413ef5a7702bb172597122373a79f7396bed490c2dd7abe15acd"
+    },
+    {
+      "file": "hud-1920x1080-alert.png",
+      "bytes": 1722624,
+      "sha256": "42622e9059654c1f4840e895754db805a0fcccfc1617781c598550caef160ab3"
+    },
+    {
+      "file": "hud-1920x1080-alert.tsv",
+      "bytes": 6718,
+      "sha256": "dd49d8567efe018a06f9f078c601feeef783195c0b4df3df89a63c1e8039cac8"
+    },
+    {
+      "file": "hud-1920x1080-cause.png",
+      "bytes": 1787314,
+      "sha256": "a4c07cb7f62301861887861cffaec0c6769e66e6d2d4145fc97814552d18ae6a"
+    },
+    {
+      "file": "hud-1920x1080-cause.tsv",
+      "bytes": 9660,
+      "sha256": "20878f83d1e97939d01f9e0d59201fd7a697ccdd8e1cac88d923202e18b88097"
+    },
+    {
+      "file": "hud-1920x1080-default.png",
+      "bytes": 1967504,
+      "sha256": "1287a7d885b080f3fe4183cee8efbd461841edbf33cb50e5b8a1ffce97ac0f36"
+    },
+    {
+      "file": "hud-1920x1080-default.tsv",
+      "bytes": 7714,
+      "sha256": "0ab5978e2ef494309533788f24161963311066972362054bd1aabdc9c0942913"
+    },
+    {
+      "file": "hud-1920x1080-empty.png",
+      "bytes": 1684901,
+      "sha256": "30bac0979f013704b63ba324e84f41e484e9f25c850b3e28220209e2f9bfc992"
+    },
+    {
+      "file": "hud-1920x1080-empty.tsv",
+      "bytes": 5852,
+      "sha256": "f7eb48fd568d8c68cb34846d93324d29974de1861c3c88e0d9fe34d65b699ccb"
+    },
+    {
+      "file": "hud-1920x1080-error.png",
+      "bytes": 1691810,
+      "sha256": "749f8adbd15c4493a0cc4b93498b6d87f67161625c09113b3d1edbfd61e645bd"
+    },
+    {
+      "file": "hud-1920x1080-error.tsv",
+      "bytes": 6062,
+      "sha256": "035bb070aa77503c4b7fff58dc5c948c370d82e82eed625b58f31fc45be5a496"
+    },
+    {
+      "file": "hud-1920x1080-history.png",
+      "bytes": 1756875,
+      "sha256": "4fb088eec23e3078e8f5ed5a65c710f03f5bb048b57089f3c34c71bf3a7a8706"
+    },
+    {
+      "file": "hud-1920x1080-history.tsv",
+      "bytes": 9714,
+      "sha256": "b0df4653ba6b8b68621ea1d3a41d0bc51cf1d06e0acf8377a1e4b8e4373f94ff"
+    },
+    {
+      "file": "hud-1920x1080-loading.png",
+      "bytes": 1688520,
+      "sha256": "783d5160cbecc1349e6f884bdee2211f1e5ed86062fe8d2b1c8cce87d09ff324"
+    },
+    {
+      "file": "hud-1920x1080-loading.tsv",
+      "bytes": 5992,
+      "sha256": "358a83370d4f6d121c2ea6d413ff15c5002d77d80381628956aa269b53b63f74"
+    },
+    {
+      "file": "hud-1920x1080-localized.png",
+      "bytes": 1687068,
+      "sha256": "f67dac7b6f14dedf462acee5c775d087b90c3a2fd7e8b511338fc4007e5a8b1d"
+    },
+    {
+      "file": "hud-1920x1080-localized.tsv",
+      "bytes": 7316,
+      "sha256": "8c68bef57c567edf1897e003b65f9841583bf73de661d718ac879fda4514070d"
+    },
+    {
+      "file": "hud-1920x1080-production.png",
+      "bytes": 1813647,
+      "sha256": "182d8e0d6176c0662972161e15ab0345d8bdb31903b4c148cd4507bc526c49dd"
+    },
+    {
+      "file": "hud-1920x1080-production.tsv",
+      "bytes": 9660,
+      "sha256": "20878f83d1e97939d01f9e0d59201fd7a697ccdd8e1cac88d923202e18b88097"
+    },
+    {
+      "file": "hud-1920x1080-residence.png",
+      "bytes": 1772212,
+      "sha256": "e9f2f8da16978c537bcea38bab1e6879baf3f0af6c756585c594b6261f4b7771"
+    },
+    {
+      "file": "hud-1920x1080-residence.tsv",
+      "bytes": 10576,
+      "sha256": "6efc05c2e16dca48019b00ad70c85be680bc375f3b48da20fc3e6ca2790ccb39"
+    },
+    {
+      "file": "hud-1920x1080-speed.png",
+      "bytes": 1970826,
+      "sha256": "4a2d1787967f1930ab148dfbd550aeb756d34f9d31133b7b3f7558245ba56322"
+    },
+    {
+      "file": "hud-1920x1080-speed.tsv",
+      "bytes": 7716,
+      "sha256": "3bf82cea26daa22e2825f2a640897543df9bdc551e9c5b401f60953a55f2c102"
+    }
+  ]
+}

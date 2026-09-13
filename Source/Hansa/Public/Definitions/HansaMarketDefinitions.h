@@ -17,28 +17,28 @@ struct HANSA_API FHansaMarketGoodProfile
 	FString GoodId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market", meta = (
-		DisplayName = "Desired reserve", ToolTip = "Target available stock for scarcity evaluation in milli-units.", ClampMin = "0",
+		DisplayName = "Desired reserve", ToolTip = "Target available stock for scarcity evaluation; remote production stops at three times this quantity, including reserved stock.", ClampMin = "0",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
 		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "NonNegative",
 		HansaUnit = "MilliUnit", HansaMin = "0", HansaMax = "9223372036854775807"))
 	int64 DesiredReserveMilliUnits = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market", meta = (
-		DisplayName = "Confirmed incoming supply", ToolTip = "Confirmed background or route supply expected during one market update window.", ClampMin = "0",
+		DisplayName = "Confirmed incoming supply", ToolTip = "Legacy snapshot field; runtime incoming supply is derived from real loaded cargo committed to the next unloading stop. Set to zero in new content.", ClampMin = "0",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
 		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "NonNegative",
 		HansaUnit = "MilliUnitPerUpdate", HansaMin = "0", HansaMax = "9223372036854775807"))
 	int64 ConfirmedIncomingSupplyMilliUnits = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Simulation", meta = (
-		DisplayName = "Initial stock", ToolTip = "Starting stock for a simulated market-only city in milli-units.", ClampMin = "0",
+		DisplayName = "Initial stock", ToolTip = "Starting stock in milli-units. Used by market-only cities and the enhanced playable economy profile.", ClampMin = "0",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
 		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "NonNegative",
 		HansaUnit = "MilliUnit", HansaMin = "0", HansaMax = "9223372036854775807"))
 	int64 InitialStockMilliUnits = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Simulation", meta = (
-		DisplayName = "Background production", ToolTip = "Fixed production added to a simulated market-only city during each market update.", ClampMin = "0",
+		DisplayName = "Background production", ToolTip = "Maximum production added per market update, limited by physical capacity and a per-good ceiling of three times Desired reserve.", ClampMin = "0",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
 		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "NonNegative",
 		HansaUnit = "MilliUnitPerUpdate", HansaMin = "0", HansaMax = "9223372036854775807"))

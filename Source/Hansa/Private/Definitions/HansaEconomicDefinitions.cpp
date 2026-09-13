@@ -186,6 +186,7 @@ void UHansaRecipeDefinition::AppendDefinitionHashData(FString& InOutCanonicalDat
 
 UHansaBuildingDefinition::UHansaBuildingDefinition()
 {
+	SchemaVersion = 5;
 	DefinitionCategory = TEXT("Buildings");
 	LocalizationKey = TEXT("Game.Building.Unnamed");
 	PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Engine/BasicShapes/Cube.Cube")));
@@ -263,6 +264,42 @@ void UHansaBuildingDefinition::ValidateDefinition(TArray<FHansaDefinitionValidat
 			NSLOCTEXT("HansaEconomicDefinition", "InvalidPresentationActor", "The presentation actor must be an existing concrete promoted Actor class."),
 			NSLOCTEXT("HansaEconomicDefinition", "InvalidPresentationActorRemedy", "Choose a production Actor Blueprint or clear it to use the presentation mesh."));
 	}
+	if (bShowInConstructionMenu && ConstructionMenuOrder < 0)
+	{
+		AddIssue(OutIssues, TEXT("HSA-BUILDING-010"), TEXT("ConstructionMenuOrder"),
+			NSLOCTEXT("HansaEconomicDefinition", "BuildingConstructionOrder", "A visible construction card requires a non-negative menu order."),
+			NSLOCTEXT("HansaEconomicDefinition", "BuildingConstructionOrderRemedy", "Assign a stable zero-based order within its category or chain."));
+	}
+	const bool bProductionCard = bShowInConstructionMenu && ConstructionMenuCategory == EHansaConstructionMenuCategory::Production;
+	const bool bHasChain = !ConstructionChainOutputGoodId.IsEmpty();
+	if (bProductionCard != bHasChain || (bHasChain &&
+		(!HasValidDomain(ConstructionChainOutputGoodId, TEXT("Good")) || ConstructionChainStage < 1 ||
+		 ConstructionChainStageCount < 1 || ConstructionChainStage > ConstructionChainStageCount)) ||
+		(!bHasChain && (ConstructionChainStage != 0 || ConstructionChainStageCount != 0)))
+	{
+		AddIssue(OutIssues, TEXT("HSA-BUILDING-011"), TEXT("ConstructionChainOutputGoodId"),
+			NSLOCTEXT("HansaEconomicDefinition", "BuildingConstructionChain", "A visible Production card requires a valid Good.* chain output and a bounded one-based stage; non-production cards must not declare chain stages."),
+			NSLOCTEXT("HansaEconomicDefinition", "BuildingConstructionChainRemedy", "Assign the final chain output and consistent stage/count metadata, or clear all chain fields outside Production."));
+	}
+	if (!RequiredConstructionTechnologyId.IsEmpty() &&
+		!HasValidDomain(RequiredConstructionTechnologyId, TEXT("Technology")))
+	{
+		AddIssue(OutIssues, TEXT("HSA-BUILDING-012"), TEXT("RequiredConstructionTechnologyId"),
+			NSLOCTEXT("HansaEconomicDefinition", "BuildingConstructionTechnology", "The construction unlock is not a canonical Technology.* identity."),
+			NSLOCTEXT("HansaEconomicDefinition", "BuildingConstructionTechnologyRemedy", "Reference an existing Technology.* definition or leave the field empty."));
+	}
+	if (bProvidesMarketAccess && (!bRequiresRoad || StorageCapacityMilliUnits <= 0))
+	{
+		AddIssue(OutIssues, TEXT("HSA-BUILDING-013"), TEXT("bProvidesMarketAccess"),
+			NSLOCTEXT("HansaEconomicDefinition", "MarketAccessProviderContract", "A physical market-access provider requires road adjacency and positive storage capacity."),
+			NSLOCTEXT("HansaEconomicDefinition", "MarketAccessProviderRemedy", "Enable Requires road and give the market hub positive storage capacity, or disable Provides market access."));
+	}
+	if (SchemaVersion >= 5 && !RecipeIds.IsEmpty() && !bRequiresRoad)
+	{
+		AddIssue(OutIssues, TEXT("HSA-BUILDING-014"), TEXT("bRequiresRoad"),
+			NSLOCTEXT("HansaEconomicDefinition", "ProductionRoadAccessContract", "A production building must require road access so its external input and output transfers use a physical market network."),
+			NSLOCTEXT("HansaEconomicDefinition", "ProductionRoadAccessRemedy", "Enable Requires road, then connect the completed building to an operational market."));
+	}
 	if (PresentationMesh.IsNull() && PresentationActorClass.IsNull())
 	{
 		AddIssue(OutIssues, TEXT("HSA-BUILDING-006"), TEXT("PresentationMesh"),
@@ -302,5 +339,25 @@ void UHansaBuildingDefinition::AppendDefinitionHashData(FString& InOutCanonicalD
 	if (!PresentationActorClass.IsNull())
 	{
 		InOutCanonicalData += TEXT("presentationActorClass=") + PresentationActorClass.ToSoftObjectPath().ToString() + TEXT("\n");
+	}
+	// Version 2 assets predate the construction presentation model. Keeping their canonical
+	// serialization unchanged makes the explicit v2 -> v3 catalog migration reproducible.
+	if (SchemaVersion >= 3)
+	{
+		InOutCanonicalData += FString::Printf(
+			TEXT("constructionMenuVisible=%d\nconstructionCategory=%s\nconstructionOrder=%d\nconstructionChain=%s\nconstructionChainStage=%d\nconstructionChainStageCount=%d\nrequiredConstructionTechnology=%s\nupgradeOnly=%d\nconstructionPurpose=%s\n"),
+			bShowInConstructionMenu ? 1 : 0,
+			*StaticEnum<EHansaConstructionMenuCategory>()->GetNameStringByValue(static_cast<int64>(ConstructionMenuCategory)),
+			ConstructionMenuOrder,
+			*ConstructionChainOutputGoodId,
+			ConstructionChainStage,
+			ConstructionChainStageCount,
+			*RequiredConstructionTechnologyId,
+			bUpgradeOnly ? 1 : 0,
+			*ConstructionPresentationPurpose.ToString());
+	}
+	if (SchemaVersion >= 4)
+	{
+		InOutCanonicalData += FString::Printf(TEXT("providesMarketAccess=%d\n"), bProvidesMarketAccess ? 1 : 0);
 	}
 }

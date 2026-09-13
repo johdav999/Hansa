@@ -1,0 +1,109 @@
+{
+	"playthroughs": [
+		{
+			"scenario": "growth",
+			"ticks": 120,
+			"population": 46,
+			"artisans": 10,
+			"satisfactionBasisPoints": 10000,
+			"breadMilliUnits": 7402,
+			"beerMilliUnits": 20124,
+			"breadPriceMilliMarks": 1104,
+			"peakIncomingBreadMilliUnits": 0,
+			"workforce": 28,
+			"fingerprint": "32B3879D8E79C853"
+		},
+		{
+			"scenario": "upgrade",
+			"ticks": 120,
+			"population": 42,
+			"artisans": 20,
+			"satisfactionBasisPoints": 6476,
+			"breadMilliUnits": 0,
+			"beerMilliUnits": 18928,
+			"breadPriceMilliMarks": 1277,
+			"peakIncomingBreadMilliUnits": 0,
+			"workforce": 25,
+			"fingerprint": "B92AE836403EEC70"
+		},
+		{
+			"scenario": "neglect",
+			"ticks": 1200,
+			"population": 0,
+			"artisans": 0,
+			"satisfactionBasisPoints": 0,
+			"breadMilliUnits": 0,
+			"beerMilliUnits": 0,
+			"breadPriceMilliMarks": 1280,
+			"peakIncomingBreadMilliUnits": 0,
+			"workforce": 0,
+			"fingerprint": "F28BFFE2FEF862B5"
+		},
+		{
+			"scenario": "shortage",
+			"ticks": 1200,
+			"population": 36,
+			"artisans": 9,
+			"satisfactionBasisPoints": 2375,
+			"breadMilliUnits": 0,
+			"beerMilliUnits": 0,
+			"breadPriceMilliMarks": 1282,
+			"peakIncomingBreadMilliUnits": 0,
+			"workforce": 21,
+			"fingerprint": "B9D7CB93BF505B7C"
+		},
+		{
+			"scenario": "recovery",
+			"ticks": 1200,
+			"population": 48,
+			"artisans": 12,
+			"satisfactionBasisPoints": 6125,
+			"breadMilliUnits": 624,
+			"beerMilliUnits": 0,
+			"breadPriceMilliMarks": 1237,
+			"peakIncomingBreadMilliUnits": 0,
+			"workforce": 29,
+			"fingerprint": "BBC5BE81E843A0AF"
+		},
+		{
+			"scenario": "surplus",
+			"ticks": 1200,
+			"population": 48,
+			"artisans": 12,
+			"satisfactionBasisPoints": 10000,
+			"breadMilliUnits": 107016,
+			"beerMilliUnits": 201560,
+			"breadPriceMilliMarks": 554,
+			"peakIncomingBreadMilliUnits": 10000,
+			"workforce": 29,
+			"fingerprint": "E95C38F52FF3A050"
+		},
+		{
+			"scenario": "trade-dependence",
+			"ticks": 3600,
+			"population": 48,
+			"artisans": 12,
+			"satisfactionBasisPoints": 6125,
+			"breadMilliUnits": 5160,
+			"beerMilliUnits": 0,
+			"breadPriceMilliMarks": 1234,
+			"peakIncomingBreadMilliUnits": 10000,
+			"workforce": 29,
+			"fingerprint": "401AC31C1F66C8DF"
+		},
+		{
+			"scenario": "collapse-recovery",
+			"ticks": 2400,
+			"population": 48,
+			"artisans": 12,
+			"satisfactionBasisPoints": 10000,
+			"breadMilliUnits": 121948,
+			"beerMilliUnits": 227660,
+			"breadPriceMilliMarks": 557,
+			"peakIncomingBreadMilliUnits": 10000,
+			"workforce": 29,
+			"fingerprint": "AB726B893593C625"
+		}
+	],
+	"candidateRegistryHash": "92658D0E14439F91"
+}

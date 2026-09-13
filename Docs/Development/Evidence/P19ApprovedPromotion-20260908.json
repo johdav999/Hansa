@@ -1,0 +1,287 @@
+{
+  "schemaVersion": 1,
+  "prompt": "EMVP-P19",
+  "approval": "Contiune and implement MPVP-P19 so it i completed. I also approve to prompte it",
+  "approvedOn": "2026-09-08",
+  "status": "completed-promoted-asset-and-read-only-projection-contract",
+  "productionRoot": "/Game/Mesh/hansa-vehicles",
+  "catalogVersion": 8,
+  "registryHash": "6FAA28CD24E2C69E",
+  "previousCatalogVersion": 7,
+  "previousRegistryHash": "22248A11101B32B0",
+  "compatibility": "new-game-required",
+  "economicsUnchanged": true,
+  "assets": [
+    {
+      "path": "/Game/Mesh/hansa-vehicles/BP_Cog_Review",
+      "class": "Blueprint",
+      "sourceSha256": "0954315E5DB51FD027080BAD8F7747AA72FA23DD55596D9416A57D5479068F18",
+      "sha256": "7620A2D19A12DCC1A17D1EC847A0F6F477C6CA93CB65E27584003BD2DBDF2273",
+      "cookedSha256": "2A4B9507754F36928A3C5D056EEACA39E4D213663CE772CD264041AF0E80F1B9"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/BP_Wagon_Review",
+      "class": "Blueprint",
+      "sourceSha256": "18A6E6C90B312F5DB9215C677B1E8DC55F3399E4B73D1ACA851AAC6DB63C0BC0",
+      "sha256": "CA678F35CB27F854F76260DE75F176BA53A0E4707A15360F8F52406CFE2BFD2D",
+      "cookedSha256": "13DD9AEF7FF1C5E9A34B9E2A088E03A52DA713BD458110D50D04194062E08012"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Materials/M_Vehicle_Canvas",
+      "class": "Material",
+      "sourceSha256": "55F3C1FB3D67EE6EA192B33A6E05AEBCD7D324C30675F0C1BE992E4A169F0C0D",
+      "sha256": "75F84971969654DFDA73D954247A291FA4CE77F0FE178EFD520FA450F89591E1",
+      "cookedSha256": "BA2B6D5F9FD570ADA6AA0D6C1DCF4E350097F9D2C7B644059C0802FEEFD371BD"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Materials/M_Vehicle_Hemp",
+      "class": "Material",
+      "sourceSha256": "A0414CA6C3360CF57FC2757C238D7DB0D7FE2D6EB47E439FCDD78194A4A0983C",
+      "sha256": "52DEB646A6BB43EB5C4E58251120AFA01C3F1433B7C8D59D33F7DBC5FF581180",
+      "cookedSha256": "E4E27C0F7F229AD4B8A4F1A9B5400E9CCF9AA8F8E8036D49E8165236704C8116"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Materials/M_Vehicle_Iron",
+      "class": "Material",
+      "sourceSha256": "F932A1D0CB477A8C7D75F5D10AFC7A90C96D4156B6AA7A92D93A09B1F545FFE0",
+      "sha256": "7EE7BA7F03F32BF07F4E1A4DB88F7FC497E700782A3B2A47D8F68E6DAF61DB9C",
+      "cookedSha256": "9BFFCDF18243521241FA54798FA16D389A9EA8C6FE1A0E109518D7F71B846F50"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Materials/M_Vehicle_Linen",
+      "class": "Material",
+      "sourceSha256": "79FF091CF61AF26ECCB1CFC5DA62DA3647D62641D62A2BBE49D172AC14934A87",
+      "sha256": "B6669AD112A9030E4B4FA363B4B279D081067CA94D415E1783EDE34E4F2A0887",
+      "cookedSha256": "4070D8FFB00B63162C15734D34CE91DE766302F1FAC5A05AFF066E9DAE9A6DCD"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Materials/M_Vehicle_Oak",
+      "class": "Material",
+      "sourceSha256": "1DC616B30E7759862AC4E652BEFD6355B0ED78436533336EBC010ED67848A39E",
+      "sha256": "5B9901C83E9F5858F4CFC0F834E24F94FDDE8E76914B7CF2FE995B48A287E65D",
+      "cookedSha256": "F9B80C8A9EC486181742FC8C27B4D0849C61A690C6D860AF4EED6B42CA47B957"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Materials/M_Vehicle_TarredOak",
+      "class": "Material",
+      "sourceSha256": "02220134B663594F6C09F0F4D9BCBC356E698134E23482E7636FB9F0117D8D03",
+      "sha256": "FBB6D69AB50FD1AE4C7FB6DC39D31424F42FA0FCCD6A1E55E587D9E84A757B77",
+      "cookedSha256": "0BAEADE7181F3B20BA802258239CE9212B7CC2EB96210AF1A178EE3ED7112D2C"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Meshes/SM_HansaCargo_Sacks",
+      "class": "StaticMesh",
+      "sourceSha256": "71F7C4D79F843F24F8FC8D8F93191F1F8BA88B62C4A3B5B5C49143DD77711C92",
+      "sha256": "F37AC77EF374CFCF0E3CE16D68642F7694A1F2284AC05C2BCA8F6D95575676B7",
+      "cookedSha256": "7B00A275B05B9D84FA09646DD9F34BC0B2E654713BBF4F2788639F7808EB76C8"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Meshes/SM_HansaCog_FurledSail",
+      "class": "StaticMesh",
+      "sourceSha256": "655C33498F31C7E0D3F21B4CBD00408F8E2386ED26185D67B911F209EE1FBB55",
+      "sha256": "E36A83F82489664D423B2001545983DF2FF6CB083283D157C064974C015F75C8",
+      "cookedSha256": "98364C5376F417693EC644EACEB087B37712B845B090F58BEA75807BF43F0901"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Meshes/SM_HansaCog_Hull",
+      "class": "StaticMesh",
+      "sourceSha256": "8CE650D81EEA33E8D61732008DD5D4B193DF1C6582DFBF10053725C6E49C9337",
+      "sha256": "2FE76C3811D7510368A7F55F07D9869DCF87AF0A6A935F3849B8DB192F81F270",
+      "cookedSha256": "6474D4ED4EB7071F0A79FE6438A074F45A015D42E8357ACA027C73AAB74416A7"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Meshes/SM_HansaCog_Rig",
+      "class": "StaticMesh",
+      "sourceSha256": "C32B420ABB9DF3DBB059512AF2421801A90476D912578BC7F6BDD4EC9C1F8391",
+      "sha256": "ABC640E6020DE054B9527B81A17AAEAD4D7C4EBB2DDD41FBBD0E062366D86828",
+      "cookedSha256": "0958363EAE89413C55E68EE1AC6A8E39AFA52BB1C779E93F20EDD982FD5CCC1F"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Meshes/SM_HansaCog_Sail",
+      "class": "StaticMesh",
+      "sourceSha256": "DAD8C8C17607654B7B2FA53D09C0FE113D6B04037A4BFCDF0C78045262F02715",
+      "sha256": "5CC1AFDF0F5ED7312411AE7B10E71571688766C5DB852B6E045BF548E806D9EF",
+      "cookedSha256": "6F5C74CC26E459ACC491A9D21F4EB51540F283795BFD64AE52B751628D3B1448"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Meshes/SM_HansaWagon_Body",
+      "class": "StaticMesh",
+      "sourceSha256": "D6F2804B5A7F7B5250C1D19EBCB4CD5FAEA5BF56B110561562C02C67BDF5C295",
+      "sha256": "5C78013037FE1F98800CC0C6FC807F76C4BDF423F1EFA723F3CC6205A089222B",
+      "cookedSha256": "5D040FA197B343968B53F9BC9F16A765E622D7E827558A67EC356391597CF37E"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Meshes/SM_HansaWagon_Wheel",
+      "class": "StaticMesh",
+      "sourceSha256": "30CBF84E4D680A2CFF773F6C6D2B7EEC85380E8BFDF04C170C4DE5D7FCACB4BB",
+      "sha256": "3069EA0EA0D1803410D22E6AD5286CD5D331F384F09A4B282AF7765B3E2F927A",
+      "cookedSha256": "8F53781796E0643BB0126EB6A4655E2BCDF37CCCE4F3750C3F6F4D9CF894588F"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Canvas_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "6FF721A4A18721DCADC93C3001389EA8F980CF1B1989523434A03B2F9DA58B37",
+      "sha256": "B2D956661CEEF88A0159AA2DA7886D2C34318937A098DA86C31214E8ACEE3CC7",
+      "cookedSha256": "56DCDB09783FD107A56DD5340C1A71498F78FE68ACAEA086466C9CA4013093A6"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Canvas_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "1FAF50A661978836AABF183418A0E8043332F682998B0133A697EF9E4353EEC2",
+      "sha256": "EB0CFAE0AE40B6FD3805E4CC09065A75D18DD5BF621E83427CF08EE97395F608",
+      "cookedSha256": "346BDB396913E0B70D7EEDFD2909D163C5BA01205F88EA095A045764046C8B08"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Canvas_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "B14CBEED0D9428C5E32CD6DA8A63EECA4A1E05E0B15410E323C5D6502F39C418",
+      "sha256": "FA06EFBEC181AFB642362590BA211992720C01A77E41B58E1984A7B903A7F44F",
+      "cookedSha256": "AAFA052F84549D223DAFA35258C911720D5C625AEF43DFB42AC119ED65F70F5E"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Hemp_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "5DB17A51475AA6DC0B4D431A1BE1708AF61A3DA71B99560CF4ABD2DBD1B63BE2",
+      "sha256": "5C9FDFABCAEB944A286166E3F584F9F0C7F98C85E2F6007A744CE68CD02ADF70",
+      "cookedSha256": "4EEBC6D94DD2813777A129058233C8DA290D804C4C1B0CBC7C3F8949108F4515"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Hemp_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "CFABD3B75C3BC5295530ABE4D393621D99572C394E50511179048A26644EF604",
+      "sha256": "B0D65797135F0EEFD526ECCD4CF7AE7E307FC10AF54A55641D08AA149560D317",
+      "cookedSha256": "DD6B67840B8F390D982A6ECE1460ABB7F85538E07408646FC6C0BBCC78C73543"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Hemp_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "F87A85C2C4FD4EAE47D447C25A04DE7437B2F2DD3BC5BEC5F4573E020F06A0C7",
+      "sha256": "3F3E8362C14543BA89314F838E9113D91793015D63A2AFAAD7875EBD906ABC83",
+      "cookedSha256": "7C667D6F122EFCDF2640D031903D816CEE8FF1B5D1F336CF0D10BD9DA0E3992D"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Iron_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "47C5F0FD0C824215BAE97F1ADAD22E35643232DAEC71471B73F8A61880FB3BCC",
+      "sha256": "B4BC7D38099E095363FCB007359B641E8B5E609D46829A3DD1A987AA88F82381",
+      "cookedSha256": "F33D593D990F4D13FF48AB1575D09195FD4837DA70A1C59807D39394EA4D133C"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Iron_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "F79214C7EC9B8C8E4A76469CDB5AD9448A4B99F4571B616EBDA69B77069055D3",
+      "sha256": "23DFEDCE399870BB07272568696C77C1CDB57D78A1C4EF531889D664C86B7FCB",
+      "cookedSha256": "A75A4D3721B5299CD7F0E5FD51C15FEC414ED61968B453ED3DCDC7416D2DFC5D"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Iron_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "C68464A93705B3DCE1616504D533864B73870DD90F1CA40F3853A15813162201",
+      "sha256": "20288ABB6A91331CB08282C17C5447302E58621992379A2DC152365F8EF61DA8",
+      "cookedSha256": "460B71F3A6EE0442D05D889F1189362080B9751AB0BF5380386B8E1BFCE4B545"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Linen_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "73638B0A4D5E2E6171DB46A3B75EA071719151AAF2ED7C5624CC340CAE9F046A",
+      "sha256": "6954D392471881ED88DABF22F9FB988E381A3F49582A936D475343E34396C441",
+      "cookedSha256": "D5DC33D2163E0FE4189885BCF7364FC453103B90DF9FBB0A39FE8EFA462662CE"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Linen_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "A22BECF55F6A74656FD6B3D95DCD26AAEC157540DFB90C9734B932C6C9EE12A2",
+      "sha256": "6BC55C01A9D8921578E0CEC29D9633B335F22D3C5207C4B710BC5B853A2E79AF",
+      "cookedSha256": "02A4679D5ADF28988F9841AB785802A5F94A6418DC5C125DA38B2877470F63A1"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Linen_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "BBE53E4D45462A521425BA61937169A9478F82CA08A236556621A006766E2FB5",
+      "sha256": "BA64FBD83300D0C96FAFDAA91402D0AE7A386731AE79FF3601DF2B925C6117E0",
+      "cookedSha256": "383056DB7FC5E03A2A621D683EB6A21973CB4968C9770CC0F44BCB3DAF6BC9D0"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Oak_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "359ACEC8DADCF8F68E21912942203F79235636AECE091F9335F1452989C0C225",
+      "sha256": "C4EEC704FAFD621E87181A15D86691278FB7B1D53CF90A7EE705E75791CA7659",
+      "cookedSha256": "16E7D4B34D7291042A585C226BF0B6775028032AF1E77E4A4C11AEDF6D1965EC"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Oak_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "34BE00852FBB59DC6BDA409B3FEACB750BB5B5B00FC97DD9A4E153284774BC06",
+      "sha256": "029C048EF9F305AC95987B72714B18B44E7E0D552B51FD806625536C1433EE72",
+      "cookedSha256": "E8BC301549F355293FEC042C7229C4770032A2B4DAED2C922BD69FA734515548"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_Oak_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "413B05769261D224EE9B46BA61AA443AE01696050B552AC815F2950A95381774",
+      "sha256": "32E115EDAE487BD82AEB39897E00BF618DAC815AF1E3C40A607EFA67F1EF86B5",
+      "cookedSha256": "634669DC53BAB23A32848DF78D15B541204ABF22D63D8B687018E08BB85AD0CD"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_TarredOak_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "E621F0C96AC8F7B5268DF1EA71F652078E9F466E0DEB43F9B021417198052D64",
+      "sha256": "B084955FED45FA20F58C190DBC11A26A79FEF42E105F6AB970F2E633CC7C29BB",
+      "cookedSha256": "64918D888F5BDAB12331E2AA9AE91BE3D34CE80225DE45A439FFB93E19A61C60"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_TarredOak_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "2BD68EAC5E2C4B902681D4678A2256B63953BD62F88CC28BD3DCEB1B55490EA0",
+      "sha256": "DA18C5D864E833494A545CF5866C8B7483C2799096FE2A16D2D6F43AD0D2DC9B",
+      "cookedSha256": "5ED2ECC3889B021C70992EE44B71AFE1E690A96EEC80567CB5A23B1A525CB738"
+    },
+    {
+      "path": "/Game/Mesh/hansa-vehicles/Textures/T_Vehicle_TarredOak_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "C9E1633D2150C235E22552B2DD62A70435A2FD73D98BDE993286524BB4936C35",
+      "sha256": "A89F86AE8675D8608439724D59F171762AAA60CA950802955BF4D0F1D683A957",
+      "cookedSha256": "1265088FD255CBE01D40905E6452F36FF925B034D09E67ABB7F5C9F21CBF3155"
+    }
+  ],
+  "definitions": [
+    {
+      "path": "/Game/Hansa/Core/Vehicles/DA_Vehicle_Cog",
+      "stableId": "Vehicle.Cog",
+      "authoredRevision": 2,
+      "contentHash": "DCD93805FB2F658F",
+      "sha256": "CDA360B1BE74E99B9DB3E41FA753597A1B531EC2415BC5F014A0E705164B85B5"
+    },
+    {
+      "path": "/Game/Hansa/Core/Vehicles/DA_Vehicle_Wagon",
+      "stableId": "Vehicle.Wagon",
+      "authoredRevision": 2,
+      "contentHash": "6950B7FF81C608BE",
+      "sha256": "A4E9EF0803117AC5E0BF4CB366DE86A8BB1DFB007744D0463B431EAD92F9F6B4"
+    }
+  ],
+  "stagingDependenciesFound": 0,
+  "validation": {
+    "targetedTestsPassed": 27,
+    "failed": 0,
+    "testsWithWarnings": 0,
+    "debugGameEditor": "passed",
+    "developmentEditor": "passed on retry after compiler-internal C1001 in existing test unity unit",
+    "shippingBinary": "passed",
+    "productionReferences": "passed",
+    "expandedCook": "passed; all 33 vehicle packages present",
+    "finalIoStoreContainerAudited": false,
+    "reimport": "FBX and GLB bounds within 2 mm and UVs retained",
+    "nativeImages": "1280x720 berth, set sail, 120 m, wagon detail; inspected",
+    "evidenceRoot": "SourceArt/Generated/Vehicles/HansaVehicles_P19_20260908/evidence"
+  },
+  "runtimeAmendment": "Harbor OnConstruction restores yaw 90 and X=1220 cm berth clearance; deck/water Z contract preserved.",
+  "limitations": [
+    "Bremen-type game reconstruction; rig and wagon dimensions are interpretive.",
+    "Cargo sacks indicate occupied cargo, not commodity identity or quantity.",
+    "No horse, driver, harness animation, physical vehicle simulation or new route authority.",
+    "P32/P34 still own continuous two-city movement, world-projection lifecycle and full delivery journey.",
+    "Local wagon proof uses a deterministic dispatched logistics fixture; default trade scenario has no local jobs.",
+    "Source/script/research artifacts and review maps are non-shipping. Overall enhanced-MVP readiness is not claimed."
+  ]
+}

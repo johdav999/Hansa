@@ -1,0 +1,23 @@
+{
+  "tests": [
+    {
+      "name": "Hansa.Editor.Terrain.ContextIsReadOnly",
+      "state": "Success",
+      "duration": 0.007595200091600418,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "name": "Hansa.Editor.Terrain.DirtyWorkBlocksImport",
+      "state": "Success",
+      "duration": 0.008391197770833969,
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "total": 2,
+  "duration": 0.015986397862434387
+}

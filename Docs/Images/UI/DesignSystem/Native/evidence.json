@@ -1,0 +1,129 @@
+{
+  "task": "EMVP-P21",
+  "date": "2026-09-08",
+  "build": "DebugGame-Build.log",
+  "tests": [
+    "Hansa.UI.Style.result.json",
+    "Hansa.UI.Scenario.result.json"
+  ],
+  "captures": [
+    {
+      "file": "UI-system-1280x720-accessible-100percent.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "e441c738a32c46422e7aabad6418a3807b3192881a3e9fba4ef4e4cb69b8ae11",
+      "mode": "Actual game viewport; native Slate gallery over Lubeck",
+      "accessibility": true,
+      "ui_scale_percent": 100,
+      "inspected_at_original_resolution": true,
+      "inspection": "Readable native text and disabled labels, distinct focus, square glyphs, wrapped status and legend; large-text action list scrolls within bounds.",
+      "source_log": "Saved/BuildArtifacts/20260908-210212536-p21-native-1280-720/Unreal.log",
+      "log_excerpt": "UI-system-1280x720-accessible-100percent.log"
+    },
+    {
+      "file": "UI-system-1280x720-accessible-140percent.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "9a9e1bad8fea9f9672aad4448a46fcd93167528e29c29aaf79276e9c8cf54c48",
+      "mode": "Actual game viewport; native Slate gallery over Lubeck",
+      "accessibility": true,
+      "ui_scale_percent": 140,
+      "inspected_at_original_resolution": true,
+      "inspection": "Readable native text and disabled labels, distinct focus, square glyphs, wrapped status and legend; large-text action list scrolls within bounds.",
+      "source_log": "Saved/BuildArtifacts/20260908-210259158-p21-native-1280-720/Unreal.log",
+      "log_excerpt": "UI-system-1280x720-accessible-140percent.log"
+    },
+    {
+      "file": "UI-system-1280x720-default-100percent.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "b8571336709f4c05ab1b49b2ea72317626e89e3619e301c5a7719ace22c72fae",
+      "mode": "Actual game viewport; native Slate gallery over Lubeck",
+      "accessibility": false,
+      "ui_scale_percent": 100,
+      "inspected_at_original_resolution": true,
+      "inspection": "Readable native text and disabled labels, distinct focus, square glyphs, wrapped status and legend; large-text action list scrolls within bounds.",
+      "source_log": "Saved/BuildArtifacts/20260908-205700313-p21-native-1280-720/Unreal.log",
+      "log_excerpt": "UI-system-1280x720-default-100percent.log"
+    },
+    {
+      "file": "UI-system-1920x1080-accessible-100percent.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "b9d5fcbe6c4765149771c13af4c8d357527cbe70868105aaa53390efaf2a37db",
+      "mode": "Actual game viewport; native Slate gallery over Lubeck",
+      "accessibility": true,
+      "ui_scale_percent": 100,
+      "inspected_at_original_resolution": true,
+      "inspection": "Readable native text and disabled labels, distinct focus, square glyphs, wrapped status and legend; large-text action list scrolls within bounds.",
+      "source_log": "Saved/BuildArtifacts/20260908-210235843-p21-native-1920-1080/Unreal.log",
+      "log_excerpt": "UI-system-1920x1080-accessible-100percent.log"
+    },
+    {
+      "file": "UI-system-1920x1080-default-100percent.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "60d05109e7150d727e1c6149b6877edf8a2a89f8a035e55053b83c4832b74ce1",
+      "mode": "Actual game viewport; native Slate gallery over Lubeck",
+      "accessibility": false,
+      "ui_scale_percent": 100,
+      "inspected_at_original_resolution": true,
+      "inspection": "Readable native text and disabled labels, distinct focus, square glyphs, wrapped status and legend; large-text action list scrolls within bounds.",
+      "source_log": "Saved/BuildArtifacts/20260908-205724159-p21-native-1920-1080/Unreal.log",
+      "log_excerpt": "UI-system-1920x1080-default-100percent.log"
+    },
+    {
+      "file": "UI-system-1920x1080-default-80percent.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "05126d7a5d4d49a9a3a63c314f2d869d2377aa20dda0051567b28f9fd3e1d725",
+      "mode": "Actual game viewport; native Slate gallery over Lubeck",
+      "accessibility": false,
+      "ui_scale_percent": 80,
+      "inspected_at_original_resolution": true,
+      "inspection": "Readable native text and disabled labels, distinct focus, square glyphs, wrapped status and legend; large-text action list scrolls within bounds.",
+      "source_log": "Saved/BuildArtifacts/20260908-205946002-p21-native-1920-1080/Unreal.log",
+      "log_excerpt": "UI-system-1920x1080-default-80percent.log"
+    },
+    {
+      "file": "UI-system-2560x1440-default-100percent.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "edc1253fc5ad9936421a1d33b0436f962efca3cabc63ea6e32b33149a79d368a",
+      "mode": "Actual game viewport; native Slate gallery over Lubeck",
+      "accessibility": false,
+      "ui_scale_percent": 100,
+      "inspected_at_original_resolution": true,
+      "inspection": "Readable native text and disabled labels, distinct focus, square glyphs, wrapped status and legend; large-text action list scrolls within bounds.",
+      "source_log": "Saved/BuildArtifacts/20260908-205837656-p21-native-2560-1440/Unreal.log",
+      "log_excerpt": "UI-system-2560x1440-default-100percent.log"
+    },
+    {
+      "file": "UI-system-3440x1440-default-100percent.png",
+      "width": 3440,
+      "height": 1440,
+      "sha256": "4afc54902f97a03e64f1494eeb030b23888c836247673662f9c152c2d0c4b64b",
+      "mode": "Actual game viewport; native Slate gallery over Lubeck",
+      "accessibility": false,
+      "ui_scale_percent": 100,
+      "inspected_at_original_resolution": true,
+      "inspection": "Readable native text and disabled labels, distinct focus, square glyphs, wrapped status and legend; large-text action list scrolls within bounds.",
+      "source_log": "Saved/BuildArtifacts/20260908-205900662-p21-native-3440-1440/Unreal.log",
+      "log_excerpt": "UI-system-3440x1440-default-100percent.log"
+    }
+  ],
+  "source_sha256": {
+    "Source/Hansa/Public/UI/HansaUiComponents.h": "098cf5d1b49a3f26c3e2a2bd1b71f571658f4b0fbf44c834ac0faa3852bbd3a0",
+    "Source/Hansa/Private/UI/HansaUiComponents.cpp": "01765e1d627a39a2481816b667ffd7fe62481935f5d031fc4f5bd0ad43e7a02f",
+    "Source/Hansa/Private/UI/HansaUiStyle.cpp": "0c55474c15f1ee4711808da1d71f422a7116511672045a1d5aef76aa96927606",
+    "Source/HansaTests/Private/UI/HansaUiComponentTests.cpp": "d45c4bf7e9e9f0b83a22bf9f9e2b84e7ffefc192665a486cd91ea3fbde13d78c",
+    "Source/HansaTests/Private/UI/HansaUiSystemCaptureTests.cpp": "e2f54cae86cb19bfc51d648ed6821ed2548e66150b2c2d280d67f7ebd4837cdf"
+  },
+  "limitations": [
+    "Component gallery is development-only and does not accept P22-P29 screens or world art.",
+    "Large-text gallery scrolls; captures do not show every row simultaneously.",
+    "UI-scale override applies to the new component gallery; the legacy screen behind it retains its own scale.",
+    "Existing engine plugin startup errors and legacy explicit-font HUD symbol warnings remain in full game logs; component tests pass.",
+    "Shipping packaging was not rerun. Generated references are Docs-only; font/OFL files are staged via runtime dependencies."
+  ]
+}

@@ -8,6 +8,8 @@
 
 class UInputAction;
 class UInputMappingContext;
+class AHansaBuildingPlacementGhost;
+class AHansaLubeckWorldFoundation;
 struct FInputActionValue;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
@@ -25,6 +27,7 @@ public:
 	AHansaStrategyPlayerController();
 
 	virtual void BeginPlay() override;
+	virtual void PlayerTick(float DeltaTime) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void SetupInputComponent() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -57,6 +60,17 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Hansa|World|Selection")
 	AActor* GetSelectedWorldActor() const { return SelectedWorldActor.Get(); }
+
+	bool BeginBuildingPlacementDrag(FName BuildingDefinitionId, FVector2D ScreenPosition, bool bPointerOverMenu, bool bUseLivePointer = true);
+	bool UpdateBuildingPlacementDrag(FVector2D ScreenPosition, bool bPointerOverMenu, bool bUseLivePointer = true);
+	bool EndBuildingPlacementDrag(FVector2D ScreenPosition, bool bPointerOverMenu, bool bUseLivePointer = true);
+	bool BeginRoadDrawing(FVector2D ScreenPosition, bool bUseLivePointer = true);
+	bool UpdateRoadDrawing(FVector2D ScreenPosition, bool bUseLivePointer = true);
+	bool EndRoadDrawing(FVector2D ScreenPosition, bool bPointerOverWorld, bool bUseLivePointer = true);
+	bool ResolvePlacementCellAtScreenPosition(FVector2D ScreenPosition, FIntPoint& OutCell, FVector& OutWorldLocation) const;
+	void CancelBuildingPlacement();
+	void RefreshBuildingPlacementPresentation();
+	[[nodiscard]] AHansaBuildingPlacementGhost* GetPlacementGhost() const { return PlacementGhost.Get(); }
 
 	UPROPERTY(BlueprintAssignable, Category = "Hansa|World|Selection")
 	FHansaWorldSelectionChanged OnWorldSelectionChanged;
@@ -99,6 +113,18 @@ private:
 	void HandleFastPan(const FInputActionValue& Value);
 	void HandleFastPanCompleted(const FInputActionValue& Value);
 	void HandleSelect(const FInputActionValue& Value);
+	void HandleSelectHeld(const FInputActionValue& Value);
+	void HandleSelectReleased(const FInputActionValue& Value);
+	void HandlePlacementCancel();
+    void HandleCameraDragPressed();
+    void HandleCameraDragReleased();
+    void UpdateCameraDrag();
+    void HandleSessionMenu();
+    void HandleContextHelp();
+	class UHansaBuildMenuPresentationModel* GetBuildMenuModel() const;
+	AHansaLubeckWorldFoundation* FindPlacementFoundation() const;
+	void SyncPlacementGhostAndCursor();
+	FVector2D ResolveCurrentPointer(FVector2D Fallback) const;
 
 	UPROPERTY(ReplicatedUsing = OnRep_HansaClientProjection)
 	FHansaClientProjectionSnapshot ClientProjection;
@@ -109,5 +135,13 @@ private:
 	uint64 AuthorityPrincipalId = 0;
 	int64 AuthorityHouseId = 0;
 	TWeakObjectPtr<AActor> SelectedWorldActor;
+	TWeakObjectPtr<AHansaBuildingPlacementGhost> PlacementGhost;
 	bool bOwnsRuntimeMappingContext = false;
+	bool bPlacementRotateHeld = false;
+	bool bRoadPointerHeld = false;
+    bool bCameraDragHeld = false;
+    double LastCameraDragDiagnosticTime = -1.0;
+    FVector2D PreviousCameraDragPointer = FVector2D::ZeroVector;
+	bool IsPointerOverWorldViewport() const;
+	bool TryGetPlacementPointer(FVector2D& OutPointer) const;
 };

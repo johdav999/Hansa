@@ -9,12 +9,16 @@
 #include "UI/HansaHudLayout.h"
 #include "UI/HansaHudPresentationModel.h"
 #include "UI/HansaHudSemantics.h"
+#include "UI/HansaUiComponents.h"
 
+class SScrollBox;
 class SBorder;
 class SBox;
 class SButton;
 class STextBlock;
 class SVerticalBox;
+class UHansaFrontendPresentationModel;
+namespace Hansa::UI {class SHansaFrontend;}
 class UHansaBuildMenuPresentationModel;
 class UHansaCityOverviewPresentationModel;
 class UHansaInspectorPresentationModel;
@@ -23,6 +27,7 @@ class UHansaResearchPresentationModel;
 class UHansaScenarioPresentationModel;
 class UHansaSaveLoadPresentationModel;
 class UHansaTradeMapPresentationModel;
+class AHansaStrategyPlayerController;
 struct FHansaCityOverviewSnapshot;
 struct FHansaScenarioPresentationSnapshot;
 struct FHansaSaveLoadPresentationSnapshot;
@@ -33,7 +38,7 @@ namespace Hansa::UI { class SHansaCityOverview; }
 namespace Hansa::UI { class SHansaContextInspector; }
 namespace Hansa::UI { class SHansaResearchScreen; }
 namespace Hansa::UI { class SHansaTradeMap; }
-namespace Hansa::UI { class SHansaScenarioScreen; }
+namespace Hansa::UI { class SHansaScenarioScreen; class SHansaSessionCoach; }
 namespace Hansa::UI { class SHansaSaveLoadScreen; }
 
 namespace Hansa::UI
@@ -43,7 +48,8 @@ namespace Hansa::UI
 	{
 	public:
 		SLATE_BEGIN_ARGS(SHansaRootHud)
-			: _Model(nullptr), _BuildModel(nullptr), _InspectorModel(nullptr), _CityOverviewModel(nullptr), _MarketTableModel(nullptr), _TradeMapModel(nullptr), _ResearchModel(nullptr), _ScenarioModel(nullptr), _SaveLoadModel(nullptr), _InitialViewportSize(FIntPoint(1280, 720)) {}
+			: _FrontendModel(nullptr), _Model(nullptr), _BuildModel(nullptr), _InspectorModel(nullptr), _CityOverviewModel(nullptr), _MarketTableModel(nullptr), _TradeMapModel(nullptr), _ResearchModel(nullptr), _ScenarioModel(nullptr), _SaveLoadModel(nullptr), _PlacementController(nullptr), _InitialViewportSize(FIntPoint(1280, 720)) {}
+			SLATE_ARGUMENT(UHansaFrontendPresentationModel*, FrontendModel)
 			SLATE_ARGUMENT(UHansaHudPresentationModel*, Model)
 			SLATE_ARGUMENT(UHansaBuildMenuPresentationModel*, BuildModel)
 			SLATE_ARGUMENT(UHansaInspectorPresentationModel*, InspectorModel)
@@ -53,12 +59,20 @@ namespace Hansa::UI
 			SLATE_ARGUMENT(UHansaResearchPresentationModel*, ResearchModel)
 			SLATE_ARGUMENT(UHansaScenarioPresentationModel*, ScenarioModel)
 			SLATE_ARGUMENT(UHansaSaveLoadPresentationModel*, SaveLoadModel)
+			SLATE_ARGUMENT(AHansaStrategyPlayerController*, PlacementController)
 			SLATE_ARGUMENT(FIntPoint, InitialViewportSize)
+			SLATE_ARGUMENT(FUiPreferences, Preferences)
 		SLATE_END_ARGS()
 
 		~SHansaRootHud();
 		void Construct(const FArguments& Arguments);
 
+		TSharedPtr<SHansaBuildMenu> GetConstructionMenu() const { return BuildMenuWidget; }
+		void SetPreferences(FUiPreferences InPreferences);
+		FUiPreferences GetPreferences() const { return Preferences; }
+		TSharedPtr<SHansaCityOverview> GetCityOverview() const { return CityOverviewWidget; }
+        TSharedPtr<SHansaContextInspector> GetInspector() const { return InspectorWidget; }
+		TSharedPtr<SWidget> ResolveSemanticWidget(const FString& Id) const;
 		void SetPresentationSize(FIntPoint Size);
 		[[nodiscard]] TSharedRef<SWidget> GetCaptureWidget() const;
 		[[nodiscard]] TArray<FHansaHudSemanticNode> GetSemanticSnapshot() const;
@@ -67,8 +81,17 @@ namespace Hansa::UI
 		bool FocusSemanticId(const FString& SemanticId);
 		virtual bool SupportsKeyboardFocus() const override { return true; }
 		virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
+		virtual void Tick(const FGeometry& AllottedGeometry, double InCurrentTime, float InDeltaTime) override;
 
 	private:
+		void UnbindModels();
+        TWeakObjectPtr<UHansaFrontendPresentationModel> FrontendModel;
+        TSharedPtr<SHansaFrontend> FrontendWidget;
+        FReply HandleSessionOpen();
+        TSharedPtr<SHansaSessionCoach> SessionCoach;
+        TSharedPtr<SButton> SessionButton;
+		void QueuePreferencesChange(FUiPreferences Value);
+		FIntPoint PhysicalViewportSize{1280,720};
 		void Refresh(const FHansaHudPresentationSnapshot& Snapshot, uint64 Revision);
 		void RefreshInspectorHost(const FHansaInspectorSnapshot& Snapshot, uint64 Revision);
 		void RefreshCityOverviewHost(const FHansaCityOverviewSnapshot& Snapshot, uint64 Revision);
@@ -80,6 +103,7 @@ namespace Hansa::UI
 		void RestoreFocusFromSaveLoad(FName SemanticId);
 		void RebuildAlerts(const FHansaHudPresentationSnapshot& Snapshot);
 		void RebuildNotifications(const FHansaHudPresentationSnapshot& Snapshot);
+		void RecordNativeFocus(FName Id);
 		void MapWidget(const TCHAR* SemanticId, const TSharedPtr<SWidget>& Widget);
 		FReply HandleAlertToggle();
 		FReply HandleAlertAction(FName AlertId, EHansaHudAlertAction Action);
@@ -106,6 +130,7 @@ namespace Hansa::UI
 		TWeakObjectPtr<UHansaResearchPresentationModel> ResearchModel;
 		TWeakObjectPtr<UHansaScenarioPresentationModel> ScenarioModel;
 		TWeakObjectPtr<UHansaSaveLoadPresentationModel> SaveLoadModel;
+		TWeakObjectPtr<AHansaStrategyPlayerController> PlacementController;
 		FDelegateHandle ModelChangedHandle;
 		FDelegateHandle InspectorFocusRestoreHandle;
 		FDelegateHandle InspectorChangedHandle;
@@ -119,7 +144,12 @@ namespace Hansa::UI
 		FDelegateHandle ScenarioFocusRestoreHandle;
 		FDelegateHandle SaveLoadChangedHandle;
 		FDelegateHandle SaveLoadFocusRestoreHandle;
-		FHansaHudLayoutMetrics Layout;
+		FArguments RebuildArguments;
+        FUiPreferences Preferences;
+        TArray<FHansaHudAlertPresentation> PresentedAlerts;
+        TArray<FHansaHudNotificationPresentation> PresentedNotifications;
+        TSharedPtr<SScrollBox> AlertScroll;
+        FHansaHudLayoutMetrics Layout;
 		uint64 PresentedRevision = 0;
 
 		FSlateBrush WorldOverlayBrush;
@@ -155,18 +185,29 @@ namespace Hansa::UI
 		SOverlay::FOverlaySlot* SaveLoadSlot = nullptr;
 		TSharedPtr<SWidget> ScreenWidget;
 		TSharedPtr<SWidget> TopStatusWidget;
+        TSharedPtr<SWidget> TopLeftPanel, TopCenterPanel, TopRightPanel;
 		TSharedPtr<STextBlock> MoneyText;
 		TSharedPtr<STextBlock> MoneyTrendText;
 		TSharedPtr<STextBlock> PopulationText;
+        TSharedRef<SWidget> BuildTopMenu();
+        TSharedPtr<STextBlock> WealthyText;
+        TSharedPtr<STextBlock> ProductTexts[3];
+        TSharedPtr<SHansaGlyph> ProductGlyphs[3];
+        TSharedPtr<SWidget> ProductChips[3];
+        TSharedPtr<SWidget> MoneyChip, TrendChip, PopulationChip, LaborerChip, WealthyChip;
 		TSharedPtr<STextBlock> WorkforceText;
 		TSharedPtr<STextBlock> CityBreadcrumbText;
 		TSharedPtr<SButton> CityOverviewButton;
 		TSharedPtr<SButton> TradeMapButton;
+        TSharedPtr<SButton> ReturnCityButton;
 		TSharedPtr<SButton> SaveLoadButton;
 		TSharedPtr<STextBlock> DateText;
 		TSharedPtr<STextBlock> ResearchText;
 		TSharedPtr<SButton> ResearchButton;
 		TSharedPtr<STextBlock> ConnectionText;
+		TSharedPtr<STextBlock> FpsText;
+		double FpsSampleElapsedSeconds = 0.0;
+		int32 FpsSampleFrameCount = 0;
 		TSharedPtr<SWidget> SpeedGroupWidget;
 		TSharedPtr<SButton> PauseButton;
 		TSharedPtr<SButton> NormalButton;

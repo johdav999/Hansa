@@ -4,6 +4,8 @@
 
 This document converts [MVP.md](MVP.md) into an executable sprint backlog for the game, authoring editor, and hybrid MCP/semantic/screenshot testing stack. The three workstreams advance together. Editor support, deterministic fixtures, gameplay queries, semantic UI coverage, screenshots, tests, and Shipping exclusions are part of feature delivery rather than later cleanup.
 
+> **Scope status after EMVP-P00:** S00–S14 are the implementation record for the simulation/editor/automation foundation and its original acceptance attempt. They are not the current playable-MVP completion contract. [MVP.md](MVP.md) now requires the enhanced two-city, three-local-chain, production-presentation slice, and [MVP-enhanced.md](MVP-enhanced.md) contains the remaining EMVP delivery prompts. Historical prompt text below—such as four market cities, four local chains, a required land route, placeholder meshes, or isolated screenshot proof—describes what that sprint built and must not be used to waive the current acceptance matrix.
+
 The baseline assumes:
 
 - fifteen sprints: Sprint 0 followed by fourteen two-week delivery sprints;
@@ -636,6 +638,6 @@ Avoid parallel edits to the same definition base, command gateway, protocol sche
 
 ## 20. Backlog and scope-change rule
 
-Anything outside [MVP.md](MVP.md)—including live TRELLIS, skeletal generation/rigging/animation, more than one fully buildable city, advanced route conditions, production multiplayer services, politics/diplomacy depth and full localization—goes into the post-MVP backlog unless it is required to repair an accepted MVP invariant.
+Current scope changes are approved only through [MVP.md](MVP.md) and [MVP-enhanced.md](MVP-enhanced.md). Anything outside them—including live TRELLIS, skeletal generation/rigging/animation, a second fully buildable city, additional required rendered cities, locally buildable chains beyond bread/fish/planks, advanced route conditions, a player-facing intercity land-route journey, production multiplayer services, politics/diplomacy depth and full localization—goes into the post-MVP backlog unless it is required to repair an accepted MVP invariant.
 
 When a new gameplay model or field is approved during implementation, add its runtime, editor, schema/migration, validation, query/semantic, fixture/test and documentation work to the same sprint or move the whole feature. Never ship only the runtime half and label the missing parity work as polish.

@@ -70,6 +70,12 @@ void UHansaCityMarketProfileDefinition::ValidateDefinition(TArray<FHansaDefiniti
 				NSLOCTEXT("HansaMarketDefinition", "GoodRowInvalid", "A market good row has an invalid/duplicate reference, quantity, modifier or price bound."),
 				NSLOCTEXT("HansaMarketDefinition", "GoodRowInvalidRemedy", "Use each existing Good.* once, non-negative quantities, ±5000 modifiers and an initial price inside positive bounds."));
 		}
+		if (Good.BackgroundProductionMilliUnitsPerUpdate > 0 && Good.DesiredReserveMilliUnits <= 0)
+		{
+			AddMarketIssue(OutIssues, TEXT("HSA-MARKET-007"), FString::Printf(TEXT("Goods[%d].DesiredReserveMilliUnits"), Index),
+				NSLOCTEXT("HansaMarketDefinition", "ProductionCeiling", "Background production requires a positive reserve to define its stock ceiling."),
+				NSLOCTEXT("HansaMarketDefinition", "ProductionCeilingRemedy", "Set a positive reserve or disable background production."));
+		}
 		SeenGoods.Add(Good.GoodId);
 	}
 	if (bMarketOnly && Goods.ContainsByPredicate([](const FHansaMarketGoodProfile& Good)

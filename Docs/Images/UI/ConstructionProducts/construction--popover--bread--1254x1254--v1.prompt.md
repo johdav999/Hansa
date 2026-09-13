@@ -1,0 +1,6 @@
+# Recipe popover reference
+
+Built-in ImageGen; model not exposed. Native 1254x1254. Reference-only opaque canvas, not imported. Original-resolution inspection accepted hierarchy, labels, edges, palette and safe margins. No resampling. Anchor: composed construction tray reference. Revision v1: isolated reusable recipe popup.
+
+Final prompt:
+Use case: ui-mockup. Hansa reusable recipe popover shell, single component reference on square 1024x1024 native canvas. Center one wide compact rectangular navy panel with fine flat brass border and tiny downward notch. Header Bread, small close X right. Three evenly spaced compact outlined tile placeholders with simple linen native-style glyphs: farm house and field, windmill, bakery oven house, captions Farm, Mill, Bakery. Thin linen arrows between. Palette BalticNavy #152A35 HarborSlate #29424D Linen #F2E9D8 Brass #C19A52. Source Serif 4 heading and Atkinson Hyperlegible captions. Native flat geometry, restrained Hanseatic mercantile style. Consistent with construction product selectors and icon-only navigation; this image only shows the popover. No contact sheet, no other widgets, no gear, no purple, no logos, no watermark, no glossy decoration. Native Slate reference only, no production raster, no resampling.

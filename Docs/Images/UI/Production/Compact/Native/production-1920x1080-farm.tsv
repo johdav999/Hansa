@@ -1,0 +1,29 @@
+id	visible	enabled	x	y	right	bottom	value
+Inspector.Root	1	1	1576	476	1896	956	Building.1
+Inspector.Identity	1	1	1589	601	1835	637	Paused
+Inspector.Result	1	1	1686	697	1786	797	0%
+Inspector.Production.Batch	1	1	1686	697	1786	797	progressTicks=0;cycleTicks=120;completedBatches=0
+Inspector.Production.Batch.Tooltip	0	1	0	0	0	0	hover
+Inspector.Production.Batch.Time	0	1	0	0	0	0	02:00
+Inspector.Production.Batch.Percent	0	1	0	0	0	0	0%
+Inspector.Production.Portrait	1	1	1668	476	1804	596	Worker
+Inspector.Production.Cost	1	1	1593	906	1732	943	
+Inspector.Production.Labor	1	1	1740	906	1879	943	8
+Inspector.Production.Output.Good.Grain	1	1	1806	713	1879	806	6
+Inspector.Flows	1	1	1593	697	1879	821	6 Grain per batch
+Inspector.Production.Output.Good.Grain.Stock	0	1	0	0	0	0	16
+Inspector.Production.Record.Batches	0	1	0	0	0	0	0
+Inspector.Production.Record.Good.Grain	0	1	0	0	0	0	0 Grain
+Inspector.Production.Laborers	0	1	0	0	0	0	8 / 8
+Inspector.Production.Artisans	0	1	0	0	0	0	0 / 0
+Inspector.Problem	1	1	1617	665	1879	685	Resume production to continue this batch.
+Inspector.Problem.Cause	0	1	0	0	0	0	This building is paused.
+Inspector.History	0	1	0	0	0	0	0 batches
+Inspector.Action.ViewStorage	0	1	0	0	0	0	action
+Inspector.Action.OpenRelated	0	1	0	0	0	0	action
+Inspector.Action.Pin	0	1	0	0	0	0	action
+Inspector.Action.Frame	0	1	0	0	0	0	action
+Inspector.Close	1	1	1835	603	1883	651	action
+Inspector.Action.ToggleProduction	1	1	1593	841	1732	889	action
+Inspector.Action.OpenCause	1	1	1740	841	1879	889	action
+Inspector.Action.RemoveBuilding	0	0	0	0	0	0	action

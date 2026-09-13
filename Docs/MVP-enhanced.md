@@ -8,8 +8,8 @@ The target is a polished 30–60 minute vertical slice:
 
 - Lübeck is the fully buildable player city.
 - Rostock is a second fully rendered coastal Hanseatic city. It is prebuilt, inspectable, and tradeable in the MVP, but not player-buildable.
-- The locally buildable production chains are bread, fish, and planks.
-- The full ten-good market, population needs, satisfaction, workforce, growth, decline, and tier progression remain active.
+- The locally buildable production chains are bread, fish, planks, and beer.
+- The full thirteen-good market, population needs, satisfaction, workforce, growth, decline, and tier progression remain active.
 - The player constructs buildings by dragging building cards into the world, sees the real 3D model as a placement ghost, and receives unambiguous valid/invalid feedback.
 - The player creates roads with a direct world interaction inspired by the usability of Anno games while retaining an original Hansa visual identity.
 - The player can establish a Lübeck–Rostock sea route and see a cog carrying actual simulated cargo.
@@ -21,7 +21,7 @@ Rostock becoming a second fully buildable city, more local production chains, ad
 
 ## 2. Why the current MVP still feels like a simulation scenario
 
-The implemented foundation is substantial: the deterministic economy, ten goods, recipes, buildings, population needs, city markets, research, routes, objectives, save/load, automation, and functional screens largely exist. The remaining gap is concentrated in the player-facing layer:
+The implemented foundation is substantial: the deterministic economy, thirteen goods, recipes, buildings, population needs, city markets, research, routes, objectives, save/load, automation, and functional screens largely exist. The remaining gap is concentrated in the player-facing layer:
 
 - only Lübeck has a playable world map;
 - Rostock, Hamburg, and Lüneburg currently behave primarily as market records;
@@ -77,7 +77,7 @@ After EMVP-P02, independent 3D asset prompts may overlap with interaction work. 
 ### EMVP-P00 — Reconcile the enhanced scope and acceptance contract
 
 ~~~text
-Execute EMVP-P00 from Docs/MVP-enhanced.md. Compare Docs/MVP.md, Docs/MVPSprintPlan.md, the current implementation, and the enhanced playable-MVP definition. Update Docs/MVP.md and related acceptance documentation only where required to make the new target explicit: buildable Lübeck; rendered, prebuilt, inspectable, tradeable Rostock; bread, fish, and planks as the only local production chains; the full ten-good market and population loop; card-drag building placement with real 3D ghosts; player-drawn roads; visible cargo vehicles; production UI; and a 30–60 minute non-prescriptive session. Preserve earlier architecture and editor-parity requirements. Mark a second buildable city, additional local chains, and wider content breadth as post-MVP. Add a requirement-to-evidence matrix whose entries cannot pass on headless state alone when the requirement is visual or interactive. Done when the target cannot reasonably be interpreted as only an automated simulation scenario.
+Execute EMVP-P00 from Docs/MVP-enhanced.md. Compare Docs/MVP.md, Docs/MVPSprintPlan.md, the current implementation, and the enhanced playable-MVP definition. Update Docs/MVP.md and related acceptance documentation only where required to make the new target explicit: buildable Lübeck; rendered, prebuilt, inspectable, tradeable Rostock; bread, fish, planks, and expanded beer as the local production chains; the full thirteen-good market and population loop; card-drag building placement with real 3D ghosts; player-drawn roads; visible cargo vehicles; production UI; and a 30–60 minute non-prescriptive session. Preserve earlier architecture and editor-parity requirements. Mark a second buildable city, additional local chains beyond beer, and wider content breadth as post-MVP. Add a requirement-to-evidence matrix whose entries cannot pass on headless state alone when the requirement is visual or interactive. Done when the target cannot reasonably be interpreted as only an automated simulation scenario.
 ~~~
 
 ### EMVP-P01 — Repair the economic catalog version/hash release blocker
@@ -190,11 +190,15 @@ Execute EMVP-P17 from Docs/MVP-enhanced.md. Use the HansaModels skill end to end
 
 ### EMVP-P18 — Production road kit
 
+Status 2026-09-08: completed and explicitly approved/promoted for the current MVP road contract. Six native-cell variants, live/final topology, wet/dry material, actual shore-grade blending, catalog v7 and release-boundary evidence are recorded in `Docs/Development/EnhancedMvpRoadKit.md`. Arbitrary Landscape conformance and unrelated world dressing remain outside this acceptance.
+
 ~~~text
 Execute EMVP-P18 from Docs/MVP-enhanced.md. Use the HansaModels skill end to end to audit the existing DirtRoad work and deliver the production road kit required by the road-drawing tool: straight, corner, T-junction, crossroads, end/transition, and any shore or gate transition actually exercised by the MVP. Use modular geometry/material techniques that avoid visible seams and do not stretch painted detail. Verify cell dimensions, pivots, path orientation, grade tolerance, collision/navigation behavior, decals or material blending, LOD/Nanite choice, and wet-weather consistency. Import and inspect every accepted piece, connect deterministic neighbor-to-variant selection, and test live previews and final roads across all junction types.
 ~~~
 
 ### EMVP-P19 — Cog and local cargo vehicle family
+
+Status 2026-09-08: completed and explicitly approved/promoted for the asset and read-only entity-presentation contract. The Cog/wagon family, stable bindings, corrected berth, catalog v8, 27 passing targeted tests and Shipping/cook evidence are recorded in `Docs/Development/EnhancedMvpVehicleFamily.md`. Continuous two-city movement and full world-projection lifecycle remain P32/P34; no animal/vehicle framework was added.
 
 ~~~text
 Execute EMVP-P19 from Docs/MVP-enhanced.md. Use the HansaModels skill end to end to create the MVP cargo Cog and the one local cart or wagon family that is actually projected into the world. Research credible Hanseatic hull, rig, cargo, wheel, harness, and loading details. Keep the cog readable at trade-route and city-harbor camera distances. Separate only the parts needed for supported movement, sail/wheel rotation, cargo-state variants, or simple rigging; do not expand into a full character/vehicle framework. Verify scale, pivots, collision, LOD/Nanite, materials, waterline, berth alignment, route orientation, and cargo sockets. Import and inspect both assets in Unreal, connect stable vehicle presentations, and verify they can represent real simulation entities rather than ambient decoration.
@@ -210,11 +214,19 @@ Execute EMVP-P20 from Docs/MVP-enhanced.md. Use the HansaModels skill end to end
 
 The UI may use Anno as an interaction reference, but not as an asset, exact-layout, iconography, or branding source. Hansa's design brief remains the visual source of truth. “AAA level” here means a coherent component language, excellent hierarchy, complete states, polished motion and feedback, accessibility, responsive native-resolution composition, and no developer/test affordances in the player path.
 
+GUI acceptance update (2026-09-09): the cross-screen repair and actual reference comparisons are recorded in [GuiRepairSession.md](Development/GuiRepairSession.md). P21–P25 implementation statuses describe functional delivery; they do not grant AAA visual or usability approval. Remaining reference-conformance, accessibility, performance and human UAT gates are explicit in that report.
+
 ### EMVP-P21 — Production UI design system and reusable component library
 
 ~~~text
 Execute EMVP-P21 from Docs/MVP-enhanced.md. Read the UI brief and asset workflow, use the imagegen skill, and establish the final Hansa UI style anchor plus a named component inventory and state matrix before implementation. Cover screen shell, top bar, bottom tray, tabs, category buttons, building cards, chain connectors, panels, list/table rows, tooltips, modal dialogs, notifications, progress, charts/overlays, cursors, focus, icons, and decorative layers. Generate a composed reference for hierarchy and a separate native-size reference or asset for each distinct reusable visual component or variant; preserve prompt records and inspect originals. Then implement centralized native Slate/UMG tokens and reusable components for palette, typography, spacing, materials, nine-slice/tiled treatment, focus, disabled, warning, error, loading, and motion. Done when all later screens can be assembled without inventing local styles.
 ~~~
+
+Implementation status (2026-09-08): P21 implemented. The shared native library,
+component/state inventory, 21 selected ImageGen references and prompt records,
+licensed fonts, accessibility/input tests and actual viewport evidence are documented
+in [EnhancedMvpUiSystem.md](Development/EnhancedMvpUiSystem.md). This completes the
+component foundation; P22–P29 and the broader EMVP-UI screen acceptance remain separate.
 
 ### EMVP-P22 — Anno-inspired bottom construction panel and chain expansion
 
@@ -222,11 +234,26 @@ Execute EMVP-P21 from Docs/MVP-enhanced.md. Read the UI brief and asset workflow
 Execute EMVP-P22 from Docs/MVP-enhanced.md. Use the imagegen skill and the approved UI component system to design and implement the production bottom construction panel. It must provide clear category navigation, a compact default tray, and chain expansion above the tray: selecting the Bread icon reveals Grain Farm, Mill, and Bakery as separate draggable building cards connected as a readable chain; Fish reveals Fishery; Planks reveals Lumber Camp and Sawmill. Show cost, lock/availability, footprint, workforce, and input/output summaries through native UI. Implement default, hover, pressed, selected, disabled, focus, dragging, warning, and error states plus localization space. Connect card drag to EMVP-P04 and retain accessible non-drag controls. Remove test helper buttons from the player path. Validate at 1280x720 and 1920x1080 without raster resampling.
 ~~~
 
+Implementation status (2026-09-08): P22 implemented. The persistent native category
+tray, Bread/Fish/Planks chain cards, P04 drag and non-drag controls, accessibility
+states, five ImageGen references and 16 native viewport captures are documented in
+[EnhancedMvpConstructionPanel.md](Development/EnhancedMvpConstructionPanel.md).
+Rendered build-menu, shared-style, HUD and native input/layout checks passed at the
+two required resolutions. P23 and broader screen acceptance remain separate.
+
 ### EMVP-P23 — Root HUD, time controls, alerts, and contextual inspector
 
 ~~~text
 Execute EMVP-P23 from Docs/MVP-enhanced.md. Use the imagegen skill only for unresolved component visuals, then assemble the root HUD from the approved native component library. Polish the top resource/status bar, city breadcrumb, time/speed controls, alert stack, selection layer, notification layer, bottom construction host, and right contextual inspector while keeping the 3D city dominant. The inspector must explain identity, state, result, inputs/outputs or needs, current problem and cause, actions, and recent history. All numbers and text remain dynamic native widgets. Complete mouse, keyboard, and controller focus behavior, color-redundant status, tooltips, loading/error/empty states, and reduced-motion behavior. Add semantic automation and true viewport captures at both reference resolutions.
 ~~~
+
+Implementation status (2026-09-09): P23 implemented. The native status and time
+controls, stable alert actions and snooze recovery, notification placement, and
+contextual inspector now share the P21 component system and preserve P22 construction.
+Mouse, keyboard and controller automation, 26 regression tests, and 26 native viewport
+captures at both reference resolutions passed. Component inventory, evidence and test
+limits are documented in
+[EnhancedMvpHudInspector.md](Development/EnhancedMvpHudInspector.md).
 
 ### EMVP-P24 — City Overview and population progression screen
 
@@ -234,11 +261,33 @@ Execute EMVP-P23 from Docs/MVP-enhanced.md. Use the imagegen skill only for unre
 Execute EMVP-P24 from Docs/MVP-enhanced.md. Use the imagegen skill and shared component library to deliver the production City Overview for Lübeck and the inspectable Rostock summary. Implement Population, Production, and Market tabs with clear population trend, tier counts, satisfaction, workforce, employment, needs fulfillment, growth/decline causes, staple reserves, bottlenecks, and causal navigation to affected buildings or goods. Rostock must clearly communicate which data is known, stale, estimated, or unavailable and must not expose construction controls. Preserve selection across refresh, support long localization labels and native scrolling, and include default/loading/empty/warning/error/focus states. Validate semantic navigation and native screenshots at both reference resolutions.
 ~~~
 
-### EMVP-P25 — Full ten-good Market screen
+Implementation status (2026-09-09): P24 implemented. The native Population,
+Production and Market summary tabs expose complete needs, tier/employment context,
+causal navigation and report-aware Rostock data. Selection survives refresh, the
+modal blocks construction input, and shared accessibility/state controls are wired.
+Six current City Overview regression tests and 26 native captures at 1280×720 and 1920×1080
+passed. Three ImageGen references, component inventory and verification limits are
+recorded in [EnhancedMvpCityOverview.md](Development/EnhancedMvpCityOverview.md).
+Follow-up verification also fixes critical-state text contrast, shared Retry targets/focus,
+and player-facing recovery copy; native Enter-to-retry recovery passes.
+The full Market redesign is recorded under P25 below.
+
+### EMVP-P25 — Full thirteen-good Market screen
 
 ~~~text
-Execute EMVP-P25 from Docs/MVP-enhanced.md. Use the imagegen skill and shared UI system to turn the existing market table into the signature production screen for all ten MVP goods. Implement search, sorting, filters, stable selection, stock, reserve, production, consumption, citizen and industrial demand, price, recent trend, incoming cargo, report age, and status. The selected-good panel must explain causes, producers, consumers, shortages, surplus, and route opportunities from authoritative projections and provide relevant actions. Use native charts and text; never bake data into raster art. Treat unknown as unknown rather than zero. Add responsive table behavior, semantic data summaries, focus, accessibility, loading/error states, and deterministic market-to-world navigation tests.
+Execute EMVP-P25 from Docs/MVP-enhanced.md. Use the imagegen skill and shared UI system to turn the existing market table into the signature production screen for all thirteen MVP goods. Implement search, sorting, filters, stable selection, stock, reserve, production, consumption, citizen and industrial demand, price, recent trend, incoming cargo, report age, and status. The selected-good panel must explain causes, producers, consumers, shortages, surplus, and route opportunities from authoritative projections and provide relevant actions. Use native charts and text; never bake data into raster art. Treat unknown as unknown rather than zero. Add responsive table behavior, semantic data summaries, focus, accessibility, loading/error states, and deterministic market-to-world navigation tests.
 ~~~
+
+Implementation status (2026-09-09): P25 implemented; it is now extended to a native thirteen-good ledger. The ledger
+uses proportional columns, wrapped report details, shared accessible controls and
+stable selection. Selected-good details include authoritative production,
+consumption, causal balance, native price history and stable producer/consumer
+building navigation. Unknown values remain unknown and sort after reported values.
+Eight current market/selected-good/performance regressions and native viewport flows at 1280×720 and 1920×1080
+passed. Three ImageGen references and 20 native captures with semantic evidence are
+recorded in [EnhancedMvpMarket.md](Development/EnhancedMvpMarket.md).
+Follow-up verification fixes repeated native activation of unchanged selections/filters
+and uses actual building names in producer/consumer links while preserving stable world IDs.
 
 ### EMVP-P26 — Trade map and complete Lübeck–Rostock route creator
 
@@ -246,11 +295,15 @@ Execute EMVP-P25 from Docs/MVP-enhanced.md. Use the imagegen skill and shared UI
 Execute EMVP-P26 from Docs/MVP-enhanced.md. Use the imagegen skill and shared UI components to deliver a polished Baltic trade map focused on Lübeck and Rostock, while preserving other market-only cities only if they remain in the approved scope. Implement a complete route-creation flow rather than only editing existing routes: choose or begin from a city/market good, add ordered stops, choose the Cog, configure load/unload and minimum reserves, review capacity, round-trip time, upkeep, expected profit range and risk, validate, name, and activate. Render dynamic routes, city labels, cargo, reports, and values natively. Provide controller/non-drag alternatives, stale-information treatment, error recovery, semantic IDs, and tests that create a delivering route without debug commands.
 ~~~
 
+**Status (2026-09-09): implemented.** Native Baltic route creation now covers market-good entry, ordered stops, Cog selection/reassignment, cargo/reserves, name, validated departure review and activation. Typed atomic commands create a new delivering route; names survive save/load through format-3 cosmetic metadata with prior-format migrations. 21 tests, 12 real-viewport delivery runs and 108 native captures across four resolutions / three UI scales passed. Four ImageGen references and comparisons, final source/build evidence and scoped Shipping exclusion results are recorded in [EnhancedMvpTradeCreator.md](Development/EnhancedMvpTradeCreator.md).
+
 ### EMVP-P27 — Research screen integration
 
 ~~~text
 Execute EMVP-P27 from Docs/MVP-enhanced.md. Use the imagegen skill only where the approved system lacks a research-specific visual component. Finish the existing research screen and wire it into the root HUD and normal navigation. Present the three MVP branches, prerequisites, costs, progress, locked reasons, queue, and applied gameplay effects with a legible hierarchy at city-builder resolutions. Reuse stable research definitions and authoritative effects; do not recompute rules in widgets. Complete hover/selected/focus/locked/loading/error states, controller navigation, causal links to affected buildings or routes, semantic coverage, and save/load tests for progress and unlocks.
 ~~~
+
+**Status (2026-09-09): implemented.** Research now presents the three MVP branches in prerequisite order, explicit costs/locked reasons, persistent queue/progress, authoritative applied effects, and normal market/building/route causal navigation. Shared executor eligibility, native disabled/focus states, semantic bounds and progress/unlock save-load tests are complete. 16 automated tests, 12 real-viewport workflows and 120 original-size captures across four resolutions / three UI scales passed. Existing approved ImageGen components were reused without a redundant generation pass. Details, original-size comparisons and scoped Shipping verification are recorded in [EnhancedMvpResearch.md](Development/EnhancedMvpResearch.md).
 
 ### EMVP-P28 — Scenario, onboarding, pause, and results presentation
 
@@ -258,15 +311,21 @@ Execute EMVP-P27 from Docs/MVP-enhanced.md. Use the imagegen skill only where th
 Execute EMVP-P28 from Docs/MVP-enhanced.md. Use the imagegen skill and shared component library to create the player-facing shell around the session: a concise opening context, optional contextual onboarding, objective/prosperity tracking, pause menu, failure/recovery messaging, and success/results presentation. The onboarding must teach camera, construction card drag, roads, inspection, market diagnosis, and route creation through contextual prompts that can be dismissed and do not prescribe one economic solution. Avoid a checklist that makes the game feel like an automation scenario. Implement complete focus, controller, accessibility, reduced-motion, localization, save/resume, and semantic states. Done when a first-time player can begin and recover without developer instructions.
 ~~~
 
+**Status (2026-09-09): implemented.** The native session shell now provides concise opening context, six optional contextual help topics with persistent dismissal, pause/resume, authoritative prosperity/results and confirmed save recovery. Initial focus, controller navigation/scrolling, modal input isolation, shared accessibility preferences and semantic states are integrated. Three built-in ImageGen references and their exact prompt records are preserved. Development and Shipping exclusion checks, 60 UI tests, 9 save integration tests and 12 native display-profile flows passed; 168 original-size captures are preserved. See [EnhancedMvpSession.md](Development/EnhancedMvpSession.md) for component inventory, references, comparisons and test limitations.
+
 ### EMVP-P29 — Frontend, new game, save/load, settings, and credits shell
 
 ~~~text
 Execute EMVP-P29 from Docs/MVP-enhanced.md. Use the imagegen skill and established component library to deliver the minimal production frontend and system screens required for a playable build: title/start screen, New Game for the enhanced slice, Continue when valid, save/load management, settings, confirmation dialogs, loading transitions, and a compact credits/legal placeholder where required. Settings must cover the existing supported display, audio, control, UI scale, contrast, text-size, and motion options without advertising unsupported features. Remove development fixtures and automation scenarios from the normal player journey. Add focus restoration, keyboard/controller support, corrupted/incompatible-save handling, and native-resolution screenshot tests.
 ~~~
 
+**Status (2026-09-09): implemented.** The native frontend now provides title/New game, compatible-save Continue, named save/load management, real system/interface settings, confirmed destructive actions, loading/recovery feedback and the requested credits/legal placeholder. New game resets the production runtime; Continue and Load restore paused sessions. Display changes have cancellation and 15-second rollback. Five built-in ImageGen references and exact prompt records are preserved. Development/Shipping exclusion, 61 UI tests, 10 save integration tests, native session/display regressions and all 12 frontend profiles passed; 300 original-size captures are validated. See [EnhancedMvpFrontend.md](Development/EnhancedMvpFrontend.md) for the component inventory, original-size comparisons, evidence and release limitations.
+
 ## 9. Wave 4 — Assemble the playable two-city slice
 
 ### EMVP-P30 — Lübeck world-art and readability pass
+
+**Status (2026-09-09): in progress; production acceptance blocked.** A separate native World Partition/Landscape/Water candidate, instanced approved quay dressing, lighting presets, reproducible authoring, and actual player-viewport construction/save comparison are implemented. The production map is unchanged. Missing P11/P16/P20 asset deliveries, the starting Brewery cube, primitive status markers, final art review and complete GPU/package evidence prevent the required zero-placeholder production assembly. See [EnhancedMvpLubeckWorldArt.md](Development/EnhancedMvpLubeckWorldArt.md).
 
 ~~~text
 Execute EMVP-P30 from Docs/MVP-enhanced.md. Assemble the verified production assets in L_Lubeck_MVP and complete a restrained world-art pass without changing authoritative gameplay state. Replace golden-path blockout geometry and staging references, establish coherent terrain, shoreline, harbor, roads, vegetation, lighting, weather/atmosphere, water, camera boundaries, and controlled ambient dressing. Preserve buildable-space readability and do not decorate valid plots into visual ambiguity. Use stable presentation roles for spawned gameplay objects. Profile instancing, materials, shadows, LOD/Nanite, overdraw, and actor counts while iterating. Capture true player-camera evidence at representative zooms and times. Done when Lübeck reads as an intentional Hanseatic city before and after player construction and no visible Engine cube remains.
@@ -274,11 +333,15 @@ Execute EMVP-P30 from Docs/MVP-enhanced.md. Assemble the verified production ass
 
 ### EMVP-P31 — Build the rendered Rostock trade city
 
+**Status (2026-09-09): playable staged implementation; production acceptance open.** Rostock now has a native streamed trade-quarter candidate, report/route-stop visits, inspection, construction guards, direct return, and bounded real-Cog approach/berth/unload projection. 73 focused tests, five native flows and 45 original-size captures pass, alongside current-production Shipping/cook exclusion checks. Final art review, target-platform performance and explicit content promotion remain open; the production map is not redirected to staging. See [EnhancedMvpRostock.md](Development/EnhancedMvpRostock.md).
+
 ~~~text
 Execute EMVP-P31 from Docs/MVP-enhanced.md. Create the second coastal city experience as a fully rendered, prebuilt, inspectable, tradeable Rostock map or streamed city presentation using the same world and presentation contracts as Lübeck. Ground the city layout and harbor identity in credible late-medieval Rostock evidence while reusing the shared Hansa asset kit intelligently. Include a recognizable waterfront, market/warehouse/dock context, residences and production silhouettes sufficient to explain its economy, but do not expose player construction there. Connect the existing Rostock market state, report age, camera transition, selection/inspection, route stops, and cargo arrival to the rendered city. Add validation, semantic travel/inspection flow, performance checks, and native viewport evidence. Done when Rostock is visibly a place, not a row in a market table.
 ~~~
 
 ### EMVP-P32 — Project real vehicles, cargo, and production state into the world
+
+**Status (2026-09-09): runtime implementation and technical acceptance complete; release-art acceptance remains open.** A bounded world manager now projects the real Cog and local delivery jobs with deterministic movement, cargo cues, generation-aware selection, streaming visibility, cancellation and save reconstruction. Production roles follow actual inventory/work state, and pause preserves visual phase. Four P32 contracts, 61 UI tests, two runtime-host tests, ten save tests, five native cargo profiles (40 captures), the existing Rostock native regression, Shipping exclusion and the current production cook audit pass. Missing P11 Fishery art and P30/P31 world-art/promotion gates remain explicit. See [EnhancedMvpCargoProjection.md](Development/EnhancedMvpCargoProjection.md) for contracts, component/reference inventory, evidence and limits.
 
 ~~~text
 Execute EMVP-P32 from Docs/MVP-enhanced.md. Implement presentation actors/components for the real simulated Cog and local cart/wagon entities using the verified EMVP-P19 assets. Bind movement, route progress, berth/loading/unloading, cargo-state cues, and selection to read-only deterministic projections; do not make actor transforms or animations authoritative. Add simple production-state presentation for the three local chains using verified role assets and effects without spawning unbounded cosmetic actors. Handle streaming, save/load reconstruction, time speed changes, route cancellation, and missing-presentation failures. Add typed queries and semantic selection, then prove that cargo seen departing, traveling, arriving, and unloading corresponds to the same simulated route and inventory events.
@@ -286,11 +349,16 @@ Execute EMVP-P32 from Docs/MVP-enhanced.md. Implement presentation actors/compon
 
 ### EMVP-P33 — Complete the full market, needs, and population-growth play loop
 
+**Status:** Runtime corrections and a tested catalog v9 candidate are implemented; production balance promotion awaits review of the exact eight-definition diff. See [implementation and evidence](Development/EnhancedMvpEconomy.md). Catalog v8 remains the default.
+
 ~~~text
-Execute EMVP-P33 from Docs/MVP-enhanced.md. Audit and tune the existing ten-good economy so only Bread, Fish, and Planks require locally buildable chains while remaining goods have explicit starting stock, remote supply, imports, consumption, or other bounded MVP sources. Ensure population needs drive satisfaction, health or approved wellbeing measures, workforce, growth, decline, tier eligibility, and demand; ensure prices and inventories respond to actual supply, consumption, reserves, and deliveries. Prevent unwinnable depletion, infinite stock, zero-information masquerading as zero, and dominant no-brainer strategies. Update definitions through the approved version/migration path and maintain editor/schema/test parity. Add deterministic playthrough simulations for recovery, neglect, growth, upgrade, shortage, surplus, and trade dependence.
+Execute EMVP-P33 from Docs/MVP-enhanced.md. Audit and tune the existing thirteen-good economy so Bread, Fish, Planks, and Beer require locally buildable chains while remaining goods have explicit starting stock, remote supply, imports, consumption, or other bounded MVP sources. Ensure population needs drive satisfaction, health or approved wellbeing measures, workforce, growth, decline, tier eligibility, and demand; ensure prices and inventories respond to actual supply, consumption, reserves, and deliveries. Prevent unwinnable depletion, infinite stock, zero-information masquerading as zero, and dominant no-brainer strategies. Update definitions through the approved version/migration path and maintain editor/schema/test parity. Add deterministic playthrough simulations for recovery, neglect, growth, upgrade, shortage, surplus, and trade dependence.
 ~~~
 
 ### EMVP-P34 — Complete two-city trade gameplay and visible delivery
+
+**Implemented (2026-09-09):** Market shortages now seed return-leg imports; circular cargo validation, protected-reserve feedback, actionable edit recovery, safe UI cancellation, and repeated native city/tab activation are verified. The deterministic two-city fixture and normal-control viewport UAT cover real loading/delivery, both city inventories/prices, household need fulfillment, failed setup recovery, stale reports, and save/replay. 63 UI tests and a 72-capture display matrix pass, with synchronized state/domain-event evidence and Shipping exclusion. See [implementation and verification](Development/EnhancedMvpTradeJourney.md). Economy remains production v8; existing P31 visual and P33 balance promotion gates remain unchanged.
+
 
 ~~~text
 Execute EMVP-P34 from Docs/MVP-enhanced.md. Join the route creator, Lübeck and Rostock markets, Cog simulation, visible world projection, docks, warehouses, and market feedback into one complete player journey. The player must be able to identify a price/supply opportunity, create the Lübeck–Rostock sea route through normal UI, protect a minimum reserve, load real stock, watch the Cog depart and arrive, observe unloading, and see both city inventories, needs, and prices respond. Support route pause/edit/cancel, insufficient cargo, capacity, stale reports, and recovery from a poor setup. Add a deterministic fixture and semantic UAT that uses ordinary UI actions, observable waits, typed queries, real viewport captures, and synchronized event/state evidence.
@@ -334,10 +402,10 @@ The enhanced MVP is playable only when all of the following are true:
 
 - A player launches a packaged build, starts the slice through a production frontend, and receives no developer instructions.
 - Lübeck is fully buildable and Rostock is visibly rendered, inspectable, and tradeable.
-- Bread, fish, and planks can be constructed and operated through their complete local chains.
+- Bread, fish, planks, and beer can be constructed and operated through their complete local chains.
 - Building cards drag into the world with authored 3D ghosts, valid/invalid feedback, rotation, cancellation, and accessible alternatives.
 - Roads are drawn directly in the world and visibly connect the logistics network.
-- All ten goods participate in the active market and affect population or production through explicit rules.
+- All thirteen goods participate in the active market and affect population or production through explicit rules.
 - Needs, satisfaction, workforce, growth, decline, and residence upgrade are understandable and responsive.
 - A player creates a Lübeck–Rostock route and sees the simulated Cog carry real cargo whose delivery changes inventories and prices.
 - No building, vehicle, road, or recurring golden-path prop appears as an Engine cube or an unverified staging asset.

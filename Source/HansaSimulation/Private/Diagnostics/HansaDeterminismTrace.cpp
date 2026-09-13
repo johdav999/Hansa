@@ -4,28 +4,28 @@ namespace Hansa::Simulation
 {
 	namespace
 	{
-		constexpr uint64 FnvOffset = 14695981039346656037ULL;
-		constexpr uint64 FnvPrime = 1099511628211ULL;
+		constexpr uint64 DeterminismTraceFnvOffset = 14695981039346656037ULL;
+		constexpr uint64 DeterminismTraceFnvPrime = 1099511628211ULL;
 
-		void AddByte(uint64& Hash, const uint8 Value)
+		void DeterminismTraceAddByte(uint64& Hash, const uint8 Value)
 		{
 			Hash ^= Value;
-			Hash *= FnvPrime;
+			Hash *= DeterminismTraceFnvPrime;
 		}
 
-		void AddUInt32(uint64& Hash, const uint32 Value)
+		void DeterminismTraceAddUInt32(uint64& Hash, const uint32 Value)
 		{
 			for (uint32 ByteIndex = 0; ByteIndex < 4; ++ByteIndex)
 			{
-				AddByte(Hash, static_cast<uint8>(Value >> (ByteIndex * 8)));
+				DeterminismTraceAddByte(Hash, static_cast<uint8>(Value >> (ByteIndex * 8)));
 			}
 		}
 
-		void AddUInt64(uint64& Hash, const uint64 Value)
+		void DeterminismTraceAddUInt64(uint64& Hash, const uint64 Value)
 		{
 			for (uint32 ByteIndex = 0; ByteIndex < 8; ++ByteIndex)
 			{
-				AddByte(Hash, static_cast<uint8>(Value >> (ByteIndex * 8)));
+				DeterminismTraceAddByte(Hash, static_cast<uint8>(Value >> (ByteIndex * 8)));
 			}
 		}
 
@@ -145,12 +145,12 @@ namespace Hansa::Simulation
 	uint64 FHansaDeterminismDiagnostics::ComputePipelineOrderHash(
 		const TConstArrayView<EHansaSimulationPhase> Phases)
 	{
-		uint64 Hash = FnvOffset;
-		AddUInt32(Hash, FHansaSimulationState::CurrentSystemPipelineVersion);
-		AddUInt32(Hash, static_cast<uint32>(Phases.Num()));
+		uint64 Hash = DeterminismTraceFnvOffset;
+		DeterminismTraceAddUInt32(Hash, FHansaSimulationState::CurrentSystemPipelineVersion);
+		DeterminismTraceAddUInt32(Hash, static_cast<uint32>(Phases.Num()));
 		for (const EHansaSimulationPhase Phase : Phases)
 		{
-			AddByte(Hash, static_cast<uint8>(Phase));
+			DeterminismTraceAddByte(Hash, static_cast<uint8>(Phase));
 		}
 		return Hash;
 	}
@@ -158,30 +158,30 @@ namespace Hansa::Simulation
 	uint64 FHansaDeterminismDiagnostics::ComputeDomainEventOrderHash(
 		const TConstArrayView<FHansaDomainEvent> Events)
 	{
-		uint64 Hash = FnvOffset;
-		AddUInt32(Hash, static_cast<uint32>(Events.Num()));
+		uint64 Hash = DeterminismTraceFnvOffset;
+		DeterminismTraceAddUInt32(Hash, static_cast<uint32>(Events.Num()));
 		for (const FHansaDomainEvent& Event : Events)
 		{
-			AddByte(Hash, static_cast<uint8>(Event.GetType()));
-			AddUInt64(Hash, Event.GetGlobalSequence());
-			AddUInt64(Hash, static_cast<uint64>(Event.GetTick().GetValue()));
-			AddUInt64(Hash, Event.GetSourceCommandId().GetValue());
-			AddUInt32(Hash, Event.GetSourceCommandId().GetGeneration());
-			AddUInt64(Hash, Event.GetIssuingHouseId().GetValue());
-			AddUInt32(Hash, Event.GetIssuingHouseId().GetGeneration());
-			AddUInt64(Hash, Event.GetTestEntityId().GetValue());
-			AddUInt32(Hash, Event.GetTestEntityId().GetGeneration());
-			AddUInt64(Hash, Event.GetProductionId().GetValue());
-			AddUInt32(Hash, Event.GetProductionId().GetGeneration());
-			AddUInt64(Hash, Event.GetBuildingId().GetValue());
-			AddUInt32(Hash, Event.GetBuildingId().GetGeneration());
-			AddUInt32(Hash, static_cast<uint32>(Event.GetRecipeId().ToString().Len()));
+			DeterminismTraceAddByte(Hash, static_cast<uint8>(Event.GetType()));
+			DeterminismTraceAddUInt64(Hash, Event.GetGlobalSequence());
+			DeterminismTraceAddUInt64(Hash, static_cast<uint64>(Event.GetTick().GetValue()));
+			DeterminismTraceAddUInt64(Hash, Event.GetSourceCommandId().GetValue());
+			DeterminismTraceAddUInt32(Hash, Event.GetSourceCommandId().GetGeneration());
+			DeterminismTraceAddUInt64(Hash, Event.GetIssuingHouseId().GetValue());
+			DeterminismTraceAddUInt32(Hash, Event.GetIssuingHouseId().GetGeneration());
+			DeterminismTraceAddUInt64(Hash, Event.GetTestEntityId().GetValue());
+			DeterminismTraceAddUInt32(Hash, Event.GetTestEntityId().GetGeneration());
+			DeterminismTraceAddUInt64(Hash, Event.GetProductionId().GetValue());
+			DeterminismTraceAddUInt32(Hash, Event.GetProductionId().GetGeneration());
+			DeterminismTraceAddUInt64(Hash, Event.GetBuildingId().GetValue());
+			DeterminismTraceAddUInt32(Hash, Event.GetBuildingId().GetGeneration());
+			DeterminismTraceAddUInt32(Hash, static_cast<uint32>(Event.GetRecipeId().ToString().Len()));
 			for (const TCHAR Character : Event.GetRecipeId().ToString())
 			{
-				AddUInt32(Hash, static_cast<uint32>(Character));
+				DeterminismTraceAddUInt32(Hash, static_cast<uint32>(Character));
 			}
-			AddByte(Hash, static_cast<uint8>(Event.GetProductionBlocker()));
-			AddUInt64(Hash, static_cast<uint64>(Event.GetValue()));
+			DeterminismTraceAddByte(Hash, static_cast<uint8>(Event.GetProductionBlocker()));
+			DeterminismTraceAddUInt64(Hash, static_cast<uint64>(Event.GetValue()));
 		}
 		return Hash;
 	}

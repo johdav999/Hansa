@@ -1,0 +1,57 @@
+[
+  {
+    "file": "tray-1280x720-bread.png",
+    "sha256": "dda8e5b56fd246dc752ad5a3d3466c6a75df868f9aafaa0a1cdf7b980f1ead4a",
+    "mode": "native game viewport capture; no resampling"
+  },
+  {
+    "file": "tray-1280x720-bread.tsv",
+    "sha256": "2f9d5ef325d504a33bc39502bdee3f9af78c1ec28a4614a9b5be02e30765c243",
+    "mode": "native game viewport capture; no resampling"
+  },
+  {
+    "file": "tray-1280x720-accessible.png",
+    "sha256": "6f35e51f176246539ef509a970dd3c1996fb8e5cdb6e0ff75a5697137125f057",
+    "mode": "native game viewport capture; no resampling"
+  },
+  {
+    "file": "tray-1280x720-accessible.tsv",
+    "sha256": "9e8e271c17c22acc489fec9f96116b5fda4516f1dbf6eca8d7f06cd6a0814789",
+    "mode": "native game viewport capture; no resampling"
+  },
+  {
+    "file": "tray-1920x1080-bread.png",
+    "sha256": "759a57fc1ea53c5b86f1864ef996db765bee43519dd9724d7ddb2ecff8b31a8e",
+    "mode": "native game viewport capture; no resampling"
+  },
+  {
+    "file": "tray-1920x1080-bread.tsv",
+    "sha256": "a1dbcd6165529b7644df19c3e6ba9f8cec657326d9431280d3b383f2c669b8e6",
+    "mode": "native game viewport capture; no resampling"
+  },
+  {
+    "file": "tray-2560x1440-bread.png",
+    "sha256": "28e0d9725c43afbe10c7d8d054222e4dbeaa72dd2a122944e560dc18cd461278",
+    "mode": "native game viewport capture; no resampling"
+  },
+  {
+    "file": "tray-2560x1440-bread.tsv",
+    "sha256": "9b86c753a9bf9ac85e7f2b835d5770dcc242ab7d928890167823b2bbdf91782b",
+    "mode": "native game viewport capture; no resampling"
+  },
+  {
+    "file": "tray-3440x1440-bread.png",
+    "sha256": "2d9f17eec8c15ce418773b2de0194d2bb6d658b88399d9e9b6556c9030bbd940",
+    "mode": "native game viewport capture; no resampling"
+  },
+  {
+    "file": "tray-3440x1440-bread.tsv",
+    "sha256": "5badfba8a129d225c7ce794fd80af87278f1832d6e9071797c313c8282bd9f7e",
+    "mode": "native game viewport capture; no resampling"
+  },
+  {
+    "file": "click-stroke-native.png",
+    "sha256": "b04cfcfd86727518e29908d590597639d11c755107892912c8c74764b64fbb0f",
+    "mode": "native game viewport capture; no resampling"
+  }
+]

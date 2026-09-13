@@ -1,0 +1,91 @@
+{
+  "city_id": "City.Rostock",
+  "survey_preflight": "passed",
+  "production_accepted": false,
+  "heightmap_sha256": "879a56a00c635f26e783bc0158db45dbfb06caa35e694752d24f14ef6d1d99b6",
+  "control_tolerance_m": 0.0009865625,
+  "control_points": [
+    {
+      "row": 0,
+      "column": 0,
+      "source_m": 6.26800012588501,
+      "native_decoded_m": 6.267578125,
+      "error_m": -0.0004220008850097656,
+      "unreal_cm": [
+        -201550.0,
+        -201650.0,
+        626.7578125
+      ]
+    },
+    {
+      "row": 0,
+      "column": 2016,
+      "source_m": 17.040000915527344,
+      "native_decoded_m": 17.0390625,
+      "error_m": -0.00093841552734375,
+      "unreal_cm": [
+        201650.0,
+        -201650.0,
+        1703.90625
+      ]
+    },
+    {
+      "row": 1008,
+      "column": 1008,
+      "source_m": 12.619999885559082,
+      "native_decoded_m": 12.619140625,
+      "error_m": -0.0008592605590820312,
+      "unreal_cm": [
+        50.0,
+        -50.0,
+        1261.9140625
+      ]
+    },
+    {
+      "row": 2016,
+      "column": 0,
+      "source_m": 30.45800018310547,
+      "native_decoded_m": 30.45703125,
+      "error_m": -0.00096893310546875,
+      "unreal_cm": [
+        -201550.0,
+        201550.0,
+        3045.703125
+      ]
+    },
+    {
+      "row": 2016,
+      "column": 2016,
+      "source_m": 26.47100067138672,
+      "native_decoded_m": 26.470703125,
+      "error_m": -0.00029754638671875,
+      "unreal_cm": [
+        201650.0,
+        201550.0,
+        2647.0703125
+      ]
+    }
+  ],
+  "landscape_origin_cm": [
+    -201550.0,
+    -201650.0,
+    3200.0
+  ],
+  "components": [
+    16,
+    16
+  ],
+  "native_height_range_m": [
+    -32.0,
+    95.998046875
+  ],
+  "remaining": [
+    "Native import/reopen and control-point comparison",
+    "License/datum/acquisition review",
+    "Historical hydrology and gameplay grading",
+    "Materials/water/streaming/collision/Shipping acceptance"
+  ],
+  "full_grid_encoding_error_m": 0.00096893310546875,
+  "previous_full_grid_encoding_error_m": 0.0019683837890625,
+  "changed_codes": 1205255
+}

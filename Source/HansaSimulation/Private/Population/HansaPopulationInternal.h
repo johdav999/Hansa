@@ -24,7 +24,8 @@ namespace Hansa::Simulation
 
 		static void AdvanceOneTick(TArray<FHansaPopulationCohortState>& Cohorts,
 			FHansaInventoryLedger& InventoryLedger, const TArray<FHansaCityMarketState>& Markets,
-			const TArray<FHansaBuildingState>& Buildings, const FHansaEconomicRegistry& Registry,
+			const TArray<FHansaBuildingState>& Buildings, const FHansaPlacementState& Placement,
+			const FHansaEconomicRegistry& Registry,
 			FHansaSimulationTick Tick, uint32 MinutesPerTick);
 	};
 }

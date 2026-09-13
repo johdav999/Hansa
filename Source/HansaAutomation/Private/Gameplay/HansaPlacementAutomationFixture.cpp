@@ -111,6 +111,12 @@ namespace Hansa::Automation
 			Residence.ResidenceCapacity = 12;
 			Residence.ResidentPopulationTierId = TEXT("PopulationTier.Laborer");
 			Residence.bRequiresRoad = true;
+			FHansaCompiledBuildingDefinition Market;
+			Market.StableId = TEXT("Building.Market");
+			Market.BuildTicks = 1;
+			Market.FootprintWidthCells = 1;
+			Market.FootprintHeightCells = 1;
+			Market.bRequiresRoad = true;
 
 			FHansaCompiledNeedDefinition BreadNeed;
 			BreadNeed.StableId = TEXT("Need.Bread");
@@ -127,7 +133,7 @@ namespace Hansa::Automation
 			Laborer.DeclineResidentsPerEvaluation = 1;
 
 			return FHansaEconomicRegistry({ MoveTemp(Grain), MoveTemp(Bread) }, { MoveTemp(BakeryRecipe) },
-				{ MoveTemp(Road), MoveTemp(Warehouse), MoveTemp(Bakery), MoveTemp(Residence) },
+				{ MoveTemp(Road), MoveTemp(Warehouse), MoveTemp(Bakery), MoveTemp(Residence), MoveTemp(Market) },
 				FHansaPlacementAutomationFixture::IntegratedRegistryHash,
 				{ MoveTemp(BreadNeed) }, { MoveTemp(Laborer) });
 		}
@@ -312,6 +318,8 @@ namespace Hansa::Automation
 		const FHansaBuildingTypeId BakeryDefinition = FHansaBuildingTypeId::TryParse(TEXT("Building.Bakery")).Value;
 		const FHansaBuildingTypeId ResidenceDefinition =
 			FHansaBuildingTypeId::TryParse(TEXT("Building.Residence.Laborer")).Value;
+		const FHansaBuildingTypeId MarketDefinition =
+			FHansaBuildingTypeId::TryParse(TEXT("Building.Market")).Value;
 		FHansaSimulationInitialization Initialization;
 		Initialization.Clock = Clock;
 		Initialization.CampaignSeed = 0x5330365030344C42ULL;
@@ -321,7 +329,8 @@ namespace Hansa::Automation
 		const FHansaBuildingState Warehouse = Building(1, WarehouseDefinitionId, HouseId, true);
 		const FHansaBuildingState Bakery = Building(2, BakeryDefinition, HouseId, false);
 		const FHansaBuildingState Residence = Building(3, ResidenceDefinition, HouseId, false);
-		Initialization.Buildings = { Warehouse, Bakery, Residence };
+		const FHansaBuildingState MarketBuilding = Building(4, MarketDefinition, HouseId, true);
+		Initialization.Buildings = { Warehouse, Bakery, Residence, MarketBuilding };
 		for (uint64 X = 0; X <= 6; ++X)
 		{
 			Initialization.Buildings.Add(Building(10 + X, RoadDefinitionId, HouseId, true));
@@ -342,16 +351,17 @@ namespace Hansa::Automation
 		Initialization.Placement.Maps.Add(MoveTemp(Map));
 		Initialization.Placement.Entitlements = {
 			{ HouseId, RoadDefinitionId }, { HouseId, WarehouseDefinitionId },
-			{ HouseId, BakeryDefinition }, { HouseId, ResidenceDefinition }
+			{ HouseId, BakeryDefinition }, { HouseId, ResidenceDefinition },
+			{ HouseId, MarketDefinition }
 		};
 		Initialization.Placement.Placements = {
 			Placement(Warehouse, CityId, 0, 1), Placement(Bakery, CityId, 3, 1),
-			Placement(Residence, CityId, 5, 1)
+			Placement(Residence, CityId, 5, 1), Placement(MarketBuilding, CityId, 6, 1)
 		};
 		for (uint64 X = 0; X <= 6; ++X)
 		{
 			Initialization.Placement.Placements.Add(
-				Placement(Initialization.Buildings[3 + static_cast<int32>(X)], CityId, static_cast<int32>(X), 0));
+				Placement(Initialization.Buildings[4 + static_cast<int32>(X)], CityId, static_cast<int32>(X), 0));
 		}
 
 		const FHansaGoodId Grain = FHansaGoodId::TryParse(TEXT("Good.Grain")).Value;

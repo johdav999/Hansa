@@ -9,7 +9,7 @@
 
 `FHansaInventoryLedger` is the Actor-independent authoritative store for city, building and warehouse inventories. Its public contract lives in `Source/HansaSimulation/Public/Inventory/HansaInventory.h`; its implementation lives in `Private/Inventory/HansaInventory.cpp`. It depends only on deterministic simulation primitives and owns no Actor, UObject, World, UI, editor, provider or transport reference.
 
-Each inventory has a typed runtime ID, exactly one typed owner, positive fixed-point capacity, a canonical accepted-goods set and canonical stock records. Initialization rejects invalid or duplicate identities, duplicate owners, duplicate accepted goods or stock lines, unaccepted initial goods, negative stock and aggregate stock above capacity. Simulation-state initialization additionally requires city and building owners to exist.
+Each inventory has a typed runtime ID, exactly one typed owner, positive fixed-point capacity, a canonical accepted-goods set and canonical stock records. Building, warehouse and vehicle inventories remain unique per owner. City inventories are unique per `(CityId, BuildingId)`: a valid building ID binds stock to one physical market, while a missing building ID is the legacy abstract-city form. Initialization rejects duplicate owner keys, duplicate accepted goods or stock lines, unaccepted initial goods, negative stock and aggregate stock above capacity. Simulation-state initialization additionally requires city and building owners to exist.
 
 ## Atomic transaction contract
 

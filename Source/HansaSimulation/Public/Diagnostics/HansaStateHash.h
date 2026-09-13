@@ -57,6 +57,8 @@ namespace Hansa::Simulation
 		[[nodiscard]] uint32 GetSystemPipelineVersion() const { return SystemPipelineVersion; }
 		[[nodiscard]] FHansaSimulationTick GetTick() const { return Tick; }
 		[[nodiscard]] uint64 GetOverallHash() const { return OverallHash; }
+		/** Diagnostic only: number of subsystem hashes recomputed instead of served by the state cache. */
+		[[nodiscard]] uint32 GetRecomputedSubsystemCount() const { return RecomputedSubsystemCount; }
 		[[nodiscard]] TConstArrayView<FHansaSubsystemStateHash> GetSubsystems() const { return Subsystems; }
 		[[nodiscard]] const FHansaSubsystemStateHash* Find(EHansaStateHashSubsystem Subsystem) const;
 		[[nodiscard]] FString ToCompactDebugString() const;
@@ -78,6 +80,7 @@ namespace Hansa::Simulation
 		uint32 SystemPipelineVersion = 0;
 		FHansaSimulationTick Tick;
 		uint64 OverallHash = 0;
+		uint32 RecomputedSubsystemCount = 0;
 		TArray<FHansaSubsystemStateHash> Subsystems;
 	};
 
@@ -87,5 +90,17 @@ namespace Hansa::Simulation
 		[[nodiscard]] static FHansaStateHashReport Compute(
 			const FHansaSimulationState& State,
 			const FHansaSimulationDefinitionContext& Definitions);
+        /** Verify old save integrity before the explicit consumption-history migration. */
+        static FHansaStateHashReport ComputeLegacyV16(const FHansaSimulationState& State,
+            const FHansaSimulationDefinitionContext& Definitions);
+        static FHansaStateHashReport ComputeLegacyV17(const FHansaSimulationState& State,
+            const FHansaSimulationDefinitionContext& Definitions);
+        static FHansaStateHashReport ComputeLegacyV18(const FHansaSimulationState& State,
+            const FHansaSimulationDefinitionContext& Definitions);
+		static FHansaStateHashReport ComputeLegacyV19(const FHansaSimulationState& State,
+			const FHansaSimulationDefinitionContext& Definitions);
+    private:
+        static FHansaStateHashReport ComputeVersion(const FHansaSimulationState& State,
+            const FHansaSimulationDefinitionContext& Definitions, uint32 FingerprintVersion);
 	};
 }

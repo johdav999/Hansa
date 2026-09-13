@@ -1,0 +1,14 @@
+selected=World.Cargo.Delivery.1.0
+good=Good.Grain
+sourceBuilding=14.0
+sourceDefinition=Building.Market
+destinationBuilding=2.0
+destinationDefinition=Building.Mill
+quantityMilli=4000
+cargoMilli=4000
+activeWagons=3
+peakWagons=3
+fingerprint=3251791891492250642
+wagon=World.Cargo.Delivery.1.0 good=Good.Grain status=InTransit cargoMilli=4000 progress=0.500000 visible=1 failure=
+wagon=World.Cargo.Delivery.2.0 good=Good.Flour status=InTransit cargoMilli=2000 progress=0.300000 visible=1 failure=
+wagon=World.Cargo.Delivery.3.0 good=Good.Grain status=InTransit cargoMilli=3000 progress=0.214286 visible=1 failure=

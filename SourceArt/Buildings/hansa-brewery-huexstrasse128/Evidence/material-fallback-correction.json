@@ -1,0 +1,33 @@
+{
+  "mesh": "/Game/Mesh/hansa-brewery-huexstrasse128/Production/SM_HansaBrewery_Production.SM_HansaBrewery_Production",
+  "fallback_percent": 1.0,
+  "fallback_error": 0.0,
+  "explicit_tangents": true,
+  "roof_tints": {
+    "Terracotta": [
+      0.56,
+      0.29,
+      0.16
+    ],
+    "Terracotta_Dark": [
+      0.45,
+      0.23,
+      0.14
+    ],
+    "Terracotta_Warm": [
+      0.62,
+      0.31,
+      0.15
+    ],
+    "Terracotta_Smoked": [
+      0.43,
+      0.27,
+      0.2
+    ],
+    "Terracotta_Pale": [
+      0.6,
+      0.36,
+      0.23
+    ]
+  }
+}

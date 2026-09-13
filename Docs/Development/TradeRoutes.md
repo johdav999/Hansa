@@ -32,3 +32,13 @@ Route creation/edit/activation/cancellation, departure/arrival, successful trans
 Determinism fingerprint version 15 includes every vehicle field, ordered route stop/action, lifecycle/travel counter, and last-transfer record. `Hansa.Simulation.Trade.CapacityReserveArrivalReplay` and `Hansa.Simulation.Trade.ValidationCancellationMissedCargo` cover capacity, reserve protection, authored arrival/delivery timing, upkeep, ownership, typed rejection causes, cancellation with cargo preservation, missed cargo, projections, and identical replay fingerprints.
 
 Advanced price-triggered, conditional, opportunistic, or multi-vehicle trading remains outside S09-P02.
+
+## EMVP-P26 player route creation
+
+The ordinary trade map now exposes a new draft, Cog selection, ordered Lübeck/Rostock stops, good and load/unload choices, quantities, minimum reserves, name, validated departure review, and creation/activation. Market good entry seeds the draft instead of selecting a pre-existing route. Closing and reopening retains the draft; discard leaves the simulation unchanged.
+
+`UHansaRuntimeSimulationHost::CreateTradeRoute` derives a fresh route ID and typed command headers. With the explicit reassignment displayed in the review, an owned empty Cog at the first stop of an inactive route may be reassigned. Cancel and create/activate execute in one atomic gateway batch. Read-only preview executes the same batch on copied state/cache. Busy, carrying, rival, malformed or unreachable plans preserve the original route, draft and command history on rejection. There is no free-ship spawning or development-command dependency.
+
+Route names are cosmetic campaign metadata persisted by save format 3; they never replace stable route identity. The review uses authored travel/upkeep and known-information queries. Load/unload moves inventory and does not buy or sell on a market, so the expected cash range is negative travel upkeep, with no invented arbitrage revenue. Capacity/reserve/unknown-report/destination-capacity warnings explain why actual delivered quantities may differ.
+
+See [EnhancedMvpTradeCreator.md](EnhancedMvpTradeCreator.md) for component references, native input/delivery captures, save migration and Shipping evidence.

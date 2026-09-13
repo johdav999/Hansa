@@ -137,6 +137,26 @@ test("MCP drives the Lübeck shortage through causal queries, controlled product
   assert.ok(price.result.structuredContent.market.priceMilliMarks < 1100);
 });
 
+test("MCP exposes physical market access and local road paths as typed authoritative queries", async () => {
+  const server = createServer();
+  await server.handle(request(1, "initialize", { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: {} }));
+  await server.handle({ jsonrpc: "2.0", method: "notifications/initialized" });
+  await server.handle(request(2, "tools/call", { name: "session_start", arguments: { requestedPermission: "FixtureControl", requiredCapabilities: ["gameplay.query", "fixture.control", "evidence"] } }));
+  await server.handle(request(3, "tools/call", { name: "fixture_load", arguments: { fixtureId: "lubeck_grain_shortage_v1" } }));
+  const list = await server.handle(request(4, "tools/call", { name: "gameplay_query", arguments: { query: "building.list" } }));
+  assert.ok(list.result.structuredContent.buildings.some(({ roadRequired, connected }) => roadRequired && connected));
+  const access = await server.handle(request(5, "tools/call", { name: "gameplay_query", arguments: { query: "building.market_access", buildingId: 1 } }));
+  assert.deepEqual(
+    [access.result.structuredContent.building.connected, access.result.structuredContent.building.selectedMarketBuildingId, access.result.structuredContent.building.failure],
+    [true, 14, "None"],
+  );
+  const path = await server.handle(request(6, "tools/call", { name: "gameplay_query", arguments: { query: "logistics.path", sourceInventoryId: 1, destinationInventoryId: 2 } }));
+  assert.equal(path.result.structuredContent.connected, true);
+  assert.ok(path.result.structuredContent.routeCells.length > 0);
+  const jobs = await server.handle(request(7, "tools/call", { name: "gameplay_query", arguments: { query: "logistics.jobs" } }));
+  assert.deepEqual(jobs.result.structuredContent.jobs, []);
+});
+
 test("MCP exposes aged remote reports and typed opportunity comparisons", async () => {
   const server = createServer();
   await server.handle(request(1, "initialize", { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: {} }));

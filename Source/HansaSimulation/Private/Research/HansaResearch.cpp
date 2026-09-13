@@ -151,6 +151,25 @@ namespace Hansa::Simulation
 		return Result;
 	}
 
+    FHansaResearchQueueResult FHansaResearchExecutor::CanQueue(
+        const FHansaHouseResearchState& State, const FString& TechnologyId,
+        TConstArrayView<FHansaCompiledTechnologyDefinition> Technologies)
+    {
+		const FHansaCompiledTechnologyDefinition* Technology = FindTechnology(Technologies, TechnologyId);
+		if (Technology == nullptr) return {EHansaResearchQueueError::UnknownTechnology, {}};
+		if (!State.ActiveTechnologyId.IsEmpty()) return {EHansaResearchQueueError::QueueFull, {}};
+		if (State.IsCompleted(TechnologyId)) return {EHansaResearchQueueError::AlreadyCompleted, {}};
+		for (const FString& PrerequisiteId : Technology->PrerequisiteTechnologyIds)
+		{
+			if (!State.IsCompleted(PrerequisiteId)) return {EHansaResearchQueueError::PrerequisiteMissing, PrerequisiteId};
+		}
+		if (State.AvailableResearchPoints < Technology->CostResearchPoints)
+		{
+			return {EHansaResearchQueueError::InsufficientResearchPoints, {}};
+		}
+        return {};
+    }
+
 	FHansaResearchQueueResult FHansaResearchExecutor::TryQueue(
 		TArray<FHansaHouseResearchState>& States, const FHansaHouseId HouseId, const FString& TechnologyId,
 		TConstArrayView<FHansaCompiledTechnologyDefinition> Technologies)
@@ -160,18 +179,9 @@ namespace Hansa::Simulation
 			return Candidate.HouseId == HouseId;
 		});
 		if (State == nullptr) return {EHansaResearchQueueError::UnknownHouse, {}};
-		const FHansaCompiledTechnologyDefinition* Technology = FindTechnology(Technologies, TechnologyId);
-		if (Technology == nullptr) return {EHansaResearchQueueError::UnknownTechnology, {}};
-		if (!State->ActiveTechnologyId.IsEmpty()) return {EHansaResearchQueueError::QueueFull, {}};
-		if (State->IsCompleted(TechnologyId)) return {EHansaResearchQueueError::AlreadyCompleted, {}};
-		for (const FString& PrerequisiteId : Technology->PrerequisiteTechnologyIds)
-		{
-			if (!State->IsCompleted(PrerequisiteId)) return {EHansaResearchQueueError::PrerequisiteMissing, PrerequisiteId};
-		}
-		if (State->AvailableResearchPoints < Technology->CostResearchPoints)
-		{
-			return {EHansaResearchQueueError::InsufficientResearchPoints, {}};
-		}
+        const auto Eligibility = CanQueue(*State, TechnologyId, Technologies);
+        if (!Eligibility) return Eligibility;
+        const auto* Technology = FindTechnology(Technologies, TechnologyId);
 		State->AvailableResearchPoints -= Technology->CostResearchPoints;
 		State->ActiveTechnologyId = TechnologyId;
 		State->ProgressTicks = 0;

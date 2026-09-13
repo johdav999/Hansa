@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "auditAsOf": "2026-09-07",
+  "map": "/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP",
+  "verifiedCurrentLevel": true,
+  "editorViewport": {
+    "locationCm": [-9166.917435, 3225.666985, 4747.435864],
+    "rotationDegrees": [-35.2, -11.4, 0],
+    "fovDegrees": 90,
+    "captureSizePx": [2253, 772]
+  },
+  "pie": {
+    "started": true,
+    "warmupSeconds": 3,
+    "gameHudVisible": true,
+    "scenarioModalVisible": true,
+    "stoppedCleanly": true
+  },
+  "transientIdentityScaleReview": {
+    "cameraLocationCm": [-10000, -10000, 10000],
+    "cameraRotationDegrees": [-45, 45, 0],
+    "cameraFovDegrees": 90,
+    "captureSizePx": [2253, 772],
+    "authoredRuntimeScale": [1, 1, 1],
+    "placedWithoutSaving": [
+      "/Game/Mesh/LaborerResidence/Materials_R02/Meshes/SM_LaborerResidence",
+      "/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery",
+      "/Game/Hansa/Core/Buildings/BP_HansaWindmill_Animated",
+      "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m"
+    ],
+    "removedAfterCapture": true,
+    "remainingAuditActors": 0
+  },
+  "sourceVerifiedGameplayCamera": {
+    "springArmCm": 6500,
+    "pitchDegrees": -55,
+    "defaultYawDegrees": 35
+  },
+  "sourceVerifiedPrototypeLighting": {
+    "sunRotationDegrees": [-50, -35, 0],
+    "sunIntensity": 5,
+    "sunLinearColor": [1, 0.84, 0.68],
+    "skyIntensity": 0.6
+  },
+  "observations": [
+    "Laborer-residence candidates remain readable at city camera distance and warm prototype lighting.",
+    "A transient identity-scale co-location review made the Bakery visibly dominate the residence rhythm and confirmed that the 3x2 footprint failure must be repaired in authored geometry.",
+    "The Mill retains a strong functional silhouette at city distance, while its sails remain a separate visual envelope rather than grounded placement geometry.",
+    "The staged 8 m road patch is visibly incompatible with the map's 4 m placement rhythm and remains a surface/profile reference only.",
+    "Current roads, quay, piers, shore, and much of the urban massing are prototype primitives, so they cannot approve later art.",
+    "The warm high-key light exposes the need for broad material-value separation and restrained roughness; painted lighting is prohibited.",
+    "No final harbor art exists to co-locate; the engine-cube harbor remains rejected rather than visually approved."
+  ],
+  "screenshotRetainedInToolTranscript": true,
+  "checkedInScreenshot": false,
+  "limitation": "The capture was retained in the tool transcript rather than as a repository raster. P30 must repeat native-resolution captures after final lighting and final promoted anchors are co-located."
+}

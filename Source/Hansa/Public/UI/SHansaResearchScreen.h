@@ -6,10 +6,13 @@
 #include "UI/HansaHudSemantics.h"
 #include "UI/HansaResearchPresentationModel.h"
 #include "Widgets/SCompoundWidget.h"
+#include "UI/HansaUiComponents.h"
 
 class SBox;
+class SScrollBox;
 class SButton;
 class SVerticalBox;
+class SHorizontalBox;
 
 namespace Hansa::UI
 {
@@ -18,11 +21,14 @@ namespace Hansa::UI
 	{
 	public:
 		SLATE_BEGIN_ARGS(SHansaResearchScreen) : _Model(nullptr) {}
+			SLATE_ARGUMENT(FUiPreferences, Preferences)
 			SLATE_ARGUMENT(UHansaResearchPresentationModel*, Model)
 		SLATE_END_ARGS()
 
 		~SHansaResearchScreen();
 		void Construct(const FArguments& Arguments);
+		void SetPresentationSize(FIntPoint Size);
+		TSharedPtr<SWidget> ResolveSemanticWidget(const FString& Id) const { const auto* W=Widgets.Find(Id); return W?W->Pin():nullptr; }
 		[[nodiscard]] TArray<FHansaHudSemanticNode> GetSemanticSnapshot() const;
 		[[nodiscard]] TArray<FString> GetControllerFocusOrder() const;
 		bool ActivateSemanticId(const FString& SemanticId);
@@ -41,19 +47,27 @@ namespace Hansa::UI
 
 		TWeakObjectPtr<UHansaResearchPresentationModel> Model;
 		FDelegateHandle ChangedHandle;
+		FUiPreferences Preferences;
+		FString PresentedContentKey;
 		FSlateBrush PanelBrush;
+		FSlateBrush HeaderBrush;
 		FSlateBrush InnerBrush;
 		FButtonStyle PrimaryButtonStyle;
 		FButtonStyle SecondaryButtonStyle;
 		FTextBlockStyle HeadingStyle;
 		FTextBlockStyle BodyStyle;
 		FTextBlockStyle CaptionStyle;
-		TSharedPtr<SBox> Root;
+        bool bCompact = false;
+        Hansa::Simulation::EHansaResearchBranch ActiveBranch = Hansa::Simulation::EHansaResearchBranch::Commerce;
+        TSharedPtr<SHorizontalBox> BranchTabs;
+        TSharedPtr<SBox> Root;
+		TSharedPtr<SScrollBox> CommerceScroll,ProductionScroll,LogisticsScroll,DetailScroll;
 		TSharedPtr<SButton> CloseButton;
 		TSharedPtr<SVerticalBox> Commerce;
 		TSharedPtr<SVerticalBox> Production;
 		TSharedPtr<SVerticalBox> Logistics;
 		TSharedPtr<SVerticalBox> Detail;
+        TSharedPtr<SVerticalBox> Actions;
 		TSharedPtr<SVerticalBox> Queue;
 		TMap<FString, TWeakPtr<SWidget>> Widgets;
 	};

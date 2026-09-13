@@ -1,0 +1,218 @@
+{
+  "prompt": "P13",
+  "approvalDate": "2026-09-08",
+  "approval": "I approve promoting P11, P12 and P13",
+  "status": "promoted-and-bound; playable/Shipping acceptance remains open",
+  "productionRoot": "/Game/Mesh/hansa-sawmill",
+  "catalogVersion": 5,
+  "registryHash": "DAA463F7043FD66F",
+  "economicsUnchanged": true,
+  "stagingDependenciesFound": 0,
+  "definitions": [
+    {
+      "path": "/Game/Hansa/Core/Buildings/DA_Building_Sawmill",
+      "stableId": "Building.Sawmill",
+      "before": {
+        "revision": 1,
+        "mesh": {
+          "refPath": "/Engine/BasicShapes/Cube.Cube"
+        },
+        "actor": "None"
+      },
+      "after": {
+        "revision": 2,
+        "mesh": {
+          "refPath": "/Game/Mesh/hansa-sawmill/Meshes/SM_HansaSawmill.SM_HansaSawmill"
+        },
+        "actor": {
+          "refPath": "/Game/Mesh/hansa-sawmill/BP_Sawmill_Review.BP_Sawmill_Review_C"
+        }
+      },
+      "sha256": "3C3F1844E3D5B513F6CFEADFBAC4EF1986A8850D6170F1FCA7F98AAB4E6C6052"
+    }
+  ],
+  "assets": [
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/BP_Sawmill_Review",
+      "sourceSha256": "d87f35bd94330aadc799d9e8e0463060d9f0f515b142e8b64b8ea7d13f5ed96e",
+      "destination": "/Game/Mesh/hansa-sawmill/BP_Sawmill_Review",
+      "class": "Blueprint",
+      "sha256": "CADEB6E30D93767CB3170E184B6C9695FF8FB4C9E70C491A8906F06D520152D6"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Meshes/SM_HansaSawmill_SawWork",
+      "sourceSha256": "d546e8e57f30176d1df51d1299db201c5f0d59526a451c0d059d363054039077",
+      "destination": "/Game/Mesh/hansa-sawmill/Meshes/SM_HansaSawmill_SawWork",
+      "class": "StaticMesh",
+      "sha256": "2080CE466CB2301A5E5D5A072CC26516DB6C7B00B142252AF03F4DF458F87DF2"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Materials/M_Sawmill_WeatheredOak",
+      "sourceSha256": "e90fa5c5d525631fa209238deb27957ef33519e2a803899867c1eb3e9bb253ec",
+      "destination": "/Game/Mesh/hansa-sawmill/Materials/M_Sawmill_WeatheredOak",
+      "class": "Material",
+      "sha256": "D4BFB9717D8E253B3A40DBB8ED32C014EC30356D18D35B0D1A1CAF5B4C6C0F0C"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_WeatheredOak_Roughness",
+      "sourceSha256": "3ea39d484691ee41d84618a4599d7657c46dec434754dd286102d906da426ac4",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_WeatheredOak_Roughness",
+      "class": "Texture2D",
+      "sha256": "639F7B9328F1F392869FE84739F1BC3E653466AFCE439C6C9BADAAAF22F44706"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_WeatheredOak_Normal",
+      "sourceSha256": "d09b92e9d42fd57c43be72ed708ec9775364a2ecd70d42a9a35240e4164768c9",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_WeatheredOak_Normal",
+      "class": "Texture2D",
+      "sha256": "3C6E24F8BEA290D6B2A157B3F8E7DBE32B78A1C780023F45D0880C66BA275392"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_WeatheredOak_BaseColor",
+      "sourceSha256": "716d1e9c77602b861792b2da9f11895d4f4422fc172fde69919025753badc474",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_WeatheredOak_BaseColor",
+      "class": "Texture2D",
+      "sha256": "5D5A64C5B7BA4C24AE4F75FED381BB2BAB474CBBC69DF7349C5984ACD590A282"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Materials/M_Sawmill_FreshOak",
+      "sourceSha256": "09dd2f77625e17e9acc050bea1514531cddbc8bc9ab70d7cde8dc28d391c66ee",
+      "destination": "/Game/Mesh/hansa-sawmill/Materials/M_Sawmill_FreshOak",
+      "class": "Material",
+      "sha256": "D1996F54C0510324B7355D6D1CA02BBEB18E91DBE83B55335DDB88F5D463AFE9"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_FreshOak_Roughness",
+      "sourceSha256": "15ef3df01843c3f299b2909590db7809cc5cc257f287768d1ca90a59930d3ffd",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_FreshOak_Roughness",
+      "class": "Texture2D",
+      "sha256": "34AC50F045450D4526A93F7E8BC40DD1CB9EF2CAEC5BDC2281EB09AE9D7FEFD2"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_FreshOak_Normal",
+      "sourceSha256": "246d128d8bd284505ed3e7ef5e6aa57d3224fd4654b8d65bfc06c0a524b0c456",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_FreshOak_Normal",
+      "class": "Texture2D",
+      "sha256": "51DAEF97080E3C3B97A8CA6A776FB39B8F3D95D51AF18569123F4E1618F7854A"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_FreshOak_BaseColor",
+      "sourceSha256": "cbd60acf2971ed297c3448206f8309072732e4ad9fa4b04aa28eaf21843af0b7",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_FreshOak_BaseColor",
+      "class": "Texture2D",
+      "sha256": "8E7A89CE4DF92A17CD94BD9A615FE9299C0E465AC0EBB1EFF5B4D09768605D2C"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Materials/M_Sawmill_ForgedIron",
+      "sourceSha256": "a324e22753be2fcbc1e5b76eb416c79c13d5631b79aa810852530bbd10934d0c",
+      "destination": "/Game/Mesh/hansa-sawmill/Materials/M_Sawmill_ForgedIron",
+      "class": "Material",
+      "sha256": "60F970F12A8B11472885B5EEAEB5B5712E39630F28F06E7D31EF1DAB3420471E"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_ForgedIron_Roughness",
+      "sourceSha256": "6d904ee30a6e2b6214ce9512bef310f288c83a5d965c5e1808bb2475028ddef6",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_ForgedIron_Roughness",
+      "class": "Texture2D",
+      "sha256": "1906A071EFFFC257324E51AA218865FF9B612363214CB1F6A5519F5D4E076040"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_ForgedIron_Normal",
+      "sourceSha256": "f67efafc360187f9be91b2aab84ad2511e21dc18256dc14c176242a2c5b4ffff",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_ForgedIron_Normal",
+      "class": "Texture2D",
+      "sha256": "6BD0F8CE2712B6E58BCE5950B79330F80B064A734D1A0930290B8BD3D98DA66C"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_ForgedIron_BaseColor",
+      "sourceSha256": "2a16e256da7f23555939fb637a08789646be092c384b9e147c319881f0a9876b",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_ForgedIron_BaseColor",
+      "class": "Texture2D",
+      "sha256": "38816AADF8C1289F5522328E99871CE53673CDFED42B91477A428B459878DFA9"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Meshes/SM_HansaSawmill_Rack",
+      "sourceSha256": "7be7eb64bd3c4f4395dd28351383a83b1de427d5d3674a853cf297d3a0f255f4",
+      "destination": "/Game/Mesh/hansa-sawmill/Meshes/SM_HansaSawmill_Rack",
+      "class": "StaticMesh",
+      "sha256": "55FEB861B58A7BCC91E66CA4A9DFEDD24ED8F102F5CDDFB0E4F346665DB96944"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Meshes/SM_HansaSawmill_PlankOutput",
+      "sourceSha256": "af1ba0abeb70642efef12c0f7fabb3ddf11dc354a4c0ccfd2f79578e42fa3321",
+      "destination": "/Game/Mesh/hansa-sawmill/Meshes/SM_HansaSawmill_PlankOutput",
+      "class": "StaticMesh",
+      "sha256": "5AA10F989991197D0DFD3BEC2E95BA267BD104629D544FD57799F6CD3A12B69A"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Meshes/SM_HansaSawmill_LogInput",
+      "sourceSha256": "d9eb21cbf3b6d8113ec14fee7c17707d0e58adc211e5f364b95418ce2384fbe4",
+      "destination": "/Game/Mesh/hansa-sawmill/Meshes/SM_HansaSawmill_LogInput",
+      "class": "StaticMesh",
+      "sha256": "3B8B6F527FE0BC05FC0479FF55C699056C4144650EF9A4B02187806AB45DE7C1"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Materials/M_Sawmill_EndGrain",
+      "sourceSha256": "7117673cc98c8b4bdf57906dffa9d372d36831bc29ae24a57af476a3895302b7",
+      "destination": "/Game/Mesh/hansa-sawmill/Materials/M_Sawmill_EndGrain",
+      "class": "Material",
+      "sha256": "6E647287D3FE3ECCB0D0A14ECCFBB02CFDE527BFC4D571EAE94377186F438807"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_EndGrain_BaseColor_R5",
+      "sourceSha256": "83c221619c71cb615173ed18b71e95aa0434831ade1ca73a8c9c15e308f659fc",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_EndGrain_BaseColor_R5",
+      "class": "Texture2D",
+      "sha256": "F11DDC08D1364D8B63B40A8194E66A450A7ABA8AC5FAD67AC377C865E5AA1899"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_EndGrain_Roughness",
+      "sourceSha256": "da6c92e05c81939e98b109675e9bf508f10e0bba9c7c6f1367a7bb86ef6dc3a0",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_EndGrain_Roughness",
+      "class": "Texture2D",
+      "sha256": "7DEDA95E1C4D2BF78DFE4D65D43951AD19000080F17F59763E39C9D9786B10BB"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_EndGrain_Normal",
+      "sourceSha256": "ca65909e13ff690fda629315b0eb570e9bf363f149995d39ce378e28c970d9c2",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_EndGrain_Normal",
+      "class": "Texture2D",
+      "sha256": "F6EC48E9CA590DE23EB520CF698A8F92879780022E8D8598F29616ADDFD9A78D"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Materials/M_Sawmill_Bark",
+      "sourceSha256": "e579a9dd99d8965ac9df0db858817ebbe53e29a196e8b706cb099afef2b1e290",
+      "destination": "/Game/Mesh/hansa-sawmill/Materials/M_Sawmill_Bark",
+      "class": "Material",
+      "sha256": "EC918E398359C56DE89C6526B5F814CC9E641D46D9F003725E2A374F370A42AB"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_Bark_Roughness",
+      "sourceSha256": "b8bb82a678baf06b12ca58e1b08c2e19bef33596adef3b8a92001ea87ca3452e",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_Bark_Roughness",
+      "class": "Texture2D",
+      "sha256": "23A4BFD64F36167984BC73E46CF1E197420DC195258B48989F1362E081A8A76C"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_Bark_Normal",
+      "sourceSha256": "e6ac79aef7c675f17869845af304bf92509bc11abf2e2492cb8f6c5993abadb7",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_Bark_Normal",
+      "class": "Texture2D",
+      "sha256": "96150B1CEF1C69CCC6544FB203EABFCEB18BD73624AFBE23B0725AF250E9C6B4"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Textures/T_Sawmill_Bark_BaseColor",
+      "sourceSha256": "ed19367a5cac31990ed3b5f70caf92743bfbe276a5b53ec2f8feeb53eda23bd2",
+      "destination": "/Game/Mesh/hansa-sawmill/Textures/T_Sawmill_Bark_BaseColor",
+      "class": "Texture2D",
+      "sha256": "BBDBD667105F1F4E853660FD9E35BCEE2CD470B4E3AEB4D7BDB082C50215502C"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Sawmill_P13/Meshes/SM_HansaSawmill",
+      "sourceSha256": "8f9c61b9d6da24a5de3a6ee97afcef2a72a99c51c1449e551e4f3a4baa4aaaa2",
+      "destination": "/Game/Mesh/hansa-sawmill/Meshes/SM_HansaSawmill",
+      "class": "StaticMesh",
+      "sha256": "DD1C303401E589AAC0A121A66665725F4BEF911AF6EFFA06F64E2AC6156BF711"
+    }
+  ]
+}

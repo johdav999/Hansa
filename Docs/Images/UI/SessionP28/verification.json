@@ -1,0 +1,1352 @@
+{
+  "captures": [
+    {
+      "file": "Native/session-1280x720-scale80-opening.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "opening",
+      "sha256": "23b53ba4eb97553616f4a964016d205a4f25e625a7740288ee14427b98db8d45"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-camera.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "camera",
+      "sha256": "3425be7c35ac5077fcbab471859e10a34f210694070dfc097bb02a736301601b"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-pause.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "pause",
+      "sha256": "1c4a6517a926a217beba128b2d9cba3f6dea653a3dc064d36b04ad5dee8c803e"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-progress.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "progress",
+      "sha256": "3f2ff9032950308a58f463da8d7661b1b3d2571dae8e809db1a408e8ab5eebcc"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-saved.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "saved",
+      "sha256": "73fa5d7f10e248ae781b611b29aeb169771400440ebaa3a1e7782fef56a12af2"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-load-confirmation.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "load-confirmation",
+      "sha256": "317c785a6fe7d8015823ace04090bba725a452fcfc384ec2e246ba7de43ad49b"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-restored-paused.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "restored-paused",
+      "sha256": "f947a533661d9bb6840a2b3b17a9693faeb7398f63c9764c86e6ad1c489fd7d0"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-construction.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "construction",
+      "sha256": "90488e26d0e9a4dffe58b06bab138d63bf134102869b2aac2c924028befda243"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-roads.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "roads",
+      "sha256": "5a94223f07a958ce18d7259a7a857bb1ff8fa21384be7771b58f2b366dff1ca3"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-inspection.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "inspection",
+      "sha256": "e78d63c0e98468c74d00067531a1d0744fc342a17732ca4bf6b62dc08b36dffd"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-market.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "market",
+      "sha256": "42538d6c1aeebcd3ff8954f026d7bd943d5c6a798686a6526d70e718ff272b72"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-routes.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "routes",
+      "sha256": "9852af069bcc2dfbff8fb81425cd67d19b00548dcaaf8a90e4e713bb9d121257"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-failure-fixture.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "failure-fixture",
+      "sha256": "667ef9a9e8493253e6cc3c65fb8f917b85c1b31eb79ec36da6aaaaaede7dab4f"
+    },
+    {
+      "file": "Native/session-1280x720-scale80-victory-fixture.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 80,
+      "state": "victory-fixture",
+      "sha256": "e2b4fa021100dac7e5758a81b721f24309a01e4b5ab61a88149df8cfa77b8767"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-opening.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "opening",
+      "sha256": "af736a4caa8d5a12f381dfdede76b59e9098c16dd17a00b4eec142c2924de56e"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-camera.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "camera",
+      "sha256": "764572613aa67087ebc724c06119c7820bd6cf01bd2aa75d604f38e42d0b8328"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-pause.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "pause",
+      "sha256": "5309c2b3931f3c010612512015d77c9dbc01616d2846892941ff2c8c9c7888da"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-progress.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "progress",
+      "sha256": "a76b69751b1779726a0bb78907edf36b7a5172c4e14e7a2c898f4129c5e8c789"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-saved.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "saved",
+      "sha256": "ae25a03a9346329c2befd5211ca3bd1c1711b2486ac0f3bd980cc620a244234d"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-load-confirmation.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "load-confirmation",
+      "sha256": "03e314dd2288bc57f54fbdc9116fcf94fcafded9920086086724ea6d5a416182"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-restored-paused.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "restored-paused",
+      "sha256": "80c97a83d9bec5e21978cf301ed18234043007a867fa61db9426cb267103575c"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-construction.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "construction",
+      "sha256": "2823778fc8f72f4ca539ce2e63ceee1f5385726202f01c37d5955de596ef6f6e"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-roads.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "roads",
+      "sha256": "3067d99ae84a29d51b4e64df9db0ebb1a45aeb31913e6e395db349e0431ae05b"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-inspection.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "inspection",
+      "sha256": "7912d4502e7dd5d479a0a4ff19c0efedcfba08a6d22ed8d878940030c855f6df"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-market.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "market",
+      "sha256": "ca6e9a342de37a1390ad9f81596e07387cf513fbbd97ca3d890c31aa3a3c036c"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-routes.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "routes",
+      "sha256": "f138c6269b3902968b9c99f6cda1c9b1f72a8d8df2e469d0ff4904c4dbf05427"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-failure-fixture.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "failure-fixture",
+      "sha256": "58ce8cc4b40ce628d58a971a738838981dfb82f6e574177b0d2651394a5c59cd"
+    },
+    {
+      "file": "Native/session-1280x720-scale100-victory-fixture.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 100,
+      "state": "victory-fixture",
+      "sha256": "8080b1964067c22544f63c96f4356a354f91981cebdd5e05c775a68de6459051"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-opening.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "opening",
+      "sha256": "ffb36dbdc232b3bbdd5360b638ebe86ad880284aae1f5b7272df1d2506a11492"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-camera.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "camera",
+      "sha256": "8fdc4691e942463c8444adccab2abae9879451c37fddb29bb150caaa50c4e7ff"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-pause.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "pause",
+      "sha256": "011173d0ee6bf6f0ce2c94f18fab0bcc4c27cf9519ff55bee8240838cb0a3972"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-progress.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "progress",
+      "sha256": "f732fd1d1ab44599379b03f3cd649c1c554251c57b1bde10bce9b72c3721fea1"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-saved.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "saved",
+      "sha256": "20380e35992e4717baaad1f3934e165bb6cffd1da48ffcdf984f95c811066ecc"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-load-confirmation.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "load-confirmation",
+      "sha256": "fc0d116011e6bc9195ea3b3976c5d4b66dee67f6f92626141e586fd571da114d"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-restored-paused.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "restored-paused",
+      "sha256": "46af932bbd337477a3fbb575bb9b5cd1de018b19d4835f180a17f02784f1d84d"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-construction.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "construction",
+      "sha256": "446c6c591c9aee80dd9dbf48fa446d4d001be0b7bb79187bdd3c3d7f8ec0f8ca"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-roads.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "roads",
+      "sha256": "cf81e5b44d580c379757d8755d51a8a348c9feab7aef1dbe73a26fd0265afa8e"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-inspection.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "inspection",
+      "sha256": "5edd99be96600611630fb24933c14229aa69a34102489639d43a6dd6304aa98d"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-market.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "market",
+      "sha256": "46a070d4c85d1553e0df9d80cb4eb6378a3e36df4afbe4c109654dc613271d80"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-routes.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "routes",
+      "sha256": "5fbcb3da31d99c661ffcc96f620870db36563ff3248184687483123d8a760429"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-failure-fixture.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "failure-fixture",
+      "sha256": "52ea130e143df7762b2a92f9b44f12fcf0af084624056e7cb501c466ac5f4f62"
+    },
+    {
+      "file": "Native/session-1280x720-scale140-victory-fixture.png",
+      "width": 1280,
+      "height": 720,
+      "scale": 140,
+      "state": "victory-fixture",
+      "sha256": "b5d90c64537487a00981f51819d270ac0e1e3d9162fbdf7e98d85f444f15d141"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-opening.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "opening",
+      "sha256": "91210aafa0278445c7126671914b37b557b36ae3825fe778d5739d28cb4be9e0"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-camera.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "camera",
+      "sha256": "9fdd5709e9f658af95df9b4bbf51d7b4b7c75b36ca9afb5316aeca694ab14a4d"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-pause.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "pause",
+      "sha256": "4446b562d5146fd7652907868f789f3ffb461f22faa2a32f6b0497d8a5f1d98c"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-progress.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "progress",
+      "sha256": "2cef0ac331d5708bb8ccdc68086be880b0a0810ce08976a93a35bdf1585be0c2"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-saved.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "saved",
+      "sha256": "0366382372af994e1b4e8995c6bf75895e0120ad2857ede2451cbc20d943dcec"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-load-confirmation.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "load-confirmation",
+      "sha256": "c4e0fbe8d2f03b6de7ac302fceb2ff72528a8ffa9e78d57ddc77a941dc93ece7"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-restored-paused.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "restored-paused",
+      "sha256": "08dcf612cfb547650ca236ad26d76ebcee9c55b19c83700210a5bdc3997ad237"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-construction.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "construction",
+      "sha256": "368086a12d63e658d27feeb82a5131f9e5ea5b6e0ad82c5bd172d7b8a0978fe3"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-roads.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "roads",
+      "sha256": "d3c2401da532bf2970dd2946c13dd2fab6d05c2037d6883cfb8fa496c60c7538"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-inspection.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "inspection",
+      "sha256": "451be133b5dc61b759806a283be5c0cf881e419bec10826dacba5c42e45e279e"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-market.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "market",
+      "sha256": "57e8d1a70185bea3645bab43a31b20eb952865b79933cecaacd5e74321acd685"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-routes.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "routes",
+      "sha256": "a58acb8e785ca22919e6213c2ddfbb1801f7aa55144c42116025deb804b1ce33"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-failure-fixture.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "failure-fixture",
+      "sha256": "ac685afe88cb801e40405aeae12664a6fd16345c3b53f5a055f481caf68a1ef8"
+    },
+    {
+      "file": "Native/session-1920x1080-scale80-victory-fixture.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 80,
+      "state": "victory-fixture",
+      "sha256": "1d8363045ba54cf140af904a2ded16a908fdf9309ec2760a1ea37da2967527b3"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-opening.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "opening",
+      "sha256": "500ef09c66797648bfd878b74518c7d48617d94ae33bad19c0d372995b457cbe"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-camera.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "camera",
+      "sha256": "56f563846ceed8fec4e41bcb1a859504ffeeb1e62d6cdcd604c0d884c47cff10"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-pause.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "pause",
+      "sha256": "399bf31859ad53f4fa61590332b1bab98548fc7659298518db4ca453869e7282"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-progress.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "progress",
+      "sha256": "d8c1620afea06139f29cf20628a3389635eeb5f2ecb557cccb11b3b897e30f4c"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-saved.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "saved",
+      "sha256": "f981cbb76ddd6bbb3b6992ad4473697d6a9d2cc270b67369b9214102c49fb9e8"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-load-confirmation.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "load-confirmation",
+      "sha256": "5f3497e938b99c29335f3aa1ac6ef1df2eb119e2afa951f014fe9a1e04156705"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-restored-paused.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "restored-paused",
+      "sha256": "9a4faf92054ee696442fc48d0ac71406615556dabfc028a6c445d7d28792a747"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-construction.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "construction",
+      "sha256": "123a4816860908edd6667d47cec5548454379e448f85309ef384b12b14aa5767"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-roads.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "roads",
+      "sha256": "39a8797ad35793c259a55ab01f1eb74bd39474124bb49710178e4c46bc185f36"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-inspection.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "inspection",
+      "sha256": "a0f188f466668d6c777493977a1e5696037c6a823a84fea9ff1cb81064003a5f"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-market.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "market",
+      "sha256": "e0f2beebf2b36875a3103d29e74e07c9b6b9078ef889ca975e4f41cd037fed04"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-routes.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "routes",
+      "sha256": "5e583e6472684c079d14403a6ab072b48b06e8dfe96014272abaad9e7ca5a9b9"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-failure-fixture.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "failure-fixture",
+      "sha256": "a81f9ab7e030bc3e64c51a10f31bc01218c5062f7012f24e8455fe3384e3ce88"
+    },
+    {
+      "file": "Native/session-1920x1080-scale100-victory-fixture.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 100,
+      "state": "victory-fixture",
+      "sha256": "4ad3d6c74ef51078e4a935eafb6cc2708a299321ceeb123b77bceed3ca6159b6"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-opening.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "opening",
+      "sha256": "7ffe04d251e866085e7d42e11a462a5fa31460a84d5a9e4d4725ad675c1c2ffe"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-camera.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "camera",
+      "sha256": "31d38c9038c4dd2fd23281ecc3894f2b727418ed4ac15723128ab5bdb4de2255"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-pause.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "pause",
+      "sha256": "9c944d1b80468483d3eccc9f8640b54252d6faa5b83990d5bc96a9b454f7ee37"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-progress.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "progress",
+      "sha256": "978bccbcdecce49b78ad9fb1a960d59bc6cfe7a2b8daaa44a0ab1a9718443be1"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-saved.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "saved",
+      "sha256": "91ab0c4695a2a3fa46618f43b8c6ede5d220c774495c9d676dd94cbd7af1c958"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-load-confirmation.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "load-confirmation",
+      "sha256": "628658c7f8960af788bcc1e858b9a22b87b6b2b45f4467bd05fc7d982f1833fd"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-restored-paused.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "restored-paused",
+      "sha256": "8ee887f53a9ae7aee86b24ab8751b19bda925e976831a0111694b0d506b42491"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-construction.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "construction",
+      "sha256": "325b4ae0a6a5b094181c41dbca946c014a7ec85e1cbbfa37d18f60c970a85197"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-roads.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "roads",
+      "sha256": "668c946668c85898e9c8ae7e3da13d0af97117c7dadf44a57f70ba39c825504a"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-inspection.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "inspection",
+      "sha256": "f4077f314139b9f06d1726022d8124869fa8f5fc1c4c789638f3e8c15135ea3a"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-market.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "market",
+      "sha256": "2c38b914cc8a67849819ddeef3f5cda187118b39a12b1e40a84b052f8ace349e"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-routes.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "routes",
+      "sha256": "a66c3fea55b8f154bac5ead676ec8cdc41b8c6b3143f67348dd7c3d7819bd9c3"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-failure-fixture.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "failure-fixture",
+      "sha256": "9a49e54fb5906d908648144208b9bf265ca0890176aad3967c621c3cd4be593c"
+    },
+    {
+      "file": "Native/session-1920x1080-scale140-victory-fixture.png",
+      "width": 1920,
+      "height": 1080,
+      "scale": 140,
+      "state": "victory-fixture",
+      "sha256": "2b694a822b698bdc6e0f651d158b3abd8ed7c7a51409df36b1ee7fab42072361"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-opening.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "opening",
+      "sha256": "de398017a9362df112a3003f08e5abd40d3481072e268b0f51ae086881576381"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-camera.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "camera",
+      "sha256": "54825622d0346379862853ac10eaf7a5ac492d615c825fe70f8938491a7da7e3"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-pause.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "pause",
+      "sha256": "209ef68f42065de35a6a67ce3966df4a32a3a696fa0adcc3623c6d9ebddb0a44"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-progress.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "progress",
+      "sha256": "9ebccae6866c82a75a26aaedcef5a1130c86906c21c67a64417251bb1aaa3a9a"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-saved.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "saved",
+      "sha256": "b8a40b02c0dd6abbc4041489683910ca21e08dcf39b78c5404c3690616c47c89"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-load-confirmation.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "load-confirmation",
+      "sha256": "201c0a67ef398740f12040a4feaa69240f24096c5a5d93e13069580faffb92db"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-restored-paused.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "restored-paused",
+      "sha256": "77243993af7274d0826a954a8c664facbd8bb1fcf953902d3abdaa604aa3c9cf"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-construction.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "construction",
+      "sha256": "c3db893ac00e62b23623a207eed0103b05cc26a970fae90257ade668c494286a"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-roads.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "roads",
+      "sha256": "e3d092d4ef499b91008a4a46186017109f65457b4723778308281ad28ed32f88"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-inspection.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "inspection",
+      "sha256": "4c15ee46235f11054dc0c8e9f218e719fc4361f16a51c56322321f72b6c5c4a0"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-market.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "market",
+      "sha256": "607912a874443536e37b9c0babc9d0424bc411f582405906b1fd97a9d5f9bc7a"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-routes.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "routes",
+      "sha256": "7777c65666331d09e5adc68c73820f4228cab4e00ea493dff7eeedcc973c18db"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-failure-fixture.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "failure-fixture",
+      "sha256": "bde1b25f6875bb160a5c38fe7cc60ba083ad71146bbcc29f01272655d0730780"
+    },
+    {
+      "file": "Native/session-2560x1440-scale80-victory-fixture.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 80,
+      "state": "victory-fixture",
+      "sha256": "1baf8a6a0c92d649485d5e3606694ce685996f3189fc18804d890a48084c80a5"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-opening.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "opening",
+      "sha256": "d204b23a9cad45565ee19410473545891c1c9fae6db37b2e62e3e9fc693fe0d1"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-camera.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "camera",
+      "sha256": "0742df4b8d8e7af7c8993e67cc58154168c9cbdd93b47ae3222e00ca16518f49"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-pause.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "pause",
+      "sha256": "844089613fff1691471f7741b59a200a28c7018dae9f6b1d51b00722b279b67d"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-progress.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "progress",
+      "sha256": "3c3b94829d60cd04d24fe9a111d6925dd8f2530d40a501984eddd1f40af07769"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-saved.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "saved",
+      "sha256": "4695434a78f61cfc8e94a69273472d7c7d3e8917d6b821b710fd37b32deed8aa"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-load-confirmation.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "load-confirmation",
+      "sha256": "59490a7936b095f79a0f5e920a71eb49bd0e681b12530a1ec912b0302d58dcdd"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-restored-paused.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "restored-paused",
+      "sha256": "bdd3ddad31e7b96dd80fa0dcc3c6a95bdbe62d2f7d10de241a2f471aff4dfb80"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-construction.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "construction",
+      "sha256": "504a09bb76de6306acaedb2a8688510cb44a6fee5ef524a5668ead173cbe612b"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-roads.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "roads",
+      "sha256": "eca3e8c09bd3e1529724cd1e181488455211b4a3a577b5511a0e0d1bb4f36d54"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-inspection.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "inspection",
+      "sha256": "89fededb78b4cb070683df26dc58fdc088c86dfb779252eaf1234ff090c76b46"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-market.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "market",
+      "sha256": "5d2c43333e0c65d74ec02712269451e13ca5e9ba54a64044272580f8836cb5d0"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-routes.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "routes",
+      "sha256": "159837a4e9db1c7ab8cf02eb3b2cdf331c99730dcca1a3880631a80164602e2e"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-failure-fixture.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "failure-fixture",
+      "sha256": "3beac8ad560adfd6faa3d941f4a73d703bfc1e3659d0dbaf7c9cb331fe066d4e"
+    },
+    {
+      "file": "Native/session-2560x1440-scale100-victory-fixture.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 100,
+      "state": "victory-fixture",
+      "sha256": "7c5b0d9a1fbf95d716e1666fb4d7f6b82b9295349507a5f2897c40a15da64910"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-opening.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "opening",
+      "sha256": "feaabb122a2ce2f19df05d44f3a5ad1c545e6f7c6e7095c68a8f1629a88c94b1"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-camera.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "camera",
+      "sha256": "0e17d4fdf8ef2072f0eafc8e52486827810f7cc7bdf0c4268684157de15939a8"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-pause.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "pause",
+      "sha256": "d561edc0af881ef53b67c8a8801bfd4faa91cf398727f12f6d02d64ebf249e50"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-progress.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "progress",
+      "sha256": "75151a5251ba5760a362848cf9cb4f6e3cbe5be5ec1d94f7f4bfcf9d0a099d99"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-saved.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "saved",
+      "sha256": "86b63f3dd18557c03f429553e3167ea1a68aefd2b4f24e2c4fb39355c2669a8f"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-load-confirmation.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "load-confirmation",
+      "sha256": "f552c60aca612c3af11baa49bfdb1e468af1bd55d2c66b2eed5f42e24516b9f1"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-restored-paused.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "restored-paused",
+      "sha256": "846ce4a8443c8c854639d8c3b5a870a2800d54102ad63384e5418045467376da"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-construction.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "construction",
+      "sha256": "8449aff98f46fd39136bad09547bdfc042c87f02a82803412b39edf1763b07a1"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-roads.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "roads",
+      "sha256": "cbf4bd19d74d6247bdbbac7a18145d8a61bc0f6cf13bbfd7c1c007b645e5953e"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-inspection.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "inspection",
+      "sha256": "785ead0905c7771c5f6ccb462b95044019e4b1c8c01d831ae11842f9546177ea"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-market.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "market",
+      "sha256": "909ad35ad154dae71f030014451c46ce91db9afe949c6250763a91e9be7e3b70"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-routes.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "routes",
+      "sha256": "1ace00737bbde8a18c8181245fc4fb6aacb8844556d069e6a2cfc2d2932ef8f8"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-failure-fixture.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "failure-fixture",
+      "sha256": "dea524bd863cbcf357b7b69334b0ee24caf1bd89a1b866282c6f9fff8b21df5b"
+    },
+    {
+      "file": "Native/session-2560x1440-scale140-victory-fixture.png",
+      "width": 2560,
+      "height": 1440,
+      "scale": 140,
+      "state": "victory-fixture",
+      "sha256": "238d088e364da89f6726ce4d311a508d6fcc0a16f4e845c8067387f0d34fa9d0"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-opening.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "opening",
+      "sha256": "c10f7e94850d2da9442fd5f1a524913f653d28c66f8a3f1d8a9c554943773183"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-camera.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "camera",
+      "sha256": "1046e311932164227411eff73326c6b39d14c8f9247bdb5bd320fdf3dddd7029"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-pause.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "pause",
+      "sha256": "0b07988b3c2b8cc0e26e659f223a5500d293d0e9ce2e3de3cdeb4d73f8e3da32"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-progress.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "progress",
+      "sha256": "6661ea2f34d8144fa483273efe1216fe8b6a2329244b030393d416f91cf957c2"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-saved.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "saved",
+      "sha256": "4f4c61e3628f6a77a60278be7bc5f1da69e9141c78a26e5c601f923c916959f6"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-load-confirmation.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "load-confirmation",
+      "sha256": "0a4eec785cefec453a3818f28951c754ab1740d4ffdc290ab2f22c6ee18bbc1a"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-restored-paused.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "restored-paused",
+      "sha256": "517fd19a6c11cda3d83b1e0985707df368de65e713e3920f6af0582a09c72632"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-construction.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "construction",
+      "sha256": "15d8c85217bf7c4c605c209b938f4643984c73ed780ba55fa65d0d89f41cb287"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-roads.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "roads",
+      "sha256": "d7584fd64d49d32ba0001dbfa47fc765b522f694a2e54db7b816b5b6371debbc"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-inspection.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "inspection",
+      "sha256": "260afd7c1bbb07c03a6cb8bcf4ac88cd294ea6fb884b6e6a7a560df2d941defb"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-market.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "market",
+      "sha256": "a218632b68c7fb4a96856075b6a8c093dbaf81253b7686f6a4437967b2527a76"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-routes.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "routes",
+      "sha256": "f3ebcb450daa118dbb558f35474ca4ce97cc5928a64707e98f7ec5e183a95f3a"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-failure-fixture.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "failure-fixture",
+      "sha256": "a6129688a3867cc927991bb20264c4d71f5d9cfcd30d10e841fa5bca31f33b4e"
+    },
+    {
+      "file": "Native/session-3440x1440-scale80-victory-fixture.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 80,
+      "state": "victory-fixture",
+      "sha256": "b45c33ca96ee73acf78e6ea10946cb7749fd538abd7d4f7996e7dc2c4139a511"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-opening.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "opening",
+      "sha256": "a6383f887858a8a905eda2be0276e292756c340775aa011b677bce7fd4dd9084"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-camera.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "camera",
+      "sha256": "8961ee26a4eccb150a4e006ab4780559c1a3002b63eb682a3cd195c3ba628ab1"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-pause.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "pause",
+      "sha256": "18c980675c30fe685be52da3f5e4cbc403f24151bf340da3e1a1f575a9f57f54"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-progress.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "progress",
+      "sha256": "3627f8a9683f3af25883639565aed38c7ab94e5aac930a40cd54b112bae1d364"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-saved.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "saved",
+      "sha256": "82f9c0ba3e212cdf2c57111027f4945b6177be7d1b3c277ff725cc796dbedd46"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-load-confirmation.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "load-confirmation",
+      "sha256": "dac4cd964530147b9f2e6551cd661211b01b095c0e9831dd5912543c9cd16f76"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-restored-paused.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "restored-paused",
+      "sha256": "0737bb4eed100239178b5badb4b55328d10a756460489ea814972327c4b7bfdf"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-construction.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "construction",
+      "sha256": "65cd3d6e488251ce8272a0b7d0fcad770f80139af6a621e6a7c42822be09aa9d"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-roads.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "roads",
+      "sha256": "c1d6a372ef295dedd37c4613554db732a995909934044cdcaacb46044e1001be"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-inspection.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "inspection",
+      "sha256": "32431cffce9a9c06a78ae3ef050c17a9a151b74f81fe0d877256349f402f191a"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-market.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "market",
+      "sha256": "9f3f2b58ad6251fcc3e942aaba3cbb54e3ca9ba4de0835c88a92fbadb6a45695"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-routes.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "routes",
+      "sha256": "2df0ce1f356aec642ea215338438a2f7d31ea7f1af65c88008d4440643e701cb"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-failure-fixture.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "failure-fixture",
+      "sha256": "92fae3014a9ddf548c9d2c4a60b1f4447bd9501735a0aa5da2db61c9ca0224a8"
+    },
+    {
+      "file": "Native/session-3440x1440-scale100-victory-fixture.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 100,
+      "state": "victory-fixture",
+      "sha256": "97cc21afe259570128b968d77343887a98cf6d0811ae318c1d5a6e89fb3046e0"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-opening.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "opening",
+      "sha256": "119a344a67b47f53ed17fb603c293e69ea692327cf5e0862cc3ffe57ef60e530"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-camera.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "camera",
+      "sha256": "0631c5bbdf2ef5da82624e4479a3cc86c35bb0995773ef2d01c26bfc8a444e84"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-pause.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "pause",
+      "sha256": "b67b756ca7d46f003403da42c1d988c70184f9dda5e49b92fdb48ad19795b7f8"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-progress.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "progress",
+      "sha256": "56950df3c8364d94dc7ae0f6dab1cefc1f382254bff93b43cfa9c51cf322e112"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-saved.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "saved",
+      "sha256": "a15c9719a0c8f7f6016b19cc87db1f71ffa152de8c4647448163ffbbbc125f0c"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-load-confirmation.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "load-confirmation",
+      "sha256": "1c7392d9f778b88afde80babb417b8c4feff7dfc3021e05c5233ba7fa6791ee6"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-restored-paused.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "restored-paused",
+      "sha256": "0e1feabaff7ad106103f5d8c7461cbbd733b6e48fbd28e38a99bda7a4f899488"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-construction.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "construction",
+      "sha256": "46264ef3e4ae292f3965f05024069695b35db63a62cea8a3087b97212a4e77b9"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-roads.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "roads",
+      "sha256": "b794c9e5c04ab18f6173fd5a2a20247b57c3c9c4d6d7c66d5181c2d8335ac114"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-inspection.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "inspection",
+      "sha256": "8a137d5b29c8dba5c773afadb4c621e5578d6eafe81330cf6adcd0490b5dbfa6"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-market.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "market",
+      "sha256": "ee3173c856bfdf6e59edaf5980d02db994686df7361529f26f2e8d8da3fc366b"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-routes.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "routes",
+      "sha256": "489bf547b4c44a4106fe78ca05077ca0d1ae132a51dea6ea534ab59db55ccfc0"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-failure-fixture.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "failure-fixture",
+      "sha256": "ebc29122cdc2075e0fac31a2de0aff93dae2c9346ce600a73d6a5ab7db58bad8"
+    },
+    {
+      "file": "Native/session-3440x1440-scale140-victory-fixture.png",
+      "width": 3440,
+      "height": 1440,
+      "scale": 140,
+      "state": "victory-fixture",
+      "sha256": "7b2df5d45e87f931318f3c5fc2fd4fcfaff09ac04f1ec2f550157940dfe0b34d"
+    }
+  ],
+  "native_count": 168,
+  "profiles": 12,
+  "primary_action_checks": 36,
+  "resampled": false
+}

@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "city_id": "City.Rostock",
+  "status": "modern-survey-source-only",
+  "historical_target": "Late medieval city; no historical or gameplay corrections applied",
+  "source_url": "https://www.geodaten-mv.de/dienste/dgm_wcs?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=mv_dgm&FORMAT=image%2Ftiff&SUBSET=x%28310942%2C314975%29&SUBSET=y%285995302%2C5999335%29",
+  "publisher": "LAiV Mecklenburg-Vorpommern",
+  "accessed": "2026-09-08",
+  "license": "CC BY 4.0",
+  "attribution": "GeoBasis-DE/M-V",
+  "license_url": "https://www.laiv-mv.de/Geoinformation/Open_Data_Angebot/",
+  "metadata_url": "https://www.laiv-mv.de/Geoinformation/Geobasisdaten/Gelaendemodelle/",
+  "source_crs": "EPSG:25833",
+  "source_vertical_datum": "DE_DHHN2016_NH EPSG:7837",
+  "acquisition_date": "Not exposed by WCS coverage; tile-level acquisition lookup remains open",
+  "source": {
+    "width": 4033,
+    "height": 4033,
+    "nodata": null,
+    "transform": [
+      1.0,
+      0.0,
+      310942.0,
+      0.0,
+      -1.0,
+      5999335.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "crs": "EPSG:25833"
+  },
+  "source_sha256": "b74c1311f02f2f4f8d09522d2575651086360e819fc06f6b041252392499f358",
+  "origin_projected_m": [
+    312958,
+    5997318,
+    0
+  ],
+  "bounds_projected_m": [
+    310942.5,
+    5995302.5,
+    314974.5,
+    5999334.5
+  ],
+  "width_vertices": 2017,
+  "height_vertices": 2017,
+  "metres_per_vertex": 2,
+  "unreal_axes": "X east; Y south; Z up",
+  "resampling": "Exact aligned DGM1 cell-center decimation every second source sample; no interpolation",
+  "encoded_min_elevation_m": -32,
+  "encoded_max_elevation_m": 96,
+  "landscape_xy_scale_cm": 200,
+  "landscape_z_scale": 25,
+  "landscape_actor_z_cm": 3200,
+  "component_quads": 126,
+  "components_x": 16,
+  "components_y": 16,
+  "heightmap_file": "rostock-survey--2017x2017--2m.r16",
+  "heightmap_sha256": "0bf22c086d8e9f779cc154cbf983e17d31e179b5fb6cea90939b2b73f8e23122",
+  "minimum_m": -1.0,
+  "maximum_m": 35.42399978637695,
+  "nodata_count": 0,
+  "maximum_encoding_error_m": 0.0009803921568618534,
+  "control_points": [
+    {
+      "row": 0,
+      "column": 0,
+      "easting": 310942.5,
+      "northing": 5999334.5,
+      "height_m": 6.26800012588501
+    },
+    {
+      "row": 0,
+      "column": 2016,
+      "easting": 314974.5,
+      "northing": 5999334.5,
+      "height_m": 17.040000915527344
+    },
+    {
+      "row": 1008,
+      "column": 1008,
+      "easting": 312958.5,
+      "northing": 5997318.5,
+      "height_m": 12.619999885559082
+    },
+    {
+      "row": 2016,
+      "column": 0,
+      "easting": 310942.5,
+      "northing": 5995302.5,
+      "height_m": 30.45800018310547
+    },
+    {
+      "row": 2016,
+      "column": 2016,
+      "easting": 314974.5,
+      "northing": 5995302.5,
+      "height_m": 26.47100067138672
+    }
+  ],
+  "remaining": [
+    "Tile acquisition date",
+    "Medieval shoreline and modern reclamation review",
+    "Hydrology and bathymetry",
+    "Unreal import and control points",
+    "PBR and layers",
+    "Visual QA, streaming and Shipping"
+  ]
+}

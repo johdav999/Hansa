@@ -1,0 +1,5 @@
+# Market chart reference
+
+Mode: built-in ImageGen. Native target: 1536×1024. Reference only. Revision 1. Inspection: readable hierarchy and consistent palette. Generated units/dates and data are illustrative; use authoritative ticks and mk in native implementation. No production import or resampling.
+
+Use case ui-mockup. One Hansa Market price history chart component reference on native1536x1024 landscape canvas. Same Linen #F2E9D8 background, Ink #202628 and Muted Ink #596160 axis labels, Brass #C19A52 price line, thin2px rules,8px grid, Atkinson Hyperlegible direction. Front view, even lighting. Chart shows tick horizontal axis and mk vertical axis, one solid brass price history line, dashed recent average line labeled, minimum/maximum labels. Below chart textual equivalent of price range and report age. No ornaments, logos, textures, invented stock-market controls or watermark. Illustrative reference only, all shipping labels and line geometry native Slate. Single reusable component with generous margins.

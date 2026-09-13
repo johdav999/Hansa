@@ -1,0 +1,30 @@
+[
+  {
+    "file": "production-1280x720-accessible.png",
+    "sha256": "495844cbe2af48f648f7d9a5786650b5fc48454fb889749a4311fa9fe4152586"
+  },
+  {
+    "file": "production-1920x1080-batch-a.png",
+    "sha256": "6bb5ccbae90b99f7cf479c9302b3ea0d4e5ef6c68ea657caecf355c8d0942229"
+  },
+  {
+    "file": "production-1920x1080-batch-b.png",
+    "sha256": "1e19e6e54bfc9cae8cba6a166b6a99e7ce9a9c63249b8cf0e0719dcd2c44e198"
+  },
+  {
+    "file": "production-1920x1080-farm.png",
+    "sha256": "6fc3d6b96286266fe590db48cfdad98dbee19173e787323379684b2987a953f3"
+  },
+  {
+    "file": "production-1920x1080-mill.png",
+    "sha256": "d7fc9614be63356e4ff26191fea5828f5078f259196fdf872622a0a1ec944c8b"
+  },
+  {
+    "file": "production-2560x1440-bakery.png",
+    "sha256": "0f07f979505b6d3b5f02fcb2c01253e4e28b1c5d76272921d368c6f68044b53e"
+  },
+  {
+    "file": "production-3440x1440-bakery.png",
+    "sha256": "3e634a08b574b3bb027f6e876933789daf390a8376f1296c79dadc28ff52f04d"
+  }
+]

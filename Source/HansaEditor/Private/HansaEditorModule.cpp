@@ -1,5 +1,9 @@
 #include "HansaEditorModule.h"
 
+#include "Terrain/HansaCityTerrainToolset.h"
+#include "ToolsetRegistry/UToolsetRegistry.h"
+#include "Misc/CoreDelegates.h"
+
 #include "Framework/Docking/TabManager.h"
 #include "Modules/ModuleManager.h"
 #include "Studio/SHansaAuthoringStudio.h"
@@ -16,6 +20,8 @@ const FName FHansaEditorModule::AuthoringStudioTabId(TEXT("HansaAuthoringStudio"
 
 void FHansaEditorModule::StartupModule()
 {
+	if (UToolsetRegistry::IsAvailable()) RegisterTerrainTools();
+	else TerrainRegistrationHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &FHansaEditorModule::RegisterTerrainTools);
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
 		AuthoringStudioTabId,
 		FOnSpawnTab::CreateRaw(this, &FHansaEditorModule::SpawnAuthoringStudioTab))
@@ -31,9 +37,16 @@ void FHansaEditorModule::StartupModule()
 
 void FHansaEditorModule::ShutdownModule()
 {
+	FCoreDelegates::OnPostEngineInit.Remove(TerrainRegistrationHandle);
+	UToolsetRegistry::UnregisterToolsetClass(UHansaCityTerrainToolset::StaticClass());
 	UToolMenus::UnRegisterStartupCallback(this);
 	UToolMenus::UnregisterOwner(this);
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(AuthoringStudioTabId);
+}
+
+void FHansaEditorModule::RegisterTerrainTools()
+{
+	UToolsetRegistry::RegisterToolsetClass(UHansaCityTerrainToolset::StaticClass());
 }
 
 TSharedRef<SDockTab> FHansaEditorModule::SpawnAuthoringStudioTab(const FSpawnTabArgs& SpawnTabArgs)

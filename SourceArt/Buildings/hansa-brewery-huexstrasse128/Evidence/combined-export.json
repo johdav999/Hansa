@@ -1,0 +1,22 @@
+{
+  "materials": [
+    "M_Brewery_DarkBrick",
+    "M_Brewery_BrickWall",
+    "M_Brewery_Limestone",
+    "M_Brewery_BrickFace",
+    "M_Brewery_Oak",
+    "M_Brewery_Terracotta",
+    "M_Brewery_Terracotta_Dark",
+    "M_Brewery_Terracotta_Warm",
+    "M_Brewery_Terracotta_Smoked",
+    "M_Brewery_Terracotta_Pale",
+    "M_Brewery_Glass",
+    "M_Brewery_Soot",
+    "M_Brewery_AgedCopper",
+    "M_Brewery_MaltMash",
+    "M_Brewery_Burlap",
+    "M_Brewery_ForgedIron"
+  ],
+  "polygons": 95431,
+  "export": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\GenerationJobs\\hansa-brewery-huexstrasse128_20260912\\exports\\SM_HansaBrewery_Production_Combined.fbx"
+}

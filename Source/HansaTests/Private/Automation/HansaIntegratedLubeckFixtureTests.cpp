@@ -128,8 +128,8 @@ bool FHansaIntegratedLubeckLongRunTest::RunTest(const FString& Parameters)
 	{
 		return false;
 	}
-	TestEqual(TEXT("Fixture begins with warehouse, bakery, residence, and seven road placements"),
-		World.GetPlacedBuildingCount(), 10);
+	TestEqual(TEXT("Fixture begins with warehouse, bakery, residence, market, and seven road placements"),
+		World.GetPlacedBuildingCount(), 11);
 	const auto Initial = World.BuildProjection();
 	TestTrue(TEXT("Initial integrated projection is available"), Initial.IsSuccess());
 	if (!Initial) return false;
@@ -213,11 +213,11 @@ bool FHansaIntegratedLubeckLongRunTest::RunTest(const FString& Parameters)
 			TestTrue(TEXT("Initial integrated state materializes through the world projection manager"),
 				ProjectionManager->Synchronize(Initial.Value, *Foundation));
 			TestEqual(TEXT("Initial world slice creates one Actor per canonical placement"),
-				ProjectionManager->GetProjectionCount(), 10);
+				ProjectionManager->GetProjectionCount(), 11);
 			TestTrue(TEXT("Final integrated state updates the same rendered world slice"),
 				ProjectionManager->Synchronize(WorldProjection.Value, *Foundation));
 			TestEqual(TEXT("Final world slice retains one Actor per canonical placement"),
-				ProjectionManager->GetProjectionCount(), 10);
+				ProjectionManager->GetProjectionCount(), 11);
 			const AHansaBuildingWorldProjectionActor* BakeryActor = ProjectionManager->FindProjectionActor(
 				FHansaBuildingId::TryCreate(2).Value);
 			const AHansaBuildingWorldProjectionActor* ResidenceActor = ProjectionManager->FindProjectionActor(

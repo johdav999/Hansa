@@ -36,11 +36,17 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	/** Only enable in an assembled map with its own validated Landscape, water and harbor. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Hansa|World|Assembly", meta=(HansaAIAccess="Never", ToolTip="Suppresses legacy topology rendering and collision; authored map surfaces must replace them."))
+	bool bUseAuthoredWorld = false;
+
 	UFUNCTION(BlueprintPure, Category = "Hansa|World")
 	FString GetStableMapId() const { return StableMapId; }
 
 	UFUNCTION(BlueprintPure, Category = "Hansa|World")
 	FTransform GetAutomationStartTransform() const;
+    /** Static port-lane origin for the starter harbor, independent of simulated building ownership. */
+    UFUNCTION(BlueprintPure, Category="Hansa|World|Cargo") FTransform GetCargoBerthTransform() const;
 
 	UFUNCTION(BlueprintPure, Category = "Hansa|World")
 	FVector2D GetCameraBoundsMin() const;
@@ -52,7 +58,10 @@ public:
 	bool WorldToPlacementCell(FVector WorldLocation, int32& OutX, int32& OutY) const;
 
 	UFUNCTION(BlueprintPure, Category = "Hansa|World|Placement")
-	FVector PlacementCellToWorld(int32 X, int32 Y, float Height = 100.0f) const;
+	FVector PlacementCellToWorld(int32 X, int32 Y, float Height = 100.0f, float GroundDatum = 100.0f) const;
+
+    /** World-space terrain sample retaining clearance relative to the supplied local datum. */
+    FVector GroundPlacementPosition(FVector Position, double LocalDatum = 100.0) const;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World")
 	FString StableMapId;
@@ -94,6 +103,9 @@ class HANSA_API AHansaLubeckAutomationStart : public APlayerStart
 
 public:
 	AHansaLubeckAutomationStart(const FObjectInitializer& ObjectInitializer);
+
+    /** World-space terrain sample retaining clearance relative to the supplied local datum. */
+    FVector GroundPlacementPosition(FVector Position, double LocalDatum = 100.0) const;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World")
 	FString StableMapId;

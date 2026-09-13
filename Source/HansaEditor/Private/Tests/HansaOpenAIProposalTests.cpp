@@ -196,4 +196,38 @@ bool FHansaProposalArrayReferenceTest::RunTest(const FString& Parameters)
 	return !HasAnyErrors();
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaMarketAccessProposalContractTest,
+	"Hansa.Architecture.GenerationWorker.MarketAccessProposalContract",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaMarketAccessProposalContractTest::RunTest(const FString& Parameters)
+{
+	TStrongObjectPtr<UHansaBuildingDefinition> Definition(NewObject<UHansaBuildingDefinition>(GetTransientPackage()));
+	Definition->StableDefinitionId = TEXT("Building.ProposedMarket");
+	Definition->AuthoredRevision = 3;
+	Definition->bRequiresRoad = true;
+	Definition->StorageCapacityMilliUnits = 10000;
+	Definition->RefreshContentHash();
+	FHansaEditorSchemaRegistry Registry;
+	const FHansaDefinitionClassSchema Schema = Registry.BuildSchemaForClass(Definition->GetClass());
+	TArray<UHansaDefinitionBase*> Definitions = { Definition.Get() };
+	TSharedPtr<FJsonObject> Contract;
+	FHansaProposalReviewError Error;
+	if (!TestTrue(TEXT("Building proposal contract builds"), FHansaDefinitionProposalReview::BuildContract(Definition.Get(), Schema, Definitions, Contract, Error))) return false;
+	const TSharedPtr<FJsonObject> Writable = Contract->GetObjectField(TEXT("writableFields"));
+	TestTrue(TEXT("AI context exposes market access capability"), Writable->HasField(TEXT("bProvidesMarketAccess")));
+	TestEqual(TEXT("Market capability is an exact boolean"), Writable->GetObjectField(TEXT("bProvidesMarketAccess"))->GetStringField(TEXT("type")), FString(TEXT("boolean")));
+	TestFalse(TEXT("AI context includes current market capability"), Contract->GetObjectField(TEXT("baseValues"))->GetBoolField(TEXT("bProvidesMarketAccess")));
+
+	TSharedRef<FJsonObject> Proposal = Hansa::Editor::Tests::ProposalFor(Definition.Get(), Schema, Contract.ToSharedRef(), 1);
+	const TSharedPtr<FJsonObject> Patch = Proposal->GetObjectField(TEXT("patch"));
+	Patch->RemoveField(TEXT("BaseValueMilliMarks"));
+	Patch->SetBoolField(TEXT("bProvidesMarketAccess"), true);
+	FHansaDefinitionProposalReview Review;
+	TestTrue(TEXT("Mock provider proposal loads through the exact schema"), Review.Load(Definition.Get(), Schema, Proposal, Definitions));
+	TestEqual(TEXT("Proposal identifies one market capability change"), Review.GetDiffs().Num(), 1);
+	TestFalse(TEXT("Review remains a draft until approved"), Definition->bProvidesMarketAccess);
+	return !HasAnyErrors();
+}
+
 #endif

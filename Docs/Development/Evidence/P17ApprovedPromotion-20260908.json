@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "prompt": "P17",
+  "approval": "Contiune and implement MPVP-P17 so it i completed. I also approve to prompte it",
+  "approvedOn": "2026-09-08",
+  "scopeAdjustment": "Use a preview; defer actual Rostock placement",
+  "productionRoot": "/Game/Mesh/hansa-harbor",
+  "status": "promoted-and-bound-runtime-regressions-passed-acceptance-open",
+  "validation": {
+    "debugGameEditorBuild": "passed",
+    "developmentEditorBuild": "passed",
+    "targetedAutomation": { "passed": 18, "withWarnings": 4, "failed": 0 },
+    "report": "SourceArt/Generated/Buildings/HansaHarbor_P17_20260908/evidence/automation-final.json",
+    "productionBerthAndSelectionFourRotations": "passed",
+    "nativePreviewDimensions": [1280, 720],
+    "fullAcceptance": "open; see SourceArt/Generated/Buildings/HansaHarbor_P17_20260908/EVALUATION.md"
+  },
+  "catalogVersion": 6,
+  "registryHash": "483D86D8C5549199",
+  "economicsUnchanged": true,
+  "stagingDependenciesFound": 0,
+  "assets": [
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/BP_Harbor_Review",
+      "destination": "/Game/Mesh/hansa-harbor/BP_Harbor_Review",
+      "class": "Blueprint",
+      "sourceSha256": "0c715b9c2581e7488d8fccb04258157318efea936946de67f035f12615c7fa79",
+      "sha256": "DCB5B4754E26659A05290FFEBB7528BCC210867B1CBA2EAF41BB270BA4F4860E"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Meshes/SM_HansaQuay_Edge4m",
+      "destination": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaQuay_Edge4m",
+      "class": "StaticMesh",
+      "sourceSha256": "ede48722b96e51c7315e2c13da544b6a754e6c5abe76a271ca76bbd852e26824",
+      "sha256": "4BE0A76DE046DBD28F513E73747CAC9FBAA25AA581D25AB39AE220A8DFF02F79"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Materials/M_Harbor_WetOak",
+      "destination": "/Game/Mesh/hansa-harbor/Materials/M_Harbor_WetOak",
+      "class": "Material",
+      "sourceSha256": "4aa4582700e4e811bc22e3250f8cc75c6454ac165fea7f83ec9a3629a1a86f95",
+      "sha256": "741FA0978987EB828BD158C646080B10C2CD33F9FFD1BA2F50838EE5355C1A8C"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_WetOak_Roughness",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_WetOak_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "67e8c324f2bb7270fc44356ee3e4a2f467998fe2282c14b37dc46fba31484632",
+      "sha256": "E3DD55C9CE6909E004AEE884C0AC35B16DAAEA4FBA7F27F7C42D68222ED7DC5D"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_WetOak_Normal",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_WetOak_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "d1389455f62993ad9ff7b743358e5516a1af709fa1424b90d7863619f0619596",
+      "sha256": "578C3FA921B48938D575A59C1C4807AAF93451E8468EA4307B84383823A32E34"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_WetOak_BaseColor",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_WetOak_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "433b7a7b720b51c3a1be7d558d9e9eec364623065651693cadf8c43d51f34f2b",
+      "sha256": "367165FCD563EB4261F2B987F0BA4C5B80005F085BA3BAB5F523F6545C569CDB"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Materials/M_Harbor_Oak",
+      "destination": "/Game/Mesh/hansa-harbor/Materials/M_Harbor_Oak",
+      "class": "Material",
+      "sourceSha256": "7a7960c94a0adc7bfb02adfb5dc37790cb92b4048043215a841aefaca0ec9311",
+      "sha256": "36D09B554A6227F86FEED4775544B6D39CCC2325DF6F8485F52B83C438356121"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_Oak_Roughness",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_Oak_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "ea19ebc1ee13ce35e6e1a4f1d60c82907f8a1620500c3d6e94aaae80eeb55a75",
+      "sha256": "E21560973DCD583FCE4A3D9E0B04BD1D203834616C9F93142F60EED8FB3AF078"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_Oak_Normal",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_Oak_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "259819929f5deebc3ca6e3f55ae9879bc418f5af6b56173a72a83078ad8b6ac9",
+      "sha256": "7213821679B6558CAD1C5508A000B871E882044BE51AB40B8E77DB4B44E801E1"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_Oak_BaseColor",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_Oak_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "f9cc278dc491fa6661c35f5b4ac3e54778519819939ff9fdbb5e6d17739fc189",
+      "sha256": "A7D2CC89B3FEC5C0EA0346B7A5A996F9F38A2D7E9639DCE42D33807B6969DABC"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Meshes/SM_HansaQuay_Corner",
+      "destination": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaQuay_Corner",
+      "class": "StaticMesh",
+      "sourceSha256": "c9b26545206329955a0a4062229ba0e2db7cf7ff00808567a06c6fc0fbc3f737",
+      "sha256": "DAC1FA235B5427FE793AB1ECE140ECB46A633E45DD6D7D2766BAEEBB7F70A9AE"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Meshes/SM_HansaPier_Steps",
+      "destination": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaPier_Steps",
+      "class": "StaticMesh",
+      "sourceSha256": "6b87aaccf5a1e28518d1f7ab9e8383038a443c5485190d0a501d8a9451212904",
+      "sha256": "CEB6D4ECC86D80278A0ED1174397036F6D601C85E2D7B952EE97486542AB7281"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Meshes/SM_HansaMooring_Post",
+      "destination": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaMooring_Post",
+      "class": "StaticMesh",
+      "sourceSha256": "5a588cc945a4d90c92ec8964368bae29674219197fb84e780db08d7b3875227f",
+      "sha256": "CB5B0CBBAB70CC2025F7A034267E70317EC7500AC685894740DD10E82C5D968E"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Materials/M_Harbor_Wicker",
+      "destination": "/Game/Mesh/hansa-harbor/Materials/M_Harbor_Wicker",
+      "class": "Material",
+      "sourceSha256": "151d2af7a9c574ced8cebe9d7e259df1ab1ef777e63a71dd2600db11844a89b9",
+      "sha256": "FE1D42C7DE7AF4AB1B7858600B1590C11013BA489E6FBA99CB28AA674FFC384D"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_Wicker_Roughness",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_Wicker_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "2f608a591d008f0e5b8e96e6217b7e45a8aaad715ec95d3294db3c62f5288ab0",
+      "sha256": "4A0E2636DE78E1F8AE3AE4C4B51BF36597985A08B0529822239355DC28620E1D"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_Wicker_Normal",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_Wicker_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "41533710c8b4cc2e5303af3a106b0e614b001921cace27311f50ca58533b10f8",
+      "sha256": "F28B5958684F46A342E601A3F2275E721C92045117BF69E0C5663D61E7BF0FAB"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_Wicker_BaseColor",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_Wicker_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "318bd7f709d01fa0dd594acf7b1441068012a07e9281d2bc5b175f8a70e4d42b",
+      "sha256": "CD82DAAAC08087C569B0BCAD6A04BE1A13A2471DA0885E2DECD6F257C27BB10F"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Meshes/SM_HansaHarborTransferSkid",
+      "destination": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaHarborTransferSkid",
+      "class": "StaticMesh",
+      "sourceSha256": "945f0ae3380e3e0a9123c4fdbfaa1b875c51ed8cc0bd2019c019c83cc66d2dc7",
+      "sha256": "B28754C2E965066F09BEA3195603327EA215A864A2080E80DBF89C0DEBDAFE40"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Meshes/SM_HansaHarborHoist",
+      "destination": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaHarborHoist",
+      "class": "StaticMesh",
+      "sourceSha256": "c23924e53953e3e8f41df55a3e7685b61d6ea6fb222ad343a93c105ca157aaa3",
+      "sha256": "2844C96F40E1CB23C0665D5B77C568674F6696BD553CB7B73B4394963F141A5F"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Materials/M_Harbor_Iron",
+      "destination": "/Game/Mesh/hansa-harbor/Materials/M_Harbor_Iron",
+      "class": "Material",
+      "sourceSha256": "45b9b2027cbb042acb3598a9425a87827694fbec580eeacfb7f41ac6a614aa0d",
+      "sha256": "C73D1EEF0C714F3C1C0F0F5D9391D07DD3E21976F80620DFE9A249F8799FA2C2"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_Iron_Roughness",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_Iron_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "7cad3329082f38cf7f07705f2bc73c1321898fd85bf54334fc35ec511bf9be87",
+      "sha256": "03E50E9D42F6C4C9139D41437CF9137A601A9ADDC65009EB7BAE3432D3F536D5"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_Iron_Normal",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_Iron_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "467aee2d2d9067e07c1bf74f72cf48288a2b94874ab996dc86b28759a872a06a",
+      "sha256": "2D33B7B7BC642C87F199A6D60247484C731F1976D8F58BB9C58A31CE8F20E612"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Textures/T_Harbor_Iron_BaseColor",
+      "destination": "/Game/Mesh/hansa-harbor/Textures/T_Harbor_Iron_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "25e04f707cde53315b5184d943f8f21cbb7719bd1fa564f0833579ff92282e67",
+      "sha256": "B2549E2650A424656C2CDF9E84F3FD93075DF81218ACF594705FC17EFFCF10AA"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Harbor_P17/Meshes/SM_HansaDock_Deck4m",
+      "destination": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaDock_Deck4m",
+      "class": "StaticMesh",
+      "sourceSha256": "408a61e4a9474c7ddca32462ba69f91a0ac727499d432f8ccc1ea5cdd1539862",
+      "sha256": "DDBACC5E818713DF8A7DF8CCEB21945FEC52007EEBE8AA709F6E999FD93BD5EB"
+    }
+  ],
+  "definitions": [
+    {
+      "path": "/Game/Hansa/Core/Buildings/DA_Building_Dock",
+      "sha256": "4FB686D0EF0876DBDCB2BD0C491186868A61BA7B4BED3CBEF6E87B46D896BA7A",
+      "before": {
+        "presentationMesh": {
+          "refPath": "/Engine/BasicShapes/Cube.Cube"
+        },
+        "presentationActorClass": "None",
+        "authoredRevision": 1
+      },
+      "changes": {
+        "presentationActorClass": {
+          "refPath": "/Game/Mesh/hansa-harbor/BP_Harbor_Review.BP_Harbor_Review_C"
+        },
+        "presentationMesh": {
+          "refPath": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaDock_Deck4m.SM_HansaDock_Deck4m"
+        },
+        "authoredRevision": 2
+      }
+    }
+  ]
+}

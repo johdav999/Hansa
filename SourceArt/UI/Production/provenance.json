@@ -1,0 +1,50 @@
+[
+  {
+    "good": "flour",
+    "source": "SourceArt\\UI\\Production\\production--flour--default--1254x1254--v2.png",
+    "nativeSize": [
+      1254,
+      1254
+    ],
+    "sha256": "99441735b1038406963729fe64d2f4966b26e7f5834d02daf3bd09d4e19d57f8",
+    "vector": "Content\\Hansa\\UI\\Production\\flour.svg",
+    "vectorRuns": 63235,
+    "rasterResampled": false
+  },
+  {
+    "good": "bread",
+    "source": "SourceArt\\UI\\Production\\production--bread--default--1254x1254--v2.png",
+    "nativeSize": [
+      1254,
+      1254
+    ],
+    "sha256": "f125c24f1cd4149b77b20b8343a9a7b5a5f9d034c4abcfad83dd4b93ffa7793c",
+    "vector": "Content\\Hansa\\UI\\Production\\bread.svg",
+    "vectorRuns": 72089,
+    "rasterResampled": false
+  },
+  {
+    "good": "worker",
+    "source": "SourceArt\\UI\\Production\\production--compact-worker--default--1254x1254--v1.png",
+    "nativeSize": [
+      1254,
+      1254
+    ],
+    "sha256": "f28fbd3f9ed320eae591d785975d98035d99f367e12f344b93e9bfb639495b71",
+    "vector": "Content\\Hansa\\UI\\Production\\worker.svg",
+    "vectorRuns": 71371,
+    "rasterResampled": false
+  },
+  {
+    "good": "grain",
+    "source": "SourceArt\\UI\\Production\\production--grain--default--1254x1254--v1.png",
+    "nativeSize": [
+      1254,
+      1254
+    ],
+    "sha256": "f2e0291d3aad50973077abe0209bb1116e61e5b50dd7feb2c8bc1c68c9218a36",
+    "vector": "Content\\Hansa\\UI\\Production\\grain.svg",
+    "vectorRuns": 49678,
+    "rasterResampled": false
+  }
+]

@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "deliveryPrompt": "EMVP-P08",
+  "definitionId": "Building.GrainFarm",
+  "definitionAsset": "/Game/Hansa/Core/Buildings/DA_Building_GrainFarm",
+  "canonicalRoot": "/Game/Mesh/hansa-grain-farm/Final",
+  "gridStepCm": 400,
+  "footprintCells": [
+    4,
+    4
+  ],
+  "insetAvailableCm": [
+    1560,
+    1560
+  ],
+  "baselineSeason": "late-summer-mature-dry-to-damp",
+  "forwardAxis": "+X",
+  "assets": [
+    {
+      "role": "completed-building",
+      "path": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaGrainFarm",
+      "boundsCm": [
+        1432.5,
+        1016.314,
+        766
+      ],
+      "lodCount": 3,
+      "collision": "four-convex-hulls",
+      "runtimeScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "role": "construction",
+      "path": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaGrainFarm_Construction",
+      "boundsCm": [
+        1320,
+        800,
+        450
+      ],
+      "lodCount": 3,
+      "collision": "none",
+      "runtimeScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "role": "working-field-center",
+      "path": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaGrainField_Center_Mature_4m",
+      "gridBodyCm": [
+        400,
+        400
+      ],
+      "visualBoundsCm": [
+        400,
+        400,
+        134.999
+      ],
+      "lodCount": 3,
+      "collision": "none",
+      "runtimeScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "role": "working-field-edge",
+      "path": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaGrainField_Edge_Mature_4m",
+      "gridBodyCm": [
+        400,
+        400
+      ],
+      "visualBoundsCm": [
+        400,
+        400,
+        134.996
+      ],
+      "lodCount": 3,
+      "collision": "none",
+      "runtimeScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "role": "working-field-corner",
+      "path": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaGrainField_Corner_Mature_4m",
+      "gridBodyCm": [
+        400,
+        400
+      ],
+      "visualBoundsCm": [
+        400,
+        400,
+        134.961
+      ],
+      "lodCount": 3,
+      "collision": "none",
+      "runtimeScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "role": "idle-field-furrow",
+      "path": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaGrainField_Furrow_4m",
+      "gridBodyCm": [
+        400,
+        400
+      ],
+      "visualBoundsCm": [
+        400,
+        400,
+        9.25
+      ],
+      "lodCount": 3,
+      "collision": "none",
+      "runtimeScale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "role": "working-props",
+      "path": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaFarmProp_SheavesTools",
+      "boundsCm": [
+        321,
+        85,
+        152.527
+      ],
+      "groundPivotErrorCm": 1,
+      "lodCount": 3,
+      "collision": "none",
+      "runtimeScale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "presentationActorClass": "/Script/Hansa.HansaGrainFarmPresentation",
+  "authoredRevision": 3,
+  "assemblyBoundsCm": [
+    1432.5,
+    1523,
+    766
+  ],
+  "stateContract": {
+    "UnderConstruction": "scaffold and furrows",
+    "Ready": "farm, mature fields and work props",
+    "Blocked": "farm and mature fields; work props hidden"
+  }
+}

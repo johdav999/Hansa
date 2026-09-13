@@ -1,0 +1,27 @@
+id	visible	enabled	x	y	right	bottom	value
+BuildMenu.Root	1	1	336	980	1584	1056	false
+BuildMenu.Categories	1	1	336	980	1584	1056	
+BuildMenu.Category.Roads	1	1	348	992	586	1044	Roads
+BuildMenu.Category.Residences	1	1	594	992	833	1044	Residences
+BuildMenu.Category.Production	1	1	841	992	1079	1044	Production
+BuildMenu.Category.Storage	1	1	1087	992	1326	1044	Storage
+BuildMenu.Category.Harbor	1	1	1334	992	1572	1044	Harbor
+BuildMenu.Cards	0	1	0	0	0	0	
+BuildMenu.Recent	0	1	336	980	336	980	None
+BuildMenu.Favorites	0	1	336	980	336	980	0
+BuildMenu.CardAction.Favorite	0	0	0	0	0	0	
+BuildMenu.CardAction.Compare	0	0	0	0	0	0	
+Placement.Root	0	1	336	980	1584	1056	None
+Placement.Preview	0	1	0	0	0	0	
+Placement.Footprint	0	1	0	0	0	0	solid-cells+outline+check
+Placement.Viewport	0	1	336	980	336	980	dragging=false;roadDrawing=false;overWorld=false;anchor=0,0;cells=0;rotation=0
+Placement.RoadPath	0	1	336	980	336	980	active=false;start=0,0;end=0,0;tieBreak=horizontal-first;new=0;existing=0;invalid=0;cost=;cells=
+Placement.Validation	0	1	0	0	0	0	EHansaPlacementFeedback::None
+Placement.Validation.Cause	0	1	0	0	0	0	
+Placement.Validation.Remedy	0	1	0	0	0	0	
+Placement.Overlay.Grid	0	1	0	0	0	0	true
+Placement.Overlay.Road	0	1	0	0	0	0	true
+Placement.Action.Rotate	0	0	0	0	0	0	0
+Placement.Action.Repeat	0	0	0	0	0	0	false
+Placement.Action.Confirm	0	0	0	0	0	0	
+Placement.Action.Cancel	0	0	0	0	0	0	

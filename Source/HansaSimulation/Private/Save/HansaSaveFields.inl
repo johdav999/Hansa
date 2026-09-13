@@ -29,6 +29,14 @@ void Value(FHansaSimulationState& V)
 	Value(V.NextLogisticsReservationValue);
 	Value(V.LocalLogisticsRequests);
 	Value(V.LocalLogisticsJobs);
+    if (FormatVersion >= 4) Value(V.ConsumptionHistory);
+}
+
+void Value(FHansaConsumptionHistory& V) { Value(V.Samples); }
+void Value(FHansaConsumptionSample& V) { Value(V.EndTick); Value(V.Goods); }
+void Value(FHansaConsumptionTotal& V)
+{
+    Value(V.CityId); Value(V.GoodId); Value(V.Required); Value(V.Consumed);
 }
 
 void Value(FHansaHouseState& V)
@@ -143,7 +151,11 @@ void Value(FHansaTestEntityState& V)
 
 void Value(FHansaPlacementState& V)
 {
-	Value(V.Maps);
+	if (FormatVersion < 7)
+	{
+		if (!bReading) LegacyPlacementMaps.Append(V.GetMaps());
+		Value(LegacyPlacementMaps);
+	}
 	Value(V.Entitlements);
 	Value(V.Placements);
 }
@@ -299,6 +311,7 @@ void Value(FHansaPopulationCohortState& V)
 	Value(V.ConsecutiveDeclineTicks);
 	Value(V.ResidentChangeLastTick);
 	Value(V.Needs);
+    if (FormatVersion >= 5) Value(V.ConsumptionHistory);
 }
 
 void Value(FHansaPopulationNeedState& V)
@@ -446,6 +459,14 @@ void Value(FHansaLogisticsJobState& V)
 	Value(V.DeliveryTick);
 	Value(V.RoadDistanceCells);
 	Value(V.Status);
+	if (FormatVersion >= 6)
+	{
+		Value(V.SelectedMarketBuildingId);
+		Value(V.RouteCells);
+		Value(V.ElapsedTravelTicks);
+		Value(V.RemainingTravelTicks);
+		Value(V.PauseReason);
+	}
 }
 
 void Value(FHansaSavePlayerOwnership& V)

@@ -50,4 +50,5 @@ private:
 	uint64 RuntimeCampaignSeedOverride = 0;
 	EHansaRuntimeScenario RuntimeScenario = EHansaRuntimeScenario::LubeckGrainShortage;
 	bool bAuthorityFixtureMode = false;
+	bool bSimulationHostInitializationAttempted = false;
 };

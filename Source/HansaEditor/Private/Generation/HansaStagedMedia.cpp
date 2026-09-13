@@ -39,7 +39,7 @@ namespace Hansa::Editor::Generation
 bool FHansaStagedMedia::bFailBeforeCommitForTests = false;
 namespace
 {
-bool Fail(FString& Error, const TCHAR* Message) { Error = Message; return false; }
+bool StagedMediaFail(FString& Error, const TCHAR* Message) { Error = Message; return false; }
 FString Field(const TSharedPtr<FJsonObject>& Json, const TCHAR* Name)
 {
     FString Value;
@@ -86,20 +86,20 @@ bool Source(const FString& Descriptor, TSharedPtr<FJsonObject>& Json, FString& A
 {
     FString DescriptorFile;
     if (!SafeSourcePath(Descriptor, DescriptorFile) || !ReadJson(DescriptorFile, Json))
-        return Fail(Error, TEXT("Select a retained SourceArt/Generated source.json descriptor."));
+        return StagedMediaFail(Error, TEXT("Select a retained SourceArt/Generated source.json descriptor."));
     double Version = 0;
     if (!Json->TryGetNumberField(TEXT("schemaVersion"), Version) || Version != 1 ||
         !SafeSourcePath(Field(Json, TEXT("sourcePath")), Absolute))
-        return Fail(Error, TEXT("Invalid media source contract or path."));
+        return StagedMediaFail(Error, TEXT("Invalid media source contract or path."));
     FString ManifestFile, Hash;
     if (!FHansaStagedMedia::HashFile(Absolute, Hash) || Hash != Field(Json, TEXT("sha256")) ||
         !SafeSourcePath(Field(Json, TEXT("manifestPath")), ManifestFile) ||
         !FHansaStagedMedia::HashFile(ManifestFile, Hash) || Hash != Field(Json, TEXT("manifestFileSha256")))
-        return Fail(Error, TEXT("Immutable source or manifest hash changed. Retain a new reviewed revision."));
+        return StagedMediaFail(Error, TEXT("Immutable source or manifest hash changed. Retain a new reviewed revision."));
     TSharedPtr<FJsonObject> Manifest;
     if (!ReadJson(ManifestFile, Manifest) || Field(Manifest, TEXT("status")) != TEXT("Review") ||
         Field(Manifest, TEXT("manifestHash")) != Field(Json, TEXT("manifestHash")))
-        return Fail(Error, TEXT("Completed Review manifest required."));
+        return StagedMediaFail(Error, TEXT("Completed Review manifest required."));
     const TSharedPtr<FJsonObject>* Provider = nullptr;
     const TSharedPtr<FJsonObject>* Rights = nullptr;
     bool Acknowledged = false;
@@ -107,7 +107,7 @@ bool Source(const FString& Descriptor, TSharedPtr<FJsonObject>& Json, FString& A
         Field(*Provider, TEXT("providerId")).IsEmpty() || Field(*Provider, TEXT("modelVersion")).IsEmpty() ||
         !Manifest->TryGetObjectField(TEXT("rights"), Rights) ||
         !(*Rights)->TryGetBoolField(TEXT("acknowledged"), Acknowledged) || !Acknowledged)
-        return Fail(Error, TEXT("Provider, pinned model and acknowledged input rights required."));
+        return StagedMediaFail(Error, TEXT("Provider, pinned model and acknowledged input rights required."));
     const TSharedPtr<FJsonObject>* Parameters = nullptr;
     const TSharedPtr<FJsonObject>* Profile = nullptr;
     const bool HasProfile = Manifest->TryGetObjectField(TEXT("parameters"), Parameters) &&
@@ -118,7 +118,7 @@ bool Source(const FString& Descriptor, TSharedPtr<FJsonObject>& Json, FString& A
         Json->SetObjectField(TEXT("staticProp"), *Profile); // derived from the hash-bound manifest, never caller settings
     }
     else if (Field(*Provider, TEXT("providerId")) == TEXT("tripo"))
-        return Fail(Error, TEXT("Tripo media requires the canonical static-prop profile."));
+        return StagedMediaFail(Error, TEXT("Tripo media requires the canonical static-prop profile."));
     const TSharedPtr<FJsonObject>* Audio = nullptr;
     if (Parameters && (*Parameters)->TryGetObjectField(TEXT("audioTake"), Audio))
     {
@@ -129,13 +129,13 @@ bool Source(const FString& Descriptor, TSharedPtr<FJsonObject>& Json, FString& A
             if (!(*Rights)->TryGetBoolField(TEXT("voiceAcknowledged"), Voice) || !Voice ||
                 !(*Rights)->TryGetBoolField(TEXT("englishTextAcknowledged"), English) || !English ||
                 Field(Manifest, TEXT("prompt")) != Field(*Audio, TEXT("subtitle")))
-                return Fail(Error, TEXT("Speech requires acknowledged voice/English rights and an exact subtitle/source-text match."));
+                return StagedMediaFail(Error, TEXT("Speech requires acknowledged voice/English rights and an exact subtitle/source-text match."));
         }
         double SelectedTake = -1, VariantCount = 0;
         if (!Json->TryGetNumberField(TEXT("outputIndex"), SelectedTake) ||
             !(*Audio)->TryGetNumberField(TEXT("variants"), VariantCount) ||
             SelectedTake < 0 || SelectedTake >= VariantCount || SelectedTake != FMath::FloorToDouble(SelectedTake))
-            return Fail(Error, TEXT("Audio source does not select an approved take index."));
+            return StagedMediaFail(Error, TEXT("Audio source does not select an approved take index."));
         if (Field(*Provider, TEXT("providerId")) == TEXT("elevenlabs"))
         {
             const TSharedPtr<FJsonObject>* Validation = nullptr;
@@ -146,17 +146,17 @@ bool Source(const FString& Descriptor, TSharedPtr<FJsonObject>& Json, FString& A
                 Field(*Original, TEXT("relativePath")) != TEXT("provider-original.mp3") ||
                 !SafeSourcePath(FPaths::GetPath(Descriptor) / TEXT("provider-original.mp3"), OriginalFile) ||
                 !FHansaStagedMedia::HashFile(OriginalFile, Hash) || Hash != Field(*Original, TEXT("sha256")))
-                return Fail(Error, TEXT("Original ElevenLabs source hash changed or is missing."));
+                return StagedMediaFail(Error, TEXT("Original ElevenLabs source hash changed or is missing."));
         }
         Json->SetObjectField(TEXT("audioTake"), *Audio);
     }
     else if (Field(*Provider, TEXT("providerId")) == TEXT("elevenlabs"))
-        return Fail(Error, TEXT("ElevenLabs sources require the canonical AudioTake profile."));
+        return StagedMediaFail(Error, TEXT("ElevenLabs sources require the canonical AudioTake profile."));
     const FString Media = Field(Json, TEXT("mediaType"));
     if (Media != TEXT("audio/wav") && Media != TEXT("model/gltf-binary"))
-        return Fail(Error, TEXT("Media contract v1 accepts only WAV and self-contained GLB."));
+        return StagedMediaFail(Error, TEXT("Media contract v1 accepts only WAV and self-contained GLB."));
     if (IFileManager::Get().FileSize(*Absolute) <= 0 || IFileManager::Get().FileSize(*Absolute) > 67108864)
-        return Fail(Error, TEXT("Source exceeds the 64 MiB import limit."));
+        return StagedMediaFail(Error, TEXT("Source exceeds the 64 MiB import limit."));
     return true;
 }
 bool SaveAsset(UObject* Asset, const FString& File)
@@ -173,16 +173,16 @@ bool Allowed(UObject* Asset)
 }
 bool Validate(UObject* Asset, FString& Error)
 {
-    if (!Allowed(Asset)) return Fail(Error, TEXT("Imported bundle contains a prohibited asset class."));
+    if (!Allowed(Asset)) return StagedMediaFail(Error, TEXT("Imported bundle contains a prohibited asset class."));
     FDataValidationContext Context;
     if (Asset->IsDataValid(Context) == EDataValidationResult::Invalid)
-        return Fail(Error, TEXT("Native asset validation failed. Inspect the staging asset."));
+        return StagedMediaFail(Error, TEXT("Native asset validation failed. Inspect the staging asset."));
     if (const UStaticMesh* Mesh = Cast<UStaticMesh>(Asset))
         if (Mesh->GetNumLODs() < 1 || Mesh->GetNumTriangles(0) < 1)
-            return Fail(Error, TEXT("Static mesh has no renderable geometry."));
+            return StagedMediaFail(Error, TEXT("Static mesh has no renderable geometry."));
     if (const USoundWave* Sound = Cast<USoundWave>(Asset))
         if (Sound->Duration <= 0 || Sound->NumChannels < 1 || Sound->NumChannels > 2)
-            return Fail(Error, TEXT("Audio did not decode to a nonempty mono/stereo sound."));
+            return StagedMediaFail(Error, TEXT("Audio did not decode to a nonempty mono/stereo sound."));
     return true;
 }
 
@@ -260,11 +260,23 @@ bool FHansaStagedMedia::HashFile(const FString& Filename, FString& Hash)
 
 bool FHansaStagedMedia::IsForbiddenPackage(const FString& Package)
 {
-    return Package.Equals(TEXT("/Game/Hansa/Generated/Staging"), ESearchCase::IgnoreCase) ||
-        Package.StartsWith(TEXT("/Game/Hansa/Generated/Staging/"), ESearchCase::IgnoreCase) ||
-        Package.Equals(TEXT("/Game/Hansa/Developer"), ESearchCase::IgnoreCase) ||
-        Package.StartsWith(TEXT("/Game/Hansa/Developer/"), ESearchCase::IgnoreCase) ||
-        Package.StartsWith(TEXT("/Game/Developers/"), ESearchCase::IgnoreCase);
+    // External packages mirror their owning map's path. Do not exempt production
+    // external actors: their dependencies must still be audited in both directions.
+    FString OwnerPath = Package;
+    for (const TCHAR* Prefix : {TEXT("/Game/__ExternalActors__/"), TEXT("/Game/__ExternalObjects__/")})
+    {
+        if (OwnerPath.StartsWith(Prefix, ESearchCase::IgnoreCase))
+        {
+            OwnerPath = TEXT("/Game/") + OwnerPath.Mid(FCString::Strlen(Prefix));
+            break;
+        }
+    }
+    return OwnerPath.Equals(TEXT("/Game/Hansa/Generated/Staging"), ESearchCase::IgnoreCase) ||
+        OwnerPath.StartsWith(TEXT("/Game/Hansa/Generated/Staging/"), ESearchCase::IgnoreCase) ||
+        OwnerPath.Equals(TEXT("/Game/Hansa/Developer"), ESearchCase::IgnoreCase) ||
+        OwnerPath.StartsWith(TEXT("/Game/Hansa/Developer/"), ESearchCase::IgnoreCase) ||
+        OwnerPath.Equals(TEXT("/Game/Developers"), ESearchCase::IgnoreCase) ||
+        OwnerPath.StartsWith(TEXT("/Game/Developers/"), ESearchCase::IgnoreCase);
 }
 bool FHansaStagedMedia::IsProductionDestination(const FString& Package)
 {
@@ -303,7 +315,7 @@ bool FHansaStagedMedia::Stage(const FString& DescriptorPath, FString& OutReceipt
     if (!Source(DescriptorPath, Descriptor, SourceFile, Error)) return false;
     const FString Job = Field(Descriptor, TEXT("jobId"));
     FGuid Guid;
-    if (!FGuid::Parse(Job, Guid)) return Fail(Error, TEXT("Invalid Hansa job identity."));
+    if (!FGuid::Parse(Job, Guid)) return StagedMediaFail(Error, TEXT("Invalid Hansa job identity."));
     // Each import attempt gets an isolated bundle. Never reimport over an earlier review.
     const FString Bundle = FGuid::NewGuid().ToString(EGuidFormats::Digits);
     const FString StagePath = TEXT("/Game/Hansa/Generated/Staging/") + Guid.ToString(EGuidFormats::Digits) + TEXT("/") + Bundle;
@@ -320,7 +332,7 @@ bool FHansaStagedMedia::Stage(const FString& DescriptorPath, FString& OutReceipt
     for (TObjectIterator<UObject> It; It; ++It)
         if (It->IsAsset() && It->GetPackage()->GetName().StartsWith(StagePath + TEXT("/"))) Assets.Add(*It);
     Assets.Sort([](const UObject& A, const UObject& B) { return A.GetPathName() < B.GetPathName(); });
-    if (Assets.IsEmpty()) return Fail(Error, TEXT("Importer produced no staging assets."));
+    if (Assets.IsEmpty()) return StagedMediaFail(Error, TEXT("Importer produced no staging assets."));
     const TSharedPtr<FJsonObject>* Profile = nullptr;
     TSharedPtr<FJsonObject> Normalization;
     if (Descriptor->TryGetObjectField(TEXT("staticProp"), Profile) && !FHansaStaticProp::Prepare(Assets, *Profile, Error, &Normalization))
@@ -334,9 +346,9 @@ bool FHansaStagedMedia::Stage(const FString& DescriptorPath, FString& OutReceipt
         if (!Validate(Asset, Error)) { Discard(Assets); return false; }
         const FString File = FPackageName::LongPackageNameToFilename(Asset->GetPackage()->GetName(), FPackageName::GetAssetPackageExtension());
         IFileManager::Get().MakeDirectory(*FPaths::GetPath(File), true);
-        if (!SaveAsset(Asset, File)) return Fail(Error, TEXT("Could not save staging bundle; production is unchanged."));
+        if (!SaveAsset(Asset, File)) return StagedMediaFail(Error, TEXT("Could not save staging bundle; production is unchanged."));
         FString Hash;
-        if (!HashFile(File, Hash)) return Fail(Error, TEXT("Could not hash staged package."));
+        if (!HashFile(File, Hash)) return StagedMediaFail(Error, TEXT("Could not hash staged package."));
         TSharedRef<FJsonObject> Record = MakeShared<FJsonObject>();
         Record->SetStringField(TEXT("objectPath"), Asset->GetPathName());
         Record->SetStringField(TEXT("sha256"), Hash);
@@ -346,7 +358,7 @@ bool FHansaStagedMedia::Stage(const FString& DescriptorPath, FString& OutReceipt
     Receipt->SetNumberField(TEXT("schemaVersion"), 1);
     FString DescriptorFile, DescriptorHash;
     if (!SafeSourcePath(DescriptorPath, DescriptorFile) || !HashFile(DescriptorFile, DescriptorHash))
-        return Fail(Error, TEXT("Could not bind the source descriptor to this import."));
+        return StagedMediaFail(Error, TEXT("Could not bind the source descriptor to this import."));
     Receipt->SetStringField(TEXT("descriptorPath"), DescriptorPath);
     Receipt->SetStringField(TEXT("descriptorHash"), DescriptorHash);
     Receipt->SetStringField(TEXT("stagePath"), StagePath);
@@ -365,7 +377,7 @@ bool FHansaStagedMedia::Stage(const FString& DescriptorPath, FString& OutReceipt
     OutReceiptPath = FPaths::GetPath(DescriptorPath) / (TEXT("import-") + Bundle + TEXT(".json"));
     FString ReceiptFile;
     if (!SafeSourcePath(OutReceiptPath, ReceiptFile) || !WriteJson(ReceiptFile, Receipt))
-        return Fail(Error, TEXT("Could not persist staging receipt."));
+        return StagedMediaFail(Error, TEXT("Could not persist staging receipt."));
     return true;
 }
 
@@ -374,23 +386,23 @@ bool FHansaStagedMedia::LoadReview(const FString& ReceiptPath, TSharedPtr<FJsonO
 {
     FString File;
     if (!SafeSourcePath(ReceiptPath, File) || !ReadJson(File, Receipt) || !HashFile(File, ReviewHash))
-        return Fail(Error, TEXT("Invalid retained import receipt."));
+        return StagedMediaFail(Error, TEXT("Invalid retained import receipt."));
     double ReceiptVersion = 0;
     if (!Receipt->TryGetNumberField(TEXT("schemaVersion"), ReceiptVersion) || ReceiptVersion != 1)
-        return Fail(Error, TEXT("Unsupported staging receipt version; re-stage from retained source."));
+        return StagedMediaFail(Error, TEXT("Unsupported staging receipt version; re-stage from retained source."));
     TSharedPtr<FJsonObject> Descriptor;
     FString SourceFile;
     if (!Source(Field(Receipt, TEXT("descriptorPath")), Descriptor, SourceFile, Error)) return false;
     FString DescriptorFile, DescriptorHash;
     if (!SafeSourcePath(Field(Receipt, TEXT("descriptorPath")), DescriptorFile) ||
         !HashFile(DescriptorFile, DescriptorHash) || DescriptorHash != Field(Receipt, TEXT("descriptorHash")))
-        return Fail(Error, TEXT("Reviewed source descriptor changed; create a new import receipt."));
+        return StagedMediaFail(Error, TEXT("Reviewed source descriptor changed; create a new import receipt."));
     const FString StagePath = Field(Receipt, TEXT("stagePath"));
     if (!StagePath.StartsWith(TEXT("/Game/Hansa/Generated/Staging/")) || !FPackageName::IsValidLongPackageName(StagePath))
-        return Fail(Error, TEXT("Receipt does not identify isolated staging."));
+        return StagedMediaFail(Error, TEXT("Receipt does not identify isolated staging."));
     const TArray<TSharedPtr<FJsonValue>>* Records = nullptr;
     if (!Receipt->TryGetArrayField(TEXT("assets"), Records) || Records->IsEmpty() || Records->Num() > 64)
-        return Fail(Error, TEXT("Receipt must contain 1 through 64 staged assets."));
+        return StagedMediaFail(Error, TEXT("Receipt must contain 1 through 64 staged assets."));
     TSet<FString> Seen;
     for (const auto& Record : *Records)
     {
@@ -401,11 +413,11 @@ bool FHansaStagedMedia::LoadReview(const FString& ReceiptPath, TSharedPtr<FJsonO
         if (!Package.StartsWith(StagePath + TEXT("/")) || Seen.Contains(Package) ||
             !HashFile(FPackageName::LongPackageNameToFilename(Package, FPackageName::GetAssetPackageExtension()), Hash) ||
             Hash != Field(Item, TEXT("sha256")))
-            return Fail(Error, TEXT("Staging bytes changed since import; create and preview a new receipt."));
+            return StagedMediaFail(Error, TEXT("Staging bytes changed since import; create and preview a new receipt."));
         Seen.Add(Package);
         UObject* Asset = LoadObject<UObject>(nullptr, *ObjectPath);
         if (!Asset || Asset->GetPackage()->IsDirty() || !Validate(Asset, Error))
-            return Fail(Error, TEXT("Staged asset is missing, modified or invalid; re-stage and preview."));
+            return StagedMediaFail(Error, TEXT("Staged asset is missing, modified or invalid; re-stage and preview."));
         Assets.Add(Asset);
     }
     const TSharedPtr<FJsonObject>* Profile = nullptr;
@@ -423,7 +435,7 @@ bool FHansaStagedMedia::Preview(const FString& ReceiptPath, FString& OutReviewHa
     TSharedPtr<FJsonObject> Receipt;
     TArray<UObject*> Assets;
     if (!LoadReview(ReceiptPath, Receipt, Assets, OutReviewHash, Error)) return false;
-    if (!GEditor || IsRunningCommandlet()) return Fail(Error, TEXT("Open the Editor to preview staged mesh/audio assets."));
+    if (!GEditor || IsRunningCommandlet()) return StagedMediaFail(Error, TEXT("Open the Editor to preview staged mesh/audio assets."));
     FString ReceiptFile;
     SafeSourcePath(ReceiptPath, ReceiptFile);
     TSharedRef<FJsonObject> PreviewRecord = MakeShared<FJsonObject>();
@@ -435,17 +447,17 @@ bool FHansaStagedMedia::Preview(const FString& ReceiptPath, FString& OutReviewHa
         if (!FHansaStaticProp::RenderPreview(Mesh, ReceiptFile + TEXT(".preview.png"), Capture, Error)) return false;
         Assets.Add(Capture);
         FString CaptureHash;
-        if (!HashFile(ReceiptFile + TEXT(".preview.png"), CaptureHash)) return Fail(Error, TEXT("Could not hash prop review capture."));
+        if (!HashFile(ReceiptFile + TEXT(".preview.png"), CaptureHash)) return StagedMediaFail(Error, TEXT("Could not hash prop review capture."));
         PreviewRecord->SetStringField(TEXT("captureSha256"), CaptureHash);
         PreviewRecord->SetStringField(TEXT("scene"), TEXT("HarborProp-v1-1280x720-camera(1.6,-2.4,1.5)-distance6r-fov45-key(-40,120)-fill(-25,-30)-exposureManual"));
     }
     if (!GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OpenEditorForAssets(Assets))
-        return Fail(Error, TEXT("Native asset preview could not open."));
+        return StagedMediaFail(Error, TEXT("Native asset preview could not open."));
     if (Receipt->HasField(TEXT("audioTake")))
     {
         USoundWave* Sound = Assets.Num() == 1 ? Cast<USoundWave>(Assets[0]) : nullptr;
         if (!Sound || !GEditor->PlayPreviewSound(Sound))
-            return Fail(Error, TEXT("Audio playback could not start. Enable Editor audio and listen to the selected take before approval."));
+            return StagedMediaFail(Error, TEXT("Audio playback could not start. Enable Editor audio and listen to the selected take before approval."));
         PreviewRecord->SetBoolField(TEXT("audioPlaybackStarted"), true);
     }
     PreviewRecord->SetStringField(TEXT("reviewHash"), OutReviewHash);
@@ -460,25 +472,25 @@ bool FHansaStagedMedia::VerifyPromotion(const FString& ReceiptPath, FString& Err
     TSharedPtr<FJsonObject> Receipt, Decision;
     if (!SafeSourcePath(ReceiptPath, ReceiptFile) || !ReadJson(ReceiptFile, Receipt) ||
         !ReadJson(ReceiptFile + TEXT(".promotion.json"), Decision))
-        return Fail(Error, TEXT("Retained promotion decision not found."));
+        return StagedMediaFail(Error, TEXT("Retained promotion decision not found."));
     FString Hash;
     if (!HashFile(ReceiptFile, Hash) || Hash != Field(Decision, TEXT("reviewHash")))
-        return Fail(Error, TEXT("Promotion receipt changed."));
+        return StagedMediaFail(Error, TEXT("Promotion receipt changed."));
     double ReceiptVersion = 0;
     if (!Receipt->TryGetNumberField(TEXT("schemaVersion"), ReceiptVersion) || ReceiptVersion != 1)
-        return Fail(Error, TEXT("Unsupported staging receipt version; re-stage from retained source."));
+        return StagedMediaFail(Error, TEXT("Unsupported staging receipt version; re-stage from retained source."));
     TSharedPtr<FJsonObject> Descriptor;
     FString SourceFile;
     if (!Source(Field(Receipt, TEXT("descriptorPath")), Descriptor, SourceFile, Error)) return false;
     FString DescriptorFile;
     if (!SafeSourcePath(Field(Receipt, TEXT("descriptorPath")), DescriptorFile) ||
         !HashFile(DescriptorFile, Hash) || Hash != Field(Receipt, TEXT("descriptorHash")))
-        return Fail(Error, TEXT("Reviewed source descriptor changed."));
+        return StagedMediaFail(Error, TEXT("Reviewed source descriptor changed."));
     const FString Destination = Field(Decision, TEXT("destination"));
-    if (!IsProductionDestination(Destination)) return Fail(Error, TEXT("Invalid retained destination."));
+    if (!IsProductionDestination(Destination)) return StagedMediaFail(Error, TEXT("Invalid retained destination."));
     const TArray<TSharedPtr<FJsonValue>>* Assets = nullptr;
     if (!Decision->TryGetArrayField(TEXT("assets"), Assets) || Assets->IsEmpty())
-        return Fail(Error, TEXT("Promotion decision lacks final package hashes."));
+        return StagedMediaFail(Error, TEXT("Promotion decision lacks final package hashes."));
     for (const auto& Value : *Assets)
     {
         const auto Asset = Value->AsObject();
@@ -486,7 +498,7 @@ bool FHansaStagedMedia::VerifyPromotion(const FString& ReceiptPath, FString& Err
         if (!Package.StartsWith(Destination + TEXT("/")) ||
             !HashFile(FPackageName::LongPackageNameToFilename(Package, FPackageName::GetAssetPackageExtension()), Hash) ||
             Hash != Field(Asset, TEXT("sha256")))
-            return Fail(Error, TEXT("Promoted package is missing or changed; preserve evidence and review a new revision."));
+            return StagedMediaFail(Error, TEXT("Promoted package is missing or changed; preserve evidence and review a new revision."));
     }
     // Recreate the terminal marker after a crash between commit and bookkeeping.
     const FString MarkerFile = ReceiptFile + TEXT(".committed.json");
@@ -494,7 +506,7 @@ bool FHansaStagedMedia::VerifyPromotion(const FString& ReceiptPath, FString& Err
     {
         Decision->SetStringField(TEXT("state"), TEXT("Promoted"));
         if (!WriteJson(MarkerFile, Decision.ToSharedRef()))
-            return Fail(Error, TEXT("Production is committed but its retained marker could not be saved. Run Hansa.Media.Verify."));
+            return StagedMediaFail(Error, TEXT("Production is committed but its retained marker could not be saved. Run Hansa.Media.Verify."));
     }
     return true;
 }
@@ -505,24 +517,24 @@ bool FHansaStagedMedia::Promote(const FString& ReceiptPath, const FString& Desti
 {
     check(IsInGameThread());
     if (!bApprove || Reviewer.TrimStartAndEnd().IsEmpty() || RightsStatement.TrimStartAndEnd().IsEmpty())
-        return Fail(Error, TEXT("Explicit named promotion approval and output-rights statement required."));
+        return StagedMediaFail(Error, TEXT("Explicit named promotion approval and output-rights statement required."));
     if (Reviewer.Len() > 128 || RightsStatement.Len() > 1024 || !IsProductionDestination(Destination))
-        return Fail(Error, TEXT("Choose a new /Game/Hansa/Meshes/Feature or /Game/Hansa/Audio/Feature directory."));
+        return StagedMediaFail(Error, TEXT("Choose a new /Game/Hansa/Meshes/Feature or /Game/Hansa/Audio/Feature directory."));
     TArray<FString> IdParts;
     StableId.ParseIntoArray(IdParts, TEXT("."), false);
     if (IdParts.Num() < 2 || (IdParts[0] != TEXT("Prop") && IdParts[0] != TEXT("SFX") && IdParts[0] != TEXT("Dialogue")))
-        return Fail(Error, TEXT("Use a stable Hansa Prop.*, SFX.* or Dialogue.* identity."));
-    for (const FString& Part : IdParts) if (!Token(Part)) return Fail(Error, TEXT("Invalid stable Hansa media ID."));
+        return StagedMediaFail(Error, TEXT("Use a stable Hansa Prop.*, SFX.* or Dialogue.* identity."));
+    for (const FString& Part : IdParts) if (!Token(Part)) return StagedMediaFail(Error, TEXT("Invalid stable Hansa media ID."));
     TSharedPtr<FJsonObject> Receipt;
     TArray<UObject*> Staged;
     FString Hash;
     if (!LoadReview(ReceiptPath, Receipt, Staged, Hash, Error)) return false;
-    if (Hash != ReviewedHash) return Fail(Error, TEXT("Approval does not match the exact reviewed bundle."));
+    if (Hash != ReviewedHash) return StagedMediaFail(Error, TEXT("Approval does not match the exact reviewed bundle."));
     const bool HasMesh = Staged.ContainsByPredicate([](const UObject* Asset) { return Asset->IsA<UStaticMesh>(); });
     const bool HasAudio = Staged.ContainsByPredicate([](const UObject* Asset) { return Asset->IsA<USoundWave>(); });
     if (HasMesh == HasAudio || (HasMesh && (!Destination.StartsWith(TEXT("/Game/Hansa/Meshes/")) || IdParts[0] != TEXT("Prop"))) ||
         (HasAudio && (!Destination.StartsWith(TEXT("/Game/Hansa/Audio/")) || IdParts[0] == TEXT("Prop"))))
-        return Fail(Error, TEXT("Media class, stable ID domain and destination domain must agree."));
+        return StagedMediaFail(Error, TEXT("Media class, stable ID domain and destination domain must agree."));
     TSharedPtr<FJsonObject> SourceDescriptor;
     FString OriginalSource;
     if (!Source(Field(Receipt, TEXT("descriptorPath")), SourceDescriptor, OriginalSource, Error)) return false;
@@ -530,20 +542,20 @@ bool FHansaStagedMedia::Promote(const FString& ReceiptPath, const FString& Desti
     if (SourceDescriptor->TryGetObjectField(TEXT("audioTake"), AudioProfile))
     {
         if (StableId != Field(*AudioProfile, TEXT("stableId")))
-            return Fail(Error, TEXT("Audio promotion identity must match its approved SFX/dialogue line."));
+            return StagedMediaFail(Error, TEXT("Audio promotion identity must match its approved SFX/dialogue line."));
         FString AudioReceiptFile;
         TSharedPtr<FJsonObject> AudioPreview;
         bool Played = false;
         SafeSourcePath(ReceiptPath, AudioReceiptFile);
         if (!ReadJson(AudioReceiptFile + TEXT(".preview.json"), AudioPreview) ||
             !AudioPreview->TryGetBoolField(TEXT("audioPlaybackStarted"), Played) || !Played)
-            return Fail(Error, TEXT("Preview playback of the selected audio take is required before approval."));
+            return StagedMediaFail(Error, TEXT("Preview playback of the selected audio take is required before approval."));
     }
     const TSharedPtr<FJsonObject>* PropProfile = nullptr;
     if (SourceDescriptor->TryGetObjectField(TEXT("staticProp"), PropProfile))
     {
         if (StableId != Field(*PropProfile, TEXT("stableId")))
-            return Fail(Error, TEXT("Promotion stable ID must match the approved harbor-prop contract."));
+            return StagedMediaFail(Error, TEXT("Promotion stable ID must match the approved harbor-prop contract."));
         FString PropReceiptFile, CaptureHash;
         TSharedPtr<FJsonObject> PropPreview;
         SafeSourcePath(ReceiptPath, PropReceiptFile);
@@ -551,13 +563,13 @@ bool FHansaStagedMedia::Promote(const FString& ReceiptPath, const FString& Desti
             !HashFile(PropReceiptFile + TEXT(".preview.png"), CaptureHash) ||
             CaptureHash != Field(PropPreview, TEXT("captureSha256")) ||
             !Field(PropPreview, TEXT("scene")).StartsWith(TEXT("HarborProp-v1-1280x720-")))
-            return Fail(Error, TEXT("A matching deterministic prop scene capture is required before human promotion approval."));
+            return StagedMediaFail(Error, TEXT("A matching deterministic prop scene capture is required before human promotion approval."));
     }
     FString ReceiptFile;
     SafeSourcePath(ReceiptPath, ReceiptFile);
     TSharedPtr<FJsonObject> PreviewRecord;
     if (!ReadJson(ReceiptFile + TEXT(".preview.json"), PreviewRecord) || Field(PreviewRecord, TEXT("reviewHash")) != Hash)
-        return Fail(Error, TEXT("Open the staged preview before approving these bytes."));
+        return StagedMediaFail(Error, TEXT("Open the staged preview before approving these bytes."));
     const FString FinalDirectory = FPackageName::LongPackageNameToFilename(Destination);
 #if PLATFORM_WINDOWS
     FString Current = FPaths::ConvertRelativePathToFull(FPaths::ProjectContentDir());
@@ -568,7 +580,7 @@ bool FHansaStagedMedia::Promote(const FString& ReceiptPath, const FString& Desti
         Current /= Part;
         const DWORD Attributes = GetFileAttributesW(*Current);
         if (Attributes != INVALID_FILE_ATTRIBUTES && (Attributes & FILE_ATTRIBUTE_REPARSE_POINT))
-            return Fail(Error, TEXT("Production destinations cannot traverse links or junctions."));
+            return StagedMediaFail(Error, TEXT("Production destinations cannot traverse links or junctions."));
     }
 #endif
 
@@ -580,7 +592,7 @@ bool FHansaStagedMedia::Promote(const FString& ReceiptPath, const FString& Desti
     const FString LockFile = FPaths::ConvertRelativePathToFull(LockDirectory / (Hash + TEXT(".lock")));
     HANDLE PromotionLock = CreateFileW(*LockFile, GENERIC_READ | GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (PromotionLock == INVALID_HANDLE_VALUE)
-        return Fail(Error, TEXT("Another editor is promoting this receipt; verify its destination and retry."));
+        return StagedMediaFail(Error, TEXT("Another editor is promoting this receipt; verify its destination and retry."));
     ON_SCOPE_EXIT { CloseHandle(PromotionLock); };
 #endif
     const FString ExistingDecisionFile = ReceiptFile + TEXT(".promotion.json");
@@ -589,21 +601,21 @@ bool FHansaStagedMedia::Promote(const FString& ReceiptPath, const FString& Desti
         TSharedPtr<FJsonObject> Previous;
         if (!ReadJson(ExistingDecisionFile, Previous) || Field(Previous, TEXT("destination")) != Destination ||
             Field(Previous, TEXT("reviewHash")) != Hash || Field(Previous, TEXT("stableId")) != StableId)
-            return Fail(Error, TEXT("A different promotion decision already exists; inspect its recorded destination."));
+            return StagedMediaFail(Error, TEXT("A different promotion decision already exists; inspect its recorded destination."));
         if (IFileManager::Get().DirectoryExists(*FinalDirectory))
             return VerifyPromotion(ReceiptPath, Error);
         // A process died before the atomic move. Archive the uncommitted decision.
         const FString Aborted = ExistingDecisionFile + TEXT(".aborted-") + FGuid::NewGuid().ToString(EGuidFormats::Digits);
         if (!IFileManager::Get().Move(*Aborted, *ExistingDecisionFile, false, false, false, true))
-            return Fail(Error, TEXT("Could not archive interrupted pre-commit decision."));
+            return StagedMediaFail(Error, TEXT("Could not archive interrupted pre-commit decision."));
     }
 
     if (IFileManager::Get().DirectoryExists(*FinalDirectory))
-        return Fail(Error, TEXT("Destination already exists. Silent overwrite is prohibited; choose a new feature revision."));
+        return StagedMediaFail(Error, TEXT("Destination already exists. Silent overwrite is prohibited; choose a new feature revision."));
     IAssetRegistry& Registry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry")).Get();
     TArray<FAssetData> Existing;
     Registry.GetAssetsByPath(FName(*Destination), Existing, true);
-    if (!Existing.IsEmpty()) return Fail(Error, TEXT("Destination has existing registered assets; inspect referencers and choose a new revision."));
+    if (!Existing.IsEmpty()) return StagedMediaFail(Error, TEXT("Destination has existing registered assets; inspect referencers and choose a new revision."));
     const FString Working = FPaths::ProjectSavedDir() / TEXT("MediaPromotion") / FGuid::NewGuid().ToString(EGuidFormats::Digits);
     IFileManager::Get().MakeDirectory(*Working, true);
     TArray<UObject*> Copies;
@@ -622,11 +634,11 @@ bool FHansaStagedMedia::Promote(const FString& ReceiptPath, const FString& Desti
             ? TEXT("SW_") + StableId.Replace(TEXT("."), TEXT("_"))
             : FString::Printf(TEXT("Asset_%03d"), Index + 1);
         const FString PackageName = Destination / Name;
-        if (FindPackage(nullptr, *PackageName)) { Transaction.Cancel(); return Fail(Error, TEXT("Destination package is already loaded.")); }
+        if (FindPackage(nullptr, *PackageName)) { Transaction.Cancel(); return StagedMediaFail(Error, TEXT("Destination package is already loaded.")); }
         UPackage* Package = CreatePackage(*PackageName);
         Package->SetFlags(RF_Transactional);
         UObject* Copy = StaticDuplicateObject(Staged[Index], Package, FName(*Name));
-        if (!Copy) { Transaction.Cancel(); return Fail(Error, TEXT("Could not duplicate staging asset.")); }
+        if (!Copy) { Transaction.Cancel(); return StagedMediaFail(Error, TEXT("Could not duplicate staging asset.")); }
         Copy->SetFlags(RF_Public | RF_Standalone | RF_Transactional);
         Copies.Add(Copy);
         Replacements.Add(Staged[Index], Copy);
@@ -670,9 +682,9 @@ bool FHansaStagedMedia::Promote(const FString& ReceiptPath, const FString& Desti
         if (!ReferenceAudit.Forbidden.IsEmpty()) { Transaction.Cancel(); Error = FString::Join(ReferenceAudit.Forbidden, TEXT("\n")); return false; }
         if (!Validate(Copy, Error)) { Transaction.Cancel(); return false; }
         const FString File = Working / (Copy->GetName() + TEXT(".uasset"));
-        if (!SaveAsset(Copy, File)) { Transaction.Cancel(); return Fail(Error, TEXT("Package save failed; no production files were committed.")); }
+        if (!SaveAsset(Copy, File)) { Transaction.Cancel(); return StagedMediaFail(Error, TEXT("Package save failed; no production files were committed.")); }
         FString PackageHash;
-        if (!HashFile(File, PackageHash)) { Transaction.Cancel(); return Fail(Error, TEXT("Package hash failed.")); }
+        if (!HashFile(File, PackageHash)) { Transaction.Cancel(); return StagedMediaFail(Error, TEXT("Package hash failed.")); }
         TSharedRef<FJsonObject> Item = MakeShared<FJsonObject>();
         Item->SetStringField(TEXT("objectPath"), Copy->GetPathName());
         Item->SetStringField(TEXT("sha256"), PackageHash);
@@ -683,13 +695,13 @@ bool FHansaStagedMedia::Promote(const FString& ReceiptPath, const FString& Desti
     // move is reconciled by verifying these exact final package hashes.
     const FString DecisionFile = ReceiptFile + TEXT(".promotion.json");
     if (IFileManager::Get().FileExists(*DecisionFile))
-    { Transaction.Cancel(); return Fail(Error, TEXT("A promotion decision already exists; inspect its destination before retrying.")); }
-    if (!WriteJson(DecisionFile, Decision)) { Transaction.Cancel(); return Fail(Error, TEXT("Could not retain promotion decision.")); }
+    { Transaction.Cancel(); return StagedMediaFail(Error, TEXT("A promotion decision already exists; inspect its destination before retrying.")); }
+    if (!WriteJson(DecisionFile, Decision)) { Transaction.Cancel(); return StagedMediaFail(Error, TEXT("Could not retain promotion decision.")); }
     if (bFailBeforeCommitForTests)
     {
         IFileManager::Get().Delete(*DecisionFile);
         Transaction.Cancel();
-        return Fail(Error, TEXT("Injected pre-commit failure; production is unchanged."));
+        return StagedMediaFail(Error, TEXT("Injected pre-commit failure; production is unchanged."));
     }
     IFileManager::Get().MakeDirectory(*FPaths::GetPath(FinalDirectory), true);
     // Same-volume directory rename is the single visibility/commit point.
@@ -697,7 +709,7 @@ bool FHansaStagedMedia::Promote(const FString& ReceiptPath, const FString& Desti
     {
         IFileManager::Get().Delete(*DecisionFile);
         Transaction.Cancel();
-        return Fail(Error, TEXT("Atomic bundle commit failed; production is unchanged."));
+        return StagedMediaFail(Error, TEXT("Atomic bundle commit failed; production is unchanged."));
     }
     Committed = true;
     for (UObject* Copy : Copies) FAssetRegistryModule::AssetCreated(Copy);

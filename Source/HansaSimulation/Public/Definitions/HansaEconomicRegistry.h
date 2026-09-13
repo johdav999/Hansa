@@ -23,6 +23,7 @@ namespace Hansa::Simulation
 		int32 PriceElasticityBasisPoints = 0;
 		int32 SpoilageBasisPointsPerDay = 0;
 		uint64 ContentHash = 0;
+		FString DisplayName;
 	};
 
 	struct HANSASIMULATION_API FHansaCompiledRecipeDefinition final
@@ -41,6 +42,7 @@ namespace Hansa::Simulation
 	struct HANSASIMULATION_API FHansaCompiledBuildingDefinition final
 	{
 		FString StableId;
+		int32 SchemaVersion = 0;
 		TArray<FHansaCompiledGoodAmount> ConstructionCosts;
 		int64 ConstructionCostPfennig = 0;
 		int32 CancellationRefundBasisPoints = 0;
@@ -55,8 +57,19 @@ namespace Hansa::Simulation
 		int32 LaborerWorkforce = 0;
 		int32 ArtisanWorkforce = 0;
 		bool bRequiresRoad = false;
+		bool bProvidesMarketAccess = false;
 		bool bRequiresShoreline = false;
 		uint64 ContentHash = 0;
+		FString DisplayName;
+		bool bShowInConstructionMenu = false;
+		FString ConstructionMenuCategory;
+		int32 ConstructionMenuOrder = 0;
+		FString ConstructionChainOutputGoodId;
+		int32 ConstructionChainStage = 0;
+		int32 ConstructionChainStageCount = 0;
+		FString RequiredConstructionTechnologyId;
+		bool bUpgradeOnly = false;
+		FString ConstructionPresentationPurpose;
 	};
 
 	enum class EHansaCompiledNeedKind : uint8

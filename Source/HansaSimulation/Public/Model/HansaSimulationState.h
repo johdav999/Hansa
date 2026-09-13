@@ -12,8 +12,10 @@
 #include "Production/HansaProduction.h"
 #include "Research/HansaResearch.h"
 #include "Population/HansaPopulation.h"
+#include "Population/HansaConsumptionHistory.h"
 #include "Placement/HansaPlacement.h"
 #include "Trade/HansaTrade.h"
+#include "Diagnostics/HansaStateHash.h"
 
 namespace Hansa::Simulation
 {
@@ -91,13 +93,15 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaSimulationState final
 	{
 	public:
-		static constexpr uint32 DeterminismFingerprintVersion = 16;
+		static constexpr uint32 DeterminismFingerprintVersion = 20;
 		static constexpr uint32 CurrentSystemPipelineVersion = 1;
 		static constexpr uint64 EmptyCommandHistoryFingerprint = 14695981039346656037ULL;
 
 		FHansaSimulationState() = default;
 
-		static THansaValueResult<FHansaSimulationState> TryCreate(FHansaSimulationInitialization Initialization);
+		static THansaValueResult<FHansaSimulationState> TryCreate(
+			FHansaSimulationInitialization Initialization,
+			TSharedPtr<const FHansaPlacementTopology> ImmutablePlacementTopology = nullptr);
 
 		[[nodiscard]] bool IsInitialized() const { return bInitialized; }
 		[[nodiscard]] FHansaSimulationReadOnlyAccess CreateReadOnlyAccess(
@@ -105,12 +109,15 @@ namespace Hansa::Simulation
 
 	private:
 		friend class FHansaSaveCodec;
+		friend class FHansaSaveEnvelope;
 		friend class FHansaSimulationPipeline;
 		friend class FHansaSimulationReadOnlyAccess;
 		friend class FHansaStateHasher;
 
 		[[nodiscard]] uint64 ComputeDeterminismFingerprint(
 			const FHansaSimulationDefinitionContext& Definitions) const;
+		void InvalidateStateHashCache(uint32 SubsystemMask) const { CachedStateHashValidMask &= ~SubsystemMask; }
+		void InvalidateAllStateHashCaches() const { CachedStateHashValidMask = 0; }
 
 		bool bInitialized = false;
 		FHansaSimulationClock Clock;
@@ -133,6 +140,7 @@ namespace Hansa::Simulation
 		uint64 NextProductionReservationValue = 1;
 		TArray<FHansaProductionState> Productions;
 		TArray<FHansaPopulationCohortState> PopulationCohorts;
+		FHansaConsumptionHistory ConsumptionHistory;
 		FHansaMarketSettings MarketSettings;
 		TArray<FHansaCityMarketState> Markets;
 		FHansaLocalLogisticsSettings LocalLogisticsSettings;
@@ -140,5 +148,13 @@ namespace Hansa::Simulation
 		uint64 NextLogisticsReservationValue = 0x8000000000000000ULL;
 		TArray<FHansaLogisticsRequestState> LocalLogisticsRequests;
 		TArray<FHansaLogisticsJobState> LocalLogisticsJobs;
+
+		// Non-authoritative derived diagnostics. These are intentionally excluded from save data and state hashing.
+		mutable uint64 CachedStateHashValues[16] = {};
+		mutable uint32 CachedStateHashRecordCounts[16] = {};
+		mutable uint32 CachedStateHashValidMask = 0;
+		mutable FHansaScenarioId CachedHashScenarioId;
+		mutable uint64 CachedHashDefinitionHash = 0;
+		mutable uint64 CachedHashTopologyHash = 0;
 	};
 }

@@ -4,6 +4,7 @@
 #include "Misc/Optional.h"
 #include "Model/HansaIds.h"
 #include "Model/HansaValueResult.h"
+#include "Placement/HansaPlacement.h"
 
 namespace Hansa::Simulation
 {
@@ -22,19 +23,40 @@ namespace Hansa::Simulation
 		static THansaValueResult<FHansaSimulationDefinitionContext> TryCreate(
 			FHansaScenarioId ScenarioId,
 			uint64 DefinitionHash,
-			FHansaEconomicRegistry EconomicRegistry);
+			FHansaEconomicRegistry EconomicRegistry,
+			TMap<uint64, FString> InCompatibleDefinitionMigrations = {});
+		static THansaValueResult<FHansaSimulationDefinitionContext> TryCreate(
+			FHansaScenarioId ScenarioId,
+			uint64 DefinitionHash,
+			FHansaEconomicRegistry EconomicRegistry,
+			FHansaPlacementTopology PlacementTopology,
+			TMap<uint64, FString> InCompatibleDefinitionMigrations = {});
+		static THansaValueResult<FHansaSimulationDefinitionContext> TryCreate(
+			FHansaScenarioId ScenarioId,
+			uint64 DefinitionHash,
+			FHansaPlacementTopology PlacementTopology);
 
 		[[nodiscard]] bool IsValid() const;
 		[[nodiscard]] const FHansaScenarioId& GetScenarioId() const { return ScenarioId; }
 		[[nodiscard]] uint64 GetDefinitionHash() const { return DefinitionHash; }
 		[[nodiscard]] const FHansaEconomicRegistry* GetEconomicRegistry() const;
+		[[nodiscard]] const FHansaPlacementTopology* GetPlacementTopology() const { return PlacementTopology.Get(); }
+		[[nodiscard]] TSharedPtr<const FHansaPlacementTopology> GetPlacementTopologyShared() const { return PlacementTopology; }
+		[[nodiscard]] uint64 GetPlacementTopologyHash() const
+		{
+			return PlacementTopology.IsValid() ? PlacementTopology->GetTopologyHash() : 0;
+		}
+		[[nodiscard]] TOptional<FString> FindCompatibleDefinitionMigration(
+			uint64 SavedDefinitionHash,
+			uint64 SavedRegistryHash) const;
 
 		friend bool operator==(
 			const FHansaSimulationDefinitionContext& Left,
 			const FHansaSimulationDefinitionContext& Right)
 		{
 			return Left.ScenarioId == Right.ScenarioId && Left.DefinitionHash == Right.DefinitionHash &&
-				Left.EconomicRegistry.IsSet() == Right.EconomicRegistry.IsSet();
+				Left.EconomicRegistry.IsSet() == Right.EconomicRegistry.IsSet() &&
+				Left.GetPlacementTopologyHash() == Right.GetPlacementTopologyHash();
 		}
 
 	private:
@@ -47,5 +69,7 @@ namespace Hansa::Simulation
 		FHansaScenarioId ScenarioId;
 		uint64 DefinitionHash = 0;
 		TOptional<FHansaEconomicRegistry> EconomicRegistry;
+		TSharedPtr<const FHansaPlacementTopology> PlacementTopology;
+		TMap<uint64, FString> CompatibleDefinitionMigrations;
 	};
 }

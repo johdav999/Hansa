@@ -86,3 +86,7 @@ These instructions apply to the entire repository.
 - Any new provider integration must implement the provider-neutral capability/job contract, cost controls, mocked contract tests, failure recovery, provenance, and Shipping-exclusion checks.
 - Never make a live provider call from normal CI. Use mocks or recorded fixtures; live smoke tests require an explicitly budgeted workflow and dedicated low-privilege credentials.
 - Prove that editor modules, generation workers, provider configuration/credentials, staging assets, and development-only manifests are absent from Shipping packages.
+
+## GUI ImageGen resizing exception — approved 2026-09-10
+
+For GUI icons and GUI images, the user authorizes proportional resizing of genuine ImageGen artwork when the generator cannot deliver the requested native display size. Request the closest practical size first. Preserve the original generated master and aspect ratio; transparent-margin cropping and high-quality proportional resampling into documented display-size variants are allowed. Review each result at actual display size, including small UI scale, on its intended background. Regenerate unreadable artwork rather than accepting blurred details. Never stretch, squash, or replace the generated artwork with manually drawn icons. Record generated dimensions, crop, output dimensions, prompt, and quality review. This exception supersedes conflicting no-resampling and native/vector icon advice in this document for GUI images only. Other game imagery retains its existing rules.

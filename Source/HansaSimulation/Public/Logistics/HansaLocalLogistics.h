@@ -11,6 +11,7 @@ namespace Hansa::Simulation
 {
 	class FHansaInventoryReadOnlyAccess;
 	class FHansaPlacementState;
+	class FHansaEconomicRegistry;
 	struct FHansaBuildingState;
 
 	enum class EHansaLogisticsPriority : uint8
@@ -43,13 +44,35 @@ namespace Hansa::Simulation
 	{
 		AwaitingPickup = 0,
 		InTransit,
-		Completed
+		Completed,
+		PausedAwaitingPickup,
+		PausedInTransit
+	};
+
+	/** Causal result for a physical road-and-market access query. */
+	enum class EHansaLogisticsRoadPathFailure : uint8
+	{
+		None = 0,
+		SourceInventoryMissing,
+		DestinationInventoryMissing,
+		SourceEndpointUnavailable,
+		DestinationEndpointUnavailable,
+		DifferentCities,
+		NoCompletedRoad,
+		NoOperationalMarket,
+		NoMarketRoadAccess,
+		SourceNotAdjacentToRoad,
+		DestinationNotAdjacentToRoad,
+		SourceNotConnectedToMarket,
+		DestinationNotConnectedToMarket,
+		EndpointsDisconnected
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaLogisticsPriority Priority);
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaLogisticsBottleneck Bottleneck);
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaLogisticsRequestStatus Status);
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaLogisticsJobStatus Status);
+	HANSASIMULATION_API const TCHAR* LexToString(EHansaLogisticsRoadPathFailure Failure);
 
 	/** Fixed-step policy for the intentionally aggregated MVP cart/warehouse abstraction. */
 	struct HANSASIMULATION_API FHansaLocalLogisticsSettings final
@@ -101,6 +124,11 @@ namespace Hansa::Simulation
 		FHansaSimulationTick PickupTick;
 		FHansaSimulationTick DeliveryTick;
 		int32 RoadDistanceCells = 0;
+		FHansaBuildingId SelectedMarketBuildingId;
+		TArray<FHansaGridCoordinate> RouteCells;
+		int32 ElapsedTravelTicks = 0;
+		int32 RemainingTravelTicks = 0;
+		EHansaLogisticsRoadPathFailure PauseReason = EHansaLogisticsRoadPathFailure::None;
 		EHansaLogisticsJobStatus Status = EHansaLogisticsJobStatus::AwaitingPickup;
 	};
 
@@ -110,7 +138,13 @@ namespace Hansa::Simulation
 		FHansaInventoryId DestinationInventoryId;
 		FHansaCityDefinitionId CityId;
 		bool bConnected = false;
+		bool bMarketEligible = false;
+		FHansaBuildingId SelectedMarketBuildingId;
+		EHansaLogisticsRoadPathFailure Failure = EHansaLogisticsRoadPathFailure::None;
+		FName MessageKey;
+		FName RemedyKey;
 		int32 RoadDistanceCells = 0;
+		TArray<FHansaGridCoordinate> RouteCells;
 		TArray<FHansaGridCoordinate> SourceAccessCells;
 		TArray<FHansaGridCoordinate> DestinationAccessCells;
 	};
@@ -143,6 +177,11 @@ namespace Hansa::Simulation
 		FHansaSimulationTick PickupTick;
 		FHansaSimulationTick DeliveryTick;
 		int32 RoadDistanceCells = 0;
+		FHansaBuildingId SelectedMarketBuildingId;
+		TArray<FHansaGridCoordinate> RouteCells;
+		int32 ElapsedTravelTicks = 0;
+		int32 RemainingTravelTicks = 0;
+		EHansaLogisticsRoadPathFailure PauseReason = EHansaLogisticsRoadPathFailure::None;
 		EHansaLogisticsJobStatus Status = EHansaLogisticsJobStatus::AwaitingPickup;
 	};
 
@@ -164,11 +203,27 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaLocalLogisticsQueries final
 	{
 	public:
+		/** Tests only whether a completed building has orthogonal access to a completed road. */
+		[[nodiscard]] static FHansaLogisticsRoadPathProjection QueryBuildingRoadAccess(
+			FHansaBuildingId SourceBuildingId,
+			const FHansaPlacementState& Placement,
+			TConstArrayView<FHansaBuildingState> Buildings);
+
 		[[nodiscard]] static FHansaLogisticsRoadPathProjection QueryRoadPath(
 			FHansaInventoryId SourceInventoryId,
 			FHansaInventoryId DestinationInventoryId,
 			const FHansaInventoryReadOnlyAccess& Inventories,
 			const FHansaPlacementState& Placement,
-			TConstArrayView<FHansaBuildingState> Buildings);
+			TConstArrayView<FHansaBuildingState> Buildings,
+			const FHansaEconomicRegistry* Registry = nullptr);
+
+		/** Tests physical access from a completed building to one spatial market inventory. */
+		[[nodiscard]] static FHansaLogisticsRoadPathProjection QueryBuildingMarketAccess(
+			FHansaBuildingId SourceBuildingId,
+			FHansaInventoryId MarketInventoryId,
+			const FHansaInventoryReadOnlyAccess& Inventories,
+			const FHansaPlacementState& Placement,
+			TConstArrayView<FHansaBuildingState> Buildings,
+			const FHansaEconomicRegistry* Registry = nullptr);
 	};
 }

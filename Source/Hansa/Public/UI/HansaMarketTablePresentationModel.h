@@ -130,6 +130,7 @@ struct HANSA_API FHansaMarketRelationshipPresentation final
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText Status;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText AccessibleLabel;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") bool bWarning = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") int64 BuildingValue = 0;
 
 	friend bool operator==(const FHansaMarketRelationshipPresentation& Left, const FHansaMarketRelationshipPresentation& Right);
 };
@@ -151,6 +152,9 @@ struct HANSA_API FHansaSelectedGoodPresentation final
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText CitizenDemand;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText IndustrialDemand;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText IncomingSupply;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText Production;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText Consumption;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText SupplyBalance;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText Explanation;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText ChartSummary;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText PinActionLabel;
@@ -201,6 +205,7 @@ struct HANSA_API FHansaMarketTableSnapshot final
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FHansaMarketTableChanged, const FHansaMarketTableSnapshot&, uint64);
 DECLARE_MULTICAST_DELEGATE_OneParam(FHansaMarketRouteRequested, FName);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FHansaMarketBuildingRequested, FName, int64);
 
 /** Immutable, event-driven ten-good market table model. */
 UCLASS(BlueprintType)
@@ -224,6 +229,8 @@ public:
 	bool TogglePinIntent();
 	bool BeginRouteIntent();
 	void SetFocusedSemanticId(FName SemanticId);
+	bool RevealRelationshipIntent(bool bProducer, FName StableId);
+	FHansaMarketBuildingRequested& OnBuildingRequested() { return BuildingRequested; }
 
 	[[nodiscard]] const FHansaMarketTableSnapshot& GetSnapshot() const { return Snapshot; }
 	[[nodiscard]] const FHansaMarketTableRowPresentation* FindRow(FName GoodStableId) const;
@@ -245,4 +252,5 @@ private:
 	uint64 Revision = 0;
 	FHansaMarketTableChanged Changed;
 	FHansaMarketRouteRequested RouteRequested;
+	FHansaMarketBuildingRequested BuildingRequested;
 };

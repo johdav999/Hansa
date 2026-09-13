@@ -59,7 +59,7 @@ namespace Hansa::Simulation
 		};
 
 		template <typename TPopulate>
-		FHansaSubsystemStateHash BuildSubsystem(
+		FHansaSubsystemStateHash BuildRawSubsystem(
 			const EHansaStateHashSubsystem Subsystem,
 			const uint32 RecordCount,
 			TPopulate Populate)
@@ -136,21 +136,96 @@ namespace Hansa::Simulation
 		const FHansaSimulationState& State,
 		const FHansaSimulationDefinitionContext& Definitions)
 	{
-		check(State.bInitialized);
+        return ComputeVersion(State, Definitions, FHansaSimulationState::DeterminismFingerprintVersion);
+    }
+
+    FHansaStateHashReport FHansaStateHasher::ComputeLegacyV16(const FHansaSimulationState& State,
+        const FHansaSimulationDefinitionContext& Definitions)
+    {
+        return ComputeVersion(State, Definitions, 16);
+    }
+
+    FHansaStateHashReport FHansaStateHasher::ComputeLegacyV17(const FHansaSimulationState& State,
+        const FHansaSimulationDefinitionContext& Definitions)
+    {
+        return ComputeVersion(State, Definitions, 17);
+    }
+
+    FHansaStateHashReport FHansaStateHasher::ComputeLegacyV18(const FHansaSimulationState& State,
+        const FHansaSimulationDefinitionContext& Definitions)
+    {
+        return ComputeVersion(State, Definitions, 18);
+    }
+
+	FHansaStateHashReport FHansaStateHasher::ComputeLegacyV19(
+		const FHansaSimulationState& State,
+		const FHansaSimulationDefinitionContext& Definitions)
+	{
+		return ComputeVersion(State, Definitions, 19);
+	}
+
+    FHansaStateHashReport FHansaStateHasher::ComputeVersion(const FHansaSimulationState& State,
+        const FHansaSimulationDefinitionContext& Definitions, const uint32 FingerprintVersion)
+    {
+        check(State.bInitialized);
 		check(Definitions.IsValid());
 
 		FHansaStateHashReport Report;
 		Report.SystemPipelineVersion = FHansaSimulationState::CurrentSystemPipelineVersion;
 		Report.Tick = State.Clock.GetTick();
-		Report.Subsystems.Reserve(15);
+		Report.Subsystems.Reserve(16);
+
+		const bool bUseCache = FingerprintVersion == FHansaSimulationState::DeterminismFingerprintVersion;
+		const uint64 TopologyHash = State.Placement.GetTopologyHash();
+		if (bUseCache &&
+			(State.CachedHashScenarioId != Definitions.GetScenarioId() ||
+				State.CachedHashDefinitionHash != Definitions.GetDefinitionHash() ||
+				State.CachedHashTopologyHash != TopologyHash))
+		{
+			State.CachedStateHashValidMask &= ~(
+				(1U << static_cast<uint8>(EHansaStateHashSubsystem::Contract)) |
+				(1U << static_cast<uint8>(EHansaStateHashSubsystem::Placement)));
+			State.CachedHashScenarioId = Definitions.GetScenarioId();
+			State.CachedHashDefinitionHash = Definitions.GetDefinitionHash();
+			State.CachedHashTopologyHash = TopologyHash;
+		}
+		const auto BuildSubsystem = [&State, &Report, bUseCache](
+			const EHansaStateHashSubsystem Subsystem,
+			const uint32 RecordCount,
+			auto&& Populate)
+		{
+			const uint32 Index = static_cast<uint32>(Subsystem);
+			const uint32 Bit = 1U << Index;
+			if (bUseCache && (State.CachedStateHashValidMask & Bit) != 0)
+			{
+				return FHansaSubsystemStateHash {
+					Subsystem,
+					State.CachedStateHashValues[Index],
+					State.CachedStateHashRecordCounts[Index]
+				};
+			}
+			FHansaSubsystemStateHash Result = BuildRawSubsystem(Subsystem, RecordCount, Populate);
+			++Report.RecomputedSubsystemCount;
+			if (bUseCache)
+			{
+				State.CachedStateHashValues[Index] = Result.Value;
+				State.CachedStateHashRecordCounts[Index] = Result.RecordCount;
+				State.CachedStateHashValidMask |= Bit;
+			}
+			return Result;
+		};
 
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Contract, 1,
-			[&Definitions](FNormalizedHashBuilder& Builder)
+			[&Definitions, &State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
-				Builder.AddUInt32(FHansaSimulationState::DeterminismFingerprintVersion);
+				Builder.AddUInt32(FingerprintVersion);
 				Builder.AddUInt32(FHansaSimulationState::CurrentSystemPipelineVersion);
 				Builder.AddAsciiString(Definitions.GetScenarioId().ToString());
 				Builder.AddUInt64(Definitions.GetDefinitionHash());
+				if (FingerprintVersion >= 20)
+				{
+					Builder.AddUInt64(State.Placement.GetTopologyHash());
+				}
 			}));
 
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::SimulationMetadata, 1,
@@ -414,9 +489,13 @@ namespace Hansa::Simulation
 		for (const FHansaPopulationCohortState& Cohort : State.PopulationCohorts)
 		{
 			PopulationRecordCount += static_cast<uint32>(Cohort.Needs.Num());
+            if (FingerprintVersion >= 18)
+                for (const auto& Sample : Cohort.ConsumptionHistory.Samples) PopulationRecordCount += 1 + Sample.Goods.Num();
 		}
+        if (FingerprintVersion >= 17)
+            for (const auto& Sample : State.ConsumptionHistory.Samples) PopulationRecordCount += 1 + Sample.Goods.Num();
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Population, PopulationRecordCount,
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				Builder.AddUInt32(static_cast<uint32>(State.PopulationCohorts.Num()));
 				for (const FHansaPopulationCohortState& Cohort : State.PopulationCohorts)
@@ -457,7 +536,39 @@ namespace Hansa::Simulation
 						Builder.AddInt32(Need.SatisfactionBasisPoints);
 						Builder.AddInt64(Need.ReserveMilliDays);
 					}
+                    if (FingerprintVersion >= 18)
+                    {
+                        Builder.AddUInt32(Cohort.ConsumptionHistory.Samples.Num());
+                        for (const auto& Sample : Cohort.ConsumptionHistory.Samples)
+                        {
+                            Builder.AddInt64(Sample.EndTick);
+                            Builder.AddUInt32(Sample.Goods.Num());
+                            for (const auto& Good : Sample.Goods)
+                            {
+                                Builder.AddAsciiString(Good.CityId.ToString());
+                                Builder.AddAsciiString(Good.GoodId.ToString());
+                                Builder.AddInt64(Good.Required);
+                                Builder.AddInt64(Good.Consumed);
+                            }
+                        }
+                    }
 				}
+                if (FingerprintVersion >= 17)
+                {
+                    Builder.AddUInt32(State.ConsumptionHistory.Samples.Num());
+                    for (const auto& Sample : State.ConsumptionHistory.Samples)
+                    {
+                        Builder.AddInt64(Sample.EndTick);
+                        Builder.AddUInt32(Sample.Goods.Num());
+                        for (const auto& Good : Sample.Goods)
+                        {
+                            Builder.AddAsciiString(Good.CityId.ToString());
+                            Builder.AddAsciiString(Good.GoodId.ToString());
+                            Builder.AddInt64(Good.Required);
+                            Builder.AddInt64(Good.Consumed);
+                        }
+                    }
+                }
 			}));
 
 		uint32 MarketRecordCount = static_cast<uint32>(State.Markets.Num());
@@ -568,37 +679,41 @@ namespace Hansa::Simulation
 				}
 			}));
 
-		uint32 PlacementRecordCount = static_cast<uint32>(
-			State.Placement.Maps.Num() + State.Placement.Entitlements.Num() + State.Placement.Placements.Num());
-		for (const FHansaPlacementMapInitialization& Map : State.Placement.Maps)
-		{
-			PlacementRecordCount += static_cast<uint32>(Map.Cells.Num());
-		}
+		uint32 PlacementRecordCount = State.Placement.GetTopologyRecordCount() +
+			static_cast<uint32>(State.Placement.Entitlements.Num() + State.Placement.Placements.Num());
 		for (const FHansaPlacedBuildingRecord& Placement : State.Placement.Placements)
 		{
 			PlacementRecordCount += static_cast<uint32>(Placement.OccupiedCells.Num());
 		}
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Placement, PlacementRecordCount,
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
-				Builder.AddUInt32(static_cast<uint32>(State.Placement.Maps.Num()));
-				for (const FHansaPlacementMapInitialization& Map : State.Placement.Maps)
+				if (FingerprintVersion >= 20)
 				{
-					Builder.AddAsciiString(Map.CityId.ToString());
-					Builder.AddInt32(Map.BoundsMin.X);
-					Builder.AddInt32(Map.BoundsMin.Y);
-					Builder.AddInt32(Map.BoundsMax.X);
-					Builder.AddInt32(Map.BoundsMax.Y);
-					Builder.AddAsciiString(Map.RoadBuildingDefinitionId.ToString());
-					Builder.AddUInt32(static_cast<uint32>(Map.Cells.Num()));
-					for (const FHansaPlacementGridCell& Cell : Map.Cells)
+					Builder.AddUInt64(State.Placement.GetTopologyHash());
+					Builder.AddUInt32(State.Placement.GetTopologyRecordCount());
+				}
+				else
+				{
+					Builder.AddUInt32(static_cast<uint32>(State.Placement.GetMaps().Num()));
+					for (const FHansaPlacementMapInitialization& Map : State.Placement.GetMaps())
 					{
-						Builder.AddInt32(Cell.Coordinate.X);
-						Builder.AddInt32(Cell.Coordinate.Y);
-						Builder.AddUInt8(static_cast<uint8>(Cell.Terrain));
-						Builder.AddUInt64(Cell.OwnerId.GetValue());
-						Builder.AddUInt32(Cell.OwnerId.GetGeneration());
-						Builder.AddUInt8(Cell.bBlocked ? 1 : 0);
+						Builder.AddAsciiString(Map.CityId.ToString());
+						Builder.AddInt32(Map.BoundsMin.X);
+						Builder.AddInt32(Map.BoundsMin.Y);
+						Builder.AddInt32(Map.BoundsMax.X);
+						Builder.AddInt32(Map.BoundsMax.Y);
+						Builder.AddAsciiString(Map.RoadBuildingDefinitionId.ToString());
+						Builder.AddUInt32(static_cast<uint32>(Map.Cells.Num()));
+						for (const FHansaPlacementGridCell& Cell : Map.Cells)
+						{
+							Builder.AddInt32(Cell.Coordinate.X);
+							Builder.AddInt32(Cell.Coordinate.Y);
+							Builder.AddUInt8(static_cast<uint8>(Cell.Terrain));
+							Builder.AddUInt64(Cell.OwnerId.GetValue());
+							Builder.AddUInt32(Cell.OwnerId.GetGeneration());
+							Builder.AddUInt8(Cell.bBlocked ? 1 : 0);
+						}
 					}
 				}
 				Builder.AddUInt32(static_cast<uint32>(State.Placement.Entitlements.Num()));
@@ -632,7 +747,7 @@ namespace Hansa::Simulation
 		const uint32 LogisticsRecordCount = static_cast<uint32>(
 			1 + State.LocalLogisticsRequests.Num() + State.LocalLogisticsJobs.Num());
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Logistics, LogisticsRecordCount,
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				Builder.AddInt64(State.LocalLogisticsSettings.JobCapacity.GetRawValue());
 				Builder.AddInt32(State.LocalLogisticsSettings.PickupDelayTicks);
@@ -679,6 +794,20 @@ namespace Hansa::Simulation
 					Builder.AddInt64(Job.DeliveryTick.GetValue());
 					Builder.AddInt32(Job.RoadDistanceCells);
 					Builder.AddUInt8(static_cast<uint8>(Job.Status));
+					if (FingerprintVersion >= 19)
+					{
+						Builder.AddUInt64(Job.SelectedMarketBuildingId.GetValue());
+						Builder.AddUInt32(Job.SelectedMarketBuildingId.GetGeneration());
+						Builder.AddUInt32(static_cast<uint32>(Job.RouteCells.Num()));
+						for (const FHansaGridCoordinate Cell : Job.RouteCells)
+						{
+							Builder.AddInt32(Cell.X);
+							Builder.AddInt32(Cell.Y);
+						}
+						Builder.AddInt32(Job.ElapsedTravelTicks);
+						Builder.AddInt32(Job.RemainingTravelTicks);
+						Builder.AddUInt8(static_cast<uint8>(Job.PauseReason));
+					}
 				}
 			}));
 

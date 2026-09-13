@@ -1,6 +1,7 @@
 #include "Definitions/HansaTradeDefinitions.h"
 
 #include "Model/HansaIds.h"
+#include "World/HansaCargoVehiclePresentation.h"
 
 namespace
 {
@@ -24,9 +25,27 @@ UHansaVehicleDefinition::UHansaVehicleDefinition()
 	DefinitionCategory = TEXT("Trade Vehicles");
 }
 
+UClass* UHansaVehicleDefinition::LoadPresentationActorClass() const
+{
+	const FString Path = PresentationActorClass.ToSoftObjectPath().ToString();
+	if (Path.Contains(TEXT("/Generated/Staging/")) || Path.Contains(TEXT("/Developer/")) || Path.Contains(TEXT("/Developers/"))) return nullptr;
+	UClass* Class = PresentationActorClass.LoadSynchronous();
+	return Class && Class->IsChildOf(AHansaCargoVehiclePresentation::StaticClass()) &&
+		!Class->HasAnyClassFlags(CLASS_Abstract | CLASS_Deprecated | CLASS_NewerVersionExists) ? Class : nullptr;
+}
+
 void UHansaVehicleDefinition::ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const
 {
 	Super::ValidateDefinition(OutIssues);
+	if (!PresentationActorClass.IsNull())
+	{
+		UClass* Class = LoadPresentationActorClass();
+		const auto* Defaults = Class ? Cast<AHansaCargoVehiclePresentation>(Class->GetDefaultObject()) : nullptr;
+		if (!Defaults || Defaults->bSeaVehicle != (Mode == EHansaAuthoredRouteMode::Sea))
+			AddTradeIssue(OutIssues, TEXT("HSA-VEHICLE-003"), TEXT("PresentationActorClass"),
+				NSLOCTEXT("HansaTradeDefinition", "VehiclePresentation", "The vehicle skin must be a promoted cargo vehicle class matching the route mode."),
+				NSLOCTEXT("HansaTradeDefinition", "VehiclePresentationRemedy", "Select an approved matching cargo vehicle Blueprint, or clear this optional field."));
+	}
 	if (!Hansa::Simulation::FHansaVehicleDefinitionId::TryParse(StableDefinitionId))
 	{
 		AddTradeIssue(OutIssues, TEXT("HSA-VEHICLE-001"), TEXT("StableDefinitionId"),
@@ -47,6 +66,9 @@ void UHansaVehicleDefinition::AppendDefinitionHashData(FString& InOutCanonicalDa
 	InOutCanonicalData += FString::Printf(TEXT("mode=%d\ncapacity=%lld\nupkeep=%lld\n"),
 		static_cast<int32>(Mode), static_cast<long long>(CargoCapacityMilliUnits),
 		static_cast<long long>(UpkeepPfennigPerTravelTick));
+	// Compatible optional extension: pre-P19 unbound definitions retain their canonical hash.
+	if (!PresentationActorClass.IsNull())
+		InOutCanonicalData += TEXT("vehiclePresentation=") + PresentationActorClass.ToSoftObjectPath().ToString() + TEXT("\n");
 }
 
 UHansaRouteDefinition::UHansaRouteDefinition()

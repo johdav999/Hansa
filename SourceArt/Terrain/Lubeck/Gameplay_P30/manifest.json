@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "status": "staged-candidate-not-production-approved",
+  "city_id": "City.Lubeck",
+  "coordinate_system": "existing local gameplay centimetres; no surveyed georeference claimed",
+  "historical_scope": "abstract enhanced-MVP Trave-side slice, not a reconstruction of measured medieval shoreline",
+  "landscape": {
+    "vertices": [
+      505,
+      505
+    ],
+    "spacing_cm": 100,
+    "extent_cm": [
+      -25200,
+      -25200,
+      25200,
+      25200
+    ],
+    "components": [
+      8,
+      8
+    ],
+    "sections_per_component": 1,
+    "section_quads": 63,
+    "z_scale": 25,
+    "actor_z_cm": 0,
+    "edit_layer": "Gameplay_Grading",
+    "height_range_cm": [
+      -450,
+      85
+    ],
+    "land_datum_cm": 75,
+    "shore_datum_cm": 85,
+    "bank_transition_cm": 650,
+    "authoritative_grid_changed": false
+  },
+  "water": {
+    "stable_role": "Water.Lubeck.Trave.Gameplay",
+    "type": "native WaterBodyCustom",
+    "surface_z_cm": -125,
+    "bathymetry": "inferred gameplay river bed, not measured",
+    "native_mesh_extent_cm": [
+      -100000,
+      -100000,
+      100000,
+      100000
+    ],
+    "triangles": 2,
+    "automatic_landscape_carving": false
+  },
+  "materials": {
+    "ground_inputs": "approved /Game/Mesh/hansa-dirt-road/Textures T_Road_BaseColor, T_Road_Normal, T_Road_Roughness; no raster edits",
+    "world_tiling_cm": 400,
+    "water_parent": "/Water/Materials/WaterSurface/Water_Material_CustomMesh",
+    "new_raster_assets": []
+  },
+  "staging_root": "/Game/Hansa/Generated/Staging/LubeckWorldArt_P30",
+  "production_map_changed": false,
+  "source_files": [
+    {
+      "path": "Source/Hansa/Private/World/HansaLubeckPlacementGrid.cpp",
+      "sha256": "c5a8d2a6673fcd36604534bcceec79b8fd3e04b4c6e522869fdacaef2978fa3b"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaLubeckWorldArt.cpp",
+      "sha256": "ee6f194ddb8884fa0cb577aa48958e60cdf0d21ae127e5017376a31c35630adf"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaLubeckWorldArtAuthoringTests.cpp",
+      "sha256": "41b8a1db52cbe275acce23d94289a1b4f46dcc27983eff6ac8238ad07d4e265a"
+    }
+  ],
+  "bake_contract": "Rendered ForceLayersFullUpdate with all World Partition actor references retained; refresh cached render bounds and save external actor packages.",
+  "candidate_packages": [
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/0/A7/9UYBU8KYI8DNQBPM6AFG2T.uasset",
+      "bytes": 271525,
+      "sha256": "7c1c334d24cea508d36083a7dd2e7e601d6a050c000f7004d3d3edcedf71b4ce"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/0/YC/QPXSLAFEFXG94ZQYA3ZFWY.uasset",
+      "bytes": 269891,
+      "sha256": "8035c67952603fbedc2415bb25f6e5774fa67cd8de2f048e0e9382ed2877c76c"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/1/29/EGN4XOSEXW8316C0M8OGF9.uasset",
+      "bytes": 271488,
+      "sha256": "9694edd9cafe6b2f9b45c097ee4f0db6d7ea9e0fac87e0d3333da9fb86e251c6"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/3/FH/18VG2WN4SH4ELECN5WI7A5.uasset",
+      "bytes": 5174,
+      "sha256": "f32d6a5013c427ac9f90af2082edbc93323f0e0c78f4d47a6cd0cee49a02903e"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/3/MJ/C7M4QDFN8THW44CSO69H85.uasset",
+      "bytes": 272435,
+      "sha256": "21d34721a8bbbf2717ecb95dad7fd31cc1aaea3202da9ac39118566806cfbad6"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/4/9A/3EFW205T3IA14A9ITM3T23.uasset",
+      "bytes": 20855,
+      "sha256": "0497b40c19fec9c3b98e4be45d64eae5f49db855b62d6b3070342ff50a1ded33"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/4/JC/A9K6P763NEH21WQZTT8Z3E.uasset",
+      "bytes": 15223,
+      "sha256": "cf1b9fd7842cc2abf05af3ba4436974f7bf3be2be23551d50b39481570943f66"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/4/RC/TYXCLXAMUJ2I34WCHEV4AC.uasset",
+      "bytes": 3119,
+      "sha256": "10305af46a6095545418412c1ae9f615d7a5e7d9c36ba736f5814fc1425dafb7"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/6/PZ/YVDT1NAB6KDYVNKLH5Y9T0.uasset",
+      "bytes": 2546,
+      "sha256": "f36ba0a78aee3d325e3f2e3b636379d9bfd9d69976199bd648150a794d2f2ab3"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/E/AM/MHI3XMY5U96GXU4UPJ5HIL.uasset",
+      "bytes": 12251,
+      "sha256": "89cbda8ca8e3d43d3cf283ca346cb15940b7734449d9f208eb03deb406e40d85"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/E/CG/OFAE0XR2R00D2TBKBA8UIP.uasset",
+      "bytes": 2675,
+      "sha256": "416864d5ece80105a4f04be57d549a6b5d0e9c6f2dbefcdee24b0363dfc2ceac"
+    },
+    {
+      "path": "Content/__ExternalActors__/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate/F/24/0UAFTULW8H94JDW1RR4JYN.uasset",
+      "bytes": 4485,
+      "sha256": "40292c66a034926817fd4e80142db8f4478581319559d5fb8b04bb53c8192027"
+    },
+    {
+      "path": "Content/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate.umap",
+      "bytes": 13651,
+      "sha256": "48f0f2c637a321514d45393a45443b657ff4b98f9707b41e38a9a8e4521fabac"
+    },
+    {
+      "path": "Content/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate_HLODLayer_Instanced.uasset",
+      "bytes": 2017,
+      "sha256": "6a7b40b79bef28c1d3f5a6e957e44632c28232444a295b10d992633f5b690b07"
+    },
+    {
+      "path": "Content/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate_HLODLayer_Merged.uasset",
+      "bytes": 3267,
+      "sha256": "b05f25178cd10ff7294ac9cbc7da7e2bbcb1bda372a4f8bb3ad0fbfbd50cc6d1"
+    },
+    {
+      "path": "Content/Hansa/Generated/Staging/LubeckWorldArt_P30/M_Lubeck_Ground.uasset",
+      "bytes": 9546,
+      "sha256": "3168943c96580fcf62baa6deaf50feb2d0a26bc5b89e24868b58106e0fd3ceb6"
+    },
+    {
+      "path": "Content/Hansa/Generated/Staging/LubeckWorldArt_P30/MI_Lubeck_Trave.uasset",
+      "bytes": 3173,
+      "sha256": "6be000c54596cb89e8e38c1e4dfb173de6b8e5b7fed3a23b195292d8c885ea0f"
+    },
+    {
+      "path": "Content/Hansa/Generated/Staging/LubeckWorldArt_P30/SM_Lubeck_RiverSurface.uasset",
+      "bytes": 10320,
+      "sha256": "3c925dcd90fd563641231e90457450d6bab45c23dcd5f1ab6947f0543f030ad4"
+    }
+  ]
+}

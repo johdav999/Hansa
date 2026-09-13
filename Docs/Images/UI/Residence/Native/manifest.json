@@ -1,0 +1,166 @@
+[
+  {
+    "path": "Docs/Images/UI/Residence/Native/need-tooltip.png",
+    "sha256": "a98d9f7c013ca3a43a69fe863e3f49bf50dc7d8eaaac2488d6c8cdcf0e7aac38"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1280x720-accessible.png",
+    "sha256": "860683ac7ee06495e456198c032f3ca2a8114614386d7bf567fa8000ff676a4e"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1280x720-accessible.tsv",
+    "sha256": "e798d696ba188a7aa18a87bac7084c06d9f734a54fa3bd39174566071b8508c7"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1280x720-details.png",
+    "sha256": "7b6576bb0c8cf087cb868fabfaa8b7f5e7280fbdb59f095f1c8cdc0305bea59a"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1280x720-details.tsv",
+    "sha256": "d889acbd6b683e261513ae975ab8ee8a8104ecf6eec403f3c29ef701bbe08899"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1280x720-evaluated.png",
+    "sha256": "35d78e72bdf2268f8f9204428138c940d0e7414be36757957104f49a5d99e9c4"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1280x720-evaluated.tsv",
+    "sha256": "d1e1b94bc139ec0446b5d223417d3f6ff583dbf277d49aa4e6e3aa03018950c7"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1280x720-hover.png",
+    "sha256": "8f9d401ab9ae520d55bd75b0c28ac768506ef7b6a7fb75c89b2278940e43613d"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1280x720-hover.tsv",
+    "sha256": "fbe5fc8c4faa6e3a897bdef3327a051a3645b5ed613887e406d5028df438bc87"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1280x720-initial.png",
+    "sha256": "675941fc477384066efec6b8907ffba356fe488e2cd43adc508fcf891292ddbf"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1280x720-initial.tsv",
+    "sha256": "8efe8e7807fad3224a0189fca8a120e9d1bde8f2d5b27733303e527e5c9a49a2"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1920x1080-accessible.png",
+    "sha256": "b680ecc189ae2da1edbbdfe7eff0ec8cb4decc17a4ed6e1378ee90779d4f733f"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1920x1080-accessible.tsv",
+    "sha256": "d3073c15e2eec7da40c41173bd0a132bf726c7f688045c5f25ccb6a524ca9493"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1920x1080-details.png",
+    "sha256": "289a51fdd0283a461f2ac61eff5464927be2e4264af52d83976ce5726560eb5c"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1920x1080-details.tsv",
+    "sha256": "16af9f2afa46942c45a2d9e72e55cad2ba481d6a4cefc66f7283bb19536c9336"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1920x1080-evaluated.png",
+    "sha256": "06481ce8f7b51bb09adda719f3daa023d33470bbc5e568fc3a8803f908a98140"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1920x1080-evaluated.tsv",
+    "sha256": "d3d247f9e48bfa1e75c862bc44f7744e6edd9167f4cf7052da9ad55d770ef287"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1920x1080-hover.png",
+    "sha256": "bfb769f0fb1222f6ebe97811393df0dfa13cafe383f7ccabd3c4dceff8185292"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1920x1080-hover.tsv",
+    "sha256": "281e61cb5bba78a5a1d965cbf99e7d4c9afcae6320aa0196aa28e67007d94dc1"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1920x1080-initial.png",
+    "sha256": "814e4bfae3b7b6b336ce91ec198f39f715e17596d314caee977563275d4a4771"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-1920x1080-initial.tsv",
+    "sha256": "e2e79483f88997184e2ee38975661496f0dc4ecddad96a3bc410a7617dc1cd64"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-2560x1440-accessible.png",
+    "sha256": "cb2ce4de85e2545b0dcc9efd3fb288707d6cf9d30b14961f00787ceec2b223fc"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-2560x1440-accessible.tsv",
+    "sha256": "df6dad5d893a9ddfc99a9e6b2b1fce990c130af9068cdd11d921434c577b48cf"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-2560x1440-details.png",
+    "sha256": "12c3e710795e9c5b60c2bb10ee3ef9decad3b23492bc6ee25b4e8150345b25ff"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-2560x1440-details.tsv",
+    "sha256": "8029ee01400547894c80e23051a1981b3e29f0109888d3d37856df1c9012aa82"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-2560x1440-evaluated.png",
+    "sha256": "cb855e60393189b4ed44c7454a16c3a20eb0e41e79bf9244593040b1f11a93c2"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-2560x1440-evaluated.tsv",
+    "sha256": "69375c972fe9ecc5d503885f9e30bbd0c49fe2712bba8123e73909d4ba9034ac"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-2560x1440-hover.png",
+    "sha256": "5b938669b25ab3b407e410973e436813fefce3ac81a2fffdde55d3e5194115c7"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-2560x1440-hover.tsv",
+    "sha256": "684c73a73bf4e8fa4f6934db7ad401b900a47612c81e85fa71f18c1efee35be2"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-2560x1440-initial.png",
+    "sha256": "dc1a906eca51ce58dd1ff0bf7ee19828bb0ad245c367d81cd6d26b806b546d80"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-2560x1440-initial.tsv",
+    "sha256": "3382dfab25301473644e0afb576c348ffd6dea38b9699a46cb8cf3d7ec6f01ce"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-3440x1440-accessible.png",
+    "sha256": "ce4f7350b89fe40c5cbd4cabbdbd38cf7b0d1b579337c5b948d9e50c3e4a6e63"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-3440x1440-accessible.tsv",
+    "sha256": "14ca567f9c7d7dc7b6a368e60f18e3cdee82ad827c39a4bbe070fd721d28291a"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-3440x1440-details.png",
+    "sha256": "8bc75c6da0b21301a880b301eaac2306eaef1678560adf944afaed9660d2ff7b"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-3440x1440-details.tsv",
+    "sha256": "65e0f40c06b78ba4eb27657761f30000a1553fb34046a36480d66111e6990e45"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-3440x1440-evaluated.png",
+    "sha256": "50f7dec1ffb1d8c2775791618d6a9ac2da505bd2b4e40eede6388f61810211bd"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-3440x1440-evaluated.tsv",
+    "sha256": "fd423384ad97806c74d9d796d0613595191f6fd48b31ba8e184bdf3c56da0cdd"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-3440x1440-hover.png",
+    "sha256": "16b8eb0059a0cd14e2535a63c56313ec7855b1baa7b90ea1bcec3bdbbcdfc22c"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-3440x1440-hover.tsv",
+    "sha256": "3c45bd542b8b6922b022bc8c83a66d1cb10eeb2dceabd57ef9a17bcb3eab38d7"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-3440x1440-initial.png",
+    "sha256": "98827ac06f3647433b5223a15b0f34e4ccc244a541081a4efd33f862c9a2535e"
+  },
+  {
+    "path": "Docs/Images/UI/Residence/Native/residence-3440x1440-initial.tsv",
+    "sha256": "90b8dc34250b64840834e9a9a5e2147eb6eaa3cbbf90e63cf1231e23d2e8815c"
+  }
+]

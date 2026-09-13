@@ -183,7 +183,11 @@ bool FHansaNormalizedStateHashTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Global fingerprint is derived from the normalized report"),
 		View.GetFingerprint().Value, Report.GetOverallHash());
 	TestEqual(TEXT("Fingerprint contract advanced for normalized subsystem hashing"),
-		FHansaSimulationState::DeterminismFingerprintVersion, uint32(16));
+		FHansaSimulationState::DeterminismFingerprintVersion, uint32(20));
+	TestEqual(TEXT("The first hash computes every subsystem"), Report.GetRecomputedSubsystemCount(), uint32(16));
+	const FHansaStateHashReport CachedReport = View.BuildStateHashReport();
+	TestEqual(TEXT("An unchanged state reuses every cached subsystem fingerprint"),
+		CachedReport.GetRecomputedSubsystemCount(), uint32(0));
 	TestTrue(TEXT("Population is covered by a dedicated hash subsystem"),
 		Report.Find(EHansaStateHashSubsystem::Population) != nullptr);
 	TestTrue(TEXT("Markets are covered by a dedicated hash subsystem"),

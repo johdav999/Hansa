@@ -15,6 +15,9 @@ enum class EHansaScenarioPresentationPhase : uint8
 	Error
 };
 
+UENUM()
+enum class EHansaSessionHelpTopic : uint8 { Camera, Construction, Roads, Inspection, Market, Routes };
+
 USTRUCT(BlueprintType)
 struct HANSA_API FHansaScenarioObjectivePresentation final
 {
@@ -44,8 +47,16 @@ struct HANSA_API FHansaVictoryPathPresentation final
 USTRUCT(BlueprintType)
 struct HANSA_API FHansaScenarioPresentationSnapshot final
 {
-	GENERATED_BODY()
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Scenario") FName ScenarioId;
+    GENERATED_BODY()
+    bool bPauseMenu = false;
+    bool bHelpEnabled = true;
+    bool bCoachVisible = false;
+    bool bReady = false;
+    bool bLoadedSession = false;
+    EHansaSessionHelpTopic HelpTopic = EHansaSessionHelpTopic::Camera;
+    FText HelpTitle;
+    FText HelpBody;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Scenario") FName ScenarioId;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Scenario") FText Title;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Scenario") FText Briefing;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Scenario") FText StateLabel;
@@ -68,7 +79,19 @@ class HANSA_API UHansaScenarioPresentationModel final : public UObject
 public:
 	void InitializeDefaults();
 	bool ApplyProgress(const Hansa::Simulation::FHansaScenarioProgress& Progress);
-	void Open(FName RestoreFocus = TEXT("HUD.AlertStack.Toggle"));
+    void OpenPause();
+    void ReviewProgress();
+    void RequestSaveLoad();
+    void RequestSystemAction(FName Action){if(SessionIntent)SessionIntent(Action);}
+    void SessionRestored();
+    void LoadHelpPreferences(const FString& File);
+    void ToggleHelp();
+    void ResetHelp();
+    void OfferHelp(EHansaSessionHelpTopic Topic);
+    void DismissHelp();
+    void SetSessionIntent(TFunction<void(FName)> Intent) { SessionIntent=MoveTemp(Intent); }
+    uint32 GetDismissedHelpMask() const { return DismissedHelpMask; }
+    void Open(FName RestoreFocus = TEXT("HUD.AlertStack.Toggle"));
 	void AcknowledgeBriefing();
 	void Close();
 	void SelectPath(FName VictoryId);
@@ -78,7 +101,11 @@ public:
 	FHansaScenarioPresentationChanged& OnChanged() { return Changed; }
 	FHansaScenarioFocusRestoreRequested& OnFocusRestoreRequested() { return FocusRestoreRequested; }
 private:
-	void Broadcast();
+    void Broadcast();
+    void PersistHelp();
+    FString PreferenceFile;
+    uint32 DismissedHelpMask = 0;
+    TFunction<void(FName)> SessionIntent;
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|UI|Scenario") FHansaScenarioPresentationSnapshot Snapshot;
 	uint64 Revision = 0;
 	FName RestoreFocusSemanticId = TEXT("HUD.AlertStack.Toggle");

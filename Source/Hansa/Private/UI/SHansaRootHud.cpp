@@ -12,14 +12,21 @@
 #include "UI/HansaSaveLoadPresentationModel.h"
 #include "UI/HansaTradeMapPresentationModel.h"
 #include "UI/SHansaCityOverview.h"
+#include "UI/SHansaMarketTable.h"
 #include "UI/SHansaContextInspector.h"
 #include "UI/SHansaBuildMenu.h"
 #include "UI/SHansaResearchScreen.h"
 #include "UI/SHansaTradeMap.h"
+#include "World/HansaStrategyPlayerController.h"
 #include "UI/SHansaScenarioScreen.h"
+#include "UI/SHansaSessionCoach.h"
+#include "UI/SHansaFrontend.h"
 #include "UI/SHansaSaveLoadScreen.h"
 #include "UI/HansaUiNavigation.h"
 #include "Widgets/Layout/SUniformGridPanel.h"
+#include "Widgets/Layout/SWrapBox.h"
+#include "Widgets/Layout/SDPIScaler.h"
+#include "Misc/ConfigCacheIni.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Layout/SBox.h"
@@ -36,8 +43,18 @@ namespace Hansa::UI
 	{
 		TSharedRef<STextBlock> StatusText(const FTextBlockStyle* Style, TSharedPtr<STextBlock>& Out)
 		{
-			return SAssignNew(Out, STextBlock).TextStyle(Style).Clipping(EWidgetClipping::ClipToBounds);
+			return SAssignNew(Out, STextBlock).TextStyle(Style).OverflowPolicy(ETextOverflowPolicy::Ellipsis).Clipping(EWidgetClipping::ClipToBounds);
 		}
+
+        float TopBarHeight(const FHansaHudLayoutMetrics& Metrics,const FUiPreferences& Prefs, bool bRemoteCity=false)
+        {
+            const float Available=FMath::Min(460.f,(Metrics.ViewportSize.X-2*Metrics.SafeArea)/3.f-16.f)-16.f;
+            const float Widths[]={Prefs.bLargeText?108.f:92.f,Prefs.bLargeText?128.f:104.f,Prefs.bLargeText?124.f:104.f,Prefs.bLargeText?80.f:68.f};
+            float Used=0; int32 Rows=1;
+            for(float W:Widths){if(Used>0 && Used+4+W>Available){++Rows;Used=0;}Used+=(Used>0?4:0)+W;}
+            return FMath::Max(108.f,16.f+48.f/FMath::Min(1.f,Prefs.UiScale)+4.f+Rows*48.f/FMath::Min(1.f,Prefs.UiScale));
+
+        }
 
 		FString SpeedValue(const EHansaHudGameSpeed Speed)
 		{
@@ -52,7 +69,87 @@ namespace Hansa::UI
 		}
 	}
 
-	SHansaRootHud::~SHansaRootHud()
+    TSharedRef<SWidget> SHansaRootHud::BuildTopMenu()
+    {
+        auto Metric=[&](EUiGlyph Glyph,TSharedPtr<STextBlock>& Text,TSharedPtr<SWidget>& Chip,TSharedPtr<SHansaGlyph>* OutIcon=nullptr)->TSharedRef<SWidget>{
+            TSharedPtr<SHansaGlyph> Icon;
+            auto Row=SNew(SHorizontalBox)
+                +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(4,0)[SAssignNew(Icon,SHansaGlyph).Glyph(Glyph).OnDark(true).Size(24)]
+                +SHorizontalBox::Slot().FillWidth(1).VAlign(VAlign_Center).Padding(4,0)[StatusText(&DarkDataStyle,Text)];
+            if(OutIcon)*OutIcon=Icon;
+            Chip=SNew(SBox).HeightOverride(32)[Row];
+            return Chip.ToSharedRef();
+        };
+        auto Left=SNew(SHorizontalBox)
+            +SHorizontalBox::Slot().FillWidth(1.15f)[Metric(EUiGlyph::Coin,MoneyText,MoneyChip)]
+            +SHorizontalBox::Slot().FillWidth(1.f)[Metric(EUiGlyph::Trend,MoneyTrendText,TrendChip)]
+            +SHorizontalBox::Slot().FillWidth(1.f)[Metric(EUiGlyph::People,PopulationText,PopulationChip)];
+        auto Products=SNew(SHorizontalBox);
+        for(int32 I=0;I<3;++I)Products->AddSlot().AutoWidth()[Metric(EUiGlyph::Production,ProductTexts[I],ProductChips[I],&ProductGlyphs[I])];
+        auto Citizens=SNew(SHorizontalBox)
+            +SHorizontalBox::Slot().FillWidth(1)[Metric(EUiGlyph::Laborer,WorkforceText,LaborerChip)]
+            +SHorizontalBox::Slot().FillWidth(1)[Metric(EUiGlyph::Wealthy,WealthyText,WealthyChip)];
+        auto Center=SNew(SVerticalBox)
+            +SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)[Products]
+            +SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)[SNew(SBox).WidthOverride(240)[Citizens]];
+        auto Speed=[&](TSharedPtr<SButton>& Button,EUiGlyph Glyph,EHansaHudGameSpeed Value,const TCHAR* Id)->TSharedRef<SWidget>{
+            return SNew(SBox).WidthOverride(48.f/FMath::Min(1.f,Preferences.UiScale))
+                [SAssignNew(Button,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences)
+                 .OnClicked(this,&SHansaRootHud::HandleSpeed,Value,Id)
+                 [SNew(SBox).HAlign(HAlign_Center)[SNew(SHansaGlyph).Glyph(Glyph).OnDark(true)]]];
+        };
+        auto Speeds=SAssignNew(SpeedGroupWidget,SHorizontalBox)
+            +SHorizontalBox::Slot().AutoWidth()[Speed(PauseButton,EUiGlyph::Pause,EHansaHudGameSpeed::Paused,TEXT("HUD.TopStatus.Speed.Pause"))]
+            +SHorizontalBox::Slot().AutoWidth()[Speed(NormalButton,EUiGlyph::Play,EHansaHudGameSpeed::Normal,TEXT("HUD.TopStatus.Speed.Normal"))]
+            +SHorizontalBox::Slot().AutoWidth()[Speed(FastButton,EUiGlyph::Fast,EHansaHudGameSpeed::Fast,TEXT("HUD.TopStatus.Speed.Fast"))]
+            +SHorizontalBox::Slot().AutoWidth()[Speed(FastestButton,EUiGlyph::Fastest,EHansaHudGameSpeed::Fastest,TEXT("HUD.TopStatus.Speed.Fastest"))];
+        auto CityControls=SNew(SHorizontalBox)
+            +SHorizontalBox::Slot().FillWidth(1)[SAssignNew(CityOverviewButton,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences)
+                .Reason(LOCTEXT("CityOverviewTip","Open population, production and markets for this city.")).OnClicked(this,&SHansaRootHud::HandleCityOverviewOpen)[StatusText(&DarkBodyStyle,CityBreadcrumbText)]]
+            +SHorizontalBox::Slot().AutoWidth()[SAssignNew(ReturnCityButton,SHansaAction).Kind(EHansaUiButtonStyle::Secondary).Compact(true).Preferences(Preferences).Label(LOCTEXT("ReturnCityShort","Return")).Reason(LOCTEXT("ReturnCityTip","Return to Lubeck.")).OnClicked_Lambda([this]{return ActivateSemanticId(TEXT("HUD.TopStatus.ReturnCity"))?FReply::Handled():FReply::Unhandled();})];
+        auto Navigation=SNew(SWrapBox).UseAllottedSize(true).InnerSlotPadding(FVector2D(4,0))
+            +SWrapBox::Slot()[SNew(SBox).WidthOverride(Preferences.bLargeText?108:92)[SAssignNew(ResearchButton,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences).OnClicked(this,&SHansaRootHud::HandleResearchOpen)[StatusText(&DarkBodyStyle,ResearchText)]]]
+            +SWrapBox::Slot()[SNew(SBox).WidthOverride(Preferences.bLargeText?128:104)[SAssignNew(SaveLoadButton,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences).Label(LOCTEXT("SaveLoad","Save / load")).Reason(LOCTEXT("SaveLoadTip","Open save and autosave slots.")).OnClicked(this,&SHansaRootHud::HandleSaveLoadOpen)]]
+            +SWrapBox::Slot()[SNew(SBox).WidthOverride(Preferences.bLargeText?124:104)[SAssignNew(TradeMapButton,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences).Label(LOCTEXT("TradeMap","Trade map")).Reason(LOCTEXT("TradeMapTip","Open known cities and trade routes.")).OnClicked(this,&SHansaRootHud::HandleTradeMapOpen)]]
+            +SWrapBox::Slot()[SNew(SBox).WidthOverride(Preferences.bLargeText?80:68)[SAssignNew(SessionButton,SHansaAction).Kind(EHansaUiButtonStyle::Secondary).Compact(true).Preferences(Preferences).Label(LOCTEXT("SessionMenu","Menu")).Reason(LOCTEXT("MenuTip","Open the session menu.")).OnClicked(this,&SHansaRootHud::HandleSessionOpen)]];
+        auto LeftContent=SNew(SVerticalBox)
+            +SVerticalBox::Slot().AutoHeight()[Left]
+            +SVerticalBox::Slot().AutoHeight().Padding(0,4,0,0)[CityControls];
+        auto CenterContent=SNew(SVerticalBox)
+            +SVerticalBox::Slot().AutoHeight()[Center]
+            +SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center).Padding(0,4,0,0)[StatusText(&DarkCaptionStyle,DateText)];
+        auto RightContent=SNew(SVerticalBox)
+            +SVerticalBox::Slot().AutoHeight()[SNew(SHorizontalBox)
+                +SHorizontalBox::Slot().AutoWidth()[Speeds]
+                +SHorizontalBox::Slot().FillWidth(1).VAlign(VAlign_Center).Padding(8,0,0,0)
+                [
+                    SNew(SVerticalBox)
+                    +SVerticalBox::Slot().AutoHeight()
+                    [StatusText(&DarkCaptionStyle,ConnectionText)]
+                    +SVerticalBox::Slot().AutoHeight().Padding(0,2,0,0)
+                    [
+                        SAssignNew(FpsText,STextBlock)
+                        .Text(LOCTEXT("FpsPending","FPS —"))
+                        .TextStyle(&DarkDataStyle)
+                        .ToolTipText(LOCTEXT("FpsTip","Rendered frames per second, averaged over the last half second."))
+                    ]
+                ]]
+            +SVerticalBox::Slot().AutoHeight().Padding(0,4,0,0)[Navigation];
+        auto Panel=[this](float Maximum,TSharedRef<SWidget> Content,TSharedPtr<SWidget>& Out)->TSharedRef<SWidget>{
+            Out=SNew(SBox).WidthOverride_Lambda([this,Maximum]{return FMath::Min(Maximum,(Layout.ViewportSize.X-2*Layout.SafeArea)/3.f-16.f);})
+                [SNew(SBorder).BorderImage(&WorldOverlayBrush).Padding(8)[Content]];
+            return Out.ToSharedRef();
+        };
+        return SNew(SHorizontalBox).Visibility(EVisibility::SelfHitTestInvisible)
+            +SHorizontalBox::Slot().FillWidth(1).HAlign(HAlign_Left).VAlign(VAlign_Top)[Panel(400,LeftContent,TopLeftPanel)]
+            +SHorizontalBox::Slot().FillWidth(1).HAlign(HAlign_Center).VAlign(VAlign_Top)[Panel(360,CenterContent,TopCenterPanel)]
+            +SHorizontalBox::Slot().FillWidth(1).HAlign(HAlign_Right).VAlign(VAlign_Top)[Panel(460,RightContent,TopRightPanel)];
+
+    }
+
+	SHansaRootHud::~SHansaRootHud(){UnbindModels();}
+
+	void SHansaRootHud::UnbindModels()
 	{
 		if (UHansaHudPresentationModel* PinnedModel = Model.Get())
 		{
@@ -93,6 +190,10 @@ namespace Hansa::UI
 	void SHansaRootHud::Construct(const FArguments& Arguments)
 	{
 		SetVisibility(EVisibility::SelfHitTestInvisible);
+		SetCanTick(true);
+		FpsSampleElapsedSeconds = 0.0;
+		FpsSampleFrameCount = 0;
+		RebuildArguments=Arguments;Preferences=Arguments._Preferences;PresentedAlerts.Reset();PresentedNotifications.Reset();SemanticWidgets.Reset();AlertSemanticWidgets.Reset();
 		Model = Arguments._Model;
 		BuildModel = Arguments._BuildModel;
 		InspectorModel = Arguments._InspectorModel;
@@ -100,11 +201,14 @@ namespace Hansa::UI
 		MarketTableModel = Arguments._MarketTableModel;
 		TradeMapModel = Arguments._TradeMapModel;
 		ResearchModel = Arguments._ResearchModel;
+		FrontendModel=Arguments._FrontendModel;
 		ScenarioModel = Arguments._ScenarioModel;
 		SaveLoadModel = Arguments._SaveLoadModel;
-		Layout = MakeHudLayoutMetrics(Arguments._InitialViewportSize);
-		WorldOverlayBrush = UHansaUiStyleLibrary::GetPanelBrush(EHansaUiPanelStyle::WorldOverlay);
-		WorkingBrush = UHansaUiStyleLibrary::GetPanelBrush(EHansaUiPanelStyle::Working);
+		PlacementController = Arguments._PlacementController;
+		PhysicalViewportSize=Arguments._InitialViewportSize;Preferences.UiScale=FMath::Clamp(Preferences.UiScale,.8f,1.4f);
+		Layout = MakeHudLayoutMetrics(FIntPoint(FMath::RoundToInt(PhysicalViewportSize.X/Preferences.UiScale),FMath::RoundToInt(PhysicalViewportSize.Y/Preferences.UiScale)));Layout.TopBarHeight=TopBarHeight(Layout,Preferences,Model.IsValid()&&Model->GetSnapshot().bRemoteCityView);
+		WorldOverlayBrush = GetComponentStyle(EUiSurface::TopBar,EUiState::Default,Preferences).Brush;
+		WorkingBrush = GetComponentStyle(EUiSurface::Panel,EUiState::Default,Preferences).Brush;
 		FloatingBrush = UHansaUiStyleLibrary::GetPanelBrush(EHansaUiPanelStyle::Floating);
 		IconButtonStyle = UHansaUiStyleLibrary::GetButtonStyle(EHansaUiButtonStyle::Icon);
 		SecondaryButtonStyle = UHansaUiStyleLibrary::GetButtonStyle(EHansaUiButtonStyle::Secondary);
@@ -114,13 +218,18 @@ namespace Hansa::UI
 		LightBodyStyle = UHansaUiStyleLibrary::GetTextStyle(EHansaUiTypographyToken::Body, false);
 		LightHeadingStyle = UHansaUiStyleLibrary::GetTextStyle(EHansaUiTypographyToken::Heading2, false);
 
-		const FSlateBrush* WhiteBrush = FCoreStyle::Get().GetBrush(TEXT("WhiteBrush"));
+		DarkBodyStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::Body,Preferences));
+        DarkDataStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::Data,Preferences));
+        DarkCaptionStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::Caption,Preferences));
+        LightBodyStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::Body,Preferences));
+        LightHeadingStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::Heading2,Preferences));
+        const FSlateBrush* WhiteBrush = FCoreStyle::Get().GetBrush(TEXT("WhiteBrush"));
 		const FLinearColor Transparent = FLinearColor::Transparent;
 		const FMargin Safe(Layout.SafeArea);
 
 		ChildSlot
 		[
-			SAssignNew(PresentationBox, SBox)
+			SNew(SDPIScaler).DPIScale(Preferences.UiScale)[SAssignNew(PresentationBox, SBox)
 			.WidthOverride(static_cast<float>(Layout.ViewportSize.X))
 			.HeightOverride(static_cast<float>(Layout.ViewportSize.Y))
 			[
@@ -133,55 +242,9 @@ namespace Hansa::UI
 				[
 					SAssignNew(TopStatusBox, SBox).HeightOverride(Layout.TopBarHeight)
 					[
-						SAssignNew(TopStatusWidget, SBorder).BorderImage(&WorldOverlayBrush).Padding(FMargin(8.0f, 4.0f))
+						SAssignNew(TopStatusWidget, SBox).Visibility(EVisibility::SelfHitTestInvisible)
 						[
-							SNew(SHorizontalBox)
-							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(4.0f)
-							[
-								SNew(STextBlock).Text(LOCTEXT("HouseCrest", "HANSA")).TextStyle(&DarkCaptionStyle)
-							]
-							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(8.0f, 0.0f)
-							[
-								SNew(SVerticalBox)
-								+ SVerticalBox::Slot().AutoHeight()[StatusText(&DarkDataStyle, MoneyText)]
-								+ SVerticalBox::Slot().AutoHeight()[StatusText(&DarkCaptionStyle, MoneyTrendText)]
-							]
-							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(8.0f, 0.0f)[StatusText(&DarkDataStyle, PopulationText)]
-							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(8.0f, 0.0f)[StatusText(&DarkDataStyle, WorkforceText)]
-							+ SHorizontalBox::Slot().FillWidth(1.0f).VAlign(VAlign_Center).Padding(8.0f, 0.0f)
-							[
-								SAssignNew(CityOverviewButton, SButton).ButtonStyle(&IconButtonStyle)
-								.ToolTipText(LOCTEXT("CityOverviewTip", "Open the selected city's Population, Production, and Market overview."))
-								.OnClicked(this, &SHansaRootHud::HandleCityOverviewOpen)
-								[
-									StatusText(&DarkBodyStyle, CityBreadcrumbText)
-								]
-							]
-							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(4.0f, 0.0f)
-							[
-								SAssignNew(TradeMapButton, SButton).ButtonStyle(&IconButtonStyle)
-								.ToolTipText(LOCTEXT("TradeMapTip", "Open the European trade map and Simple route editor."))
-								.OnClicked(this, &SHansaRootHud::HandleTradeMapOpen)
-								.Text(LOCTEXT("TradeMap", "Trade map"))
-							]
-							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(8.0f, 0.0f)[StatusText(&DarkDataStyle, DateText)]
-							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(4.0f, 0.0f)
-							[
-								SAssignNew(SpeedGroupWidget, SHorizontalBox)
-								+ SHorizontalBox::Slot().AutoWidth()[SAssignNew(PauseFocus, SBorder).BorderImage(WhiteBrush).Padding(2.0f)[SAssignNew(PauseButton, SButton).ButtonStyle(&IconButtonStyle).Text(LOCTEXT("Pause", "Ⅱ")).OnClicked(this, &SHansaRootHud::HandleSpeed, EHansaHudGameSpeed::Paused, TEXT("HUD.TopStatus.Speed.Pause"))]]
-								+ SHorizontalBox::Slot().AutoWidth()[SAssignNew(NormalFocus, SBorder).BorderImage(WhiteBrush).Padding(2.0f)[SAssignNew(NormalButton, SButton).ButtonStyle(&IconButtonStyle).Text(LOCTEXT("NormalSpeed", "▶")).OnClicked(this, &SHansaRootHud::HandleSpeed, EHansaHudGameSpeed::Normal, TEXT("HUD.TopStatus.Speed.Normal"))]]
-								+ SHorizontalBox::Slot().AutoWidth()[SAssignNew(FastFocus, SBorder).BorderImage(WhiteBrush).Padding(2.0f)[SAssignNew(FastButton, SButton).ButtonStyle(&IconButtonStyle).Text(LOCTEXT("FastSpeed", "▶▶")).OnClicked(this, &SHansaRootHud::HandleSpeed, EHansaHudGameSpeed::Fast, TEXT("HUD.TopStatus.Speed.Fast"))]]
-								+ SHorizontalBox::Slot().AutoWidth()[SAssignNew(FastestFocus, SBorder).BorderImage(WhiteBrush).Padding(2.0f)[SAssignNew(FastestButton, SButton).ButtonStyle(&IconButtonStyle).Text(LOCTEXT("FastestSpeed", "▶▶▶")).OnClicked(this, &SHansaRootHud::HandleSpeed, EHansaHudGameSpeed::Fastest, TEXT("HUD.TopStatus.Speed.Fastest"))]]
-							]
-							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(4.0f, 0.0f)
-							[
-								SAssignNew(ResearchButton, SButton).ButtonStyle(&IconButtonStyle)
-								.ToolTipText(LOCTEXT("ResearchTip", "Open research branches, prerequisites, effects, and queue."))
-								.OnClicked(this, &SHansaRootHud::HandleResearchOpen)
-								[StatusText(&DarkCaptionStyle, ResearchText)]
-							]
-							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(8.0f, 0.0f)[StatusText(&DarkCaptionStyle, ConnectionText)]
-							+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)[SAssignNew(SaveLoadButton, SButton).ButtonStyle(&IconButtonStyle).Text(LOCTEXT("SaveLoad", "Save / load")).ToolTipText(LOCTEXT("SaveLoadTip", "Open manual save and autosave slots.")).OnClicked(this, &SHansaRootHud::HandleSaveLoadOpen)]
+BuildTopMenu()
 						]
 					]
 				]
@@ -194,7 +257,7 @@ namespace Hansa::UI
 							SNew(SVerticalBox)
 							+ SVerticalBox::Slot().AutoHeight()
 							[
-								SAssignNew(AlertToggleButton, SButton).ButtonStyle(&SecondaryButtonStyle).OnClicked(this, &SHansaRootHud::HandleAlertToggle)
+								SAssignNew(AlertToggleButton, SHansaAction).Kind(EHansaUiButtonStyle::Secondary).Compact(true).Preferences(Preferences).Reason(LOCTEXT("AlertsTip","Expand or collapse objectives and causal alerts.")).OnClicked(this, &SHansaRootHud::HandleAlertToggle)
 								[
 									SAssignNew(AlertToggleText, STextBlock).TextStyle(&LightBodyStyle)
 								]
@@ -203,7 +266,7 @@ namespace Hansa::UI
 							[
 								SAssignNew(AlertRowsHostBox, SBox).MaxDesiredHeight(Layout.AlertExpandedHeight)
 								[
-									SNew(SScrollBox)
+									SAssignNew(AlertScroll,SScrollBox)
 									+ SScrollBox::Slot()
 									[
 										SNew(SVerticalBox)
@@ -213,7 +276,7 @@ namespace Hansa::UI
 											SAssignNew(PinnedTrackersWidget, SBorder).BorderImage(&FloatingBrush).Padding(6.0f)
 											[
 												SNew(SVerticalBox)
-												+ SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(LOCTEXT("PinnedTrackers", "◆ Pinned tracking")).TextStyle(&DarkCaptionStyle)]
+												+ SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(LOCTEXT("PinnedTrackers", "Pinned tracking")).TextStyle(&DarkCaptionStyle)]
 												+ SVerticalBox::Slot().AutoHeight()[SAssignNew(PinnedTrackerRows, SVerticalBox)]
 											]
 										]
@@ -235,13 +298,13 @@ namespace Hansa::UI
 						]
 					]
 				]
-				+ SOverlay::Slot().Expose(BuildMenuSlot).HAlign(HAlign_Center).VAlign(VAlign_Bottom).Padding(Layout.SafeArea, 0.0f, Layout.SafeArea, Layout.SafeArea + Layout.BottomHeight + 8.0f)
+				+ SOverlay::Slot().Expose(BuildMenuSlot).HAlign(HAlign_Center).VAlign(VAlign_Bottom).Padding(Layout.SafeArea, 0.0f, Layout.SafeArea, Layout.SafeArea)
 				[
 					SAssignNew(BuildMenuHostBox, SBox)
 					.WidthOverride(FMath::Min(1248.0f, static_cast<float>(Layout.ViewportSize.X) - Layout.SafeArea * 2.0f))
-					.HeightOverride(Layout.BuildMenuHeight)
+					.MaxDesiredHeight(static_cast<float>(Layout.ViewportSize.Y)-Layout.TopBarHeight-Layout.SafeArea*3.f)
 					[
-						SAssignNew(BuildMenuWidget, SHansaBuildMenu).Model(BuildModel.Get())
+						SAssignNew(BuildMenuWidget, SHansaBuildMenu).Preferences(Preferences).Model(BuildModel.Get()).PlacementController(PlacementController.Get())
 					]
 				]
 				+ SOverlay::Slot().Expose(InspectorSlot).HAlign(HAlign_Right).VAlign(VAlign_Fill).Padding(0.0f, Layout.SafeArea * 2.0f + Layout.TopBarHeight, Layout.SafeArea, Layout.SafeArea * 2.0f + Layout.BottomHeight)
@@ -250,11 +313,11 @@ namespace Hansa::UI
 					[
 						SAssignNew(InspectorHostWidget, SBorder).BorderImage(&WorkingBrush).Padding(0.0f)
 						[
-							SAssignNew(InspectorWidget, SHansaContextInspector).Model(InspectorModel.Get())
+							SAssignNew(InspectorWidget, SHansaContextInspector).Preferences(Preferences).Model(InspectorModel.Get())
 						]
 					]
 				]
-				+ SOverlay::Slot().Expose(NotificationSlot).HAlign(HAlign_Right).VAlign(VAlign_Bottom).Padding(0.0f, 0.0f, Layout.SafeArea, Layout.SafeArea * 2.0f + Layout.BottomHeight)
+				+ SOverlay::Slot().Expose(NotificationSlot).HAlign(HAlign_Left).VAlign(VAlign_Bottom).Padding(Layout.SafeArea, 0.0f, 0.0f, Layout.SafeArea * 2.0f + Layout.BottomHeight)
 				[
 					SAssignNew(NotificationHostBox, SBox).WidthOverride(Layout.NotificationWidth)
 					[
@@ -271,11 +334,11 @@ namespace Hansa::UI
 						SAssignNew(FocusText, STextBlock).TextStyle(&DarkCaptionStyle)
 					]
 				]
-				+ SOverlay::Slot().Expose(CityOverviewSlot).HAlign(HAlign_Center).VAlign(VAlign_Center).Padding(Layout.SafeArea)
+				+ SOverlay::Slot().Expose(CityOverviewSlot).HAlign(HAlign_Center).VAlign(VAlign_Fill).Padding(Layout.SafeArea)
 				[
 					SAssignNew(CityOverviewHostWidget, SBox)
 					[
-						SAssignNew(CityOverviewWidget, SHansaCityOverview)
+						SAssignNew(CityOverviewWidget, SHansaCityOverview).Preferences(Preferences)
 						.Model(CityOverviewModel.Get())
 						.MarketTableModel(MarketTableModel.Get())
 						.InitialViewportSize(FIntPoint(
@@ -287,7 +350,7 @@ namespace Hansa::UI
 				[
 					SAssignNew(TradeMapHostWidget, SBox)
 					[
-						SAssignNew(TradeMapWidget, SHansaTradeMap)
+						SAssignNew(TradeMapWidget, SHansaTradeMap).Preferences(Preferences)
 						.Model(TradeMapModel.Get())
 						.InitialViewportSize(FIntPoint(
 							FMath::Max(640, Layout.ViewportSize.X - FMath::RoundToInt(Layout.SafeArea * 2.0f)),
@@ -298,36 +361,50 @@ namespace Hansa::UI
 				[
 					SAssignNew(ResearchHostWidget, SBox)
 					[
-						SAssignNew(ResearchWidget, SHansaResearchScreen).Model(ResearchModel.Get())
+						SAssignNew(ResearchWidget, SHansaResearchScreen).Preferences(Preferences).Model(ResearchModel.Get())
 					]
 				]
+                + SOverlay::Slot()
+                [SNew(SBorder).BorderImage(FCoreStyle::Get().GetBrush("WhiteBrush")).BorderBackgroundColor(FLinearColor(0,0,0,.32f))
+                 .Visibility_Lambda([this]{return ScenarioModel.IsValid()&&ScenarioModel->GetSnapshot().bOpen?EVisibility::Visible:EVisibility::Collapsed;})
+                 .OnMouseButtonDown_Lambda([](const FGeometry&,const FPointerEvent&){return FReply::Handled();})]
 				+ SOverlay::Slot().Expose(ScenarioSlot).HAlign(HAlign_Center).VAlign(VAlign_Center).Padding(Layout.SafeArea)
 				[
 					SAssignNew(ScenarioHostWidget, SBox)
 					[
-						SAssignNew(ScenarioWidget, SHansaScenarioScreen)
+						SAssignNew(ScenarioWidget, SHansaScenarioScreen).Preferences(Preferences)
 						.Model(ScenarioModel.Get())
 					]
 				]
-				+ SOverlay::Slot().Expose(SaveLoadSlot).HAlign(HAlign_Center).VAlign(VAlign_Center).Padding(Layout.SafeArea)
+                +SOverlay::Slot().HAlign(HAlign_Left).VAlign(VAlign_Bottom).Padding(16,0,0,100)
+                [SAssignNew(SessionCoach,SHansaSessionCoach).Model(ScenarioModel.Get()).Preferences(Preferences).OnDismissed_Lambda([this]{const auto Order=GetControllerFocusOrder();if(!Order.IsEmpty())FocusSemanticId(Order[0]);})]
+				+ SOverlay::Slot()[SAssignNew(FrontendWidget,SHansaFrontend).Model(FrontendModel.Get()).Preferences(Preferences).OnPreferencesChanged(this,&SHansaRootHud::QueuePreferencesChange).OnClosed_Lambda([this]{const auto Order=GetControllerFocusOrder();if(!Order.IsEmpty())FocusSemanticId(Order[0]);})]
+                + SOverlay::Slot().Expose(SaveLoadSlot).HAlign(HAlign_Center).VAlign(VAlign_Center).Padding(Layout.SafeArea)
 				[
 					SAssignNew(SaveLoadHostWidget, SBox)
 					[
-						SAssignNew(SaveLoadWidget, SHansaSaveLoadScreen).Model(SaveLoadModel.Get())
+						SAssignNew(SaveLoadWidget, SHansaSaveLoadScreen).Preferences(Preferences).OnPreferencesChanged(this,&SHansaRootHud::QueuePreferencesChange).Model(SaveLoadModel.Get())
 					]
 				]
 				]
-		];
+		]];
 
 		MapWidget(TEXT("HUD.Root"), ScreenWidget);
+        MapWidget(TEXT("HUD.TopStatus.Session"),SessionButton);
 		MapWidget(TEXT("HUD.TopStatus"), TopStatusWidget);
-		MapWidget(TEXT("HUD.TopStatus.Money"), MoneyText);
-		MapWidget(TEXT("HUD.TopStatus.MoneyTrend"), MoneyTrendText);
-		MapWidget(TEXT("HUD.TopStatus.Population"), PopulationText);
-		MapWidget(TEXT("HUD.TopStatus.Workforce"), WorkforceText);
+        MapWidget(TEXT("HUD.TopStatus.LeftPanel"),TopLeftPanel);
+        MapWidget(TEXT("HUD.TopStatus.CenterPanel"),TopCenterPanel);
+        MapWidget(TEXT("HUD.TopStatus.RightPanel"),TopRightPanel);
+		MapWidget(TEXT("HUD.TopStatus.Money"), MoneyChip);
+		MapWidget(TEXT("HUD.TopStatus.MoneyTrend"), TrendChip);
+		MapWidget(TEXT("HUD.TopStatus.Population"), PopulationChip);
+		MapWidget(TEXT("HUD.TopStatus.Workforce"), LaborerChip);
+        MapWidget(TEXT("HUD.TopStatus.WealthyCitizens"),WealthyChip);
+        for(int32 I=0;I<3;++I)MapWidget(*FString::Printf(TEXT("HUD.TopStatus.Product.%d"),I+1),ProductChips[I]);
 		MapWidget(TEXT("HUD.TopStatus.CityBreadcrumb"), CityBreadcrumbText);
 		MapWidget(TEXT("HUD.TopStatus.CityOverview"), CityOverviewButton);
 		MapWidget(TEXT("HUD.TopStatus.TradeMap"), TradeMapButton);
+        MapWidget(TEXT("HUD.TopStatus.ReturnCity"), ReturnCityButton);
 		MapWidget(TEXT("HUD.TopStatus.SaveLoad"), SaveLoadButton);
 		MapWidget(TEXT("HUD.TopStatus.DateSeason"), DateText);
 		MapWidget(TEXT("HUD.TopStatus.Speed"), SpeedGroupWidget);
@@ -338,6 +415,7 @@ namespace Hansa::UI
 		MapWidget(TEXT("HUD.TopStatus.Research"), ResearchText);
 		MapWidget(TEXT("HUD.TopStatus.Research.Open"), ResearchButton);
 		MapWidget(TEXT("HUD.TopStatus.Connection"), ConnectionText);
+		MapWidget(TEXT("HUD.TopStatus.FPS"), FpsText);
 		MapWidget(TEXT("HUD.AlertStack"), AlertStackWidget);
 		MapWidget(TEXT("HUD.AlertStack.Toggle"), AlertToggleButton);
 		MapWidget(TEXT("HUD.BottomArea"), BottomAreaWidget);
@@ -401,9 +479,73 @@ namespace Hansa::UI
 		}
 	}
 
+	void SHansaRootHud::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
+	{
+		SCompoundWidget::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
+		if (!FpsText.IsValid() || !FMath::IsFinite(InDeltaTime) || InDeltaTime <= 0.0f)
+		{
+			return;
+		}
+
+		FpsSampleElapsedSeconds += static_cast<double>(InDeltaTime);
+		++FpsSampleFrameCount;
+		constexpr double FpsUpdateIntervalSeconds = 0.5;
+		if (FpsSampleElapsedSeconds < FpsUpdateIntervalSeconds)
+		{
+			return;
+		}
+
+		const int32 FramesPerSecond = FMath::Max(0, FMath::RoundToInt(
+			static_cast<double>(FpsSampleFrameCount) / FpsSampleElapsedSeconds));
+		FpsText->SetText(FText::Format(
+			LOCTEXT("FpsValue", "FPS {0}"), FText::AsNumber(FramesPerSecond)));
+		FpsSampleElapsedSeconds = 0.0;
+		FpsSampleFrameCount = 0;
+	}
+
+    void SHansaRootHud::QueuePreferencesChange(FUiPreferences Value){
+        RegisterActiveTimer(0.f,FWidgetActiveTimerDelegate::CreateLambda([Weak=TWeakPtr<SHansaRootHud>(SharedThis(this)),Value](double,float){
+            if(auto Self=Weak.Pin()){
+                Self->SetPreferences(Value);
+                if(GConfig){
+                    GConfig->SetFloat(TEXT("Hansa.UI"),TEXT("Scale"),Value.UiScale,GGameUserSettingsIni);
+                    GConfig->SetBool(TEXT("Hansa.UI"),TEXT("HighContrast"),Value.bHighContrast,GGameUserSettingsIni);
+                    GConfig->SetBool(TEXT("Hansa.UI"),TEXT("LargeText"),Value.bLargeText,GGameUserSettingsIni);
+                    GConfig->SetBool(TEXT("Hansa.UI"),TEXT("ReducedMotion"),Value.bReducedMotion,GGameUserSettingsIni);
+                    GConfig->Flush(false,GGameUserSettingsIni);
+                }
+            }
+            return EActiveTimerReturnType::Stop;
+        }));
+    }
+    void SHansaRootHud::SetPreferences(FUiPreferences InPreferences){
+        FName Focus=Model.IsValid()?Model->GetSnapshot().FocusedSemanticId:FName();
+        if(SaveLoadModel.IsValid()&&SaveLoadModel->GetSnapshot().bOpen)Focus=SaveLoadModel->GetSnapshot().FocusedSemanticId;
+        else if(FrontendWidget&&FrontendWidget->IsOpen())Focus=FName(*FrontendWidget->GetFocusedId());
+        else if(ResearchModel.IsValid()&&ResearchModel->GetSnapshot().bOpen)Focus=ResearchModel->GetSnapshot().FocusedSemanticId;
+        else if(TradeMapModel.IsValid()&&TradeMapModel->GetSnapshot().bOpen)Focus=TradeMapModel->GetSnapshot().FocusedSemanticId;
+        else if(ScenarioModel.IsValid()&&ScenarioModel->GetSnapshot().bOpen)Focus=ScenarioModel->GetSnapshot().FocusedSemanticId;
+        else if(CityOverviewModel.IsValid()&&CityOverviewModel->GetSnapshot().bOpen)Focus=CityOverviewModel->GetSnapshot().FocusedSemanticId;
+        else if(InspectorModel.IsValid()&&InspectorModel->GetSnapshot().bOpen)Focus=InspectorModel->GetSnapshot().FocusedSemanticId;
+        const bool FullMarket=CityOverviewWidget.IsValid()&&CityOverviewWidget->IsFullMarket();
+        auto Args=RebuildArguments;Args._Preferences=InPreferences;Args._InitialViewportSize=PhysicalViewportSize;
+        UnbindModels();Construct(Args);if(FullMarket&&CityOverviewWidget)CityOverviewWidget->ActivateSemanticId(TEXT("CityOverview.Market.Details"));if(!Focus.IsNone())FocusSemanticId(Focus.ToString());
+    }
+    TSharedPtr<SWidget> SHansaRootHud::ResolveSemanticWidget(const FString& Id) const {
+        if(Id.StartsWith(TEXT("Session.Help."))&&SessionCoach)return SessionCoach->ResolveSemanticWidget(Id);
+        if(Id.StartsWith(TEXT("Frontend."))&&FrontendWidget)return FrontendWidget->ResolveSemanticWidget(Id);
+        if(Id.StartsWith(TEXT("Research."))&&ResearchWidget)return ResearchWidget->ResolveSemanticWidget(Id);
+        if(Id.StartsWith(TEXT("Scenario."))&&ScenarioWidget)return ScenarioWidget->ResolveSemanticWidget(Id);
+        if(Id.StartsWith(TEXT("SaveLoad."))&&SaveLoadWidget)return SaveLoadWidget->ResolveSemanticWidget(Id);
+        if(Id.StartsWith(TEXT("TradeMap."))&&TradeMapWidget)return TradeMapWidget->ResolveSemanticWidget(Id);
+        if(Id.StartsWith(TEXT("Market."))&&CityOverviewWidget&&CityOverviewWidget->GetMarketTable())return CityOverviewWidget->GetMarketTable()->ResolveSemanticWidget(Id);
+        if(Id.StartsWith(TEXT("CityOverview."))&&CityOverviewWidget)return CityOverviewWidget->ResolveSemanticWidget(Id);
+        const auto* W=AlertSemanticWidgets.Find(Id);if(!W)W=SemanticWidgets.Find(Id);return W?W->Pin():nullptr;
+    }
+
 	void SHansaRootHud::SetPresentationSize(const FIntPoint Size)
 	{
-		Layout = MakeHudLayoutMetrics(Size);
+		PhysicalViewportSize=Size;Layout = MakeHudLayoutMetrics(FIntPoint(FMath::RoundToInt(Size.X/Preferences.UiScale),FMath::RoundToInt(Size.Y/Preferences.UiScale)));Layout.TopBarHeight=TopBarHeight(Layout,Preferences,Model.IsValid()&&Model->GetSnapshot().bRemoteCityView);
 		ApplyResponsiveLayout();
 		if (UHansaHudPresentationModel* PinnedModel = Model.Get())
 		{
@@ -429,25 +571,31 @@ namespace Hansa::UI
 		if (BuildMenuHostBox.IsValid())
 		{
 			BuildMenuHostBox->SetWidthOverride(FMath::Min(1248.0f, static_cast<float>(Layout.ViewportSize.X) - Layout.SafeArea * 2.0f));
-			BuildMenuHostBox->SetHeightOverride(Layout.BuildMenuHeight);
+			BuildMenuHostBox->SetMaxDesiredHeight(static_cast<float>(Layout.ViewportSize.Y)-Layout.TopBarHeight-Layout.SafeArea*3.f);
 		}
 		if (InspectorHostBox.IsValid()) InspectorHostBox->SetWidthOverride(Layout.InspectorWidth);
 		if (NotificationHostBox.IsValid()) NotificationHostBox->SetWidthOverride(Layout.NotificationWidth);
 		if (TopStatusSlot != nullptr) TopStatusSlot->SetPadding(FMargin(Layout.SafeArea));
 		if (AlertSlot != nullptr) AlertSlot->SetPadding(FMargin(Layout.SafeArea, Layout.SafeArea * 2.0f + Layout.TopBarHeight, 0.0f, 0.0f));
 		if (BottomSlot != nullptr) BottomSlot->SetPadding(FMargin(0.0f, 0.0f, 0.0f, Layout.SafeArea));
-		if (BuildMenuSlot != nullptr) BuildMenuSlot->SetPadding(FMargin(Layout.SafeArea, 0.0f, Layout.SafeArea, Layout.SafeArea + Layout.BottomHeight + 8.0f));
+		if (BuildMenuSlot != nullptr) BuildMenuSlot->SetPadding(FMargin(Layout.SafeArea, 0.0f, Layout.SafeArea, Layout.SafeArea));
 		if (InspectorSlot != nullptr) InspectorSlot->SetPadding(FMargin(0.0f, Layout.SafeArea * 2.0f + Layout.TopBarHeight, Layout.SafeArea, Layout.SafeArea * 2.0f + Layout.BottomHeight));
-		if (NotificationSlot != nullptr) NotificationSlot->SetPadding(FMargin(0.0f, 0.0f, Layout.SafeArea, Layout.SafeArea * 2.0f + Layout.BottomHeight));
+        if(InspectorModel.IsValid())RefreshInspectorHost(InspectorModel->GetSnapshot(),InspectorModel->GetRevision());
+		if (NotificationSlot != nullptr) NotificationSlot->SetPadding(FMargin(Layout.SafeArea, 0.0f, 0.0f, Layout.SafeArea * 2.0f + Layout.BottomHeight));
 		if (FocusSlot != nullptr) FocusSlot->SetPadding(FMargin(Layout.SafeArea, 0.0f, 0.0f, Layout.SafeArea));
 		const FMargin ModalPadding(Layout.SafeArea);
+        const FIntPoint ModalSize(Layout.ViewportSize.X-FMath::RoundToInt(Layout.SafeArea*2),Layout.ViewportSize.Y-FMath::RoundToInt(Layout.SafeArea*2));
+        if(ResearchWidget)ResearchWidget->SetPresentationSize(ModalSize);
+        if(FrontendWidget)FrontendWidget->SetPresentationSize(ModalSize);
+        if(ScenarioWidget)ScenarioWidget->SetPresentationSize(ModalSize);
+        if(SaveLoadWidget)SaveLoadWidget->SetPresentationSize(ModalSize);
 		if (CityOverviewSlot != nullptr) CityOverviewSlot->SetPadding(ModalPadding);
 		if (TradeMapSlot != nullptr) TradeMapSlot->SetPadding(ModalPadding);
 		if (ResearchSlot != nullptr) ResearchSlot->SetPadding(ModalPadding);
 		if (ScenarioSlot != nullptr) ScenarioSlot->SetPadding(ModalPadding);
 		if (SaveLoadSlot != nullptr) SaveLoadSlot->SetPadding(ModalPadding);
 
-		const EVisibility SecondaryStatusVisibility = Layout.ViewportSize.X < 1500 ? EVisibility::Collapsed : EVisibility::HitTestInvisible;
+		const EVisibility SecondaryStatusVisibility = EVisibility::Visible;
 		if (PopulationText.IsValid()) PopulationText->SetVisibility(SecondaryStatusVisibility);
 		if (WorkforceText.IsValid()) WorkforceText->SetVisibility(SecondaryStatusVisibility);
 		if (ConnectionText.IsValid()) ConnectionText->SetVisibility(SecondaryStatusVisibility);
@@ -474,16 +622,48 @@ namespace Hansa::UI
 		MoneyTrendText->SetText(Snapshot.MoneyTrend);
 		PopulationText->SetText(Snapshot.Population);
 		WorkforceText->SetText(Snapshot.Workforce);
-		CityBreadcrumbText->SetText(Snapshot.CityBreadcrumb);
+        WealthyText->SetText(Snapshot.WealthyCitizens.IsEmpty()?LOCTEXT("NoTier","—"):Snapshot.WealthyCitizens);
+        MoneyChip->SetToolTipText(FText::Format(LOCTEXT("PlayerMoneyTip","Total player money across all cities: {0} marks."),Snapshot.Money));
+        TrendChip->SetToolTipText(Snapshot.MoneyTrendTooltip);
+        PopulationChip->SetToolTipText(FText::Format(LOCTEXT("CurrentPopulationTip","Total residents in the current city: {0}."),Snapshot.Population));
+        LaborerChip->SetToolTipText(FText::Format(LOCTEXT("LaborersTip","Laborers living in the current city: {0}. This is the resident count, not available workforce."),Snapshot.Workforce));
+        WealthyChip->SetToolTipText(FText::Format(LOCTEXT("WealthyTip","Wealthy citizens in the current city: {0}. The current scenario represents this group with artisan residents."),Snapshot.WealthyCitizens));
+        for(int32 I=0;I<3;++I){
+            const bool Present=Snapshot.TopProducts.IsValidIndex(I);
+            ProductChips[I]->SetVisibility(Present?EVisibility::Visible:EVisibility::Collapsed);
+            if(!Present)continue;
+            ProductTexts[I]->SetText(Snapshot.TopProducts[I].Value);
+            ProductChips[I]->SetToolTipText(Snapshot.TopProducts[I].Tooltip);
+            EUiGlyph Glyph=EUiGlyph::Production;
+            if(Present){const FName Good=Snapshot.TopProducts[I].GoodId;
+                if(Good==TEXT("Good.Bread"))Glyph=EUiGlyph::Bread;
+                else if(Good==TEXT("Good.Fish"))Glyph=EUiGlyph::Fish;
+                else if(Good==TEXT("Good.Planks"))Glyph=EUiGlyph::Planks;
+                else if(Good==TEXT("Good.Grain"))Glyph=EUiGlyph::Grain;
+                else if(Good==TEXT("Good.Flour"))Glyph=EUiGlyph::Flour;
+                else if(Good==TEXT("Good.Timber"))Glyph=EUiGlyph::Timber;
+                else if(Good==TEXT("Good.Salt"))Glyph=EUiGlyph::Salt;
+                else if(Good==TEXT("Good.Iron"))Glyph=EUiGlyph::Iron;
+                else if(Good==TEXT("Good.Tools"))Glyph=EUiGlyph::Tools;
+                else if(Good==TEXT("Good.Beer"))Glyph=EUiGlyph::Beer;
+            }
+            ProductGlyphs[I]->SetGlyph(Glyph);
+        }
+		CityBreadcrumbText->SetText(Snapshot.CityBreadcrumb);CityBreadcrumbText->SetAutoWrapText(true);CityBreadcrumbText->SetToolTipText(Snapshot.CityBreadcrumb);
 		DateText->SetText(Snapshot.DateAndSeason);
-		ResearchText->SetText(Layout.ViewportSize.X < 1500 ? LOCTEXT("ResearchCompact", "Research") : Snapshot.Research);
-		ConnectionText->SetText(Snapshot.Connection);
+		ResearchText->SetText(LOCTEXT("ResearchCompact","Research"));ResearchButton->SetToolTipText(Snapshot.Research);
+		CityOverviewButton->SetToolTipText(FText::Format(LOCTEXT("CityNavigationTip","{0}. Open the city overview."),Snapshot.CityBreadcrumb));
+		ConnectionText->SetText(Snapshot.Connection);ConnectionText->SetAutoWrapText(true);
 		SelectionText->SetText(Snapshot.SelectionSummary);
+        const bool RemoteLayoutChanged=ReturnCityButton && ReturnCityButton->GetVisibility()!=(Snapshot.bRemoteCityView?EVisibility::Visible:EVisibility::Collapsed);
+        if(ReturnCityButton)ReturnCityButton->SetVisibility(Snapshot.bRemoteCityView?EVisibility::Visible:EVisibility::Collapsed);
+        if(RemoteLayoutChanged)SetPresentationSize(PhysicalViewportSize);
+        if(BuildMenuHostBox)BuildMenuHostBox->SetVisibility(Snapshot.bRemoteCityView?EVisibility::Collapsed:EVisibility::Visible);
 		AlertToggleText->SetText(Snapshot.bAlertStackExpanded
-			? FText::Format(LOCTEXT("HideAlerts", "Objectives and alerts ({0})  ▲"), FText::AsNumber(Snapshot.Alerts.Num()))
-			: FText::Format(LOCTEXT("ShowAlerts", "Objectives and alerts ({0})  ▼"), FText::AsNumber(Snapshot.Alerts.Num())));
+			? FText::Format(LOCTEXT("HideAlerts", "Alerts ({0}) · Hide"), FText::AsNumber(Snapshot.Alerts.Num()))
+			: FText::Format(LOCTEXT("ShowAlerts", "Alerts ({0}) · Show"), FText::AsNumber(Snapshot.Alerts.Num())));
 		AlertRows->SetVisibility(Snapshot.bAlertStackExpanded ? EVisibility::Visible : EVisibility::Collapsed);
-		BottomAreaWidget->SetVisibility(Snapshot.bBottomAreaOpen ? EVisibility::Visible : EVisibility::Collapsed);
+		BottomAreaWidget->SetVisibility(!BuildModel.IsValid() && Snapshot.bBottomAreaOpen ? EVisibility::Visible : EVisibility::Collapsed);
 		const UHansaInspectorPresentationModel* PinnedInspector = InspectorModel.Get();
 		const bool bInspectorOpen = PinnedInspector != nullptr ? PinnedInspector->GetSnapshot().bOpen : Snapshot.bInspectorOpen;
 		InspectorHostWidget->SetVisibility(bInspectorOpen ? EVisibility::Visible : EVisibility::Collapsed);
@@ -495,10 +675,10 @@ namespace Hansa::UI
 		else if (CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen) ActiveFocus = CityOverviewModel->GetSnapshot().FocusedSemanticId;
 		else if (InspectorModel.IsValid() && InspectorModel->GetSnapshot().bOpen) ActiveFocus = InspectorModel->GetSnapshot().FocusedSemanticId;
 		UpdateFocusIndicator(ActiveFocus);
-		PauseFocus->SetBorderBackgroundColor(FocusColor(TEXT("HUD.TopStatus.Speed.Pause")));
-		NormalFocus->SetBorderBackgroundColor(FocusColor(TEXT("HUD.TopStatus.Speed.Normal")));
-		FastFocus->SetBorderBackgroundColor(FocusColor(TEXT("HUD.TopStatus.Speed.Fast")));
-		FastestFocus->SetBorderBackgroundColor(FocusColor(TEXT("HUD.TopStatus.Speed.Fastest")));
+        StaticCastSharedPtr<SHansaAction>(PauseButton)->SetState(Snapshot.Speed==EHansaHudGameSpeed::Paused?EUiState::Selected:EUiState::Default,LOCTEXT("PauseTip","Pause the simulation."));
+        StaticCastSharedPtr<SHansaAction>(NormalButton)->SetState(Snapshot.Speed==EHansaHudGameSpeed::Normal?EUiState::Selected:EUiState::Default,LOCTEXT("NormalTip","Normal speed: 1× simulation time."));
+        StaticCastSharedPtr<SHansaAction>(FastButton)->SetState(Snapshot.Speed==EHansaHudGameSpeed::Fast?EUiState::Selected:EUiState::Default,LOCTEXT("FastTip","Fast speed: 4× simulation time."));
+        StaticCastSharedPtr<SHansaAction>(FastestButton)->SetState(Snapshot.Speed==EHansaHudGameSpeed::Fastest?EUiState::Selected:EUiState::Default,LOCTEXT("FastestTip","Fastest speed: 12× simulation time."));
 		RebuildAlerts(Snapshot);
 		RebuildNotifications(Snapshot);
 	}
@@ -507,27 +687,44 @@ namespace Hansa::UI
 	{
 		(void)Revision;
 		if (InspectorHostWidget.IsValid()) InspectorHostWidget->SetVisibility(Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed);
+
+        const bool Market=Snapshot.Kind==EHansaInspectorObjectKind::Market;
+        const bool Compact=Snapshot.Production.bValid || Snapshot.Residence.bValid || Market;
+        if(InspectorSlot)InspectorSlot->SetVerticalAlignment(Compact?VAlign_Bottom:VAlign_Fill);
+        if(InspectorHostBox.IsValid())
+        {
+            InspectorHostBox->SetWidthOverride(Market?360.f:Compact?320.f:Layout.InspectorWidth);
+            const float Available=Layout.ViewportSize.Y-Layout.TopBarHeight-Layout.BottomHeight-Layout.SafeArea*4.f;
+            InspectorHostBox->SetHeightOverride(Compact?FOptionalSize(FMath::Min(Snapshot.Residence.bValid?600.f:Market?520.f:480.f,Available)):FOptionalSize());
+        }
+        if(InspectorHostWidget.IsValid())StaticCastSharedPtr<SBorder>(InspectorHostWidget)->SetBorderImage(Compact?FCoreStyle::Get().GetBrush(TEXT("NoBorder")):&WorkingBrush);
 		if (Snapshot.bOpen) UpdateFocusIndicator(Snapshot.FocusedSemanticId);
+        if(Snapshot.bOpen&&Snapshot.Kind!=EHansaInspectorObjectKind::Cargo&&ScenarioModel.IsValid())ScenarioModel->OfferHelp(EHansaSessionHelpTopic::Inspection);
 	}
 
 	void SHansaRootHud::RefreshCityOverviewHost(const FHansaCityOverviewSnapshot& Snapshot, const uint64 Revision)
 	{
 		(void)Revision;
 		if (CityOverviewHostWidget.IsValid()) CityOverviewHostWidget->SetVisibility(Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed);
+
 		if (Snapshot.bOpen) UpdateFocusIndicator(Snapshot.FocusedSemanticId);
+        if(Snapshot.bOpen&&Snapshot.ActiveTab==EHansaCityOverviewTab::Market&&ScenarioModel.IsValid())ScenarioModel->OfferHelp(EHansaSessionHelpTopic::Market);
 	}
 
 	void SHansaRootHud::RefreshTradeMapHost(const FHansaTradeMapSnapshot& Snapshot, const uint64 Revision)
 	{
 		(void)Revision;
 		if (TradeMapHostWidget.IsValid()) TradeMapHostWidget->SetVisibility(Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed);
+
 		if (Snapshot.bOpen) UpdateFocusIndicator(Snapshot.FocusedSemanticId);
+        if(Snapshot.bOpen&&ScenarioModel.IsValid())ScenarioModel->OfferHelp(EHansaSessionHelpTopic::Routes);
 	}
 
 	void SHansaRootHud::RefreshResearchHost(const FHansaResearchPresentationSnapshot& Snapshot, const uint64 Revision)
 	{
 		(void)Revision;
 		if (ResearchHostWidget.IsValid()) ResearchHostWidget->SetVisibility(Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed);
+
 		if (Snapshot.bOpen) UpdateFocusIndicator(Snapshot.FocusedSemanticId);
 	}
 
@@ -535,6 +732,7 @@ namespace Hansa::UI
 	{
 		(void)Revision;
 		if (ScenarioHostWidget.IsValid()) ScenarioHostWidget->SetVisibility(Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed);
+
 		if (Snapshot.bOpen) UpdateFocusIndicator(Snapshot.FocusedSemanticId);
 	}
 
@@ -542,26 +740,28 @@ namespace Hansa::UI
 	{
 		(void)Revision;
 		if (SaveLoadHostWidget.IsValid()) SaveLoadHostWidget->SetVisibility(Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed);
+
 		if (Snapshot.bOpen) UpdateFocusIndicator(Snapshot.FocusedSemanticId);
 	}
 
 	void SHansaRootHud::UpdateFocusIndicator(const FName SemanticId)
 	{
 		if (!FocusLayerWidget.IsValid() || !FocusText.IsValid()) return;
-		FocusLayerWidget->SetVisibility(SemanticId.IsNone() ? EVisibility::Collapsed : EVisibility::HitTestInvisible);
-		FocusText->SetText(SemanticId.IsNone() ? FText::GetEmpty() :
-			FText::Format(LOCTEXT("FocusedControl", "Keyboard/controller focus · {0}"), FText::FromName(SemanticId)));
+		// Focus remains in the semantic tree; native controls draw their own focus rings.
+		FocusLayerWidget->SetVisibility(EVisibility::Collapsed);
+		(void)SemanticId;
+		FocusText->SetText(FText::GetEmpty());
 	}
 
 	void SHansaRootHud::RestoreFocusFromSaveLoad(const FName SemanticId)
 	{
 		if (!SemanticId.IsNone() && FocusSemanticId(SemanticId.ToString())) return;
-		FocusSemanticId(TEXT("HUD.TopStatus.SaveLoad"));
+		const auto Order=GetControllerFocusOrder();if(!Order.IsEmpty())FocusSemanticId(Order[0]);
 	}
 	void SHansaRootHud::RestoreFocusFromScenario(const FName SemanticId)
 	{
 		if (!SemanticId.IsNone() && FocusSemanticId(SemanticId.ToString())) return;
-		FocusSemanticId(TEXT("HUD.AlertStack.Toggle"));
+        const auto Order=GetControllerFocusOrder();if(!Order.IsEmpty())FocusSemanticId(Order[0]);
 	}
 
 	void SHansaRootHud::RestoreFocusFromResearch(const FName SemanticId)
@@ -572,6 +772,10 @@ namespace Hansa::UI
 
 	void SHansaRootHud::RebuildAlerts(const FHansaHudPresentationSnapshot& Snapshot)
 	{
+		if(PresentedAlerts==Snapshot.Alerts && AlertRows->NumSlots()>0)return;
+		FString Restore;
+		if(FSlateApplication::IsInitialized())for(const auto& Pair:AlertSemanticWidgets)if(Pair.Value.Pin()==FSlateApplication::Get().GetKeyboardFocusedWidget())Restore=Pair.Key;
+		PresentedAlerts=Snapshot.Alerts;
 		AlertRows->ClearChildren(); PinnedTrackerRows->ClearChildren(); AlertSemanticWidgets.Reset();
 		auto SafeId = [](const FName StableId)
 		{
@@ -585,7 +789,7 @@ namespace Hansa::UI
 			{
 				PinnedTrackerRows->AddSlot().AutoHeight().Padding(0.0f, 2.0f)
 				[
-					SNew(STextBlock).Text(FText::Format(LOCTEXT("PinnedTrackerRow", "◆ {0} · {1}"), Alert.AffectedObject, Alert.Causal.Problem)).TextStyle(&DarkCaptionStyle).AutoWrapText(true)
+					SNew(STextBlock).Text(FText::Format(LOCTEXT("PinnedTrackerRow", "{0} · {1}"), Alert.AffectedObject, Alert.Causal.Problem)).TextStyle(&DarkCaptionStyle).AutoWrapText(true)
 				]
 			;
 			}
@@ -601,14 +805,21 @@ namespace Hansa::UI
 			if (GroupAlerts.IsEmpty()) continue;
 			const FString GroupSemanticId = FString::Printf(TEXT("HUD.AlertStack.Group.%s"), *SafeId(GroupId));
 			TSharedPtr<SBorder> GroupWidget;
+			TSharedPtr<SHansaAction> ExplainButton;
 			AlertRows->AddSlot().AutoHeight().Padding(0.0f, 2.0f)
 			[
 				SAssignNew(GroupWidget, SBorder).BorderImage(&FloatingBrush).Padding(6.0f)
 				[
-					SNew(STextBlock).Text(FText::Format(LOCTEXT("AlertGroup", "△ {0} · {1}"), FText::FromName(GroupId), FText::AsNumber(GroupAlerts.Num()))).TextStyle(&DarkBodyStyle)
+					SNew(SHorizontalBox)
+                    +SHorizontalBox::Slot().FillWidth(1).VAlign(VAlign_Center)[SNew(STextBlock).Text(FText::Format(LOCTEXT("AlertGroup", "{0} · {1}"),FText::FromName(GroupId),FText::AsNumber(GroupAlerts.Num()))).TextStyle(&DarkBodyStyle).AutoWrapText(true)]
+                    +SHorizontalBox::Slot().AutoWidth().Padding(4,0)[SNew(SBox).WidthOverride(88)[SAssignNew(ExplainButton,SHansaAction).Compact(true).Preferences(Preferences).Label(LOCTEXT("ExplainAlert","Details"))
+                     .Reason(FText::Format(LOCTEXT("ExplainAlertTip","Cause: {0}\nRemedy: {1}"),GroupAlerts[0]->Causal.Cause,GroupAlerts[0]->Causal.Remedy))
+                     .OnClicked(this,&SHansaRootHud::HandleAlertAction,GroupAlerts[0]->StableId,EHansaHudAlertAction::OpenCause)]]
 				]
 			];
 			AlertSemanticWidgets.Add(GroupSemanticId, GroupWidget);
+			const FString ExplainId=FString::Printf(TEXT("HUD.AlertStack.Alert.%s.OpenCause"),*SafeId(GroupAlerts[0]->StableId));
+			AlertSemanticWidgets.Add(ExplainId,ExplainButton);ExplainButton->SetFocusHandler(FSimpleDelegate::CreateSP(this,&SHansaRootHud::RecordNativeFocus,FName(*ExplainId)));
 
 			const FHansaHudAlertPresentation& Alert = *GroupAlerts[0];
 			const EHansaUiSeverity SeverityToken = Alert.Causal.Severity == EHansaCausalSeverity::Critical ? EHansaUiSeverity::Critical :
@@ -624,10 +835,12 @@ namespace Hansa::UI
 					SNew(SVerticalBox)
 					+ SVerticalBox::Slot().AutoHeight()
 					[
-						SNew(STextBlock).Text(FText::Format(LOCTEXT("AlertSummary", "{0} {1} · {2}\n{3}\nCause · {4}"),
-							Alert.Causal.Severity == EHansaCausalSeverity::Critical ? LOCTEXT("CriticalGlyph", "! Critical ·") :
-								(Alert.bWarning ? LOCTEXT("WarningGlyph", "△ Warning ·") : LOCTEXT("NoticeGlyph", "i Notice ·")),
-							Alert.AffectedObject, Alert.Age, Alert.Label, Alert.Causal.Cause)).TextStyle(&LightBodyStyle).AutoWrapText(true)
+						SNew(SHorizontalBox)
+                        +SHorizontalBox::Slot().AutoWidth().Padding(0,0,6,0)[SNew(SHansaGlyph).Size(20).Glyph(Alert.Causal.Severity==EHansaCausalSeverity::Critical?EUiGlyph::Error:(Alert.bWarning?EUiGlyph::Warning:EUiGlyph::Information))]
+                        +SHorizontalBox::Slot().FillWidth(1)[SNew(STextBlock).Text(FText::Format(LOCTEXT("AlertSummary", "{0} {1}\n{3}"),
+							Alert.Causal.Severity == EHansaCausalSeverity::Critical ? LOCTEXT("CriticalGlyph", "Critical ·") :
+								(Alert.bWarning ? LOCTEXT("WarningGlyph", "Warning ·") : LOCTEXT("NoticeGlyph", "Notice ·")),
+							Alert.AffectedObject, Alert.Age, Alert.Label, Alert.Causal.Cause)).TextStyle(&LightBodyStyle).AutoWrapText(true)]
 					]
 					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 6.0f, 0.0f, 0.0f)[SAssignNew(Actions, SUniformGridPanel).SlotPadding(FMargin(2.0f))]
 				]
@@ -638,39 +851,57 @@ namespace Hansa::UI
 			{
 				const FString Id = FString::Printf(TEXT("HUD.AlertStack.Alert.%s.%s"), *SafeId(Alert.StableId), Suffix);
 				TSharedPtr<SButton> Button;
-				Actions->AddSlot(ActionIndex % 2, ActionIndex / 2)
+				Actions->AddSlot(ActionIndex % 3, ActionIndex / 3)
 				[
 					SNew(SBox).MinDesiredHeight(UHansaUiStyleLibrary::GetSpacing(EHansaUiSpacingToken::ControllerFocusTarget))
 					[
-						SAssignNew(Button, SButton).ButtonStyle(&IconButtonStyle).ContentPadding(FMargin(6.0f, 4.0f)).Text(Label).ToolTipText(ToolTip).OnClicked(this, &SHansaRootHud::HandleAlertAction, Alert.StableId, Action)
+						SAssignNew(Button, SHansaAction).Kind(EHansaUiButtonStyle::Secondary).Compact(true).Preferences(Preferences).Label(Label).Reason(ToolTip).OnClicked(this, &SHansaRootHud::HandleAlertAction, Alert.StableId, Action)
 					]
 				];
 				++ActionIndex;
 				AlertSemanticWidgets.Add(Id, Button);
+				StaticCastSharedPtr<SHansaAction>(Button)->SetFocusHandler(FSimpleDelegate::CreateSP(this,&SHansaRootHud::RecordNativeFocus,FName(*Id)));
 			};
-			AddAction(TEXT("Frame"), LOCTEXT("FrameAlert", "⌖ Frame"), EHansaHudAlertAction::Frame, LOCTEXT("FrameAlertTip", "Frame the affected object [F]."));
-			AddAction(TEXT("OpenCause"), LOCTEXT("OpenCauseAlert", "? Cause"), EHansaHudAlertAction::OpenCause,
-				FText::Format(LOCTEXT("OpenCauseAlertTip", "Open causal inspector [C].\nCause: {0}\nRemedy: {1}"), Alert.Causal.Cause, Alert.Causal.Remedy));
-			AddAction(TEXT("Snooze"), LOCTEXT("SnoozeAlert", "◷ Snooze"), EHansaHudAlertAction::Snooze, LOCTEXT("SnoozeAlertTip", "Snooze this alert for the current presentation interval."));
-			AddAction(TEXT("Pin"), Alert.bPinned ? LOCTEXT("PinnedAlert", "◆ Pinned") : LOCTEXT("PinAlert", "◇ Pin"), EHansaHudAlertAction::Pin, LOCTEXT("PinAlertTip", "Toggle persistent pinned tracking."));
-		}
+			AddAction(TEXT("Frame"), LOCTEXT("FrameAlert", "Frame"), EHansaHudAlertAction::Frame, LOCTEXT("FrameAlertTip", "Frame the affected object [F]."));
+
+			AddAction(TEXT("Snooze"), LOCTEXT("SnoozeAlert", "Snooze"), EHansaHudAlertAction::Snooze, LOCTEXT("SnoozeAlertTip", "Snooze this alert for the current presentation interval."));
+			AddAction(TEXT("Pin"), Alert.bPinned ? LOCTEXT("PinnedAlert", "Pinned") : LOCTEXT("PinAlert", "Pin"), EHansaHudAlertAction::Pin, LOCTEXT("PinAlertTip", "Toggle persistent pinned tracking."));
+		}        for(const auto& Alert:Snapshot.Alerts)if(Alert.bSnoozed){
+            const FString Id=FString::Printf(TEXT("HUD.AlertStack.Alert.%s.Snooze"),*SafeId(Alert.StableId));TSharedPtr<SHansaAction> Button;
+            AlertRows->AddSlot().AutoHeight().Padding(0,4)[SAssignNew(Button,SHansaAction).Compact(true).Preferences(Preferences)
+             .Label(FText::Format(LOCTEXT("RestoreAlert","Restore alert: {0}"),Alert.AffectedObject)).Reason(LOCTEXT("RestoreAlertTip","Show this snoozed alert again."))
+             .OnClicked(this,&SHansaRootHud::HandleAlertAction,Alert.StableId,EHansaHudAlertAction::Snooze)];
+            AlertSemanticWidgets.Add(Id,Button);Button->SetFocusHandler(FSimpleDelegate::CreateSP(this,&SHansaRootHud::RecordNativeFocus,FName(*Id)));
+        }
+        if(!Restore.IsEmpty()){
+            const auto* Target=AlertSemanticWidgets.Find(Restore);
+            if(Target && Target->IsValid())FSlateApplication::Get().SetKeyboardFocus(Target->Pin(),EFocusCause::SetDirectly);
+            else FocusSemanticId(TEXT("HUD.AlertStack.Toggle"));
+        }
+        if(Snapshot.Alerts.IsEmpty())AlertRows->AddSlot().AutoHeight()[SNew(STextBlock).Text(LOCTEXT("NoAlerts","No current alerts.")).TextStyle(&LightBodyStyle).AutoWrapText(true)];
+
 	}
 
 	void SHansaRootHud::RebuildNotifications(const FHansaHudPresentationSnapshot& Snapshot)
 	{
+		if(PresentedNotifications==Snapshot.Notifications)return;
+		PresentedNotifications=Snapshot.Notifications;
 		NotificationRows->ClearChildren();
 		for (const FHansaHudNotificationPresentation& Notification : Snapshot.Notifications)
 		{
 			NotificationRows->AddSlot().AutoHeight().Padding(0.0f, 4.0f)
 			[
-				SNew(SBorder).BorderImage(&FloatingBrush).Padding(10.0f)[SNew(STextBlock).Text(Notification.Label).TextStyle(&DarkBodyStyle).AutoWrapText(true)]
+				SNew(SHansaSurface).Surface(EUiSurface::Notification).Preferences(Preferences).State(EUiState::Default).Reason(Notification.Label)
 			];
 		}
 	}
 
+	void SHansaRootHud::RecordNativeFocus(FName Id){if(Model.IsValid())Model->SetFocusedSemanticId(Id);}
+
 	void SHansaRootHud::MapWidget(const TCHAR* SemanticId, const TSharedPtr<SWidget>& Widget)
 	{
 		SemanticWidgets.Add(SemanticId, Widget);
+        if(Widget.IsValid() && Widget->GetType()==TEXT("SHansaAction"))StaticCastSharedPtr<SHansaAction>(Widget)->SetFocusHandler(FSimpleDelegate::CreateSP(this,&SHansaRootHud::RecordNativeFocus,FName(SemanticId)));
 	}
 
 	FReply SHansaRootHud::HandleAlertToggle()
@@ -709,7 +940,7 @@ namespace Hansa::UI
 	void SHansaRootHud::RestoreFocusFromInspector(const FName SemanticId)
 	{
 		if (!SemanticId.IsNone() && FocusSemanticId(SemanticId.ToString())) return;
-		FocusSemanticId(TEXT("HUD.AlertStack.Toggle"));
+        const auto Order=GetControllerFocusOrder();if(!Order.IsEmpty())FocusSemanticId(Order[0]);
 	}
 
 	void SHansaRootHud::RestoreFocusFromCityOverview(const FName SemanticId)
@@ -753,12 +984,23 @@ namespace Hansa::UI
 		{
 			if (UHansaCityOverviewPresentationModel* City = CityOverviewModel.Get(); City != nullptr && City->GetSnapshot().bOpen) City->CloseIntent();
 			if (UHansaTradeMapPresentationModel* Trade = TradeMapModel.Get(); Trade != nullptr && Trade->GetSnapshot().bOpen) Trade->CloseIntent();
-			Pinned->Open(TEXT("HUD.TopStatus.SaveLoad"));
+			if(ScenarioModel.IsValid()&&!ScenarioModel->GetSnapshot().bOpen)ScenarioModel->OpenPause();
+            Pinned->Open(TEXT("HUD.TopStatus.SaveLoad"));
 			FocusSemanticId(TEXT("SaveLoad.Close"));
 			return FReply::Handled();
 		}
 		return FReply::Unhandled();
 	}
+
+    FReply SHansaRootHud::HandleSessionOpen()
+    {
+        if(FrontendWidget&&FrontendWidget->IsOpen())return FReply::Handled();
+        if(!ScenarioModel.IsValid())return FReply::Unhandled();
+        if(SaveLoadModel.IsValid()&&SaveLoadModel->GetSnapshot().bOpen)return FReply::Handled();
+        if(ScenarioModel->GetSnapshot().bOpen&&ScenarioModel->GetSnapshot().bPauseMenu){ScenarioModel->Close();return FReply::Handled();}
+        ScenarioModel->OpenPause();FocusSemanticId(ScenarioModel->GetSnapshot().Phase==EHansaScenarioPresentationPhase::Briefing?TEXT("Scenario.Begin"):TEXT("Scenario.Resume"));
+        return FReply::Handled();
+    }
 
 	FReply SHansaRootHud::HandleResearchOpen()
 	{
@@ -801,11 +1043,16 @@ namespace Hansa::UI
 
 	bool SHansaRootHud::ActivateSemanticId(const FString& SemanticId)
 	{
+        if(SemanticId==TEXT("HUD.TopStatus.Session"))return HandleSessionOpen().IsEventHandled();
+        if(SemanticId.StartsWith(TEXT("Session.Help."))&&SessionCoach){const bool Done=SessionCoach->ActivateSemanticId(SemanticId);if(Done){const auto Order=GetControllerFocusOrder();if(!Order.IsEmpty())FocusSemanticId(Order[0]);}return Done;}
+
+		if(SemanticId.StartsWith(TEXT("HUD.AlertStack.Alert.")) && (!Model.IsValid() || !Model->GetSnapshot().bAlertStackExpanded || !AlertSemanticWidgets.Contains(SemanticId)))return false;
 		if (SaveLoadWidget.IsValid() && SaveLoadModel.IsValid() && SaveLoadModel->GetSnapshot().bOpen)
 		{
 			return SaveLoadWidget->ActivateSemanticId(SemanticId);
 		}
-		if (ScenarioWidget.IsValid() && ScenarioModel.IsValid() && ScenarioModel->GetSnapshot().bOpen)
+		if(FrontendWidget&&FrontendWidget->IsOpen())return FrontendWidget->ActivateSemanticId(SemanticId);
+        if (ScenarioWidget.IsValid() && ScenarioModel.IsValid() && ScenarioModel->GetSnapshot().bOpen)
 		{
 			return ScenarioWidget->ActivateSemanticId(SemanticId);
 		}
@@ -813,9 +1060,11 @@ namespace Hansa::UI
 		{
 			return ResearchWidget->ActivateSemanticId(SemanticId);
 		}
+		if(CityOverviewWidget.IsValid() && CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen)return CityOverviewWidget->ActivateSemanticId(SemanticId);
 		if (SemanticId == TEXT("HUD.TopStatus.SaveLoad")) return HandleSaveLoadOpen().IsEventHandled();
 		if (SemanticId == TEXT("HUD.TopStatus.Research.Open")) return HandleResearchOpen().IsEventHandled();
-		if (SemanticId == TEXT("HUD.TopStatus.TradeMap")) return HandleTradeMapOpen().IsEventHandled();
+		if (SemanticId == TEXT("HUD.TopStatus.ReturnCity"))return Model.IsValid()&&Model->GetSnapshot().bRemoteCityView&&CityOverviewModel.IsValid()&&CityOverviewModel->VisitRequested&&CityOverviewModel->VisitRequested(TEXT("City.Lubeck"));
+        if (SemanticId == TEXT("HUD.TopStatus.TradeMap")) return HandleTradeMapOpen().IsEventHandled();
 		if (TradeMapWidget.IsValid() && TradeMapWidget->ActivateSemanticId(SemanticId)) return true;
 		if (SemanticId == TEXT("HUD.TopStatus.CityOverview")) return HandleCityOverviewOpen().IsEventHandled();
 		if (CityOverviewWidget.IsValid() && CityOverviewWidget->ActivateSemanticId(SemanticId)) return true;
@@ -838,7 +1087,7 @@ namespace Hansa::UI
 			return true;
 		}
 		if (SemanticId == TEXT("BuildMenu.Root")) { HandleBottomToggle(); return true; }
-		if (BuildMenuWidget.IsValid() && BuildMenuWidget->ActivateSemanticId(SemanticId)) return true;
+		if (BuildModel.IsValid() && BuildModel->IsConstructionAllowed() && BuildMenuWidget.IsValid() && BuildMenuWidget->ActivateSemanticId(SemanticId)) return true;
 		if (InspectorWidget.IsValid() && InspectorWidget->ActivateSemanticId(SemanticId)) return true;
 		if (SemanticId == TEXT("Inspector.Close") && !InspectorModel.IsValid())
 		{
@@ -853,11 +1102,13 @@ namespace Hansa::UI
 
 	bool SHansaRootHud::FocusSemanticId(const FString& SemanticId)
 	{
+        if(SemanticId.StartsWith(TEXT("Session.Help."))&&SessionCoach)return SessionCoach->FocusSemanticId(SemanticId);
 		if (SaveLoadWidget.IsValid() && SaveLoadModel.IsValid() && SaveLoadModel->GetSnapshot().bOpen)
 		{
 			return SaveLoadWidget->FocusSemanticId(SemanticId);
 		}
-		if (ScenarioWidget.IsValid() && ScenarioModel.IsValid() && ScenarioModel->GetSnapshot().bOpen)
+		if(FrontendWidget&&FrontendWidget->IsOpen())return FrontendWidget->FocusSemanticId(SemanticId);
+        if (ScenarioWidget.IsValid() && ScenarioModel.IsValid() && ScenarioModel->GetSnapshot().bOpen)
 		{
 			return ScenarioWidget->FocusSemanticId(SemanticId);
 		}
@@ -865,14 +1116,15 @@ namespace Hansa::UI
 		{
 			return ResearchWidget->FocusSemanticId(SemanticId);
 		}
-		if (TradeMapWidget.IsValid() && TradeMapWidget->FocusSemanticId(SemanticId)) return true;
-		if (CityOverviewWidget.IsValid() && CityOverviewWidget->FocusSemanticId(SemanticId)) return true;
-		if (BuildMenuWidget.IsValid() && BuildMenuWidget->FocusSemanticId(SemanticId)) return true;
+		if (TradeMapModel.IsValid() && TradeMapModel->GetSnapshot().bOpen && TradeMapWidget.IsValid() && TradeMapWidget->FocusSemanticId(SemanticId)) return true;
+		if (CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen && CityOverviewWidget.IsValid()) return CityOverviewWidget->FocusSemanticId(SemanticId);
+		if (BuildModel.IsValid() && BuildModel->IsConstructionAllowed() && BuildMenuWidget.IsValid() && BuildMenuWidget->FocusSemanticId(SemanticId)) return true;
 		if (InspectorWidget.IsValid() && InspectorWidget->FocusSemanticId(SemanticId)) return true;
 		const TWeakPtr<SWidget>* Found = AlertSemanticWidgets.Find(SemanticId);
 		if (Found == nullptr) Found = SemanticWidgets.Find(SemanticId);
 		const TSharedPtr<SWidget> Widget = Found != nullptr ? Found->Pin() : nullptr;
-		if (!Widget.IsValid()) return false;
+		if (!Widget.IsValid() || !Widget->IsEnabled() || !GetControllerFocusOrder().Contains(SemanticId)) return false;
+		if(AlertSemanticWidgets.Contains(SemanticId))AlertScroll->ScrollDescendantIntoView(Widget,false,EDescendantScrollDestination::IntoView);
 		if (UHansaHudPresentationModel* PinnedModel = Model.Get()) PinnedModel->SetFocusedSemanticId(FName(*SemanticId));
 		if (FSlateApplication::IsInitialized()) FSlateApplication::Get().SetKeyboardFocus(Widget, EFocusCause::SetDirectly);
 		return true;
@@ -880,30 +1132,34 @@ namespace Hansa::UI
 
 	TArray<FString> SHansaRootHud::GetControllerFocusOrder() const
 	{
+        auto WithCoach=[this](TArray<FString> Order){if(SessionCoach&&SessionCoach->IsOffered()){Order.Add(TEXT("Session.Help.Dismiss"));Order.Add(TEXT("Session.Help.Hide"));}return Order;};
 		if (SaveLoadWidget.IsValid() && SaveLoadModel.IsValid() && SaveLoadModel->GetSnapshot().bOpen)
 		{
 			return SaveLoadWidget->GetControllerFocusOrder();
 		}
-		if (ScenarioWidget.IsValid() && ScenarioModel.IsValid() && ScenarioModel->GetSnapshot().bOpen)
+		if(FrontendWidget&&FrontendWidget->IsOpen())return FrontendWidget->GetControllerFocusOrder();
+        if (ScenarioWidget.IsValid() && ScenarioModel.IsValid() && ScenarioModel->GetSnapshot().bOpen)
 		{
 			return ScenarioWidget->GetControllerFocusOrder();
 		}
 		if (ResearchWidget.IsValid() && ResearchModel.IsValid() && ResearchModel->GetSnapshot().bOpen)
 		{
-			return ResearchWidget->GetControllerFocusOrder();
+			return WithCoach(ResearchWidget->GetControllerFocusOrder());
 		}
+		if(CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen && CityOverviewWidget.IsValid())return WithCoach(CityOverviewWidget->GetControllerFocusOrder());
 		TArray<FString> Result = {
-			TEXT("HUD.TopStatus.CityOverview"), TEXT("HUD.TopStatus.TradeMap"), TEXT("HUD.TopStatus.Research.Open"), TEXT("HUD.TopStatus.SaveLoad"), TEXT("HUD.TopStatus.Speed.Pause"), TEXT("HUD.TopStatus.Speed.Normal"),
+			TEXT("HUD.TopStatus.Session"), TEXT("HUD.TopStatus.CityOverview"), TEXT("HUD.TopStatus.TradeMap"), TEXT("HUD.TopStatus.Research.Open"), TEXT("HUD.TopStatus.SaveLoad"), TEXT("HUD.TopStatus.Speed.Pause"), TEXT("HUD.TopStatus.Speed.Normal"),
 			TEXT("HUD.TopStatus.Speed.Fast"), TEXT("HUD.TopStatus.Speed.Fastest"), TEXT("HUD.AlertStack.Toggle")
 		};
+        if(Model.IsValid()&&Model->GetSnapshot().bRemoteCityView)Result.Insert(TEXT("HUD.TopStatus.ReturnCity"),3);
 		if (const UHansaHudPresentationModel* Pinned = Model.Get())
 		{
 			for (const FHansaHudAlertPresentation& Alert : Pinned->GetSnapshot().Alerts)
 			{
-				if (Alert.bSnoozed || !Pinned->GetSnapshot().bAlertStackExpanded) continue;
+				if (!Pinned->GetSnapshot().bAlertStackExpanded) continue;
 				FString SafeAlertId = Alert.StableId.ToString(); SafeAlertId.ReplaceInline(TEXT("."), TEXT("_"));
 				const FString Base = FString::Printf(TEXT("HUD.AlertStack.Alert.%s"), *SafeAlertId);
-				Result.Append({ Base + TEXT(".Frame"), Base + TEXT(".OpenCause"), Base + TEXT(".Snooze"), Base + TEXT(".Pin") });
+				for(const FString& Id:{Base+TEXT(".Frame"),Base+TEXT(".OpenCause"),Base+TEXT(".Snooze"),Base+TEXT(".Pin")})if(AlertSemanticWidgets.Contains(Id))Result.Add(Id);
 			}
 		}
 		if (CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen && CityOverviewWidget.IsValid())
@@ -918,16 +1174,19 @@ namespace Hansa::UI
 		{
 			Result.Append(InspectorWidget->GetControllerFocusOrder());
 		}
-		if (BuildModel.IsValid() && BuildModel->GetSnapshot().bOpen && BuildMenuWidget.IsValid())
+		if (BuildModel.IsValid() && BuildModel->IsConstructionAllowed() && BuildMenuWidget.IsValid())
 		{
 			Result.Append(BuildMenuWidget->GetControllerFocusOrder());
 		}
-		return Result;
+		return WithCoach(Result);
 	}
 
 	FReply SHansaRootHud::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
 	{
 		(void)MyGeometry;
+        if(FrontendWidget&&FrontendWidget->IsOpen()&&!(SaveLoadModel.IsValid()&&SaveLoadModel->GetSnapshot().bOpen))return FrontendWidget->OnKeyDown(MyGeometry,InKeyEvent);
+        if(InKeyEvent.GetKey()==EKeys::Gamepad_Special_Right)return HandleSessionOpen();
+        if(InKeyEvent.GetKey()==EKeys::F1||InKeyEvent.GetKey()==EKeys::Gamepad_Special_Left)return ActivateSemanticId(TEXT("Session.Help.Dismiss"))?FReply::Handled():FReply::Unhandled();
 		const EHansaUiNavigationIntent Intent = ClassifyNavigationIntent(InKeyEvent);
 		if (Intent == EHansaUiNavigationIntent::Back)
 		{
@@ -938,7 +1197,7 @@ namespace Hansa::UI
 			if (CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen) return ActivateSemanticId(TEXT("CityOverview.Close")) ? FReply::Handled() : FReply::Unhandled();
 			if (InspectorModel.IsValid() && InspectorModel->GetSnapshot().bOpen) return ActivateSemanticId(TEXT("Inspector.Close")) ? FReply::Handled() : FReply::Unhandled();
 			if (BuildModel.IsValid() && BuildModel->GetSnapshot().bOpen) { BuildModel->SetOpen(false); return FReply::Handled(); }
-			return FReply::Unhandled();
+			return HandleSessionOpen();
 		}
 		FString Current;
 		if (SaveLoadModel.IsValid() && SaveLoadModel->GetSnapshot().bOpen) Current = SaveLoadModel->GetSnapshot().FocusedSemanticId.ToString();
@@ -949,7 +1208,14 @@ namespace Hansa::UI
 		else if (InspectorModel.IsValid() && InspectorModel->GetSnapshot().bOpen) Current = InspectorModel->GetSnapshot().FocusedSemanticId.ToString();
 		else if (BuildModel.IsValid() && BuildModel->GetSnapshot().bOpen) Current = BuildModel->GetSnapshot().FocusedSemanticId.ToString();
 		else if (Model.IsValid()) Current = Model->GetSnapshot().FocusedSemanticId.ToString();
-		if (Intent == EHansaUiNavigationIntent::Activate)
+		if(FSlateApplication::IsInitialized()){
+            const auto Focused=FSlateApplication::Get().GetKeyboardFocusedWidget();
+            for(const auto& Id:GetControllerFocusOrder()){
+                auto Widget=ResolveSemanticWidget(Id);if(!Widget && InspectorWidget)Widget=InspectorWidget->ResolveSemanticWidget(Id);if(!Widget && BuildMenuWidget)Widget=BuildMenuWidget->ResolveSemanticWidget(Id);
+                if(Widget.IsValid() && Widget==Focused){Current=Id;break;}
+            }
+        }
+        if (Intent == EHansaUiNavigationIntent::Activate)
 		{
 			return !Current.IsEmpty() && ActivateSemanticId(Current) ? FReply::Handled() : FReply::Unhandled();
 		}
@@ -999,16 +1265,23 @@ namespace Hansa::UI
 
 		Add(TEXT("HUD.Root"), TEXT(""), TEXT("Main HUD"), EHansaHudSemanticRole::Screen);
 		Add(TEXT("HUD.TopStatus"), TEXT("HUD.Root"), TEXT("Top status"), EHansaHudSemanticRole::Panel);
+        Add(TEXT("HUD.TopStatus.LeftPanel"),TEXT("HUD.TopStatus"),TEXT("Player and city"),EHansaHudSemanticRole::Panel);
+        Add(TEXT("HUD.TopStatus.CenterPanel"),TEXT("HUD.TopStatus"),TEXT("City production and citizens"),EHansaHudSemanticRole::Panel);
+        Add(TEXT("HUD.TopStatus.RightPanel"),TEXT("HUD.TopStatus"),TEXT("Speed and navigation"),EHansaHudSemanticRole::Panel);
 		Add(TEXT("HUD.TopStatus.Money"), TEXT("HUD.TopStatus"), TEXT("Money"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), State.Money.ToString());
 		Add(TEXT("HUD.TopStatus.MoneyTrend"), TEXT("HUD.TopStatus.Money"), TEXT("Money trend"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), State.MoneyTrend.ToString());
 		Add(TEXT("HUD.TopStatus.Population"), TEXT("HUD.TopStatus"), TEXT("Population"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), State.Population.ToString());
-		Add(TEXT("HUD.TopStatus.Workforce"), TEXT("HUD.TopStatus"), TEXT("Workforce"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), State.Workforce.ToString());
+		Add(TEXT("HUD.TopStatus.Workforce"), TEXT("HUD.TopStatus"), TEXT("Laborers"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), State.Workforce.ToString());
+        Add(TEXT("HUD.TopStatus.WealthyCitizens"),TEXT("HUD.TopStatus"),TEXT("Wealthy citizens"),EHansaHudSemanticRole::Status,false,false,TEXT("text"),State.WealthyCitizens.ToString());
+        for(int32 I=0;I<FMath::Min(3,State.TopProducts.Num());++I)Add(FString::Printf(TEXT("HUD.TopStatus.Product.%d"),I+1),TEXT("HUD.TopStatus"),State.TopProducts[I].GoodId.ToString(),EHansaHudSemanticRole::Status,false,false,TEXT("text"),State.TopProducts[I].Value.ToString());
 		Add(TEXT("HUD.TopStatus.CityBreadcrumb"), TEXT("HUD.TopStatus"), TEXT("Selected city"), EHansaHudSemanticRole::Text, false, false, TEXT("text"), State.CityBreadcrumb.ToString());
 		const bool bCityOverviewOpen = CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen;
 		Add(TEXT("HUD.TopStatus.CityOverview"), TEXT("HUD.TopStatus"), TEXT("Open City Overview"), EHansaHudSemanticRole::Button, true, true, TEXT("open"), bCityOverviewOpen ? TEXT("true") : TEXT("false"), bCityOverviewOpen);
 		const bool bTradeMapOpen = TradeMapModel.IsValid() && TradeMapModel->GetSnapshot().bOpen;
+        if(Model.IsValid()&&Model->GetSnapshot().bRemoteCityView)Add(TEXT("HUD.TopStatus.ReturnCity"),TEXT("HUD.TopStatus"),TEXT("Return to Lübeck"),EHansaHudSemanticRole::Button);
 		Add(TEXT("HUD.TopStatus.TradeMap"), TEXT("HUD.TopStatus"), TEXT("Open European trade map"), EHansaHudSemanticRole::Button, true, true, TEXT("open"), bTradeMapOpen ? TEXT("true") : TEXT("false"), bTradeMapOpen);
 		const bool bResearchOpen = ResearchModel.IsValid() && ResearchModel->GetSnapshot().bOpen;
+        Add(TEXT("HUD.TopStatus.Session"),TEXT("HUD.TopStatus"),LOCTEXT("SessionMenu","Menu").ToString(),EHansaHudSemanticRole::Button,true,true,TEXT("action"),TEXT("pause-menu"));
 		Add(TEXT("HUD.TopStatus.Research.Open"), TEXT("HUD.TopStatus"), TEXT("Open research"), EHansaHudSemanticRole::Button, true, true, TEXT("open"), bResearchOpen ? TEXT("true") : TEXT("false"), bResearchOpen);
 		const bool bSaveLoadOpen = SaveLoadModel.IsValid() && SaveLoadModel->GetSnapshot().bOpen;
 		Add(TEXT("HUD.TopStatus.SaveLoad"), TEXT("HUD.TopStatus"), TEXT("Open save and load"), EHansaHudSemanticRole::Button, true, true, TEXT("open"), bSaveLoadOpen ? TEXT("true") : TEXT("false"), bSaveLoadOpen);
@@ -1020,6 +1293,8 @@ namespace Hansa::UI
 		Add(TEXT("HUD.TopStatus.Speed.Fastest"), TEXT("HUD.TopStatus.Speed"), TEXT("Fastest speed"), EHansaHudSemanticRole::Button, true, true, TEXT("game-speed"), TEXT("fastest"), State.Speed == EHansaHudGameSpeed::Fastest);
 		Add(TEXT("HUD.TopStatus.Research"), TEXT("HUD.TopStatus"), TEXT("Research"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), State.Research.ToString());
 		Add(TEXT("HUD.TopStatus.Connection"), TEXT("HUD.TopStatus"), TEXT("Connection"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), State.Connection.ToString());
+		Add(TEXT("HUD.TopStatus.FPS"), TEXT("HUD.TopStatus"), TEXT("Frames per second"), EHansaHudSemanticRole::Status,
+			false, false, TEXT("frames-per-second"), FpsText.IsValid() ? FpsText->GetText().ToString() : TEXT("FPS —"));
 		const bool bAnyWarning = State.Alerts.ContainsByPredicate([](const FHansaHudAlertPresentation& Alert) { return Alert.bWarning; });
 		Add(TEXT("HUD.AlertStack"), TEXT("HUD.Root"), TEXT("Objectives and alerts"), EHansaHudSemanticRole::Alert, false, false, TEXT("expanded"), State.bAlertStackExpanded ? TEXT("true") : TEXT("false"), State.bAlertStackExpanded, bAnyWarning);
 		Add(TEXT("HUD.AlertStack.Toggle"), TEXT("HUD.AlertStack"), TEXT("Toggle alerts"), EHansaHudSemanticRole::Button, true, true, TEXT("expanded"), State.bAlertStackExpanded ? TEXT("true") : TEXT("false"), State.bAlertStackExpanded);
@@ -1042,14 +1317,14 @@ namespace Hansa::UI
 				bCritical ? TEXT("critical") : Alert.bWarning ? TEXT("warning") : TEXT("notice"), *Alert.Age.ToString(), *Alert.AffectedObject.ToString(),
 				*Alert.Causal.Cause.ToString(), *Alert.Causal.Remedy.ToString(), Alert.bSnoozed ? TEXT("true") : TEXT("false"), Alert.bPinned ? TEXT("true") : TEXT("false"));
 			Add(AlertId, FString::Printf(TEXT("HUD.AlertStack.Group.%s"), *SafeGroupId), Alert.Label.ToString(), EHansaHudSemanticRole::Alert,
-				false, true, TEXT("alert"), Value, false, Alert.bWarning, State.bAlertStackExpanded && !Alert.bSnoozed, bCritical);
+				false, true, TEXT("alert"), Value, false, Alert.bWarning, State.bAlertStackExpanded && !Alert.bSnoozed && AlertSemanticWidgets.Contains(AlertId), bCritical);
 			for (const TPair<const TCHAR*, EHansaHudAlertAction>& Action : {
 				TPair<const TCHAR*, EHansaHudAlertAction>(TEXT("Frame"), EHansaHudAlertAction::Frame),
 				{ TEXT("OpenCause"), EHansaHudAlertAction::OpenCause }, { TEXT("Snooze"), EHansaHudAlertAction::Snooze }, { TEXT("Pin"), EHansaHudAlertAction::Pin } })
 			{
-				Add(AlertId + TEXT(".") + Action.Key, AlertId, Action.Key, EHansaHudSemanticRole::Button, true, true,
+				Add(AlertId + TEXT(".") + Action.Key, Alert.bSnoozed?FString(TEXT("HUD.AlertStack")):AlertId, Alert.bSnoozed?TEXT("Restore alert"):Action.Key, EHansaHudSemanticRole::Button, true, true,
 					TEXT("alert-action"), Action.Key, Action.Value == EHansaHudAlertAction::Pin && Alert.bPinned, Alert.bWarning,
-					State.bAlertStackExpanded && !Alert.bSnoozed, bCritical);
+					State.bAlertStackExpanded && AlertSemanticWidgets.Contains(AlertId+TEXT(".")+Action.Key), bCritical);
 			}
 		}
 		int32 PinnedCount = 0;
@@ -1061,26 +1336,48 @@ namespace Hansa::UI
 			Add(FString::Printf(TEXT("HUD.PinnedTrackers.Tracker.%s"), *SafeAlertId), TEXT("HUD.PinnedTrackers"), Alert.AffectedObject.ToString(), EHansaHudSemanticRole::Status,
 				false, false, TEXT("tracker"), Alert.Causal.Problem.ToString(), true, Alert.bWarning);
 		}
-		Add(TEXT("HUD.BottomArea"), TEXT("HUD.Root"), TEXT("Build and selection"), EHansaHudSemanticRole::Panel, true, false, TEXT("open"), State.bBottomAreaOpen ? TEXT("true") : TEXT("false"), State.bBottomAreaOpen, false, State.bBottomAreaOpen);
+		Add(TEXT("HUD.BottomArea"), TEXT("HUD.Root"), TEXT("Build and selection"), EHansaHudSemanticRole::Panel, true, false, TEXT("open"), State.bBottomAreaOpen ? TEXT("true") : TEXT("false"), State.bBottomAreaOpen, false, !BuildModel.IsValid() && State.bBottomAreaOpen);
 		const UHansaInspectorPresentationModel* PinnedInspector = InspectorModel.Get();
 		const bool bInspectorOpen = PinnedInspector != nullptr ? PinnedInspector->GetSnapshot().bOpen : State.bInspectorOpen;
 		Add(TEXT("HUD.InspectorHost"), TEXT("HUD.Root"), TEXT("Inspector host"), EHansaHudSemanticRole::Panel, false, false, TEXT("open"), bInspectorOpen ? TEXT("true") : TEXT("false"), bInspectorOpen, false, bInspectorOpen);
 		Add(TEXT("HUD.NotificationLayer"), TEXT("HUD.Root"), TEXT("Notifications"), EHansaHudSemanticRole::Panel, false, false, TEXT("count"), FString::FromInt(State.Notifications.Num()), false, false, State.Notifications.Num() > 0);
 		Add(TEXT("HUD.TooltipLayer"), TEXT("HUD.Root"), TEXT("Tooltips"), EHansaHudSemanticRole::Panel, false, false, TEXT("mode"), TEXT("short-and-expanded"));
-		Add(TEXT("HUD.FocusLayer"), TEXT("HUD.Root"), TEXT("Controller focus"), EHansaHudSemanticRole::Status, false, false, TEXT("semantic-id"), State.FocusedSemanticId.ToString(), false, false, !State.FocusedSemanticId.IsNone());
+		Add(TEXT("HUD.FocusLayer"), TEXT("HUD.Root"), TEXT("Controller focus"), EHansaHudSemanticRole::Status, false, false, TEXT("semantic-id"), State.FocusedSemanticId.ToString(), false, false, false);
 		Add(TEXT("HUD.CityOverviewHost"), TEXT("HUD.Root"), TEXT("City Overview host"), EHansaHudSemanticRole::Panel, false, false, TEXT("open"), bCityOverviewOpen ? TEXT("true") : TEXT("false"), bCityOverviewOpen, false, bCityOverviewOpen);
 		Add(TEXT("HUD.TradeMapHost"), TEXT("HUD.Root"), TEXT("European trade map host"), EHansaHudSemanticRole::Panel, false, false, TEXT("open"), bTradeMapOpen ? TEXT("true") : TEXT("false"), bTradeMapOpen, false, bTradeMapOpen);
 		Add(TEXT("HUD.ResearchHost"), TEXT("HUD.Root"), TEXT("Research host"), EHansaHudSemanticRole::Panel, false, false, TEXT("open"), bResearchOpen ? TEXT("true") : TEXT("false"), bResearchOpen, false, bResearchOpen);
 		const bool bScenarioOpen = ScenarioModel.IsValid() && ScenarioModel->GetSnapshot().bOpen;
 		Add(TEXT("HUD.SaveLoadHost"), TEXT("HUD.Root"), TEXT("Save and load host"), EHansaHudSemanticRole::Panel, false, false, TEXT("open"), bSaveLoadOpen ? TEXT("true") : TEXT("false"), bSaveLoadOpen, false, bSaveLoadOpen);
 		Add(TEXT("HUD.ScenarioHost"), TEXT("HUD.Root"), TEXT("Scenario and victory host"), EHansaHudSemanticRole::Panel, false, false, TEXT("open"), bScenarioOpen ? TEXT("true") : TEXT("false"), bScenarioOpen, false, bScenarioOpen);
-		if (BuildMenuWidget.IsValid()) Result.Append(BuildMenuWidget->GetSemanticSnapshot());
-		if (InspectorWidget.IsValid()) Result.Append(InspectorWidget->GetSemanticSnapshot());
-		if (CityOverviewWidget.IsValid()) Result.Append(CityOverviewWidget->GetSemanticSnapshot());
+		if (BuildMenuWidget.IsValid() && BuildModel.IsValid() && BuildModel->IsConstructionAllowed())
+		{
+			auto Nodes=BuildMenuWidget->GetSemanticSnapshot();
+			const FVector2D Delta=BuildMenuWidget->GetCachedGeometry().GetAbsolutePosition()-GetCachedGeometry().GetAbsolutePosition();
+			const FIntPoint Offset(FMath::RoundToInt(Delta.X),FMath::RoundToInt(Delta.Y));
+			for(auto& Node:Nodes) { Node.Bounds.Min+=Offset;Node.Bounds.Max+=Offset; }
+			Result.Append(Nodes);
+		}
+		if (InspectorWidget.IsValid()) {
+            auto Nodes=InspectorWidget->GetSemanticSnapshot();const auto Delta=InspectorWidget->GetCachedGeometry().GetAbsolutePosition()-GetCachedGeometry().GetAbsolutePosition();
+            const FIntPoint Offset(FMath::RoundToInt(Delta.X),FMath::RoundToInt(Delta.Y));for(auto& N:Nodes){N.Bounds.Min+=Offset;N.Bounds.Max+=Offset;}Result.Append(Nodes);
+        }
+		if (CityOverviewWidget.IsValid()) {
+            auto Nodes=CityOverviewWidget->GetSemanticSnapshot();const auto Delta=CityOverviewWidget->GetCachedGeometry().GetAbsolutePosition()-GetCachedGeometry().GetAbsolutePosition();
+            const FIntPoint Offset(FMath::RoundToInt(Delta.X),FMath::RoundToInt(Delta.Y));for(auto& N:Nodes){N.Bounds.Min+=Offset;N.Bounds.Max+=Offset;}Result.Append(Nodes);
+        }
 		if (TradeMapWidget.IsValid()) Result.Append(TradeMapWidget->GetSemanticSnapshot());
 		if (ResearchWidget.IsValid()) Result.Append(ResearchWidget->GetSemanticSnapshot());
 		if (ScenarioWidget.IsValid()) Result.Append(ScenarioWidget->GetSemanticSnapshot());
+        if(SessionCoach)Result.Append(SessionCoach->GetSemanticSnapshot());
 		if (SaveLoadWidget.IsValid()) Result.Append(SaveLoadWidget->GetSemanticSnapshot());
+        if(FrontendWidget)Result.Append(FrontendWidget->GetSemanticSnapshot());
+        const bool SaveModal=SaveLoadModel.IsValid()&&SaveLoadModel->GetSnapshot().bOpen;
+        const bool SessionModal=ScenarioModel.IsValid()&&ScenarioModel->GetSnapshot().bOpen;
+        const bool FrontModal=FrontendWidget&&FrontendWidget->IsOpen();
+        if(SaveModal||FrontModal||SessionModal)for(auto& N:Result)if(!N.Id.StartsWith(SaveModal?TEXT("SaveLoad."):FrontModal?TEXT("Frontend."):TEXT("Scenario."))){N.State.bVisible=false;N.State.bEnabled=false;N.bCanActivate=false;N.bCanFocus=false;}
+
+        if(CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen)for(auto& Node:Result)
+            if(!Node.Id.StartsWith(TEXT("CityOverview.")) && !Node.Id.StartsWith(TEXT("Market.")) && !Node.Id.StartsWith(TEXT("Session.Help")) && !Node.Id.StartsWith(TEXT("Scenario.")) && !Node.Id.StartsWith(TEXT("SaveLoad.")) && !Node.Id.StartsWith(TEXT("Frontend."))){Node.State.bVisible=false;Node.State.bEnabled=false;}
 		return Result;
 	}
 }

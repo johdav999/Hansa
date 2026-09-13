@@ -1,0 +1,14 @@
+map=/Game/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate
+state=restored
+tick=124
+fingerprint=16982245970769070759
+actors=46
+visibleMeshInstances=30
+lod0UpperBoundTriangles=392160
+materialInterfaces=47
+enginePrimitiveComponents=3
+stagingMeshComponents=1
+releaseAccepted=false
+gameThreadMeanMs=1.509
+renderThreadMeanMs=5.931
+frameSamples=253

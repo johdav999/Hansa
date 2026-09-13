@@ -28,7 +28,7 @@ namespace Hansa::Tests::Production
 	}
 
 	template <typename TId>
-	TId Entity(const uint64 Value)
+	TId ProductionTestsEntity(const uint64 Value)
 	{
 		return Require(TId::TryCreate(Value));
 	}
@@ -95,8 +95,8 @@ namespace Hansa::Tests::Production
 	{
 		TArray<FHansaCompiledGoodDefinition> Goods;
 		for (const TCHAR* StableId : {
-			TEXT("Good.Beer"), TEXT("Good.Bread"), TEXT("Good.Fish"), TEXT("Good.Flour"), TEXT("Good.Grain"),
-			TEXT("Good.Iron"), TEXT("Good.Planks"), TEXT("Good.Salt"), TEXT("Good.Timber"), TEXT("Good.Tools") })
+			TEXT("Good.Barrels"), TEXT("Good.Beer"), TEXT("Good.Bread"), TEXT("Good.Fish"), TEXT("Good.Flour"), TEXT("Good.Grain"),
+			TEXT("Good.Hops"), TEXT("Good.Iron"), TEXT("Good.Malt"), TEXT("Good.Planks"), TEXT("Good.Salt"), TEXT("Good.Timber"), TEXT("Good.Tools") })
 		{
 			FHansaCompiledGoodDefinition Definition;
 			Definition.StableId = StableId;
@@ -106,10 +106,13 @@ namespace Hansa::Tests::Production
 
 		TArray<FHansaCompiledRecipeDefinition> Recipes = {
 			RecipeDefinition(TEXT("Recipe.BakeBread"), { Amount(TEXT("Good.Flour"), 2'000) }, { Amount(TEXT("Good.Bread"), 3'000) }, 2, 4, 2),
-			RecipeDefinition(TEXT("Recipe.BrewBeer"), { Amount(TEXT("Good.Grain"), 3'000) }, { Amount(TEXT("Good.Beer"), 5'000) }, 2, 4, 2),
+			RecipeDefinition(TEXT("Recipe.BrewBeer"), { Amount(TEXT("Good.Malt"), 3'000), Amount(TEXT("Good.Hops"), 1'000), Amount(TEXT("Good.Barrels"), 1'000) }, { Amount(TEXT("Good.Beer"), 5'000) }, 2, 4, 2),
 			RecipeDefinition(TEXT("Recipe.CatchFish"), {}, { Amount(TEXT("Good.Fish"), 4'000) }, 2, 8, 0),
 			RecipeDefinition(TEXT("Recipe.FellTimber"), {}, { Amount(TEXT("Good.Timber"), 6'000) }, 2, 8, 0),
 			RecipeDefinition(TEXT("Recipe.GrowGrain"), {}, { Amount(TEXT("Good.Grain"), 6'000) }, 3, 8, 0),
+			RecipeDefinition(TEXT("Recipe.GrowHops"), {}, { Amount(TEXT("Good.Hops"), 4'000) }, 2, 4, 0),
+			RecipeDefinition(TEXT("Recipe.MaltGrain"), { Amount(TEXT("Good.Grain"), 4'000) }, { Amount(TEXT("Good.Malt"), 3'000) }, 2, 3, 1),
+			RecipeDefinition(TEXT("Recipe.MakeBarrels"), { Amount(TEXT("Good.Timber"), 3'000) }, { Amount(TEXT("Good.Barrels"), 1'000) }, 2, 3, 2),
 			RecipeDefinition(TEXT("Recipe.MillFlour"), { Amount(TEXT("Good.Grain"), 4'000) }, { Amount(TEXT("Good.Flour"), 3'000) }, 2, 4, 1),
 			RecipeDefinition(TEXT("Recipe.SawPlanks"), { Amount(TEXT("Good.Timber"), 5'000) }, { Amount(TEXT("Good.Planks"), 3'500) }, 2, 6, 1),
 			RecipeDefinition(TEXT("Recipe.SmithTools"), { Amount(TEXT("Good.Iron"), 3'000) }, { Amount(TEXT("Good.Tools"), 1'000) }, 2, 4, 4)
@@ -120,7 +123,10 @@ namespace Hansa::Tests::Production
 			BuildingDefinition(TEXT("Building.Brewery"), TEXT("Recipe.BrewBeer"), 4, 2),
 			BuildingDefinition(TEXT("Building.Fishery"), TEXT("Recipe.CatchFish"), 8, 0),
 			BuildingDefinition(TEXT("Building.GrainFarm"), TEXT("Recipe.GrowGrain"), 8, 0),
+			BuildingDefinition(TEXT("Building.HopFarm"), TEXT("Recipe.GrowHops"), 4, 0),
 			BuildingDefinition(TEXT("Building.LumberCamp"), TEXT("Recipe.FellTimber"), 8, 0),
+			BuildingDefinition(TEXT("Building.MaltHouse"), TEXT("Recipe.MaltGrain"), 3, 1),
+			BuildingDefinition(TEXT("Building.Cooperage"), TEXT("Recipe.MakeBarrels"), 3, 2),
 			BuildingDefinition(TEXT("Building.Mill"), TEXT("Recipe.MillFlour"), 4, 1),
 			BuildingDefinition(TEXT("Building.Sawmill"), TEXT("Recipe.SawPlanks"), 6, 1),
 			BuildingDefinition(TEXT("Building.Smithy"), TEXT("Recipe.SmithTools"), 4, 4)
@@ -150,12 +156,12 @@ namespace Hansa::Tests::Production
 		const bool bActive = true)
 	{
 		FHansaProductionInitialization Result;
-		Result.Id = Entity<FHansaProductionId>(ProductionValue);
+		Result.Id = ProductionTestsEntity<FHansaProductionId>(ProductionValue);
 		Result.Kind = EHansaProductionKind::BuildingRecipe;
-		Result.BuildingId = Entity<FHansaBuildingId>(BuildingValue);
+		Result.BuildingId = ProductionTestsEntity<FHansaBuildingId>(BuildingValue);
 		Result.RecipeId = Recipe(RecipeId);
-		Result.InputInventoryId = Entity<FHansaInventoryId>(1);
-		Result.OutputInventoryId = Entity<FHansaInventoryId>(1);
+		Result.InputInventoryId = ProductionTestsEntity<FHansaInventoryId>(1);
+		Result.OutputInventoryId = ProductionTestsEntity<FHansaInventoryId>(1);
 		Result.AllocatedLaborerWorkforce = Laborers;
 		Result.AllocatedArtisanWorkforce = Artisans;
 		Result.bActive = bActive;
@@ -168,30 +174,32 @@ namespace Hansa::Tests::Production
 		Initialization.Clock = Require(FHansaSimulationClock::TryCreate(
 			Require(FHansaSimulationVersion::TryCreate(1)), Tick(0)));
 		Initialization.CampaignSeed = 0x33445566;
-		Initialization.Houses.Add({ Entity<FHansaHouseId>(1), FHansaMoney::FromRaw(100'000) });
+		Initialization.Houses.Add({ ProductionTestsEntity<FHansaHouseId>(1), FHansaMoney::FromRaw(100'000) });
 		const FHansaCityDefinitionId City = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")));
 		Initialization.Cities.Add({ City, FHansaQuantity() });
 
 		const TCHAR* BuildingIds[] = {
 			TEXT("Building.GrainFarm"), TEXT("Building.Mill"), TEXT("Building.Bakery"), TEXT("Building.LumberCamp"),
-			TEXT("Building.Sawmill"), TEXT("Building.Smithy"), TEXT("Building.Brewery"), TEXT("Building.Fishery")
+			TEXT("Building.Sawmill"), TEXT("Building.Smithy"), TEXT("Building.Brewery"), TEXT("Building.Fishery"),
+			TEXT("Building.HopFarm"), TEXT("Building.MaltHouse"), TEXT("Building.Cooperage")
 		};
 		for (uint64 Index = 0; Index < UE_ARRAY_COUNT(BuildingIds); ++Index)
 		{
 			Initialization.Buildings.Add({
-				Entity<FHansaBuildingId>(Index + 1), BuildingType(BuildingIds[Index]), Entity<FHansaHouseId>(1),
+				ProductionTestsEntity<FHansaBuildingId>(Index + 1), BuildingType(BuildingIds[Index]), ProductionTestsEntity<FHansaHouseId>(1),
 				FHansaRate::FromPartsPerMillion(FHansaRate::Scale) });
 		}
 
 		FHansaInventoryInitialization Inventory;
-		Inventory.Id = Entity<FHansaInventoryId>(1);
+		Inventory.Id = ProductionTestsEntity<FHansaInventoryId>(1);
 		Inventory.OwnerKind = EHansaInventoryOwnerKind::City;
 		Inventory.CityId = City;
 		Inventory.Capacity = FHansaQuantity::FromRaw(2'000'000);
 		Inventory.AcceptedGoods = {
 			Good(TEXT("Good.Grain")), Good(TEXT("Good.Flour")), Good(TEXT("Good.Bread")), Good(TEXT("Good.Fish")),
 			Good(TEXT("Good.Salt")), Good(TEXT("Good.Timber")), Good(TEXT("Good.Planks")), Good(TEXT("Good.Iron")),
-			Good(TEXT("Good.Tools")), Good(TEXT("Good.Beer")) };
+			Good(TEXT("Good.Tools")), Good(TEXT("Good.Hops")), Good(TEXT("Good.Malt")), Good(TEXT("Good.Barrels")),
+			Good(TEXT("Good.Beer")) };
 		Inventory.InitialStock = { Stock(TEXT("Good.Iron"), 60'000) };
 		Initialization.Inventories.Add(MoveTemp(Inventory));
 
@@ -203,16 +211,19 @@ namespace Hansa::Tests::Production
 			BuildingProduction(5, 5, TEXT("Recipe.SawPlanks"), 6, 1),
 			BuildingProduction(6, 6, TEXT("Recipe.SmithTools"), 4, 4),
 			BuildingProduction(7, 7, TEXT("Recipe.BrewBeer"), 4, 2),
-			BuildingProduction(8, 8, TEXT("Recipe.CatchFish"), 8, 0)
+			BuildingProduction(8, 8, TEXT("Recipe.CatchFish"), 8, 0),
+			BuildingProduction(9, 9, TEXT("Recipe.GrowHops"), 4, 0),
+			BuildingProduction(10, 10, TEXT("Recipe.MaltGrain"), 3, 1),
+			BuildingProduction(11, 11, TEXT("Recipe.MakeBarrels"), 3, 2)
 		};
 		FHansaProductionInitialization Salt;
-		Salt.Id = Entity<FHansaProductionId>(9);
+		Salt.Id = ProductionTestsEntity<FHansaProductionId>(12);
 		Salt.Kind = EHansaProductionKind::BackgroundSupply;
 		Salt.CityId = City;
 		Salt.SupplyGoodId = Good(TEXT("Good.Salt"));
 		Salt.SupplyQuantityPerCycle = FHansaQuantity::FromRaw(2'000);
 		Salt.SupplyCycleTicks = 3;
-		Salt.OutputInventoryId = Entity<FHansaInventoryId>(1);
+		Salt.OutputInventoryId = ProductionTestsEntity<FHansaInventoryId>(1);
 		Initialization.Productions.Add(Salt);
 
 		if (bReverseDiscovery)
@@ -239,7 +250,7 @@ namespace Hansa::Tests::Production
 	{
 		const TOptional<FHansaInventoryStockProjection> StockProjection =
 			State.CreateReadOnlyAccess(Definitions).GetInventories().QueryStock(
-				Entity<FHansaInventoryId>(1), Good(GoodId));
+				ProductionTestsEntity<FHansaInventoryId>(1), Good(GoodId));
 		return StockProjection.IsSet() ? StockProjection->Stock.GetRawValue() : 0;
 	}
 }
@@ -260,7 +271,7 @@ bool FHansaProductionFixedTickTest::RunTest(const FString& Parameters)
 	const FHansaCommandGatewayResult First = Step(State, Definitions, Cache);
 	TestTrue(TEXT("First production tick succeeds"), First.IsSuccess());
 	const TOptional<FHansaProductionProjection> MillAfterOne =
-		State.CreateReadOnlyAccess(Definitions).QueryProduction(Entity<FHansaProductionId>(2));
+		State.CreateReadOnlyAccess(Definitions).QueryProduction(ProductionTestsEntity<FHansaProductionId>(2));
 	TestTrue(TEXT("Typed production query resolves mill"), MillAfterOne.IsSet());
 	if (MillAfterOne.IsSet())
 	{
@@ -277,11 +288,11 @@ bool FHansaProductionFixedTickTest::RunTest(const FString& Parameters)
 	for (const FHansaDomainEvent& Event : Third.GetEvents())
 	{
 		bFoundGrainCompletion |= Event.GetType() == EHansaDomainEventType::ProductionCycleCompleted &&
-			Event.GetProductionId() == Entity<FHansaProductionId>(1);
+			Event.GetProductionId() == ProductionTestsEntity<FHansaProductionId>(1);
 	}
 	TestTrue(TEXT("Grain source emits a typed completion event"), bFoundGrainCompletion);
 	const TOptional<FHansaProductionProjection> GrainFarm =
-		State.CreateReadOnlyAccess(Definitions).QueryProduction(Entity<FHansaProductionId>(1));
+		State.CreateReadOnlyAccess(Definitions).QueryProduction(ProductionTestsEntity<FHansaProductionId>(1));
 	TestTrue(TEXT("Grain farm projection remains available"), GrainFarm.IsSet());
 	if (GrainFarm.IsSet())
 	{
@@ -289,10 +300,10 @@ bool FHansaProductionFixedTickTest::RunTest(const FString& Parameters)
 		TestEqual(TEXT("Completed source resets fixed-tick progress"), GrainFarm->ProgressTicks, 0);
 	}
 	TestEqual(TEXT("Owning simulation snapshots include canonical production state"),
-		State.CreateReadOnlyAccess(Definitions).CaptureSnapshot().GetProductions().GetProductions().Num(), 9);
+		State.CreateReadOnlyAccess(Definitions).CaptureSnapshot().GetProductions().GetProductions().Num(), 12);
 	TestEqual(TEXT("Mill reserves its exact grain input when it can start"),
 		State.CreateReadOnlyAccess(Definitions).GetInventories().QueryStock(
-			Entity<FHansaInventoryId>(1), Good(TEXT("Good.Grain")))->Reserved.GetRawValue(), int64(4'000));
+			ProductionTestsEntity<FHansaInventoryId>(1), Good(TEXT("Good.Grain")))->Reserved.GetRawValue(), int64(4'000));
 	return !HasAnyErrors();
 }
 
@@ -310,6 +321,8 @@ bool FHansaProductionChainsLongRunTest::RunTest(const FString& Parameters)
 	FHansaSimulationState Reversed = MakeFullState(true);
 	FHansaSimulationTransientCache ForwardCache;
 	FHansaSimulationTransientCache ReversedCache;
+	bool bMaltCycleCompleted = false;
+	bool bBarrelCycleCompleted = false;
 	for (int32 Index = 0; Index < 1'000; ++Index)
 	{
 		const FHansaCommandGatewayResult Left = Step(Forward, Definitions, ForwardCache);
@@ -322,18 +335,27 @@ bool FHansaProductionChainsLongRunTest::RunTest(const FString& Parameters)
 			FHansaDeterminismDiagnostics::ComputeDomainEventOrderHash(Right.GetEvents()));
 		TestEqual(TEXT("Equivalent discovery orders retain identical hashes"),
 			Left.GetFingerprintAfter().Value, Right.GetFingerprintAfter().Value);
+		for (const FHansaDomainEvent& Event : Left.GetEvents())
+		{
+			if (Event.GetType() != EHansaDomainEventType::ProductionCycleCompleted) continue;
+			bMaltCycleCompleted |= Event.GetProductionId() == ProductionTestsEntity<FHansaProductionId>(10);
+			bBarrelCycleCompleted |= Event.GetProductionId() == ProductionTestsEntity<FHansaProductionId>(11);
+		}
 	}
 	for (const TCHAR* ProducedGood : {
-		TEXT("Good.Bread"), TEXT("Good.Planks"), TEXT("Good.Tools"), TEXT("Good.Beer"), TEXT("Good.Fish"), TEXT("Good.Salt") })
+		TEXT("Good.Bread"), TEXT("Good.Planks"), TEXT("Good.Tools"), TEXT("Good.Hops"),
+		TEXT("Good.Beer"), TEXT("Good.Fish"), TEXT("Good.Salt") })
 	{
 		TestTrue(FString::Printf(TEXT("MVP production produces %s"), ProducedGood),
 			StockQuantity(Forward, Definitions, ProducedGood) > 0);
 	}
+	TestTrue(TEXT("Malt house completes cycles even when the brewery consumes all final malt stock"), bMaltCycleCompleted);
+	TestTrue(TEXT("Cooperage completes cycles even when the brewery consumes all final barrel stock"), bBarrelCycleCompleted);
 	const FHansaSubsystemStateHash* ProductionHash =
 		Forward.CreateReadOnlyAccess(Definitions).BuildStateHashReport().Find(EHansaStateHashSubsystem::Productions);
 	TestNotNull(TEXT("Production has a dedicated authoritative subsystem hash"), ProductionHash);
 	TestEqual(TEXT("Canonical production projections survive reordered discovery"),
-		Forward.CreateReadOnlyAccess(Definitions).BuildProductionProjection().Num(), 9);
+		Forward.CreateReadOnlyAccess(Definitions).BuildProductionProjection().Num(), 12);
 	return !HasAnyErrors();
 }
 
@@ -355,7 +377,7 @@ bool FHansaProductionBlockersTest::RunTest(const FString& Parameters)
 	}
 	const TArray<FHansaProductionProjection> Projections =
 		State.CreateReadOnlyAccess(Definitions).BuildProductionProjection();
-	TestEqual(TEXT("Every production keeps a causal projection"), Projections.Num(), 9);
+	TestEqual(TEXT("Every production keeps a causal projection"), Projections.Num(), 12);
 	TestTrue(TEXT("Finite storage eventually produces an explicit storage blocker"), Projections.ContainsByPredicate(
 		[](const FHansaProductionProjection& Projection)
 		{
@@ -387,16 +409,17 @@ bool FHansaProductionWorkforceAndInactiveTest::RunTest(const FString& Parameters
 	FHansaSimulationInitialization Initialization;
 	Initialization.Clock = Require(FHansaSimulationClock::TryCreate(
 		Require(FHansaSimulationVersion::TryCreate(1)), Tick(0)));
-	Initialization.Houses.Add({ Entity<FHansaHouseId>(1), FHansaMoney() });
+	Initialization.Houses.Add({ ProductionTestsEntity<FHansaHouseId>(1), FHansaMoney() });
 	const FHansaCityDefinitionId City = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")));
 	Initialization.Cities.Add({ City, FHansaQuantity() });
 	Initialization.Buildings = {
-		{ Entity<FHansaBuildingId>(1), BuildingType(TEXT("Building.GrainFarm")), Entity<FHansaHouseId>(1), FHansaRate() },
-		{ Entity<FHansaBuildingId>(2), BuildingType(TEXT("Building.Mill")), Entity<FHansaHouseId>(1), FHansaRate::FromPartsPerMillion(FHansaRate::Scale) },
-		{ Entity<FHansaBuildingId>(3), BuildingType(TEXT("Building.Fishery")), Entity<FHansaHouseId>(1), FHansaRate::FromPartsPerMillion(FHansaRate::Scale) }
+		{ ProductionTestsEntity<FHansaBuildingId>(1), BuildingType(TEXT("Building.GrainFarm")), ProductionTestsEntity<FHansaHouseId>(1), FHansaRate() },
+		{ ProductionTestsEntity<FHansaBuildingId>(2), BuildingType(TEXT("Building.Mill")), ProductionTestsEntity<FHansaHouseId>(1), FHansaRate::FromPartsPerMillion(FHansaRate::Scale) },
+		{ ProductionTestsEntity<FHansaBuildingId>(3), BuildingType(TEXT("Building.Fishery")), ProductionTestsEntity<FHansaHouseId>(1), FHansaRate::FromPartsPerMillion(FHansaRate::Scale) },
+		{ ProductionTestsEntity<FHansaBuildingId>(4), BuildingType(TEXT("Building.Mill")), ProductionTestsEntity<FHansaHouseId>(1), FHansaRate::FromPartsPerMillion(FHansaRate::Scale) }
 	};
 	FHansaInventoryInitialization Inventory;
-	Inventory.Id = Entity<FHansaInventoryId>(1);
+	Inventory.Id = ProductionTestsEntity<FHansaInventoryId>(1);
 	Inventory.OwnerKind = EHansaInventoryOwnerKind::City;
 	Inventory.CityId = City;
 	Inventory.Capacity = FHansaQuantity::FromRaw(100'000);
@@ -405,8 +428,9 @@ bool FHansaProductionWorkforceAndInactiveTest::RunTest(const FString& Parameters
 	Initialization.Inventories.Add(Inventory);
 	Initialization.Productions = {
 		BuildingProduction(1, 1, TEXT("Recipe.GrowGrain"), 8, 0),
-		BuildingProduction(2, 2, TEXT("Recipe.MillFlour"), 0, 0),
-		BuildingProduction(3, 3, TEXT("Recipe.CatchFish"), 8, 0, false)
+		BuildingProduction(2, 2, TEXT("Recipe.MillFlour"), 1, 0),
+		BuildingProduction(3, 3, TEXT("Recipe.CatchFish"), 8, 0, false),
+		BuildingProduction(4, 4, TEXT("Recipe.MillFlour"), 0, 0)
 	};
 	FHansaSimulationState State = Require(FHansaSimulationState::TryCreate(MoveTemp(Initialization)));
 	const FHansaSimulationDefinitionContext Definitions = MakeDefinitions();
@@ -415,12 +439,17 @@ bool FHansaProductionWorkforceAndInactiveTest::RunTest(const FString& Parameters
 	TestTrue(TEXT("Blocker tick succeeds"), Result.IsSuccess());
 	const FHansaSimulationReadOnlyAccess Access = State.CreateReadOnlyAccess(Definitions);
 	TestEqual(TEXT("Incomplete construction blocks production"),
-		Access.QueryProduction(Entity<FHansaProductionId>(1))->Blocker, EHansaProductionBlocker::ConstructionIncomplete);
-	TestEqual(TEXT("Insufficient workforce is explicit"),
-		Access.QueryProduction(Entity<FHansaProductionId>(2))->Blocker, EHansaProductionBlocker::InsufficientLaborerWorkforce);
+		Access.QueryProduction(ProductionTestsEntity<FHansaProductionId>(1))->Blocker, EHansaProductionBlocker::ConstructionIncomplete);
+	const auto PartialMill = Access.QueryProduction(ProductionTestsEntity<FHansaProductionId>(2));
+	TestTrue(TEXT("One worker starts a production unit"), PartialMill.IsSet() && PartialMill->Blocker == EHansaProductionBlocker::None);
+	TestTrue(TEXT("One of five workers gives twenty-percent speed and five-times batch duration"),
+		PartialMill.IsSet() && PartialMill->CycleTicks == 10 && PartialMill->ProgressTicks == 1);
 	TestEqual(TEXT("Inactive production is explicit"),
-		Access.QueryProduction(Entity<FHansaProductionId>(3))->Blocker, EHansaProductionBlocker::Inactive);
-	TestEqual(TEXT("Each first blocker transition emits one typed event"), Result.GetEvents().Num(), 3);
+		Access.QueryProduction(ProductionTestsEntity<FHansaProductionId>(3))->Blocker, EHansaProductionBlocker::Inactive);
+	TestEqual(TEXT("A completely unstaffed unit remains workforce-blocked"),
+		Access.QueryProduction(ProductionTestsEntity<FHansaProductionId>(4))->Blocker,
+		EHansaProductionBlocker::InsufficientLaborerWorkforce);
+	TestEqual(TEXT("Only blocked units emit first-transition events"), Result.GetEvents().Num(), 3);
 	return !HasAnyErrors();
 }
 
@@ -483,14 +512,14 @@ bool FHansaProductionBoundaryAtomicityTest::RunTest(const FString& Parameters)
 		FHansaSimulationInitialization Initialization;
 		Initialization.Clock = Require(FHansaSimulationClock::TryCreate(
 			Require(FHansaSimulationVersion::TryCreate(1)), Tick(0)));
-		Initialization.Houses.Add({ Entity<FHansaHouseId>(1), FHansaMoney() });
+		Initialization.Houses.Add({ ProductionTestsEntity<FHansaHouseId>(1), FHansaMoney() });
 		const FHansaCityDefinitionId City = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")));
 		Initialization.Cities.Add({ City, FHansaQuantity() });
 		Initialization.Buildings.Add({
-			Entity<FHansaBuildingId>(1), BuildingType(TEXT("Building.Bakery")), Entity<FHansaHouseId>(1),
+			ProductionTestsEntity<FHansaBuildingId>(1), BuildingType(TEXT("Building.Bakery")), ProductionTestsEntity<FHansaHouseId>(1),
 			FHansaRate::FromPartsPerMillion(FHansaRate::Scale) });
 		FHansaInventoryInitialization Inventory;
-		Inventory.Id = Entity<FHansaInventoryId>(1);
+		Inventory.Id = ProductionTestsEntity<FHansaInventoryId>(1);
 		Inventory.OwnerKind = EHansaInventoryOwnerKind::City;
 		Inventory.CityId = City;
 		Inventory.Capacity = FHansaQuantity::FromRaw(Capacity);
@@ -506,9 +535,9 @@ bool FHansaProductionBoundaryAtomicityTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Missing-input boundary tick succeeds"), Step(MissingSecondInput, Definitions, MissingCache).IsSuccess());
 	const FHansaSimulationReadOnlyAccess MissingAccess = MissingSecondInput.CreateReadOnlyAccess(Definitions);
 	TestEqual(TEXT("Second missing input is reported causally"),
-		MissingAccess.QueryProduction(Entity<FHansaProductionId>(1))->BlockingGoodId, Good(TEXT("Good.Salt")));
+		MissingAccess.QueryProduction(ProductionTestsEntity<FHansaProductionId>(1))->BlockingGoodId, Good(TEXT("Good.Salt")));
 	TestEqual(TEXT("Failed multi-input reservation leaves the first input unreserved"),
-		MissingAccess.GetInventories().QueryStock(Entity<FHansaInventoryId>(1), Good(TEXT("Good.Grain")))->Reserved.GetRawValue(),
+		MissingAccess.GetInventories().QueryStock(ProductionTestsEntity<FHansaInventoryId>(1), Good(TEXT("Good.Grain")))->Reserved.GetRawValue(),
 		int64(0));
 
 	FHansaSimulationState BlockedOutput = MakeState(500, 1'500);
@@ -516,13 +545,13 @@ bool FHansaProductionBoundaryAtomicityTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Storage-blocked boundary tick succeeds"), Step(BlockedOutput, Definitions, BlockedCache).IsSuccess());
 	const FHansaSimulationReadOnlyAccess BlockedAccess = BlockedOutput.CreateReadOnlyAccess(Definitions);
 	TestEqual(TEXT("Output one unit beyond effective capacity is blocked"),
-		BlockedAccess.QueryProduction(Entity<FHansaProductionId>(1))->Blocker, EHansaProductionBlocker::StorageBlocked);
+		BlockedAccess.QueryProduction(ProductionTestsEntity<FHansaProductionId>(1))->Blocker, EHansaProductionBlocker::StorageBlocked);
 	TestEqual(TEXT("Storage failure consumes no grain"), StockQuantity(BlockedOutput, Definitions, TEXT("Good.Grain")), int64(1'000));
 	TestEqual(TEXT("Storage failure consumes no salt"), StockQuantity(BlockedOutput, Definitions, TEXT("Good.Salt")), int64(500));
 	TestEqual(TEXT("Storage failure creates no partial output"), StockQuantity(BlockedOutput, Definitions, TEXT("Good.Bread")), int64(0));
 	TestEqual(TEXT("Storage-blocked recipe retains all input reservations for retry"),
-		BlockedAccess.GetInventories().QueryStock(Entity<FHansaInventoryId>(1), Good(TEXT("Good.Grain")))->Reserved.GetRawValue() +
-		BlockedAccess.GetInventories().QueryStock(Entity<FHansaInventoryId>(1), Good(TEXT("Good.Salt")))->Reserved.GetRawValue(),
+		BlockedAccess.GetInventories().QueryStock(ProductionTestsEntity<FHansaInventoryId>(1), Good(TEXT("Good.Grain")))->Reserved.GetRawValue() +
+		BlockedAccess.GetInventories().QueryStock(ProductionTestsEntity<FHansaInventoryId>(1), Good(TEXT("Good.Salt")))->Reserved.GetRawValue(),
 		int64(1'500));
 
 	FHansaSimulationState ExactBoundary = MakeState(500, 1'600);

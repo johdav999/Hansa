@@ -26,15 +26,15 @@ namespace Hansa::UI
 	FHansaHudLayoutMetrics MakeHudLayoutMetrics(const FIntPoint ViewportSize)
 	{
 		FHansaHudLayoutMetrics Result;
-		Result.ViewportSize = ViewportSize;
+		Result.ViewportSize = ViewportSize;Result.TopBarHeight=ViewportSize.X>=1600?64.f:112.f;
 		if (ViewportSize.X >= 1920 && ViewportSize.Y >= 1080)
 		{
 			Result.SafeArea = 24.0f;
-			Result.TopBarHeight = 72.0f;
-			Result.AlertWidth = 320.0f;
-			Result.AlertExpandedHeight = 224.0f;
+			Result.TopBarHeight = 64.0f;
+			Result.AlertWidth = 336.0f;
+			Result.AlertExpandedHeight = 320.0f;
 			Result.BottomWidth = 896.0f;
-			Result.BottomHeight = 112.0f;
+			Result.BottomHeight = 76.0f;
 			Result.BuildMenuHeight = 440.0f;
 			Result.InspectorWidth = 400.0f;
 			Result.NotificationWidth = 360.0f;

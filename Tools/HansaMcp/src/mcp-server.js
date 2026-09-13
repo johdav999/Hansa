@@ -207,12 +207,14 @@ export const TOOLS = [
       type: "object",
       required: ["query"],
       properties: {
-        query: { type: "string", enum: ["fixture.summary", "integrated.summary", "strategic.summary", "strategic.evidence", "research.state", "scenario.progress", "ai.decision_history", "construction.list", "construction.get", "construction.cost", "production.list", "production.get", "route.list", "route.get", "route.cargo", "route.events", "vehicle.list", "population.cohort", "city.population", "inventory.stock", "market.price", "market.history", "market.components", "market.reserve", "market.explanation", "market.consumers", "market.producers", "market.alerts", "market.diagnosis", "market.known_price", "market.report_age", "market.known_components", "market.opportunity"] },
+        query: { type: "string", enum: ["fixture.summary", "integrated.summary", "strategic.summary", "strategic.evidence", "research.state", "scenario.progress", "ai.decision_history", "building.list", "building.market_access", "construction.list", "construction.get", "construction.cost", "production.list", "production.get", "route.list", "route.get", "route.cargo", "route.events", "vehicle.list", "population.cohort", "city.population", "inventory.stock", "logistics.requests", "logistics.jobs", "logistics.path", "market.price", "market.history", "market.components", "market.reserve", "market.explanation", "market.consumers", "market.producers", "market.alerts", "market.diagnosis", "market.known_price", "market.report_age", "market.known_components", "market.opportunity"] },
         buildingId: { type: "integer", minimum: 1 },
         buildingDefinitionId: { type: "string", pattern: "^Building\\.[A-Za-z0-9.]+$" },
         productionId: { type: "integer", minimum: 1 },
         populationCohortId: { type: "integer", minimum: 1 },
         inventoryId: { type: "integer", minimum: 1 },
+        sourceInventoryId: { type: "integer", minimum: 1 },
+        destinationInventoryId: { type: "integer", minimum: 1 },
         routeId: { type: "integer", minimum: 1 },
         cityId: CITY_ID,
         sourceCityId: CITY_ID,
@@ -456,10 +458,12 @@ function validToolArguments(name, args) {
   if (name === "save_wait_for") return (args.condition === "roundtrip_verified" && keys.length === 1) || (args.condition === "slot_exists" && keys.length === 2 && ["manual", "autosave"].includes(args.slotId));
   if (name === "fixture_load") return keys.length === 1 && ["mvp_production_chains_v1", "lubeck_grain_shortage_v1", "route_delivery_v1", "empty_lubeck_build_v1", "integrated_lubeck_city_v1", "strategic_vertical_slice_seed_alpha_v1", "strategic_vertical_slice_seed_beta_v1", "save_roundtrip_v1"].includes(args.fixtureId);
   if (name === "gameplay_query") {
-    if (keys.some((key) => !["query", "buildingId", "buildingDefinitionId", "productionId", "populationCohortId", "inventoryId", "routeId", "cityId", "sourceCityId", "destinationCityId", "goodId"].includes(key))) return false;
-    if (["fixture.summary", "integrated.summary", "strategic.summary", "strategic.evidence", "research.state", "scenario.progress", "ai.decision_history", "construction.list", "production.list", "route.list", "vehicle.list"].includes(args.query)) return keys.length === 1;
+    if (keys.some((key) => !["query", "buildingId", "buildingDefinitionId", "productionId", "populationCohortId", "inventoryId", "sourceInventoryId", "destinationInventoryId", "routeId", "cityId", "sourceCityId", "destinationCityId", "goodId"].includes(key))) return false;
+    if (["fixture.summary", "integrated.summary", "strategic.summary", "strategic.evidence", "research.state", "scenario.progress", "ai.decision_history", "building.list", "construction.list", "production.list", "route.list", "vehicle.list", "logistics.requests", "logistics.jobs"].includes(args.query)) return keys.length === 1;
 	if (["route.get", "route.cargo", "route.events"].includes(args.query)) return keys.length === 2 && Number.isInteger(args.routeId) && args.routeId > 0;
     if (args.query === "construction.get") return keys.length === 2 && Number.isInteger(args.buildingId) && args.buildingId > 0;
+    if (args.query === "building.market_access") return keys.length === 2 && Number.isInteger(args.buildingId) && args.buildingId > 0;
+    if (args.query === "logistics.path") return keys.length === 3 && Number.isInteger(args.sourceInventoryId) && args.sourceInventoryId > 0 && Number.isInteger(args.destinationInventoryId) && args.destinationInventoryId > 0;
     if (args.query === "construction.cost") return keys.length === 2 && /^Building\.[A-Za-z0-9.]+$/.test(args.buildingDefinitionId ?? "");
     if (args.query === "production.get") return keys.length === 2 && Number.isInteger(args.productionId) && args.productionId > 0;
     if (args.query === "population.cohort") return keys.length === 2 && Number.isInteger(args.populationCohortId) && args.populationCohortId > 0;

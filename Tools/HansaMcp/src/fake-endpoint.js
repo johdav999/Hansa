@@ -320,6 +320,19 @@ export class FakeHansaEndpoint {
       if (request.payload?.query === "research.state" && this.fixture.golden) return success({ research: this.#goldenEvidence().research });
       if (request.payload?.query === "ai.decision_history" && this.fixture.golden) return success({ decisions: this.#goldenEvidence().aiDecisions });
       if (request.payload?.query === "scenario.progress" && this.fixture.golden) return success({ scenario: this.#goldenEvidence().objectiveState });
+      if (request.payload?.query === "building.list" && this.fixture.golden) return success({ buildings: [
+        { buildingId: 1, buildingDefinitionId: "Building.GrainFarm", cityId: "City.Lubeck", x: 10, y: 20, roadRequired: true, connected: true, failure: "None", selectedMarketBuildingId: 14, roadDistanceCells: 9, deliveryBlocked: false, blockedDeliveryCount: 0, deliveryFailure: "None" },
+        { buildingId: 14, buildingDefinitionId: "Building.Market", cityId: "City.Lubeck", x: 10, y: 15, roadRequired: true, connected: true, failure: "None", selectedMarketBuildingId: 14, roadDistanceCells: 2, deliveryBlocked: false, blockedDeliveryCount: 0, deliveryFailure: "None" },
+      ] });
+      if (request.payload?.query === "building.market_access" && this.fixture.golden && [1, 14].includes(request.payload.buildingId)) {
+		const building = request.payload.buildingId === 1
+		  ? { buildingId: 1, buildingDefinitionId: "Building.GrainFarm", cityId: "City.Lubeck", x: 10, y: 20, roadRequired: true, connected: true, failure: "None", selectedMarketBuildingId: 14, roadDistanceCells: 9, deliveryBlocked: false, blockedDeliveryCount: 0, deliveryFailure: "None" }
+		  : { buildingId: 14, buildingDefinitionId: "Building.Market", cityId: "City.Lubeck", x: 10, y: 15, roadRequired: true, connected: true, failure: "None", selectedMarketBuildingId: 14, roadDistanceCells: 2, deliveryBlocked: false, blockedDeliveryCount: 0, deliveryFailure: "None" };
+        return success({ building });
+      }
+      if (request.payload?.query === "logistics.requests") return success({ requests: [] });
+      if (request.payload?.query === "logistics.jobs") return success({ jobs: [] });
+      if (request.payload?.query === "logistics.path" && request.payload.sourceInventoryId > 0 && request.payload.destinationInventoryId > 0) return success({ sourceInventoryId: request.payload.sourceInventoryId, destinationInventoryId: request.payload.destinationInventoryId, cityId: "City.Lubeck", connected: true, marketEligible: true, selectedMarketBuildingId: 14, failure: "None", messageKey: "", remedyKey: "", roadDistanceCells: 9, routeCells: [{ x: 10, y: 18 }, { x: 11, y: 18 }] });
       if (request.payload?.query === "integrated.summary" && this.fixture.integrated) {
         const integrated = this.fixture.integrated;
         return success({

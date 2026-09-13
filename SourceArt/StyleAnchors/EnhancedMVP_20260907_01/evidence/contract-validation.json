@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "validatedAsOf": "2026-09-07",
+  "validator": "Scripts/ValidateEnhancedMvpWorldStyleAnchors.ps1",
+  "status": "passed",
+  "contractId": "EnhancedMvp.WorldStyleAnchors.v1",
+  "candidateCount": 5,
+  "productionReady": 0,
+  "requiresRevision": 4,
+  "rejected": 1,
+  "runtimeAutoFitAllowed": false,
+  "headlessBlender": {
+    "version": "3.5.1",
+    "bakeryPassed": true,
+    "millPassed": true,
+    "roadPassed": true,
+    "externalConsumedImageCount": 0
+  },
+  "compile": {
+    "p07TranslationUnitsCompiled": [
+      "Source/Hansa/Private/World/HansaBuildingWorldProjection.cpp",
+      "Source/HansaTests/Private/World/HansaBuildingWorldProjectionTests.cpp",
+      "Source/HansaTests/Private/World/HansaWorldStyleAnchorTests.cpp"
+    ],
+    "fullEditorTargetLinked": false,
+    "blocker": "Unrelated pre-existing unity translation-unit symbol collisions in HansaSimulation, Hansa UI, HansaTests, and HansaEditor generation sources prevented the full target link."
+  }
+}

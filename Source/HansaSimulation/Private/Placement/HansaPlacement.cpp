@@ -7,6 +7,40 @@ namespace Hansa::Simulation
 {
 	namespace
 	{
+		constexpr uint64 TopologyFnvOffset = 14695981039346656037ULL;
+		constexpr uint64 TopologyFnvPrime = 1099511628211ULL;
+
+		void AddTopologyByte(uint64& Hash, const uint8 Value)
+		{
+			Hash ^= Value;
+			Hash *= TopologyFnvPrime;
+		}
+
+		void AddTopologyUInt32(uint64& Hash, const uint32 Value)
+		{
+			for (uint32 ByteIndex = 0; ByteIndex < 4; ++ByteIndex)
+			{
+				AddTopologyByte(Hash, static_cast<uint8>(Value >> (ByteIndex * 8)));
+			}
+		}
+
+		void AddTopologyUInt64(uint64& Hash, const uint64 Value)
+		{
+			for (uint32 ByteIndex = 0; ByteIndex < 8; ++ByteIndex)
+			{
+				AddTopologyByte(Hash, static_cast<uint8>(Value >> (ByteIndex * 8)));
+			}
+		}
+
+		void AddTopologyString(uint64& Hash, const FString& Value)
+		{
+			AddTopologyUInt32(Hash, static_cast<uint32>(Value.Len()));
+			for (const TCHAR Character : Value)
+			{
+				AddTopologyByte(Hash, static_cast<uint8>(Character));
+			}
+		}
+
 		bool IsKnownRotation(const EHansaGridRotation Rotation)
 		{
 			return Rotation == EHansaGridRotation::North || Rotation == EHansaGridRotation::East ||
@@ -86,21 +120,131 @@ namespace Hansa::Simulation
 		}
 	}
 
-	THansaValueResult<FHansaPlacementState> FHansaPlacementState::TryCreate(
-		FHansaPlacementInitialization Initialization)
+	FHansaPlacementTopology::FHansaPlacementTopology()
 	{
-		for (FHansaPlacementMapInitialization& Map : Initialization.Maps)
+		TopologyHash = TopologyFnvOffset;
+		AddTopologyUInt32(TopologyHash, 1);
+		AddTopologyUInt32(TopologyHash, 0);
+	}
+
+	THansaValueResult<FHansaPlacementTopology> FHansaPlacementTopology::TryCreate(
+		TArray<FHansaPlacementMapInitialization> InMaps)
+	{
+		for (FHansaPlacementMapInitialization& Map : InMaps)
 		{
 			Map.Cells.Sort([](const FHansaPlacementGridCell& Left, const FHansaPlacementGridCell& Right)
 			{
 				return Left.Coordinate < Right.Coordinate;
 			});
 		}
-		Initialization.Maps.Sort([](const FHansaPlacementMapInitialization& Left,
+		InMaps.Sort([](const FHansaPlacementMapInitialization& Left,
 			const FHansaPlacementMapInitialization& Right)
 		{
 			return Left.CityId < Right.CityId;
 		});
+		uint64 RecordCount = static_cast<uint64>(InMaps.Num());
+		for (int32 MapIndex = 0; MapIndex < InMaps.Num(); ++MapIndex)
+		{
+			const FHansaPlacementMapInitialization& Map = InMaps[MapIndex];
+			if (!Map.CityId.IsValid() || !Map.RoadBuildingDefinitionId.IsValid() ||
+				Map.BoundsMin.X > Map.BoundsMax.X || Map.BoundsMin.Y > Map.BoundsMax.Y ||
+				(MapIndex > 0 && InMaps[MapIndex - 1].CityId == Map.CityId))
+			{
+				return THansaValueResult<FHansaPlacementTopology>::Failure(EHansaValueError::InvalidFormat);
+			}
+			RecordCount += static_cast<uint64>(Map.Cells.Num());
+			if (RecordCount > MAX_uint32)
+			{
+				return THansaValueResult<FHansaPlacementTopology>::Failure(EHansaValueError::OutOfRange);
+			}
+			for (int32 CellIndex = 0; CellIndex < Map.Cells.Num(); ++CellIndex)
+			{
+				const FHansaPlacementGridCell& Cell = Map.Cells[CellIndex];
+				if (!Cell.OwnerId.IsValid() || !IsKnownTerrain(Cell.Terrain) || !IsInside(Map, Cell.Coordinate) ||
+					(CellIndex > 0 && Map.Cells[CellIndex - 1].Coordinate == Cell.Coordinate))
+				{
+					return THansaValueResult<FHansaPlacementTopology>::Failure(EHansaValueError::InvalidFormat);
+				}
+			}
+		}
+
+		FHansaPlacementTopology Topology;
+		Topology.Maps = MoveTemp(InMaps);
+		Topology.RecordCount = static_cast<uint32>(RecordCount);
+		Topology.TopologyHash = TopologyFnvOffset;
+		AddTopologyUInt32(Topology.TopologyHash, 1);
+		AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Topology.Maps.Num()));
+		for (const FHansaPlacementMapInitialization& Map : Topology.Maps)
+		{
+			AddTopologyString(Topology.TopologyHash, Map.CityId.ToString());
+			AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Map.BoundsMin.X));
+			AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Map.BoundsMin.Y));
+			AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Map.BoundsMax.X));
+			AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Map.BoundsMax.Y));
+			AddTopologyString(Topology.TopologyHash, Map.RoadBuildingDefinitionId.ToString());
+			AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Map.Cells.Num()));
+			for (const FHansaPlacementGridCell& Cell : Map.Cells)
+			{
+				AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Cell.Coordinate.X));
+				AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Cell.Coordinate.Y));
+				AddTopologyByte(Topology.TopologyHash, static_cast<uint8>(Cell.Terrain));
+				AddTopologyUInt64(Topology.TopologyHash, Cell.OwnerId.GetValue());
+				AddTopologyUInt32(Topology.TopologyHash, Cell.OwnerId.GetGeneration());
+				AddTopologyByte(Topology.TopologyHash, Cell.bBlocked ? 1 : 0);
+			}
+		}
+		return THansaValueResult<FHansaPlacementTopology>::Success(MoveTemp(Topology));
+	}
+
+	const FHansaPlacementMapInitialization* FHansaPlacementTopology::FindMap(
+		const FHansaCityDefinitionId CityId) const
+	{
+		return Maps.FindByPredicate([CityId](const FHansaPlacementMapInitialization& Map)
+		{
+			return Map.CityId == CityId;
+		});
+	}
+
+	const FHansaPlacementGridCell* FHansaPlacementTopology::FindCell(
+		const FHansaCityDefinitionId CityId,
+		const FHansaGridCoordinate Coordinate) const
+	{
+		const FHansaPlacementMapInitialization* Map = FindMap(CityId);
+		if (!Map) return nullptr;
+		int32 First = 0;
+		int32 Last = Map->Cells.Num();
+		while (First < Last)
+		{
+			const int32 Middle = First + (Last - First) / 2;
+			if (Map->Cells[Middle].Coordinate < Coordinate) First = Middle + 1;
+			else Last = Middle;
+		}
+		return Map->Cells.IsValidIndex(First) && Map->Cells[First].Coordinate == Coordinate
+			? &Map->Cells[First] : nullptr;
+	}
+
+	THansaValueResult<FHansaPlacementState> FHansaPlacementState::TryCreate(
+		FHansaPlacementInitialization Initialization,
+		TSharedPtr<const FHansaPlacementTopology> ImmutableTopology)
+	{
+		if (!Initialization.Maps.IsEmpty())
+		{
+			THansaValueResult<FHansaPlacementTopology> SuppliedTopology =
+				FHansaPlacementTopology::TryCreate(MoveTemp(Initialization.Maps));
+			if (!SuppliedTopology)
+			{
+				return THansaValueResult<FHansaPlacementState>::Failure(SuppliedTopology.Error);
+			}
+			if (ImmutableTopology.IsValid() &&
+				ImmutableTopology->GetTopologyHash() != SuppliedTopology.Value.GetTopologyHash())
+			{
+				return THansaValueResult<FHansaPlacementState>::Failure(EHansaValueError::InvalidFormat);
+			}
+			if (!ImmutableTopology.IsValid())
+			{
+				ImmutableTopology = MakeShared<FHansaPlacementTopology>(MoveTemp(SuppliedTopology.Value));
+			}
+		}
 		Initialization.Entitlements.Sort([](const FHansaPlacementEntitlement& Left,
 			const FHansaPlacementEntitlement& Right)
 		{
@@ -117,26 +261,6 @@ namespace Hansa::Simulation
 			return Left.BuildingId < Right.BuildingId;
 		});
 
-		for (int32 MapIndex = 0; MapIndex < Initialization.Maps.Num(); ++MapIndex)
-		{
-			const FHansaPlacementMapInitialization& Map = Initialization.Maps[MapIndex];
-			if (!Map.CityId.IsValid() || !Map.RoadBuildingDefinitionId.IsValid() ||
-				Map.BoundsMin.X > Map.BoundsMax.X || Map.BoundsMin.Y > Map.BoundsMax.Y ||
-				(MapIndex > 0 && Initialization.Maps[MapIndex - 1].CityId == Map.CityId))
-			{
-				return THansaValueResult<FHansaPlacementState>::Failure(EHansaValueError::InvalidFormat);
-			}
-			for (int32 CellIndex = 0; CellIndex < Map.Cells.Num(); ++CellIndex)
-			{
-				const FHansaPlacementGridCell& Cell = Map.Cells[CellIndex];
-				if (!Cell.OwnerId.IsValid() || !IsKnownTerrain(Cell.Terrain) || !IsInside(Map, Cell.Coordinate) ||
-					(CellIndex > 0 && Map.Cells[CellIndex - 1].Coordinate == Cell.Coordinate))
-				{
-					return THansaValueResult<FHansaPlacementState>::Failure(EHansaValueError::InvalidFormat);
-				}
-			}
-		}
-
 		for (int32 Index = 0; Index < Initialization.Entitlements.Num(); ++Index)
 		{
 			const FHansaPlacementEntitlement& Entitlement = Initialization.Entitlements[Index];
@@ -149,7 +273,7 @@ namespace Hansa::Simulation
 		}
 
 		FHansaPlacementState State;
-		State.Maps = MoveTemp(Initialization.Maps);
+		State.Topology = MoveTemp(ImmutableTopology);
 		State.Entitlements = MoveTemp(Initialization.Entitlements);
 		for (int32 PlacementIndex = 0; PlacementIndex < Initialization.Placements.Num(); ++PlacementIndex)
 		{
@@ -191,21 +315,14 @@ namespace Hansa::Simulation
 
 	const FHansaPlacementMapInitialization* FHansaPlacementState::FindMap(const FHansaCityDefinitionId CityId) const
 	{
-		return Maps.FindByPredicate([CityId](const FHansaPlacementMapInitialization& Map)
-		{
-			return Map.CityId == CityId;
-		});
+		return Topology.IsValid() ? Topology->FindMap(CityId) : nullptr;
 	}
 
 	const FHansaPlacementGridCell* FHansaPlacementState::FindCell(
 		const FHansaCityDefinitionId CityId,
 		const FHansaGridCoordinate Coordinate) const
 	{
-		const FHansaPlacementMapInitialization* Map = FindMap(CityId);
-		return Map != nullptr ? Map->Cells.FindByPredicate([Coordinate](const FHansaPlacementGridCell& Cell)
-		{
-			return Cell.Coordinate == Coordinate;
-		}) : nullptr;
+		return Topology.IsValid() ? Topology->FindCell(CityId, Coordinate) : nullptr;
 	}
 
 	const FHansaPlacedBuildingRecord* FHansaPlacementState::FindPlacement(const FHansaBuildingId BuildingId) const
@@ -482,6 +599,15 @@ namespace Hansa::Simulation
 		{
 			Anchor = End;
 			bHasAnchor = true;
+		}
+	}
+
+	void FHansaPlacementSession::CancelRoadDrag()
+	{
+		if (bActive && bRoad)
+		{
+			bHasAnchor = false;
+			bHasDragStart = false;
 		}
 	}
 

@@ -1,0 +1,6 @@
+# Production bread
+
+Mode: built-in ImageGen, new generation. Native 1254x1254, target 1024x1024. Revision v2 aligns silhouette with approved bakery panel. Intended use: scalable SVG recreation. Opaque linen source. Inspected at original resolution: clean silhouette, no text or clipping; no resampling.
+
+## Final prompt
+Use case: stylized-concept. Single Hansa production good icon, original engraved ink illustration matching approved bakery panel. Ink #202628 crosshatching and stippling on linen #F2E9D8 background, restrained paper shading, front evenly lit, slightly elevated three-quarter view, strong readable silhouette, no surrounding UI or border, no text, labels, logo or watermark. Native 1024x1024 square, ample clear margins. Intended for scalable vector recreation; no raster resampling. Exactly two rustic scored bread loaves stacked diagonally, a tall rounded loaf behind and a lower oval loaf in front with two slices leaning at right. Delicate merchant ledger engraving, monochrome ink, as in the bread side of the approved Hansa bakery inspector.

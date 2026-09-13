@@ -1,11 +1,17 @@
 #include "World/HansaStrategyPlayerController.h"
+#include "World/HansaTerrainPlacement.h"
 
 #include "HansaLog.h"
+#include "HAL/PlatformProcess.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Layout/WidgetPath.h"
 #include "EnhancedActionKeyMapping.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EngineUtils.h"
 #include "Engine/LocalPlayer.h"
+#include "Engine/GameViewportClient.h"
+#include "Widgets/SViewport.h"
 #include "Engine/World.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
@@ -13,7 +19,13 @@
 #include "InputTriggers.h"
 #include "World/HansaBuildingWorldProjection.h"
 #include "World/HansaGameMode.h"
+#include "UI/HansaBuildMenuPresentationModel.h"
+#include "UI/HansaRootHud.h"
+#include "UI/SHansaRootHud.h"
+#include "UI/HansaScenarioPresentationModel.h"
+#include "UI/HansaSaveLoadPresentationModel.h"
 #include "Net/UnrealNetwork.h"
+#include "World/HansaLubeckWorldFoundation.h"
 #include "World/HansaStrategyCameraPawn.h"
 
 namespace
@@ -70,10 +82,13 @@ void AHansaStrategyPlayerController::BeginPlay()
 	InputMode.SetHideCursorDuringCapture(false);
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	SetInputMode(InputMode);
+    UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Diagnostics v3 (yaw+pitch) initialized controller=%s executable=%s"), *GetName(), FPlatformProcess::ExecutableName());
 }
 
 void AHansaStrategyPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (AHansaBuildingPlacementGhost* Ghost = PlacementGhost.Get()) Ghost->Destroy();
+	PlacementGhost.Reset();
 	if (StrategyMappingContext != nullptr)
 	{
 		if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
@@ -190,6 +205,16 @@ void AHansaStrategyPlayerController::SetupInputComponent()
 	Enhanced->BindAction(FastPanAction, ETriggerEvent::Completed, this, &AHansaStrategyPlayerController::HandleFastPanCompleted);
 	Enhanced->BindAction(FastPanAction, ETriggerEvent::Canceled, this, &AHansaStrategyPlayerController::HandleFastPanCompleted);
 	Enhanced->BindAction(SelectAction, ETriggerEvent::Started, this, &AHansaStrategyPlayerController::HandleSelect);
+	Enhanced->BindAction(SelectAction, ETriggerEvent::Triggered, this, &AHansaStrategyPlayerController::HandleSelectHeld);
+	Enhanced->BindAction(SelectAction, ETriggerEvent::Completed, this, &AHansaStrategyPlayerController::HandleSelectReleased);
+	Enhanced->BindAction(SelectAction, ETriggerEvent::Canceled, this, &AHansaStrategyPlayerController::HandleSelectReleased);
+	InputComponent->BindKey(EKeys::RightMouseButton, IE_Pressed, this, &AHansaStrategyPlayerController::HandleCameraDragPressed);
+    InputComponent->BindKey(EKeys::RightMouseButton, IE_Released, this, &AHansaStrategyPlayerController::HandleCameraDragReleased);
+	InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &AHansaStrategyPlayerController::HandlePlacementCancel);
+    InputComponent->BindKey(EKeys::Gamepad_Special_Right,IE_Pressed,this,&AHansaStrategyPlayerController::HandleSessionMenu);
+    InputComponent->BindKey(EKeys::F1,IE_Pressed,this,&AHansaStrategyPlayerController::HandleContextHelp);
+    InputComponent->BindKey(EKeys::Gamepad_Special_Left,IE_Pressed,this,&AHansaStrategyPlayerController::HandleContextHelp);
+	InputComponent->BindKey(EKeys::Gamepad_FaceButton_Right, IE_Pressed, this, &AHansaStrategyPlayerController::HandlePlacementCancel);
 }
 
 bool AHansaStrategyPlayerController::TraceWorldSelection(FHitResult& OutHit) const
@@ -348,6 +373,7 @@ void AHansaStrategyPlayerController::AddDefaultMappings()
 	StrategyMappingContext->MapKey(FastPanAction, EKeys::LeftShift);
 	StrategyMappingContext->MapKey(FastPanAction, EKeys::Gamepad_RightShoulder);
 	StrategyMappingContext->MapKey(SelectAction, EKeys::LeftMouseButton);
+	StrategyMappingContext->MapKey(SelectAction, EKeys::SpaceBar);
 	StrategyMappingContext->MapKey(SelectAction, EKeys::Gamepad_FaceButton_Bottom);
 }
 
@@ -382,6 +408,17 @@ void AHansaStrategyPlayerController::HandleZoom(const FInputActionValue& Value)
 
 void AHansaStrategyPlayerController::HandleRotate(const FInputActionValue& Value)
 {
+	if (UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel();
+		BuildModel != nullptr && !BuildModel->GetSnapshot().SelectedBuildingId.IsNone())
+	{
+		if (!bPlacementRotateHeld && FMath::Abs(Value.Get<float>()) > 0.25f)
+		{
+			bPlacementRotateHeld = true;
+			BuildModel->RotateIntent();
+			SyncPlacementGhostAndCursor();
+		}
+		return;
+	}
 	if (AHansaStrategyCameraPawn* CameraPawn = GetStrategyCameraPawn())
 	{
 		CameraPawn->SetRotateIntent(Value.Get<float>());
@@ -390,6 +427,7 @@ void AHansaStrategyPlayerController::HandleRotate(const FInputActionValue& Value
 
 void AHansaStrategyPlayerController::HandleRotateCompleted(const FInputActionValue& Value)
 {
+	bPlacementRotateHeld = false;
 	if (AHansaStrategyCameraPawn* CameraPawn = GetStrategyCameraPawn())
 	{
 		CameraPawn->SetRotateIntent(0.0f);
@@ -414,5 +452,418 @@ void AHansaStrategyPlayerController::HandleFastPanCompleted(const FInputActionVa
 
 void AHansaStrategyPlayerController::HandleSelect(const FInputActionValue& Value)
 {
+    if(const auto* Hud=Cast<AHansaRootHud>(GetHUD());Hud&&((Hud->GetScenarioPresentationModel()&&Hud->GetScenarioPresentationModel()->GetSnapshot().bOpen)||(Hud->GetSaveLoadPresentationModel()&&Hud->GetSaveLoadPresentationModel()->GetSnapshot().bOpen)))return;
+	(void)Value;
+	if (UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel();
+		BuildModel != nullptr && !BuildModel->GetSnapshot().SelectedBuildingId.IsNone())
+	{
+		float MouseX = 0.0f, MouseY = 0.0f;
+		int32 Width = 0, Height = 0;
+		GetViewportSize(Width, Height);
+		// Use the position recorded with this click for construction.
+        const FVector2D Pointer = GetMousePosition(MouseX, MouseY)
+            ? FVector2D(MouseX, MouseY) : ResolveCurrentPointer(FVector2D(Width * 0.5, Height * 0.5));
+		if (BuildModel->GetSnapshot().SelectedBuildingId == TEXT("Building.Road"))
+		{
+			bRoadPointerHeld = BeginRoadDrawing(Pointer, false);
+			return;
+		}
+		FIntPoint Cell;
+		FVector WorldLocation;
+		if (ResolvePlacementCellAtScreenPosition(Pointer, Cell, WorldLocation))
+		{
+			BuildModel->TargetGridCell(Cell.X, Cell.Y);
+			if (IsPointerOverWorldViewport()) BuildModel->BeginBuildingStroke(Cell.X,Cell.Y);
+			SyncPlacementGhostAndCursor();
+			return;
+		}
+	}
 	PerformWorldSelection();
+}
+
+void AHansaStrategyPlayerController::HandleSelectHeld(const FInputActionValue& Value)
+{
+	(void)Value;
+	if (!bRoadPointerHeld) return;
+	float MouseX = 0.0f, MouseY = 0.0f;
+	int32 Width = 0, Height = 0;
+	GetViewportSize(Width, Height);
+	const FVector2D Pointer = ResolveCurrentPointer(FVector2D(Width * 0.5, Height * 0.5));
+	UpdateRoadDrawing(Pointer, false);
+}
+
+void AHansaStrategyPlayerController::HandleSelectReleased(const FInputActionValue& Value)
+{
+	if(auto* Model=GetBuildMenuModel())Model->EndBuildingStroke();
+	(void)Value;
+	if (!bRoadPointerHeld) return;
+	float MouseX = 0.0f, MouseY = 0.0f;
+	int32 Width = 0, Height = 0;
+	GetViewportSize(Width, Height);
+	const FVector2D Pointer = ResolveCurrentPointer(FVector2D(Width * 0.5, Height * 0.5));
+	FIntPoint Cell;
+	FVector WorldLocation;
+	const bool bOverWorld = ResolvePlacementCellAtScreenPosition(Pointer, Cell, WorldLocation);
+	EndRoadDrawing(Pointer, bOverWorld, false);
+	bRoadPointerHeld = false;
+}
+
+void AHansaStrategyPlayerController::HandleCameraDragPressed()
+{
+    UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Press controller=%s cachedCtrl=%d cachedRMB=%d"),
+        *GetName(), IsInputKeyDown(EKeys::LeftControl) || IsInputKeyDown(EKeys::RightControl), IsInputKeyDown(EKeys::RightMouseButton));
+    HandleCameraDragReleased();
+    // Preserve construction cancellation without opening the session menu.
+    if (const auto* Build = GetBuildMenuModel(); Build && !Build->GetSnapshot().SelectedBuildingId.IsNone())
+    {
+        CancelBuildingPlacement();
+    }
+    const bool bLocal = IsLocalController();
+    const bool bOverWorld = IsPointerOverWorldViewport();
+    const bool bPointerValid = TryGetPlacementPointer(PreviousCameraDragPointer);
+    if (!bLocal || !bOverWorld || !bPointerValid)
+    {
+        UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Start rejected local=%d overWorld=%d pointerValid=%d"), bLocal, bOverWorld, bPointerValid);
+        return;
+    }
+    if (auto* CameraPawn = GetStrategyCameraPawn())
+    {
+        bCameraDragHeld = true;
+        CameraPawn->SetDragPanIntent(FVector2D::ZeroVector, true);
+        UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Started pointer=%s pawn=%s viewTarget=%s yaw=%.3f"),
+            *PreviousCameraDragPointer.ToString(), *CameraPawn->GetName(), *GetNameSafe(GetViewTarget()), CameraPawn->GetCameraYawDegrees());
+    }
+    else
+    {
+        UE_LOG(LogHansa, Warning, TEXT("[CameraDrag] Start rejected: no strategy camera pawn; possessed=%s viewTarget=%s"),
+            *GetNameSafe(GetPawn()), *GetNameSafe(GetViewTarget()));
+    }
+}
+
+void AHansaStrategyPlayerController::HandleCameraDragReleased()
+{
+    if (bCameraDragHeld)
+    {
+        UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Released/reset controller=%s"), *GetName());
+    }
+    bCameraDragHeld = false;
+    if (auto* CameraPawn = GetStrategyCameraPawn())
+    {
+        CameraPawn->SetDragPanIntent(FVector2D::ZeroVector, false);
+        CameraPawn->SetDragOrbitIntent(FVector2D::ZeroVector, false);
+    }
+}
+
+void AHansaStrategyPlayerController::UpdateCameraDrag()
+{
+    const bool bSlateReady = FSlateApplication::IsInitialized();
+    const bool bSlateRMB = bSlateReady && FSlateApplication::Get().GetPressedMouseButtons().Contains(EKeys::RightMouseButton);
+    const bool bCachedRMB = IsInputKeyDown(EKeys::RightMouseButton);
+    const double Now = FPlatformTime::Seconds();
+    const bool bLogSample = (bCameraDragHeld || bSlateRMB || bCachedRMB) && Now - LastCameraDragDiagnosticTime >= 0.5;
+    if (bLogSample)
+    {
+        LastCameraDragDiagnosticTime = Now;
+        UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Input held=%d slateRMB=%d cachedRMB=%d slateCtrl=%d cachedLeftCtrl=%d cachedRightCtrl=%d active=%d"),
+            bCameraDragHeld, bSlateRMB, bCachedRMB,
+            bSlateReady && FSlateApplication::Get().GetModifierKeys().IsControlDown(),
+            IsInputKeyDown(EKeys::LeftControl), IsInputKeyDown(EKeys::RightControl),
+            bSlateReady && FSlateApplication::Get().IsActive());
+    }
+    if (!bCameraDragHeld) return;
+    FVector2D Pointer = FVector2D::ZeroVector;
+    const bool bActive = bSlateReady && FSlateApplication::Get().IsActive();
+    const bool bOverWorld = IsPointerOverWorldViewport();
+    const bool bPointerValid = TryGetPlacementPointer(Pointer);
+    // Once the world starts the captured gesture, Slate may report a HUD child as
+    // the deepest hovered widget. Pointer validity is the geometry-based viewport
+    // boundary; bOverWorld must not cancel a drag that is still inside it.
+    if (!Hansa::Game::FHansaStrategyCameraModel::ShouldContinuePointerDrag(
+        bCachedRMB, bSlateReady, bActive, bPointerValid))
+    {
+        UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Cancel cachedRMB=%d slateReady=%d active=%d overWorld=%d pointerValid=%d"),
+            bCachedRMB, bSlateReady, bActive, bOverWorld, bPointerValid);
+        HandleCameraDragReleased();
+        return;
+    }
+    if (auto* CameraPawn = GetStrategyCameraPawn())
+    {
+        // Slate owns the cursor and modifier state, including Ctrl held before viewport focus.
+        const bool bRotate = FSlateApplication::Get().GetModifierKeys().IsControlDown();
+        const FVector2D Delta = Pointer - PreviousCameraDragPointer;
+        CameraPawn->SetDragPanIntent(bRotate ? FVector2D::ZeroVector : Delta, !bRotate);
+        // Camera yaw is driven only by horizontal pointer travel. Including Y here
+        // made ordinary diagonal drags cancel or reverse their horizontal yaw.
+        const float YawPixels = bRotate
+            ? Hansa::Game::FHansaStrategyCameraModel::YawPointerDisplacement(Delta)
+            : 0.0f;
+        CameraPawn->SetDragOrbitIntent(bRotate ? FVector2D(YawPixels, Delta.Y) : FVector2D::ZeroVector, bRotate);
+        if (bLogSample)
+        {
+            UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Move pointer=%s delta=%s rotate=%d yawPixels=%.3f sensitivity=%.3f pawn=%s viewTarget=%s yaw=%.3f"),
+                *Pointer.ToString(), *Delta.ToString(), bRotate, YawPixels,
+                CameraPawn->DragRotationDegreesPerPixel, *CameraPawn->GetName(), *GetNameSafe(GetViewTarget()), CameraPawn->GetCameraYawDegrees());
+        }
+    }
+    else if (bLogSample)
+    {
+        UE_LOG(LogHansa, Warning, TEXT("[CameraDrag] Move has no strategy camera pawn"));
+    }
+    PreviousCameraDragPointer = Pointer;
+}
+void AHansaStrategyPlayerController::HandlePlacementCancel()
+{
+    if(const auto* Build=GetBuildMenuModel();Build&&!Build->GetSnapshot().SelectedBuildingId.IsNone()){bRoadPointerHeld=false;CancelBuildingPlacement();return;}
+    if(auto* Hud=Cast<AHansaRootHud>(GetHUD());Hud&&Hud->GetRootWidget())Hud->GetRootWidget()->OnKeyDown(FGeometry(),FKeyEvent(EKeys::Escape,FModifierKeysState(),0,false,0,0));
+}
+void AHansaStrategyPlayerController::HandleSessionMenu(){if(auto* Hud=Cast<AHansaRootHud>(GetHUD());Hud&&Hud->GetRootWidget())Hud->GetRootWidget()->ActivateSemanticId(TEXT("HUD.TopStatus.Session"));}
+void AHansaStrategyPlayerController::HandleContextHelp(){if(auto* Hud=Cast<AHansaRootHud>(GetHUD());Hud&&Hud->GetRootWidget())Hud->GetRootWidget()->ActivateSemanticId(TEXT("Session.Help.Dismiss"));}
+
+UHansaBuildMenuPresentationModel* AHansaStrategyPlayerController::GetBuildMenuModel() const
+{
+	const AHansaRootHud* RootHud = Cast<AHansaRootHud>(GetHUD());
+	return RootHud != nullptr ? RootHud->GetBuildMenuPresentationModel() : nullptr;
+}
+
+AHansaLubeckWorldFoundation* AHansaStrategyPlayerController::FindPlacementFoundation() const
+{
+	if (UWorld* World = GetWorld())
+	{
+		for (TActorIterator<AHansaLubeckWorldFoundation> It(World); It; ++It) return *It;
+	}
+	return nullptr;
+}
+
+FVector2D AHansaStrategyPlayerController::ResolveCurrentPointer(const FVector2D Fallback) const
+{
+	FVector2D Pointer;
+	return TryGetPlacementPointer(Pointer) ? Pointer : Fallback;
+}
+
+bool AHansaStrategyPlayerController::ResolvePlacementCellAtScreenPosition(
+	const FVector2D ScreenPosition, FIntPoint& OutCell, FVector& OutWorldLocation) const
+{
+	AHansaLubeckWorldFoundation* Foundation = FindPlacementFoundation();
+	if (Foundation == nullptr || GetWorld() == nullptr) return false;
+	FVector Candidate = FVector::ZeroVector;
+	FHitResult Hit;
+	FVector RayOrigin, RayDirection;
+    const bool bRay = DeprojectScreenPositionToWorld(ScreenPosition.X, ScreenPosition.Y, RayOrigin, RayDirection);
+    if ((bRay && Hansa::Game::TerrainPlacement::Trace(GetWorld(), RayOrigin,
+        RayOrigin + RayDirection * SelectionTraceDistance, Hit)) ||
+        (GetHitResultAtScreenPosition(ScreenPosition,
+        UEngineTypes::ConvertToTraceType(ECC_Visibility), true, Hit) && Hit.bBlockingHit))
+	{
+		Candidate = Hit.ImpactPoint;
+	}
+	else
+	{
+		FVector Origin, Direction;
+		if (!DeprojectScreenPositionToWorld(ScreenPosition.X, ScreenPosition.Y, Origin, Direction) ||
+			FMath::IsNearlyZero(Direction.Z)) return false;
+		const double SurfaceZ = Foundation->PlacementCellToWorld(0, 0).Z;
+		const double Distance = (SurfaceZ - Origin.Z) / Direction.Z;
+		if (Distance <= 0.0 || Distance > SelectionTraceDistance) return false;
+		Candidate = Origin + Direction * Distance;
+	}
+	int32 X = 0, Y = 0;
+	if (!Foundation->WorldToPlacementCell(Candidate, X, Y)) return false;
+	OutCell = FIntPoint(X, Y);
+	OutWorldLocation = Foundation->PlacementCellToWorld(X, Y, 106.0f);
+	return true;
+}
+
+bool AHansaStrategyPlayerController::BeginBuildingPlacementDrag(
+	const FName BuildingDefinitionId, const FVector2D ScreenPosition, const bool bPointerOverMenu, const bool bUseLivePointer)
+{
+	UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel();
+	if (BuildModel == nullptr || !BuildModel->BeginCardDrag(BuildingDefinitionId)) return false;
+	UpdateBuildingPlacementDrag(ScreenPosition, bPointerOverMenu, bUseLivePointer);
+	return true;
+}
+
+bool AHansaStrategyPlayerController::UpdateBuildingPlacementDrag(
+	const FVector2D ScreenPosition, const bool bPointerOverMenu, const bool bUseLivePointer)
+{
+	UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel();
+	if (BuildModel == nullptr || !BuildModel->GetSnapshot().bDraggingCard) return false;
+	FIntPoint Cell = FIntPoint::ZeroValue;
+	FVector WorldLocation;
+	const bool bOverWorld = !bPointerOverMenu && ResolvePlacementCellAtScreenPosition(
+		bUseLivePointer ? ResolveCurrentPointer(ScreenPosition) : ScreenPosition, Cell, WorldLocation);
+	if (bOverWorld) BuildModel->UpdateCardDragTarget(Cell.X, Cell.Y);
+	else BuildModel->ClearCardDragTarget();
+	SyncPlacementGhostAndCursor();
+	return bOverWorld;
+}
+
+bool AHansaStrategyPlayerController::EndBuildingPlacementDrag(
+	const FVector2D ScreenPosition, const bool bPointerOverMenu, const bool bUseLivePointer)
+{
+	UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel();
+	if (BuildModel == nullptr || !BuildModel->GetSnapshot().bDraggingCard) return false;
+	const bool bOverWorld = UpdateBuildingPlacementDrag(ScreenPosition, bPointerOverMenu, bUseLivePointer);
+	const bool bCommitted = BuildModel->EndCardDrag(bOverWorld);
+	SyncPlacementGhostAndCursor();
+	return bCommitted;
+}
+
+bool AHansaStrategyPlayerController::BeginRoadDrawing(
+	const FVector2D ScreenPosition, const bool bUseLivePointer)
+{
+	UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel();
+	FIntPoint Cell;
+	FVector WorldLocation;
+	if (BuildModel == nullptr || !ResolvePlacementCellAtScreenPosition(
+		bUseLivePointer ? ResolveCurrentPointer(ScreenPosition) : ScreenPosition, Cell, WorldLocation))
+	{
+		return false;
+	}
+	const bool bStarted = BuildModel->BeginRoadDraw(Cell.X, Cell.Y);
+	SyncPlacementGhostAndCursor();
+	return bStarted;
+}
+
+bool AHansaStrategyPlayerController::UpdateRoadDrawing(
+	const FVector2D ScreenPosition, const bool bUseLivePointer)
+{
+	UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel();
+	FIntPoint Cell;
+	FVector WorldLocation;
+	if (BuildModel == nullptr || !BuildModel->GetSnapshot().bRoadDrawing ||
+		!ResolvePlacementCellAtScreenPosition(
+			bUseLivePointer ? ResolveCurrentPointer(ScreenPosition) : ScreenPosition, Cell, WorldLocation))
+	{
+		return false;
+	}
+	const bool bUpdated = BuildModel->UpdateRoadDraw(Cell.X, Cell.Y);
+	SyncPlacementGhostAndCursor();
+	return bUpdated;
+}
+
+bool AHansaStrategyPlayerController::EndRoadDrawing(
+	const FVector2D ScreenPosition, const bool bPointerOverWorld, const bool bUseLivePointer)
+{
+	UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel();
+	if (BuildModel == nullptr || !BuildModel->GetSnapshot().bRoadDrawing) return false;
+	bool bOverWorld = bPointerOverWorld;
+	if (bPointerOverWorld)
+	{
+		bOverWorld = UpdateRoadDrawing(ScreenPosition, bUseLivePointer);
+	}
+	const bool bCommitted = BuildModel->EndRoadDraw(bOverWorld);
+	SyncPlacementGhostAndCursor();
+	return bCommitted;
+}
+
+void AHansaStrategyPlayerController::CancelBuildingPlacement()
+{
+	bRoadPointerHeld = false;
+	if (UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel()) BuildModel->CancelIntent();
+	SyncPlacementGhostAndCursor();
+}
+
+void AHansaStrategyPlayerController::RefreshBuildingPlacementPresentation()
+{
+	SyncPlacementGhostAndCursor();
+}
+
+void AHansaStrategyPlayerController::SyncPlacementGhostAndCursor()
+{
+	UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel();
+	AHansaLubeckWorldFoundation* Foundation = FindPlacementFoundation();
+	if (BuildModel == nullptr || Foundation == nullptr) return;
+	const FHansaBuildMenuSnapshot& Snapshot = BuildModel->GetSnapshot();
+	if (!Snapshot.SelectedBuildingId.IsNone() && Snapshot.bHasTarget)
+	{
+		AHansaBuildingPlacementGhost* Ghost = PlacementGhost.Get();
+		if (Ghost == nullptr && GetWorld() != nullptr)
+		{
+			Ghost = GetWorld()->SpawnActor<AHansaBuildingPlacementGhost>();
+			PlacementGhost = Ghost;
+		}
+		if (Ghost != nullptr)
+		{
+			if (Snapshot.bRoadDrawing)
+			{
+				Ghost->ApplyRoadPreview(Snapshot.RoadPreviewCells, Snapshot.Feedback,
+					Snapshot.ValidationCause, *Foundation);
+			}
+			else
+			{
+				Ghost->ApplyPreview(Snapshot.SelectedBuildingId, Snapshot.AnchorCell,
+					Snapshot.RotationQuarterTurns, Snapshot.FootprintCells, Snapshot.Feedback,
+					Snapshot.ValidationCause, *Foundation);
+			}
+		}
+	}
+	else if (AHansaBuildingPlacementGhost* Ghost = PlacementGhost.Get())
+	{
+		Ghost->HidePreview();
+	}
+	CurrentMouseCursor = Snapshot.SelectedBuildingId.IsNone() ? EMouseCursor::Default
+		: Snapshot.Feedback == EHansaPlacementFeedback::Invalid ? EMouseCursor::SlashedCircle
+		: Snapshot.Feedback == EHansaPlacementFeedback::Warning ? EMouseCursor::CardinalCross
+		: EMouseCursor::Crosshairs;
+}
+
+
+bool AHansaStrategyPlayerController::TryGetPlacementPointer(FVector2D& OutPointer) const
+{
+ const ULocalPlayer* LocalPlayer = GetLocalPlayer();
+ const UGameViewportClient* Client = LocalPlayer ? LocalPlayer->ViewportClient : nullptr;
+ const auto Viewport = Client ? Client->GetGameViewportWidget() : nullptr;
+ if (!Viewport.IsValid() || !FSlateApplication::IsInitialized()) return false;
+ const FGeometry& Geometry = Viewport->GetCachedGeometry();
+ const FVector2D LocalSize = Geometry.GetLocalSize();
+ int32 Width = 0, Height = 0;
+ GetViewportSize(Width, Height);
+ if (LocalSize.X <= 0 || LocalSize.Y <= 0 || Width <= 0 || Height <= 0) return false;
+ // GetMousePosition reads FSceneViewport's event cache, which is cleared on
+ // mouse leave. Placement must follow the released cursor across UI/focus changes.
+ const FVector2D Local = Geometry.AbsoluteToLocal(FSlateApplication::Get().GetCursorPos());
+ if (Local.X < 0 || Local.Y < 0 || Local.X >= LocalSize.X || Local.Y >= LocalSize.Y) return false;
+ OutPointer = FVector2D(Local.X * Width / LocalSize.X, Local.Y * Height / LocalSize.Y);
+ return true;
+}
+
+bool AHansaStrategyPlayerController::IsPointerOverWorldViewport() const
+{
+ if(!FSlateApplication::IsInitialized())return false;
+ const ULocalPlayer* LocalPlayer = GetLocalPlayer();
+ const auto Viewport = LocalPlayer && LocalPlayer->ViewportClient ? LocalPlayer->ViewportClient->GetGameViewportWidget() : nullptr;
+ if (!Viewport.IsValid()) return false;
+ auto& Slate=FSlateApplication::Get();
+ const auto Path=Slate.LocateWindowUnderMouse(Slate.GetCursorPos(),Slate.GetInteractiveTopLevelWindows());
+ return Path.IsValid() && Path.Widgets.Last().Widget == Viewport;
+}
+
+void AHansaStrategyPlayerController::PlayerTick(float DeltaTime)
+{
+ Super::PlayerTick(DeltaTime);
+ UpdateCameraDrag();
+ auto* Model=GetBuildMenuModel();
+ if(!Model || Model->GetSnapshot().SelectedBuildingId.IsNone()) {
+  if(auto* Ghost=PlacementGhost.Get();Ghost && Ghost->IsPreviewVisible())Ghost->HidePreview();
+  return;
+ }
+ if(Model->IsBuildingStrokeActive() && !IsInputKeyDown(EKeys::LeftMouseButton))Model->EndBuildingStroke();
+ if(Model->GetSnapshot().bDraggingCard || Model->GetSnapshot().bRoadDrawing)return;
+ FVector2D Pointer;
+ FIntPoint Cell;FVector Location;
+ // Re-evaluate even at a stationary cursor: camera, UI and selection may change.
+ const bool HasPointer=TryGetPlacementPointer(Pointer);
+ const bool OverWorld=IsPointerOverWorldViewport();
+ const bool Resolved=HasPointer && OverWorld && ResolvePlacementCellAtScreenPosition(Pointer,Cell,Location);
+ if(Resolved) {
+  if (!Model->GetSnapshot().bHasTarget || Model->GetSnapshot().AnchorCell != Cell) {
+   if(Model->IsBuildingStrokeActive())Model->UpdateBuildingStroke(Cell.X,Cell.Y);
+   else Model->TargetGridCell(Cell.X,Cell.Y);
+   SyncPlacementGhostAndCursor();
+  } else if (!PlacementGhost.IsValid() || !PlacementGhost->IsPreviewVisible())SyncPlacementGhostAndCursor();
+ } else if (Model->GetSnapshot().bHasTarget) {
+  // Suspend targets over UI/capture transitions. Only release/cancel ends the
+  // held stroke, so moving back into the scene can continue placing safely.
+  Model->ClearPointerTarget();SyncPlacementGhostAndCursor();
+ }
 }

@@ -29,6 +29,8 @@ namespace Hansa::Simulation
 			TArray<FHansaVehicleState>& Vehicles,
 			TArray<FHansaHouseState>& Houses,
 			FHansaInventoryLedger& Inventories,
+			const FHansaPlacementState& Placement,
+			TConstArrayView<FHansaBuildingState> Buildings,
 			const FHansaEconomicRegistry& Registry,
 			FHansaSimulationTick Tick,
 			uint64& InOutPublishedEventCount,

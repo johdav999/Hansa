@@ -15,6 +15,8 @@ USTRUCT(BlueprintType)
 struct HANSA_API FHansaSaveLoadPresentationSnapshot final
 {
 	GENERATED_BODY()
+    bool bSavingAllowed=true;
+    FString SaveName=TEXT("Manual save");
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Save") bool bOpen = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Save") EHansaSaveSlotId SelectedSlot = EHansaSaveSlotId::Manual;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Save") TArray<FHansaSaveSlotMetadata> Slots;
@@ -39,8 +41,11 @@ public:
 	void Close();
 	void Refresh();
 	void SelectSlot(EHansaSaveSlotId SlotId);
+	void SetSavingAllowed(bool Allowed){Snapshot.bSavingAllowed=Allowed;Broadcast();}
+    void SetSaveName(const FString& Name){Snapshot.SaveName=Name.Left(64).TrimStartAndEnd();}
 	void RequestSave();
 	void RequestLoad();
+    void ReportOperationFailure(FText Error,FText Remedy){Snapshot.Status=EHansaSaveLoadStatus::Error;Snapshot.StatusMessage=MoveTemp(Error);Snapshot.StatusRemedy=MoveTemp(Remedy);Broadcast();}
 	void Confirm();
 	void CancelConfirmation();
 	void SetFocusedSemanticId(FName SemanticId);

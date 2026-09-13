@@ -6,7 +6,9 @@
 #include "UI/HansaHudSemantics.h"
 #include "UI/HansaInspectorPresentationModel.h"
 #include "Widgets/SCompoundWidget.h"
+#include "UI/HansaUiComponents.h"
 
+class SScrollBox;
 class SBorder;
 class SButton;
 class STextBlock;
@@ -15,16 +17,21 @@ class UHansaInspectorPresentationModel;
 
 namespace Hansa::UI
 {
+    class SHansaProductionInspector;
+class SHansaResidenceInspector;
 	/** Reusable, stable-order contextual inspector for buildings and residences. */
 	class HANSA_API SHansaContextInspector final : public SCompoundWidget
 	{
 	public:
 		SLATE_BEGIN_ARGS(SHansaContextInspector) : _Model(nullptr) {}
 			SLATE_ARGUMENT(UHansaInspectorPresentationModel*, Model)
+			SLATE_ARGUMENT(FUiPreferences, Preferences)
 		SLATE_END_ARGS()
 
 		~SHansaContextInspector();
 		void Construct(const FArguments& Arguments);
+		void RevealSemanticWidget(const FString& Id);
+		TSharedPtr<SWidget> ResolveSemanticWidget(const FString& Id) const;
 		bool ActivateSemanticId(const FString& SemanticId);
 		bool FocusSemanticId(const FString& SemanticId);
 		[[nodiscard]] TArray<FHansaHudSemanticNode> GetSemanticSnapshot() const;
@@ -42,13 +49,26 @@ namespace Hansa::UI
 		void RebuildActions(const FHansaInspectorSnapshot& Snapshot);
 		void RebuildHistory(const FHansaInspectorSnapshot& Snapshot);
 		FReply Invoke(FName SemanticId);
+		void RecordNativeFocus(FName Id);
 		void MapWidget(const FString& SemanticId, const TSharedPtr<SWidget>& Widget);
 		static FString InstanceId(const TCHAR* Prefix, FName StableId);
 
+		TSharedPtr<SHansaProductionInspector> ProductionPanel;
+		bool bProductionMode = false;
+		TSharedPtr<SHansaResidenceInspector> ResidencePanel;
+		bool bResidenceMode=false;
+		FUiPreferences Preferences;
+		TSharedPtr<SScrollBox> Scroll;
+		TSharedPtr<SHansaAction> CauseButton;
+		TSharedPtr<SHansaGlyph> ProblemGlyph;
+        TSharedPtr<SWidget> ProblemHeadingWidget;
 		TWeakObjectPtr<UHansaInspectorPresentationModel> Model;
 		FDelegateHandle ChangedHandle;
 		uint64 PresentedRevision = 0;
 		FSlateBrush WorkingBrush;
+		FSlateBrush HeaderBrush;
+		FTextBlockStyle HeaderTextStyle;
+		FButtonStyle QuietDestructiveStyle;
 		FSlateBrush DecisionBrush;
 		FSlateBrush CriticalBrush;
 		FButtonStyle PrimaryButtonStyle;
@@ -58,7 +78,9 @@ namespace Hansa::UI
 		FTextBlockStyle LightCaptionStyle;
 		TSharedPtr<SBorder> RootWidget;
 		TSharedPtr<SWidget> IdentityWidget;
-		TSharedPtr<STextBlock> IdentityText;
+		TSharedPtr<STextBlock> ResultSectionHeading, FlowSectionHeading;
+        TSharedPtr<SHansaGlyph> IdentityGlyph;
+        TSharedPtr<STextBlock> IdentityText;
 		TSharedPtr<STextBlock> StateText;
 		TSharedPtr<SWidget> ResultWidget;
 		TSharedPtr<STextBlock> ResultText;

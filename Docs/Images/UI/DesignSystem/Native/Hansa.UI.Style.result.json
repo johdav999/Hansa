@@ -1,0 +1,14 @@
+{
+  "Operation": "RunAutomationTests",
+  "Status": "Succeeded",
+  "Filter": "Hansa.UI.Style",
+  "Configuration": "DebugGame",
+  "TestsFound": 5,
+  "EditorBuildSkipped": false,
+  "RenderingEnabled": false,
+  "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+  "EngineRoot": "H:\\Unreal\\UE_5.8",
+  "CompletedUtc": "2026-09-08T19:01:55.9091363Z",
+  "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260908-210121240-automation-Hansa.UI.Style\\UnrealEditor.log",
+  "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260908-210121240-automation-Hansa.UI.Style\\AutomationCommand.log"
+}

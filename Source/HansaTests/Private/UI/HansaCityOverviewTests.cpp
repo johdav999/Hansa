@@ -74,7 +74,20 @@ bool FHansaCityOverviewProjectionTest::RunTest(const FString& Parameters)
 			});
 		}));
 
-	const uint64 Revision = Model->GetRevision();
+	for (const auto& Row : Snapshot.MarketRows)
+    {
+        int64 Produced = 0;
+        for (const auto& Production : Projection.Value.GetProductions())
+            if (Production.CityId == CityId.Value && Production.Kind == EHansaProductionKind::BuildingRecipe)
+                for (const auto& Output : Production.Outputs)
+                    if (Output.GoodId.ToString() == Row.GoodStableId.ToString())
+                        Produced += int64(Production.CompletedCycles) * Output.NominalQuantityPerCycle.GetRawValue();
+        const auto* Field = Row.Fields.FindByPredicate([](const auto& F) { return F.StableId == TEXT("Produced"); });
+        if (TestNotNull(TEXT("Market exposes produced quantity separately from remaining stock"), Field))
+            TestEqual(TEXT("Produced quantity matches completed local batches"), Field->Value.ToString(),
+                FString::Printf(TEXT("%.1f"), double(Produced) / 1000.0));
+    }
+    const uint64 Revision = Model->GetRevision();
 	TestTrue(TEXT("An identical authoritative refresh is accepted"),
 		Model->ApplyProjection(Projection.Value, *Registry, CityId.Value, FText::FromString(TEXT("Lübeck")), 18500));
 	TestEqual(TEXT("An identical event refresh does not publish a presentation revision"), Model->GetRevision(), Revision);

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "assetId": "road",
+  "sourceBlend": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/SourceArt/Generated/Roads/HansaDirtRoad_20260906_01/exports/Hansa_DirtRoad_Kit.blend",
+  "blenderVersion": "3.5.1",
+  "unitSystem": "METRIC",
+  "lengthUnit": "METERS",
+  "scaleLength": 1.0,
+  "renderVisibleMeshObjects": 6,
+  "evaluatedVertices": 33956,
+  "evaluatedTriangles": 65960,
+  "boundsMeters": {
+    "min": [
+      -15.0,
+      -14.460619,
+      -0.175
+    ],
+    "max": [
+      15.4,
+      18.0,
+      0.501884
+    ],
+    "size": [
+      30.4,
+      32.460617,
+      0.676884
+    ]
+  },
+  "groundPivotOffsetMeters": -0.175,
+  "meshObjectsWithUv0": 6,
+  "materialCount": 1,
+  "materials": [
+    "M_DirtRoad"
+  ],
+  "packedImageCount": 3,
+  "packedImages": [
+    "Dirt_Normal.png",
+    "Dirt_Roughness.png",
+    "dirt-road--basecolor--v1.png"
+  ],
+  "externalConsumedImages": [],
+  "unappliedObjectScaleCount": 0,
+  "unappliedObjectScaleSamples": [],
+  "passed": true
+}

@@ -1,6 +1,7 @@
 #include "Queries/HansaSimulationReadOnly.h"
 
 #include "Construction/HansaConstructionInternal.h"
+#include "HansaSimulationModule.h"
 #include "Math/NumericLimits.h"
 
 namespace Hansa::Simulation
@@ -18,6 +19,18 @@ namespace Hansa::Simulation
 
 	namespace
 	{
+		FString FormatRoadConnectivityCells(const TConstArrayView<FHansaGridCoordinate> Cells)
+		{
+			FString Result(TEXT("["));
+			for (int32 Index = 0; Index < Cells.Num(); ++Index)
+			{
+				if (Index > 0) Result += TEXT(",");
+				Result += FString::Printf(TEXT("(%d,%d)"), Cells[Index].X, Cells[Index].Y);
+			}
+			Result += TEXT("]");
+			return Result;
+		}
+
 		int64 RefundAmount(const int64 Paid, const int32 BasisPoints)
 		{
 			if (Paid < 0 || BasisPoints < 0 || BasisPoints > 10'000)
@@ -76,7 +89,7 @@ namespace Hansa::Simulation
 			return TOptional<FHansaConstructionProjection>(MoveTemp(Projection));
 		}
 
-		const FHansaBuildingState* FindBuilding(
+		const FHansaBuildingState* SimulationReadOnlyFindBuilding(
 			const TArray<FHansaBuildingState>& Buildings,
 			const FHansaBuildingId BuildingId)
 		{
@@ -122,7 +135,7 @@ namespace Hansa::Simulation
 				return TOptional<FHansaProductionProjection>(MoveTemp(Projection));
 			}
 
-			const FHansaBuildingState* Building = FindBuilding(Buildings, Production.BuildingId);
+			const FHansaBuildingState* Building = SimulationReadOnlyFindBuilding(Buildings, Production.BuildingId);
 			const FHansaCompiledRecipeDefinition* Recipe = Registry != nullptr
 				? Registry->FindRecipe(Production.RecipeId.ToString()) : nullptr;
 			const FHansaCompiledBuildingDefinition* BuildingDefinition =
@@ -132,11 +145,17 @@ namespace Hansa::Simulation
 			{
 				return TOptional<FHansaProductionProjection>(MoveTemp(Projection));
 			}
-			Projection.CycleTicks = Recipe->CycleTicks;
 			Projection.RequiredLaborerWorkforce = FMath::Max(
 				Recipe->LaborerWorkforce, BuildingDefinition->LaborerWorkforce);
 			Projection.RequiredArtisanWorkforce = FMath::Max(
 				Recipe->ArtisanWorkforce, BuildingDefinition->ArtisanWorkforce);
+			const int32 AdjustedCycleTicks = CalculateWorkforceAdjustedCycleTicks(
+				Recipe->CycleTicks,
+				Projection.AllocatedLaborerWorkforce, Projection.RequiredLaborerWorkforce,
+				Projection.AllocatedArtisanWorkforce, Projection.RequiredArtisanWorkforce);
+			// Keep the authored duration visible while completely unstaffed; the blocker
+			// explains why no progress is possible. Partial staffing reports real duration.
+			Projection.CycleTicks = AdjustedCycleTicks > 0 ? AdjustedCycleTicks : Recipe->CycleTicks;
 			Projection.Outputs.Reserve(Recipe->Outputs.Num());
 			for (const FHansaCompiledGoodAmount& RecipeOutput : Recipe->Outputs)
 			{
@@ -155,7 +174,7 @@ namespace Hansa::Simulation
 			return TOptional<FHansaProductionProjection>(MoveTemp(Projection));
 		}
 
-		FHansaPopulationCohortProjection BuildOnePopulationProjection(const FHansaPopulationCohortState& Cohort)
+		FHansaPopulationCohortProjection BuildOnePopulationProjection(const FHansaPopulationCohortState& Cohort, const FHansaSimulationClock& Clock)
 		{
 			FHansaPopulationCohortProjection Projection;
 			Projection.Id = Cohort.Id;
@@ -174,10 +193,11 @@ namespace Hansa::Simulation
 			Projection.SatisfactionBasisPoints = Cohort.SatisfactionBasisPoints;
 			Projection.ResidentChangeLastTick = Cohort.ResidentChangeLastTick;
 			Projection.Needs = Cohort.Needs;
+            Projection.Consumption = Cohort.ConsumptionHistory.Project(Clock);
 			return Projection;
 		}
 
-		FHansaCityDefinitionId ResolveProductionCity(const FHansaProductionState& Production,
+		FHansaCityDefinitionId SimulationReadOnlyResolveProductionCity(const FHansaProductionState& Production,
 			const FHansaPlacementState& Placement, const FHansaInventoryReadOnlyAccess& Inventories)
 		{
 			if (Production.CityId.IsValid()) return Production.CityId;
@@ -224,6 +244,11 @@ namespace Hansa::Simulation
 			Projection.PickupTick = Job.PickupTick;
 			Projection.DeliveryTick = Job.DeliveryTick;
 			Projection.RoadDistanceCells = Job.RoadDistanceCells;
+			Projection.SelectedMarketBuildingId = Job.SelectedMarketBuildingId;
+			Projection.RouteCells = Job.RouteCells;
+			Projection.ElapsedTravelTicks = Job.ElapsedTravelTicks;
+			Projection.RemainingTravelTicks = Job.RemainingTravelTicks;
+			Projection.PauseReason = Job.PauseReason;
 			Projection.Status = Job.Status;
 			return Projection;
 		}
@@ -244,6 +269,8 @@ namespace Hansa::Simulation
 			Projection.CurrentPriceMilliMarks = Market.CurrentPriceMilliMarks;
 			Projection.Factors = Market.Factors;
 			Projection.LastUpdateTick = Market.LastUpdateTick;
+            Projection.UpdateCadenceTicks = Settings.UpdateCadenceTicks;
+            Projection.bDemandPerReport = Market.bMarketOnly;
 			Projection.PriceHistory = Market.PriceHistory;
 			int64 PriceTotal = 0;
 			for (const FHansaMarketPriceHistoryEntry& Entry : Market.PriceHistory)
@@ -279,7 +306,7 @@ namespace Hansa::Simulation
 			});
 		}
 
-		int64 SafeAdd(const int64 Left, const int64 Right)
+		int64 SimulationReadOnlySafeAdd(const int64 Left, const int64 Right)
 		{
 			const THansaValueResult<int64> Sum = FHansaCheckedIntegerMath::TryAdd(Left, Right);
 			return Sum ? Sum.Value : TNumericLimits<int64>::Max();
@@ -305,7 +332,7 @@ namespace Hansa::Simulation
 			int64 Total = 0;
 			for (const FHansaMarketPriceHistoryEntry& Entry : Report.PriceHistory)
 			{
-				Total = SafeAdd(Total, Entry.PriceMilliMarks);
+				Total = SimulationReadOnlySafeAdd(Total, Entry.PriceMilliMarks);
 			}
 			return Total / Report.PriceHistory.Num();
 		}
@@ -367,14 +394,14 @@ namespace Hansa::Simulation
 			return Result;
 		}
 
-		bool InventoryBelongsToMarket(const FHansaCityMarketState& Market, const FHansaInventoryId InventoryId)
+		bool SimulationReadOnlyInventoryBelongsToMarket(const FHansaCityMarketState& Market, const FHansaInventoryId InventoryId)
 		{
 			return Market.InventoryIds.Contains(InventoryId);
 		}
 
 		TArray<FHansaMarketConsumerProjection> BuildConsumers(const FHansaCityMarketState& Market,
 			const TArray<FHansaPopulationCohortState>& Cohorts, const TArray<FHansaProductionState>& Productions,
-			const FHansaEconomicRegistry* Registry)
+			const TArray<FHansaBuildingState>& Buildings, const FHansaEconomicRegistry* Registry)
 		{
 			TArray<FHansaMarketConsumerProjection> Result;
 			for (const FHansaPopulationCohortState& Cohort : Cohorts)
@@ -407,7 +434,7 @@ namespace Hansa::Simulation
 				for (const FHansaProductionState& Production : Productions)
 				{
 					if (!Production.bActive || Production.Kind != EHansaProductionKind::BuildingRecipe ||
-						!InventoryBelongsToMarket(Market, Production.InputInventoryId))
+						!SimulationReadOnlyInventoryBelongsToMarket(Market, Production.InputInventoryId))
 					{
 						continue;
 					}
@@ -416,6 +443,10 @@ namespace Hansa::Simulation
 					{
 						continue;
 					}
+					const TOptional<FHansaProductionProjection> ProductionProjection =
+						BuildOneProductionProjection(Production, Buildings, Registry);
+					const int32 EffectiveCycleTicks = ProductionProjection.IsSet()
+						? ProductionProjection->CycleTicks : Recipe->CycleTicks;
 					for (const FHansaCompiledGoodAmount& Input : Recipe->Inputs)
 					{
 						if (Input.GoodId != Market.GoodId.ToString())
@@ -430,7 +461,7 @@ namespace Hansa::Simulation
 						Consumer.BuildingId = Production.BuildingId;
 						Consumer.RecipeId = Production.RecipeId;
 						Consumer.DemandPerTick = FHansaQuantity::FromRaw(FMath::DivideAndRoundUp(
-							Input.QuantityMilliUnits, static_cast<int64>(Recipe->CycleTicks)));
+							Input.QuantityMilliUnits, static_cast<int64>(EffectiveCycleTicks)));
 						Consumer.FulfilledLastTick = Production.bCompletedCycleLastTick
 							? FHansaQuantity::FromRaw(Input.QuantityMilliUnits) : FHansaQuantity();
 						Consumer.ProductionBlocker = Production.Blocker;
@@ -448,12 +479,13 @@ namespace Hansa::Simulation
 		}
 
 		TArray<FHansaMarketProducerProjection> BuildProducers(const FHansaCityMarketState& Market,
-			const TArray<FHansaProductionState>& Productions, const FHansaEconomicRegistry* Registry)
+			const TArray<FHansaProductionState>& Productions, const TArray<FHansaBuildingState>& Buildings,
+			const FHansaEconomicRegistry* Registry)
 		{
 			TArray<FHansaMarketProducerProjection> Result;
 			for (const FHansaProductionState& Production : Productions)
 			{
-				if (!InventoryBelongsToMarket(Market, Production.OutputInventoryId))
+				if (!SimulationReadOnlyInventoryBelongsToMarket(Market, Production.OutputInventoryId))
 				{
 					continue;
 				}
@@ -482,6 +514,10 @@ namespace Hansa::Simulation
 				{
 					continue;
 				}
+				const TOptional<FHansaProductionProjection> ProductionProjection =
+					BuildOneProductionProjection(Production, Buildings, Registry);
+				const int32 EffectiveCycleTicks = ProductionProjection.IsSet()
+					? ProductionProjection->CycleTicks : Recipe->CycleTicks;
 				for (const FHansaCompiledGoodAmount& Output : Recipe->Outputs)
 				{
 					if (Output.GoodId == Market.GoodId.ToString())
@@ -496,7 +532,7 @@ namespace Hansa::Simulation
 						Producer.NominalQuantityPerCycle = FHansaQuantity::FromRaw(Output.QuantityMilliUnits);
 						Producer.ActualQuantityLastTick = Production.bCompletedCycleLastTick
 							? Producer.NominalQuantityPerCycle : FHansaQuantity();
-						Producer.CycleTicks = Recipe->CycleTicks;
+						Producer.CycleTicks = EffectiveCycleTicks;
 						Producer.bActive = Production.bActive;
 						Producer.Blocker = Production.Blocker;
 						Result.Add(MoveTemp(Producer));
@@ -732,7 +768,7 @@ namespace Hansa::Simulation
 	TOptional<FHansaConstructionProjection> FHansaSimulationReadOnlyAccess::QueryConstruction(
 		const FHansaBuildingId BuildingId) const
 	{
-		const FHansaBuildingState* Building = FindBuilding(State->Buildings, BuildingId);
+		const FHansaBuildingState* Building = SimulationReadOnlyFindBuilding(State->Buildings, BuildingId);
 		return Building != nullptr
 			? BuildOneConstructionProjection(*Building, State->Placement, Definitions->GetEconomicRegistry())
 			: TOptional<FHansaConstructionProjection>();
@@ -765,7 +801,8 @@ namespace Hansa::Simulation
 	{
 		return FHansaLocalLogisticsQueries::QueryRoadPath(
 			SourceInventoryId, DestinationInventoryId,
-			State->InventoryLedger.CreateReadOnlyAccess(), State->Placement, State->Buildings);
+			State->InventoryLedger.CreateReadOnlyAccess(), State->Placement, State->Buildings,
+			Definitions->GetEconomicRegistry());
 	}
 
 	TOptional<FHansaLogisticsRequestProjection> FHansaSimulationReadOnlyAccess::QueryLogisticsRequest(
@@ -827,7 +864,7 @@ namespace Hansa::Simulation
 			BuildOneProductionProjection(*Production, State->Buildings, Definitions->GetEconomicRegistry());
 		if (Projection.IsSet() && !Projection->CityId.IsValid())
 		{
-			Projection->CityId = ResolveProductionCity(
+			Projection->CityId = SimulationReadOnlyResolveProductionCity(
 				*Production, State->Placement, State->InventoryLedger.CreateReadOnlyAccess());
 		}
 		return Projection;
@@ -845,7 +882,7 @@ namespace Hansa::Simulation
 			{
 				if (!Projection->CityId.IsValid())
 				{
-					Projection->CityId = ResolveProductionCity(
+					Projection->CityId = SimulationReadOnlyResolveProductionCity(
 						Production, State->Placement, State->InventoryLedger.CreateReadOnlyAccess());
 				}
 				Result.Add(Projection.GetValue());
@@ -859,7 +896,7 @@ namespace Hansa::Simulation
 	{
 		const FHansaPopulationCohortState* Cohort = State->PopulationCohorts.FindByPredicate(
 			[CohortId](const FHansaPopulationCohortState& Value) { return Value.Id == CohortId; });
-		return Cohort != nullptr ? TOptional<FHansaPopulationCohortProjection>(BuildOnePopulationProjection(*Cohort))
+		return Cohort != nullptr ? TOptional<FHansaPopulationCohortProjection>(BuildOnePopulationProjection(*Cohort, State->Clock))
 			: TOptional<FHansaPopulationCohortProjection>();
 	}
 
@@ -869,7 +906,7 @@ namespace Hansa::Simulation
 		Result.Reserve(State->PopulationCohorts.Num());
 		for (const FHansaPopulationCohortState& Cohort : State->PopulationCohorts)
 		{
-			Result.Add(BuildOnePopulationProjection(Cohort));
+			Result.Add(BuildOnePopulationProjection(Cohort, State->Clock));
 		}
 		return Result;
 	}
@@ -925,7 +962,7 @@ namespace Hansa::Simulation
 		for (const FHansaProductionState& Production : State->Productions)
 		{
 			if (Production.Kind != EHansaProductionKind::BuildingRecipe ||
-				ResolveProductionCity(Production, State->Placement, Inventories) != CityId) continue;
+				SimulationReadOnlyResolveProductionCity(Production, State->Placement, Inventories) != CityId) continue;
 			Result.LaborerWorkforceAssigned += Production.AllocatedLaborerWorkforce;
 			Result.ArtisanWorkforceAssigned += Production.AllocatedArtisanWorkforce;
 		}
@@ -1051,7 +1088,7 @@ namespace Hansa::Simulation
 			Result.DesiredReserve = Market->Report.DesiredReserve;
 			Result.CitizenDemand = Market->Report.CitizenDemand;
 			Result.IndustrialDemand = Market->Report.IndustrialDemand;
-			Result.TotalDemand = FHansaQuantity::FromRaw(SafeAdd(
+			Result.TotalDemand = FHansaQuantity::FromRaw(SimulationReadOnlySafeAdd(
 				Market->Report.CitizenDemand.GetRawValue(), Market->Report.IndustrialDemand.GetRawValue()));
 			Result.RecentLocalProduction = Market->Report.RecentLocalProduction;
 			Result.ExpectedIncomingSupply = Market->Report.ExpectedIncomingSupply;
@@ -1120,7 +1157,7 @@ namespace Hansa::Simulation
 		Result.DesiredReserve = Market->DesiredReserve;
 		Result.CitizenDemand = Market->CitizenDemand;
 		Result.IndustrialDemand = Market->IndustrialDemand;
-		Result.TotalDemand = FHansaQuantity::FromRaw(SafeAdd(
+		Result.TotalDemand = FHansaQuantity::FromRaw(SimulationReadOnlySafeAdd(
 			Market->CitizenDemand.GetRawValue(), Market->IndustrialDemand.GetRawValue()));
 		Result.RecentLocalProduction = Market->RecentLocalProduction;
 		Result.ExpectedIncomingSupply = Market->ExpectedIncomingSupply;
@@ -1164,7 +1201,7 @@ namespace Hansa::Simulation
 		const FHansaCityDefinitionId CityId, const FHansaGoodId GoodId) const
 	{
 		const FHansaCityMarketState* Market = FindMarket(State->Markets, CityId, GoodId);
-		return Market != nullptr ? BuildConsumers(*Market, State->PopulationCohorts, State->Productions,
+		return Market != nullptr ? BuildConsumers(*Market, State->PopulationCohorts, State->Productions, State->Buildings,
 			Definitions->GetEconomicRegistry()) : TArray<FHansaMarketConsumerProjection>();
 	}
 
@@ -1172,7 +1209,8 @@ namespace Hansa::Simulation
 		const FHansaCityDefinitionId CityId, const FHansaGoodId GoodId) const
 	{
 		const FHansaCityMarketState* Market = FindMarket(State->Markets, CityId, GoodId);
-		return Market != nullptr ? BuildProducers(*Market, State->Productions, Definitions->GetEconomicRegistry())
+		return Market != nullptr ? BuildProducers(*Market, State->Productions, State->Buildings,
+			Definitions->GetEconomicRegistry())
 			: TArray<FHansaMarketProducerProjection>();
 	}
 
@@ -1357,6 +1395,7 @@ namespace Hansa::Simulation
 		Projection.Inventories = State->InventoryLedger.CreateReadOnlyAccess().BuildProjection();
 		Projection.Productions = BuildProductionProjection();
 		Projection.PopulationCohorts = BuildPopulationProjection();
+		Projection.CitizenConsumption = State->ConsumptionHistory.Project(State->Clock);
 		Projection.CityPopulations = BuildCityPopulationProjection();
 		for (const FHansaPopulationCohortProjection& Cohort : Projection.PopulationCohorts)
 		{
@@ -1406,6 +1445,7 @@ namespace Hansa::Simulation
 				{
 					WorldProjection.FootprintWidthCells = Definition->FootprintWidthCells;
 					WorldProjection.FootprintHeightCells = Definition->FootprintHeightCells;
+					WorldProjection.bRequiresRoad = Definition->bRequiresRoad;
 				}
 			}
 
@@ -1419,6 +1459,89 @@ namespace Hansa::Simulation
 						WorldProjection.Status = EHansaBuildingWorldStatus::Blocked;
 						WorldProjection.ProductionBlocker = Production.Blocker;
 						break;
+					}
+				}
+
+				if (WorldProjection.bRequiresRoad)
+				{
+					const FHansaLogisticsRoadPathProjection RoadAccess =
+						FHansaLocalLogisticsQueries::QueryBuildingRoadAccess(
+							Building->Id, State->Placement, State->Buildings);
+					WorldProjection.bHasRoadAccess = RoadAccess.bConnected;
+					WorldProjection.RoadAccessFailure = RoadAccess.Failure;
+
+					const FHansaInventoryProjection* MarketInventory = nullptr;
+					for (const FHansaInventoryProjection& Inventory : Projection.Inventories)
+					{
+						if (Inventory.OwnerKind == EHansaInventoryOwnerKind::City &&
+							Inventory.CityId == Placement.Spec.CityId &&
+							(MarketInventory == nullptr || Inventory.Id < MarketInventory->Id))
+						{
+							MarketInventory = &Inventory;
+						}
+					}
+					if (MarketInventory != nullptr)
+					{
+						const FHansaLogisticsRoadPathProjection Access =
+							FHansaLocalLogisticsQueries::QueryBuildingMarketAccess(
+								Building->Id, MarketInventory->Id,
+								State->InventoryLedger.CreateReadOnlyAccess(), State->Placement,
+								State->Buildings, Registry);
+						WorldProjection.bHasMarketAccess = Access.bMarketEligible;
+						WorldProjection.MarketAccessFailure = Access.Failure;
+						WorldProjection.MarketAccessMessageKey = Access.MessageKey;
+						WorldProjection.MarketAccessRemedyKey = Access.RemedyKey;
+						WorldProjection.SelectedMarketBuildingId = Access.SelectedMarketBuildingId;
+						WorldProjection.MarketRoadDistanceCells = Access.RoadDistanceCells;
+					}
+					else
+					{
+						WorldProjection.MarketAccessFailure = EHansaLogisticsRoadPathFailure::DestinationInventoryMissing;
+					}
+
+					if (UE_LOG_ACTIVE(LogHansaSimulation, Verbose))
+					{
+						UE_LOG(LogHansaSimulation, Verbose,
+							TEXT("[RoadConnectivity] building=%llu definition=%s city=%s anchor=(%d,%d) ")
+							TEXT("footprint=%s roadConnected=%d adjacentRoadCells=%s roadFailure=%s ")
+							TEXT("marketConnected=%d marketFailure=%s selectedMarket=%llu roadDistance=%d"),
+							static_cast<unsigned long long>(Building->Id.GetValue()),
+							*Placement.Spec.BuildingDefinitionId.ToString(),
+							*Placement.Spec.CityId.ToString(),
+							Placement.Spec.Anchor.X,
+							Placement.Spec.Anchor.Y,
+							*FormatRoadConnectivityCells(Placement.OccupiedCells),
+							WorldProjection.bHasRoadAccess,
+							*FormatRoadConnectivityCells(RoadAccess.SourceAccessCells),
+							LexToString(RoadAccess.Failure),
+							WorldProjection.bHasMarketAccess,
+							LexToString(WorldProjection.MarketAccessFailure),
+							static_cast<unsigned long long>(WorldProjection.SelectedMarketBuildingId.GetValue()),
+							WorldProjection.MarketRoadDistanceCells);
+					}
+				}
+
+				for (const FHansaLogisticsJobProjection& Job : Projection.LogisticsJobs)
+				{
+					if (Job.Status != EHansaLogisticsJobStatus::PausedAwaitingPickup &&
+						Job.Status != EHansaLogisticsJobStatus::PausedInTransit)
+					{
+						continue;
+					}
+					const FHansaInventoryProjection* Source = Projection.Inventories.FindByPredicate(
+						[&Job](const FHansaInventoryProjection& Inventory) { return Inventory.Id == Job.SourceInventoryId; });
+					const FHansaInventoryProjection* Destination = Projection.Inventories.FindByPredicate(
+						[&Job](const FHansaInventoryProjection& Inventory) { return Inventory.Id == Job.DestinationInventoryId; });
+					if ((Source != nullptr && Source->BuildingId == Building->Id) ||
+						(Destination != nullptr && Destination->BuildingId == Building->Id) ||
+						Job.SelectedMarketBuildingId == Building->Id)
+					{
+						WorldProjection.bDeliveryBlocked = true;
+						++WorldProjection.BlockedDeliveryCount;
+						if (WorldProjection.DeliveryFailure == EHansaLogisticsRoadPathFailure::None)
+						{
+							WorldProjection.DeliveryFailure = Job.PauseReason;
+						}
 					}
 				}
 			}

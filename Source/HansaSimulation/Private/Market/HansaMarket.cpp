@@ -299,10 +299,52 @@ namespace Hansa::Simulation
 			return FHansaQuantity::FromRaw(Total);
 		}
 
+		FHansaQuantity IncomingCargo(const FHansaCityMarketState& Market,
+			const TArray<FHansaRouteState>& Routes, const TArray<FHansaVehicleState>& Vehicles,
+			const FHansaInventoryReadOnlyAccess& Inventories)
+		{
+			int64 Total = 0;
+			TArray<FHansaVehicleId> Counted;
+			for (const FHansaRouteState& Route : Routes)
+			{
+				if (Route.Lifecycle != EHansaRouteLifecycleState::Traveling &&
+					!(Route.Lifecycle == EHansaRouteLifecycleState::AtStop && Route.bPendingStopActions)) continue;
+				const int32 StopIndex = Route.Lifecycle == EHansaRouteLifecycleState::Traveling
+					? Route.NextStopIndex : Route.CurrentStopIndex;
+				if (!Route.Stops.IsValidIndex(StopIndex) || Route.Stops[StopIndex].CityId != Market.CityId ||
+					Counted.Contains(Route.VehicleId)) continue;
+				const auto* Vehicle = Vehicles.FindByPredicate([&](const auto& V) { return V.Id == Route.VehicleId; });
+				if (!Vehicle) continue;
+				const auto Stock = Inventories.QueryStock(Vehicle->CargoInventoryId, Market.GoodId);
+				int64 Remaining = Stock.IsSet() ? Stock->Available.GetRawValue() : 0;
+				for (const auto& Action : Route.Stops[StopIndex].Actions)
+				{
+					if (Action.Kind != EHansaRouteCargoActionKind::Unload || Action.GoodId != Market.GoodId) continue;
+					const int64 Quantity = FMath::Min(Action.QuantityLimit.GetRawValue(),
+						Remaining);
+					Total = SafeAdd(Total, Quantity);
+					Remaining -= Quantity;
+				}
+				Counted.Add(Route.VehicleId);
+			}
+			return FHansaQuantity::FromRaw(Total);
+		}
+
 		int64 DepositBackgroundProduction(FHansaCityMarketState& Market, FHansaInventoryLedger& Inventories,
 			const FHansaSimulationTick Tick)
 		{
-			int64 Remaining = Market.BackgroundProductionPerUpdate.GetRawValue();
+			// A remote good has its own stock ceiling; one untraded export cannot fill
+			// the shared warehouse and permanently starve every other good of capacity.
+			const int64 Reserve = Market.DesiredReserve.GetRawValue();
+			const int64 Ceiling = Reserve > TNumericLimits<int64>::Max() / 3
+				? TNumericLimits<int64>::Max() : Reserve * 3;
+			int64 Stored = 0;
+			for (const auto InventoryId : Market.InventoryIds)
+			{
+				const auto Stock = Inventories.CreateReadOnlyAccess().QueryStock(InventoryId, Market.GoodId);
+				if (Stock.IsSet()) Stored = SafeAdd(Stored, Stock->Stock.GetRawValue());
+			}
+			int64 Remaining = FMath::Min(Market.BackgroundProductionPerUpdate.GetRawValue(), FMath::Max<int64>(0, Ceiling - Stored));
 			int64 Applied = 0;
 			const FName SourceId(*FString::Printf(TEXT("MarketBackground.%s.Production"), *Market.CityId.ToString()));
 			for (const FHansaInventoryId InventoryId : Market.InventoryIds)
@@ -422,7 +464,8 @@ namespace Hansa::Simulation
 	void FHansaMarketExecutor::AdvanceOneTick(TArray<FHansaCityMarketState>& Markets, const FHansaMarketSettings& Settings,
 		FHansaInventoryLedger& InventoryLedger, const TArray<FHansaProductionState>& Productions,
 		const TArray<FHansaPopulationCohortState>& PopulationCohorts,
-		const FHansaEconomicRegistry& Registry, const FHansaSimulationTick Tick)
+		const FHansaEconomicRegistry& Registry, const FHansaSimulationTick Tick,
+		const TArray<FHansaRouteState>& Routes, const TArray<FHansaVehicleState>& Vehicles)
 	{
 		if (Settings.UpdateCadenceTicks <= 0)
 		{
@@ -430,7 +473,10 @@ namespace Hansa::Simulation
 		}
 		for (FHansaCityMarketState& Market : Markets)
 		{
-			Market.AccumulatedLocalProductionSinceUpdate = FHansaQuantity::FromRaw(SafeAdd(
+			// Stock follows completed inventory transactions every tick. Price/history and
+            // remote reports retain their authored cadence.
+            Market.CurrentStock = SumStock(Market, InventoryLedger.CreateReadOnlyAccess());
+            Market.AccumulatedLocalProductionSinceUpdate = FHansaQuantity::FromRaw(SafeAdd(
 				Market.AccumulatedLocalProductionSinceUpdate.GetRawValue(),
 				SumLocalProduction(Market, Productions, Registry).GetRawValue()));
 		}
@@ -472,7 +518,7 @@ namespace Hansa::Simulation
 						SumUnmetIndustrialDemand(Market, Productions, Registry).GetRawValue()));
 			}
 			Market.AccumulatedLocalProductionSinceUpdate = FHansaQuantity();
-			Market.ExpectedIncomingSupply = Market.ConfirmedIncomingSupplyPerUpdate;
+			Market.ExpectedIncomingSupply = IncomingCargo(Market, Routes, Vehicles, InventoryLedger.CreateReadOnlyAccess());
 			Market.MinimumConsumerAffordabilityBasisPoints = Market.bMarketOnly
 				? 10000 : MinimumConsumerAffordability(Market, PopulationCohorts);
 			UpdatePrice(Market, Settings, *Good);

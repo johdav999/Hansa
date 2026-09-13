@@ -285,6 +285,133 @@ namespace Hansa::Automation
 		if (Query == TEXT("strategic.evidence")) { OutPayload = MakeEvidenceSnapshot(); return true; }
 		const auto Projection = Host->BuildProjection();
 		if (!Projection) { OutError = TEXT("Strategic projection is unavailable."); return false; }
+		if (Query == TEXT("building.list") || Query == TEXT("building.market_access"))
+		{
+			int64 RequestedBuildingValue = 0;
+			if (Query == TEXT("building.market_access") &&
+				(!Integral(Request, TEXT("buildingId"), RequestedBuildingValue) || RequestedBuildingValue <= 0))
+			{
+				OutError = TEXT("building.market_access requires a positive integral buildingId.");
+				return false;
+			}
+			TArray<TSharedPtr<FJsonValue>> Buildings;
+			for (const FHansaBuildingWorldProjection& Building : Projection.Value.GetBuildingWorldProjections())
+			{
+				if (RequestedBuildingValue > 0 &&
+					Building.BuildingId.GetValue() != static_cast<uint64>(RequestedBuildingValue)) continue;
+				TSharedRef<FJsonObject> Item = MakeShared<FJsonObject>();
+				Item->SetNumberField(TEXT("buildingId"), static_cast<double>(Building.BuildingId.GetValue()));
+				Item->SetStringField(TEXT("buildingDefinitionId"), Building.Placement.BuildingDefinitionId.ToString());
+				Item->SetStringField(TEXT("cityId"), Building.Placement.CityId.ToString());
+				Item->SetNumberField(TEXT("x"), Building.Placement.Anchor.X);
+				Item->SetNumberField(TEXT("y"), Building.Placement.Anchor.Y);
+				Item->SetBoolField(TEXT("roadRequired"), Building.bRequiresRoad);
+				Item->SetBoolField(TEXT("roadConnected"), Building.bHasRoadAccess);
+				Item->SetStringField(TEXT("roadFailure"), LexToString(Building.RoadAccessFailure));
+				Item->SetBoolField(TEXT("marketConnected"), Building.bHasMarketAccess);
+				// Compatibility: connected historically meant market eligibility.
+				Item->SetBoolField(TEXT("connected"), Building.bHasMarketAccess);
+				Item->SetStringField(TEXT("failure"), LexToString(Building.MarketAccessFailure));
+				Item->SetStringField(TEXT("messageKey"), Building.MarketAccessMessageKey.ToString());
+				Item->SetStringField(TEXT("remedyKey"), Building.MarketAccessRemedyKey.ToString());
+				Item->SetNumberField(TEXT("selectedMarketBuildingId"), static_cast<double>(Building.SelectedMarketBuildingId.GetValue()));
+				Item->SetNumberField(TEXT("roadDistanceCells"), Building.MarketRoadDistanceCells);
+				Item->SetBoolField(TEXT("deliveryBlocked"), Building.bDeliveryBlocked);
+				Item->SetNumberField(TEXT("blockedDeliveryCount"), Building.BlockedDeliveryCount);
+				Item->SetStringField(TEXT("deliveryFailure"), LexToString(Building.DeliveryFailure));
+				Buildings.Add(MakeShared<FJsonValueObject>(Item));
+			}
+			if (Query == TEXT("building.market_access"))
+			{
+				if (Buildings.IsEmpty()) { OutError = TEXT("The requested buildingId does not exist."); return false; }
+				OutPayload->SetObjectField(TEXT("building"), Buildings[0]->AsObject().ToSharedRef());
+			}
+			else
+			{
+				OutPayload->SetArrayField(TEXT("buildings"), MoveTemp(Buildings));
+			}
+			return true;
+		}
+		if (Query == TEXT("logistics.requests"))
+		{
+			TArray<TSharedPtr<FJsonValue>> Requests;
+			for (const FHansaLogisticsRequestProjection& RequestProjection : Projection.Value.GetLogisticsRequests())
+			{
+				TSharedRef<FJsonObject> Item = MakeShared<FJsonObject>();
+				Item->SetNumberField(TEXT("requestId"), static_cast<double>(RequestProjection.Id.GetValue()));
+				Item->SetNumberField(TEXT("sourceInventoryId"), static_cast<double>(RequestProjection.SourceInventoryId.GetValue()));
+				Item->SetNumberField(TEXT("destinationInventoryId"), static_cast<double>(RequestProjection.DestinationInventoryId.GetValue()));
+				Item->SetStringField(TEXT("goodId"), RequestProjection.GoodId.ToString());
+				Item->SetNumberField(TEXT("remainingMilliUnits"), RequestProjection.RemainingQuantity.GetRawValue());
+				Item->SetStringField(TEXT("status"), LexToString(RequestProjection.Status));
+				Item->SetStringField(TEXT("bottleneck"), LexToString(RequestProjection.Bottleneck));
+				Requests.Add(MakeShared<FJsonValueObject>(Item));
+			}
+			OutPayload->SetArrayField(TEXT("requests"), MoveTemp(Requests));
+			return true;
+		}
+		if (Query == TEXT("logistics.jobs"))
+		{
+			TArray<TSharedPtr<FJsonValue>> Jobs;
+			for (const FHansaLogisticsJobProjection& Job : Projection.Value.GetLogisticsJobs())
+			{
+				TSharedRef<FJsonObject> Item = MakeShared<FJsonObject>();
+				Item->SetNumberField(TEXT("jobId"), static_cast<double>(Job.Id.GetValue()));
+				Item->SetNumberField(TEXT("requestId"), static_cast<double>(Job.RequestId.GetValue()));
+				Item->SetNumberField(TEXT("sourceInventoryId"), static_cast<double>(Job.SourceInventoryId.GetValue()));
+				Item->SetNumberField(TEXT("destinationInventoryId"), static_cast<double>(Job.DestinationInventoryId.GetValue()));
+				Item->SetStringField(TEXT("goodId"), Job.GoodId.ToString());
+				Item->SetStringField(TEXT("status"), LexToString(Job.Status));
+				Item->SetStringField(TEXT("pauseReason"), LexToString(Job.PauseReason));
+				Item->SetNumberField(TEXT("selectedMarketBuildingId"), static_cast<double>(Job.SelectedMarketBuildingId.GetValue()));
+				Item->SetNumberField(TEXT("roadDistanceCells"), Job.RoadDistanceCells);
+				Item->SetNumberField(TEXT("elapsedTravelTicks"), Job.ElapsedTravelTicks);
+				Item->SetNumberField(TEXT("remainingTravelTicks"), Job.RemainingTravelTicks);
+				TArray<TSharedPtr<FJsonValue>> RouteCells;
+				for (const FHansaGridCoordinate Cell : Job.RouteCells)
+				{
+					TSharedRef<FJsonObject> CellJson = MakeShared<FJsonObject>();
+					CellJson->SetNumberField(TEXT("x"), Cell.X);
+					CellJson->SetNumberField(TEXT("y"), Cell.Y);
+					RouteCells.Add(MakeShared<FJsonValueObject>(CellJson));
+				}
+				Item->SetArrayField(TEXT("routeCells"), MoveTemp(RouteCells));
+				Jobs.Add(MakeShared<FJsonValueObject>(Item));
+			}
+			OutPayload->SetArrayField(TEXT("jobs"), MoveTemp(Jobs));
+			return true;
+		}
+		if (Query == TEXT("logistics.path"))
+		{
+			int64 SourceValue = 0, DestinationValue = 0;
+			if (!Integral(Request, TEXT("sourceInventoryId"), SourceValue) || SourceValue <= 0 ||
+				!Integral(Request, TEXT("destinationInventoryId"), DestinationValue) || DestinationValue <= 0)
+			{ OutError = TEXT("logistics.path requires positive integral sourceInventoryId and destinationInventoryId."); return false; }
+			const auto SourceId = FHansaInventoryId::TryCreate(static_cast<uint64>(SourceValue));
+			const auto DestinationId = FHansaInventoryId::TryCreate(static_cast<uint64>(DestinationValue));
+			if (!SourceId || !DestinationId) { OutError = TEXT("logistics.path inventory identifiers are invalid."); return false; }
+			const FHansaLogisticsRoadPathProjection Path = Host->QueryLocalRoadPath(SourceId.Value, DestinationId.Value);
+			OutPayload->SetNumberField(TEXT("sourceInventoryId"), static_cast<double>(SourceValue));
+			OutPayload->SetNumberField(TEXT("destinationInventoryId"), static_cast<double>(DestinationValue));
+			OutPayload->SetStringField(TEXT("cityId"), Path.CityId.ToString());
+			OutPayload->SetBoolField(TEXT("connected"), Path.bConnected);
+			OutPayload->SetBoolField(TEXT("marketEligible"), Path.bMarketEligible);
+			OutPayload->SetNumberField(TEXT("selectedMarketBuildingId"), static_cast<double>(Path.SelectedMarketBuildingId.GetValue()));
+			OutPayload->SetStringField(TEXT("failure"), LexToString(Path.Failure));
+			OutPayload->SetStringField(TEXT("messageKey"), Path.MessageKey.ToString());
+			OutPayload->SetStringField(TEXT("remedyKey"), Path.RemedyKey.ToString());
+			OutPayload->SetNumberField(TEXT("roadDistanceCells"), Path.RoadDistanceCells);
+			TArray<TSharedPtr<FJsonValue>> RouteCells;
+			for (const FHansaGridCoordinate Cell : Path.RouteCells)
+			{
+				TSharedRef<FJsonObject> CellJson = MakeShared<FJsonObject>();
+				CellJson->SetNumberField(TEXT("x"), Cell.X);
+				CellJson->SetNumberField(TEXT("y"), Cell.Y);
+				RouteCells.Add(MakeShared<FJsonValueObject>(CellJson));
+			}
+			OutPayload->SetArrayField(TEXT("routeCells"), MoveTemp(RouteCells));
+			return true;
+		}
 		if (Query == TEXT("research.state"))
 		{
 			OutPayload->SetObjectField(TEXT("research"), ResearchJson(Projection.Value, Host->GetHouseId()));
@@ -347,7 +474,7 @@ namespace Hansa::Automation
 			}
 			return true;
 		}
-		OutError = TEXT("Strategic query is not allowlisted. Use strategic.summary, strategic.evidence, market.alerts, market.diagnosis, research.state, ai.decision_history, or scenario.progress.");
+		OutError = TEXT("Strategic query is not allowlisted. Use strategic.summary, strategic.evidence, building.*, logistics.*, market.alerts, market.diagnosis, research.state, ai.decision_history, or scenario.progress.");
 		return false;
 	}
 
@@ -370,6 +497,15 @@ namespace Hansa::Automation
 			Spec.Anchor = {static_cast<int32>(X), static_cast<int32>(Y)};
 			Result = Host->PlaceBuildings(MakeArrayView(&Spec, 1));
 		}
+		else if (CommandName == TEXT("building.remove"))
+		{
+			int64 BuildingValue = 0;
+			if (!Integral(Request, TEXT("buildingId"), BuildingValue) || BuildingValue <= 0)
+			{ OutError = TEXT("building.remove requires a positive integral buildingId."); return false; }
+			const auto BuildingId = FHansaBuildingId::TryCreate(static_cast<uint64>(BuildingValue));
+			if (!BuildingId) { OutError = TEXT("building.remove buildingId is invalid."); return false; }
+			Result = Host->RemoveBuilding(BuildingId.Value);
+		}
 		else if (CommandName == TEXT("route.set_active"))
 		{
 			int64 RouteValue = 0; bool bActive = false;
@@ -385,7 +521,7 @@ namespace Hansa::Automation
 			if (!Request->TryGetStringField(TEXT("technologyId"), TechnologyId)) { OutError = TEXT("research.queue requires technologyId."); return false; }
 			Result = Host->QueueResearch(TechnologyId);
 		}
-		else { OutError = TEXT("Strategic command is not allowlisted. Use building.place, route.set_active, or research.queue."); return false; }
+		else { OutError = TEXT("Strategic command is not allowlisted. Use building.place, building.remove, route.set_active, or research.queue."); return false; }
 		if (!Result) { OutError = FString::Printf(TEXT("Authoritative gameplay gateway rejected %s: %s."), *CommandName, LexToString(Result.GetError())); return false; }
 		OutPayload = MakeSummary();
 		OutPayload->SetStringField(TEXT("command"), CommandName);

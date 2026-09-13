@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "task": "EMVP-P31",
+  "status": "staged-review-candidate",
+  "productionApproved": false,
+  "historicalPeriod": "late-medieval Hanseatic trade city",
+  "interpretation": "Compact inferred market-to-Warnow trade quarter; not cadastral, surveyed or exact medieval reconstruction",
+  "sources": [
+    {
+      "url": "https://www.rostock.de/entdecken/stadt",
+      "publisher": "Tourismuszentrale Rostock & Warnemuende",
+      "accessed": "2026-09-09",
+      "use": "1218 town rights; three towns united 1265; merchant/craft settlement on left Warnow bank; harbor/market/storage connections"
+    },
+    {
+      "url": "https://rathaus.rostock.de/media/4984/Auslobung_Rostock_Stadthafen_klein.pdf",
+      "publisher": "Hansestadt Rostock",
+      "published": "2014",
+      "accessed": "2026-09-09",
+      "use": "Section 2.2.2 historic harbor development; distinguish later harbor changes"
+    }
+  ],
+  "crs": null,
+  "verticalDatum": "Local gameplay centimeters; not sea-level datum",
+  "surveyAssetsConsumed": false,
+  "sourceRaster": null,
+  "rasterResampled": false,
+  "landscape": {
+    "vertices": [
+      253,
+      253
+    ],
+    "components": 16,
+    "sectionQuads": 63,
+    "xyScaleCm": 250,
+    "zScale": 25,
+    "extentM": [
+      630,
+      630
+    ],
+    "localMinimumCm": [
+      -31500,
+      -31500
+    ],
+    "landHeightCm": 100,
+    "inferredBedHeightCm": -450,
+    "editLayer": "Interpreted_TradeQuarter",
+    "locked": true
+  },
+  "water": {
+    "actor": "AWaterBodyCustom",
+    "zone": "AWaterZone",
+    "heightCm": -125,
+    "extentM": [
+      630,
+      630
+    ],
+    "meshTriangles": 2,
+    "scale": [
+      1,
+      1,
+      1
+    ],
+    "carving": false,
+    "buoyancy": false,
+    "material": "Native SingleLayerWater with bounded procedural normals; no raster"
+  },
+  "streaming": {
+    "kind": "Conventional asynchronous level instance",
+    "offsetCm": [
+      60000,
+      0,
+      0
+    ],
+    "offsetIsGeography": false,
+    "maxLoadedQuarterInstances": 1,
+    "maxVisibleOwnCargoVessels": 8
+  },
+  "assets": {
+    "stage": "/Game/Hansa/Generated/Staging/Rostock_P31",
+    "productionTarget": "/Game/Hansa/World/Cities/Rostock/L_Rostock_Quarter",
+    "productionTargetExists": false,
+    "reference": "Docs/Images/UI/RostockP31/rostock--quarter-reference--default--1536x1024--v1.png",
+    "referenceDimensions": [
+      1536,
+      1024
+    ],
+    "referenceMode": "built-in ImageGen",
+    "shippingRasters": []
+  },
+  "prerequisites": [
+    "Approved P06 residences, P08 market, P09 mill, P10 bakery, P17 harbor, P18 street textures, P19 Cog"
+  ],
+  "limitations": [
+    "P16 warehouse building unavailable: labeled handling yard supplies warehouse context",
+    "P20 vegetation absent; ground is interim bare loam",
+    "Existing Rostock survey files preserved and unused",
+    "No measured bathymetry or licensing claim for survey inputs; no source imagery redistributed"
+  ]
+}

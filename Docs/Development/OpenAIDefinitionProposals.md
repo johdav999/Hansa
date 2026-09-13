@@ -1,5 +1,7 @@
 # OpenAI definition proposals
 
+Building schema v4 exposes `bProvidesMarketAccess` as a strict boolean proposal field with its current value in `baseValues`. It is marked `HansaAIAccess=Generate` and `HansaMigration=RequiresMigration`; generated changes remain drafts and pass the normal schema, reference, temporary-registry, diff, approval, apply, and undo flow. The mock proposal contract test proves the field is present and type-checked without making a live provider call or mutating the selected asset.
+
 S12-P03 adds an optional OpenAI Responses API adapter to the external `Tools/HansaGenerationWorker` process. Unreal runtime modules never load the adapter or receive its credential. The adapter is advertised only when every required worker environment value is present:
 
 ```text

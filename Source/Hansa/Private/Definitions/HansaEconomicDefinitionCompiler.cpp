@@ -189,6 +189,63 @@ namespace Hansa::Game::EconomicCompiler
 	}
 }
 
+FString FHansaEconomicRegistryCompileResult::DescribeRegistryHashMismatch(
+	const uint64 ExpectedRegistryHash,
+	const TArray<FHansaEconomicDefinitionHashEvidence>& ExpectedDefinitions) const
+{
+	const auto Key = [](const FHansaEconomicDefinitionHashEvidence& Evidence)
+	{
+		return Evidence.DefinitionClassPath + TEXT("|") + Evidence.StableId;
+	};
+	TMap<FString, const FHansaEconomicDefinitionHashEvidence*> ExpectedByKey;
+	TMap<FString, const FHansaEconomicDefinitionHashEvidence*> ActualByKey;
+	for (const FHansaEconomicDefinitionHashEvidence& Evidence : ExpectedDefinitions)
+	{
+		ExpectedByKey.Add(Key(Evidence), &Evidence);
+	}
+	for (const FHansaEconomicDefinitionHashEvidence& Evidence : DefinitionHashes)
+	{
+		ActualByKey.Add(Key(Evidence), &Evidence);
+	}
+
+	TArray<FString> Differences;
+	for (const FHansaEconomicDefinitionHashEvidence& Expected : ExpectedDefinitions)
+	{
+		const FHansaEconomicDefinitionHashEvidence* const* Actual = ActualByKey.Find(Key(Expected));
+		if (Actual == nullptr)
+		{
+			Differences.Add(FString::Printf(TEXT("missing %s (%s), expected %016llX"),
+				*Expected.StableId, *Expected.DefinitionClassPath,
+				static_cast<unsigned long long>(Expected.ContentHash)));
+		}
+		else if ((*Actual)->ContentHash != Expected.ContentHash)
+		{
+			Differences.Add(FString::Printf(TEXT("changed %s (%s): expected %016llX, actual %016llX"),
+				*Expected.StableId, *Expected.DefinitionClassPath,
+				static_cast<unsigned long long>(Expected.ContentHash),
+				static_cast<unsigned long long>((*Actual)->ContentHash)));
+		}
+	}
+	for (const FHansaEconomicDefinitionHashEvidence& Actual : DefinitionHashes)
+	{
+		if (!ExpectedByKey.Contains(Key(Actual)))
+		{
+			Differences.Add(FString::Printf(TEXT("unexpected %s (%s), actual %016llX"),
+				*Actual.StableId, *Actual.DefinitionClassPath,
+				static_cast<unsigned long long>(Actual.ContentHash)));
+		}
+	}
+	Differences.Sort();
+	if (Differences.IsEmpty())
+	{
+		Differences.Add(TEXT("no per-definition fingerprint differs; registry row serialization or aggregation changed"));
+	}
+	return FString::Printf(TEXT("Registry hash mismatch: expected %016llX, actual %016llX. %s."),
+		static_cast<unsigned long long>(ExpectedRegistryHash),
+		static_cast<unsigned long long>(Registry.GetRegistryHash()),
+		*FString::Join(Differences, TEXT("; ")));
+}
+
 FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 	const TArray<const UHansaDefinitionBase*>& Definitions)
 {
@@ -340,6 +397,19 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-007"), Building->StableDefinitionId + TEXT(".UpgradeTargetBuildingId"),
 					FText::Format(NSLOCTEXT("HansaEconomicCompiler", "MissingUpgradeBuilding", "Upgrade target {0} is missing."), FText::FromString(Building->UpgradeTargetBuildingId)),
 					NSLOCTEXT("HansaEconomicCompiler", "MissingUpgradeBuildingRemedy", "Add the target Building definition or clear/correct the upgrade reference."));
+			}
+			if (!Building->ConstructionChainOutputGoodId.IsEmpty() && !GoodIds.Contains(Building->ConstructionChainOutputGoodId))
+			{
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-036"), Building->StableDefinitionId + TEXT(".ConstructionChainOutputGoodId"),
+					FText::Format(NSLOCTEXT("HansaEconomicCompiler", "MissingConstructionChainGood", "Construction chain references missing final output {0}."), FText::FromString(Building->ConstructionChainOutputGoodId)),
+					NSLOCTEXT("HansaEconomicCompiler", "MissingConstructionChainGoodRemedy", "Add the referenced Good definition or correct the construction-chain output."));
+			}
+			if (!Building->RequiredConstructionTechnologyId.IsEmpty() &&
+				!TechnologyIds.Contains(Building->RequiredConstructionTechnologyId))
+			{
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-037"), Building->StableDefinitionId + TEXT(".RequiredConstructionTechnologyId"),
+					FText::Format(NSLOCTEXT("HansaEconomicCompiler", "MissingConstructionTechnology", "Construction card references missing technology {0}."), FText::FromString(Building->RequiredConstructionTechnologyId)),
+					NSLOCTEXT("HansaEconomicCompiler", "MissingConstructionTechnologyRemedy", "Add the referenced Technology definition or clear the construction unlock."));
 			}
 			if ((Building->ResidenceCapacity > 0 && !PopulationTierIds.Contains(Building->ResidentPopulationTierId)) ||
 				(Building->ResidenceCapacity == 0 && !Building->ResidentPopulationTierId.IsEmpty()))
@@ -601,6 +671,48 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			NSLOCTEXT("HansaEconomicCompiler", "TierBaseCountRemedy", "Clear PreviousTierId on exactly one lowest tier and link all others toward it."));
 	}
 	ValidateProductionGraph(SortedDefinitions, GoodIds, Result.Issues);
+	TMap<FString, TArray<const UHansaBuildingDefinition*>> ConstructionChains;
+	TSet<FString> UpgradeTargets;
+	for (const UHansaDefinitionBase* Definition : SortedDefinitions)
+	{
+		if (const UHansaBuildingDefinition* Building = Cast<UHansaBuildingDefinition>(Definition))
+		{
+			if (!Building->ConstructionChainOutputGoodId.IsEmpty())
+			{
+				ConstructionChains.FindOrAdd(Building->ConstructionChainOutputGoodId).Add(Building);
+			}
+			if (!Building->UpgradeTargetBuildingId.IsEmpty()) UpgradeTargets.Add(Building->UpgradeTargetBuildingId);
+		}
+	}
+	for (const TPair<FString, TArray<const UHansaBuildingDefinition*>>& Pair : ConstructionChains)
+	{
+		const int32 ExpectedCount = Pair.Value[0]->ConstructionChainStageCount;
+		TSet<int32> Stages;
+		bool bConsistentCount = ExpectedCount > 0;
+		for (const UHansaBuildingDefinition* Building : Pair.Value)
+		{
+			bConsistentCount &= Building->ConstructionChainStageCount == ExpectedCount;
+			Stages.Add(Building->ConstructionChainStage);
+		}
+		bool bComplete = bConsistentCount && Pair.Value.Num() == ExpectedCount && Stages.Num() == ExpectedCount;
+		for (int32 Stage = 1; Stage <= ExpectedCount && bComplete; ++Stage) bComplete &= Stages.Contains(Stage);
+		if (!bComplete)
+		{
+			AddIssue(Result.Issues, TEXT("HSA-REGISTRY-038"), Pair.Key + TEXT(".ConstructionChain"),
+				FText::Format(NSLOCTEXT("HansaEconomicCompiler", "IncompleteConstructionChain", "Construction chain {0} is missing a member, duplicates a stage, or disagrees about its expected size."), FText::FromString(Pair.Key)),
+				NSLOCTEXT("HansaEconomicCompiler", "IncompleteConstructionChainRemedy", "Provide exactly one visible building for every authored stage from one through the shared stage count."));
+		}
+	}
+	for (const UHansaDefinitionBase* Definition : SortedDefinitions)
+	{
+		const UHansaBuildingDefinition* Building = Cast<UHansaBuildingDefinition>(Definition);
+		if (Building != nullptr && Building->bUpgradeOnly && !UpgradeTargets.Contains(Building->StableDefinitionId))
+		{
+			AddIssue(Result.Issues, TEXT("HSA-REGISTRY-039"), Building->StableDefinitionId + TEXT(".bUpgradeOnly"),
+				NSLOCTEXT("HansaEconomicCompiler", "UnreachableUpgradeOnlyBuilding", "An upgrade-only construction card is not the target of another building definition."),
+				NSLOCTEXT("HansaEconomicCompiler", "UnreachableUpgradeOnlyBuildingRemedy", "Add the authored upgrade reference or allow direct construction."));
+		}
+	}
 	if (!TechnologyIds.IsEmpty())
 	{
 		TArray<Hansa::Simulation::FHansaCompiledTechnologyDefinition> GraphTechnologies;
@@ -649,6 +761,11 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 	for (const UHansaDefinitionBase* Definition : SortedDefinitions)
 	{
 		const uint64 ContentHash = Definition->ComputeDeterministicContentHash();
+		Result.DefinitionHashes.Add({
+			Definition->GetClass()->GetPathName(),
+			Definition->StableDefinitionId,
+			ContentHash
+		});
 		RegistryCanonicalData += FString::Printf(
 			TEXT("%s|%s|%llu\n"),
 			*Definition->GetClass()->GetPathName(),
@@ -657,14 +774,15 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 
 		if (const UHansaGoodDefinition* Good = Cast<UHansaGoodDefinition>(Definition))
 		{
-			CompiledGoods.Add({
-				Good->StableDefinitionId,
-				StaticEnum<EHansaGoodUnit>()->GetNameStringByValue(static_cast<int64>(Good->QuantityUnit)),
-				Good->BaseValueMilliMarks,
-				Good->PriceElasticityBasisPoints,
-				Good->SpoilageBasisPointsPerDay,
-				ContentHash
-			});
+			Hansa::Simulation::FHansaCompiledGoodDefinition Compiled;
+			Compiled.StableId = Good->StableDefinitionId;
+			Compiled.Unit = StaticEnum<EHansaGoodUnit>()->GetNameStringByValue(static_cast<int64>(Good->QuantityUnit));
+			Compiled.BaseValueMilliMarks = Good->BaseValueMilliMarks;
+			Compiled.PriceElasticityBasisPoints = Good->PriceElasticityBasisPoints;
+			Compiled.SpoilageBasisPointsPerDay = Good->SpoilageBasisPointsPerDay;
+			Compiled.ContentHash = ContentHash;
+			Compiled.DisplayName = Good->DisplayName.ToString();
+			CompiledGoods.Add(MoveTemp(Compiled));
 		}
 		else if (const UHansaRecipeDefinition* Recipe = Cast<UHansaRecipeDefinition>(Definition))
 		{
@@ -684,6 +802,8 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 		{
 			Hansa::Simulation::FHansaCompiledBuildingDefinition Compiled;
 			Compiled.StableId = Building->StableDefinitionId;
+			Compiled.SchemaVersion = Building->SchemaVersion;
+			Compiled.DisplayName = Building->DisplayName.ToString();
 			Compiled.ConstructionCosts = CompileAmounts(Building->ConstructionCosts);
 			Compiled.ConstructionCostPfennig = Building->ConstructionCostPfennig;
 			Compiled.CancellationRefundBasisPoints = Building->CancellationRefundBasisPoints;
@@ -699,7 +819,21 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			Compiled.LaborerWorkforce = Building->LaborerWorkforce;
 			Compiled.ArtisanWorkforce = Building->ArtisanWorkforce;
 			Compiled.bRequiresRoad = Building->bRequiresRoad;
+			// Schema v3 used the canonical Market identity before the capability became authored.
+			Compiled.bProvidesMarketAccess = Building->SchemaVersion >= 4
+				? Building->bProvidesMarketAccess
+				: Building->StableDefinitionId == TEXT("Building.Market");
 			Compiled.bRequiresShoreline = Building->bRequiresShoreline;
+			Compiled.bShowInConstructionMenu = Building->bShowInConstructionMenu;
+			Compiled.ConstructionMenuCategory = StaticEnum<EHansaConstructionMenuCategory>()->GetNameStringByValue(
+				static_cast<int64>(Building->ConstructionMenuCategory));
+			Compiled.ConstructionMenuOrder = Building->ConstructionMenuOrder;
+			Compiled.ConstructionChainOutputGoodId = Building->ConstructionChainOutputGoodId;
+			Compiled.ConstructionChainStage = Building->ConstructionChainStage;
+			Compiled.ConstructionChainStageCount = Building->ConstructionChainStageCount;
+			Compiled.RequiredConstructionTechnologyId = Building->RequiredConstructionTechnologyId;
+			Compiled.bUpgradeOnly = Building->bUpgradeOnly;
+			Compiled.ConstructionPresentationPurpose = Building->ConstructionPresentationPurpose.ToString();
 			Compiled.ContentHash = ContentHash;
 			CompiledBuildings.Add(MoveTemp(Compiled));
 		}

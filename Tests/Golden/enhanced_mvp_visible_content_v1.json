@@ -1,0 +1,3781 @@
+{
+  "schemaVersion": 1,
+  "manifestId": "EnhancedMvp.VisibleContent.v1",
+  "goldenSessionId": "Scenario.LubeckGrainShortageV1",
+  "auditAsOf": "2026-09-07",
+  "sourceDocuments": [
+    "Docs/MVP.md",
+    "Docs/MVP-enhanced.md",
+    "Docs/UIDesignBrief.md",
+    "Docs/UIAssetWorkflow.md",
+    "Docs/EditorArchitecture.md",
+    "Docs/EditorMVP.md"
+  ],
+  "statusVocabulary": {
+    "production-ready": "Promoted with accepted proof.",
+    "native-production": "Final native UI with complete proof.",
+    "unverified-production": "Production path exists; proof incomplete.",
+    "prototype-native": "Functional native implementation, not final presentation.",
+    "reference-only": "Non-shipping reference.",
+    "staging-only": "Forbidden staging content.",
+    "engine-placeholder": "Forbidden Engine primitive.",
+    "missing": "No current presentation.",
+    "not-shown": "Explicitly excluded."
+  },
+  "requiredCategories": [
+    "world",
+    "building",
+    "construction-stage",
+    "road",
+    "ship",
+    "cart",
+    "citizen",
+    "harbor-equipment",
+    "production-prop",
+    "cargo-prop",
+    "vegetation",
+    "street-dressing",
+    "water-shore",
+    "effect",
+    "icon",
+    "cursor",
+    "overlay",
+    "frontend-screen",
+    "hud-panel",
+    "management-screen",
+    "modal-screen",
+    "ui-state"
+  ],
+  "goldenPathPresentationDefinitions": [
+    "Building.Road",
+    "Building.Residence.Laborer",
+    "Building.Residence.Artisan",
+    "Building.Market",
+    "Building.Warehouse",
+    "Building.Dock",
+    "Building.GrainFarm",
+    "Building.Mill",
+    "Building.Bakery",
+    "Building.Brewery",
+    "Building.Fishery",
+    "Building.LumberCamp",
+    "Building.Sawmill",
+    "Vehicle.Cog",
+    "Vehicle.Wagon",
+    "Good.Grain",
+    "Good.Flour",
+    "Good.Bread",
+    "Good.Fish",
+    "Good.Salt",
+    "Good.Timber",
+    "Good.Planks",
+    "Good.Iron",
+    "Good.Tools",
+    "Good.Beer"
+  ],
+  "requiredScreenIds": [
+    "Screen.Frontend.Title",
+    "Screen.Frontend.NewGame",
+    "Screen.Frontend.Continue",
+    "Screen.Frontend.SaveLoad",
+    "Screen.Frontend.Settings",
+    "Screen.Frontend.Credits",
+    "Screen.Frontend.Loading",
+    "Screen.HUD.Root",
+    "Screen.HUD.BuildMenu",
+    "Screen.HUD.WorldPlacement",
+    "Screen.HUD.RoadTool",
+    "Screen.HUD.ContextInspector",
+    "Screen.CityOverview",
+    "Screen.Market",
+    "Screen.TradeMapRouteCreator",
+    "Screen.Research",
+    "Screen.Scenario",
+    "Screen.Onboarding",
+    "Screen.Results",
+    "Screen.Pause",
+    "Screen.Modal.Confirmation",
+    "Screen.Modal.Demolition",
+    "Screen.Modal.SaveOverwrite"
+  ],
+  "requiredNativeResolutions": [
+    {
+      "stableId": "Resolution.1280x720",
+      "width": 1280,
+      "height": 720,
+      "uiScale": 1,
+      "nativeCaptureRequired": true,
+      "rasterResamplingAllowed": false
+    },
+    {
+      "stableId": "Resolution.1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "uiScale": 1,
+      "nativeCaptureRequired": true,
+      "rasterResamplingAllowed": false
+    }
+  ],
+  "responsiveVerification": [
+    "16:10",
+    "21:9",
+    "32:9",
+    "windowed",
+    "UI scale 80%",
+    "UI scale 140%"
+  ],
+  "entries": [
+    {
+      "stableId": "World.Region.Lubeck",
+      "category": "world",
+      "owningDefinition": "Region.Lubeck.Mvp",
+      "presentationRole": "Buildable Lübeck, harbor, and readable plots",
+      "currentReference": "/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP.L_Lubeck_MVP",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP",
+      "deliveryPrompt": "EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "World.Region.Rostock",
+      "category": "world",
+      "owningDefinition": "City.Rostock",
+      "presentationRole": "Rendered prebuilt, inspectable, tradeable Rostock",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/World/Cities/Rostock/L_Rostock_MVP",
+      "deliveryPrompt": "EMVP-P31",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Road",
+      "category": "road",
+      "owningDefinition": "Building.Road",
+      "presentationRole": "Final neighbor-selected road; 1x1 footprint",
+      "currentReference": "/Game/Mesh/hansa-dirt-road/BP_Road_Review.BP_Road_Review_C",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-dirt-road/BP_Road_Review",
+      "deliveryPrompt": "EMVP-P18",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Accepted: Docs/Development/Evidence/P18ApprovedPromotion-20260908.json",
+        "Accepted: SourceArt/Generated/Roads/HansaRoad_P18_20260908/EVALUATION.md",
+        "Accepted: road command/preview journey and native Unreal kit/ground captures",
+        "Accepted: Shipping binary and expanded cooked-package audits; not final IoStore release"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Residence.Laborer",
+      "category": "building",
+      "owningDefinition": "Building.Residence.Laborer",
+      "presentationRole": "Laborer residence; 2x2 footprint",
+      "currentReference": "/Game/Mesh/hansa-residences/BP_Residence_Laborer_Review.BP_Residence_Laborer_Review_C",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-residences/BP_Residence_Laborer_Review.BP_Residence_Laborer_Review_C",
+      "deliveryPrompt": "EMVP-P14",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Residence.Artisan",
+      "category": "building",
+      "owningDefinition": "Building.Residence.Artisan",
+      "presentationRole": "Artisan upgrade state; 2x2 footprint",
+      "currentReference": "/Game/Mesh/hansa-residences/BP_Residence_Artisan_Review.BP_Residence_Artisan_Review_C",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-residences/BP_Residence_Artisan_Review.BP_Residence_Artisan_Review_C",
+      "deliveryPrompt": "EMVP-P14",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Market",
+      "category": "building",
+      "owningDefinition": "Building.Market",
+      "presentationRole": "Civic market; 3x3 footprint",
+      "currentReference": "/Game/Mesh/hansa-market/BP_Market_Review.BP_Market_Review_C",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-market/BP_Market_Review.BP_Market_Review_C",
+      "deliveryPrompt": "EMVP-P15",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Warehouse",
+      "category": "building",
+      "owningDefinition": "Building.Warehouse",
+      "presentationRole": "Logistics warehouse; 4x3 footprint",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-warehouse/SM_HansaWarehouse",
+      "deliveryPrompt": "EMVP-P16",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Dock",
+      "category": "building",
+      "owningDefinition": "Building.Dock",
+      "presentationRole": "Shore-facing dock; 5x3 shore footprint",
+      "currentReference": "/Game/Mesh/hansa-harbor/BP_Harbor_Review.BP_Harbor_Review_C",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-harbor/SM_HansaDock_*",
+      "deliveryPrompt": "EMVP-P17",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.GrainFarm",
+      "category": "building",
+      "owningDefinition": "Building.GrainFarm",
+      "presentationRole": "Grain farm; 4x4 footprint",
+      "currentReference": "/Script/Hansa.HansaGrainFarmPresentation",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaGrainFarm",
+      "deliveryPrompt": "EMVP-P08",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Mill",
+      "category": "building",
+      "owningDefinition": "Building.Mill",
+      "presentationRole": "Animated mill; 3x3 footprint",
+        "currentReference": "/Game/Hansa/Core/Buildings/BP_HansaWindmill_Animated.BP_HansaWindmill_Animated_C",
+        "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Hansa/Core/Buildings/BP_HansaWindmill_Animated",
+      "deliveryPrompt": "EMVP-P09",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Bakery",
+      "category": "building",
+      "owningDefinition": "Building.Bakery",
+      "presentationRole": "Bakery; 3x2 footprint",
+      "currentReference": "/Script/Hansa.HansaBakeryPresentation",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery",
+      "deliveryPrompt": "EMVP-P10",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Fishery",
+      "category": "building",
+      "owningDefinition": "Building.Fishery",
+      "presentationRole": "Shore-facing fishery; 3x2 shore footprint",
+      "currentReference": "/Game/Mesh/hansa-fishery/SM_HansaFishery.SM_HansaFishery",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-fishery/SM_HansaFishery",
+      "deliveryPrompt": "EMVP-P11",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.LumberCamp",
+      "category": "building",
+      "owningDefinition": "Building.LumberCamp",
+      "presentationRole": "Lumber camp; 3x3 footprint",
+      "currentReference": "/Game/Mesh/hansa-lumber-camp/BP_LumberCamp_Review.BP_LumberCamp_Review_C",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-lumber-camp/BP_LumberCamp_Review.BP_LumberCamp_Review_C",
+      "deliveryPrompt": "EMVP-P12",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Sawmill",
+      "category": "building",
+      "owningDefinition": "Building.Sawmill",
+      "presentationRole": "Sawmill; 4x3 footprint",
+      "currentReference": "/Game/Mesh/hansa-sawmill/BP_Sawmill_Review.BP_Sawmill_Review_C",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-sawmill/BP_Sawmill_Review.BP_Sawmill_Review_C",
+      "deliveryPrompt": "EMVP-P13",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Smithy.Excluded",
+      "category": "building",
+      "owningDefinition": "Building.Smithy",
+      "presentationRole": "Compatibility-only; prohibited from golden construction catalog",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "not-shown",
+      "intendedCanonicalPath": "none",
+      "deliveryPrompt": "EMVP-P03",
+      "goldenPath": false,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Negative build-catalog assertion"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Building.Brewery",
+      "category": "building",
+      "owningDefinition": "Building.Brewery",
+      "presentationRole": "Approved beer-production brewery; full-scale 4x4-cell parcel",
+      "currentReference": "/Game/Mesh/hansa-brewery-huexstrasse128/Production/SM_HansaBrewery_Production.SM_HansaBrewery_Production",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-brewery-huexstrasse128/Production/SM_HansaBrewery_Production",
+      "deliveryPrompt": "Brewery promotion approved by Johan 2026-09-12",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Hansa.UI.World.BreweryProductionPresentation and Hansa.Integration.Authoring.EconomicAssetReload"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Construction.Ghost",
+      "category": "construction-stage",
+      "owningDefinition": "none",
+      "presentationRole": "Authored mesh ghost: valid/warning/invalid",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "native:placement ghost + /Game/Hansa/Materials/Placement",
+      "deliveryPrompt": "EMVP-P04",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Construction.Foundation",
+      "category": "construction-stage",
+      "owningDefinition": "none",
+      "presentationRole": "Early foundation stage",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-construction/SM_HansaFoundation_*",
+      "deliveryPrompt": "EMVP-P07",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Construction.Scaffold",
+      "category": "construction-stage",
+      "owningDefinition": "none",
+      "presentationRole": "Mid-construction scaffold stage",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-construction/SM_HansaScaffold_*",
+      "deliveryPrompt": "EMVP-P07",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Construction.Complete",
+      "category": "construction-stage",
+      "owningDefinition": "none",
+      "presentationRole": "Completed model and restrained settle",
+      "currentReference": "Source/Hansa/Private/World/HansaBuildingWorldProjection.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:building projection + completion effect",
+      "deliveryPrompt": "EMVP-P06; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Construction.Selection",
+      "category": "construction-stage",
+      "owningDefinition": "none",
+      "presentationRole": "Selection outline and non-color status",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "native:selection outline + /Game/Hansa/UI/WorldMarkers",
+      "deliveryPrompt": "EMVP-P06; EMVP-P21",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Road.Preview",
+      "category": "road",
+      "owningDefinition": "Building.Road",
+      "presentationRole": "Live path/cost/per-cell validity",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "native:road preview + /Game/Mesh/hansa-road",
+      "deliveryPrompt": "EMVP-P05",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Road.Straight",
+      "category": "road",
+      "owningDefinition": "Building.Road",
+      "presentationRole": "Straight",
+      "currentReference": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Straight.SM_HansaRoad_Straight",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Straight",
+      "deliveryPrompt": "EMVP-P18",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Accepted: Docs/Development/Evidence/P18ApprovedPromotion-20260908.json",
+        "Accepted: SourceArt/Generated/Roads/HansaRoad_P18_20260908/EVALUATION.md",
+        "Accepted: road command/preview journey and native Unreal kit/ground captures",
+        "Accepted: Shipping binary and expanded cooked-package audits; not final IoStore release"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Road.Corner",
+      "category": "road",
+      "owningDefinition": "Building.Road",
+      "presentationRole": "Corner",
+      "currentReference": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Corner.SM_HansaRoad_Corner",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Corner",
+      "deliveryPrompt": "EMVP-P18",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Accepted: Docs/Development/Evidence/P18ApprovedPromotion-20260908.json",
+        "Accepted: SourceArt/Generated/Roads/HansaRoad_P18_20260908/EVALUATION.md",
+        "Accepted: road command/preview journey and native Unreal kit/ground captures",
+        "Accepted: Shipping binary and expanded cooked-package audits; not final IoStore release"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Road.TJunction",
+      "category": "road",
+      "owningDefinition": "Building.Road",
+      "presentationRole": "T-junction",
+      "currentReference": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_TJunction.SM_HansaRoad_TJunction",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_TJunction",
+      "deliveryPrompt": "EMVP-P18",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Accepted: Docs/Development/Evidence/P18ApprovedPromotion-20260908.json",
+        "Accepted: SourceArt/Generated/Roads/HansaRoad_P18_20260908/EVALUATION.md",
+        "Accepted: road command/preview journey and native Unreal kit/ground captures",
+        "Accepted: Shipping binary and expanded cooked-package audits; not final IoStore release"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Road.Crossroads",
+      "category": "road",
+      "owningDefinition": "Building.Road",
+      "presentationRole": "Crossroads",
+      "currentReference": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Crossroads.SM_HansaRoad_Crossroads",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Crossroads",
+      "deliveryPrompt": "EMVP-P18",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Accepted: Docs/Development/Evidence/P18ApprovedPromotion-20260908.json",
+        "Accepted: SourceArt/Generated/Roads/HansaRoad_P18_20260908/EVALUATION.md",
+        "Accepted: road command/preview journey and native Unreal kit/ground captures",
+        "Accepted: Shipping binary and expanded cooked-package audits; not final IoStore release"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Road.Isolated",
+      "category": "road",
+      "owningDefinition": "Building.Road",
+      "presentationRole": "Isolated unconnected cell; no false ports",
+      "currentReference": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Isolated.SM_HansaRoad_Isolated",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Isolated",
+      "deliveryPrompt": "EMVP-P18",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Accepted: Docs/Development/Evidence/P18ApprovedPromotion-20260908.json",
+        "Accepted: SourceArt/Generated/Roads/HansaRoad_P18_20260908/EVALUATION.md",
+        "Accepted: road command/preview journey and native Unreal kit/ground captures",
+        "Accepted: Shipping binary and expanded cooked-package audits; not final IoStore release"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Road.End",
+      "category": "road",
+      "owningDefinition": "Building.Road",
+      "presentationRole": "Road end",
+      "currentReference": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_End.SM_HansaRoad_End",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_End",
+      "deliveryPrompt": "EMVP-P18",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Accepted: Docs/Development/Evidence/P18ApprovedPromotion-20260908.json",
+        "Accepted: SourceArt/Generated/Roads/HansaRoad_P18_20260908/EVALUATION.md",
+        "Accepted: road command/preview journey and native Unreal kit/ground captures",
+        "Accepted: Shipping binary and expanded cooked-package audits; not final IoStore release"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Road.Transition",
+      "category": "road",
+      "owningDefinition": "Building.Road",
+      "presentationRole": "MVP land-to-shore grade: 1 m approach to the 10 cm rise; no gate-specific MVP placement rule",
+      "currentReference": "/Game/Mesh/hansa-dirt-road/Materials/M_Road_Earth.M_Road_Earth",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-dirt-road/Materials/M_Road_Earth",
+      "deliveryPrompt": "EMVP-P18",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Accepted: Docs/Development/Evidence/P18ApprovedPromotion-20260908.json",
+        "Accepted: SourceArt/Generated/Roads/HansaRoad_P18_20260908/EVALUATION.md",
+        "Accepted: road command/preview journey and native Unreal kit/ground captures",
+        "Accepted: Shipping binary and expanded cooked-package audits; not final IoStore release"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Vehicle.Cog",
+      "category": "ship",
+      "owningDefinition": "Vehicle.Cog",
+      "presentationRole": "Sea-route departure/travel/berth/load/unload",
+      "currentReference": "/Game/Mesh/hansa-vehicles/BP_Cog_Review.BP_Cog_Review_C",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-vehicles/BP_Cog_Review",
+      "deliveryPrompt": "EMVP-P19; EMVP-P32",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Vehicle.Wagon",
+      "category": "cart",
+      "owningDefinition": "Vehicle.Wagon",
+      "presentationRole": "Local cargo delivery projection",
+      "currentReference": "/Game/Mesh/hansa-vehicles/BP_Wagon_Review.BP_Wagon_Review_C",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-vehicles/BP_Wagon_Review",
+      "deliveryPrompt": "EMVP-P19; EMVP-P32",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "PresentationMeshOrActor",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Citizen.Policy",
+      "category": "citizen",
+      "owningDefinition": "PopulationTier.Laborer",
+      "presentationRole": "No individual citizens; cohort/UI population only",
+      "currentReference": "none",
+      "status": "not-shown",
+      "intendedCanonicalPath": "none",
+      "deliveryPrompt": "EMVP-P00",
+      "goldenPath": false,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Negative citizen Actor audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Harbor.Quay",
+      "category": "harbor-equipment",
+      "owningDefinition": "Building.Dock",
+      "presentationRole": "Quay edges/corners",
+      "currentReference": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaQuay_Edge4m.SM_HansaQuay_Edge4m",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-harbor/SM_HansaQuay_*",
+      "deliveryPrompt": "EMVP-P17",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Harbor.PierLanding",
+      "category": "harbor-equipment",
+      "owningDefinition": "Building.Dock",
+      "presentationRole": "Pier/landing/steps/ramp",
+      "currentReference": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaDock_Deck4m.SM_HansaDock_Deck4m",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-harbor/SM_HansaPier_*",
+      "deliveryPrompt": "EMVP-P17",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Harbor.Mooring",
+      "category": "harbor-equipment",
+      "owningDefinition": "Building.Dock",
+      "presentationRole": "Mooring and berth markers",
+      "currentReference": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaMooring_Post.SM_HansaMooring_Post",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-harbor/SM_HansaMooring_*",
+      "deliveryPrompt": "EMVP-P17",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Harbor.Hoist",
+      "category": "harbor-equipment",
+      "owningDefinition": "Building.Dock",
+      "presentationRole": "Crane/hoist",
+      "currentReference": "/Game/Mesh/hansa-harbor/Meshes/SM_HansaHarborHoist.SM_HansaHarborHoist",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-harbor/SM_HansaHarborHoist",
+      "deliveryPrompt": "EMVP-P17",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Harbor.BerthSockets",
+      "category": "harbor-equipment",
+      "owningDefinition": "Building.Dock",
+      "presentationRole": "Invisible berth/load alignment",
+      "currentReference": "/Script/Hansa.HansaHarborPresentation",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "native:Harbor.Berth.* components",
+      "deliveryPrompt": "EMVP-P17",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Grain.Fields",
+      "category": "production-prop",
+      "owningDefinition": "Building.GrainFarm",
+      "presentationRole": "Cultivated fields/edges",
+      "currentReference": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaGrainField_Center_Mature_4m",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaGrainField_*",
+      "deliveryPrompt": "EMVP-P08",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Grain.Work",
+      "category": "production-prop",
+      "owningDefinition": "Building.GrainFarm",
+      "presentationRole": "Farm tools/sheaves",
+      "currentReference": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaFarmProp_SheavesTools",
+      "status": "production-ready",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-grain-farm/Final/SM_HansaFarmProp_*",
+      "deliveryPrompt": "EMVP-P08",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Mill.Rotor",
+      "category": "production-prop",
+      "owningDefinition": "Building.Mill",
+      "presentationRole": "Animated rotor/sails",
+        "currentReference": "/Game/Mesh/hansa-mill/P09/Meshes/SM_Mill_Rotor.SM_Mill_Rotor",
+      "status": "production-ready",
+        "intendedCanonicalPath": "/Game/Mesh/hansa-mill/P09/Meshes/SM_Mill_Rotor.SM_Mill_Rotor",
+      "deliveryPrompt": "EMVP-P09",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Bakery.Input",
+      "category": "production-prop",
+      "owningDefinition": "Building.Bakery",
+      "presentationRole": "Flour sacks",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-bakery/Props/SM_HansaFlourSack_*",
+      "deliveryPrompt": "EMVP-P10",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Bakery.Output",
+      "category": "production-prop",
+      "owningDefinition": "Building.Bakery",
+      "presentationRole": "Bread crates",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-bakery/Props/SM_HansaBreadCrate_*",
+      "deliveryPrompt": "EMVP-P10",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Bakery.Sign",
+      "category": "production-prop",
+      "owningDefinition": "Building.Bakery",
+      "presentationRole": "Permanent symbol sign",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-bakery/Props/SM_HansaBakerySign",
+      "deliveryPrompt": "EMVP-P10",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Fishery.Work",
+      "category": "production-prop",
+      "owningDefinition": "Building.Fishery",
+      "presentationRole": "Landing/nets/racks",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-fishery/Props/SM_HansaFishery_*",
+      "deliveryPrompt": "EMVP-P11",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Fishery.Cargo",
+      "category": "production-prop",
+      "owningDefinition": "Building.Fishery",
+      "presentationRole": "Fish baskets/crates",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-fishery/Props/SM_HansaFishCargo_*",
+      "deliveryPrompt": "EMVP-P11",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Lumber.Input",
+      "category": "production-prop",
+      "owningDefinition": "Building.LumberCamp",
+      "presentationRole": "Logs/cut timber/tool shelter",
+      "currentReference": "/Game/Mesh/hansa-lumber-camp/BP_LumberCamp_Review.BP_LumberCamp_Review_C",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-lumber-camp/BP_LumberCamp_Review.BP_LumberCamp_Review_C",
+      "deliveryPrompt": "EMVP-P12",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Sawmill.Flow",
+      "category": "production-prop",
+      "owningDefinition": "Building.Sawmill",
+      "presentationRole": "Log/saw/plank states",
+      "currentReference": "/Game/Mesh/hansa-sawmill/BP_Sawmill_Review.BP_Sawmill_Review_C",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-sawmill/BP_Sawmill_Review.BP_Sawmill_Review_C",
+      "deliveryPrompt": "EMVP-P13",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Market.Trade",
+      "category": "production-prop",
+      "owningDefinition": "Building.Market",
+      "presentationRole": "Stalls/awnings/scales/baskets",
+      "currentReference": "/Game/Mesh/hansa-market/BP_Market_Review.BP_Market_Review_C",
+      "status": "unverified-production",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-market/BP_Market_Review.BP_Market_Review_C",
+      "deliveryPrompt": "EMVP-P15",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Prop.Warehouse.Transfer",
+      "category": "production-prop",
+      "owningDefinition": "Building.Warehouse",
+      "presentationRole": "Doors/hoist/transfer staging",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-warehouse/Props/SM_HansaWarehouse_*",
+      "deliveryPrompt": "EMVP-P16",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Cargo.Barrel",
+      "category": "cargo-prop",
+      "owningDefinition": "none",
+      "presentationRole": "Beer/fish/salt barrels",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-cargo/SM_HansaBarrel_*",
+      "deliveryPrompt": "EMVP-P15; EMVP-P16; EMVP-P17; EMVP-P20",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Cargo.Crate",
+      "category": "cargo-prop",
+      "owningDefinition": "none",
+      "presentationRole": "Bread/tools/iron crates",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-cargo/SM_HansaCrate_*",
+      "deliveryPrompt": "EMVP-P15; EMVP-P16; EMVP-P17; EMVP-P20",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Cargo.Sack",
+      "category": "cargo-prop",
+      "owningDefinition": "none",
+      "presentationRole": "Grain/flour sacks",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-cargo/SM_HansaSack_*",
+      "deliveryPrompt": "EMVP-P15; EMVP-P16; EMVP-P17; EMVP-P20",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Cargo.Timber",
+      "category": "cargo-prop",
+      "owningDefinition": "none",
+      "presentationRole": "Logs/planks modules",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-cargo/SM_HansaTimber_*",
+      "deliveryPrompt": "EMVP-P15; EMVP-P16; EMVP-P17; EMVP-P20",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Vegetation.Tree",
+      "category": "vegetation",
+      "owningDefinition": "none",
+      "presentationRole": "Northern trees",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-environment/Vegetation/SM_HansaTree_*",
+      "deliveryPrompt": "EMVP-P20; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Vegetation.GroundCover",
+      "category": "vegetation",
+      "owningDefinition": "none",
+      "presentationRole": "Sparse plot-safe cover",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-environment/Vegetation/SM_HansaGroundCover_*",
+      "deliveryPrompt": "EMVP-P20; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Vegetation.Shore",
+      "category": "vegetation",
+      "owningDefinition": "none",
+      "presentationRole": "Reeds/shore plants",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-environment/Vegetation/SM_HansaShore_*",
+      "deliveryPrompt": "EMVP-P20; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Street.Bench",
+      "category": "street-dressing",
+      "owningDefinition": "none",
+      "presentationRole": "Benches",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-city-life/SM_HansaBench_*",
+      "deliveryPrompt": "EMVP-P20; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Street.Well",
+      "category": "street-dressing",
+      "owningDefinition": "none",
+      "presentationRole": "Public well",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-city-life/SM_HansaWell_*",
+      "deliveryPrompt": "EMVP-P20; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Street.Sign",
+      "category": "street-dressing",
+      "owningDefinition": "none",
+      "presentationRole": "Symbol signs",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-city-life/SM_HansaSign_*",
+      "deliveryPrompt": "EMVP-P20; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Street.Fence",
+      "category": "street-dressing",
+      "owningDefinition": "none",
+      "presentationRole": "Fences/gates",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-city-life/SM_HansaFence_*",
+      "deliveryPrompt": "EMVP-P20; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Street.RestingCart",
+      "category": "street-dressing",
+      "owningDefinition": "none",
+      "presentationRole": "Parked cart",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-city-life/SM_HansaRestingCart_*",
+      "deliveryPrompt": "EMVP-P20; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Street.Light",
+      "category": "street-dressing",
+      "owningDefinition": "none",
+      "presentationRole": "Period light/brazier",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-city-life/SM_HansaLight_*",
+      "deliveryPrompt": "EMVP-P20; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Street.ShoreDebris",
+      "category": "street-dressing",
+      "owningDefinition": "none",
+      "presentationRole": "Ropes/driftwood/debris",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-city-life/SM_HansaShoreDebris_*",
+      "deliveryPrompt": "EMVP-P20; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Surface.Land",
+      "category": "water-shore",
+      "owningDefinition": "Region.Lubeck.Mvp",
+      "presentationRole": "Buildable terrain/plots",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "/Game/Hansa/World/Environment/Lubeck/M_Landscape_Lubeck",
+      "deliveryPrompt": "EMVP-P17; EMVP-P18; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Surface.Water",
+      "category": "water-shore",
+      "owningDefinition": "Region.Lubeck.Mvp",
+      "presentationRole": "Baltic/harbor water",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "/Game/Hansa/World/Environment/Water/M_HansaBalticWater",
+      "deliveryPrompt": "EMVP-P17; EMVP-P18; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Surface.Shore",
+      "category": "water-shore",
+      "owningDefinition": "Region.Lubeck.Mvp",
+      "presentationRole": "Land-water transition",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "/Game/Hansa/World/Environment/Lubeck/M_HansaShore",
+      "deliveryPrompt": "EMVP-P17; EMVP-P18; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Surface.HarborWetDry",
+      "category": "water-shore",
+      "owningDefinition": "Region.Lubeck.Mvp",
+      "presentationRole": "Quay wet/dry transition",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-harbor/Materials/M_HansaHarborWetDry",
+      "deliveryPrompt": "EMVP-P17; EMVP-P18; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Surface.RoadBlend",
+      "category": "water-shore",
+      "owningDefinition": "Region.Lubeck.Mvp",
+      "presentationRole": "Road-terrain blend",
+      "currentReference": "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "/Game/Mesh/hansa-road/Materials/M_HansaRoadBlend",
+      "deliveryPrompt": "EMVP-P17; EMVP-P18; EMVP-P30",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.World: LOD/Nanite and gameplay-camera readability proof.",
+        "collision": "Profile.World: simple role collision; simulation stays authoritative.",
+        "pivot": "Profile.World: ground pivot and deterministic forward axis.",
+        "footprint": "See role text; authored scale only, no runtime auto-fit."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Effect.Placement",
+      "category": "effect",
+      "owningDefinition": "none",
+      "presentationRole": "Valid/warning/invalid placement",
+      "currentReference": "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "/Game/Hansa/Effects/Placement",
+      "deliveryPrompt": "EMVP-P21; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Effect.Road",
+      "category": "effect",
+      "owningDefinition": "none",
+      "presentationRole": "Road preview/invalid/confirm",
+      "currentReference": "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "/Game/Hansa/Effects/Road",
+      "deliveryPrompt": "EMVP-P21; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Effect.Construction",
+      "category": "effect",
+      "owningDefinition": "none",
+      "presentationRole": "Confirm/reject/complete",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/Effects/Construction",
+      "deliveryPrompt": "EMVP-P21; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Effect.Production",
+      "category": "effect",
+      "owningDefinition": "none",
+      "presentationRole": "Active/blocked",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/Effects/Production",
+      "deliveryPrompt": "EMVP-P21; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Effect.Population",
+      "category": "effect",
+      "owningDefinition": "none",
+      "presentationRole": "Shortage/growth/decline",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/Effects/Population",
+      "deliveryPrompt": "EMVP-P21; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Effect.Market",
+      "category": "effect",
+      "owningDefinition": "none",
+      "presentationRole": "Price/stock movement",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/Effects/Market",
+      "deliveryPrompt": "EMVP-P21; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Effect.Route",
+      "category": "effect",
+      "owningDefinition": "none",
+      "presentationRole": "Create/depart/arrive/unload",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/Effects/Route",
+      "deliveryPrompt": "EMVP-P21; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Effect.Research",
+      "category": "effect",
+      "owningDefinition": "none",
+      "presentationRole": "Queued/completed",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/Effects/Research",
+      "deliveryPrompt": "EMVP-P21; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Effect.Alerts",
+      "category": "effect",
+      "owningDefinition": "none",
+      "presentationRole": "Notice/warning/critical/decision",
+      "currentReference": "Source/Hansa/Private/UI/SHansaRootHud.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:Hansa UI Alerts",
+      "deliveryPrompt": "EMVP-P21; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Effect.UiTransition",
+      "category": "effect",
+      "owningDefinition": "none",
+      "presentationRole": "Panel/modal/reduced motion",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:Hansa UI UiTransition",
+      "deliveryPrompt": "EMVP-P21; EMVP-P35",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.Prop: LOD/instancing and bounded material slots.",
+        "collision": "Profile.Prop: visual-only unless explicitly navigation-blocking.",
+        "pivot": "Profile.Prop: ground pivot and deterministic reusable orientation.",
+        "footprint": "Role-sized; preserve plot and traffic readability."
+      },
+      "proofNeeded": [
+        "Role/definition binding",
+        "Scale/pivot/collision/LOD inspection",
+        "Real gameplay-camera capture",
+        "Shipping reference audit"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Good.Grain",
+      "category": "icon",
+      "owningDefinition": "Good.Grain",
+      "presentationRole": "Grain icon with text",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Goods/T_UI_Good_Grain",
+      "deliveryPrompt": "EMVP-P21; EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "Icon",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Good.Flour",
+      "category": "icon",
+      "owningDefinition": "Good.Flour",
+      "presentationRole": "Flour icon with text",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Goods/T_UI_Good_Flour",
+      "deliveryPrompt": "EMVP-P21; EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "Icon",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Good.Bread",
+      "category": "icon",
+      "owningDefinition": "Good.Bread",
+      "presentationRole": "Bread icon with text",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Goods/T_UI_Good_Bread",
+      "deliveryPrompt": "EMVP-P21; EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "Icon",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Good.Fish",
+      "category": "icon",
+      "owningDefinition": "Good.Fish",
+      "presentationRole": "Fish icon with text",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Goods/T_UI_Good_Fish",
+      "deliveryPrompt": "EMVP-P21; EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "Icon",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Good.Salt",
+      "category": "icon",
+      "owningDefinition": "Good.Salt",
+      "presentationRole": "Salt icon with text",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Goods/T_UI_Good_Salt",
+      "deliveryPrompt": "EMVP-P21; EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "Icon",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Good.Timber",
+      "category": "icon",
+      "owningDefinition": "Good.Timber",
+      "presentationRole": "Timber icon with text",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Goods/T_UI_Good_Timber",
+      "deliveryPrompt": "EMVP-P21; EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "Icon",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Good.Planks",
+      "category": "icon",
+      "owningDefinition": "Good.Planks",
+      "presentationRole": "Planks icon with text",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Goods/T_UI_Good_Planks",
+      "deliveryPrompt": "EMVP-P21; EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "Icon",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Good.Iron",
+      "category": "icon",
+      "owningDefinition": "Good.Iron",
+      "presentationRole": "Iron icon with text",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Goods/T_UI_Good_Iron",
+      "deliveryPrompt": "EMVP-P21; EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "Icon",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Good.Tools",
+      "category": "icon",
+      "owningDefinition": "Good.Tools",
+      "presentationRole": "Tools icon with text",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Goods/T_UI_Good_Tools",
+      "deliveryPrompt": "EMVP-P21; EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "Icon",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Good.Beer",
+      "category": "icon",
+      "owningDefinition": "Good.Beer",
+      "presentationRole": "Beer icon with text",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Goods/T_UI_Good_Beer",
+      "deliveryPrompt": "EMVP-P21; EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": true,
+      "definitionPresentationProperty": "Icon",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Building",
+      "category": "icon",
+      "owningDefinition": "none",
+      "presentationRole": "Buildable/chain/card icons",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Building",
+      "deliveryPrompt": "EMVP-P21",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Research",
+      "category": "icon",
+      "owningDefinition": "none",
+      "presentationRole": "Nine research icons",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Research",
+      "deliveryPrompt": "EMVP-P21",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Status",
+      "category": "icon",
+      "owningDefinition": "none",
+      "presentationRole": "Status glyphs",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Status",
+      "deliveryPrompt": "EMVP-P21",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Icon.Controls",
+      "category": "icon",
+      "owningDefinition": "none",
+      "presentationRole": "Time/navigation/action glyphs",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Icons/Controls",
+      "deliveryPrompt": "EMVP-P21",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Cursor.World",
+      "category": "cursor",
+      "owningDefinition": "none",
+      "presentationRole": "Select/build/valid/warning/invalid/rotate/road cursors",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "/Game/Hansa/UI/Cursors",
+      "deliveryPrompt": "EMVP-P04; EMVP-P05; EMVP-P21",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "selected",
+        "disabled",
+        "focus",
+        "warning",
+        "error"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Overlay.PlacementGrid",
+      "category": "overlay",
+      "owningDefinition": "none",
+      "presentationRole": "Grid/footprint",
+      "currentReference": "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "native:Hansa PlacementGrid overlay",
+      "deliveryPrompt": "EMVP-P04; EMVP-P05; EMVP-P21; EMVP-P23; EMVP-P26",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Overlay.Service",
+      "category": "overlay",
+      "owningDefinition": "none",
+      "presentationRole": "Road/service reach",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:Hansa Service overlay",
+      "deliveryPrompt": "EMVP-P04; EMVP-P05; EMVP-P21; EMVP-P23; EMVP-P26",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Overlay.ProductionRadius",
+      "category": "overlay",
+      "owningDefinition": "none",
+      "presentationRole": "Gathering/fertility radius",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:Hansa ProductionRadius overlay",
+      "deliveryPrompt": "EMVP-P04; EMVP-P05; EMVP-P21; EMVP-P23; EMVP-P26",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Overlay.RouteMap",
+      "category": "overlay",
+      "owningDefinition": "none",
+      "presentationRole": "Route/direction/capacity/stale",
+      "currentReference": "Source/Hansa/Private/UI/SHansaTradeMap.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:Hansa RouteMap overlay",
+      "deliveryPrompt": "EMVP-P04; EMVP-P05; EMVP-P21; EMVP-P23; EMVP-P26",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Overlay.Selection",
+      "category": "overlay",
+      "owningDefinition": "none",
+      "presentationRole": "World selection/marker",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "status": "engine-placeholder",
+      "intendedCanonicalPath": "native:Hansa Selection overlay",
+      "deliveryPrompt": "EMVP-P04; EMVP-P05; EMVP-P21; EMVP-P23; EMVP-P26",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Presentation.Overlay.Tooltip",
+      "category": "overlay",
+      "owningDefinition": "none",
+      "presentationRole": "Short/expanded causal tooltip",
+      "currentReference": "Source/Hansa/Private/UI/SHansaContextInspector.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:Hansa Tooltip overlay",
+      "deliveryPrompt": "EMVP-P04; EMVP-P05; EMVP-P21; EMVP-P23; EMVP-P26",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.Frontend.Title",
+      "category": "frontend-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Title/start",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:SHansaFrontend",
+      "deliveryPrompt": "EMVP-P29",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.Frontend.NewGame",
+      "category": "frontend-screen",
+      "owningDefinition": "none",
+      "presentationRole": "New Game",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:SHansaNewGameScreen",
+      "deliveryPrompt": "EMVP-P29",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "focus",
+        "disabled",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.Frontend.Continue",
+      "category": "frontend-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Continue valid/disabled/invalid",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:SHansaFrontend Continue",
+      "deliveryPrompt": "EMVP-P29",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.Frontend.SaveLoad",
+      "category": "frontend-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Save/load management",
+      "currentReference": "Source/Hansa/Private/UI/SHansaSaveLoadScreen.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaSaveLoadScreen",
+      "deliveryPrompt": "EMVP-P29",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": [
+        "default",
+        "selected",
+        "focus",
+        "disabled",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ]
+    },
+    {
+      "stableId": "Screen.Frontend.Settings",
+      "category": "frontend-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Settings",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:SHansaSettingsScreen",
+      "deliveryPrompt": "EMVP-P29",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.Frontend.Credits",
+      "category": "frontend-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Credits/legal",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:SHansaCreditsScreen",
+      "deliveryPrompt": "EMVP-P29",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "focus",
+        "loading",
+        "error"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.Frontend.Loading",
+      "category": "frontend-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Loading/failure transition",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:SHansaLoadingScreen",
+      "deliveryPrompt": "EMVP-P29",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "loading",
+        "error"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.HUD.Root",
+      "category": "hud-panel",
+      "owningDefinition": "none",
+      "presentationRole": "Top/alerts/world/bottom/inspector",
+      "currentReference": "Source/Hansa/Private/UI/SHansaRootHud.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaRootHud",
+      "deliveryPrompt": "EMVP-P21; EMVP-P23",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "focus",
+        "disabled",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": [
+        "default",
+        "focus",
+        "warning"
+      ]
+    },
+    {
+      "stableId": "Screen.HUD.BuildMenu",
+      "category": "hud-panel",
+      "owningDefinition": "none",
+      "presentationRole": "Construction tray/chains",
+      "currentReference": "Source/Hansa/Private/UI/SHansaBuildMenu.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaBuildMenu",
+      "deliveryPrompt": "EMVP-P03; EMVP-P22",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty",
+        "dragging"
+      ],
+      "implementedUiStates": [
+        "default",
+        "selected",
+        "disabled",
+        "focus",
+        "warning"
+      ]
+    },
+    {
+      "stableId": "Screen.HUD.WorldPlacement",
+      "category": "hud-panel",
+      "owningDefinition": "none",
+      "presentationRole": "World placement layer",
+      "currentReference": "Source/Hansa/Private/World/HansaBuildingWorldProjection.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:Hansa placement layer",
+      "deliveryPrompt": "EMVP-P04",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty",
+        "dragging"
+      ],
+      "implementedUiStates": [
+        "default",
+        "selected",
+        "warning",
+        "error"
+      ]
+    },
+    {
+      "stableId": "Screen.HUD.RoadTool",
+      "category": "hud-panel",
+      "owningDefinition": "none",
+      "presentationRole": "Road drawing layer",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:Hansa road tool",
+      "deliveryPrompt": "EMVP-P05",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty",
+        "dragging"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.HUD.ContextInspector",
+      "category": "hud-panel",
+      "owningDefinition": "none",
+      "presentationRole": "Object causal inspector",
+      "currentReference": "Source/Hansa/Private/UI/SHansaContextInspector.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaContextInspector",
+      "deliveryPrompt": "EMVP-P06; EMVP-P23",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "focus",
+        "disabled",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": [
+        "default",
+        "focus",
+        "warning",
+        "empty"
+      ]
+    },
+    {
+      "stableId": "Screen.CityOverview",
+      "category": "management-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Lübeck/Rostock overview",
+      "currentReference": "Source/Hansa/Private/UI/SHansaCityOverview.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaCityOverview",
+      "deliveryPrompt": "EMVP-P24",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": [
+        "default",
+        "selected",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ]
+    },
+    {
+      "stableId": "Screen.Market",
+      "category": "management-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Ten-good market",
+      "currentReference": "Source/Hansa/Private/UI/SHansaMarketTable.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaMarketTable",
+      "deliveryPrompt": "EMVP-P25",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": [
+        "default",
+        "hover",
+        "selected",
+        "disabled",
+        "focus",
+        "warning",
+        "empty"
+      ]
+    },
+    {
+      "stableId": "Screen.TradeMapRouteCreator",
+      "category": "management-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Trade map/route creator",
+      "currentReference": "Source/Hansa/Private/UI/SHansaTradeMap.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaTradeMap",
+      "deliveryPrompt": "EMVP-P26",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": [
+        "default",
+        "selected",
+        "focus",
+        "warning",
+        "empty"
+      ]
+    },
+    {
+      "stableId": "Screen.Research",
+      "category": "management-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Research branches/queue",
+      "currentReference": "Source/Hansa/Private/UI/SHansaResearchScreen.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaResearchScreen",
+      "deliveryPrompt": "EMVP-P27",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty",
+        "locked"
+      ],
+      "implementedUiStates": [
+        "default",
+        "selected",
+        "disabled",
+        "focus",
+        "warning"
+      ]
+    },
+    {
+      "stableId": "Screen.Scenario",
+      "category": "management-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Opening/prosperity/recovery",
+      "currentReference": "Source/Hansa/Private/UI/SHansaScenarioScreen.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaScenarioScreen",
+      "deliveryPrompt": "EMVP-P28",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "focus",
+        "disabled",
+        "loading",
+        "warning",
+        "error",
+        "empty",
+        "success"
+      ],
+      "implementedUiStates": [
+        "default",
+        "focus",
+        "warning",
+        "error",
+        "success"
+      ]
+    },
+    {
+      "stableId": "Screen.Onboarding",
+      "category": "management-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Dismissible contextual teaching",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:SHansaOnboardingLayer",
+      "deliveryPrompt": "EMVP-P28",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.Results",
+      "category": "management-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Success/defeat/recovery",
+      "currentReference": "Source/Hansa/Private/UI/SHansaScenarioScreen.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaScenarioResults",
+      "deliveryPrompt": "EMVP-P28",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "focus",
+        "disabled",
+        "loading",
+        "warning",
+        "error",
+        "empty",
+        "success"
+      ],
+      "implementedUiStates": [
+        "default",
+        "focus",
+        "warning",
+        "error",
+        "success"
+      ]
+    },
+    {
+      "stableId": "Screen.Pause",
+      "category": "modal-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Pause menu",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:SHansaPauseMenu",
+      "deliveryPrompt": "EMVP-P28",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.Modal.Confirmation",
+      "category": "modal-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Reusable confirmation",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:SHansaConfirmationDialog",
+      "deliveryPrompt": "EMVP-P21; EMVP-P29",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.Modal.Demolition",
+      "category": "modal-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Demolition/refund",
+      "currentReference": "none",
+      "status": "missing",
+      "intendedCanonicalPath": "native:SHansaDemolitionDialog",
+      "deliveryPrompt": "EMVP-P06; EMVP-P21",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": []
+    },
+    {
+      "stableId": "Screen.Modal.SaveOverwrite",
+      "category": "modal-screen",
+      "owningDefinition": "none",
+      "presentationRole": "Save overwrite/incompatible/corrupt",
+      "currentReference": "Source/Hansa/Private/UI/SHansaSaveLoadScreen.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:SHansaSaveConfirmation",
+      "deliveryPrompt": "EMVP-P21; EMVP-P29",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "hover",
+        "pressed",
+        "selected",
+        "disabled",
+        "focus",
+        "loading",
+        "warning",
+        "error",
+        "empty"
+      ],
+      "implementedUiStates": [
+        "default",
+        "selected",
+        "focus",
+        "warning",
+        "error"
+      ]
+    },
+    {
+      "stableId": "Presentation.UIState.Empty",
+      "category": "ui-state",
+      "owningDefinition": "none",
+      "presentationRole": "Reusable empty treatment",
+      "currentReference": "Source/Hansa/Private/UI/SHansaCityOverview.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:Hansa UI EmptyState",
+      "deliveryPrompt": "EMVP-P21",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "empty"
+      ],
+      "implementedUiStates": [
+        "default",
+        "empty"
+      ]
+    },
+    {
+      "stableId": "Presentation.UIState.Loading",
+      "category": "ui-state",
+      "owningDefinition": "none",
+      "presentationRole": "Reusable loading treatment",
+      "currentReference": "Source/Hansa/Private/UI/SHansaCityOverview.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:Hansa UI LoadingState",
+      "deliveryPrompt": "EMVP-P21",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "loading"
+      ],
+      "implementedUiStates": [
+        "default",
+        "loading"
+      ]
+    },
+    {
+      "stableId": "Presentation.UIState.Error",
+      "category": "ui-state",
+      "owningDefinition": "none",
+      "presentationRole": "Reusable error treatment",
+      "currentReference": "Source/Hansa/Private/UI/SHansaCityOverview.cpp",
+      "status": "prototype-native",
+      "intendedCanonicalPath": "native:Hansa UI ErrorState",
+      "deliveryPrompt": "EMVP-P21",
+      "goldenPath": true,
+      "bindsDefinitionPresentation": false,
+      "definitionPresentationProperty": "none",
+      "requirements": {
+        "lod": "Profile.UI: native Slate/UMG, vector/SDF, material, or native-density raster.",
+        "collision": "Profile.UI: native hit testing; 40px pointer and 48px controller targets.",
+        "pivot": "Profile.UI: responsive safe-area anchors; no raster scale compensation.",
+        "footprint": "Native 1280x720 and 1920x1080; UI scale 80-140%."
+      },
+      "proofNeeded": [
+        "Native 1280x720 and 1920x1080 captures",
+        "Semantic mouse/keyboard/controller trace",
+        "Focus/clipping/localization/accessibility inspection"
+      ],
+      "requiredUiStates": [
+        "default",
+        "error",
+        "focus"
+      ],
+      "implementedUiStates": [
+        "default",
+        "error",
+        "focus"
+      ]
+    }
+  ]
+}

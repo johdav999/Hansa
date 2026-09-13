@@ -22,13 +22,13 @@ namespace Hansa::Simulation
 			TEXT("AITuning")
 		};
 
-		bool IsAsciiLetter(const TCHAR Character)
+		bool IdsIsAsciiLetter(const TCHAR Character)
 		{
 			return (Character >= TEXT('A') && Character <= TEXT('Z')) ||
 				(Character >= TEXT('a') && Character <= TEXT('z'));
 		}
 
-		bool IsAsciiDigit(const TCHAR Character)
+		bool IdsIsAsciiDigit(const TCHAR Character)
 		{
 			return Character >= TEXT('0') && Character <= TEXT('9');
 		}
@@ -42,7 +42,7 @@ namespace Hansa::Simulation
 
 			for (const TCHAR Character : Segment)
 			{
-				if (!IsAsciiLetter(Character) && !IsAsciiDigit(Character))
+				if (!IdsIsAsciiLetter(Character) && !IdsIsAsciiDigit(Character))
 				{
 					return false;
 				}

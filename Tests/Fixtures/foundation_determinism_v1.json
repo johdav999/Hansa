@@ -25,6 +25,7 @@
   "expected": {
     "processedCommandCount": 2,
     "finalTick": 6,
-    "finalChecksum": "C827BB245C79D327"
+    "finalChecksum": "B321103452ABE908",
+    "fingerprintVersion": 20
   }
 }

@@ -1,0 +1,52 @@
+[
+  {
+    "file": "Docs\\Images\\UI\\AllMenus\\SizingTrials\\allmenus--coin-sizing-trial--default--1254x1254--v1.png",
+    "nativeSize": [
+      1254,
+      1254
+    ],
+    "alphaBounds": [
+      97,
+      51,
+      1196,
+      1182
+    ],
+    "visibleAlpha128Bounds": [
+      388,
+      402,
+      881,
+      872
+    ],
+    "requiredIconSize": [
+      32,
+      32
+    ],
+    "resampled": false,
+    "acceptedForProduction": false
+  },
+  {
+    "file": "Docs\\Images\\UI\\AllMenus\\SizingTrials\\allmenus--coin-sizing-trial--default--1254x1254--v2.png",
+    "nativeSize": [
+      1254,
+      1254
+    ],
+    "alphaBounds": [
+      210,
+      21,
+      1079,
+      695
+    ],
+    "visibleAlpha128Bounds": [
+      564,
+      568,
+      687,
+      691
+    ],
+    "requiredIconSize": [
+      32,
+      32
+    ],
+    "resampled": false,
+    "acceptedForProduction": false
+  }
+]

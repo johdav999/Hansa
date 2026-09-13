@@ -3,6 +3,7 @@
 #include "Population/HansaPopulationInternal.h"
 
 #include "Construction/HansaConstruction.h"
+#include "Logistics/HansaLocalLogistics.h"
 #include "Math/NumericLimits.h"
 #include "Model/HansaSimulationState.h"
 
@@ -21,20 +22,21 @@ namespace Hansa::Simulation
 
 	namespace
 	{
-		constexpr int32 BasisPointScale = 10000;
+		constexpr int32 PopulationBasisPointScale = 10000;
+		constexpr int32 InitialHouseholdResidents = 2;
 
 		int32 RatioBasisPoints(const int64 Numerator, const int64 Denominator)
 		{
-			if (Denominator <= 0) return BasisPointScale;
+			if (Denominator <= 0) return PopulationBasisPointScale;
 			const auto Ratio = FHansaCheckedIntegerMath::TryMultiplyDivide(
-				FMath::Max<int64>(0, Numerator), BasisPointScale, Denominator, EHansaRoundingMode::TowardZero);
-			return Ratio ? static_cast<int32>(FMath::Clamp<int64>(Ratio.Value, 0, BasisPointScale)) : 0;
+				FMath::Max<int64>(0, Numerator), PopulationBasisPointScale, Denominator, EHansaRoundingMode::TowardZero);
+			return Ratio ? static_cast<int32>(FMath::Clamp<int64>(Ratio.Value, 0, PopulationBasisPointScale)) : 0;
 		}
 
 		int32 WeightedAverage(const int64 WeightedTotal, const int64 Weight)
 		{
 			return Weight > 0
-				? static_cast<int32>(FMath::Clamp<int64>(WeightedTotal / Weight, 0, BasisPointScale))
+				? static_cast<int32>(FMath::Clamp<int64>(WeightedTotal / Weight, 0, PopulationBasisPointScale))
 				: 0;
 		}
 
@@ -66,6 +68,81 @@ namespace Hansa::Simulation
 		{
 			return !Tier.PreviousTierId.IsEmpty();
 		}
+
+		bool HasPlacementMap(const FHansaPlacementState& Placement, const FHansaCityDefinitionId CityId)
+		{
+			for (const FHansaPlacementMapInitialization& Map : Placement.GetMaps())
+			{
+				if (Map.CityId == CityId) return true;
+			}
+			return false;
+		}
+
+		bool HasCurrentMarketAccess(const FHansaPopulationCohortState& Cohort,
+			const FHansaInventoryReadOnlyAccess& Inventories,
+			const TArray<FHansaCityMarketState>& Markets,
+			const TArray<FHansaBuildingState>& Buildings, const FHansaPlacementState& Placement,
+			const FHansaEconomicRegistry& Registry)
+		{
+			const TOptional<FHansaInventoryProjection> ConsumptionInventory =
+				Inventories.QueryInventory(Cohort.ConsumptionInventoryId);
+			const bool bMarketStateExists = Markets.ContainsByPredicate([&Cohort](const FHansaCityMarketState& Market)
+				{ return Market.CityId == Cohort.CityId; });
+			const bool bPhysicalAccess = !HasPlacementMap(Placement, Cohort.CityId) ||
+				FHansaLocalLogisticsQueries::QueryBuildingMarketAccess(
+					Cohort.ResidenceBuildingId, Cohort.ConsumptionInventoryId,
+					Inventories, Placement, Buildings, &Registry).bMarketEligible;
+			return ConsumptionInventory.IsSet() &&
+				ConsumptionInventory->OwnerKind == EHansaInventoryOwnerKind::City &&
+				ConsumptionInventory->CityId == Cohort.CityId &&
+				bMarketStateExists && bPhysicalAccess;
+		}
+
+		struct FPopulationSupplyPool
+		{
+			FHansaInventoryId InventoryId;
+			FHansaGoodId GoodId;
+			int64 OpeningAvailableRaw = 0;
+			int64 AllocatedRaw = 0;
+		};
+
+		struct FPopulationConsumptionPlan
+		{
+			FHansaPopulationCohortId CohortId;
+			int32 SupplyPoolIndex = INDEX_NONE;
+			int64 DesiredRaw = 0;
+			int64 AllocatedRaw = 0;
+		};
+
+		void RefreshPooledWorkforce(TArray<FHansaPopulationCohortState>& Cohorts,
+			const FHansaEconomicRegistry& Registry)
+		{
+			struct FWorkforceRemainder
+			{
+				FHansaCityDefinitionId CityId;
+				FHansaPopulationTierId TierId;
+				int64 BasisPoints = 0;
+			};
+			TArray<FWorkforceRemainder> Remainders;
+			// Cohorts are in canonical ID order. Carry fractional workers between
+			// homes in the same city/tier, so their sum equals floor(city-tier total).
+			// Attribute the whole workers back to homes for consistent UI/save totals.
+			for (FHansaPopulationCohortState& Cohort : Cohorts)
+			{
+				Cohort.WorkforceSupply = 0;
+				if (!Cohort.bResidenceOperational || Cohort.Residents <= 0) continue;
+				const auto* Tier = Registry.FindPopulationTier(Cohort.TierId.ToString());
+				if (Tier == nullptr) continue;
+				int32 Index = Remainders.IndexOfByPredicate([&Cohort](const auto& Pool)
+					{ return Pool.CityId == Cohort.CityId && Pool.TierId == Cohort.TierId; });
+				if (Index == INDEX_NONE) Index = Remainders.Add({ Cohort.CityId, Cohort.TierId, 0 });
+				auto& Pool = Remainders[Index];
+				const int64 Contribution = static_cast<int64>(Cohort.Residents) *
+					Tier->WorkforcePerResidentBasisPoints + Pool.BasisPoints;
+				Cohort.WorkforceSupply = static_cast<int32>(Contribution / PopulationBasisPointScale);
+				Pool.BasisPoints = Contribution % PopulationBasisPointScale;
+			}
+		}
 	}
 
 	void FHansaPopulationExecutor::SynchronizeResidencesAndAssignWorkforce(
@@ -88,12 +165,27 @@ namespace Hansa::Simulation
 			}
 			const FHansaPlacedBuildingRecord* ResidencePlacement = Placement.FindPlacement(Building.Id);
 			if (ResidencePlacement == nullptr) continue;
-			const FHansaInventoryProjection* MarketInventory = InventoryProjection.FindByPredicate(
-				[ResidencePlacement](const FHansaInventoryProjection& Inventory)
+			const FHansaInventoryProjection* ConsumptionInventory = nullptr;
+			const bool bRequiresPhysicalMarketAccess = HasPlacementMap(Placement, ResidencePlacement->Spec.CityId);
+			for (const FHansaInventoryProjection& Inventory : InventoryProjection)
+			{
+				if (Inventory.OwnerKind != EHansaInventoryOwnerKind::City ||
+					Inventory.CityId != ResidencePlacement->Spec.CityId)
 				{
-					return Inventory.OwnerKind == EHansaInventoryOwnerKind::City &&
-						Inventory.CityId == ResidencePlacement->Spec.CityId;
-				});
+					continue;
+				}
+				// A completed home owns a cohort even before it is connected to a physical Market.
+				// Retain a deterministic city-inventory fallback so the population projection can
+				// report zero market access instead of making the residence disappear from the UI.
+				if (ConsumptionInventory == nullptr) ConsumptionInventory = &Inventory;
+				if (!bRequiresPhysicalMarketAccess ||
+					FHansaLocalLogisticsQueries::QueryBuildingMarketAccess(
+						Building.Id, Inventory.Id, Inventories, Placement, Buildings, &Registry).bMarketEligible)
+				{
+					ConsumptionInventory = &Inventory;
+					break;
+				}
+			}
 			const auto TierId = FHansaPopulationTierId::TryParse(Definition->ResidentPopulationTierId);
 			uint64 CohortValue = Building.Id.GetValue();
 			auto CohortId = FHansaPopulationCohortId::TryCreate(CohortValue, Building.Id.GetGeneration());
@@ -107,12 +199,12 @@ namespace Hansa::Simulation
 				}
 				CohortId = FHansaPopulationCohortId::TryCreate(++CohortValue, Building.Id.GetGeneration());
 			}
-			if (MarketInventory == nullptr || !TierId || !CohortId) continue;
+			if (ConsumptionInventory == nullptr || !TierId || !CohortId) continue;
 			FHansaPopulationCohortState Cohort;
 			Cohort.Id = CohortId.Value;
 			Cohort.ResidenceBuildingId = Building.Id;
 			Cohort.CityId = ResidencePlacement->Spec.CityId;
-			Cohort.ConsumptionInventoryId = MarketInventory->Id;
+			Cohort.ConsumptionInventoryId = ConsumptionInventory->Id;
 			Cohort.TierId = TierId.Value;
 			Cohort.ResidenceCapacity = Definition->ResidenceCapacity;
 			Cohorts.Add(MoveTemp(Cohort));
@@ -145,12 +237,8 @@ namespace Hansa::Simulation
 			Cohort.TierId = TierId.Value;
 			Cohort.ResidenceCapacity = Definition->ResidenceCapacity;
 			Cohort.Residents = FMath::Min(Cohort.Residents, Cohort.ResidenceCapacity);
-			const FHansaCompiledPopulationTierDefinition* Tier = Registry.FindPopulationTier(Cohort.TierId.ToString());
-			Cohort.WorkforceSupply = Tier != nullptr
-				? static_cast<int32>((static_cast<int64>(Cohort.Residents) *
-					Tier->WorkforcePerResidentBasisPoints) / BasisPointScale)
-				: 0;
 		}
+		RefreshPooledWorkforce(Cohorts, Registry);
 
 		TArray<FHansaCityDefinitionId> Cities;
 		for (const FHansaPopulationCohortState& Cohort : Cohorts) Cities.AddUnique(Cohort.CityId);
@@ -166,6 +254,7 @@ namespace Hansa::Simulation
 				if (Tier != nullptr && IsArtisanTier(*Tier)) ArtisansAvailable += Cohort.WorkforceSupply;
 				else LaborersAvailable += Cohort.WorkforceSupply;
 			}
+			TArray<FHansaProductionState*> CityProductions;
 			for (FHansaProductionState& Production : Productions)
 			{
 				if (!Production.bUsesCityWorkforce || Production.Kind != EHansaProductionKind::BuildingRecipe ||
@@ -173,26 +262,136 @@ namespace Hansa::Simulation
 				Production.AllocatedLaborerWorkforce = 0;
 				Production.AllocatedArtisanWorkforce = 0;
 				if (!Production.bActive) continue;
-				const FHansaCompiledRecipeDefinition* Recipe = Registry.FindRecipe(Production.RecipeId.ToString());
-				const FHansaBuildingState* Building = FindBuilding(Buildings, Production.BuildingId);
+				CityProductions.Add(&Production);
+			}
+			// Give as many active units as possible their first worker before filling
+			// remaining slots. Stable production order keeps allocation deterministic.
+			for (FHansaProductionState* Production : CityProductions)
+			{
+				const FHansaCompiledRecipeDefinition* Recipe = Registry.FindRecipe(Production->RecipeId.ToString());
+				const FHansaBuildingState* Building = FindBuilding(Buildings, Production->BuildingId);
 				const FHansaCompiledBuildingDefinition* BuildingDefinition = Building != nullptr
 					? Registry.FindBuilding(Building->DefinitionId.ToString()) : nullptr;
 				if (Recipe == nullptr || BuildingDefinition == nullptr) continue;
 				const int32 LaborersRequired = FMath::Max(Recipe->LaborerWorkforce, BuildingDefinition->LaborerWorkforce);
 				const int32 ArtisansRequired = FMath::Max(Recipe->ArtisanWorkforce, BuildingDefinition->ArtisanWorkforce);
-				Production.AllocatedLaborerWorkforce = FMath::Min(LaborersAvailable, LaborersRequired);
-				Production.AllocatedArtisanWorkforce = FMath::Min(ArtisansAvailable, ArtisansRequired);
-				LaborersAvailable -= Production.AllocatedLaborerWorkforce;
-				ArtisansAvailable -= Production.AllocatedArtisanWorkforce;
+				if (LaborersRequired > 0 && LaborersAvailable > 0)
+				{
+					Production->AllocatedLaborerWorkforce = 1;
+					--LaborersAvailable;
+				}
+				else if (ArtisansRequired > 0 && ArtisansAvailable > 0)
+				{
+					Production->AllocatedArtisanWorkforce = 1;
+					--ArtisansAvailable;
+				}
+			}
+			for (FHansaProductionState* Production : CityProductions)
+			{
+				const FHansaCompiledRecipeDefinition* Recipe = Registry.FindRecipe(Production->RecipeId.ToString());
+				const FHansaBuildingState* Building = FindBuilding(Buildings, Production->BuildingId);
+				const FHansaCompiledBuildingDefinition* BuildingDefinition = Building != nullptr
+					? Registry.FindBuilding(Building->DefinitionId.ToString()) : nullptr;
+				if (Recipe == nullptr || BuildingDefinition == nullptr) continue;
+				const int32 LaborersRequired = FMath::Max(Recipe->LaborerWorkforce, BuildingDefinition->LaborerWorkforce);
+				const int32 ArtisansRequired = FMath::Max(Recipe->ArtisanWorkforce, BuildingDefinition->ArtisanWorkforce);
+				const int32 AdditionalLaborers = FMath::Min(LaborersAvailable,
+					LaborersRequired - Production->AllocatedLaborerWorkforce);
+				const int32 AdditionalArtisans = FMath::Min(ArtisansAvailable,
+					ArtisansRequired - Production->AllocatedArtisanWorkforce);
+				Production->AllocatedLaborerWorkforce += AdditionalLaborers;
+				Production->AllocatedArtisanWorkforce += AdditionalArtisans;
+				LaborersAvailable -= AdditionalLaborers;
+				ArtisansAvailable -= AdditionalArtisans;
 			}
 		}
 	}
 
 	void FHansaPopulationExecutor::AdvanceOneTick(TArray<FHansaPopulationCohortState>& Cohorts,
 		FHansaInventoryLedger& InventoryLedger, const TArray<FHansaCityMarketState>& Markets,
-		const TArray<FHansaBuildingState>& Buildings, const FHansaEconomicRegistry& Registry,
+		const TArray<FHansaBuildingState>& Buildings, const FHansaPlacementState& Placement,
+		const FHansaEconomicRegistry& Registry,
 		const FHansaSimulationTick Tick, const uint32 MinutesPerTick)
 	{
+		// Plan all household consumption against the same opening stock before applying
+		// any transfer. Without this phase, stable cohort order lets the first residence
+		// drain a scarce good and makes later residences report zero fulfillment.
+		const FHansaInventoryReadOnlyAccess OpeningInventories = InventoryLedger.CreateReadOnlyAccess();
+		TArray<FPopulationSupplyPool> SupplyPools;
+		TArray<FPopulationConsumptionPlan> ConsumptionPlans;
+		for (FHansaPopulationCohortState& Cohort : Cohorts)
+		{
+			const FHansaCompiledPopulationTierDefinition* Tier = Registry.FindPopulationTier(Cohort.TierId.ToString());
+			const FHansaBuildingState* Building = FindBuilding(Buildings, Cohort.ResidenceBuildingId);
+			const bool bOperational = Tier != nullptr && Building != nullptr && Cohort.bResidenceOperational &&
+				Building->ConstructionState == EHansaConstructionState::Completed;
+			Cohort.bHasMarketAccess = bOperational && HasCurrentMarketAccess(
+				Cohort, OpeningInventories, Markets, Buildings, Placement, Registry);
+			if (!bOperational) continue;
+			for (const FHansaCompiledPopulationTierNeed& Requirement : Tier->Needs)
+			{
+				const FHansaCompiledNeedDefinition* NeedDefinition = Registry.FindNeed(Requirement.NeedId);
+				if (NeedDefinition == nullptr || NeedDefinition->Kind != EHansaCompiledNeedKind::Good) continue;
+				const auto GoodId = FHansaGoodId::TryParse(NeedDefinition->GoodId);
+				if (!GoodId) continue;
+				int32 PoolIndex = SupplyPools.IndexOfByPredicate([&Cohort, &GoodId](const FPopulationSupplyPool& Pool)
+				{ return Pool.InventoryId == Cohort.ConsumptionInventoryId && Pool.GoodId == GoodId.Value; });
+				if (PoolIndex == INDEX_NONE)
+				{
+					FPopulationSupplyPool Pool;
+					Pool.InventoryId = Cohort.ConsumptionInventoryId;
+					Pool.GoodId = GoodId.Value;
+					const TOptional<FHansaInventoryStockProjection> Stock =
+						OpeningInventories.QueryStock(Pool.InventoryId, Pool.GoodId);
+					Pool.OpeningAvailableRaw = Stock.IsSet() ? Stock->Available.GetRawValue() : 0;
+					PoolIndex = SupplyPools.Add(MoveTemp(Pool));
+				}
+				if (!Cohort.bHasMarketAccess || Cohort.Residents <= 0) continue;
+				const int64 RequiredRaw = static_cast<int64>(Cohort.Residents) *
+					Requirement.ConsumptionMilliUnitsPerResidentPerTick;
+				const auto Affordable = FHansaCheckedIntegerMath::TryMultiplyDivide(RequiredRaw,
+					Cohort.PurchasingPowerBasisPoints, PopulationBasisPointScale, EHansaRoundingMode::TowardZero);
+				if (!Affordable || Affordable.Value <= 0) continue;
+				ConsumptionPlans.Add({ Cohort.Id, PoolIndex, Affordable.Value, 0 });
+			}
+		}
+		for (int32 PoolIndex = 0; PoolIndex < SupplyPools.Num(); ++PoolIndex)
+		{
+			int64 TotalDesiredRaw = 0;
+			for (const FPopulationConsumptionPlan& Plan : ConsumptionPlans)
+			{
+				if (Plan.SupplyPoolIndex != PoolIndex) continue;
+				const auto Added = FHansaCheckedIntegerMath::TryAdd(TotalDesiredRaw, Plan.DesiredRaw);
+				TotalDesiredRaw = Added ? Added.Value : TNumericLimits<int64>::Max();
+			}
+			const int64 SupplyRaw = FMath::Min(SupplyPools[PoolIndex].OpeningAvailableRaw, TotalDesiredRaw);
+			if (SupplyRaw <= 0 || TotalDesiredRaw <= 0) continue;
+			int64 DistributedRaw = 0;
+			for (FPopulationConsumptionPlan& Plan : ConsumptionPlans)
+			{
+				if (Plan.SupplyPoolIndex != PoolIndex) continue;
+				const auto Share = FHansaCheckedIntegerMath::TryMultiplyDivide(
+					SupplyRaw, Plan.DesiredRaw, TotalDesiredRaw, EHansaRoundingMode::TowardZero);
+				Plan.AllocatedRaw = Share ? FMath::Min(Plan.DesiredRaw, Share.Value) : 0;
+				DistributedRaw += Plan.AllocatedRaw;
+			}
+			int64 RemainderRaw = SupplyRaw - DistributedRaw;
+			while (RemainderRaw > 0)
+			{
+				bool bGrantedAny = false;
+				for (FPopulationConsumptionPlan& Plan : ConsumptionPlans)
+				{
+					if (Plan.SupplyPoolIndex != PoolIndex || Plan.AllocatedRaw >= Plan.DesiredRaw) continue;
+					++Plan.AllocatedRaw;
+					--RemainderRaw;
+					bGrantedAny = true;
+					if (RemainderRaw == 0) break;
+				}
+				if (!bGrantedAny) break;
+			}
+			SupplyPools[PoolIndex].AllocatedRaw = SupplyRaw - RemainderRaw;
+		}
+
 		for (FHansaPopulationCohortState& Cohort : Cohorts)
 		{
 			Cohort.Needs.Reset();
@@ -211,19 +410,12 @@ namespace Hansa::Simulation
 				continue;
 			}
 
-			const TOptional<FHansaInventoryProjection> ConsumptionInventory =
-				InventoryLedger.CreateReadOnlyAccess().QueryInventory(Cohort.ConsumptionInventoryId);
-			Cohort.bHasMarketAccess = ConsumptionInventory.IsSet() &&
-				ConsumptionInventory->OwnerKind == EHansaInventoryOwnerKind::City &&
-				ConsumptionInventory->CityId == Cohort.CityId &&
-				Markets.ContainsByPredicate([&Cohort](const FHansaCityMarketState& Market)
-				{ return Market.CityId == Cohort.CityId; });
-
 			int64 AccessTotal = 0;
 			int64 AffordabilityTotal = 0;
 			int64 ReliabilityTotal = 0;
 			int64 SatisfactionTotal = 0;
 			int64 TotalWeight = 0;
+			bool bBasicServicesSatisfied = false;
 			for (const FHansaCompiledPopulationTierNeed& Requirement : Tier->Needs)
 			{
 				const FHansaCompiledNeedDefinition* NeedDefinition = Registry.FindNeed(Requirement.NeedId);
@@ -238,6 +430,9 @@ namespace Hansa::Simulation
 					Need.ReliabilityBasisPoints = Cohort.ServiceReliabilityBasisPoints;
 					Need.SatisfactionBasisPoints = FMath::Min3(Need.AccessBasisPoints,
 						Need.AffordabilityBasisPoints, Need.ReliabilityBasisPoints);
+					bBasicServicesSatisfied |= Cohort.bHasMarketAccess &&
+						Requirement.NeedId == TEXT("Need.BasicServices") &&
+						Need.SatisfactionBasisPoints == PopulationBasisPointScale;
 				}
 				else
 				{
@@ -248,21 +443,38 @@ namespace Hansa::Simulation
 						const int64 RequiredRaw = static_cast<int64>(Cohort.Residents) *
 							Requirement.ConsumptionMilliUnitsPerResidentPerTick;
 						Need.RequiredLastTick = FHansaQuantity::FromRaw(RequiredRaw);
-						const TOptional<FHansaInventoryStockProjection> Stock =
-							InventoryLedger.CreateReadOnlyAccess().QueryStock(Cohort.ConsumptionInventoryId, GoodId.Value);
-						const int64 AvailableRaw = Stock.IsSet() ? Stock->Available.GetRawValue() : 0;
+						const int32 PoolIndex = SupplyPools.IndexOfByPredicate([&Cohort, &GoodId](
+							const FPopulationSupplyPool& Pool)
+							{ return Pool.InventoryId == Cohort.ConsumptionInventoryId && Pool.GoodId == GoodId.Value; });
+						const bool bStockExists = PoolIndex != INDEX_NONE;
+						const int64 OpeningAvailableRaw = bStockExists
+							? SupplyPools[PoolIndex].OpeningAvailableRaw : 0;
 						Need.AccessBasisPoints = Cohort.bHasMarketAccess &&
-							Stock.IsSet() && AvailableRaw > 0 ? BasisPointScale : 0;
+							bStockExists && OpeningAvailableRaw > 0 ? PopulationBasisPointScale : 0;
 						const auto Affordable = FHansaCheckedIntegerMath::TryMultiplyDivide(RequiredRaw,
-							Cohort.PurchasingPowerBasisPoints, BasisPointScale, EHansaRoundingMode::TowardZero);
+							Cohort.PurchasingPowerBasisPoints, PopulationBasisPointScale, EHansaRoundingMode::TowardZero);
 						const int64 DesiredRaw = Affordable ? Affordable.Value : 0;
-						const int64 ConsumedRaw = Need.AccessBasisPoints > 0 ? FMath::Min(AvailableRaw, DesiredRaw) : 0;
-						Need.ReliabilityBasisPoints = RatioBasisPoints(ConsumedRaw, DesiredRaw);
+						int64 ConsumedRaw = 0;
+						if (Cohort.Residents > 0 && PoolIndex != INDEX_NONE)
+						{
+							const FPopulationConsumptionPlan* Plan = ConsumptionPlans.FindByPredicate(
+								[&Cohort, PoolIndex](const FPopulationConsumptionPlan& Candidate)
+								{ return Candidate.CohortId == Cohort.Id && Candidate.SupplyPoolIndex == PoolIndex; });
+							ConsumedRaw = Plan != nullptr ? Plan->AllocatedRaw : 0;
+						}
+						// An empty home evaluates whether one prospective resident can be supplied.
+						// It advertises no citizen demand and consumes nothing until migration occurs.
+						const int64 ProspectiveRaw = Requirement.ConsumptionMilliUnitsPerResidentPerTick;
+						const int64 ProspectiveAvailableRaw = PoolIndex != INDEX_NONE
+							? FMath::Max<int64>(0, OpeningAvailableRaw - SupplyPools[PoolIndex].AllocatedRaw) : 0;
+						Need.ReliabilityBasisPoints = Cohort.Residents == 0
+							? RatioBasisPoints(ProspectiveAvailableRaw, ProspectiveRaw)
+							: RatioBasisPoints(ConsumedRaw, DesiredRaw);
 						Need.SatisfactionBasisPoints = FMath::Min3(Need.AccessBasisPoints,
 							Need.AffordabilityBasisPoints, Need.ReliabilityBasisPoints);
 						if (RequiredRaw > 0)
 						{
-							const auto Reserve = FHansaCheckedIntegerMath::TryMultiplyDivide(AvailableRaw,
+							const auto Reserve = FHansaCheckedIntegerMath::TryMultiplyDivide(OpeningAvailableRaw,
 								static_cast<int64>(MinutesPerTick) * 1000, RequiredRaw * 1440,
 								EHansaRoundingMode::TowardZero);
 							Need.ReserveMilliDays = Reserve ? FMath::Max<int64>(0, Reserve.Value) : 0;
@@ -296,15 +508,68 @@ namespace Hansa::Simulation
 			Cohort.AffordabilityBasisPoints = WeightedAverage(AffordabilityTotal, TotalWeight);
 			Cohort.ReliabilityBasisPoints = WeightedAverage(ReliabilityTotal, TotalWeight);
 			Cohort.SatisfactionBasisPoints = WeightedAverage(SatisfactionTotal, TotalWeight);
-			Cohort.WorkforceSupply = static_cast<int32>((static_cast<int64>(Cohort.Residents) *
-				Tier->WorkforcePerResidentBasisPoints) / BasisPointScale);
+			if (Cohort.Residents == 0 && bBasicServicesSatisfied)
+			{
+				Cohort.Residents = FMath::Min(InitialHouseholdResidents, Cohort.ResidenceCapacity);
+				Cohort.ResidentChangeLastTick = Cohort.Residents;
+				Cohort.ConsecutiveGrowthTicks = 0;
+				Cohort.ConsecutiveDeclineTicks = 0;
+				continue;
+			}
 
-			if (Cohort.SatisfactionBasisPoints >= Tier->GrowthSatisfactionBasisPoints)
+			const auto Recent = Cohort.ConsumptionHistory.RecentTotals(Tier->EvaluationTicks - 1);
+			int64 MigrationWeightedTotal = 0;
+			const FHansaCompiledPopulationTierNeed* Staple = nullptr;
+			for (const auto& Requirement : Tier->Needs)
+			{
+				const auto* Need = Cohort.Needs.FindByPredicate([&Requirement](const auto& Item)
+					{ return Item.NeedId.ToString() == Requirement.NeedId; });
+				if (!Need) continue;
+				int32 Fulfillment = Need->SatisfactionBasisPoints;
+				if (Need->GoodId.IsValid())
+				{
+					const auto* History = Recent.FindByPredicate([Need](const auto& Item) { return Item.GoodId == Need->GoodId; });
+					Fulfillment = RatioBasisPoints(Need->ConsumedLastTick.GetRawValue() + (History ? History->Consumed : 0),
+						Need->RequiredLastTick.GetRawValue() + (History ? History->Required : 0));
+					if (!Staple || Requirement.ImportanceBasisPoints > Staple->ImportanceBasisPoints) Staple = &Requirement;
+				}
+				MigrationWeightedTotal += static_cast<int64>(Fulfillment) * Requirement.ImportanceBasisPoints;
+			}
+			const int32 MigrationSatisfaction = WeightedAverage(MigrationWeightedTotal, TotalWeight);
+			bool bGrowthReserve = true;
+			if (Staple)
+			{
+				const auto* Definition = Registry.FindNeed(Staple->NeedId);
+				const auto Good = FHansaGoodId::TryParse(Definition->GoodId);
+				const auto Stock = InventoryLedger.CreateReadOnlyAccess().QueryStock(Cohort.ConsumptionInventoryId, Good.Value);
+				int64 DemandAfterGrowth = static_cast<int64>(FMath::Min(Tier->GrowthResidentsPerEvaluation,
+					Cohort.ResidenceCapacity - Cohort.Residents)) * Staple->ConsumptionMilliUnitsPerResidentPerTick;
+				for (const auto& Other : Cohorts)
+				{
+					if (!Other.bResidenceOperational || Other.ConsumptionInventoryId != Cohort.ConsumptionInventoryId) continue;
+					const auto* OtherTier = Registry.FindPopulationTier(Other.TierId.ToString());
+					if (!OtherTier) continue;
+					for (const auto& Requirement : OtherTier->Needs)
+					{
+						const auto* OtherNeed = Registry.FindNeed(Requirement.NeedId);
+						if (OtherNeed && OtherNeed->GoodId == Definition->GoodId)
+							DemandAfterGrowth += static_cast<int64>(Other.Residents) * Requirement.ConsumptionMilliUnitsPerResidentPerTick;
+					}
+				}
+				const auto ReserveRequired = FHansaCheckedIntegerMath::TryMultiplyDivide(
+					DemandAfterGrowth, FMath::Max(Tier->EvaluationTicks,
+						FHansaConsumptionHistory::WindowTicks(MinutesPerTick)), 1, EHansaRoundingMode::TowardZero);
+				bGrowthReserve = ReserveRequired && Stock.IsSet() && Stock->Available.GetRawValue() >= ReserveRequired.Value;
+			}
+			// Empty homes enter only through the founding-household rule above. Zero
+			// demand must not count as satisfied migration while a market is still building.
+			if (Cohort.Residents > 0 && Cohort.bHasMarketAccess &&
+				MigrationSatisfaction >= Tier->GrowthSatisfactionBasisPoints && bGrowthReserve)
 			{
 				++Cohort.ConsecutiveGrowthTicks;
 				Cohort.ConsecutiveDeclineTicks = 0;
 			}
-			else if (Cohort.SatisfactionBasisPoints <= Tier->DeclineSatisfactionBasisPoints)
+			else if (MigrationSatisfaction <= Tier->DeclineSatisfactionBasisPoints)
 			{
 				++Cohort.ConsecutiveDeclineTicks;
 				Cohort.ConsecutiveGrowthTicks = 0;
@@ -329,8 +594,7 @@ namespace Hansa::Simulation
 				Cohort.ResidentChangeLastTick = Cohort.Residents - Before;
 				Cohort.ConsecutiveDeclineTicks = 0;
 			}
-			Cohort.WorkforceSupply = static_cast<int32>((static_cast<int64>(Cohort.Residents) *
-				Tier->WorkforcePerResidentBasisPoints) / BasisPointScale);
 		}
+		RefreshPooledWorkforce(Cohorts, Registry);
 	}
 }

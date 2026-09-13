@@ -2,7 +2,8 @@ using UnrealBuildTool;
 
 public class HansaTests : ModuleRules
 {
-	// Coverage includes deterministic simulation, versioned fixtures, and managed world-projection lifecycles.
+	// Coverage includes deterministic simulation, surveyed waterfront construction,
+	// versioned fixtures, and managed world-projection lifecycles.
 	public HansaTests(ReadOnlyTargetRules Target) : base(Target)
 	{
 		if (Target.Configuration == UnrealTargetConfiguration.Shipping)
@@ -22,8 +23,16 @@ public class HansaTests : ModuleRules
 			"HansaSimulation",
 			"InputCore",
 			"Json",
+			"Landscape",
+            "RenderCore",
 			"Slate",
 			"SlateCore"
 		});
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.Add("UnrealEd");
+			PrivateDependencyModuleNames.Add("MeshDescription");
+			PrivateDependencyModuleNames.Add("StaticMeshDescription");
+		}
 	}
 }

@@ -362,6 +362,9 @@ namespace Hansa::Simulation
 	/** Owning market report shared by game UI, diagnostics and allowlisted automation. */
 	struct HANSASIMULATION_API FHansaCityMarketProjection final
 	{
+        // Read-only units for report quantities; copied from existing market settings/state.
+        int32 UpdateCadenceTicks = 0;
+        bool bDemandPerReport = false;
 		FHansaCityDefinitionId CityId;
 		FHansaGoodId GoodId;
 		FHansaQuantity CurrentStock;

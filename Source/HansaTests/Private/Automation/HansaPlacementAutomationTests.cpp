@@ -43,7 +43,8 @@ bool FHansaPlacementSemanticFlowTest::RunTest(const FString& Parameters)
 		WarehouseCard->State.Value.Contains(TEXT("workforce=")) && WarehouseCard->State.Value.Contains(TEXT("flow=")));
 
 	Activate(TEXT("BuildMenu.Card.Building_Road"));
-	Activate(TEXT("Placement.Target.Road"));
+	TestTrue(TEXT("Road pointer target is accepted through the normal placement intent"),
+		Fixture.TargetRoadCellIntent());
 	const FHansaSemanticNode* RoadPreview = Registry.FindNode(TEXT("BuildMode.Placement.Preview"));
 	TestTrue(TEXT("Road preview is typed and valid before confirmation"),
 		RoadPreview != nullptr && RoadPreview->State.bSelected && !RoadPreview->State.bError &&
@@ -52,7 +53,8 @@ bool FHansaPlacementSemanticFlowTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Road confirmation reaches authoritative occupancy"), Fixture.GetPlacedBuildingCount(), 1);
 
 	Activate(TEXT("BuildMenu.Card.Building_Warehouse"));
-	Activate(TEXT("Placement.Target.Disconnected"));
+	TestTrue(TEXT("Disconnected pointer target is accepted for validation"),
+		Fixture.TargetInvalidCellIntent());
 	const FHansaSemanticNode* Invalid = Registry.FindNode(TEXT("BuildMode.Placement.Validation"));
 	const FHansaSemanticNode* Cause = Registry.FindNode(TEXT("BuildMode.Placement.Validation.Cause"));
 	const FHansaSemanticNode* Remedy = Registry.FindNode(TEXT("BuildMode.Placement.Validation.Remedy"));
@@ -62,7 +64,8 @@ bool FHansaPlacementSemanticFlowTest::RunTest(const FString& Parameters)
 		Remedy != nullptr && Remedy->Label == TEXT("Build next to a road"));
 	TestFalse(TEXT("Invalid preview cannot be confirmed"), Fixture.CanConfirm());
 
-	Activate(TEXT("Placement.Target.Adjacent"));
+	TestTrue(TEXT("Road-adjacent pointer target is accepted through the normal placement intent"),
+		Fixture.TargetValidCellIntent());
 	const FHansaSemanticNode* Valid = Registry.FindNode(TEXT("BuildMode.Placement.Validation"));
 	TestTrue(TEXT("Road-adjacent warehouse becomes structurally valid"),
 		Valid != nullptr && Valid->State.bSelected && !Valid->State.bError &&

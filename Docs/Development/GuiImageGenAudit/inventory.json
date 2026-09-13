@@ -1,0 +1,516 @@
+[
+  {
+    "source": "Source\\Hansa\\Private\\UI\\HansaBuildMenuPresentationModel.cpp",
+    "glyphs": [],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 76,
+        "text": "return InputText + TEXT(\" → \") + FormatAmounts(Registry, Outputs);"
+      },
+      {
+        "line": 109,
+        "text": "case EHansaPlacementFailure::RoadRequired: return LOCTEXT(\"RoadRequired\", \"✕ Road required\");"
+      },
+      {
+        "line": 110,
+        "text": "case EHansaPlacementFailure::ShorelineRequired: return LOCTEXT(\"ShoreRequired\", \"✕ Land and water access required\");"
+      },
+      {
+        "line": 111,
+        "text": "case EHansaPlacementFailure::Occupied: return LOCTEXT(\"Occupied\", \"✕ Footprint occupied\");"
+      },
+      {
+        "line": 112,
+        "text": "case EHansaPlacementFailure::OutsideBounds: return LOCTEXT(\"Outside\", \"✕ Outside buildable area\");"
+      },
+      {
+        "line": 113,
+        "text": "case EHansaPlacementFailure::TerrainNotBuildable: return LOCTEXT(\"Terrain\", \"✕ Terrain not buildable\");"
+      },
+      {
+        "line": 114,
+        "text": "case EHansaPlacementFailure::None: return LOCTEXT(\"Valid\", \"✓ Valid placement\");"
+      },
+      {
+        "line": 115,
+        "text": "default: return FText::FromString(FString::Printf(TEXT(\"✕ %s\"), LexToString(Failure)));"
+      },
+      {
+        "line": 235,
+        "text": "Card.Footprint = FText::FromString(FString::Printf(TEXT(\"%d × %d\"), Building.FootprintWidthCells, Building.FootprintHeightCells));"
+      },
+      {
+        "line": 480,
+        "text": "? FText::Format(LOCTEXT(\"InvalidDragDrop\", \"✕ Not placed · {0} · {1}\"), Cause, Remedy)"
+      },
+      {
+        "line": 548,
+        "text": "? FText::Format(LOCTEXT(\"InvalidRoadRelease\", \"✕ Road not built · {0} · {1}\"), Cause, Remedy)"
+      },
+      {
+        "line": 769,
+        "text": "? FText::Format(LOCTEXT(\"RoadPlacedResult\", \"✓ Road committed · {0} new cells\"), FText::AsNumber(RoadCellCount))"
+      },
+      {
+        "line": 770,
+        "text": ": FText::Format(LOCTEXT(\"PlacedResult\", \"✓ Construction committed · {0}\"), FText::FromName(Snapshot.SelectedBuildingId));"
+      },
+      {
+        "line": 822,
+        "text": "? LOCTEXT(\"RepeatWarning\", \"△ Valid · repeated placement enabled\")"
+      },
+      {
+        "line": 823,
+        "text": ": LOCTEXT(\"ShoreWarning\", \"△ Valid shoreline footprint\");"
+      },
+      {
+        "line": 922,
+        "text": "Snapshot.ValidationCause = LOCTEXT(\"RoadAlreadyBuilt\", \"△ Road already exists on this path\");"
+      },
+      {
+        "line": 928,
+        "text": "Snapshot.ValidationCause = LOCTEXT(\"RoadInsufficientFunds\", \"✕ Insufficient construction resources\");"
+      },
+      {
+        "line": 934,
+        "text": "Snapshot.ValidationCause = LOCTEXT(\"RoadContinuation\", \"△ Valid road continuation\");"
+      },
+      {
+        "line": 940,
+        "text": "Snapshot.ValidationCause = LOCTEXT(\"RoadValid\", \"✓ Valid connected road\");"
+      },
+      {
+        "line": 944,
+        "text": "LOCTEXT(\"RoadPlacementSummary\", \"Road · {0},{1} → {2},{3} · horizontal first · {4}\"),"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\HansaCityOverviewPresentationModel.cpp",
+    "glyphs": [],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 143,
+        "text": "Summary(TEXT(\"PopulationTrend\"), LOCTEXT(\"PopulationTrend\", \"Population trend\"), LOCTEXT(\"NoPopulation\", \"No residents\"), LOCTEXT(\"Stable\", \"→ Stable\")),"
+      },
+      {
+        "line": 148,
+        "text": "Summary(TEXT(\"Alerts\"), LOCTEXT(\"Alerts\", \"Alerts\"), LOCTEXT(\"NoAlerts\", \"0 active\"), LOCTEXT(\"AllClear\", \"✓ All clear\"))"
+      },
+      {
+        "line": 205,
+        "text": "Percent(CityPopulation->SatisfactionBasisPoints), CityPopulation->SatisfactionBasisPoints >= 8000 ? LOCTEXT(\"Satisfied\", \"✓ Stable\") : LOCTEXT(\"NeedsAttention\", \"△ Needs attention\"));"
+      },
+      {
+        "line": 219,
+        "text": "AlertCount == 0 ? LOCTEXT(\"AllClear\", \"✓ All clear\") : (bCriticalAlert ? LOCTEXT(\"CriticalAlerts\", \"! Critical\") : LOCTEXT(\"WarningAlerts\", \"△ Warning\")))"
+      },
+      {
+        "line": 227,
+        "text": "Summary(TEXT(\"PopulationTrend\"), LOCTEXT(\"PopulationTrend\", \"Population trend\"), LOCTEXT(\"NoPopulation\", \"No residents\"), LOCTEXT(\"Stable\", \"→ Stable\")),"
+      },
+      {
+        "line": 232,
+        "text": "Summary(TEXT(\"Alerts\"), LOCTEXT(\"Alerts\", \"Alerts\"), FText::Format(LOCTEXT(\"AlertCount\", \"{0} active\"), FText::AsNumber(AlertCount)), AlertCount == 0 ? LOCTEXT(\"AllClear\", \"✓ All clear\") : LOCTEXT(\"WarningAlerts\", \"△ Warning\"))"
+      },
+      {
+        "line": 273,
+        "text": "Row.Status = Row.bError ? LOCTEXT(\"CriticalNeed\", \"! Critical need\") : (Row.bWarning ? LOCTEXT(\"WarningNeed\", \"△ Need warning\") : LOCTEXT(\"StableNeed\", \"✓ Needs stable\"));"
+      },
+      {
+        "line": 324,
+        "text": "Row.Status = !Row.bWarning ? LOCTEXT(\"ProductionReady\", \"✓ Operating\") : FText::Format(LOCTEXT(\"ProductionBlocked\", \"△ {0}\"), FText::FromString(LexToString(Production.Blocker)));"
+      },
+      {
+        "line": 340,
+        "text": "Row.Subtitle = Market.bIsStale ? LOCTEXT(\"StaleMarket\", \"◷ Stale local report\") : LOCTEXT(\"CurrentMarket\", \"● Current local report\");"
+      },
+      {
+        "line": 372,
+        "text": "Row.Status = bBelowReserve ? LOCTEXT(\"LowReserve\", \"△ Low reserve\") : (Market.bIsStale ? LOCTEXT(\"Stale\", \"◷ Stale\") : LOCTEXT(\"MarketStable\", \"✓ Stable\"));"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\HansaHudPresentationModel.cpp",
+    "glyphs": [],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 76,
+        "text": "GrainWatch.Label = LOCTEXT(\"DefaultAlert\", \"△ Grain reserves are low\"); GrainWatch.AffectedObject = LOCTEXT(\"BakeryObject\", \"Lübeck bakery\");"
+      },
+      {
+        "line": 78,
+        "text": "GrainWatch.Causal.StableCode = TEXT(\"MissingInput\"); GrainWatch.Causal.Problem = LOCTEXT(\"GrainProblem\", \"△ Missing grain\");"
+      },
+      {
+        "line": 248,
+        "text": "bCritical ? LOCTEXT(\"CriticalMarketGlyph\", \"!\") : LOCTEXT(\"WarningMarketGlyph\", \"△\"), Good,"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\HansaInspectorPresentationModel.cpp",
+    "glyphs": [],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 157,
+        "text": "Result.Problem = LOCTEXT(\"ProductionHealthy\", \"✓ Production is operating\");"
+      },
+      {
+        "line": 164,
+        "text": "Result.Problem = LOCTEXT(\"MissingInputProblem\", \"△ Missing production input\");"
+      },
+      {
+        "line": 174,
+        "text": "Result.Problem = LOCTEXT(\"WorkforceProblem\", \"△ Workforce shortage\");"
+      },
+      {
+        "line": 223,
+        "text": "Result.Problem = FText::Format(LOCTEXT(\"NeedProblem\", \"△ {0} need is not fulfilled\"), InspectorPresentationModelStableLabel(Weakest->NeedId.ToString()));"
+      },
+      {
+        "line": 232,
+        "text": "Result.StableCode = TEXT(\"ResidenceHealthy\"); Result.Problem = LOCTEXT(\"ResidenceHealthy\", \"✓ Needs are stable\");"
+      },
+      {
+        "line": 392,
+        "text": "Snapshot.State = Production.bActive ? LOCTEXT(\"Operating\", \"● Operating\") : LOCTEXT(\"Paused\", \"Ⅱ Paused\");"
+      },
+      {
+        "line": 464,
+        "text": "Snapshot.State = Residence.bResidenceOperational ? LOCTEXT(\"ResidenceOperating\", \"● Occupied\") : LOCTEXT(\"ResidenceUnavailable\", \"! Unavailable\");"
+      },
+      {
+        "line": 573,
+        "text": "Snapshot.State = Residence->bResidenceOperational ? LOCTEXT(\"WorldResidenceOccupied\", \"● Occupied\") : LOCTEXT(\"WorldResidenceUnavailable\", \"! Unavailable\");"
+      },
+      {
+        "line": 610,
+        "text": "Snapshot.State = Production->bActive ? LOCTEXT(\"WorldOperating\", \"● Operating\") : LOCTEXT(\"WorldPaused\", \"Ⅱ Paused\");"
+      },
+      {
+        "line": 645,
+        "text": "Snapshot.Causal.Problem = ProductionBlocker == TEXT(\"None\") ? LOCTEXT(\"WorldHealthy\", \"✓ No active problem\") : FText::Format(LOCTEXT(\"WorldProblem\", \"△ {0}\"), FText::FromString(ProductionBlocker));"
+      },
+      {
+        "line": 701,
+        "text": "Snapshot.LastActionResult = Snapshot.bPinned ? LOCTEXT(\"PinnedResult\", \"◆ Pinned tracker added\") : LOCTEXT(\"UnpinnedResult\", \"◇ Pinned tracker removed\");"
+      },
+      {
+        "line": 765,
+        "text": "? (bActivate ? LOCTEXT(\"ProductionResumedResult\", \"● Production resumed\") : LOCTEXT(\"ProductionPausedResult\", \"Ⅱ Production paused\"))"
+      },
+      {
+        "line": 781,
+        "text": "Snapshot.LastActionResult = Result.IsSuccess() ? LOCTEXT(\"ResidenceUpgradedResult\", \"✓ Residence upgraded; population and building appearance moved to the next tier\") : GatewayFailure(Result);"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\HansaMarketTablePresentationModel.cpp",
+    "glyphs": [],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 27,
+        "text": "{ TEXT(\"Good.Iron\"), TEXT(\"Iron\"), TEXT(\"◆\"), EHansaMarketGoodCategory::Material },"
+      },
+      {
+        "line": 328,
+        "text": "else if (Row.bShortage) Row.Status = LOCTEXT(\"ShortageStatus\", \"△ Shortage\");"
+      },
+      {
+        "line": 330,
+        "text": "else Row.Status = LOCTEXT(\"CurrentStatus\", \"✓ Current\");"
+      },
+      {
+        "line": 342,
+        "text": ": LOCTEXT(\"CurrentDetailReport\", \"✓ Current report\");"
+      },
+      {
+        "line": 413,
+        "text": "? FText::FromString(FString::Printf(TEXT(\"△ %s\"), Source.ProductionBlocker == Hansa::Simulation::EHansaProductionBlocker::None ? TEXT(\"Unmet demand\") : Hansa::Simulation::LexToString(Source.ProductionBlocker)))"
+      },
+      {
+        "line": 414,
+        "text": ": LOCTEXT(\"ConsumerCurrent\", \"✓ Current\");"
+      },
+      {
+        "line": 430,
+        "text": "? FText::FromString(FString::Printf(TEXT(\"△ %s\"), Source.Blocker == Hansa::Simulation::EHansaProductionBlocker::None ? TEXT(\"Paused\") : Hansa::Simulation::LexToString(Source.Blocker)))"
+      },
+      {
+        "line": 431,
+        "text": ": LOCTEXT(\"ProducerOperating\", \"✓ Operating\");"
+      },
+      {
+        "line": 540,
+        "text": "? FText::Format(LOCTEXT(\"PinnedResult\", \"◆ {0} price and stock pinned.\"), Snapshot.SelectedGood.GoodLabel)"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\HansaScenarioPresentationModel.cpp",
+    "glyphs": [],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 47,
+        "text": "Objective.Status = SourceObjective.bMet ? LOCTEXT(\"Met\", \"✓ Met\") : LOCTEXT(\"InProgress\", \"△ In progress\");"
+      },
+      {
+        "line": 59,
+        "text": "Updated.StateLabel = LOCTEXT(\"Victory\", \"✓ Scenario victory\");"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\HansaTradeMapPresentationModel.cpp",
+    "glyphs": [],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 123,
+        "text": "Item.State = LOCTEXT(\"StoppedListState\", \"⏸ Stopped\");"
+      },
+      {
+        "line": 131,
+        "text": "Item.State = FText::Format(LOCTEXT(\"AtStopListState\", \"● Active · At {0}\"), CurrentCity);"
+      },
+      {
+        "line": 148,
+        "text": "Item.State = LOCTEXT(\"CancelledListState\", \"× Cancelled\");"
+      },
+      {
+        "line": 295,
+        "text": "Snapshot.ReserveRisk = bRisk ? LOCTEXT(\"Risk\", \"⚠ Planned load exceeds reported stock above reserve. Loading may be partial; the reserve stays protected.\")"
+      },
+      {
+        "line": 297,
+        "text": ": LOCTEXT(\"Safe\", \"✓ Reported stock covers the planned load and protected reserve.\");"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\HansaUiComponents.cpp",
+    "glyphs": [
+      "Arrow",
+      "Bakery",
+      "Beer",
+      "Bread",
+      "Building",
+      "Check",
+      "Civic",
+      "Coin",
+      "Cursor",
+      "Decoration",
+      "Error",
+      "Farm",
+      "Fast",
+      "Fastest",
+      "Fish",
+      "Flour",
+      "Grain",
+      "Harbor",
+      "Information",
+      "Iron",
+      "Laborer",
+      "Loading",
+      "Mill",
+      "Pause",
+      "People",
+      "Planks",
+      "Play",
+      "Production",
+      "Road",
+      "Salt",
+      "Storage",
+      "Timber",
+      "Tools",
+      "Trend",
+      "Warning",
+      "Wealthy"
+    ],
+    "images": [],
+    "symbolText": []
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\SHansaBuildMenu.cpp",
+    "glyphs": [
+      "Arrow",
+      "Bakery",
+      "Bread",
+      "Building",
+      "Check",
+      "Civic",
+      "Decoration",
+      "Error",
+      "Farm",
+      "Fish",
+      "Harbor",
+      "Mill",
+      "Planks",
+      "Production",
+      "Road",
+      "Storage",
+      "Warning"
+    ],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 89,
+        "text": "const FText NativeFlow=Flow.Split(TEXT(\" → \"),&Input,&Output)?FText::Format(LOCTEXT(\"CardFlow\",\"{0} produces {1}\"),FText::FromString(Input),FText::FromString(Output)):Card.InputOutput;"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\SHansaContextInspector.cpp",
+    "glyphs": [
+      "Building",
+      "Civic",
+      "Error",
+      "Information",
+      "Loading",
+      "Warning"
+    ],
+    "images": [],
+    "symbolText": []
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\SHansaMarketDemandRow.h",
+    "glyphs": [
+      "Beer",
+      "Bread",
+      "Fish",
+      "Information",
+      "Production"
+    ],
+    "images": [],
+    "symbolText": []
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\SHansaProductionInspector.cpp",
+    "glyphs": [
+      "Arrow",
+      "Check",
+      "Decoration",
+      "Information",
+      "Warning"
+    ],
+    "images": [
+      ".svg"
+    ],
+    "symbolText": [
+      {
+        "line": 151,
+        "text": "+ SHorizontalBox::Slot().FillWidth(1)[TipLabel(LOCTEXT(\"BatchTime\",\"Batch time (1×)\"),EHansaUiTypographyToken::Body)]"
+      },
+      {
+        "line": 240,
+        "text": "+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)[SNew(SBox).WidthOverride(48)[Action(TEXT(\"Inspector.Close\"),LOCTEXT(\"Close\",\"×\"),true)]]]]"
+      },
+      {
+        "line": 313,
+        "text": "FText::Format(LOCTEXT(\"Recipe\",\"{0} → {1} per batch\"),RecipePart(D.Inputs),RecipePart(D.Outputs)));"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\SHansaResearchScreen.cpp",
+    "glyphs": [],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 82,
+        "text": "const TCHAR* State = Node.State == EHansaResearchNodePresentationState::Completed ? TEXT(\"✓ Completed\") :"
+      },
+      {
+        "line": 124,
+        "text": "const FString Label=(Prerequisite&&Prerequisite->State==EHansaResearchNodePresentationState::Completed?TEXT(\"✓ \"):TEXT(\"Requires: \"))+(Prerequisite?Prerequisite->DisplayName.ToString():Id);"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\SHansaResidenceInspector.cpp",
+    "glyphs": [
+      "Beer",
+      "Bread",
+      "Civic",
+      "Fish",
+      "Information",
+      "Production"
+    ],
+    "images": [
+      "Hansa/UI/Residence/citizen.svg"
+    ],
+    "symbolText": []
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\SHansaRootHud.cpp",
+    "glyphs": [
+      "Beer",
+      "Bread",
+      "Coin",
+      "Fast",
+      "Fastest",
+      "Fish",
+      "Flour",
+      "Grain",
+      "Iron",
+      "Laborer",
+      "Pause",
+      "People",
+      "Planks",
+      "Play",
+      "Production",
+      "Salt",
+      "Timber",
+      "Tools",
+      "Trend",
+      "Wealthy"
+    ],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 615,
+        "text": "StaticCastSharedPtr<SHansaAction>(NormalButton)->SetState(Snapshot.Speed==EHansaHudGameSpeed::Normal?EUiState::Selected:EUiState::Default,LOCTEXT(\"NormalTip\",\"Normal speed: 1× simulation time.\"));"
+      },
+      {
+        "line": 616,
+        "text": "StaticCastSharedPtr<SHansaAction>(FastButton)->SetState(Snapshot.Speed==EHansaHudGameSpeed::Fast?EUiState::Selected:EUiState::Default,LOCTEXT(\"FastTip\",\"Fast speed: 4× simulation time.\"));"
+      },
+      {
+        "line": 617,
+        "text": "StaticCastSharedPtr<SHansaAction>(FastestButton)->SetState(Snapshot.Speed==EHansaHudGameSpeed::Fastest?EUiState::Selected:EUiState::Default,LOCTEXT(\"FastestTip\",\"Fastest speed: 12× simulation time.\"));"
+      },
+      {
+        "line": 776,
+        "text": "(Alert.bWarning ? LOCTEXT(\"WarningGlyph\", \"△ Warning ·\") : LOCTEXT(\"NoticeGlyph\", \"i Notice ·\")),"
+      }
+    ]
+  },
+  {
+    "source": "Source\\Hansa\\Private\\UI\\SHansaTradeMap.cpp",
+    "glyphs": [],
+    "images": [],
+    "symbolText": [
+      {
+        "line": 119,
+        "text": "+SHorizontalBox::Slot().AutoWidth()[MakeControl(TEXT(\"TradeMap.Close\"),LOCTEXT(\"Close\",\"Close ×\"),EHansaUiButtonStyle::Icon)]]"
+      },
+      {
+        "line": 164,
+        "text": "+SVerticalBox::Slot().AutoHeight().Padding(0,8)[SNew(SBox).Visibility_Lambda([CreationVisibility]{return CreationVisibility(false);})[MakeControl(TEXT(\"TradeMap.Creator.Review\"),LOCTEXT(\"Review\",\"Review voyage →\"),EHansaUiButtonStyle::Primary)]]"
+      },
+      {
+        "line": 324,
+        "text": "false, TEXT(\"risk\"), State.ReserveRisk.ToString(), false, State.ReserveRisk.ToString().StartsWith(TEXT(\"⚠\")));"
+      }
+    ]
+  }
+]

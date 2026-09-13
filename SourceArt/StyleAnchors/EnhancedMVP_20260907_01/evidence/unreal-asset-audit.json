@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "auditAsOf": "2026-09-07",
+  "method": "live Unreal MCP asset inspection",
+  "assets": [
+    {
+      "family": "merchant-house",
+      "path": "/Game/Mesh/LaborerResidence/Materials_R02/Meshes/SM_LaborerResidence",
+      "boundsCm": [575.8844, 729, 645.7963],
+      "triangles": 141260,
+      "lodCount": 1,
+      "nanite": false,
+      "materialSlots": 10
+    },
+    {
+      "family": "bakery",
+      "path": "/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery",
+      "boundsCm": [1000.6693, 1948.5001, 1664.4999],
+      "triangles": 42952,
+      "lodCount": 1,
+      "nanite": true,
+      "materialSlots": 17,
+      "thumbnailObservation": "gray checkerboard/fallback presentation"
+    },
+    {
+      "family": "mill-body",
+      "path": "/Game/Hansa/Core/Buildings/Windmill/Meshes/SM_Windmill_Body",
+      "boundsCm": [800, 819.5, 1304.3],
+      "triangles": 259298,
+      "lodCount": 1,
+      "nanite": false,
+      "materialSlots": 8
+    },
+    {
+      "family": "mill-rotor",
+      "path": "/Game/Hansa/Core/Buildings/Windmill/Meshes/SM_Windmill_Rotor",
+      "boundsCm": [1337.7, 197.4, 1337.7],
+      "triangles": 24712,
+      "lodCount": 1,
+      "nanite": false
+    },
+    {
+      "family": "road",
+      "path": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m",
+      "boundsCm": [800, 492.2, 13.5],
+      "triangles": 7680,
+      "lodCount": 1,
+      "nanite": false
+    }
+  ]
+}

@@ -6,12 +6,15 @@
 #include "Styling/SlateBrush.h"
 #include "Styling/SlateTypes.h"
 #include "Widgets/SCompoundWidget.h"
+#include "UI/HansaUiComponents.h"
 
 class SBorder;
 class SBox;
+class SScrollBox;
 class SButton;
 class STextBlock;
 class SVerticalBox;
+class SEditableTextBox;
 
 namespace Hansa::UI
 {
@@ -20,11 +23,13 @@ namespace Hansa::UI
 	{
 	public:
 		SLATE_BEGIN_ARGS(SHansaTradeMap) : _Model(nullptr), _InitialViewportSize(FIntPoint(1280,720)) {}
+			SLATE_ARGUMENT(FUiPreferences, Preferences)
 			SLATE_ARGUMENT(UHansaTradeMapPresentationModel*, Model)
 			SLATE_ARGUMENT(FIntPoint, InitialViewportSize)
 		SLATE_END_ARGS()
 		~SHansaTradeMap();
 		void Construct(const FArguments& Arguments);
+		TSharedPtr<SWidget> ResolveSemanticWidget(const FString& Id) const { const auto* W=SemanticWidgets.Find(Id); return W?W->Pin():nullptr; }
 		void SetPresentationSize(FIntPoint Size);
 		bool ActivateSemanticId(const FString& SemanticId);
 		bool FocusSemanticId(const FString& SemanticId);
@@ -40,8 +45,16 @@ namespace Hansa::UI
 		FReply Invoke(const FString Id);
 		TWeakObjectPtr<UHansaTradeMapPresentationModel> Model;
 		FDelegateHandle ChangedHandle;
+		FUiPreferences Preferences;
+		FString PresentedContentKey;
+		FString PresentedStopKey;
 		FIntPoint PresentationSize{1280,720};
+        FEditableTextBoxStyle RouteNameStyle;
+        TSharedPtr<SEditableTextBox> RouteNameInput;
+        TSharedPtr<STextBlock> CogLabel, ReviewText, ValidationText;
+        TSharedPtr<SVerticalBox> SetupPanel, EditPanel, ReviewPanel, ExistingPanel;
 		TSharedPtr<SBox> PresentationBox;
+		TSharedPtr<SScrollBox> RouteScroll,EditorScroll;
 		TSharedPtr<SVerticalBox> RouteList;
 		TSharedPtr<SVerticalBox> StopList;
 		TSharedPtr<SBox> CanvasHost;

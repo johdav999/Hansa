@@ -1,7 +1,13 @@
 // Validate restore structure through the shared initialization validators; do not replace live records.
-static bool ValidateState(const FHansaSimulationState& S)
+static bool ValidateState(const FHansaSimulationState& S, const FHansaSimulationDefinitionContext& D)
 {
-	if (!S.bInitialized || !S.InventoryLedger.bInitialized) return false;
+	if (!S.bInitialized || !S.InventoryLedger.bInitialized ||
+		S.Placement.GetTopologyHash() != D.GetPlacementTopologyHash()) return false;
+    if (!S.ConsumptionHistory.Validate(S.Clock)) return false;
+    for (const auto& Sample : S.ConsumptionHistory.Samples)
+        for (const auto& Good : Sample.Goods)
+            if (!S.Cities.ContainsByPredicate([&](const auto& City) { return City.DefinitionId == Good.CityId; }) ||
+                !D.GetEconomicRegistry() || !D.GetEconomicRegistry()->FindGood(Good.GoodId.ToString())) return false;
 	FHansaSimulationInitialization I;
 	I.Clock = S.Clock;
 	I.CampaignSeed = S.CampaignSeed;
@@ -19,7 +25,7 @@ static bool ValidateState(const FHansaSimulationState& S)
 	I.TestEntities = S.TestEntities;
 	I.MarketSettings = S.MarketSettings;
 	I.LocalLogisticsSettings = S.LocalLogisticsSettings;
-	I.Placement = {S.Placement.Maps, S.Placement.Entitlements, S.Placement.Placements};
+	I.Placement = {{}, S.Placement.Entitlements, S.Placement.Placements};
 	I.InventoryMovementHistoryCapacity = S.InventoryLedger.MovementCapacity;
 	for (const auto& V : S.InventoryLedger.Inventories)
 	{
@@ -55,6 +61,11 @@ static bool ValidateState(const FHansaSimulationState& S)
 	}
 	for (const auto& V : S.PopulationCohorts)
 	{
+        if (!V.ConsumptionHistory.Validate(S.Clock)) return false;
+        for (const auto& Sample : V.ConsumptionHistory.Samples)
+            for (const auto& Good : Sample.Goods)
+                if (Good.CityId != V.CityId || !D.GetEconomicRegistry() ||
+                    !D.GetEconomicRegistry()->FindGood(Good.GoodId.ToString())) return false;
 		FHansaPopulationCohortInitialization R;
 		R.Id = V.Id;
 		R.ResidenceBuildingId = V.ResidenceBuildingId;
@@ -112,7 +123,7 @@ static bool ValidateState(const FHansaSimulationState& S)
 		R.AppliedEffects = V.AppliedEffects;
 		I.Research.Add(MoveTemp(R));
 	}
-	if (!FHansaSimulationState::TryCreate(MoveTemp(I)).IsSuccess()) return false;
+	if (!FHansaSimulationState::TryCreate(MoveTemp(I), D.GetPlacementTopologyShared()).IsSuccess()) return false;
 	if (!S.NextProductionReservationValue || !S.NextLogisticsJobValue ||
 		S.NextLogisticsReservationValue < 0x8000000000000000ULL ||
 		S.InventoryLedger.RecentMovements.Num() > S.InventoryLedger.MovementCapacity) return false;
@@ -148,13 +159,47 @@ static bool ValidateState(const FHansaSimulationState& S)
 		if (R.RemainingQuantity.GetRawValue() < 0 || R.RequestedQuantity < R.RemainingQuantity ||
 			R.InFlightQuantity.GetRawValue() < 0 || R.RemainingQuantity < R.InFlightQuantity) return false;
 	TSet<FHansaLogisticsJobId> Jobs;
+	TMap<FHansaLogisticsRequestId, int64> InFlightByRequest;
 	for (const auto& J : S.LocalLogisticsJobs)
 	{
 		if (!J.Id.IsValid() || Jobs.Contains(J.Id) || J.Id.GetValue() >= S.NextLogisticsJobValue ||
 			J.CargoQuantity.GetRawValue() < 0 || J.Quantity < J.CargoQuantity ||
+			J.ElapsedTravelTicks < 0 || J.RemainingTravelTicks < 0 ||
+			J.RoadDistanceCells <= 0 || J.RouteCells.Num() > 4096 ||
+			J.Status > EHansaLogisticsJobStatus::PausedInTransit ||
+			J.PauseReason > EHansaLogisticsRoadPathFailure::EndpointsDisconnected ||
 			!S.LocalLogisticsRequests.ContainsByPredicate([&](const auto& R) { return R.Id == J.RequestId; })) return false;
+		for (int32 CellIndex = 1; CellIndex < J.RouteCells.Num(); ++CellIndex)
+			if (FMath::Abs(J.RouteCells[CellIndex].X - J.RouteCells[CellIndex - 1].X) +
+				FMath::Abs(J.RouteCells[CellIndex].Y - J.RouteCells[CellIndex - 1].Y) != 1) return false;
+		const bool bBeforePickup = J.Status == EHansaLogisticsJobStatus::AwaitingPickup ||
+			J.Status == EHansaLogisticsJobStatus::PausedAwaitingPickup;
+		const bool bCarriesCargo = J.Status == EHansaLogisticsJobStatus::InTransit ||
+			J.Status == EHansaLogisticsJobStatus::PausedInTransit;
+		if ((bBeforePickup && J.CargoQuantity.GetRawValue() != 0) ||
+			(bCarriesCargo && J.CargoQuantity != J.Quantity) ||
+			(J.Status == EHansaLogisticsJobStatus::Completed &&
+				(J.CargoQuantity.GetRawValue() != 0 || J.RemainingTravelTicks != 0)) ||
+			(J.Status == EHansaLogisticsJobStatus::AwaitingPickup && !J.SourceReservationId.IsValid()) ||
+			(J.Status != EHansaLogisticsJobStatus::AwaitingPickup && J.SourceReservationId.IsValid())) return false;
+		if (J.SourceReservationId.IsValid() && !S.InventoryLedger.Reservations.ContainsByPredicate(
+			[&](const auto& Reservation)
+			{
+				return Reservation.Id == J.SourceReservationId &&
+					Reservation.InventoryId == J.SourceInventoryId &&
+					Reservation.GoodId == J.GoodId && Reservation.Quantity == J.Quantity;
+			})) return false;
+		if (J.Status != EHansaLogisticsJobStatus::Completed)
+		{
+			int64& InFlight = InFlightByRequest.FindOrAdd(J.RequestId);
+			const auto Sum = FHansaCheckedIntegerMath::TryAdd(InFlight, J.Quantity.GetRawValue());
+			if (!Sum) return false;
+			InFlight = Sum.Value;
+		}
 		Jobs.Add(J.Id);
 	}
+	for (const auto& R : S.LocalLogisticsRequests)
+		if (R.InFlightQuantity.GetRawValue() != InFlightByRequest.FindRef(R.Id)) return false;
 	for (const auto& M : S.Markets)
 		if (M.PriceHistory.Num() > S.MarketSettings.PriceHistoryCapacity ||
 			M.Report.PriceHistory.Num() > S.MarketSettings.PriceHistoryCapacity) return false;

@@ -3,6 +3,8 @@
 #include "Definitions/HansaDefinitionBase.h"
 #include "HansaTradeDefinitions.generated.h"
 
+class AHansaCargoVehiclePresentation;
+
 UENUM(BlueprintType)
 enum class EHansaAuthoredRouteMode : uint8
 {
@@ -43,6 +45,14 @@ class HANSA_API UHansaVehicleDefinition final : public UHansaDefinitionBase
 
 public:
 	UHansaVehicleDefinition();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trade|Presentation", meta = (
+		DisplayName = "Presentation actor", ToolTip = "Optional promoted cargo vehicle skin. Empty preserves legacy data; never changes simulation identity or capacity.",
+		HansaRequired = "false", HansaReference = "ActorClass", HansaBulkEditable = "false", HansaAIAccess = "Never",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "OptionalAsset"))
+	TSoftClassPtr<AHansaCargoVehiclePresentation> PresentationActorClass;
+
+	UClass* LoadPresentationActorClass() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trade", meta = (
 		DisplayName = "Route mode", ToolTip = "Network mode this vehicle can traverse.",

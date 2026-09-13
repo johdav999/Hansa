@@ -1,6 +1,7 @@
 #include "World/HansaStrategyCameraPawn.h"
 
 #include "Camera/CameraComponent.h"
+#include "HansaLog.h"
 #include "EngineUtils.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -39,6 +40,7 @@ void AHansaStrategyCameraPawn::BeginPlay()
 	ResolveMapBounds();
 	CameraState.Focus = FVector2D(GetActorLocation().X, GetActorLocation().Y);
 	CameraState.YawDegrees = GetActorRotation().Yaw;
+	CameraState.PitchDegrees = CameraBoom->GetRelativeRotation().Pitch;
 	CameraState.ZoomDistance = FMath::Clamp(CameraBoom->TargetArmLength, MinimumZoomDistance, MaximumZoomDistance);
 	ApplyCameraState();
 }
@@ -48,7 +50,7 @@ void AHansaStrategyCameraPawn::Tick(const float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	Hansa::Game::FHansaStrategyCameraIntent EffectiveIntent = PendingIntent;
-	if (EffectiveIntent.Pan.IsNearlyZero())
+	if (!bDragPanActive && !bDragRotateActive && EffectiveIntent.Pan.IsNearlyZero())
 	{
 		EffectiveIntent.Pan = GetMouseEdgePanIntent();
 	}
@@ -62,14 +64,66 @@ void AHansaStrategyCameraPawn::Tick(const float DeltaSeconds)
 	Settings.ZoomUnitsPerStep = ZoomUnitsPerStep;
 	Settings.MinimumZoomDistance = MinimumZoomDistance;
 	Settings.MaximumZoomDistance = MaximumZoomDistance;
+	const float PreviousYaw = CameraState.YawDegrees;
 	CameraState = Hansa::Game::FHansaStrategyCameraModel::Advance(CameraState, EffectiveIntent, Settings, DeltaSeconds);
 	PendingIntent.ZoomSteps = 0.0f;
-	ApplyCameraState();
+    PendingIntent.YawDisplacement = 0.0f;
+    PendingIntent.PitchDisplacement = 0.0f;
+    PendingIntent.PanDisplacement = FVector2D::ZeroVector;
+    ApplyCameraState();
+    const double Now = FPlatformTime::Seconds();
+    if (bDragRotateActive && Now - LastCameraYawDiagnosticTime >= 0.5)
+    {
+        LastCameraYawDiagnosticTime = Now;
+        UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Applied pawn=%s dt=%.4f requestedYawDelta=%.3f yawBefore=%.3f yawAfter=%.3f actorYaw=%.3f cameraYaw=%.3f requestedPitchDelta=%.3f pitch=%.3f cameraPitch=%.3f intentValid=%d settingsValid=%d"),
+            *GetName(), DeltaSeconds, EffectiveIntent.YawDisplacement, PreviousYaw, CameraState.YawDegrees,
+            GetActorRotation().Yaw, Camera->GetComponentRotation().Yaw, EffectiveIntent.PitchDisplacement,
+            CameraState.PitchDegrees, Camera->GetComponentRotation().Pitch, EffectiveIntent.IsFinite(), Settings.IsValid());
+    }
 }
 
 void AHansaStrategyCameraPawn::SetPanIntent(const FVector2D Value)
 {
 	PendingIntent.Pan = Value;
+}
+
+void AHansaStrategyCameraPawn::SetDragPanIntent(const FVector2D PixelDelta, const bool bActive)
+{
+    bDragPanActive = bActive;
+    if (!bActive)
+    {
+        PendingIntent.PanDisplacement = FVector2D::ZeroVector;
+    }
+    else if (!PixelDelta.ContainsNaN() && FMath::IsFinite(DragPanUnitsPerPixel))
+    {
+        PendingIntent.PanDisplacement += FVector2D(-PixelDelta.X, PixelDelta.Y) *
+            FMath::Max(0.0f, DragPanUnitsPerPixel);
+    }
+}
+
+void AHansaStrategyCameraPawn::SetDragRotateIntent(const float HorizontalPixelDelta, const bool bActive)
+{
+    bDragRotateActive = bActive;
+    if (!bActive)
+    {
+        PendingIntent.YawDisplacement = 0.0f;
+        PendingIntent.PitchDisplacement = 0.0f;
+    }
+    else if (FMath::IsFinite(HorizontalPixelDelta) && FMath::IsFinite(DragRotationDegreesPerPixel))
+    {
+        PendingIntent.YawDisplacement += HorizontalPixelDelta * FMath::Max(0.0f, DragRotationDegreesPerPixel);
+    }
+}
+
+void AHansaStrategyCameraPawn::SetDragOrbitIntent(const FVector2D PixelDelta, const bool bActive)
+{
+    const FVector2D SafeDelta = PixelDelta.ContainsNaN() ? FVector2D::ZeroVector : PixelDelta;
+    SetDragRotateIntent(SafeDelta.X, bActive);
+    if (bActive && FMath::IsFinite(DragRotationDegreesPerPixel))
+    {
+        // Screen Y increases downward; dragging up raises the viewing direction.
+        PendingIntent.PitchDisplacement -= SafeDelta.Y * FMath::Max(0.0f, DragRotationDegreesPerPixel);
+    }
 }
 
 void AHansaStrategyCameraPawn::SetRotateIntent(const float Value)
@@ -93,6 +147,8 @@ void AHansaStrategyCameraPawn::SetFastPanIntent(const bool bValue)
 void AHansaStrategyCameraPawn::ClearCameraIntents()
 {
 	PendingIntent = Hansa::Game::FHansaStrategyCameraIntent();
+    bDragPanActive = false;
+    bDragRotateActive = false;
 }
 
 void AHansaStrategyCameraPawn::FocusWorldLocationIntent(const FVector WorldLocation)
@@ -156,4 +212,23 @@ void AHansaStrategyCameraPawn::ApplyCameraState()
 	SetActorLocation(FVector(CameraState.Focus.X, CameraState.Focus.Y, GetActorLocation().Z));
 	SetActorRotation(FRotator(0.0, CameraState.YawDegrees, 0.0));
 	CameraBoom->TargetArmLength = CameraState.ZoomDistance;
+	const Hansa::Game::FHansaStrategyCameraSettings Settings;
+	CameraState.PitchDegrees = FMath::Clamp(CameraState.PitchDegrees,
+		Settings.MinimumPitchDegrees, Settings.MaximumPitchDegrees);
+	CameraBoom->SetRelativeRotation(FRotator(CameraState.PitchDegrees, 0.0, 0.0));
+}
+
+void AHansaStrategyCameraPawn::SetViewBounds(FVector2D Min,FVector2D Max)
+{
+    if(Min.ContainsNaN()||Max.ContainsNaN()||Min.X>=Max.X||Min.Y>=Max.Y)return;
+    ClearCameraIntents();MapBoundsMin=Min;MapBoundsMax=Max;
+}
+void AHansaStrategyCameraPawn::RestoreHomeBounds(){ClearCameraIntents();ResolveMapBounds();}
+
+void AHansaStrategyCameraPawn::RestoreViewState(const Hansa::Game::FHansaStrategyCameraState& State)
+{
+    ClearCameraIntents();
+    if (!State.IsFinite()) return;
+    CameraState = State;
+    ApplyCameraState();
 }

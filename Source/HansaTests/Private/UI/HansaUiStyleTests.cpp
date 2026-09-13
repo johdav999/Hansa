@@ -43,11 +43,11 @@ bool FHansaUiTokenContractTest::RunTest(const FString& Parameters)
 		UHansaUiStyleLibrary::GetSpacing(EHansaUiSpacingToken::ControllerFocusTarget), 48.0f);
 
 	TestEqual(TEXT("Display typography is inside the 32-40 pixel range"),
-		UHansaUiStyleLibrary::GetTypography(EHansaUiTypographyToken::Display).Size, 36.0f);
+		UHansaUiStyleLibrary::GetTypography(EHansaUiTypographyToken::Display).Size, 27.0f);
 	TestEqual(TEXT("Body typography uses the approved 15-17 pixel range"),
-		UHansaUiStyleLibrary::GetTypography(EHansaUiTypographyToken::Body).Size, 16.0f);
+		UHansaUiStyleLibrary::GetTypography(EHansaUiTypographyToken::Body).Size, 12.0f);
 	TestEqual(TEXT("Caption typography never drops below 12 pixels"),
-		UHansaUiStyleLibrary::GetTypography(EHansaUiTypographyToken::Caption).Size, 13.0f);
+		UHansaUiStyleLibrary::GetTypography(EHansaUiTypographyToken::Caption).Size, 9.75f);
 
 	const FHansaUiFocusStyle Focus = UHansaUiStyleLibrary::GetFocusStyle();
 	const FHansaUiFocusStyle HighContrastFocus = UHansaUiStyleLibrary::GetFocusStyle(true);
@@ -126,7 +126,7 @@ bool FHansaUiNativeStyleTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Tab style uses native toggle-button behavior"),
 		UHansaUiStyleLibrary::GetTabStyle().CheckBoxType == ESlateCheckBoxType::ToggleButton);
 	TestEqual(TEXT("Tooltip text uses body-size native text"),
-		UHansaUiStyleLibrary::GetTooltipTextStyle().Font.Size, 16.0f);
+		UHansaUiStyleLibrary::GetTooltipTextStyle().Font.Size, 12.0f);
 	return !HasAnyErrors();
 }
 

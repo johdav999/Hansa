@@ -1,0 +1,153 @@
+{
+  "resampled": false,
+  "production_raster_imports": 0,
+  "images": [
+    {
+      "path": "Docs/Images/UI/Construction/construction--bread-icon--default--1254x1254--v1.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "9fc904dcd6bef2670eade38cdcf427b09ac5f3f8382cf377c57697ba5c8478c9",
+      "role": "non-shipping ImageGen reference"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/construction--building-card--default--1254x1254--v1.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "6fb14a2af508eeb6daa94a6886ad854c795c833090f32a80f6d1c56955f8bb25",
+      "role": "non-shipping ImageGen reference"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/construction--composed--default--1536x1024--v2.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "8fe18ec716ac89ef3ce4c07731b2a0ab14947de69a77dac38099ccdc52343952",
+      "role": "non-shipping ImageGen reference"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/construction--fish-icon--default--1254x1254--v1.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "a183f94e5b032e5ab0dac7f62d0500f12ed9920ec2ac4ce0552a9725bb4cae21",
+      "role": "non-shipping ImageGen reference"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/construction--planks-icon--default--1254x1254--v1.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "5708eba81caf83a59ca890a6a3dec6c2e215d3f7ab17ba7db7659073251a890a",
+      "role": "non-shipping ImageGen reference"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1280x720-accessible.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "0243e46ee8feac2c08d31b460badad30bc7da0563d3cf299cb274a286933e3be",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1280x720-bread.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "b45ef364375d93fcc1ac048928b4bc5e69be8e3fed96720aa6c8cedce97e4be9",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1280x720-compact.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "06cc23a1e5e97dcd3a2b2018fb999189169aa6103248049b154e954a898980f3",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1280x720-fish.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "355e206402f36328c0ccd63eb78fd54b76ba86fbc47686f1e2d358b8f95d3328",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1280x720-localized.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "e54086320f3f3d579567080fa28ea134ab9c8994db09b8113f04827ee7f6a71c",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1280x720-locked.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "13804020e0df3ab8ba3ee458978e7b00cda0be77009e7c6b53255036dbd04358",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1280x720-placement.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "f78a1f6a8fcfc557118b816263a02609fa4a256d00694681a689807edbd8906e",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1280x720-planks.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "6c0a535b006b0a38e9a090c817a318fcd239d358afaa38a334890e42fd3bfa40",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1920x1080-accessible.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "3fb0fbe923bbd334cd75d71767eb95af19b72928e19681b8f516f91e85a265d9",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1920x1080-bread.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "937a75d6e484a981311f7a03bb54a0e98e66c25e38754728829f1033a9af2586",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1920x1080-compact.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "f4aa4b0d93dea95bdd638256dc476f4aec5d2196480fc96d32374d78fda972e4",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1920x1080-fish.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "336f8ac2a47ac5d88a83dbaf5dae6268024ac1b2d39a6794b0ea62c6615a0bca",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1920x1080-localized.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "783f58fe6207528eca9afdaa3677c29d3c1caa76bb6be15db1178fb088aea27c",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1920x1080-locked.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "979c12a2dbf5beef815ee6916e70ead368983cff14e9699ad9bd202d0848a3a2",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1920x1080-placement.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "6d4f3ac7addc73d7008a86a20199a7fc25307e4d1f6fd4e01b8ead36a5aa03fb",
+      "role": "native viewport capture"
+    },
+    {
+      "path": "Docs/Images/UI/Construction/Native/tray-1920x1080-planks.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "a0510816bf0183f1b66b61797a881cf1aab0ff468a1476d8304fdf3183d525ac",
+      "role": "native viewport capture"
+    }
+  ]
+}

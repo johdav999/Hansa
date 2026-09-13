@@ -497,3 +497,7 @@ A GUI/image task is complete only when:
 7. accessibility, input, localization, and resolution checks pass;
 8. the completion report distinguishes reference art from production-ready assets.
 
+
+## GUI ImageGen resizing exception — approved 2026-09-10
+
+For GUI icons and GUI images, the user authorizes proportional resizing of genuine ImageGen artwork when the generator cannot deliver the requested native display size. Request the closest practical size first. Preserve the original generated master and aspect ratio; transparent-margin cropping and high-quality proportional resampling into documented display-size variants are allowed. Review each result at actual display size, including small UI scale, on its intended background. Regenerate unreadable artwork rather than accepting blurred details. Never stretch, squash, or replace the generated artwork with manually drawn icons. Record generated dimensions, crop, output dimensions, prompt, and quality review. This exception supersedes conflicting no-resampling and native/vector icon advice in this document for GUI images only. Other game imagery retains its existing rules.

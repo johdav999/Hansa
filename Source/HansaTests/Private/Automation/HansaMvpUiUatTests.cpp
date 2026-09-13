@@ -58,7 +58,7 @@ namespace Hansa::Tests::MvpUiUat
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaMvpUiNativeGoldenFlowUatTest,
 	"Hansa.UI.UAT.MvpGoldenFlows.NativeScreens",
-	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter | EAutomationTestFlags::NonNullRHI)
 
 bool FHansaMvpUiNativeGoldenFlowUatTest::RunTest(const FString& Parameters)
 {

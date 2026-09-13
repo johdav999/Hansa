@@ -28,6 +28,18 @@ namespace Hansa::Simulation
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaProductionBlocker Blocker);
 
+	/**
+	 * Converts partial staffing into an effective batch duration.
+	 * One assigned worker is enough to operate a staffed recipe; speed is
+	 * assigned workforce / required workforce, so duration grows by the inverse ratio.
+	 */
+	HANSASIMULATION_API int32 CalculateWorkforceAdjustedCycleTicks(
+		int32 BaseCycleTicks,
+		int32 AllocatedLaborerWorkforce,
+		int32 RequiredLaborerWorkforce,
+		int32 AllocatedArtisanWorkforce,
+		int32 RequiredArtisanWorkforce);
+
 	/** Initialization for either a building recipe or deterministic city background supply. */
 	struct HANSASIMULATION_API FHansaProductionInitialization final
 	{

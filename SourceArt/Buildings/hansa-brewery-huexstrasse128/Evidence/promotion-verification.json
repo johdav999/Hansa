@@ -1,0 +1,138 @@
+{
+  "approval": "Johan explicitly approved brewery production promotion and game-data integration",
+  "mesh": "/Game/Mesh/hansa-brewery-huexstrasse128/Production/SM_HansaBrewery_Production.SM_HansaBrewery_Production",
+  "definition": "/Game/Hansa/Core/Buildings/DA_Building_Brewery.DA_Building_Brewery",
+  "footprint": [
+    4,
+    4
+  ],
+  "material_slots": 16,
+  "full_static_mesh_and_source_roof_tints": "passed",
+  "nanite_enabled": false,
+  "restrained_material_relief": "passed",
+  "dependencies": {
+    "/Game/Mesh/hansa-brewery-huexstrasse128/Production/SM_HansaBrewery_Production": [
+      "/Script/NavigationSystem",
+      "/Script/InterchangeEngine",
+      "/Script/InterchangePipelines",
+      "/Script/InterchangeImport",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_AgedCopper_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_BrickFace_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_BrickWall_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Burlap_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_DarkBrick_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_ForgedIron_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Glass_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Limestone_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_MaltMash_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Oak_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Soot_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Terracotta_Dark_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Terracotta_Pale_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Terracotta_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Terracotta_Smoked_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Terracotta_Warm_R05"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Terracotta_Warm_R05": [
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_N_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_R_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_Warm_BC_R05"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_Warm_BC_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_R_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_N_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Terracotta_Smoked_R05": [
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_N_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_R_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_Smoked_BC_R05"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_Smoked_BC_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Terracotta_R05": [
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_N_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_R_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_BC_R05"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_BC_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Terracotta_Pale_R05": [
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_N_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_R_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_Pale_BC_R05"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_Pale_BC_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Terracotta_Dark_R05": [
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_Dark_BC_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_N_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_R_R05"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Terracotta_Dark_BC_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Soot_R05": [],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Oak_R05": [
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Oak_BC_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Oak_N_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Oak_R_R05"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Oak_R_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Oak_N_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_Oak_BC_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_MaltMash_R05": [],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Limestone_R05": [],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Glass_R05": [],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_ForgedIron_R05": [],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_DarkBrick_R05": [
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickFace_BC_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickFace_N_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickFace_R_R05"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickFace_R_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickFace_N_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickFace_BC_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_Burlap_R05": [],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_BrickWall_R05": [
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickWall_BC_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickWall_N_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickWall_R_R05"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickWall_R_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickWall_N_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickWall_BC_R05": [
+      "/Script/InterchangeEngine"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_BrickFace_R05": [
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickFace_BC_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickFace_N_R05",
+      "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Textures/T_Brewery_BrickFace_R_R05"
+    ],
+    "/Game/Mesh/hansa-brewery-huexstrasse128/R05/Materials/M_Brewery_AgedCopper_R05": []
+  },
+  "production_dependency_audit": "passed"
+}

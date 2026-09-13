@@ -1,0 +1,67 @@
+{
+  "developmentBuild": "20260909-130952468-build-HansaEditor-Win64-Development",
+  "tradeTests": "20260909-130457053-automation-Hansa.UI.Trade",
+  "marketTests": "20260909-130514332-automation-Hansa.UI.Market",
+  "selectedGoodTests": "20260909-130531123-automation-Hansa.UI.SelectedGood",
+  "saveTests": "20260909-130049945-automation-Hansa.Integration.Save",
+  "shippingExclusion": "20260909-131039079-shipping-exclusion-Win64",
+  "nativeRuns": [
+    "20260909-131024685-gui-repair-1280-720",
+    "20260909-131055027-gui-repair-1280-720",
+    "20260909-131123177-gui-repair-1280-720",
+    "20260909-131024888-gui-repair-1920-1080",
+    "20260909-131057113-gui-repair-1920-1080",
+    "20260909-131126361-gui-repair-1920-1080",
+    "20260909-131214319-gui-repair-2560-1440",
+    "20260909-131245455-gui-repair-2560-1440",
+    "20260909-131315145-gui-repair-2560-1440",
+    "20260909-131215809-gui-repair-3440-1440",
+    "20260909-131247420-gui-repair-3440-1440",
+    "20260909-131317741-gui-repair-3440-1440"
+  ],
+  "nativeImageCount": 108,
+  "automatedTests": 21,
+  "shippingScope": "Shipping executable and receipt exclusion scan; full cooked/depot audit not performed in P26",
+  "references": [
+    {
+      "path": "trade-p26--chart--reference--1536x1024--v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "built-in ImageGen",
+      "shipping": false,
+      "sha256": "cdbd949a2262ced0fe7b8b1a22f2c7e095bbff33d608396a6131fb4e371c457c"
+    },
+    {
+      "path": "trade-p26--departure-review--reference--1536x1024--v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "built-in ImageGen",
+      "shipping": false,
+      "sha256": "9be9505d488c761bf6d52dfd0ce6395ec2cbe517c267a3e8cd6772ccea2cfe06"
+    },
+    {
+      "path": "trade-p26--ordered-stops--reference--1536x1024--v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "built-in ImageGen",
+      "shipping": false,
+      "sha256": "4bc94304443b9a300a3b78448017935f652e0d9f6d90f8a393d1c2935af62260"
+    },
+    {
+      "path": "trade-p26--workspace--reference--1536x1024--v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "built-in ImageGen",
+      "shipping": false,
+      "sha256": "c7f13988af0e72c7a1af0ae352909003a4a18669c9a2d7c04d7ee0c305812d81"
+    }
+  ]
+}

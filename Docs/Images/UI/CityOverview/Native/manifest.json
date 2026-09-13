@@ -1,0 +1,271 @@
+{
+  "date": "2026-09-09",
+  "mode": "Unreal Slate viewport readback; no resampling",
+  "build": "20260909-121609059-build-HansaEditor-Win64-Development",
+  "runs": [
+    "20260909-121637416-gui-repair-1280-720",
+    "20260909-121638120-gui-repair-1920-1080"
+  ],
+  "files": [
+    {
+      "file": "city-1280x720-population.png",
+      "bytes": 139729,
+      "sha256": "8ecf60f8b12a1d3c844f4f88fae69d51ab17653ef3265f0b78ae6c5bf5c874e1"
+    },
+    {
+      "file": "city-1280x720-population.tsv",
+      "bytes": 25906,
+      "sha256": "f347f88973986dd8337f2e11a0620f0ca401d229ff87f35d7cdc77d659b6c3f3"
+    },
+    {
+      "file": "city-1280x720-focus.png",
+      "bytes": 140043,
+      "sha256": "34a5204e591173ac37600a558eaa764ed241d9bbd9a1c04c3acbbe13be57507a"
+    },
+    {
+      "file": "city-1280x720-focus.tsv",
+      "bytes": 25906,
+      "sha256": "8f5f1c28270c8544e0117fc6d75899baaff60cb050f63f701e8c5021ab7a998a"
+    },
+    {
+      "file": "city-1280x720-production.png",
+      "bytes": 139375,
+      "sha256": "918b551ac718142f7a84c9649da3fb39ac989113600d951cf1f2bda244d52efa"
+    },
+    {
+      "file": "city-1280x720-production.tsv",
+      "bytes": 26962,
+      "sha256": "bd5ac29b44a5436ab543992c732ae586d5778a348ad84de6cdfe4ef1d7bdfc05"
+    },
+    {
+      "file": "city-1280x720-market.png",
+      "bytes": 139256,
+      "sha256": "8dba3945d32d337eed51b0a5a037efa8bf80aeca1918da30437c41092c2cc966"
+    },
+    {
+      "file": "city-1280x720-market.tsv",
+      "bytes": 33708,
+      "sha256": "8f326cebc2508b45db0b67952bb672bb0414310fdfc374dfb52cce4e1f773c1b"
+    },
+    {
+      "file": "city-1280x720-rostock-population.png",
+      "bytes": 109827,
+      "sha256": "6c00c676578a30bd0cdbabf7ac24a13cba7357497533abd887dd84d0eeff9625"
+    },
+    {
+      "file": "city-1280x720-rostock-population.tsv",
+      "bytes": 23864,
+      "sha256": "10fada441517567ba30fa729de3bcc77b37a7228a4803d1b237a060b7771e2d5"
+    },
+    {
+      "file": "city-1280x720-rostock-production.png",
+      "bytes": 109649,
+      "sha256": "0a24837bee34312c25acf3ecc9d26bfce1184d4c242bf17158a391c5d14d5328"
+    },
+    {
+      "file": "city-1280x720-rostock-production.tsv",
+      "bytes": 23864,
+      "sha256": "161b86c23267585a9e41d4d31d2770432f8d25a06ed2cb99af5c0084dd23069a"
+    },
+    {
+      "file": "city-1280x720-rostock-market.png",
+      "bytes": 130520,
+      "sha256": "10cde79883b007f59656148a76bff78e483532c1e659367c5e44d469ca04c7fc"
+    },
+    {
+      "file": "city-1280x720-rostock-market.tsv",
+      "bytes": 32668,
+      "sha256": "4b2341ccd7d98a6eb025d67047ac2acc513f027504c11f0036ed319a97499499"
+    },
+    {
+      "file": "city-1280x720-loading.png",
+      "bytes": 105313,
+      "sha256": "aa7a4463b60a0f9775be55cc0c8176924dd0072616e90467bccff25dd9e030c8"
+    },
+    {
+      "file": "city-1280x720-loading.tsv",
+      "bytes": 32754,
+      "sha256": "4b3aa89c83e4e4229d008f86c458ac0b086fc2ae2fdf5c64368428fe213f1e6d"
+    },
+    {
+      "file": "city-1280x720-error.png",
+      "bytes": 112211,
+      "sha256": "3bbf94ee0afb6d890f0b634aae1ceaf0ec0473238825035358b7467e65450afb"
+    },
+    {
+      "file": "city-1280x720-error.tsv",
+      "bytes": 32874,
+      "sha256": "a8dc5951cf46575697e932182e77988be19cc630278c5457762c240f9ce6999c"
+    },
+    {
+      "file": "city-1280x720-accessible.png",
+      "bytes": 157474,
+      "sha256": "a45013cd1f8f4cb4b6ef73466b8d1a56df1fb7ca75e1b420c0584004f8a94216"
+    },
+    {
+      "file": "city-1280x720-accessible.tsv",
+      "bytes": 25886,
+      "sha256": "0d26868b7c89ed212e3417a20bbe00f912cfd1c5db9b3999ad2c3d39085a5d5f"
+    },
+    {
+      "file": "city-1280x720-localized.png",
+      "bytes": 120583,
+      "sha256": "f249433d443a419d55b35efd406119f4d0ee617bc38d941602f664957b561026"
+    },
+    {
+      "file": "city-1280x720-localized.tsv",
+      "bytes": 25988,
+      "sha256": "7b58c0cba39af805dc3286c0ace576564b9299fb22cee6250b7aaae7acfebc7a"
+    },
+    {
+      "file": "city-1280x720-supply-chain.png",
+      "bytes": 153221,
+      "sha256": "1814cece306f774e2ae6b0ff3b08af9c556af8ab0c10c198af0dbdfcf98d5b14"
+    },
+    {
+      "file": "city-1280x720-supply-chain.tsv",
+      "bytes": 26964,
+      "sha256": "b996a2ceb0d48991447dad4afa1f5e4ef164abd6a973b09517ff1f411dbf6a73"
+    },
+    {
+      "file": "city-1280x720-building-cause.png",
+      "bytes": 631659,
+      "sha256": "d7452440bb4f6a14629ced1610a2fc02d78903f795f38f2355fd2e0f7e29c532"
+    },
+    {
+      "file": "city-1280x720-building-cause.tsv",
+      "bytes": 28734,
+      "sha256": "1e511cb908b7bac44df5bc5a689e0f4a13b54b5b6a226e8507bd6795763c0409"
+    },
+    {
+      "file": "city-1920x1080-population.png",
+      "bytes": 457478,
+      "sha256": "0e91e8127b24a5c276bd9222ab0d801af85b3cdc9b7b140cea4b7c969415e60b"
+    },
+    {
+      "file": "city-1920x1080-population.tsv",
+      "bytes": 26054,
+      "sha256": "befdeefc0d6875939f2bee5c12a5626bb50fe568086f24eba29e9d0486a89dfe"
+    },
+    {
+      "file": "city-1920x1080-focus.png",
+      "bytes": 459039,
+      "sha256": "746c14768a525a91b797d7470398b476e5b8387fd097f94024b562576ab73af6"
+    },
+    {
+      "file": "city-1920x1080-focus.tsv",
+      "bytes": 26054,
+      "sha256": "befdeefc0d6875939f2bee5c12a5626bb50fe568086f24eba29e9d0486a89dfe"
+    },
+    {
+      "file": "city-1920x1080-production.png",
+      "bytes": 507021,
+      "sha256": "c9a1c74594a69b70d5e8a88161a0f224ebcb4764126043c4b398d3ae67961f85"
+    },
+    {
+      "file": "city-1920x1080-production.tsv",
+      "bytes": 27220,
+      "sha256": "ecbf0f9d317795df4210431dfc9bd513d6e4e6c4001ddf11d2882e804c7fddfa"
+    },
+    {
+      "file": "city-1920x1080-market.png",
+      "bytes": 501927,
+      "sha256": "817c66428e8e99ea4c10cb423f0f9b41b00dece423400019346a165ac5a66262"
+    },
+    {
+      "file": "city-1920x1080-market.tsv",
+      "bytes": 34138,
+      "sha256": "50325f95ab9cd4bbc730877978c4302711663fdf3c6381c736b76cca01505019"
+    },
+    {
+      "file": "city-1920x1080-rostock-population.png",
+      "bytes": 432039,
+      "sha256": "4197b610d7291c80badeb6a2fe1b443792eaf00f4e56268c5cba35ba66bcd0ab"
+    },
+    {
+      "file": "city-1920x1080-rostock-population.tsv",
+      "bytes": 24002,
+      "sha256": "2f4142c884dc25654769fa07a13a8505e52bc6ad536107c88fc9e33274a0a332"
+    },
+    {
+      "file": "city-1920x1080-rostock-production.png",
+      "bytes": 431222,
+      "sha256": "180becd166f8d841cbabc9a38f0a81a0193756dcc104b0e6ca3ba8742e628b46"
+    },
+    {
+      "file": "city-1920x1080-rostock-production.tsv",
+      "bytes": 24002,
+      "sha256": "5939c3ea507dbc0e3c14c52e328451b27885cf805ab12c37d468c91abd768496"
+    },
+    {
+      "file": "city-1920x1080-rostock-market.png",
+      "bytes": 493397,
+      "sha256": "82c0892b3de97b74e87199af126eb2066233c79a8aa11937ba214756ab6607a6"
+    },
+    {
+      "file": "city-1920x1080-rostock-market.tsv",
+      "bytes": 33052,
+      "sha256": "65a639b9b8ab1bdf5026c60fa2782e414fc50d95c3c696364491ab9214efd768"
+    },
+    {
+      "file": "city-1920x1080-loading.png",
+      "bytes": 427197,
+      "sha256": "88d6918a3ef112aed564a563c2fd1c247906ea02ad0e75a64262fc18ce0f1526"
+    },
+    {
+      "file": "city-1920x1080-loading.tsv",
+      "bytes": 33138,
+      "sha256": "a4f7d33dc601dcde56d69bab7b199211296725af1ce9fbc81c65d0a485056b02"
+    },
+    {
+      "file": "city-1920x1080-error.png",
+      "bytes": 435333,
+      "sha256": "ae4debf88f6582933c7524d0d83bd13e1fe535ab3c08efe21438135f80976623"
+    },
+    {
+      "file": "city-1920x1080-error.tsv",
+      "bytes": 33260,
+      "sha256": "858a4787f51fcb5c3fc29ed8c8f0079ad7980b70cc6324e064f88d0eae99848e"
+    },
+    {
+      "file": "city-1920x1080-accessible.png",
+      "bytes": 484614,
+      "sha256": "b7e0b6a9c3842df0d559077177b643e38bc6f514de0479e8f3cd673fd2dcb7cd"
+    },
+    {
+      "file": "city-1920x1080-accessible.tsv",
+      "bytes": 26036,
+      "sha256": "963b2456b65468d218b79e64a9f0b5589106827ab7c5329295a647b3cb78098c"
+    },
+    {
+      "file": "city-1920x1080-localized.png",
+      "bytes": 443820,
+      "sha256": "3515b53ee2f151a7a189f488fb951c1d4ab4563d4910691557fd4482a01508f5"
+    },
+    {
+      "file": "city-1920x1080-localized.tsv",
+      "bytes": 26142,
+      "sha256": "b0b0e485f26746aa6b26c8119a7bdf80fced8ca7d3e71830ee2764799edc5dfb"
+    },
+    {
+      "file": "city-1920x1080-supply-chain.png",
+      "bytes": 519127,
+      "sha256": "8715586ded3599fcb421c1a45a553934bde3770bc8509c818f2a38911242f82c"
+    },
+    {
+      "file": "city-1920x1080-supply-chain.tsv",
+      "bytes": 27220,
+      "sha256": "cd1042a477c9136cc8e5a5437c81e34fa43851273c85e28807a18fe96c050ad5"
+    },
+    {
+      "file": "city-1920x1080-building-cause.png",
+      "bytes": 1844856,
+      "sha256": "3294cf76cc2e920fcc373bc7374d10569db0c9a04e8bfc3f3c79be0ef794f5a5"
+    },
+    {
+      "file": "city-1920x1080-building-cause.tsv",
+      "bytes": 29198,
+      "sha256": "529c1fb93e3f91744836a77d741412b8153ab6b620cc4b0f09d2e36c24b6f005"
+    }
+  ]
+}

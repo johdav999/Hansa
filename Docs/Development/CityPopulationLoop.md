@@ -6,10 +6,11 @@ S06-P03 connects the previously separate construction, population, market, and p
 
 1. Construction completes a placed residence.
 2. Residence synchronization applies the building definition's hosted population tier and capacity and creates a missing cohort against the city's canonical inventory.
-3. Operational cohorts publish tier workforce. Building-recipe productions that opt into city assignment receive labor in stable production-ID order.
-4. Production runs with that allocation and reports typed laborer or artisan shortage blockers.
-5. Needs evaluation requires both the city market and stocked city consumption inventory, consumes goods through the ledger, and updates satisfaction.
-6. Sustained satisfaction drives bounded migration. New workforce participates on the next simulation tick.
+3. An empty operational home with physical market access and fully satisfied `Need.BasicServices` immediately receives an initial two residents (bounded by capacity); goods demand begins on the following tick.
+4. Operational cohorts publish tier workforce. Active building-recipe productions receive one worker each in stable production-ID order where possible, then remaining labor fills authored slots in that same order.
+5. A staffed production runs at `assigned workforce / required workforce` speed. One worker is sufficient to start; the effective batch duration is `ceil(base batch ticks * required / assigned)`. A unit blocks for workforce only when it has no assigned worker.
+6. Needs evaluation requires both the city market and stocked city consumption inventory, consumes goods through the ledger, and updates satisfaction.
+7. Sustained satisfaction drives bounded migration. New workforce participates on the next simulation tick.
 
 The flow is integer-only, stable-ID ordered, and uses the existing fixed simulation phases. UI, automation, and editor code consume projections and diagnostics instead of reproducing these rules.
 

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "prompt": "EMVP-P15",
+  "revision": 5,
+  "status": "promoted-and-bound-playable-acceptance-pending",
+  "productionBound": true,
+  "playableCoverageVerified": false,
+  "sourcePackage": "SourceArt/Generated/Buildings/HansaMarket_P15_20260908",
+  "stagedRoot": "/Game/Hansa/Generated/Staging/Market_P15",
+  "stableDefinitionId": "Building.Market",
+  "definitionSha256": "615AD3ABD0CB2A765853415B5E933BEF556A3A0E775EA85F161F0F12A31F0F27",
+  "footprintCells": [3, 3],
+  "roles": [
+    {"manifestRole": "Presentation.Building.Market", "component": "CourtHall", "mesh": "SM_HansaMarket", "instances": 1, "lodTriangles": [63176,31588,15794]},
+    {"manifestRole": "Presentation.Prop.Market.Trade", "component": "Stalls", "mesh": "SM_HansaMarket_Stall", "instances": 2, "lodTriangles": [660,330,164]},
+    {"manifestRole": "Presentation.Prop.Market.Trade", "component": "Awnings", "mesh": "SM_HansaMarket_Awning", "instances": 2, "lodTriangles": [2624,1312,656]},
+    {"manifestRole": "Presentation.Prop.Market.Trade", "component": "Scales", "mesh": "SM_HansaMarket_Scales", "instances": 1, "lodTriangles": [892,446,222]},
+    {"manifestRole": "Presentation.Prop.Market.Trade", "component": "Baskets", "mesh": "SM_HansaMarket_Basket", "instances": 2, "lodTriangles": [4868,2434,1216]},
+    {"manifestRole": "Presentation.Prop.Market.Trade", "component": "Cargo", "mesh": "SM_HansaMarket_Cargo", "instances": 1, "lodTriangles": [1648,824,412]}
+  ]
+}

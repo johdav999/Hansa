@@ -4,6 +4,7 @@
 #include "Styling/SlateBrush.h"
 #include "Styling/SlateTypes.h"
 #include "UI/HansaHudSemantics.h"
+#include "UI/HansaUiComponents.h"
 #include "UI/HansaMarketTablePresentationModel.h"
 #include "Widgets/SCompoundWidget.h"
 #include "Widgets/Views/SListView.h"
@@ -11,6 +12,7 @@
 class SBorder;
 class SButton;
 class SSearchBox;
+class SScrollBox;
 class STextBlock;
 class SVerticalBox;
 
@@ -23,12 +25,16 @@ namespace Hansa::UI
 	public:
 		SLATE_BEGIN_ARGS(SHansaMarketTable) : _Model(nullptr) {}
 			SLATE_ARGUMENT(UHansaMarketTablePresentationModel*, Model)
+			SLATE_ARGUMENT(FUiPreferences, Preferences)
 		SLATE_END_ARGS()
 
 		~SHansaMarketTable();
 		void Construct(const FArguments& Arguments);
 		bool ActivateSemanticId(const FString& SemanticId);
+        virtual FReply OnKeyDown(const FGeometry&, const FKeyEvent&) override;
+        virtual void Tick(const FGeometry&, double, float) override;
 		bool FocusSemanticId(const FString& SemanticId);
+		TSharedPtr<SWidget> ResolveSemanticWidget(const FString& Id) const { const auto* W=SemanticWidgets.Find(Id); return W?W->Pin():nullptr; }
 		[[nodiscard]] TArray<FHansaHudSemanticNode> GetSemanticSnapshot() const;
 		[[nodiscard]] const TArray<FString>& GetControllerFocusOrder() const { return FocusOrder; }
 #if WITH_DEV_AUTOMATION_TESTS
@@ -56,6 +62,9 @@ namespace Hansa::UI
 		static FString CellId(FName GoodStableId, const TCHAR* Column);
 
 		TWeakObjectPtr<UHansaMarketTablePresentationModel> Model;
+		FUiPreferences Preferences;
+		FTableRowStyle RowStyle;
+		FSearchBoxStyle SearchStyle;
 		FDelegateHandle ChangedHandle;
 		uint64 PresentedRevision = 0;
 		FSlateBrush WorkingBrush;
@@ -71,13 +80,12 @@ namespace Hansa::UI
 		FTextBlockStyle CaptionStyle;
 		FTextBlockStyle CaptionOnDarkStyle;
 		TSharedPtr<SSearchBox> SearchBox;
-		TSharedPtr<SButton> CategoryButton;
-		TSharedPtr<SButton> TrendButton;
-		TSharedPtr<SButton> QuickButton;
-		TSharedPtr<SButton> ClearButton;
+		TSharedPtr<SHansaAction> CategoryButton;
+		TSharedPtr<SHansaAction> TrendButton;
+		TSharedPtr<SHansaAction> QuickButton;
+		TSharedPtr<SHansaAction> ClearButton;
 		TSharedPtr<STextBlock> ResultText;
-		TArray<TSharedPtr<SButton>> HeaderButtons;
-		TArray<TSharedPtr<STextBlock>> HeaderTexts;
+		TMap<EHansaMarketSortColumn, TSharedPtr<SHansaAction>> HeaderButtons;
 		TSharedPtr<SBorder> ListPanel;
 		TSharedPtr<SListView<TSharedPtr<FHansaMarketTableRowPresentation>>> ListView;
 		TSharedPtr<SBorder> EmptyPanel;
@@ -95,6 +103,11 @@ namespace Hansa::UI
 		TSharedPtr<STextBlock> CitizenDemandText;
 		TSharedPtr<STextBlock> IndustrialDemandText;
 		TSharedPtr<STextBlock> IncomingSupplyText;
+		TSharedPtr<STextBlock> ProductionText, ConsumptionText, SupplyBalanceText;
+		TSharedPtr<SScrollBox> DetailScroll;
+		TSharedPtr<SScrollBox> ControlScroll;
+        FString PendingDetailScroll;
+        int32 ScrollLayoutAttempts=0;
 		TSharedPtr<STextBlock> ExplanationText;
 		TSharedPtr<STextBlock> ChartSummaryText;
 		TSharedPtr<STextBlock> PinReasonText;
@@ -103,8 +116,8 @@ namespace Hansa::UI
 		TSharedPtr<SVerticalBox> FactorList;
 		TSharedPtr<SVerticalBox> ConsumerList;
 		TSharedPtr<SVerticalBox> ProducerList;
-		TSharedPtr<SButton> PinButton;
-		TSharedPtr<SButton> RouteButton;
+		TSharedPtr<SHansaAction> PinButton;
+		TSharedPtr<SHansaAction> RouteButton;
 		TSharedPtr<SHansaPriceHistoryChart> PriceChart;
 		FHansaSelectedGoodPresentation PresentedDetail;
 		TArray<TSharedPtr<FHansaMarketTableRowPresentation>> Items;

@@ -27,7 +27,11 @@ struct FHansaResearchNodePresentation
 	TArray<FString> PrerequisiteIds;
 	TArray<FString> MissingPrerequisiteIds;
 	FText UnlockExplanation;
-	FText EffectSummary;
+    FText EffectSummary;
+    FText AppliedEffectSummary;
+    FText LockedReason;
+    TArray<Hansa::Simulation::FHansaCompiledResearchEffect> Effects;
+    Hansa::Simulation::EHansaResearchQueueError QueueError = Hansa::Simulation::EHansaResearchQueueError::None;
 	int32 CostResearchPoints = 0;
 	int32 DurationTicks = 1;
 	int32 ProgressTicks = 0;
@@ -38,7 +42,10 @@ struct FHansaResearchPresentationSnapshot
 {
 	GENERATED_BODY()
 
-	bool bOpen = false;
+    bool bOpen = false;
+    bool bLoading = true;
+    bool bSubmitting = false;
+    FText Feedback;
 	int32 AvailableResearchPoints = 0;
 	FString SelectedTechnologyId;
 	FName FocusedSemanticId;
@@ -64,7 +71,11 @@ public:
 	bool SelectTechnology(const FString& TechnologyId);
 	bool RequestQueueSelected();
 	void SetQueueIntent(TFunction<bool(const FString&)> InIntent) { QueueIntent = MoveTemp(InIntent); }
-	void SetFocusedSemanticId(FName SemanticId);
+    void SetFocusedSemanticId(FName SemanticId);
+    void SetLoading(bool bLoading);
+    void SetError(const FText& Message);
+    void SetEffectIntent(TFunction<bool(const Hansa::Simulation::FHansaCompiledResearchEffect&)> Intent) { EffectIntent = MoveTemp(Intent); }
+    bool RequestEffect(int32 Index);
 
 	[[nodiscard]] const FHansaResearchPresentationSnapshot& GetSnapshot() const { return Snapshot; }
 	[[nodiscard]] uint64 GetRevision() const { return Revision; }
@@ -76,7 +87,8 @@ private:
 	FHansaResearchPresentationSnapshot Snapshot;
 	FName Opener;
 	uint64 Revision = 0;
-	TFunction<bool(const FString&)> QueueIntent;
+    TFunction<bool(const FString&)> QueueIntent;
+    TFunction<bool(const Hansa::Simulation::FHansaCompiledResearchEffect&)> EffectIntent;
 	FHansaResearchPresentationChanged Changed;
 	FHansaResearchFocusRestoreRequested FocusRestoreRequested;
 };

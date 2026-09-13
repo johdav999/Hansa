@@ -33,6 +33,7 @@ namespace Hansa::Simulation
 			FHansaInventoryLedger& InventoryLedger,
 			const FHansaPlacementState& Placement,
 			TConstArrayView<FHansaBuildingState> Buildings,
+			const FHansaEconomicRegistry* Registry,
 			FHansaSimulationTick CurrentTick);
 	};
 }

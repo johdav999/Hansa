@@ -1,0 +1,14 @@
+selected=World.Cargo.Delivery.12.0
+good=Good.Grain
+sourceBuilding=1.0
+sourceDefinition=Building.GrainFarm
+destinationBuilding=14.0
+destinationDefinition=Building.Market
+quantityMilli=6000
+cargoMilli=6000
+activeWagons=3
+peakWagons=4
+fingerprint=18313745260966276739
+wagon=World.Cargo.Delivery.10.0 good=Good.Grain status=InTransit cargoMilli=3000 progress=0.857143 visible=1 failure=
+wagon=World.Cargo.Delivery.11.0 good=Good.Beer status=InTransit cargoMilli=5000 progress=0.857143 visible=1 failure=
+wagon=World.Cargo.Delivery.12.0 good=Good.Grain status=InTransit cargoMilli=6000 progress=0.666667 visible=1 failure=

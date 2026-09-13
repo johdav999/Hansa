@@ -1,0 +1,33 @@
+{
+  "contractVersion": 1,
+  "prompt": "EMVP-P14",
+  "revision": 6,
+  "status": "promoted-and-bound-playable-acceptance-pending",
+  "sourcePackage": "SourceArt/Generated/Buildings/HansaResidences_P14_20260908",
+  "stagedRoot": "/Game/Hansa/Generated/Staging/Residences_P14",
+  "selectedMeshFolder": "Meshes_R06",
+  "footprintCells": [2, 2],
+  "gridCellCm": 400,
+  "groundedInsetCm": [760, 760],
+  "doorForward": "+X",
+  "groundToleranceCm": 2,
+  "nativeColorDimensions": [1254, 1254],
+  "portableMapDimensions": [1024, 1024],
+  "texelDensityPxPerMetre": 512,
+  "minimumLods": 3,
+  "materialSlots": 7,
+  "nanite": false,
+  "roles": [
+    {"mesh": "SM_Residence_Laborer_A", "stableRole": "Presentation.Building.Residence.Laborer", "lod0Triangles": 43480},
+    {"mesh": "SM_Residence_Laborer_B", "stableRole": "Presentation.Building.Residence.Laborer", "lod0Triangles": 43768},
+    {"mesh": "SM_Residence_Artisan_A", "stableRole": "Presentation.Building.Residence.Artisan", "lod0Triangles": 50024},
+    {"mesh": "SM_Residence_Artisan_B", "stableRole": "Presentation.Building.Residence.Artisan", "lod0Triangles": 50312}
+  ],
+  "capacityPreserved": {"Laborer": 12, "Artisan": 8},
+  "variantPolicy": "Deterministic parcel XY hash; tier and rotation do not change variant index. No new saved gameplay identity.",
+  "nightWindows": "Opaque non-emissive; no night-lighting feature claimed.",
+  "approvalRequired": true,
+  "productionBound": true,
+  "runtimeUpgradeValidated": false,
+  "shippingCookValidated": false
+}

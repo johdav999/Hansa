@@ -14,6 +14,8 @@ public:
 	virtual void ShutdownModule() override;
 
 private:
+	void RegisterTerrainTools();
+	FDelegateHandle TerrainRegistrationHandle;
 	TSharedRef<class SDockTab> SpawnAuthoringStudioTab(const class FSpawnTabArgs& SpawnTabArgs);
 	void RegisterMenus();
 };

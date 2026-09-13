@@ -1,29 +1,68 @@
 #include "Trade/HansaTradeInternal.h"
 
+#include "Logistics/HansaLocalLogistics.h"
 #include "Math/NumericLimits.h"
 
 namespace Hansa::Simulation
 {
 	namespace
 	{
-		FHansaVehicleState* FindVehicle(TArray<FHansaVehicleState>& Vehicles, const FHansaVehicleId Id)
+		FHansaVehicleState* TradeInternalFindVehicle(TArray<FHansaVehicleState>& Vehicles, const FHansaVehicleId Id)
 		{
 			return Vehicles.FindByPredicate([Id](const FHansaVehicleState& Vehicle) { return Vehicle.Id == Id; });
 		}
 
-		FHansaHouseState* FindHouse(TArray<FHansaHouseState>& Houses, const FHansaHouseId Id)
+		FHansaHouseState* TradeInternalFindHouse(TArray<FHansaHouseState>& Houses, const FHansaHouseId Id)
 		{
 			return Houses.FindByPredicate([Id](const FHansaHouseState& House) { return House.Id == Id; });
 		}
 
+		bool HasPlacementMap(const FHansaPlacementState& Placement, const FHansaCityDefinitionId CityId)
+		{
+			for (const FHansaPlacementMapInitialization& Map : Placement.GetMaps())
+			{
+				if (Map.CityId == CityId) return true;
+			}
+			return false;
+		}
+
+		bool CanUseCityInventory(const FHansaInventoryProjection& Inventory,
+			const EHansaRouteMode Mode, const FHansaInventoryLedger& Inventories,
+			const FHansaPlacementState& Placement, const TConstArrayView<FHansaBuildingState> Buildings,
+			const FHansaEconomicRegistry& Registry)
+		{
+			if (!HasPlacementMap(Placement, Inventory.CityId)) return true;
+			if (!FHansaLocalLogisticsQueries::QueryRoadPath(
+				Inventory.Id, Inventory.Id, Inventories.CreateReadOnlyAccess(), Placement, Buildings, &Registry).bMarketEligible)
+			{
+				return false;
+			}
+			if (Mode != EHansaRouteMode::Sea) return true;
+			for (const FHansaPlacedBuildingRecord& Record : Placement.GetPlacements())
+			{
+				if (Record.Spec.CityId == Inventory.CityId &&
+					Record.Spec.BuildingDefinitionId.ToString() == TEXT("Building.Dock") &&
+					FHansaLocalLogisticsQueries::QueryBuildingMarketAccess(
+						Record.BuildingId, Inventory.Id, Inventories.CreateReadOnlyAccess(),
+						Placement, Buildings, &Registry).bMarketEligible)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
 		TArray<FHansaInventoryProjection> CityInventories(const FHansaInventoryLedger& Inventories,
-			const FHansaCityDefinitionId CityId, const FHansaGoodId GoodId)
+			const FHansaCityDefinitionId CityId, const FHansaGoodId GoodId, const EHansaRouteMode Mode,
+			const FHansaPlacementState& Placement, const TConstArrayView<FHansaBuildingState> Buildings,
+			const FHansaEconomicRegistry& Registry)
 		{
 			TArray<FHansaInventoryProjection> Result;
 			for (const FHansaInventoryProjection& Inventory : Inventories.CreateReadOnlyAccess().BuildProjection())
 			{
 				if (Inventory.OwnerKind == EHansaInventoryOwnerKind::City && Inventory.CityId == CityId &&
-					Inventory.AcceptedGoods.Contains(GoodId))
+					Inventory.AcceptedGoods.Contains(GoodId) &&
+					CanUseCityInventory(Inventory, Mode, Inventories, Placement, Buildings, Registry))
 				{
 					Result.Add(Inventory);
 				}
@@ -31,7 +70,7 @@ namespace Hansa::Simulation
 			return Result;
 		}
 
-		int64 AddClamped(const int64 Left, const int64 Right)
+		int64 TradeInternalAddClamped(const int64 Left, const int64 Right)
 		{
 			return Right > 0 && Left > TNumericLimits<int64>::Max() - Right
 				? TNumericLimits<int64>::Max() : Left + Right;
@@ -39,7 +78,8 @@ namespace Hansa::Simulation
 
 		FHansaRouteTransferRecord ExecuteAction(FHansaRouteState& Route, FHansaVehicleState& Vehicle,
 			const FHansaRouteCargoAction& Action, const int32 ActionIndex, FHansaInventoryLedger& Inventories,
-			const FHansaSimulationTick Tick)
+			const FHansaPlacementState& Placement, const TConstArrayView<FHansaBuildingState> Buildings,
+			const FHansaEconomicRegistry& Registry, const FHansaSimulationTick Tick)
 		{
 			FHansaRouteTransferRecord Record;
 			Record.Tick = Tick;
@@ -60,7 +100,7 @@ namespace Hansa::Simulation
 				{
 					Remaining = FMath::Min(Remaining, Cargo->FreeCapacity.GetRawValue());
 					const TArray<FHansaInventoryProjection> Sources =
-						CityInventories(Inventories, Record.CityId, Action.GoodId);
+						CityInventories(Inventories, Record.CityId, Action.GoodId, Vehicle.Mode, Placement, Buildings, Registry);
 					int64 TotalStock = 0;
 					int64 TotalAvailable = 0;
 					for (const FHansaInventoryProjection& Source : Sources)
@@ -68,8 +108,8 @@ namespace Hansa::Simulation
 						const TOptional<FHansaInventoryStockProjection> Stock =
 							Inventories.CreateReadOnlyAccess().QueryStock(Source.Id, Action.GoodId);
 						if (!Stock.IsSet()) continue;
-						TotalStock = AddClamped(TotalStock, Stock->Stock.GetRawValue());
-						TotalAvailable = AddClamped(TotalAvailable, Stock->Available.GetRawValue());
+						TotalStock = TradeInternalAddClamped(TotalStock, Stock->Stock.GetRawValue());
+						TotalAvailable = TradeInternalAddClamped(TotalAvailable, Stock->Available.GetRawValue());
 					}
 					Remaining = FMath::Min(Remaining, FMath::Min(TotalAvailable,
 						FMath::Max<int64>(0, TotalStock - Action.MinimumSourceReserve.GetRawValue())));
@@ -86,7 +126,7 @@ namespace Hansa::Simulation
 							FHansaQuantity::FromRaw(Transfer), Tick,
 							Inventories.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
 						if (!Result.IsSuccess()) continue;
-						Applied = AddClamped(Applied, Result.AppliedQuantity.GetRawValue());
+						Applied = TradeInternalAddClamped(Applied, Result.AppliedQuantity.GetRawValue());
 						Remaining -= Result.AppliedQuantity.GetRawValue();
 					}
 				}
@@ -96,7 +136,8 @@ namespace Hansa::Simulation
 				const TOptional<FHansaInventoryStockProjection> CargoStock =
 					Inventories.CreateReadOnlyAccess().QueryStock(Vehicle.CargoInventoryId, Action.GoodId);
 				Remaining = CargoStock.IsSet() ? FMath::Min(Remaining, CargoStock->Available.GetRawValue()) : 0;
-				for (const FHansaInventoryProjection& Destination : CityInventories(Inventories, Record.CityId, Action.GoodId))
+				for (const FHansaInventoryProjection& Destination : CityInventories(
+					Inventories, Record.CityId, Action.GoodId, Vehicle.Mode, Placement, Buildings, Registry))
 				{
 					if (Remaining <= 0) break;
 					const TOptional<FHansaInventoryProjection> Current =
@@ -110,7 +151,7 @@ namespace Hansa::Simulation
 						FHansaQuantity::FromRaw(Transfer), Tick,
 						Inventories.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
 					if (!Result.IsSuccess()) continue;
-					Applied = AddClamped(Applied, Result.AppliedQuantity.GetRawValue());
+					Applied = TradeInternalAddClamped(Applied, Result.AppliedQuantity.GetRawValue());
 					Remaining -= Result.AppliedQuantity.GetRawValue();
 				}
 			}
@@ -205,7 +246,8 @@ namespace Hansa::Simulation
 
 	void FHansaTradeExecutor::AdvanceOneTick(TArray<FHansaRouteState>& Routes,
 		TArray<FHansaVehicleState>& Vehicles, TArray<FHansaHouseState>& Houses,
-		FHansaInventoryLedger& Inventories, const FHansaEconomicRegistry& Registry,
+		FHansaInventoryLedger& Inventories, const FHansaPlacementState& Placement,
+		const TConstArrayView<FHansaBuildingState> Buildings, const FHansaEconomicRegistry& Registry,
 		const FHansaSimulationTick Tick, uint64& InOutPublishedEventCount,
 		TArray<FHansaDomainEvent>& OutEvents)
 	{
@@ -213,19 +255,19 @@ namespace Hansa::Simulation
 		{
 			if (Route.Lifecycle == EHansaRouteLifecycleState::Inactive ||
 				Route.Lifecycle == EHansaRouteLifecycleState::Cancelled) continue;
-			FHansaVehicleState* Vehicle = FindVehicle(Vehicles, Route.VehicleId);
+			FHansaVehicleState* Vehicle = TradeInternalFindVehicle(Vehicles, Route.VehicleId);
 			const FHansaCompiledRouteDefinition* Definition = Registry.FindRoute(Route.RouteDefinitionId.ToString());
 			if (Vehicle == nullptr || Definition == nullptr || Route.Stops.Num() < 2) continue;
 
 			if (Route.Lifecycle == EHansaRouteLifecycleState::Traveling)
 			{
-				if (FHansaHouseState* House = FindHouse(Houses, Route.OwnerId))
+				if (FHansaHouseState* House = TradeInternalFindHouse(Houses, Route.OwnerId))
 				{
 					const auto Money = FHansaMoney::TrySubtract(House->Money,
 						FHansaMoney::FromRaw(Vehicle->UpkeepPfennigPerTravelTick));
 					if (Money) House->Money = Money.Value;
 				}
-				Vehicle->AccruedUpkeepPfennig = AddClamped(
+				Vehicle->AccruedUpkeepPfennig = TradeInternalAddClamped(
 					Vehicle->AccruedUpkeepPfennig, Vehicle->UpkeepPfennigPerTravelTick);
 				--Route.RemainingTravelTicks;
 				const int64 Elapsed = Route.TotalTravelTicks - Route.RemainingTravelTicks;
@@ -252,7 +294,7 @@ namespace Hansa::Simulation
 				for (int32 ActionIndex = 0; ActionIndex < Stop.Actions.Num(); ++ActionIndex)
 				{
 					Route.LastTransfer = ExecuteAction(Route, *Vehicle, Stop.Actions[ActionIndex],
-						ActionIndex, Inventories, Tick);
+						ActionIndex, Inventories, Placement, Buildings, Registry, Tick);
 					if (Route.LastTransfer.Outcome != EHansaRouteTransferOutcome::Completed)
 						++Route.MissedCargoActionCount;
 					PublishRouteEvent(Route, *Vehicle,

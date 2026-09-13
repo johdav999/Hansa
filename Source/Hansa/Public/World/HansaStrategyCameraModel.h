@@ -10,6 +10,7 @@ namespace Hansa::Game
 		FVector2D Focus = FVector2D::ZeroVector;
 		float YawDegrees = 45.0f;
 		float ZoomDistance = 6500.0f;
+		float PitchDegrees = -55.0f;
 
 		bool IsFinite() const;
 	};
@@ -18,7 +19,13 @@ namespace Hansa::Game
 	struct HANSA_API FHansaStrategyCameraIntent
 	{
 		FVector2D Pan = FVector2D::ZeroVector;
+        /** One-frame displacement in camera-relative world units: X right, Y forward. */
+        FVector2D PanDisplacement = FVector2D::ZeroVector;
 		float Rotate = 0.0f;
+        /** One-frame yaw displacement, independent of frame time. */
+        float YawDisplacement = 0.0f;
+		/** One-frame pitch displacement, independent of frame time. */
+		float PitchDisplacement = 0.0f;
 		float ZoomSteps = 0.0f;
 		bool bFastPan = false;
 
@@ -35,6 +42,8 @@ namespace Hansa::Game
 		float ZoomUnitsPerStep = 900.0f;
 		float MinimumZoomDistance = 1800.0f;
 		float MaximumZoomDistance = 9500.0f;
+		float MinimumPitchDegrees = -80.0f;
+		float MaximumPitchDegrees = -15.0f;
 
 		bool IsValid() const;
 	};
@@ -43,6 +52,16 @@ namespace Hansa::Game
 	class HANSA_API FHansaStrategyCameraModel
 	{
 	public:
+		/** Convert a 2D pointer drag to the horizontal yaw input required by the UI contract. */
+		static float YawPointerDisplacement(const FVector2D& PointerDelta);
+
+		/** A captured drag remains active across HUD children while the pointer is inside the viewport. */
+		static bool ShouldContinuePointerDrag(
+			bool bButtonDown,
+			bool bApplicationReady,
+			bool bApplicationActive,
+			bool bPointerInsideViewport);
+
 		static FHansaStrategyCameraState Advance(
 			const FHansaStrategyCameraState& Current,
 			const FHansaStrategyCameraIntent& Intent,

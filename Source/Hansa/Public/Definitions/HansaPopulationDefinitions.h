@@ -98,14 +98,14 @@ public:
 	int32 WorkforcePerResidentBasisPoints = 5000;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Population|Migration", meta = (
-		DisplayName = "Growth satisfaction", ToolTip = "Minimum bounded satisfaction required to accumulate growth ticks.",
+		DisplayName = "Growth satisfaction", ToolTip = "Minimum satisfaction over the evaluation window required for growth. The most important food good must also have at least 30 days (or one evaluation window, if longer) of city supply in reserve after growth.",
 		ClampMin = "0", ClampMax = "10000", HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
 		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Range",
 		HansaUnit = "BasisPoint", HansaMin = "0", HansaMax = "10000"))
 	int32 GrowthSatisfactionBasisPoints = 8000;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Population|Migration", meta = (
-		DisplayName = "Decline satisfaction", ToolTip = "Maximum bounded satisfaction that accumulates decline ticks.",
+		DisplayName = "Decline satisfaction", ToolTip = "Maximum satisfaction over the evaluation window that accumulates decline ticks. Short delivery gaps are smoothed using actual consumption.",
 		ClampMin = "0", ClampMax = "10000", HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
 		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Range",
 		HansaUnit = "BasisPoint", HansaMin = "0", HansaMax = "10000"))

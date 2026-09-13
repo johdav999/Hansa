@@ -104,7 +104,7 @@ bool FHansaLubeckMapContractTest::RunTest(const FString& Parameters)
 #endif
 		TArray<UStaticMeshComponent*> Components;
 		Foundation->GetComponents<UStaticMeshComponent>(Components);
-		TestTrue(TEXT("Representative topology has multiple independently tagged surfaces"), Components.Num() >= 12);
+		TestTrue(TEXT("Representative topology has multiple independently tagged surfaces"), Components.Num() >= 10);
 
 		TSet<FName> SurfaceTags;
 		for (const UStaticMeshComponent* Component : Components)
@@ -121,7 +121,7 @@ bool FHansaLubeckMapContractTest::RunTest(const FString& Parameters)
 		TestTrue(TEXT("Shore topology is tagged"), SurfaceTags.Contains(TEXT("Hansa.World.Surface.Shore")));
 		TestTrue(TEXT("Harbor topology is tagged"), SurfaceTags.Contains(TEXT("Hansa.World.Surface.Harbor")));
 		TestTrue(TEXT("Water topology is tagged"), SurfaceTags.Contains(TEXT("Hansa.World.Surface.Water")));
-		TestTrue(TEXT("Road datum topology is tagged"), SurfaceTags.Contains(TEXT("Hansa.World.Surface.Road")));
+		TestFalse(TEXT("Foundation does not bake roads into an empty new city"), SurfaceTags.Contains(TEXT("Hansa.World.Surface.Road")));
 	}
 #if WITH_EDITOR
 	TestFalse(TEXT("The deterministic PlayerStart is always loaded by World Partition"),

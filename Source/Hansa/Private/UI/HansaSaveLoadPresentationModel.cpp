@@ -43,6 +43,7 @@ void UHansaSaveLoadPresentationModel::SelectSlot(const EHansaSaveSlotId SlotId)
 
 void UHansaSaveLoadPresentationModel::RequestSave()
 {
+    if(!Snapshot.bSavingAllowed){Snapshot.Status=EHansaSaveLoadStatus::Error;Snapshot.StatusMessage=LOCTEXT("StartBeforeSave","Start or continue a game before saving.");Snapshot.StatusRemedy=LOCTEXT("StartRemedy","Return to the title screen and choose New game or Continue.");Broadcast();return;}
 	const FHansaSaveSlotMetadata* Slot = Snapshot.Slots.FindByPredicate([this](const auto& Candidate) { return Candidate.SlotId == Snapshot.SelectedSlot; });
 	if (Slot != nullptr && Slot->bExists) { Snapshot.Confirmation = EHansaSaveLoadConfirmation::Overwrite; Broadcast(); return; }
 	PerformSave();
@@ -75,7 +76,7 @@ void UHansaSaveLoadPresentationModel::PerformSave()
 	Snapshot.StatusMessage = LOCTEXT("Saving", "Saving…"); Snapshot.StatusRemedy = FText::GetEmpty(); Broadcast();
 	FText Error, Remedy;
 	const bool bSaved = Subsystem.IsValid() && Subsystem->Save(Snapshot.SelectedSlot,
-		Snapshot.SelectedSlot == EHansaSaveSlotId::Manual ? TEXT("Manual save") : TEXT("Autosave"), Error, Remedy);
+		Snapshot.SelectedSlot == EHansaSaveSlotId::Manual ? (Snapshot.SaveName.IsEmpty()?TEXT("Manual save"):Snapshot.SaveName) : TEXT("Autosave"), Error, Remedy);
 	Snapshot.Status = bSaved ? EHansaSaveLoadStatus::Success : EHansaSaveLoadStatus::Error;
 	Snapshot.StatusMessage = bSaved ? LOCTEXT("Saved", "Game saved.") : Error;
 	Snapshot.StatusRemedy = bSaved ? FText::GetEmpty() : Remedy; Refresh();

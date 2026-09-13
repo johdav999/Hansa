@@ -5,6 +5,7 @@ param(
     [string]$Configuration = 'Development',
 	[switch]$SkipBuild,
 	[switch]$WithRendering,
+    [switch]$NoZenDdc,
 	[string]$EngineRoot,
     [string]$ArtifactsRoot
 )
@@ -46,7 +47,11 @@ $arguments = @(
     '-TestExit=Automation Test Queue Empty'
 	"-AbsLog=$unrealLogPath"
 )
-if ($Configuration -eq 'DebugGame') { $arguments += '-debug' }
+if ($NoZenDdc) { $arguments += '-ddc=NoZenLocalFallback' }
+$editorCommand = $context.UnrealEditorCommand
+if ($Configuration -eq 'DebugGame') {
+    $editorCommand = Join-Path (Split-Path $editorCommand) 'UnrealEditor-Win64-DebugGame-Cmd.exe'
+}
 if (-not $WithRendering) {
 	$arguments += '-NullRHI'
 }
@@ -58,7 +63,7 @@ $previousSkipSdkSetup = [Environment]::GetEnvironmentVariable('UE_SKIP_UBT_SDK_S
 try {
     [Environment]::SetEnvironmentVariable('UE_SKIP_UBT_SDK_SETUP', '1', 'Process')
     Invoke-HansaNativeCommand `
-        -FilePath $context.UnrealEditorCommand `
+        -FilePath $editorCommand `
         -Arguments $arguments `
         -LogPath $wrapperLogPath `
         -FailureMessage "Unreal automation tests failed for filter '$TestFilter'." | Out-Null

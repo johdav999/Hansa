@@ -500,6 +500,19 @@ namespace Hansa::Automation
 				Item->SetNumberField(TEXT("pickupTick"), static_cast<double>(Job.PickupTick.GetValue()));
 				Item->SetNumberField(TEXT("deliveryTick"), static_cast<double>(Job.DeliveryTick.GetValue()));
 				Item->SetNumberField(TEXT("roadDistanceCells"), Job.RoadDistanceCells);
+				Item->SetNumberField(TEXT("selectedMarketBuildingId"), static_cast<double>(Job.SelectedMarketBuildingId.GetValue()));
+				Item->SetNumberField(TEXT("elapsedTravelTicks"), Job.ElapsedTravelTicks);
+				Item->SetNumberField(TEXT("remainingTravelTicks"), Job.RemainingTravelTicks);
+				Item->SetStringField(TEXT("pauseReason"), Hansa::Simulation::LexToString(Job.PauseReason));
+				TArray<TSharedPtr<FJsonValue>> RouteCells;
+				for (const Hansa::Simulation::FHansaGridCoordinate Cell : Job.RouteCells)
+				{
+					TSharedRef<FJsonObject> CellJson = MakeShared<FJsonObject>();
+					CellJson->SetNumberField(TEXT("x"), Cell.X);
+					CellJson->SetNumberField(TEXT("y"), Cell.Y);
+					RouteCells.Add(MakeShared<FJsonValueObject>(CellJson));
+				}
+				Item->SetArrayField(TEXT("routeCells"), MoveTemp(RouteCells));
 				Item->SetStringField(TEXT("status"), Hansa::Simulation::LexToString(Job.Status));
 				Jobs.Add(MakeShared<FJsonValueObject>(Item));
 			}
@@ -528,7 +541,61 @@ namespace Hansa::Automation
 			OutPayload->SetNumberField(TEXT("destinationInventoryId"), static_cast<double>(DestinationValue));
 			OutPayload->SetStringField(TEXT("cityId"), Path.CityId.ToString());
 			OutPayload->SetBoolField(TEXT("connected"), Path.bConnected);
+			OutPayload->SetBoolField(TEXT("marketEligible"), Path.bMarketEligible);
+			OutPayload->SetNumberField(TEXT("selectedMarketBuildingId"),
+				static_cast<double>(Path.SelectedMarketBuildingId.GetValue()));
+			OutPayload->SetStringField(TEXT("failure"), Hansa::Simulation::LexToString(Path.Failure));
+			OutPayload->SetStringField(TEXT("messageKey"), Path.MessageKey.ToString());
+			OutPayload->SetStringField(TEXT("remedyKey"), Path.RemedyKey.ToString());
 			OutPayload->SetNumberField(TEXT("roadDistanceCells"), Path.RoadDistanceCells);
+			TArray<TSharedPtr<FJsonValue>> RouteCells;
+			for (const Hansa::Simulation::FHansaGridCoordinate Cell : Path.RouteCells)
+			{
+				TSharedRef<FJsonObject> CellJson = MakeShared<FJsonObject>();
+				CellJson->SetNumberField(TEXT("x"), Cell.X);
+				CellJson->SetNumberField(TEXT("y"), Cell.Y);
+				RouteCells.Add(MakeShared<FJsonValueObject>(CellJson));
+			}
+			OutPayload->SetArrayField(TEXT("routeCells"), MoveTemp(RouteCells));
+			return true;
+		}
+		if (Query == TEXT("building.market_access"))
+		{
+			int64 BuildingValue = 0;
+			if (!TryIntegral(Request, TEXT("buildingId"), BuildingValue) || BuildingValue <= 0)
+			{
+				OutError = TEXT("building.market_access requires a positive integral buildingId.");
+				return false;
+			}
+			const auto BuildingId = Hansa::Simulation::FHansaBuildingId::TryCreate(static_cast<uint64>(BuildingValue));
+			const Hansa::Simulation::FHansaBuildingWorldProjection* Building = BuildingId
+				? Projection.Value.GetBuildingWorldProjections().FindByPredicate(
+					[&BuildingId](const Hansa::Simulation::FHansaBuildingWorldProjection& Candidate)
+					{ return Candidate.BuildingId == BuildingId.Value; })
+				: nullptr;
+			if (Building == nullptr)
+			{
+				OutError = TEXT("The requested buildingId does not exist in the loaded fixture.");
+				return false;
+			}
+			OutPayload->SetNumberField(TEXT("buildingId"), static_cast<double>(BuildingValue));
+			OutPayload->SetStringField(TEXT("buildingDefinitionId"), Building->Placement.BuildingDefinitionId.ToString());
+			OutPayload->SetStringField(TEXT("cityId"), Building->Placement.CityId.ToString());
+			OutPayload->SetBoolField(TEXT("roadRequired"), Building->bRequiresRoad);
+			OutPayload->SetBoolField(TEXT("roadConnected"), Building->bHasRoadAccess);
+			OutPayload->SetStringField(TEXT("roadFailure"),
+				Hansa::Simulation::LexToString(Building->RoadAccessFailure));
+			OutPayload->SetBoolField(TEXT("marketConnected"), Building->bHasMarketAccess);
+			// Compatibility: connected historically meant market eligibility.
+			OutPayload->SetBoolField(TEXT("connected"), Building->bHasMarketAccess);
+			OutPayload->SetStringField(TEXT("failure"), Hansa::Simulation::LexToString(Building->MarketAccessFailure));
+			OutPayload->SetStringField(TEXT("messageKey"), Building->MarketAccessMessageKey.ToString());
+			OutPayload->SetStringField(TEXT("remedyKey"), Building->MarketAccessRemedyKey.ToString());
+			OutPayload->SetNumberField(TEXT("selectedMarketBuildingId"), static_cast<double>(Building->SelectedMarketBuildingId.GetValue()));
+			OutPayload->SetNumberField(TEXT("roadDistanceCells"), Building->MarketRoadDistanceCells);
+			OutPayload->SetBoolField(TEXT("deliveryBlocked"), Building->bDeliveryBlocked);
+			OutPayload->SetNumberField(TEXT("blockedDeliveryCount"), Building->BlockedDeliveryCount);
+			OutPayload->SetStringField(TEXT("deliveryFailure"), Hansa::Simulation::LexToString(Building->DeliveryFailure));
 			return true;
 		}
 		if (Query == TEXT("city.population"))
@@ -592,6 +659,22 @@ namespace Hansa::Automation
 			OutPayload->SetNumberField(TEXT("reliabilityBasisPoints"), Cohort->ReliabilityBasisPoints);
 			OutPayload->SetNumberField(TEXT("satisfactionBasisPoints"), Cohort->SatisfactionBasisPoints);
 			OutPayload->SetNumberField(TEXT("residentChangeLastTick"), Cohort->ResidentChangeLastTick);
+            TSharedRef<FJsonObject> Consumption = MakeShared<FJsonObject>();
+            Consumption->SetNumberField(TEXT("coveredMinutes"), Cohort->Consumption.CoveredMinutes);
+            Consumption->SetBoolField(TEXT("fullWindow"), Cohort->Consumption.bFullWindow);
+            Consumption->SetBoolField(TEXT("known"), Cohort->Consumption.CoveredMinutes > 0);
+            TArray<TSharedPtr<FJsonValue>> ConsumedGoods;
+            for (const auto& Total : Cohort->Consumption.Goods)
+            {
+                TSharedRef<FJsonObject> Good = MakeShared<FJsonObject>();
+                Good->SetStringField(TEXT("goodId"), Total.GoodId.ToString());
+                Good->SetNumberField(TEXT("requiredMilliUnits"), Total.Required);
+                Good->SetNumberField(TEXT("consumedMilliUnits"), Total.Consumed);
+                if (Total.Required > 0) Good->SetNumberField(TEXT("percent"), 100.0 * (double(Total.Consumed) / Total.Required));
+                ConsumedGoods.Add(MakeShared<FJsonValueObject>(Good));
+            }
+            Consumption->SetArrayField(TEXT("goods"), MoveTemp(ConsumedGoods));
+            OutPayload->SetObjectField(TEXT("consumption30Days"), Consumption);
 			TArray<TSharedPtr<FJsonValue>> Needs;
 			for (const Hansa::Simulation::FHansaPopulationNeedState& Need : Cohort->Needs)
 			{
@@ -706,6 +789,21 @@ namespace Hansa::Automation
 			OutPayload->SetObjectField(TEXT("market"), MakeMarket(Market.GetValue()));
 			if (Query == TEXT("market.components"))
 			{
+                const auto ConsumptionView = ReadOnly.BuildProjection();
+                if (!ConsumptionView) { OutError = TEXT("Consumption projection unavailable."); return false; }
+                const auto& Consumption = ConsumptionView.Value.GetCitizenConsumption();
+                TSharedRef<FJsonObject> Fulfillment = MakeShared<FJsonObject>();
+                Fulfillment->SetNumberField(TEXT("coveredMinutes"), Consumption.CoveredMinutes);
+                Fulfillment->SetBoolField(TEXT("fullWindow"), Consumption.bFullWindow);
+                Fulfillment->SetBoolField(TEXT("known"), Consumption.CoveredMinutes > 0);
+                int64 Required = 0, Consumed = 0;
+                for (const auto& Total : Consumption.Goods)
+                    if (Total.CityId == CityId && Total.GoodId == GoodId) { Required = Total.Required; Consumed = Total.Consumed; break; }
+                Fulfillment->SetNumberField(TEXT("requiredMilliUnits"), Required);
+                Fulfillment->SetNumberField(TEXT("consumedMilliUnits"), Consumed);
+                if (Consumption.CoveredMinutes > 0 && Required > 0)
+                    Fulfillment->SetNumberField(TEXT("percent"), 100.0 * (double(Consumed) / Required));
+                OutPayload->SetObjectField(TEXT("citizenFulfillment30Days"), Fulfillment);
 				TSharedRef<FJsonObject> Factors = MakeShared<FJsonObject>();
 				Factors->SetNumberField(TEXT("scarcityBasisPoints"), Market->Factors.ScarcityBasisPoints);
 				Factors->SetNumberField(TEXT("citizenDemandBasisPoints"), Market->Factors.CitizenDemandBasisPoints);
@@ -817,7 +915,7 @@ namespace Hansa::Automation
 			OutPayload->SetArrayField(TEXT("producers"), MoveTemp(Producers));
 			return true;
 		}
-		OutError = TEXT("Query is not allowlisted. Use fixture.summary, production.*, route.*, vehicle.list, inventory.stock, logistics.*, city.population, population.cohort, or documented market.* queries.");
+		OutError = TEXT("Query is not allowlisted. Use fixture.summary, building.market_access, production.*, route.*, vehicle.list, inventory.stock, logistics.*, city.population, population.cohort, or documented market.* queries.");
 		return false;
 	}
 

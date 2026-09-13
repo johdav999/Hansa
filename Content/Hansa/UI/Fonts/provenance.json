@@ -1,0 +1,30 @@
+[
+  {
+    "file": "SourceSerif4-Semibold.ttf",
+    "license": "SourceSerif4-OFL.md",
+    "source": "https://raw.githubusercontent.com/adobe-fonts/source-serif/release/TTF/SourceSerif4-Semibold.ttf",
+    "roles": "Display, H1, H2 and tabular Data",
+    "sha256": "36db62940cb5728b12b1802476dc7fcf4c6c519a7bdd476ba23a4e555fc4655f",
+    "retrieved": "2026-09-08",
+    "digit_advance_units": 520,
+    "verified_glyphs": "L\u00fcbeckRostock\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6\u00df\u20ac0123456789"
+  },
+  {
+    "file": "AtkinsonHyperlegible-Regular.ttf",
+    "license": "AtkinsonHyperlegible-OFL.txt",
+    "source": "https://raw.githubusercontent.com/googlefonts/atkinson-hyperlegible/main/fonts/ttf/AtkinsonHyperlegible-Regular.ttf",
+    "roles": "Body and Caption",
+    "sha256": "7fb917c89019896d0b52ee84b7cbb3304c18cb90b19a62f5e32712bd23e97669",
+    "retrieved": "2026-09-08",
+    "verified_glyphs": "L\u00fcbeckRostock\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6\u00df\u20ac0123456789"
+  },
+  {
+    "file": "NotoSansSymbols2-Regular.ttf",
+    "license": "NotoSansSymbols2-OFL.txt",
+    "source": "https://raw.githubusercontent.com/notofonts/noto-fonts/main/hinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf",
+    "roles": "Composite fallback for legacy HUD symbols",
+    "sha256": "630846d528dbe4c4981370a4d0a9475a1fd1491a129bb411f8e157cdb5de13c6",
+    "retrieved": "2026-09-08",
+    "verified_glyphs": "\u2316\u25f7\u25cb\u25b3\u25b2"
+  }
+]

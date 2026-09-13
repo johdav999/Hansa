@@ -12,6 +12,8 @@ namespace Hansa::Simulation
 	class FHansaSimulationProjection;
 }
 
+class UHansaRuntimeSimulationHost;
+
 UENUM(BlueprintType)
 enum class EHansaCityOverviewTab : uint8
 {
@@ -128,7 +130,8 @@ public:
 		const Hansa::Simulation::FHansaEconomicRegistry& Registry,
 		Hansa::Simulation::FHansaCityDefinitionId CityId,
 		FText CityDisplayName,
-		int64 TreasuryContributionMilliMarks = 0);
+		int64 TreasuryContributionMilliMarks = 0,
+        const UHansaRuntimeSimulationHost* KnowledgeSource = nullptr);
 
 	bool Open(FName FocusOriginSemanticId = TEXT("HUD.TopStatus.CityOverview"));
 	bool CloseIntent();
@@ -137,6 +140,11 @@ public:
 	bool SelectRowIntent(FName RowStableId);
 	bool ActivateCausalIntent(FName RowStableId);
 	bool RetryIntent();
+    bool SelectCityIntent(FName CityId);
+    TFunction<bool(FName)> VisitRequested;
+    bool VisitCityIntent();
+    void SetVisitStatus(FText Status);
+    FSimpleMulticastDelegate& OnRefreshRequested() { return RefreshRequested; }
 	void SetFocusedSemanticId(FName SemanticId);
 	void SetLoading(FText CityDisplayName = FText());
 	void SetError(FText Cause, FText Remedy);
@@ -158,6 +166,7 @@ private:
 
 	uint64 Revision = 0;
 	FHansaCityOverviewChanged Changed;
+    FSimpleMulticastDelegate RefreshRequested;
 	FHansaCityOverviewFocusRestoreRequested FocusRestoreRequested;
 	FHansaCityOverviewRelatedTargetRequested RelatedTargetRequested;
 };

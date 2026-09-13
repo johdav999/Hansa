@@ -15,6 +15,9 @@ class USceneComponent;
 class UStaticMesh;
 class UStaticMeshComponent;
 class UChildActorComponent;
+class UTextRenderComponent;
+enum class EHansaPlacementFeedback : uint8;
+struct FHansaRoadPreviewCell;
 
 namespace Hansa::Game
 {
@@ -47,6 +50,20 @@ namespace Hansa::Game
 	};
 }
 
+/** Exact production state behind the bounded role meshes; no cosmetic stock counts. */
+USTRUCT(BlueprintType)
+struct HANSA_API FHansaProductionWorldObservation
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadOnly) bool bAvailable = false;
+    UPROPERTY(BlueprintReadOnly) bool bWorking = false;
+    UPROPERTY(BlueprintReadOnly) int32 ProgressTicks = 0;
+    UPROPERTY(BlueprintReadOnly) int32 CycleTicks = 0;
+    UPROPERTY(BlueprintReadOnly) int64 CompletedCycles = 0;
+    UPROPERTY(BlueprintReadOnly) FName Blocker;
+    UPROPERTY(BlueprintReadOnly) FString PresentationFailure;
+};
+
 /** One managed, non-authoritative world representation of a placed building or road. */
 UCLASS(NotBlueprintable)
 class HANSA_API AHansaBuildingWorldProjectionActor final : public AActor
@@ -55,11 +72,16 @@ class HANSA_API AHansaBuildingWorldProjectionActor final : public AActor
 
 public:
 	AHansaBuildingWorldProjectionActor();
+	virtual void Tick(float DeltaSeconds) override;
 
 	void ApplyProjection(
 		const Hansa::Simulation::FHansaBuildingWorldProjection& Projection,
-		const AHansaLubeckWorldFoundation& Foundation);
+		const AHansaLubeckWorldFoundation& Foundation, uint8 RoadNeighborMask = 0);
 	void SetSelected(bool bInSelected);
+    void ApplyProduction(const Hansa::Simulation::FHansaProductionProjection* Production,
+        TConstArrayView<Hansa::Simulation::FHansaInventoryProjection> Inventories);
+    void SampleProduction(double TickFraction);
+    UFUNCTION(BlueprintPure, Category="Hansa|World|Projection") FHansaProductionWorldObservation QueryProduction() const { return ProductionObservation; }
 
 	[[nodiscard]] Hansa::Simulation::FHansaBuildingId GetBuildingId() const { return BuildingId; }
 	[[nodiscard]] const FString& GetBuildingDefinitionId() const { return BuildingDefinitionId; }
@@ -67,6 +89,7 @@ public:
 	[[nodiscard]] Hansa::Simulation::EHansaProductionBlocker GetProductionBlocker() const { return ProductionBlocker; }
 	[[nodiscard]] bool IsSelected() const { return bSelected; }
 	[[nodiscard]] bool IsRoad() const { return bRoad; }
+	[[nodiscard]] bool IsRoadDisconnectedIndicatorVisible() const { return bRoadDisconnected; }
 
 	UFUNCTION(BlueprintPure, Category = "Hansa|World|Projection")
 	int64 GetStableBuildingValue() const { return static_cast<int64>(BuildingId.GetValue()); }
@@ -95,6 +118,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
 	TObjectPtr<UStaticMeshComponent> StatusMarker;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
+	TObjectPtr<UStaticMeshComponent> RoadDisconnectedMarker;
 
 private:
 	void EnsureMaterials();
@@ -126,9 +152,68 @@ private:
 	Hansa::Simulation::EHansaBuildingWorldStatus WorldStatus =
 		Hansa::Simulation::EHansaBuildingWorldStatus::UnderConstruction;
 	Hansa::Simulation::EHansaProductionBlocker ProductionBlocker = Hansa::Simulation::EHansaProductionBlocker::None;
+    FHansaProductionWorldObservation ProductionObservation;
+    TMap<TWeakObjectPtr<USceneComponent>, FRotator> MechanicalRestRotations;
 	bool bSelected = false;
 	bool bRoad = false;
+	bool bRoadDisconnected = false;
+	UPROPERTY(EditDefaultsOnly, Category = "Hansa|World|Projection", meta = (ClampMin = "0.0"))
+	float RoadDisconnectedRotationDegreesPerSecond = 45.0f;
 	FBox PresentationBounds = FBox(ForceInit);
+};
+
+/** Non-authoritative world-space preview for a construction placement session. */
+UCLASS(NotBlueprintable)
+class HANSA_API AHansaBuildingPlacementGhost final : public AActor
+{
+	GENERATED_BODY()
+
+public:
+	AHansaBuildingPlacementGhost();
+
+	void ApplyPreview(
+		FName BuildingDefinitionId,
+		FIntPoint AnchorCell,
+		int32 RotationQuarterTurns,
+		TConstArrayView<FIntPoint> FootprintCells,
+		EHansaPlacementFeedback Feedback,
+		const FText& Reason,
+		const AHansaLubeckWorldFoundation& Foundation);
+	void ApplyRoadPreview(
+		TConstArrayView<FHansaRoadPreviewCell> Cells,
+		EHansaPlacementFeedback Feedback,
+		const FText& Reason,
+		const AHansaLubeckWorldFoundation& Foundation);
+	void HidePreview();
+
+	[[nodiscard]] bool IsPreviewVisible() const { return !IsHidden(); }
+	[[nodiscard]] FName GetPreviewBuildingId() const { return PreviewBuildingId; }
+	[[nodiscard]] int32 GetPreviewCellCount() const { return ActiveFootprintCellCount; }
+	[[nodiscard]] int32 GetRoadPieceCount() const { return ActiveRoadPieceCount; }
+
+private:
+	UStaticMeshComponent* AcquireFootprintCell(int32 Index);
+	UStaticMeshComponent* AcquireRoadPiece(int32 Index);
+	void ApplyFeedbackVisuals(EHansaPlacementFeedback Feedback, const FText& Reason);
+
+	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TObjectPtr<USceneComponent> SceneRoot;
+	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TObjectPtr<UStaticMeshComponent> BuildingMesh;
+	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TObjectPtr<UChildActorComponent> BuildingPresentation;
+	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TArray<TObjectPtr<UStaticMeshComponent>> FootprintCellMeshes;
+	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TArray<TObjectPtr<UStaticMeshComponent>> RoadPieceMeshes;
+	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TArray<TObjectPtr<UStaticMeshComponent>> OutlineMeshes;
+	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TObjectPtr<UTextRenderComponent> StatusText;
+	UPROPERTY() TObjectPtr<UStaticMesh> CubeMesh;
+	UPROPERTY() TObjectPtr<UMaterialInterface> BaseMaterial;
+	UPROPERTY() TObjectPtr<UHansaDefinitionBase> PresentationDefinition;
+	UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> FeedbackMaterial;
+	UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> RoadValidMaterial;
+	UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> RoadExistingMaterial;
+	UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> RoadInvalidMaterial;
+	FName PreviewBuildingId;
+	FBox PresentationBounds = FBox(ForceInit);
+	int32 ActiveFootprintCellCount = 0;
+	int32 ActiveRoadPieceCount = 0;
 };
 
 /** Managed Actor projection layer; authoritative state remains exclusively in HansaSimulation. */
@@ -155,6 +240,8 @@ public:
 	void ClearSelection();
 
 	[[nodiscard]] int32 GetProjectionCount() const { return ProjectionActors.Num(); }
+	const TSet<FIntPoint>& GetRoadCells() const { return RoadCells; }
+	bool IsBoundTo(const AHansaLubeckWorldFoundation& Foundation) const { return BoundFoundation.Get() == &Foundation; }
 	[[nodiscard]] AHansaBuildingWorldProjectionActor* FindProjectionActor(
 		Hansa::Simulation::FHansaBuildingId BuildingId) const;
 
@@ -164,9 +251,14 @@ private:
 	bool SpawnOrUpdate(
 		Hansa::Simulation::FHansaBuildingId BuildingId,
 		AHansaLubeckWorldFoundation& Foundation);
+	void RefreshWarehouseInventories(const Hansa::Simulation::FHansaSimulationProjection& Projection);
 	void RemoveActor(Hansa::Simulation::FHansaBuildingId BuildingId);
 
 	Hansa::Game::FHansaPlacementProjectionRegistry Registry;
+	TSet<FIntPoint> RoadCells;
+    FTransform LastRoadFoundationTransform;
+    TArray<TArray<FIntPoint>> RoadRuns;
+    TMap<FIntPoint,uint8> RoadRunMasks;
 	TMap<Hansa::Simulation::FHansaBuildingId, TWeakObjectPtr<AHansaBuildingWorldProjectionActor>> ProjectionActors;
 	TWeakObjectPtr<AHansaLubeckWorldFoundation> BoundFoundation;
 	Hansa::Simulation::FHansaBuildingId SelectedBuildingId;

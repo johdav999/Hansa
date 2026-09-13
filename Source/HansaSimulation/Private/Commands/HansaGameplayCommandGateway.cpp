@@ -35,6 +35,7 @@ namespace Hansa::Simulation
 		case EHansaCommandGatewayError::RouteStateInvalid: return TEXT("RouteStateInvalid");
 		case EHansaCommandGatewayError::VehicleAlreadyAssigned: return TEXT("VehicleAlreadyAssigned");
 		case EHansaCommandGatewayError::ResearchRejected: return TEXT("ResearchRejected");
+		case EHansaCommandGatewayError::TargetHasCargoObligations: return TEXT("TargetHasCargoObligations");
 		default: return TEXT("UnknownCommandGatewayError");
 		}
 	}

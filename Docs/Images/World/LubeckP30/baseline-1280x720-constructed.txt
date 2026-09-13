@@ -1,0 +1,14 @@
+map=/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP
+state=constructed
+tick=124
+fingerprint=16982245970769070759
+actors=50
+visibleMeshInstances=41
+lod0UpperBoundTriangles=12116132
+materialInterfaces=89
+enginePrimitiveComponents=15
+stagingMeshComponents=0
+releaseAccepted=false
+gameThreadMeanMs=1.586
+renderThreadMeanMs=8.881
+frameSamples=169

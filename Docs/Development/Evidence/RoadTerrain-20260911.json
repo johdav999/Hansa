@@ -1,0 +1,221 @@
+{
+  "date": "2026-09-11",
+  "engine": "Unreal Engine 5.8.2",
+  "scope": "Road presentation; authoritative gameplay and save schema unchanged",
+  "checks": {
+    "development_build": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-141229015-build-HansaEditor-Win64-Development"
+    },
+    "road_terrain_tests": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-141005065-automation-Hansa.World.RoadTerrain"
+    },
+    "command_projection_journey": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-135544594-automation-Hansa.World.Road.CommandProjectionJourney"
+    },
+    "production_projection": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-135601683-automation-Hansa.World.Road.ProductionProjection"
+    },
+    "construction_terrain": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-135619766-automation-Hansa.World.Terrain.Construction"
+    },
+    "shipping_build": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-140950596-build-Hansa-Win64-Shipping"
+    },
+    "shipping_exclusion": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-141002873-shipping-exclusion-Win64"
+    },
+    "expanded_cook": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-140952258-media-shipping-cook"
+    },
+    "media_shipping_audit": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-141022652-media-shipping-audit"
+    },
+    "viewport_1920x1080": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-141234341-road-terrain-1920-1080/Unreal.log",
+      "journey": [
+        "rigid-before",
+        "fitted-close",
+        "gameplay-zoom",
+        "junction-removal",
+        "save-restoration",
+        "rvt-writers-disabled"
+      ]
+    },
+    "viewport_1280x720": {
+      "status": "passed",
+      "path": "Saved/BuildArtifacts/20260911-141329851-road-terrain-1280-720/Unreal.log",
+      "journey": [
+        "rigid-before",
+        "fitted-close",
+        "gameplay-zoom",
+        "junction-removal",
+        "save-restoration",
+        "rvt-writers-disabled"
+      ]
+    }
+  },
+  "automated_test_count": 6,
+  "assets": [
+    {
+      "path": "Content/Mesh/hansa-dirt-road/Materials/M_Road_Terrain.uasset",
+      "sha256": "39c97fb158b3bee356f91f188edcfca18f413b329e8fca65f7c3d62e67d7fd9a"
+    },
+    {
+      "path": "Content/Mesh/hansa-dirt-road/Materials/RVT_HansaRoad.uasset",
+      "sha256": "0a290e80be38e5408a93cc993948a5b09e440ab2735fb38e27978d09e1b7e5d6"
+    },
+    {
+      "path": "Content/Hansa/Generated/Staging/LubeckTerrain_20260907/Materials/M_Terrain_Hansa_Master.uasset",
+      "sha256": "ea442cdf3858e606787016c21c5fe5f709f1ef9029646337abdc1dac3dac4ca1"
+    },
+    {
+      "path": "Content/Hansa/Generated/Staging/LubeckWorldArt_P30/M_Lubeck_Ground.uasset",
+      "sha256": "6057fd267db2fc70ca0c4ea5c091c8aca02b6ddc1ac407a5e27ff6f509403f4d"
+    }
+  ],
+  "not_completed": [
+    "Full clean-checkout packaged gameplay/MVP acceptance and final IoStore distribution",
+    "Separate application launch with project-wide virtual texturing disabled",
+    "Dedicated World Partition unload/reload stress test",
+    "Exhaustive rendered synthetic crest/dip/cross-slope matrix",
+    "Proof of conformity to arbitrary sub-grid collision spikes"
+  ],
+  "notes": [
+    "RVT-disabled viewport check switches off road writers and forces refitting.",
+    "Flat/sloped/cross-sloped collision and adaptive ridge are automated; rendered terrain is the existing uneven Landscape.",
+    "A repeat cook ran out of disk space; duplicate task-created cooked outputs were removed, and final cook passed.",
+    "Original source material may emit a startup spline usage warning before the supported terrain material replaces it.",
+    "Existing pale exposure and competing directional lights are retained.",
+    "No new raster source assets or provider-generated media; existing approved road meshes/textures reused."
+  ],
+  "captures": [
+    {
+      "path": "Docs/Images/World/RoadTerrain/after-close-1280x720.png",
+      "native_dimensions": [
+        1280,
+        720
+      ],
+      "resampled": false,
+      "sha256": "f8e375718e0cf828c2d6d15a4d04f9d911ec380998e4b85743b40a90825fb79f"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/after-close-1920x1080.png",
+      "native_dimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "fee34fb47a44b1becafb9bc485b78f5816a9708ee1d7f772e80b22fd0511db64"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/after-gameplay-1280x720.png",
+      "native_dimensions": [
+        1280,
+        720
+      ],
+      "resampled": false,
+      "sha256": "265a35c2faba558c81047560e6e9497faf5165474c294e1d974682689acd90eb"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/after-gameplay-1920x1080.png",
+      "native_dimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "2018092646bbaaf935d4f0bebf982d92857431bce51d554815e4d7bb962ebb49"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/before-1280x720.png",
+      "native_dimensions": [
+        1280,
+        720
+      ],
+      "resampled": false,
+      "sha256": "c7ffba868543745241fcc7976f9f28c82261efd73378d5ede3a88cbcb5cd8a56"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/before-1920x1080.png",
+      "native_dimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "3e7e1368b2c30f6024540f1ab0269d12dd413c392e2c06849e7ccccbc397908c"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/removed-junction-1280x720.png",
+      "native_dimensions": [
+        1280,
+        720
+      ],
+      "resampled": false,
+      "sha256": "eaaf713cf88fcf1b04bf7d460f6d3bc38d9a55a5933136b820b1eaef7a16c09b"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/removed-junction-1920x1080.png",
+      "native_dimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "d5677f784499cc3f97c93e18bff1afd9babc1ba8162395183a156170b243394d"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/restored-1280x720.png",
+      "native_dimensions": [
+        1280,
+        720
+      ],
+      "resampled": false,
+      "sha256": "9be3061c126131f219a12158028758acbbb64e49da7622e85c294df5f4803572"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/restored-1920x1080.png",
+      "native_dimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "a648b695fcddf94fc3eb2d80fef1ffa4cd4a2293f5650aef5db91990f3f3e20d"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/rvt-disabled-1280x720.png",
+      "native_dimensions": [
+        1280,
+        720
+      ],
+      "resampled": false,
+      "sha256": "3cca2d4ef34ead7c3d8882f3577f73f5993b67a653ce840e6e5d3d7d138673dc"
+    },
+    {
+      "path": "Docs/Images/World/RoadTerrain/rvt-disabled-1920x1080.png",
+      "native_dimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "aff10883699d8e66348282e111984de305496b35076b721fe8b83558a8d8b911"
+    }
+  ],
+  "performance": {
+    "measurement": "origin=21,28 roads=74 fullNetworkResampleMs=24.772 meanFitMs=0.335",
+    "scope": "Forced full resampling of 74 roads, CPU fit timer; not GPU frame time. Cached unchanged fit is verified to use zero traces."
+  },
+  "inspection": {
+    "geometry": "No visible join cracks or terrain cutouts in the captured test network after fitting. Before capture shows rigid-edge cutouts and seams.",
+    "removal": "Removed junction returns to terrain with no visible residual road mark.",
+    "fallback": "Physical roads remain fitted with RVT writes disabled.",
+    "limitations": "Scene exposure limits fine shading/detail assessment. See not_completed."
+  }
+}

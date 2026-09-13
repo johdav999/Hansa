@@ -26,6 +26,14 @@ namespace Hansa::Simulation
 	class FHansaProductionExecutor final
 	{
 	public:
+		/** Idempotently activate completed recipe buildings, including older saves missing runtime records. */
+		static bool SynchronizeCompletedBuildings(
+			TArray<FHansaProductionState>& Productions,
+			const TArray<FHansaBuildingState>& Buildings,
+			const FHansaPlacementState& Placement,
+			FHansaInventoryLedger& InventoryLedger,
+			const FHansaEconomicRegistry& Registry);
+
 		static void AdvanceOneTick(
 			TArray<FHansaProductionState>& Productions,
 			uint64& NextReservationValue,

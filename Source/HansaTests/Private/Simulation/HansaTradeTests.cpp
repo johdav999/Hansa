@@ -18,7 +18,7 @@ namespace Hansa::Tests::Trade
 	}
 
 	template <typename TId>
-	TId Entity(const uint64 Value)
+	TId TradeTestsEntity(const uint64 Value)
 	{
 		return Require(TId::TryCreate(Value));
 	}
@@ -34,19 +34,20 @@ namespace Hansa::Tests::Trade
 		FHansaSimulationDefinitionContext Definitions;
 		FHansaSimulationState State;
 		FHansaSimulationTransientCache Cache;
-		FHansaHouseId Owner = Entity<FHansaHouseId>(1);
-		FHansaHouseId OtherHouse = Entity<FHansaHouseId>(2);
-		FHansaVehicleId VehicleId = Entity<FHansaVehicleId>(1);
-		FHansaInventoryId SourceInventoryId = Entity<FHansaInventoryId>(1);
-		FHansaInventoryId DestinationInventoryId = Entity<FHansaInventoryId>(2);
-		FHansaInventoryId CargoInventoryId = Entity<FHansaInventoryId>(3);
+		FHansaHouseId Owner = TradeTestsEntity<FHansaHouseId>(1);
+		FHansaHouseId OtherHouse = TradeTestsEntity<FHansaHouseId>(2);
+		FHansaVehicleId VehicleId = TradeTestsEntity<FHansaVehicleId>(1);
+		FHansaInventoryId SourceInventoryId = TradeTestsEntity<FHansaInventoryId>(1);
+		FHansaInventoryId DestinationInventoryId = TradeTestsEntity<FHansaInventoryId>(2);
+		FHansaInventoryId CargoInventoryId = TradeTestsEntity<FHansaInventoryId>(3);
 		FHansaCityDefinitionId Lubeck = Stable<FHansaCityDefinitionId>(TEXT("City.Lubeck"));
 		FHansaCityDefinitionId Rostock = Stable<FHansaCityDefinitionId>(TEXT("City.Rostock"));
 		FHansaGoodId Grain = Stable<FHansaGoodId>(TEXT("Good.Grain"));
 		FHansaRouteDefinitionId SeaRoute = Stable<FHansaRouteDefinitionId>(TEXT("Route.TestSea"));
 	};
 
-	FTradeHarness MakeHarness(const int64 SourceStock = 50'000, const int64 VehicleCapacity = 15'000)
+	FTradeHarness MakeHarness(const int64 SourceStock = 50'000, const int64 VehicleCapacity = 15'000,
+		const bool bPhysicalLubeck = false, const bool bConnectDock = true)
 	{
 		FTradeHarness Harness;
 		FHansaCompiledGoodDefinition Grain;
@@ -84,11 +85,53 @@ namespace Hansa::Tests::Trade
 		Vehicle.CurrentCityId = Harness.Lubeck;
 		Vehicle.UpkeepPfennigPerTravelTick = 2;
 		Initialization.Vehicles.Add(Vehicle);
+		if (bPhysicalLubeck)
+		{
+			const FHansaHouseId Owner = Harness.Owner;
+			const auto AddBuilding = [&](const uint64 Value, const TCHAR* DefinitionId)
+			{
+				FHansaBuildingState Building;
+				Building.Id = TradeTestsEntity<FHansaBuildingId>(Value);
+				Building.DefinitionId = Stable<FHansaBuildingTypeId>(DefinitionId);
+				Building.OwnerId = Owner;
+				Building.ConstructionProgress = FHansaRate::FromPartsPerMillion(FHansaRate::Scale);
+				Building.ConstructionState = EHansaConstructionState::Completed;
+				Initialization.Buildings.Add(Building);
+			};
+			AddBuilding(10, TEXT("Building.Market"));
+			AddBuilding(11, TEXT("Building.Dock"));
+			AddBuilding(12, TEXT("Building.Road"));
+			if (bConnectDock) AddBuilding(13, TEXT("Building.Road"));
+			AddBuilding(14, TEXT("Building.Road"));
+			AddBuilding(15, TEXT("Building.Road"));
+			FHansaPlacementMapInitialization Map;
+			Map.CityId = Harness.Lubeck;
+			Map.BoundsMin = { 0, 0 };
+			Map.BoundsMax = { 3, 1 };
+			Map.RoadBuildingDefinitionId = Stable<FHansaBuildingTypeId>(TEXT("Building.Road"));
+			for (int32 X = 0; X <= 3; ++X)
+				for (int32 Y = 0; Y <= 1; ++Y)
+					Map.Cells.Add({ { X, Y }, EHansaPlacementTerrain::Land, Owner, false });
+			Initialization.Placement.Maps.Add(MoveTemp(Map));
+			const auto AddPlacement = [&](const uint64 Value, const TCHAR* DefinitionId, const int32 X, const int32 Y)
+			{
+				Initialization.Placement.Placements.Add({ TradeTestsEntity<FHansaBuildingId>(Value), Owner,
+					{ Harness.Lubeck, Stable<FHansaBuildingTypeId>(DefinitionId), { X, Y }, EHansaGridRotation::North },
+					{ { X, Y } } });
+			};
+			AddPlacement(10, TEXT("Building.Market"), 0, 1);
+			AddPlacement(11, TEXT("Building.Dock"), 3, 1);
+			AddPlacement(12, TEXT("Building.Road"), 0, 0);
+			if (bConnectDock) AddPlacement(13, TEXT("Building.Road"), 1, 0);
+			AddPlacement(14, TEXT("Building.Road"), 2, 0);
+			AddPlacement(15, TEXT("Building.Road"), 3, 0);
+		}
 
 		FHansaInventoryInitialization Source;
 		Source.Id = Harness.SourceInventoryId;
 		Source.OwnerKind = EHansaInventoryOwnerKind::City;
 		Source.CityId = Harness.Lubeck;
+		if (bPhysicalLubeck) Source.BuildingId = TradeTestsEntity<FHansaBuildingId>(10);
 		Source.Capacity = FHansaQuantity::FromRaw(100'000);
 		Source.AcceptedGoods.Add(Harness.Grain);
 		Source.InitialStock.Add({ Harness.Grain, FHansaQuantity::FromRaw(SourceStock) });
@@ -113,7 +156,7 @@ namespace Hansa::Tests::Trade
 		const FHansaHouseId Issuer = FHansaHouseId())
 	{
 		FHansaCommandHeader Result;
-		Result.CommandId = Entity<FHansaCommandId>(Sequence);
+		Result.CommandId = TradeTestsEntity<FHansaCommandId>(Sequence);
 		Result.Authority.IssuingHouseId = Issuer.IsValid() ? Issuer : Harness.Owner;
 		Result.Authority.PrincipalId = Result.Authority.IssuingHouseId.GetValue();
 		Result.Authority.Origin = EHansaCommandOrigin::ControlledAutomation;
@@ -146,7 +189,7 @@ namespace Hansa::Tests::Trade
 		const FHansaRouteDefinitionId Definition = FHansaRouteDefinitionId())
 	{
 		FHansaCreateRouteCommand Payload;
-		Payload.RouteId = Entity<FHansaRouteId>(1);
+		Payload.RouteId = TradeTestsEntity<FHansaRouteId>(1);
 		Payload.VehicleId = Harness.VehicleId;
 		Payload.RouteDefinitionId = Definition.IsValid() ? Definition : Harness.SeaRoute;
 		Payload.Stops = MoveTemp(RouteStops);
@@ -186,7 +229,7 @@ bool FHansaTradeCapacityReserveArrivalReplayTest::RunTest(const FString& Paramet
 	const TOptional<FHansaInventoryStockProjection> Destination = Read.GetInventories().QueryStock(
 		First.DestinationInventoryId, First.Grain);
 	const TOptional<FHansaVehicleProjection> Vehicle = Read.QueryVehicle(First.VehicleId);
-	const TOptional<FHansaRouteProjection> Route = Read.QueryRoute(Entity<FHansaRouteId>(1));
+	const TOptional<FHansaRouteProjection> Route = Read.QueryRoute(TradeTestsEntity<FHansaRouteId>(1));
 	TestEqual(TEXT("minimum reserve is protected"), Source->Stock.GetRawValue(), int64(35'000));
 	TestEqual(TEXT("capacity-limited cargo is delivered"), Destination->Stock.GetRawValue(), int64(15'000));
 	TestEqual(TEXT("cargo empties at destination"), Vehicle->Cargo.GetRawValue(), int64(0));
@@ -222,24 +265,53 @@ bool FHansaTradeValidationCancellationMissedCargoTest::RunTest(const FString& Pa
 
 	FTradeHarness Cancel = MakeHarness();
 	TestTrue(TEXT("route starts with cargo"), CreateActiveRoute(Cancel, 1, Stops(Cancel, 0)).IsSuccess());
-	const FHansaCancelRouteCommand Payload { Entity<FHansaRouteId>(1) };
+	const FHansaCancelRouteCommand Payload { TradeTestsEntity<FHansaRouteId>(1) };
 	const FHansaGameplayCommand Command = FHansaGameplayCommand::Create(Header(Cancel, 2), Payload);
 	const FHansaCommandGatewayResult Cancelled = FHansaGameplayCommandGateway::ExecuteTick(
 		Cancel.State, Cancel.Definitions, MakeArrayView(&Command, 1), Cancel.Cache);
 	const FHansaSimulationReadOnlyAccess CancelRead = Cancel.State.CreateReadOnlyAccess(Cancel.Definitions);
 	TestTrue(TEXT("in-transit cancellation succeeds"), Cancelled.IsSuccess());
-	TestEqual(TEXT("cancelled route stops"), CancelRead.QueryRoute(Entity<FHansaRouteId>(1))->Lifecycle,
+	TestEqual(TEXT("cancelled route stops"), CancelRead.QueryRoute(TradeTestsEntity<FHansaRouteId>(1))->Lifecycle,
 		EHansaRouteLifecycleState::Cancelled);
 	TestEqual(TEXT("cancellation preserves loaded cargo"), CancelRead.QueryVehicle(Cancel.VehicleId)->Cargo.GetRawValue(), int64(15'000));
 
 	FTradeHarness Missed = MakeHarness();
 	const FHansaCommandGatewayResult MissedResult = CreateActiveRoute(Missed, 1, Stops(Missed, 50'000));
 	const TOptional<FHansaRouteProjection> MissedRoute =
-		Missed.State.CreateReadOnlyAccess(Missed.Definitions).QueryRoute(Entity<FHansaRouteId>(1));
+		Missed.State.CreateReadOnlyAccess(Missed.Definitions).QueryRoute(TradeTestsEntity<FHansaRouteId>(1));
 	TestTrue(TEXT("reserve-blocked route still departs deterministically"), MissedResult.IsSuccess());
 	TestEqual(TEXT("missed cargo is recorded"), MissedRoute->MissedCargoActionCount, int64(1));
 	TestEqual(TEXT("reserve-blocked cargo remains empty"),
 		Missed.State.CreateReadOnlyAccess(Missed.Definitions).QueryVehicle(Missed.VehicleId)->Cargo.GetRawValue(), int64(0));
 	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaTradePhysicalHarborHandoffTest,
+	"Hansa.Simulation.Trade.PhysicalHarborHandoff", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaTradePhysicalHarborHandoffTest::RunTest(const FString& Parameters)
+{
+	using namespace Hansa::Tests::Trade;
+	FTradeHarness Disconnected = MakeHarness(50'000, 15'000, true, false);
+	TestTrue(TEXT("A route with a disconnected harbor remains a valid plan"),
+		CreateActiveRoute(Disconnected, 1, Stops(Disconnected, 0)).IsSuccess());
+	const FHansaSimulationReadOnlyAccess DisconnectedRead =
+		Disconnected.State.CreateReadOnlyAccess(Disconnected.Definitions);
+	TestEqual(TEXT("A disconnected harbor cannot load city stock"),
+		DisconnectedRead.QueryVehicle(Disconnected.VehicleId)->Cargo.GetRawValue(), int64(0));
+	TestEqual(TEXT("A missed harbor handoff conserves source stock"),
+		DisconnectedRead.GetInventories().QueryStock(Disconnected.SourceInventoryId, Disconnected.Grain)->Stock.GetRawValue(),
+		int64(50'000));
+
+	FTradeHarness Connected = MakeHarness(50'000, 15'000, true, true);
+	TestTrue(TEXT("A connected harbor route starts"),
+		CreateActiveRoute(Connected, 1, Stops(Connected, 0)).IsSuccess());
+	const FHansaSimulationReadOnlyAccess ConnectedRead = Connected.State.CreateReadOnlyAccess(Connected.Definitions);
+	TestEqual(TEXT("Reconnecting the harbor permits the bounded load"),
+		ConnectedRead.QueryVehicle(Connected.VehicleId)->Cargo.GetRawValue(), int64(15'000));
+	TestEqual(TEXT("The connected load conserves city plus cargo stock"),
+		ConnectedRead.GetInventories().QueryStock(Connected.SourceInventoryId, Connected.Grain)->Stock.GetRawValue() +
+		ConnectedRead.QueryVehicle(Connected.VehicleId)->Cargo.GetRawValue(), int64(50'000));
+	return !HasAnyErrors();
 }
 #endif

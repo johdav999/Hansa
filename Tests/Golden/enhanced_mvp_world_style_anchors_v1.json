@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "contractId": "EnhancedMvp.WorldStyleAnchors.v1",
+  "auditAsOf": "2026-09-07",
+  "sourceDocument": "Docs/Development/EnhancedMvpWorldStyleAnchors.md",
+  "worldScale": {
+    "unrealCentimetersPerMeter": 100,
+    "blenderMetersPerUnit": 1,
+    "gridCellCm": 400,
+    "footprintInsetTotalCm": 40,
+    "authoredRuntimeScale": [1, 1, 1],
+    "runtimeAutoFitAllowed": false,
+    "groundPivotToleranceCm": 2,
+    "upAxis": "+Z",
+    "forwardAxis": "+X"
+  },
+  "humanScale": {
+    "referenceHumanHeightCm": 180,
+    "doorClearWidthCm": [85, 120],
+    "doorClearHeightCm": [200, 230],
+    "ordinaryFloorToFloorCm": [280, 340],
+    "merchantHallClearHeightCm": [450, 650],
+    "merchantHallRangeIsGameplayTargetPendingAssetSpecificEvidence": true
+  },
+  "footprint": {
+    "groundedCollisionMustFitInset": true,
+    "visualOverhangAllowed": ["eaves", "signs", "windmill-sails", "rigging"],
+    "overhangMustNotBlockPlacementOrNavigation": true,
+    "invalidAssetMustBeRevisedNotScaled": true
+  },
+  "texelDensity": {
+    "baselinePixelsPerMeter": 512,
+    "gameplayMinimumPixelsPerMeter": 384,
+    "heroRangePixelsPerMeter": [768, 1024],
+    "maximumWithinAssetVariancePercent": 25,
+    "nativeTextureVariantsRequired": true
+  },
+  "pbr": {
+    "requiredInputs": ["base-color", "normal", "roughness"],
+    "optionalInputs": ["ambient-occlusion", "metallic", "height"],
+    "metallicDefault": 0,
+    "generatedNormalOrRoughnessFromUnrelatedColorTextureAllowed": false,
+    "packedOrRepositoryRelativeSourcesRequired": true
+  },
+  "lodNanite": {
+    "staticNaniteCandidateTriangleThreshold": 100000,
+    "nonNaniteMinimumLodCount": 3,
+    "animatedMinimumLodCount": 3,
+    "naniteDoesNotReplaceSilhouetteOrMaterialAudit": true,
+    "gameplayCameraProfileRequired": true
+  },
+  "collision": {
+    "complexAsSimpleAllowed": false,
+    "simpleGroundedHullRequired": true,
+    "doorAndWorkAccessMustRemainOpen": true,
+    "animatedPartsMustNotDriveBuildingCollision": true,
+    "visualOverhangExcludedFromPlacementFit": true
+  },
+  "weathering": {
+    "baseline": "restrained working-city use",
+    "requiredSignals": ["ground-contact damp", "rain runoff", "handled-edge wear", "roof soot where functionally justified"],
+    "forbiddenSignals": ["uniform grime", "random damage", "fantasy exaggeration", "painted-on lighting"]
+  },
+  "season": {
+    "baseline": "late-summer neutral, dry-to-damp",
+    "snowOrHeavyIceInBaselineAllowed": false,
+    "seasonChangesRequireNativeMaterialOrAssetVariants": true,
+    "runtimeRasterResamplingAllowed": false
+  },
+  "lighting": {
+    "validationMap": "/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP",
+    "currentSunRotationDegrees": [-50, -35, 0],
+    "currentSunIntensity": 5,
+    "currentSunLinearColor": [1, 0.84, 0.68],
+    "currentSkyIntensity": 0.6,
+    "currentLightingIsPrototype": true,
+    "mustRemainReadableInWarmKeyAndNeutralOvercast": true
+  },
+  "cameraRead": {
+    "gameplaySpringArmCm": 6500,
+    "gameplayPitchDegrees": -55,
+    "defaultYawDegrees": 35,
+    "validationDistancesCm": [2500, 6500, 12000],
+    "requiredReads": ["footprint", "entrance", "function", "selected-state silhouette"]
+  },
+  "canonicalPaths": {
+    "allowedPrefixes": ["/Game/Hansa/Core/Buildings/", "/Game/Mesh/"],
+    "forbiddenPrefixes": ["/Game/Hansa/Generated/Staging/", "/Game/Developers/", "/Engine/BasicShapes/"]
+  },
+  "candidates": [
+    {
+      "family": "merchant-house",
+      "currentReference": "/Game/Mesh/LaborerResidence/Materials_R02/Meshes/SM_LaborerResidence.SM_LaborerResidence",
+      "currentStaticMeshes": ["/Game/Mesh/LaborerResidence/Materials_R02/Meshes/SM_LaborerResidence.SM_LaborerResidence"],
+      "sourceBlend": "none",
+      "footprintCells": [2, 2],
+      "availableGroundedBoundsCm": [760, 760],
+      "observedPrimaryBoundsCm": [575.8844, 729, 645.7963],
+      "observedLodCount": 1,
+      "observedNanite": false,
+      "disposition": "requires-revision",
+      "selectedStyleAnchor": true,
+      "selectedScopes": ["human scale", "ground pivot", "half-timber contrast"],
+      "intendedCanonicalPath": "/Game/Mesh/merchant-house/SM_HansaMerchantHouse_*",
+      "reason": "The candidate fits a 2x2 inset at identity scale and reads coherently in the Lubeck map, but it is a laborer residence rather than a merchant house and has no editable source, provenance, collision proof, or LOD chain."
+    },
+    {
+      "family": "bakery",
+      "currentReference": "/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery.SM_HansaBakery",
+      "currentStaticMeshes": ["/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery.SM_HansaBakery"],
+      "sourceBlend": "SourceArt/Generated/Buildings/HansaBakery_ImageGen_20260906_02/HansaBakery.blend",
+      "blenderEvidence": "SourceArt/StyleAnchors/EnhancedMVP_20260907_01/evidence/bakery-blender.json",
+      "footprintCells": [3, 2],
+      "availableGroundedBoundsCm": [1160, 760],
+      "observedPrimaryBoundsCm": [1000.6693, 1948.5001, 1664.4999],
+      "observedLodCount": 1,
+      "observedNanite": true,
+      "disposition": "requires-revision",
+      "selectedStyleAnchor": true,
+      "selectedScopes": ["PBR material family", "functional soot", "restrained weathering", "bakery silhouette"],
+      "intendedCanonicalPath": "/Game/Mesh/hansa-bakery/Meshes/SM_HansaBakery",
+      "reason": "The source is inspectable and materially strong, but its 19.49 m depth cannot fit the 7.6 m inset and the Unreal thumbnail showed fallback/checkerboard material presentation."
+    },
+    {
+      "family": "mill",
+      "currentReference": "/Game/Hansa/Core/Buildings/BP_HansaWindmill_Animated.BP_HansaWindmill_Animated_C",
+      "currentStaticMeshes": [
+        "/Game/Hansa/Core/Buildings/Windmill/Meshes/SM_Windmill_Body.SM_Windmill_Body",
+        "/Game/Hansa/Core/Buildings/Windmill/Meshes/SM_Windmill_Rotor.SM_Windmill_Rotor"
+      ],
+      "sourceBlend": "SourceArt/Generated/Buildings/HansaWindmillAnimated_20260906_04/exports/HansaWindmill_Animated.blend",
+      "blenderEvidence": "SourceArt/StyleAnchors/EnhancedMVP_20260907_01/evidence/mill-blender.json",
+      "footprintCells": [3, 3],
+      "availableGroundedBoundsCm": [1160, 1160],
+      "observedPrimaryBoundsCm": [800, 819.5, 1304.3],
+      "observedVisualEnvelopeCm": [1337.9874, 873.9, 1752.4935],
+      "observedLodCount": 1,
+      "observedNanite": false,
+      "disposition": "requires-revision",
+      "selectedStyleAnchor": true,
+      "selectedScopes": ["functional silhouette", "material restraint", "rotor motion pivot", "allowed sail overhang"],
+      "intendedCanonicalPath": "/Game/Hansa/Core/Buildings/BP_HansaWindmill_Animated",
+      "reason": "The grounded body fits a 3x3 inset and the assembly is the strongest functional anchor, but it has one LOD, no complete collision/performance proof, and 1555 non-unit source object transforms. Sails are visual overhang, not footprint geometry."
+    },
+    {
+      "family": "road",
+      "currentReference": "/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m.SM_DirtRoad_Straight_8m",
+      "currentStaticMeshes": ["/Game/Hansa/Generated/Staging/HansaDirtRoad_20260906_01/Meshes/SM_DirtRoad_Straight_8m.SM_DirtRoad_Straight_8m"],
+      "sourceBlend": "SourceArt/Generated/Roads/HansaDirtRoad_20260906_01/exports/Hansa_DirtRoad_Kit.blend",
+      "blenderEvidence": "SourceArt/StyleAnchors/EnhancedMVP_20260907_01/evidence/road-blender.json",
+      "footprintCells": [1, 1],
+      "availableGroundedBoundsCm": [360, 360],
+      "observedPrimaryBoundsCm": [800, 492.2, 13.5],
+      "observedLodCount": 1,
+      "observedNanite": false,
+      "disposition": "requires-revision",
+      "selectedStyleAnchor": true,
+      "selectedScopes": ["crown and rut profile", "earth material", "connector language"],
+      "intendedCanonicalPath": "/Game/Mesh/hansa-road/SM_HansaRoad_*",
+      "reason": "The surface treatment is useful, but the selected piece is 8 m by 4.92 m for a 4 m cell, has one LOD, and remains in forbidden staging. P18 must author native 4 m neighbor-selected pieces or adopt an explicit non-grid spline contract."
+    },
+    {
+      "family": "harbor",
+      "currentReference": "/Engine/BasicShapes/Cube.Cube",
+      "currentStaticMeshes": ["/Engine/BasicShapes/Cube.Cube"],
+      "sourceBlend": "none",
+      "footprintCells": [5, 3],
+      "availableGroundedBoundsCm": [1960, 1160],
+      "disposition": "rejected",
+      "selectedStyleAnchor": false,
+      "selectedScopes": [],
+      "intendedCanonicalPath": "/Game/Mesh/hansa-harbor/SM_HansaDock_*",
+      "reason": "The current dock and world-foundation quay are engine primitives with no usable art, PBR, collision, LOD, provenance, or historical detail. P17 must build the first harbor style anchor from evidence."
+    }
+  ],
+  "summary": {
+    "productionReady": [],
+    "requiresRevision": ["merchant-house", "bakery", "mill", "road"],
+    "rejected": ["harbor"]
+  }
+}

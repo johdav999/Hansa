@@ -74,7 +74,7 @@ namespace Hansa::Tests::Market
 	FHansaSimulationState MakeState(const TCHAR* MarketGood, const int64 Stock, const int64 Reserve,
 		const int64 Incoming, const int64 InitialPrice, const int32 Cadence = 1,
 		const int32 HistoryCapacity = 8, const bool bPopulation = false, const bool bProduction = false,
-		const int64 MaximumPrice = 1000000, const int32 PopulationPurchasingPowerBasisPoints = 10000)
+		const int64 MaximumPrice = 1000000, const int32 PopulationPurchasingPowerBasisPoints = 10000, const int64 GrainStock = 0)
 	{
 		FHansaSimulationInitialization Initialization;
 		Initialization.Clock = Require(FHansaSimulationClock::TryCreate(
@@ -102,6 +102,7 @@ namespace Hansa::Tests::Market
 		Inventory.Capacity = FHansaQuantity::FromRaw(100000000);
 		Inventory.AcceptedGoods = { Good(TEXT("Good.Bread")), Good(TEXT("Good.Grain")) };
 		Inventory.InitialStock.Add({ Good(MarketGood), FHansaQuantity::FromRaw(Stock) });
+        if (GrainStock > 0) Inventory.InitialStock.Add({ Good(TEXT("Good.Grain")), FHansaQuantity::FromRaw(GrainStock) });
 		Initialization.Inventories.Add(MoveTemp(Inventory));
 
 		if (bPopulation)
@@ -329,10 +330,42 @@ bool FHansaMarketDemandRecoveryTest::RunTest(const FString& Parameters)
 	FHansaSimulationTransientCache RecoveryCache;
 	TestTrue(TEXT("Recovering-supply market step succeeds"), Step(Recovery, Definitions, RecoveryCache));
 	const FHansaCityMarketProjection RecoveryMarket = Market(Recovery, Definitions, TEXT("Good.Bread"));
-	TestEqual(TEXT("Confirmed incoming supply is projected"), RecoveryMarket.ExpectedIncomingSupply.GetRawValue(), int64(10000));
-	TestEqual(TEXT("Incoming supply contributes bounded relief"), RecoveryMarket.Factors.IncomingSupplyBasisPoints, -2500);
+	TestEqual(TEXT("Unbacked authored promises are not reported as real cargo"), RecoveryMarket.ExpectedIncomingSupply.GetRawValue(), int64(0));
+	TestEqual(TEXT("Unbacked promises cannot discount prices"), RecoveryMarket.Factors.IncomingSupplyBasisPoints, 0);
 	TestEqual(TEXT("Recovering supply lowers an elevated price within its cap"), RecoveryMarket.CurrentPriceMilliMarks, int64(1800));
 	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaMarketLiveProductionStockTest,
+    "Hansa.Simulation.Market.LiveProductionStock",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaMarketLiveProductionStockTest::RunTest(const FString&)
+{
+    using namespace Hansa::Simulation;
+    using namespace Hansa::Tests::Market;
+    const auto Definitions = MakeDefinitions();
+    auto State = MakeState(TEXT("Good.Bread"), 0, 10000, 0, 1000, 100, 8, false, true, 1000000, 10000, 10000);
+    FHansaSimulationTransientCache Cache;
+    for (int32 Index = 0; Index < 31; ++Index)
+        if (!TestTrue(TEXT("Production tick succeeds"), Step(State, Definitions, Cache))) return false;
+    const auto View = State.CreateReadOnlyAccess(Definitions);
+    const auto Stock = View.GetInventories().QueryStock(Entity<FHansaInventoryId>(1), Good(TEXT("Good.Bread")));
+    if (!TestTrue(TEXT("Bread stock exists"), Stock.IsSet())) return false;
+    TestEqual(TEXT("Three completed batches deposit three breads"), Stock->Stock.GetRawValue(), int64(3000));
+    const auto Bread = Market(State, Definitions, TEXT("Good.Bread"));
+    TestEqual(TEXT("Market includes produced bread before the first price update"), Bread.CurrentStock.GetRawValue(), Stock->Available.GetRawValue());
+    TestEqual(TEXT("Stock refresh does not advance price history"), Bread.PriceHistory.Num(), 0);
+    TestEqual(TEXT("Stock refresh does not alter price"), Bread.CurrentPriceMilliMarks, int64(1000));
+
+    auto Consumed = MakeState(TEXT("Good.Bread"), 3000, 10000, 0, 1000, 100, 8, true);
+    FHansaSimulationTransientCache ConsumedCache;
+    TestTrue(TEXT("Citizen consumption tick succeeds"), Step(Consumed, Definitions, ConsumedCache));
+    const auto Remaining = Consumed.CreateReadOnlyAccess(Definitions).GetInventories().QueryStock(
+        Entity<FHansaInventoryId>(1), Good(TEXT("Good.Bread")));
+    TestTrue(TEXT("Residents consume bread"), Remaining.IsSet() && Remaining->Stock.GetRawValue() < 3000);
+    TestEqual(TEXT("Market removes consumed bread immediately"),
+        Market(Consumed, Definitions, TEXT("Good.Bread")).CurrentStock.GetRawValue(), Remaining->Available.GetRawValue());
+    return !HasAnyErrors();
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaMarketCadenceHistoryTest,
@@ -542,7 +575,7 @@ bool FHansaIntercityMarketKnowledgeTest::RunTest(const FString& Parameters)
 	if (Components.IsSet() && Components->Stock.IsSet())
 	{
 		TestEqual(TEXT("Fixed background production and demand evolve remote stock through the inventory ledger"),
-			Components->Stock.GetValue().GetRawValue(), int64(60'000));
+			Components->Stock.GetValue().GetRawValue(), int64(29'000));
 	}
 	TestEqual(TEXT("Identical remote evolution replays bit-for-bit"),
 		State.CreateReadOnlyAccess(Definitions).GetFingerprint().Value,

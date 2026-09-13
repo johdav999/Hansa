@@ -1,0 +1,3 @@
+trace -3200 -700 hit=HansaLubeckWorldFoundation_UAID_C87F54696D02F6FD02_1113709960 z=102.50 expected=75.00
+trace 0 0 hit=HansaLubeckWorldFoundation_UAID_C87F54696D02F6FD02_1113709960 z=85.00 expected=85.00
+trace 2000 0 hit=none z=0.00 expected=-450.00

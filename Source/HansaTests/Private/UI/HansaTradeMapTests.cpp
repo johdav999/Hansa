@@ -14,7 +14,7 @@
 
 namespace
 {
-	const Hansa::UI::FHansaHudSemanticNode* FindNode(const TArray<Hansa::UI::FHansaHudSemanticNode>& Nodes, const FString& Id)
+	const Hansa::UI::FHansaHudSemanticNode* TradeMapTestsFindNode(const TArray<Hansa::UI::FHansaHudSemanticNode>& Nodes, const FString& Id)
 	{
 		return Nodes.FindByPredicate([&](const auto& Node){ return Node.Id == Id; });
 	}
@@ -80,13 +80,13 @@ bool FHansaTradeMapSemanticsResponsiveEvidenceTest::RunTest(const FString& Param
 	TSharedRef<Hansa::UI::SHansaTradeMap> Screen = SNew(Hansa::UI::SHansaTradeMap).Model(Model.Get()).InitialViewportSize(FIntPoint(1280,720));
 	Screen->SetPresentationSize(FIntPoint(1280,720));
 	auto Nodes = Screen->GetSemanticSnapshot();
-	TestTrue(TEXT("Map geometry is native"), FindNode(Nodes,TEXT("TradeMap.Canvas")) != nullptr && FindNode(Nodes,TEXT("TradeMap.Canvas"))->State.Value == TEXT("native"));
-	TestNotNull(TEXT("Lübeck has a stable semantic city ID"), FindNode(Nodes,TEXT("TradeMap.City.City_Lubeck")));
-	TestNotNull(TEXT("Sea route has a stable semantic route ID"), FindNode(Nodes,TEXT("TradeMap.Route.1")));
-	const auto* RouteStateNode = FindNode(Nodes, TEXT("TradeMap.Editor.RouteState"));
-	const auto* RouteActionNode = FindNode(Nodes, TEXT("TradeMap.Editor.ToggleActive"));
+	TestTrue(TEXT("Map geometry is native"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Canvas")) != nullptr && TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Canvas"))->State.Value == TEXT("native"));
+	TestNotNull(TEXT("Lübeck has a stable semantic city ID"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.City.City_Lubeck")));
+	TestNotNull(TEXT("Sea route has a stable semantic route ID"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Route.1")));
+	const auto* RouteStateNode = TradeMapTestsFindNode(Nodes, TEXT("TradeMap.Editor.RouteState"));
+	const auto* RouteActionNode = TradeMapTestsFindNode(Nodes, TEXT("TradeMap.Editor.ToggleActive"));
 	TestTrue(TEXT("Selected stopped route exposes an explicit state"),
-		RouteStateNode != nullptr && RouteStateNode->Label == TEXT("ROUTE STOPPED") &&
+		RouteStateNode != nullptr && RouteStateNode->Label == TEXT("Route stopped") &&
 		RouteStateNode->State.Value.Contains(TEXT("Stopped")));
 	TestTrue(TEXT("Stopped route exposes one unambiguous enabled action"),
 		RouteActionNode != nullptr && RouteActionNode->Label == TEXT("Start route") &&
@@ -134,7 +134,7 @@ bool FHansaTradeMapRuntimeCommandCommitTest::RunTest(const FString& Parameters)
 	const auto* RivalRoute = Model->GetSnapshot().Routes.FindByPredicate([](const auto& Route){ return Route.RouteValue == 3; });
 	TestTrue(TEXT("Player stopped route clearly offers Start route"),
 		StoppedLandRoute != nullptr && StoppedLandRoute->bOwnedByPlayer && StoppedLandRoute->bCanToggleActive &&
-		StoppedLandRoute->StateHeading.EqualTo(FText::FromString(TEXT("ROUTE STOPPED"))) &&
+		StoppedLandRoute->StateHeading.EqualTo(FText::FromString(TEXT("Route stopped"))) &&
 		StoppedLandRoute->ToggleActionLabel.EqualTo(FText::FromString(TEXT("Start route"))));
 	TestTrue(TEXT("Rival route is identified and cannot be operated"),
 		RivalRoute != nullptr && !RivalRoute->bOwnedByPlayer && !RivalRoute->bCanToggleActive &&

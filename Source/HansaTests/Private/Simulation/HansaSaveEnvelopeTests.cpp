@@ -57,6 +57,27 @@ bool FHansaSaveContinuationTest::RunTest(const FString& Parameters)
 			TestEqual(TEXT("Authoritative checksum"), Decoded.AuthoritativeHash, Fixture.BuildStateHashes().GetOverallHash());
 			TestEqual(TEXT("Campaign checksum includes pending commands"), Decoded.CampaignHash, Encoded.CampaignHash);
 			TestEqual(TEXT("Unicode display metadata"), Loaded.DisplayName, Saved.DisplayName);
+            for (const auto& Cohort : Before.BuildPopulationProjection())
+            {
+                const auto Restored = Loaded.State.CreateReadOnlyAccess(D).QueryPopulationCohort(Cohort.Id);
+                if (!TestTrue(TEXT("Residence restored"), Restored.IsSet())) return false;
+                TestEqual(TEXT("Residence coverage restored"), Restored->Consumption.CoveredMinutes, Cohort.Consumption.CoveredMinutes);
+                TestEqual(TEXT("Residence goods restored"), Restored->Consumption.Goods.Num(), Cohort.Consumption.Goods.Num());
+                for (int32 I = 0; I < Cohort.Consumption.Goods.Num(); ++I)
+                {
+                    TestEqual(TEXT("Residence required sum restored"), Restored->Consumption.Goods[I].Required, Cohort.Consumption.Goods[I].Required);
+                    TestEqual(TEXT("Residence consumed sum restored"), Restored->Consumption.Goods[I].Consumed, Cohort.Consumption.Goods[I].Consumed);
+                }
+            }
+            const auto ConsumptionBefore = Before.BuildProjection().Value.GetCitizenConsumption();
+            const auto ConsumptionAfter = Loaded.State.CreateReadOnlyAccess(D).BuildProjection().Value.GetCitizenConsumption();
+            TestEqual(TEXT("Recorded window survives save"), ConsumptionAfter.CoveredMinutes, ConsumptionBefore.CoveredMinutes);
+            TestEqual(TEXT("Goods history survives save"), ConsumptionAfter.Goods.Num(), ConsumptionBefore.Goods.Num());
+            for (int32 I = 0; I < ConsumptionBefore.Goods.Num(); ++I)
+            {
+                TestEqual(TEXT("Required sum restored"), ConsumptionAfter.Goods[I].Required, ConsumptionBefore.Goods[I].Required);
+                TestEqual(TEXT("Consumed sum restored"), ConsumptionAfter.Goods[I].Consumed, ConsumptionBefore.Goods[I].Consumed);
+            }
 			TArray<uint8> Reencoded;
 			TestTrue(TEXT("Encode restored copy"), FHansaSaveEnvelope::Encode(Loaded, D, Reencoded).IsSuccess());
 			TestTrue(TEXT("Canonical byte round trip"), Bytes == Reencoded);
@@ -119,18 +140,39 @@ bool FHansaSaveMigrationTest::RunTest(const FString& Parameters)
 	const auto R = FHansaSaveEnvelope::Decode(Bytes, D, Loaded);
 	if (!TestTrue(*R.Message, R.IsSuccess())) return false;
 	TestEqual(TEXT("Prior format reported"), R.SourceFormatVersion, 1U);
-	TestEqual(TEXT("One explicit migration"), R.AppliedMigrations.Num(), 1);
-	TestEqual(TEXT("Migration lineage captured"), Loaded.MigrationHistory.Num(), 1);
+	TestEqual(TEXT("Six explicit migrations including immutable topology extraction"), R.AppliedMigrations.Num(), 6);
+	TestEqual(TEXT("Migration lineage captured"), Loaded.MigrationHistory.Num(), 6);
 	TestEqual(TEXT("Deterministic display default"), Loaded.DisplayName, D.GetScenarioId().ToString());
-	TestEqual(TEXT("Golden state unchanged"), R.AuthoritativeHash, F.Value.BuildStateHashes().GetOverallHash());
+	TestEqual(TEXT("Migrated v1 state locks the reviewed fingerprint-v20 checksum"),
+		R.AuthoritativeHash, 17470896765056296923ULL);
 	TArray<uint8> Current;
 	TestTrue(TEXT("Migrated save writes current version"), FHansaSaveEnvelope::Encode(Loaded, D, Current).IsSuccess());
 	FHansaSaveSnapshot Again;
 	const auto R2 = FHansaSaveEnvelope::Decode(Current, D, Again);
 	TestTrue(TEXT("Migration is not reapplied"), R2.IsSuccess() && R2.AppliedMigrations.IsEmpty());
-	TestEqual(TEXT("Migration preserves campaign state"), R2.CampaignHash, R.CampaignHash);
+	TestEqual(TEXT("Migration preserves authoritative gameplay state"), R2.AuthoritativeHash, R.AuthoritativeHash);
 	TestTrue(TEXT("Migration lineage persists in current save"), Again.MigrationHistory == Loaded.MigrationHistory);
 	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaSaveV2RouteLabels, "Hansa.Integration.Save.Format2RouteLabelMigration",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaSaveV2RouteLabels::RunTest(const FString&)
+{
+    using namespace Hansa::Tests::Save;
+    auto F=FHansaProductionFixture::TryCreate();if(!F)return false;
+    TArray<uint8> Bytes; if(!FFileHelper::LoadFileToArray(Bytes,*(FPaths::ProjectDir()/TEXT("Tests/Fixtures/save_envelope_v2.hansa"))))return false;
+    FHansaSaveSnapshot Loaded;
+    const auto Result=FHansaSaveEnvelope::Decode(Bytes,F.Value.GetDefinitions(),Loaded);
+    TestTrue(*Result.Message,!!Result);if(!Result)return false;
+    TestEqual(TEXT("Prior format 2 recognized"),Result.SourceFormatVersion,2U);
+	TestEqual(TEXT("Label, city, residence history, logistics, and topology migrations"),Result.AppliedMigrations.Num(),5);
+    TestTrue(TEXT("Prior campaigns get no invented labels"),Loaded.RouteLabels.IsEmpty());
+    TArray<uint8> Current;TestTrue(TEXT("Migrated save encodes"),!!FHansaSaveEnvelope::Encode(Loaded,F.Value.GetDefinitions(),Current));
+    FHansaSaveSnapshot Again;const auto R=FHansaSaveEnvelope::Decode(Current,F.Value.GetDefinitions(),Again);
+    TestTrue(TEXT("Migration is idempotent"),R&&R.AppliedMigrations.IsEmpty());
+    TestEqual(TEXT("Authoritative state preserved"),R.AuthoritativeHash,Result.AuthoritativeHash);
+    return !HasAnyErrors();
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaSaveMvpBudgetTest, "Hansa.Integration.Performance.MvpEnvelopeSizeAndTime",
@@ -179,6 +221,3 @@ bool FHansaSaveMvpBudgetTest::RunTest(const FString& Parameters)
 	return !HasAnyErrors();
 }
 #endif
-
-
-

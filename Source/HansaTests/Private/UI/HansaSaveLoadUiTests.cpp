@@ -17,8 +17,8 @@ bool FHansaSaveLoadUiSemanticTest::RunTest(const FString& Parameters)
 	TSharedRef<Hansa::UI::SHansaSaveLoadScreen> Screen = SNew(Hansa::UI::SHansaSaveLoadScreen).Model(Model);
 	const TArray<FString> FocusOrder = Screen->GetControllerFocusOrder();
 	TestTrue(TEXT("Close is keyboard/controller reachable"), FocusOrder.Contains(TEXT("SaveLoad.Close")));
-	TestTrue(TEXT("Save action is keyboard/controller reachable"), FocusOrder.Contains(TEXT("SaveLoad.Action.Save")));
-	TestTrue(TEXT("Load action is keyboard/controller reachable"), FocusOrder.Contains(TEXT("SaveLoad.Action.Load")));
+	TestFalse(TEXT("Unavailable save is excluded from keyboard/controller navigation"), FocusOrder.Contains(TEXT("SaveLoad.Action.Save")));
+	TestFalse(TEXT("Unavailable load is excluded from keyboard/controller navigation"), FocusOrder.Contains(TEXT("SaveLoad.Action.Load")));
 	Model->RequestLoad();
 	TestEqual(TEXT("Unavailable slot becomes an explicit error"), Model->GetSnapshot().Status, EHansaSaveLoadStatus::Error);
 	TestFalse(TEXT("Unavailable slot supplies an actionable remedy"), Model->GetSnapshot().StatusRemedy.IsEmpty());

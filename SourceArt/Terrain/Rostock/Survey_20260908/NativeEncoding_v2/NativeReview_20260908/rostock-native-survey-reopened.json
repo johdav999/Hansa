@@ -1,0 +1,42 @@
+{
+  "context": {
+    "projectFile": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Hansa.uproject",
+    "pieRunning": false,
+    "map": "/Game/Hansa/Generated/Staging/RostockTerrain_P31_20260908/L_Rostock_Survey_WP",
+    "dirtyPackages": []
+  },
+  "nativeSurveyReadback": {
+    "ok": true,
+    "productionAccepted": false,
+    "map": "/Game/Hansa/Generated/Staging/RostockTerrain_P31_20260908/L_Rostock_Survey_WP",
+    "measuredLayerSha256": "879a56a00c635f26e783bc0158db45dbfb06caa35e694752d24f14ef6d1d99b6",
+    "componentsLoaded": 256,
+    "worldPartition": true,
+    "status": "Native survey draft only; materials, water, historical reconstruction, reopen, collision, streaming and Shipping gates remain"
+  },
+  "guardTests": {
+    "tests": [
+      {
+        "name": "Hansa.Editor.Terrain.ContextIsReadOnly",
+        "state": "Success",
+        "duration": 0.007595200091600418,
+        "errors": [],
+        "warnings": []
+      },
+      {
+        "name": "Hansa.Editor.Terrain.DirtyWorkBlocksImport",
+        "state": "Success",
+        "duration": 0.008391197770833969,
+        "errors": [],
+        "warnings": []
+      }
+    ],
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "total": 2,
+    "duration": 0.015986397862434387
+  },
+  "reopenedInFreshEditor": true,
+  "productionAccepted": false
+}

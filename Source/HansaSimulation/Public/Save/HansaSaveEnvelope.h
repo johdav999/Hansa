@@ -32,6 +32,9 @@ namespace Hansa::Simulation
 		TArray<FHansaSaveVictoryStreak> VictoryStreaks;
 	};
 
+	/** Cosmetic player label; never used as gameplay identity. */
+	struct FHansaSaveRouteLabel { uint64 RouteValue = 0; FString Label; };
+
 	/** Owning tick-boundary copy. Safe to encode on a worker after capture on the authority thread. */
 	struct FHansaSaveSnapshot
 	{
@@ -45,6 +48,7 @@ namespace Hansa::Simulation
 		TArray<FHansaSavePlayerOwnership> Players;
 		TArray<FHansaGameplayCommand> PendingCommands;
 		FHansaSaveScenarioState Scenario;
+		TArray<FHansaSaveRouteLabel> RouteLabels;
 	};
 
 	enum class EHansaSaveError : uint8
@@ -61,6 +65,7 @@ namespace Hansa::Simulation
 		uint32 FingerprintVersion = 0;
 		uint64 ContentHash = 0;
 		uint64 RegistryHash = 0;
+		uint64 PlacementTopologyHash = 0;
 		FString ScenarioId;
 		FString BuildVersion;
 		FString SavedUtc;
@@ -84,7 +89,7 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaSaveEnvelope final
 	{
 	public:
-		static constexpr uint32 CurrentFormatVersion = 2;
+		static constexpr uint32 CurrentFormatVersion = 7;
 		static constexpr int32 MaximumBytes = 64 * 1024 * 1024;
 		static FHansaSaveResult Encode(const FHansaSaveSnapshot& Snapshot,
 			const FHansaSimulationDefinitionContext& Definitions, TArray<uint8>& OutBytes);

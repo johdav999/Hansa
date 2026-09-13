@@ -20,18 +20,21 @@ The MVP proves extensibility, safety, and the complete workflow. It is not inten
 
 ## 2. Product slice
 
-The MVP supports the four-city economic vertical slice defined in `Docs/GameConcept.md`:
+The editor MVP supports the enhanced playable slice defined in [MVP.md](MVP.md):
 
-- Lübeck, Hamburg, Lüneburg, and Rostock;
-- 10 initial goods;
-- initial recipes and production buildings;
+- buildable Lübeck and prebuilt, inspectable, tradeable Rostock;
+- 10 active market goods;
+- bread, fish, planks, and beer as the locally buildable production chains;
+- explicit bounded starting-stock, remote-supply, import, demand, or consumption rules for the remaining goods;
 - a small technology subset sufficient to test prerequisites and unlock effects;
 - one deterministic Lübeck grain-shortage fixture;
 - one static harbor prop generated for use in a preview/test scene;
 - one ship-bell or market-confirmation SFX;
 - one short merchant or dockworker voice line with matching subtitle text.
 
-The editor does not need to author the entire final campaign before it is considered an MVP.
+Existing Hamburg, Lüneburg, and smithy definitions remain valid compatibility/editor test content where already implemented, but they do not expand the enhanced player-facing acceptance scope. Hop Farm, Malt House, Cooperage, and Brewery definitions—and the generic Grain-to-Malt, Hops, Timber-to-Barrels, and multi-input Beer recipes—are part of the player-facing construction scope. Additional required cities and locally buildable chains are post-MVP.
+
+The editor does not need to author the entire final campaign before it is considered an MVP. Its single Tripo harbor-prop proof also does not satisfy the enhanced playable slice's production building, vehicle, road, prop, or world-art requirements; those assets require the repository's HansaModels workflow and the presentation evidence defined by `MVP.md`.
 
 ## 3. MVP architecture
 

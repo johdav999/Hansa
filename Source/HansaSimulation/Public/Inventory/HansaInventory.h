@@ -203,6 +203,9 @@ namespace Hansa::Simulation
 		[[nodiscard]] bool IsValid() const { return bInitialized; }
 		[[nodiscard]] FHansaInventoryReadOnlyAccess CreateReadOnlyAccess() const;
 
+		/** Register empty runtime storage without replacing stock, reservations or movement history. */
+		[[nodiscard]] bool TryAddEmptyInventory(FHansaInventoryInitialization Inventory);
+
 		[[nodiscard]] FHansaInventoryTransactionResult TryTransfer(
 			const FHansaInventoryEndpoint& Source,
 			const FHansaInventoryEndpoint& Destination,

@@ -4,8 +4,13 @@
 #include "Styling/SlateBrush.h"
 #include "Styling/SlateTypes.h"
 #include "Widgets/SCompoundWidget.h"
+#include "UI/HansaUiComponents.h"
+#include "UI/SHansaUiPreferences.h"
 #include "UI/HansaHudSemantics.h"
 
+class SEditableTextBox;
+class SBox;
+class SScrollBox;
 class SButton;
 class STextBlock;
 class SVerticalBox;
@@ -19,10 +24,14 @@ namespace Hansa::UI
 	{
 	public:
 		SLATE_BEGIN_ARGS(SHansaSaveLoadScreen) : _Model(nullptr) {}
+			SLATE_ARGUMENT(FUiPreferences, Preferences)
+			SLATE_EVENT(FUiPreferencesChanged, OnPreferencesChanged)
 			SLATE_ARGUMENT(UHansaSaveLoadPresentationModel*, Model)
 		SLATE_END_ARGS()
 		~SHansaSaveLoadScreen();
 		void Construct(const FArguments& Arguments);
+		void SetPresentationSize(FIntPoint Size);
+		TSharedPtr<SWidget> ResolveSemanticWidget(const FString& Id) const { const auto* W=SemanticWidgets.Find(Id); return W?W->Pin():nullptr; }
 		bool ActivateSemanticId(const FString& SemanticId);
 		bool FocusSemanticId(const FString& SemanticId);
 		[[nodiscard]] TArray<FString> GetControllerFocusOrder() const;
@@ -40,11 +49,18 @@ namespace Hansa::UI
 		FReply HandleCancel();
 		TWeakObjectPtr<UHansaSaveLoadPresentationModel> Model;
 		FDelegateHandle ChangedHandle;
+		TSharedPtr<SBox> PanelSize;
+        TSharedPtr<SEditableTextBox> SaveName;
+		TSharedPtr<SScrollBox> SlotScroll,DetailScroll;
+		TSharedPtr<SHansaUiPreferences> PreferencesWidget;
+		FUiPreferences Preferences;
+		FString PresentedContentKey;
 		uint64 PresentedRevision = 0;
-		FSlateBrush ScrimBrush, PanelBrush, InnerBrush, CriticalBrush;
+		FSlateBrush HeaderBrush, ScrimBrush, PanelBrush, InnerBrush, CriticalBrush;
 		FButtonStyle PrimaryButtonStyle, SecondaryButtonStyle;
+        FEditableTextBoxStyle SaveNameStyle;
 		FTextBlockStyle HeadingStyle, BodyStyle, DataStyle, CaptionStyle;
-		TSharedPtr<SVerticalBox> SlotRows;
+		TSharedPtr<SVerticalBox> SlotRows,MainPanel;
 		TSharedPtr<STextBlock> DetailTitle, DetailTimestamp, DetailScenario, DetailVersion, DetailHashes;
 		TSharedPtr<STextBlock> StatusText, RemedyText, ConfirmationText;
 		TSharedPtr<SButton> CloseButton, SaveButton, LoadButton, ConfirmButton, CancelButton;

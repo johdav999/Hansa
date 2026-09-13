@@ -1,0 +1,12 @@
+city=City.Lubeck
+state=home
+tick=0
+fingerprint=6519455959296703690
+routeId=0
+remoteActors=0
+meshInstances=0
+lod0UpperBoundTriangles=0
+engineShapes=0
+gameThreadMeanMs=1.386
+renderThreadMeanMs=12.081
+arrival=

@@ -40,6 +40,7 @@ namespace Hansa::Tests::Placement
 		Road.FootprintWidthCells = 1;
 		Road.FootprintHeightCells = 1;
 		Road.BuildTicks = 1;
+		Road.ConstructionCostPfennig = 25;
 
 		FHansaCompiledBuildingDefinition Fishery;
 		Fishery.StableId = TEXT("Building.Fishery");
@@ -110,7 +111,7 @@ namespace Hansa::Tests::Placement
 		return Result;
 	}
 
-	FHansaSimulationState MakeState(TArray<FHansaPlacedBuildingRecord> Placements = {})
+	FHansaSimulationState MakeState(TArray<FHansaPlacedBuildingRecord> Placements = {}, const int64 StartingMoney = 100'000)
 	{
 		FHansaSimulationInitialization Initialization;
 		Initialization.Clock = RequireValue(FHansaSimulationClock::TryCreate(
@@ -118,7 +119,7 @@ namespace Hansa::Tests::Placement
 			RequireValue(FHansaSimulationTick::TryCreate(0))));
 		Initialization.CampaignSeed = 0x4C554245434BULL;
 		Initialization.Houses = {
-			{ EntityId<FHansaHouseId>(1), FHansaMoney::FromRaw(100'000) },
+			{ EntityId<FHansaHouseId>(1), FHansaMoney::FromRaw(StartingMoney) },
 			{ EntityId<FHansaHouseId>(2), FHansaMoney::FromRaw(100'000) }
 		};
 		Initialization.Cities = {
@@ -349,6 +350,35 @@ bool FHansaPlacementCommandTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FHansaRoadBatchInsufficientFundsTest,
+	"Hansa.Simulation.Placement.RoadBatchInsufficientFunds",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaRoadBatchInsufficientFundsTest::RunTest(const FString& Parameters)
+{
+	using namespace Hansa::Simulation;
+	using namespace Hansa::Tests::Placement;
+	FHansaSimulationState State = MakeState({}, 50);
+	const FHansaSimulationDefinitionContext Definitions = MakeDefinitions();
+	FHansaSimulationTransientCache Cache;
+	const TArray<FHansaGameplayCommand> Commands = {
+		Place(1, 1, 0, 101, Spec(TEXT("Building.Road"), 1, 2)),
+		Place(2, 2, 0, 102, Spec(TEXT("Building.Road"), 2, 2)),
+		Place(3, 3, 0, 103, Spec(TEXT("Building.Road"), 3, 2))
+	};
+	const FHansaCommandGatewayResult Result =
+		FHansaGameplayCommandGateway::ExecuteTick(State, Definitions, Commands, Cache);
+	TestEqual(TEXT("Aggregate road cost rejects the first unaffordable command"),
+		Result.GetError(), EHansaCommandGatewayError::ConstructionCostUnavailable);
+	TestEqual(TEXT("The unaffordable third road cell is identified"), Result.GetFailedCommandIndex(), 2);
+	TestEqual(TEXT("Road batch rejection is transactional"),
+		State.CreateReadOnlyAccess(Definitions).GetPlacement().GetPlacements().Num(), 0);
+	TestEqual(TEXT("Rejected batch does not advance time"),
+		State.CreateReadOnlyAccess(Definitions).GetClock().GetTick().GetValue(), int64(0));
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FHansaRoadDragSessionTest,
 	"Hansa.Simulation.Placement.RoadDragCancelRepeat",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -442,6 +472,14 @@ bool FHansaPlacementCanonicalOrderTest::RunTest(const FString& Parameters)
 		FirstHash.Find(EHansaStateHashSubsystem::Placement)->Value,
 		SecondHash.Find(EHansaStateHashSubsystem::Placement)->Value);
 	TestTrue(TEXT("Canonical placement order participates in the overall checksum"), FirstHash == SecondHash);
+	FHansaSimulationState TransactionalCopy = First;
+	TestTrue(TEXT("Transactional state copies share one immutable topology allocation"),
+		TransactionalCopy.CreateReadOnlyAccess(Definitions).GetPlacement().GetTopology() ==
+		First.CreateReadOnlyAccess(Definitions).GetPlacement().GetTopology());
+	TestEqual(TEXT("Only sparse placement state is rehashed after the immutable topology is cached"),
+		First.CreateReadOnlyAccess(Definitions).BuildStateHashReport().GetRecomputedSubsystemCount(), uint32(0));
+	TestEqual(TEXT("Topology diagnostics retain the canonical map and cell record count"),
+		First.CreateReadOnlyAccess(Definitions).GetPlacement().GetTopologyRecordCount(), uint32(65));
 	return !HasAnyErrors();
 }
 

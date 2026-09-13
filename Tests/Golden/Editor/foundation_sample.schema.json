@@ -92,6 +92,19 @@
 			"x-hansa-serialization": "Included",
 			"x-hansa-validation": "NonEmpty"
 		},
+		"PresentationMesh":
+		{
+			"title": "Presentation mesh",
+			"description": "Optional promoted mesh for this definition. Buildings require a mesh; non-spatial items may leave it empty. Stable identity never depends on this path.",
+			"type": "string",
+			"x-hansa-category": "Definition|Presentation",
+			"x-hansa-reference": "StaticMesh",
+			"x-hansa-ai-access": "Never",
+			"x-hansa-bulk-editable": false,
+			"x-hansa-migration": "Compatible",
+			"x-hansa-serialization": "Included",
+			"x-hansa-validation": "OptionalAsset"
+		},
 		"ReplacementDefinitionId":
 		{
 			"title": "Replacement definition ID",

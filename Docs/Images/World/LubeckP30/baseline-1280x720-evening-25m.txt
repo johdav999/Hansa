@@ -1,0 +1,14 @@
+map=/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP
+state=evening-25m
+tick=0
+fingerprint=6519455959296703690
+actors=44
+visibleMeshInstances=37
+lod0UpperBoundTriangles=12028792
+materialInterfaces=87
+enginePrimitiveComponents=13
+stagingMeshComponents=0
+releaseAccepted=false
+gameThreadMeanMs=1.335
+renderThreadMeanMs=7.569
+frameSamples=198

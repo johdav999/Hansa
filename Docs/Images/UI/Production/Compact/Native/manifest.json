@@ -1,0 +1,83 @@
+[
+  {
+    "file": "production-1280x720-accessible.png",
+    "nativeSize": [
+      1280,
+      720
+    ],
+    "sha256": "bda862dedded3bf39c004b39d5ffc020cc04d47fa1b012aa2f789d0343688d47",
+    "resampled": false
+  },
+  {
+    "file": "production-1920x1080-batch-a.png",
+    "nativeSize": [
+      1920,
+      1080
+    ],
+    "sha256": "db692f865f741b570c474ac7e2d4935796b3ad27bac8b9bc1661115c523121fb",
+    "resampled": false
+  },
+  {
+    "file": "production-1920x1080-batch-b.png",
+    "nativeSize": [
+      1920,
+      1080
+    ],
+    "sha256": "1aa78f348d5f03b5951ec50e724dd777eb419b1fc1043654ea80892573664908",
+    "resampled": false
+  },
+  {
+    "file": "production-1920x1080-farm.png",
+    "nativeSize": [
+      1920,
+      1080
+    ],
+    "sha256": "90745c9f5d123f5b4dc4ad6599589260274553f12540759113e4695f467feff9",
+    "resampled": false
+  },
+  {
+    "file": "production-1920x1080-focus.png",
+    "nativeSize": [
+      1920,
+      1080
+    ],
+    "sha256": "e069e2e1c7e0acd0390e1a856631392c6586591a76fabc73b02d7016fc77d1d9",
+    "resampled": false
+  },
+  {
+    "file": "production-1920x1080-mill.png",
+    "nativeSize": [
+      1920,
+      1080
+    ],
+    "sha256": "5747dc6c048929c192b2829d5ba035d448bfbd9f85dfc5ba8597b45e09ed582c",
+    "resampled": false
+  },
+  {
+    "file": "production-1920x1080-tooltip-popup.png",
+    "nativeSize": [
+      280,
+      123
+    ],
+    "sha256": "31949e26a7cffce2bdd654d5747eb7ab18c0eaf08b1b38bbc95924a4b4bd2bf2",
+    "resampled": false
+  },
+  {
+    "file": "production-2560x1440-bakery.png",
+    "nativeSize": [
+      2560,
+      1440
+    ],
+    "sha256": "9ed9efa2df61b2ce17a3b9ecb795e9ba82f022468325da85450bbd2cf698625b",
+    "resampled": false
+  },
+  {
+    "file": "production-3440x1440-bakery.png",
+    "nativeSize": [
+      3440,
+      1440
+    ],
+    "sha256": "af1a631805ae5d07cf034659d6c159fc4cff7ce03596262cafa856f8bfc75734",
+    "resampled": false
+  }
+]

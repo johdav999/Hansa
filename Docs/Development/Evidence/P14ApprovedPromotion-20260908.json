@@ -1,0 +1,295 @@
+{
+  "prompt": "P14",
+  "approvalDate": "2026-09-08",
+  "approval": "Also approve promoting P14 and P15",
+  "status": "promoted-and-bound; playable/Shipping acceptance remains open",
+  "productionRoot": "/Game/Mesh/hansa-residences",
+  "catalogVersion": 5,
+  "registryHash": "DAA463F7043FD66F",
+  "economicsUnchanged": true,
+  "stagingDependenciesFound": 0,
+  "definitions": [
+    {
+      "path": "/Game/Hansa/Core/Buildings/DA_Building_Residence_Laborer",
+      "stableId": "Building.Residence.Laborer",
+      "before": {
+        "revision": 1,
+        "mesh": {
+          "refPath": "/Game/Mesh/LaborerResidence/Materials_R02/Meshes/SM_LaborerResidence.SM_LaborerResidence"
+        },
+        "actor": "None"
+      },
+      "after": {
+        "revision": 2,
+        "mesh": {
+          "refPath": "/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Laborer_A.SM_Residence_Laborer_A"
+        },
+        "actor": {
+          "refPath": "/Game/Mesh/hansa-residences/BP_Residence_Laborer_Review.BP_Residence_Laborer_Review_C"
+        }
+      },
+      "sha256": "C43048227D574422B1F74891CFF903E5DEA0408E30455CE2A82794AA234149D5"
+    },
+    {
+      "path": "/Game/Hansa/Core/Buildings/DA_Building_Residence_Artisan",
+      "stableId": "Building.Residence.Artisan",
+      "before": {
+        "revision": 1,
+        "mesh": {
+          "refPath": "/Engine/BasicShapes/Cube.Cube"
+        },
+        "actor": "None"
+      },
+      "after": {
+        "revision": 2,
+        "mesh": {
+          "refPath": "/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Artisan_A.SM_Residence_Artisan_A"
+        },
+        "actor": {
+          "refPath": "/Game/Mesh/hansa-residences/BP_Residence_Artisan_Review.BP_Residence_Artisan_Review_C"
+        }
+      },
+      "sha256": "7F192DFD479C4388D5916305A3BC7FD3FB8611B3AC62F674927F8C4967D3DBF8"
+    }
+  ],
+  "assets": [
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/BP_Residence_Artisan_Review",
+      "sourceSha256": "0fdab4bb3507a690cc957d6318d46b27f226620bc8338d5f618c95a203fd2da8",
+      "destination": "/Game/Mesh/hansa-residences/BP_Residence_Artisan_Review",
+      "class": "Blueprint",
+      "sha256": "29F096D8F907F7A23FF851F05D0BA26E1C487E805C1050961BB63AAA185890B3"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Meshes_R06/SM_Residence_Artisan_B",
+      "sourceSha256": "997333c069cb2e316b28362d0802dcdb93271573542d0662e4b31938a34bdcf7",
+      "destination": "/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Artisan_B",
+      "class": "StaticMesh",
+      "sha256": "390412F003EBDCB1CE257B308DAD27B5FC5D5FEC0C3E54E3607D4F8BD1191572"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Materials/M_Residence_Window",
+      "sourceSha256": "0d79666f1c9d7b079d8a69b9125cbf6112dadd84bb955b901a3aec6144e0a486",
+      "destination": "/Game/Mesh/hansa-residences/Materials/M_Residence_Window",
+      "class": "Material",
+      "sha256": "6B44EBEC96114E9A5F67060F835BCD1CF530D102277E823C68F251AB9E0272DF"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Window_Roughness",
+      "sourceSha256": "f785c61d76dce8c5fb008f2a7087b4e53154e7d39c4e9b28f4ad4c75c5e4ea18",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Window_Roughness",
+      "class": "Texture2D",
+      "sha256": "2732D628D9FFC9F9DC3716E7E379ECBE0989F9B18C2529F9A21BE0A84B83CB55"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Window_Normal",
+      "sourceSha256": "c21458ee1ec90dac3f369550988b1faaa3ff1055ca83108f63a461feeefb880d",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Window_Normal",
+      "class": "Texture2D",
+      "sha256": "00C5DF2B13AB85249FEF7FCF5D6CD2656635E25C584AC646F4A94C2144109998"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Window_BaseColor",
+      "sourceSha256": "9a7523b0d5eded3690ebae83f61dd624ee6654fd17bbaf7eacd95fa0ee7b6198",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Window_BaseColor",
+      "class": "Texture2D",
+      "sha256": "D3B1912FE8D046BE032B304BD60660C842B4383957B5AE4E4DFF99F680D8155C"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Materials/M_Residence_Oak",
+      "sourceSha256": "05e1fcd5f3874c52649ed0ffc10effb647088616cc075f8a550c1d805ab703c9",
+      "destination": "/Game/Mesh/hansa-residences/Materials/M_Residence_Oak",
+      "class": "Material",
+      "sha256": "4289998D94BAFD953197CB975BF6FE7E8C2371874C5B3DDD3E0CF979739B693A"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Oak_Roughness",
+      "sourceSha256": "479e40618aacf4c197e0f1baac8f22ffd477a1395552b800494eb22e3a7397a6",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Oak_Roughness",
+      "class": "Texture2D",
+      "sha256": "DBEE168778DC66C7044548C976F5F7862A005483FC20A09DB86BFE77AB924D92"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Oak_Normal",
+      "sourceSha256": "46d95f8327c28508a0f7f9bde9c9b6f8eca64eff849db215671b530a3cfc07f4",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Oak_Normal",
+      "class": "Texture2D",
+      "sha256": "C865ADB789C974199F2D4CC4781BFEC1AE170631FA883B71F4D4230D3AB3AA38"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Oak_BaseColor",
+      "sourceSha256": "af5f7ee875e17e1fb672bcf14674fb3c48db3fa6a2f1997ab6d6e8db9c78ac44",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Oak_BaseColor",
+      "class": "Texture2D",
+      "sha256": "B60DDE6D1FB49DBB5A8ED5021BE56532CD795765158871C85C6212E4414DDF3A"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Materials/M_Residence_Mortar",
+      "sourceSha256": "e4d0b64fefa8e3ae94f1a6972f6cce0be6fd8a20aa588ab5028d174f81a85dd8",
+      "destination": "/Game/Mesh/hansa-residences/Materials/M_Residence_Mortar",
+      "class": "Material",
+      "sha256": "67FDBC7A9D40D9DD43EFF893A3AB9E31A623BBDFAA12B25B92DB7728E67F10A9"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Mortar_Roughness",
+      "sourceSha256": "09ec9815bf4309f4f149934e7ad190c8bf90a7a52dcedbd7d72563827c309129",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Mortar_Roughness",
+      "class": "Texture2D",
+      "sha256": "1B7DF1E420B520370E854A91699704261569AB8CBA8A677B711D462AECABC671"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Mortar_Normal",
+      "sourceSha256": "88fa3738b8514daf5cd15da047c11e4223fb6bda3f4b6ca825bfa9bf2e77ce1c",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Mortar_Normal",
+      "class": "Texture2D",
+      "sha256": "49A2CD9C5DC6DF81228759C596836499425EE4118D9212711D6D2B9529E843F1"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Mortar_BaseColor",
+      "sourceSha256": "e23980c12b81333a463c419643b6bcfacad49e066f37fd9170fae29698544dce",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Mortar_BaseColor",
+      "class": "Texture2D",
+      "sha256": "6BCC5CE93CCB2B20D0FF5CEB881D95491A1669BE4AC61354230C390599D453F5"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Materials/M_Residence_Lime",
+      "sourceSha256": "8d7e224252c0c9ff097d07b2fff6c12fbb723bb90561bd2ca53b3e4d06b456d7",
+      "destination": "/Game/Mesh/hansa-residences/Materials/M_Residence_Lime",
+      "class": "Material",
+      "sha256": "6ECDEF774552797E7C677BCCD9DE65996DA2F985EACBA52DCCE8227B62701EB9"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Lime_Roughness",
+      "sourceSha256": "ea8b23f382fb784c40cc57db7e0eb0511eb90b2191fc4cd269fba268e34b63fe",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Lime_Roughness",
+      "class": "Texture2D",
+      "sha256": "AE2D74F0268D5FB166668CEEFBB75EF2EF32F2FCD3A59C22FB8D3CC3455E0270"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Lime_Normal",
+      "sourceSha256": "d081828efd8e11032da8e75fedc34ccf17c4a2fd8b007f7465b020547cce55d4",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Lime_Normal",
+      "class": "Texture2D",
+      "sha256": "C1C86497F044FD01D53F1D1E6D02D3A7573C5B01041EC87672F664B34EC3758F"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Lime_BaseColor",
+      "sourceSha256": "ca10bfb306f273254f9455f6e14da76eced3398a55c100ccb65f9c10103baeca",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Lime_BaseColor",
+      "class": "Texture2D",
+      "sha256": "C0C888860B497F962C1707BD2EA818D91AB30B3126807EFF26ED93FA9FF7F62A"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Materials/M_Residence_Iron",
+      "sourceSha256": "2d87a6a11d347308ee9b361b981ce43cf4cc9c32f9d1b80bb989b03213807303",
+      "destination": "/Game/Mesh/hansa-residences/Materials/M_Residence_Iron",
+      "class": "Material",
+      "sha256": "61586B17B8A266E5953461CC7C13B4AEAE486D087338E02B084BB72814CD3916"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Iron_Roughness",
+      "sourceSha256": "f278005b9f58dad5d7814287f18e8526ad850e6d8dd2ec3c6a738af29a76141e",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Iron_Roughness",
+      "class": "Texture2D",
+      "sha256": "142957AA5F74C684FDAD38D0520D7C906F4ADF891C2D56739BD368CBD8205F49"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Iron_Normal",
+      "sourceSha256": "41e2e800ff048f5f1b753c635cf96f6040ebeb8c0ee1773ebe6195618727886d",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Iron_Normal",
+      "class": "Texture2D",
+      "sha256": "BEA1CC7962E60843CF3E707FA6AECE865C278D4BF0BB8027B7259D3CD341F934"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Iron_BaseColor",
+      "sourceSha256": "c1be3ef5ac10ef323569d082132f19c6aa68d5b1a7572532d013a6470d77a7bb",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Iron_BaseColor",
+      "class": "Texture2D",
+      "sha256": "E77D418968209CE3B69AE4175C0A55D2BE45DA4D0ED8B69C81D28D618E0FA368"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Materials/M_Residence_Fieldstone",
+      "sourceSha256": "3149ae8830c0beeaeeddb145441e94ffbf655b05462d82b57526b172dc779ad9",
+      "destination": "/Game/Mesh/hansa-residences/Materials/M_Residence_Fieldstone",
+      "class": "Material",
+      "sha256": "12C592371AD64299CEDF9F2FD3EF08B21C122491EA09024B428D147283A67517"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Fieldstone_Roughness",
+      "sourceSha256": "8cea746a33e4d1a250d1cfcd855ea339f388d613a2ebf94a5e69d435c7bb242e",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Fieldstone_Roughness",
+      "class": "Texture2D",
+      "sha256": "A3BEF795F95017D1F19109C5CDC7C071B639630B44302225B241792EE7763D5B"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Fieldstone_Normal",
+      "sourceSha256": "d2eb946a1e68b3490fb30d49a30e552852971504c7dd860af87fdfbdb3749366",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Fieldstone_Normal",
+      "class": "Texture2D",
+      "sha256": "9AA19781C5870505EF93E35955A2C88D2C8C677F082642BBCF3E1FBA03F44E10"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Fieldstone_BaseColor",
+      "sourceSha256": "6a3bb2b8d6820c5afb369653c24e688aad441e1eef03a25a80decf225be6e0fe",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Fieldstone_BaseColor",
+      "class": "Texture2D",
+      "sha256": "BFC3F63535A8F4D7E4C019F46F8A16A13F937EA669FF22070DDD55733E8F54EC"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Materials/M_Residence_Clay",
+      "sourceSha256": "85fa87f23d6e7027f15a75548a003a0e14a62fbef2d31b15176d84c7c33e3934",
+      "destination": "/Game/Mesh/hansa-residences/Materials/M_Residence_Clay",
+      "class": "Material",
+      "sha256": "EA433C71BE5EAE8658975DAFF622D4242F99F78CD940F972C98AA53C7757CA45"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Clay_Roughness",
+      "sourceSha256": "d6289ccaba2bb7057c72669d145fbf3c83cd8be48aa72fd37d7800a70df84775",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Clay_Roughness",
+      "class": "Texture2D",
+      "sha256": "E21BC525B887D393C79F70689245735B2D5C4965D92EC4D1CB2E23D24BB5F5EC"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Clay_Normal",
+      "sourceSha256": "e14d74678055f1f7f4e3bd3c3c6924dc66488e0f6484c3a05941b55b99278316",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Clay_Normal",
+      "class": "Texture2D",
+      "sha256": "D44F97B01E4762E802B66F8EB998A38C7DD764E3080B274CD6075A4D2195AEDB"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Textures/T_Residence_Clay_BaseColor",
+      "sourceSha256": "b9f7da024417bedf4edaf2e1ec34d5913922082a2b55c0c6fc5083c1f7793642",
+      "destination": "/Game/Mesh/hansa-residences/Textures/T_Residence_Clay_BaseColor",
+      "class": "Texture2D",
+      "sha256": "E82C51A2567E55B3D6850461F25A0AE22496D21DB7D7AD7630A1082A8303A79B"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Meshes_R06/SM_Residence_Artisan_A",
+      "sourceSha256": "5bba5b58bdf79c564a610d24513c41c0a4386638528cc9d46c570cb92e8c6f98",
+      "destination": "/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Artisan_A",
+      "class": "StaticMesh",
+      "sha256": "DE1185EBB96D91CF685B54CAD66C28B261A50DAB06FA8416517AFF32D4D48984"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/BP_Residence_Laborer_Review",
+      "sourceSha256": "18c7bced61da658997de3c6bf0a219eab6d089fde26ff1f62f8588091142364b",
+      "destination": "/Game/Mesh/hansa-residences/BP_Residence_Laborer_Review",
+      "class": "Blueprint",
+      "sha256": "EF1B5BC8478BD9445EAC54900C62909482721118B2C244FB3A55EED916C7B872"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Meshes_R06/SM_Residence_Laborer_B",
+      "sourceSha256": "02eaa806749c6d5c1256668a32fd4f95dd8e8d442e01d0864a7a5fa13fb810c1",
+      "destination": "/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Laborer_B",
+      "class": "StaticMesh",
+      "sha256": "DDC9FC2699B550EA68CE84D4322DF5B9FCB98DB512D737BBCC57E94EF16430E8"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Residences_P14/Meshes_R06/SM_Residence_Laborer_A",
+      "sourceSha256": "eb7b18e8223ff5afd5e670e038c567173c4e1606a2e3faa74b1b8557f44792b7",
+      "destination": "/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Laborer_A",
+      "class": "StaticMesh",
+      "sha256": "AEBDB8CF2794B6B6F38FB349040924716F4DFAB42F73EF61B8D0DCD012925020"
+    }
+  ]
+}

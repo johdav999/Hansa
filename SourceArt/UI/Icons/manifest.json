@@ -1,0 +1,2084 @@
+{
+  "assets": [
+    {
+      "name": "Coin",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        248,
+        232,
+        1014,
+        1012
+      ],
+      "master": "SourceArt/UI/Icons/icons--coin--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Coin--16.png",
+        "Content/Hansa/UI/Icons/Coin--20.png",
+        "Content/Hansa/UI/Icons/Coin--24.png",
+        "Content/Hansa/UI/Icons/Coin--28.png",
+        "Content/Hansa/UI/Icons/Coin--32.png",
+        "Content/Hansa/UI/Icons/Coin--40.png",
+        "Content/Hansa/UI/Icons/Coin--48.png",
+        "Content/Hansa/UI/Icons/Coin--56.png",
+        "Content/Hansa/UI/Icons/Coin--64.png",
+        "Content/Hansa/UI/Icons/Coin--80.png",
+        "Content/Hansa/UI/Icons/Coin--96.png",
+        "Content/Hansa/UI/Icons/Coin--112.png",
+        "Content/Hansa/UI/Icons/Coin--160.png"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: single production raster icon for Hansa GUI, Coin / total player treasury, also icon-family style anchor. Generate ONE original tiny engraved brass coin with a clear simple embossed merchant balance-scales symbol. Request native 32x32 transparent PNG if possible; if the canvas must be larger, keep the complete icon approximately 64x64 physical pixels at canvas centre, with the rest genuinely transparent, not a checkerboard. Strong readable silhouette designed for 20-32 pixel display, broad clean shapes, restrained engraved character without fine hatching. Three-quarter shallow view, warm Brass #C19A52 highlights, Linen #F2E9D8, dark Ink #202628 contour, subtle Oak #795137 shading. Upper-left light; no cast shadow, no surrounding frame, no text, letters, numbers, logo, watermark or UI mockup. One coin only, isolated alpha background, no montage. Match Hansa's sober Hanseatic counting-house aesthetic. Prefer simple filled shapes over thin strokes. The output will be proportionally resized only if exact native size is unavailable, reviewed at actual size.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Check",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        368,
+        424,
+        888,
+        834
+      ],
+      "master": "SourceArt/UI/Icons/icons--check--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Check--16.png",
+        "Content/Hansa/UI/Icons/Check--20.png",
+        "Content/Hansa/UI/Icons/Check--24.png",
+        "Content/Hansa/UI/Icons/Check--28.png",
+        "Content/Hansa/UI/Icons/Check--32.png",
+        "Content/Hansa/UI/Icons/Check--40.png",
+        "Content/Hansa/UI/Icons/Check--48.png",
+        "Content/Hansa/UI/Icons/Check--56.png",
+        "Content/Hansa/UI/Icons/Check--64.png",
+        "Content/Hansa/UI/Icons/Check--80.png",
+        "Content/Hansa/UI/Icons/Check--96.png",
+        "Content/Hansa/UI/Icons/Check--112.png",
+        "Content/Hansa/UI/Icons/Check--160.png"
+      ],
+      "prompt": "Generate a transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one bold check mark. Hansa game GUI asset. Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Restrained engraved brass #C19A52 with pale linen #F2E9D8 highlight and a dark ink #202628 outline. Large solid silhouette, broad stroke, very little texture, minimal shallow bevel. Designed to be legible at 20px. NOT a photograph. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No text, no watermark, no coin, no frame. Produce actual RGBA transparency, not a picture of transparency.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Information",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        249,
+        247,
+        1004,
+        995
+      ],
+      "master": "SourceArt/UI/Icons/icons--information--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Information--16.png",
+        "Content/Hansa/UI/Icons/Information--20.png",
+        "Content/Hansa/UI/Icons/Information--24.png",
+        "Content/Hansa/UI/Icons/Information--28.png",
+        "Content/Hansa/UI/Icons/Information--32.png",
+        "Content/Hansa/UI/Icons/Information--40.png",
+        "Content/Hansa/UI/Icons/Information--48.png",
+        "Content/Hansa/UI/Icons/Information--56.png",
+        "Content/Hansa/UI/Icons/Information--64.png",
+        "Content/Hansa/UI/Icons/Information--80.png",
+        "Content/Hansa/UI/Icons/Information--96.png",
+        "Content/Hansa/UI/Icons/Information--112.png",
+        "Content/Hansa/UI/Icons/Information--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: an information symbol: a lowercase i inside a thick circular ring; permanent universal symbol, not prose. Hansa game GUI production asset \"Information\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Warning",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1247,
+        1261
+      ],
+      "crop": [
+        288,
+        340,
+        956,
+        923
+      ],
+      "master": "SourceArt/UI/Icons/icons--warning--default--1247x1261--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Warning--16.png",
+        "Content/Hansa/UI/Icons/Warning--20.png",
+        "Content/Hansa/UI/Icons/Warning--24.png",
+        "Content/Hansa/UI/Icons/Warning--28.png",
+        "Content/Hansa/UI/Icons/Warning--32.png",
+        "Content/Hansa/UI/Icons/Warning--40.png",
+        "Content/Hansa/UI/Icons/Warning--48.png",
+        "Content/Hansa/UI/Icons/Warning--56.png",
+        "Content/Hansa/UI/Icons/Warning--64.png",
+        "Content/Hansa/UI/Icons/Warning--80.png",
+        "Content/Hansa/UI/Icons/Warning--96.png",
+        "Content/Hansa/UI/Icons/Warning--112.png",
+        "Content/Hansa/UI/Icons/Warning--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: warning symbol: a bold exclamation mark inside a thick triangular border. Hansa game GUI production asset \"Warning\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Error",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1283,
+        1226
+      ],
+      "crop": [
+        258,
+        236,
+        1024,
+        991
+      ],
+      "master": "SourceArt/UI/Icons/icons--error--default--1283x1226--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Error--16.png",
+        "Content/Hansa/UI/Icons/Error--20.png",
+        "Content/Hansa/UI/Icons/Error--24.png",
+        "Content/Hansa/UI/Icons/Error--28.png",
+        "Content/Hansa/UI/Icons/Error--32.png",
+        "Content/Hansa/UI/Icons/Error--40.png",
+        "Content/Hansa/UI/Icons/Error--48.png",
+        "Content/Hansa/UI/Icons/Error--56.png",
+        "Content/Hansa/UI/Icons/Error--64.png",
+        "Content/Hansa/UI/Icons/Error--80.png",
+        "Content/Hansa/UI/Icons/Error--96.png",
+        "Content/Hansa/UI/Icons/Error--112.png",
+        "Content/Hansa/UI/Icons/Error--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: error symbol: an X inside a thick octagonal border. Hansa game GUI production asset \"Error\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Loading",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        470,
+        354,
+        785,
+        860
+      ],
+      "master": "SourceArt/UI/Icons/icons--loading--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Loading--16.png",
+        "Content/Hansa/UI/Icons/Loading--20.png",
+        "Content/Hansa/UI/Icons/Loading--24.png",
+        "Content/Hansa/UI/Icons/Loading--28.png",
+        "Content/Hansa/UI/Icons/Loading--32.png",
+        "Content/Hansa/UI/Icons/Loading--40.png",
+        "Content/Hansa/UI/Icons/Loading--48.png",
+        "Content/Hansa/UI/Icons/Loading--56.png",
+        "Content/Hansa/UI/Icons/Loading--64.png",
+        "Content/Hansa/UI/Icons/Loading--80.png",
+        "Content/Hansa/UI/Icons/Loading--96.png",
+        "Content/Hansa/UI/Icons/Loading--112.png",
+        "Content/Hansa/UI/Icons/Loading--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one simple hourglass, two glass chambers and a brass frame. Hansa game GUI production asset \"Loading\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Decoration",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1774,
+        887
+      ],
+      "crop": [
+        637,
+        341,
+        1137,
+        547
+      ],
+      "master": "SourceArt/UI/Icons/icons--decoration--default--1774x887--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Decoration--16.png",
+        "Content/Hansa/UI/Icons/Decoration--20.png",
+        "Content/Hansa/UI/Icons/Decoration--24.png",
+        "Content/Hansa/UI/Icons/Decoration--28.png",
+        "Content/Hansa/UI/Icons/Decoration--32.png",
+        "Content/Hansa/UI/Icons/Decoration--40.png",
+        "Content/Hansa/UI/Icons/Decoration--48.png",
+        "Content/Hansa/UI/Icons/Decoration--56.png",
+        "Content/Hansa/UI/Icons/Decoration--64.png",
+        "Content/Hansa/UI/Icons/Decoration--80.png",
+        "Content/Hansa/UI/Icons/Decoration--96.png",
+        "Content/Hansa/UI/Icons/Decoration--112.png",
+        "Content/Hansa/UI/Icons/Decoration--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one symmetrical merchant ledger flourish, a central diamond and two short horizontal arms. Hansa game GUI production asset \"Decoration\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Arrow",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1402,
+        1122
+      ],
+      "crop": [
+        405,
+        362,
+        1026,
+        767
+      ],
+      "master": "SourceArt/UI/Icons/icons--arrow--default--1402x1122--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Arrow--16.png",
+        "Content/Hansa/UI/Icons/Arrow--20.png",
+        "Content/Hansa/UI/Icons/Arrow--24.png",
+        "Content/Hansa/UI/Icons/Arrow--28.png",
+        "Content/Hansa/UI/Icons/Arrow--32.png",
+        "Content/Hansa/UI/Icons/Arrow--40.png",
+        "Content/Hansa/UI/Icons/Arrow--48.png",
+        "Content/Hansa/UI/Icons/Arrow--56.png",
+        "Content/Hansa/UI/Icons/Arrow--64.png",
+        "Content/Hansa/UI/Icons/Arrow--80.png",
+        "Content/Hansa/UI/Icons/Arrow--96.png",
+        "Content/Hansa/UI/Icons/Arrow--112.png",
+        "Content/Hansa/UI/Icons/Arrow--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one broad right-pointing arrow with a thick straight shaft. Hansa game GUI production asset \"Arrow\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Fish",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        71,
+        119,
+        1232,
+        1100
+      ],
+      "master": "SourceArt/UI/Icons/icons--fish--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Fish--16.png",
+        "Content/Hansa/UI/Icons/Fish--20.png",
+        "Content/Hansa/UI/Icons/Fish--24.png",
+        "Content/Hansa/UI/Icons/Fish--28.png",
+        "Content/Hansa/UI/Icons/Fish--32.png",
+        "Content/Hansa/UI/Icons/Fish--40.png",
+        "Content/Hansa/UI/Icons/Fish--48.png",
+        "Content/Hansa/UI/Icons/Fish--56.png",
+        "Content/Hansa/UI/Icons/Fish--64.png",
+        "Content/Hansa/UI/Icons/Fish--80.png",
+        "Content/Hansa/UI/Icons/Fish--96.png",
+        "Content/Hansa/UI/Icons/Fish--112.png",
+        "Content/Hansa/UI/Icons/Fish--160.png"
+      ],
+      "prompt": "Create an isolated transparent PNG cutout icon of a silver-blue herring fish angled diagonally from bottom left to top right. SQUARE CANVAS, equal width and height. Actual alpha channel must be fully transparent outside the object. Hansa GUI icon Fish, intended display 32x32 pixels; use closest supported native square resolution. Match Hansa engraved brass family: Brass #C19A52, dark Ink #202628 broad outline, Linen #F2E9D8 small highlights, Oak #795137 shading. Fish and iron use Frost #9CC3CF and Slate #29424D. Broad clean silhouette, minimal shallow bevel, upper-left lighting, generous padding. Absolutely flat empty transparent surroundings, no external lighting or aura, no external shadow. Only the icon cutout on transparent alpha. No frame, lettering or numbers. Keep square canvas even for horizontal shapes. This replaces a rejected opaque generation; real transparent background is essential. Resampling to display size is approved.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Bread",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1273,
+        1236
+      ],
+      "crop": [
+        259,
+        343,
+        1065,
+        940
+      ],
+      "master": "SourceArt/UI/Icons/icons--bread--default--1273x1236--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Bread--16.png",
+        "Content/Hansa/UI/Icons/Bread--20.png",
+        "Content/Hansa/UI/Icons/Bread--24.png",
+        "Content/Hansa/UI/Icons/Bread--28.png",
+        "Content/Hansa/UI/Icons/Bread--32.png",
+        "Content/Hansa/UI/Icons/Bread--40.png",
+        "Content/Hansa/UI/Icons/Bread--48.png",
+        "Content/Hansa/UI/Icons/Bread--56.png",
+        "Content/Hansa/UI/Icons/Bread--64.png",
+        "Content/Hansa/UI/Icons/Bread--80.png",
+        "Content/Hansa/UI/Icons/Bread--96.png",
+        "Content/Hansa/UI/Icons/Bread--112.png",
+        "Content/Hansa/UI/Icons/Bread--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one rustic oval golden bread loaf with three broad scored cuts. Hansa game GUI production asset \"Bread\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Cursor",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1261,
+        1247
+      ],
+      "crop": [
+        410,
+        373,
+        850,
+        908
+      ],
+      "master": "SourceArt/UI/Icons/icons--cursor--default--1261x1247--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Cursor--16.png",
+        "Content/Hansa/UI/Icons/Cursor--20.png",
+        "Content/Hansa/UI/Icons/Cursor--24.png",
+        "Content/Hansa/UI/Icons/Cursor--28.png",
+        "Content/Hansa/UI/Icons/Cursor--32.png",
+        "Content/Hansa/UI/Icons/Cursor--40.png",
+        "Content/Hansa/UI/Icons/Cursor--48.png",
+        "Content/Hansa/UI/Icons/Cursor--56.png",
+        "Content/Hansa/UI/Icons/Cursor--64.png",
+        "Content/Hansa/UI/Icons/Cursor--80.png",
+        "Content/Hansa/UI/Icons/Cursor--96.png",
+        "Content/Hansa/UI/Icons/Cursor--112.png",
+        "Content/Hansa/UI/Icons/Cursor--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one bold upward-left pointing selection cursor arrow. Hansa game GUI production asset \"Cursor\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Planks",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        288,
+        355,
+        998,
+        1004
+      ],
+      "master": "SourceArt/UI/Icons/icons--planks--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Planks--16.png",
+        "Content/Hansa/UI/Icons/Planks--20.png",
+        "Content/Hansa/UI/Icons/Planks--24.png",
+        "Content/Hansa/UI/Icons/Planks--28.png",
+        "Content/Hansa/UI/Icons/Planks--32.png",
+        "Content/Hansa/UI/Icons/Planks--40.png",
+        "Content/Hansa/UI/Icons/Planks--48.png",
+        "Content/Hansa/UI/Icons/Planks--56.png",
+        "Content/Hansa/UI/Icons/Planks--64.png",
+        "Content/Hansa/UI/Icons/Planks--80.png",
+        "Content/Hansa/UI/Icons/Planks--96.png",
+        "Content/Hansa/UI/Icons/Planks--112.png",
+        "Content/Hansa/UI/Icons/Planks--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: three stacked sawn oak boards with clearly square-cut ends. Hansa game GUI production asset \"Planks\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Building",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1313,
+        1198
+      ],
+      "crop": [
+        321,
+        193,
+        1028,
+        1013
+      ],
+      "master": "SourceArt/UI/Icons/icons--building--default--1313x1198--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Building--16.png",
+        "Content/Hansa/UI/Icons/Building--20.png",
+        "Content/Hansa/UI/Icons/Building--24.png",
+        "Content/Hansa/UI/Icons/Building--28.png",
+        "Content/Hansa/UI/Icons/Building--32.png",
+        "Content/Hansa/UI/Icons/Building--40.png",
+        "Content/Hansa/UI/Icons/Building--48.png",
+        "Content/Hansa/UI/Icons/Building--56.png",
+        "Content/Hansa/UI/Icons/Building--64.png",
+        "Content/Hansa/UI/Icons/Building--80.png",
+        "Content/Hansa/UI/Icons/Building--96.png",
+        "Content/Hansa/UI/Icons/Building--112.png",
+        "Content/Hansa/UI/Icons/Building--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one compact Hanseatic gabled red-brick residence in three-quarter view, simple roof and door. Hansa game GUI production asset \"Building\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Road",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1343,
+        1171
+      ],
+      "crop": [
+        382,
+        408,
+        962,
+        777
+      ],
+      "master": "SourceArt/UI/Icons/icons--road--default--1343x1171--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Road--16.png",
+        "Content/Hansa/UI/Icons/Road--20.png",
+        "Content/Hansa/UI/Icons/Road--24.png",
+        "Content/Hansa/UI/Icons/Road--28.png",
+        "Content/Hansa/UI/Icons/Road--32.png",
+        "Content/Hansa/UI/Icons/Road--40.png",
+        "Content/Hansa/UI/Icons/Road--48.png",
+        "Content/Hansa/UI/Icons/Road--56.png",
+        "Content/Hansa/UI/Icons/Road--64.png",
+        "Content/Hansa/UI/Icons/Road--80.png",
+        "Content/Hansa/UI/Icons/Road--96.png",
+        "Content/Hansa/UI/Icons/Road--112.png",
+        "Content/Hansa/UI/Icons/Road--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one small strip of cobbled road receding in perspective, no modern lane markings. Hansa game GUI production asset \"Road\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Harbor",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        158,
+        75,
+        1095,
+        1178
+      ],
+      "master": "SourceArt/UI/Icons/icons--harbor--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Harbor--16.png",
+        "Content/Hansa/UI/Icons/Harbor--20.png",
+        "Content/Hansa/UI/Icons/Harbor--24.png",
+        "Content/Hansa/UI/Icons/Harbor--28.png",
+        "Content/Hansa/UI/Icons/Harbor--32.png",
+        "Content/Hansa/UI/Icons/Harbor--40.png",
+        "Content/Hansa/UI/Icons/Harbor--48.png",
+        "Content/Hansa/UI/Icons/Harbor--56.png",
+        "Content/Hansa/UI/Icons/Harbor--64.png",
+        "Content/Hansa/UI/Icons/Harbor--80.png",
+        "Content/Hansa/UI/Icons/Harbor--96.png",
+        "Content/Hansa/UI/Icons/Harbor--112.png",
+        "Content/Hansa/UI/Icons/Harbor--160.png"
+      ],
+      "prompt": "Generate a single transparent PNG GUI anchor icon for Hansa. SQUARE canvas, requested32x32 or closest supported native square size. Match engraved brass family style anchor: bright Brass #C19A52 and broad Linen #F2E9D8 highlights, shallow Oak #795137 bevel, slim Ink #202628 outline. The entire anchor must be light brass, highly visible on both navy #152A35 and linen #F2E9D8 at20px. Broad shank, ring and flukes, simple flat frontal silhouette. Real transparent alpha outside silhouette, empty surroundings, no shadow, glow, backdrop, words, numbers. Generous padding. Replace earlier anchor that was too dark. Preserve aspect when resizing for GUI.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Production",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1262,
+        1246
+      ],
+      "crop": [
+        224,
+        189,
+        1100,
+        1083
+      ],
+      "master": "SourceArt/UI/Icons/icons--production--default--1262x1246--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Production--16.png",
+        "Content/Hansa/UI/Icons/Production--20.png",
+        "Content/Hansa/UI/Icons/Production--24.png",
+        "Content/Hansa/UI/Icons/Production--28.png",
+        "Content/Hansa/UI/Icons/Production--32.png",
+        "Content/Hansa/UI/Icons/Production--40.png",
+        "Content/Hansa/UI/Icons/Production--48.png",
+        "Content/Hansa/UI/Icons/Production--56.png",
+        "Content/Hansa/UI/Icons/Production--64.png",
+        "Content/Hansa/UI/Icons/Production--80.png",
+        "Content/Hansa/UI/Icons/Production--96.png",
+        "Content/Hansa/UI/Icons/Production--112.png",
+        "Content/Hansa/UI/Icons/Production--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one wooden-handled iron hammer, diagonal silhouette. Hansa game GUI production asset \"Production\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Storage",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1306,
+        1204
+      ],
+      "crop": [
+        358,
+        266,
+        949,
+        964
+      ],
+      "master": "SourceArt/UI/Icons/icons--storage--default--1306x1204--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Storage--16.png",
+        "Content/Hansa/UI/Icons/Storage--20.png",
+        "Content/Hansa/UI/Icons/Storage--24.png",
+        "Content/Hansa/UI/Icons/Storage--28.png",
+        "Content/Hansa/UI/Icons/Storage--32.png",
+        "Content/Hansa/UI/Icons/Storage--40.png",
+        "Content/Hansa/UI/Icons/Storage--48.png",
+        "Content/Hansa/UI/Icons/Storage--56.png",
+        "Content/Hansa/UI/Icons/Storage--64.png",
+        "Content/Hansa/UI/Icons/Storage--80.png",
+        "Content/Hansa/UI/Icons/Storage--96.png",
+        "Content/Hansa/UI/Icons/Storage--112.png",
+        "Content/Hansa/UI/Icons/Storage--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: two stacked wooden cargo crates, clear plank construction. Hansa game GUI production asset \"Storage\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Civic",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        314,
+        130,
+        940,
+        1014
+      ],
+      "master": "SourceArt/UI/Icons/icons--civic--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Civic--16.png",
+        "Content/Hansa/UI/Icons/Civic--20.png",
+        "Content/Hansa/UI/Icons/Civic--24.png",
+        "Content/Hansa/UI/Icons/Civic--28.png",
+        "Content/Hansa/UI/Icons/Civic--32.png",
+        "Content/Hansa/UI/Icons/Civic--40.png",
+        "Content/Hansa/UI/Icons/Civic--48.png",
+        "Content/Hansa/UI/Icons/Civic--56.png",
+        "Content/Hansa/UI/Icons/Civic--64.png",
+        "Content/Hansa/UI/Icons/Civic--80.png",
+        "Content/Hansa/UI/Icons/Civic--96.png",
+        "Content/Hansa/UI/Icons/Civic--112.png",
+        "Content/Hansa/UI/Icons/Civic--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one Hanseatic town hall facade with stepped gable and three arches. Hansa game GUI production asset \"Civic\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Farm",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        343,
+        391,
+        913,
+        883
+      ],
+      "master": "SourceArt/UI/Icons/icons--farm--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Farm--16.png",
+        "Content/Hansa/UI/Icons/Farm--20.png",
+        "Content/Hansa/UI/Icons/Farm--24.png",
+        "Content/Hansa/UI/Icons/Farm--28.png",
+        "Content/Hansa/UI/Icons/Farm--32.png",
+        "Content/Hansa/UI/Icons/Farm--40.png",
+        "Content/Hansa/UI/Icons/Farm--48.png",
+        "Content/Hansa/UI/Icons/Farm--56.png",
+        "Content/Hansa/UI/Icons/Farm--64.png",
+        "Content/Hansa/UI/Icons/Farm--80.png",
+        "Content/Hansa/UI/Icons/Farm--96.png",
+        "Content/Hansa/UI/Icons/Farm--112.png",
+        "Content/Hansa/UI/Icons/Farm--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one tiny timber barn beside two broad field furrows. Hansa game GUI production asset \"Farm\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Mill",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        271,
+        186,
+        1051,
+        1079
+      ],
+      "master": "SourceArt/UI/Icons/icons--mill--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Mill--16.png",
+        "Content/Hansa/UI/Icons/Mill--20.png",
+        "Content/Hansa/UI/Icons/Mill--24.png",
+        "Content/Hansa/UI/Icons/Mill--28.png",
+        "Content/Hansa/UI/Icons/Mill--32.png",
+        "Content/Hansa/UI/Icons/Mill--40.png",
+        "Content/Hansa/UI/Icons/Mill--48.png",
+        "Content/Hansa/UI/Icons/Mill--56.png",
+        "Content/Hansa/UI/Icons/Mill--64.png",
+        "Content/Hansa/UI/Icons/Mill--80.png",
+        "Content/Hansa/UI/Icons/Mill--96.png",
+        "Content/Hansa/UI/Icons/Mill--112.png",
+        "Content/Hansa/UI/Icons/Mill--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one simple timber windmill with four broad diagonal sails. Hansa game GUI production asset \"Mill\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Beer",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1273,
+        1236
+      ],
+      "crop": [
+        437,
+        379,
+        893,
+        880
+      ],
+      "master": "SourceArt/UI/Icons/icons--beer--default--1273x1236--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Beer--16.png",
+        "Content/Hansa/UI/Icons/Beer--20.png",
+        "Content/Hansa/UI/Icons/Beer--24.png",
+        "Content/Hansa/UI/Icons/Beer--28.png",
+        "Content/Hansa/UI/Icons/Beer--32.png",
+        "Content/Hansa/UI/Icons/Beer--40.png",
+        "Content/Hansa/UI/Icons/Beer--48.png",
+        "Content/Hansa/UI/Icons/Beer--56.png",
+        "Content/Hansa/UI/Icons/Beer--64.png",
+        "Content/Hansa/UI/Icons/Beer--80.png",
+        "Content/Hansa/UI/Icons/Beer--96.png",
+        "Content/Hansa/UI/Icons/Beer--112.png",
+        "Content/Hansa/UI/Icons/Beer--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one wooden tankard with a handle and pale foam. Hansa game GUI production asset \"Beer\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Trend",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1246,
+        1262
+      ],
+      "crop": [
+        347,
+        394,
+        905,
+        874
+      ],
+      "master": "SourceArt/UI/Icons/icons--trend--default--1246x1262--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Trend--16.png",
+        "Content/Hansa/UI/Icons/Trend--20.png",
+        "Content/Hansa/UI/Icons/Trend--24.png",
+        "Content/Hansa/UI/Icons/Trend--28.png",
+        "Content/Hansa/UI/Icons/Trend--32.png",
+        "Content/Hansa/UI/Icons/Trend--40.png",
+        "Content/Hansa/UI/Icons/Trend--48.png",
+        "Content/Hansa/UI/Icons/Trend--56.png",
+        "Content/Hansa/UI/Icons/Trend--64.png",
+        "Content/Hansa/UI/Icons/Trend--80.png",
+        "Content/Hansa/UI/Icons/Trend--96.png",
+        "Content/Hansa/UI/Icons/Trend--112.png",
+        "Content/Hansa/UI/Icons/Trend--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: three solid vertical bars of increasing height, a compact financial trend symbol. Hansa game GUI production asset \"Trend\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Bakery",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        311,
+        320,
+        985,
+        926
+      ],
+      "master": "SourceArt/UI/Icons/icons--bakery--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Bakery--16.png",
+        "Content/Hansa/UI/Icons/Bakery--20.png",
+        "Content/Hansa/UI/Icons/Bakery--24.png",
+        "Content/Hansa/UI/Icons/Bakery--28.png",
+        "Content/Hansa/UI/Icons/Bakery--32.png",
+        "Content/Hansa/UI/Icons/Bakery--40.png",
+        "Content/Hansa/UI/Icons/Bakery--48.png",
+        "Content/Hansa/UI/Icons/Bakery--56.png",
+        "Content/Hansa/UI/Icons/Bakery--64.png",
+        "Content/Hansa/UI/Icons/Bakery--80.png",
+        "Content/Hansa/UI/Icons/Bakery--96.png",
+        "Content/Hansa/UI/Icons/Bakery--112.png",
+        "Content/Hansa/UI/Icons/Bakery--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one red-brick bakehouse with chimney and a dark arched oven opening. Hansa game GUI production asset \"Bakery\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "People",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1312,
+        1199
+      ],
+      "crop": [
+        242,
+        376,
+        1071,
+        833
+      ],
+      "master": "SourceArt/UI/Icons/icons--people--default--1312x1199--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/People--16.png",
+        "Content/Hansa/UI/Icons/People--20.png",
+        "Content/Hansa/UI/Icons/People--24.png",
+        "Content/Hansa/UI/Icons/People--28.png",
+        "Content/Hansa/UI/Icons/People--32.png",
+        "Content/Hansa/UI/Icons/People--40.png",
+        "Content/Hansa/UI/Icons/People--48.png",
+        "Content/Hansa/UI/Icons/People--56.png",
+        "Content/Hansa/UI/Icons/People--64.png",
+        "Content/Hansa/UI/Icons/People--80.png",
+        "Content/Hansa/UI/Icons/People--96.png",
+        "Content/Hansa/UI/Icons/People--112.png",
+        "Content/Hansa/UI/Icons/People--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: a group of three human bust silhouettes, middle person higher than the two side figures. Hansa game GUI production asset \"People\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Laborer",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        273,
+        234,
+        981,
+        1020
+      ],
+      "master": "SourceArt/UI/Icons/icons--laborer--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Laborer--16.png",
+        "Content/Hansa/UI/Icons/Laborer--20.png",
+        "Content/Hansa/UI/Icons/Laborer--24.png",
+        "Content/Hansa/UI/Icons/Laborer--28.png",
+        "Content/Hansa/UI/Icons/Laborer--32.png",
+        "Content/Hansa/UI/Icons/Laborer--40.png",
+        "Content/Hansa/UI/Icons/Laborer--48.png",
+        "Content/Hansa/UI/Icons/Laborer--56.png",
+        "Content/Hansa/UI/Icons/Laborer--64.png",
+        "Content/Hansa/UI/Icons/Laborer--80.png",
+        "Content/Hansa/UI/Icons/Laborer--96.png",
+        "Content/Hansa/UI/Icons/Laborer--112.png",
+        "Content/Hansa/UI/Icons/Laborer--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one medieval worker bust wearing a simple cloth cap and tunic; broad silhouette without facial detail. Hansa game GUI production asset \"Laborer\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Pause",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1287,
+        1222
+      ],
+      "crop": [
+        481,
+        421,
+        807,
+        810
+      ],
+      "master": "SourceArt/UI/Icons/icons--pause--default--1287x1222--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Pause--16.png",
+        "Content/Hansa/UI/Icons/Pause--20.png",
+        "Content/Hansa/UI/Icons/Pause--24.png",
+        "Content/Hansa/UI/Icons/Pause--28.png",
+        "Content/Hansa/UI/Icons/Pause--32.png",
+        "Content/Hansa/UI/Icons/Pause--40.png",
+        "Content/Hansa/UI/Icons/Pause--48.png",
+        "Content/Hansa/UI/Icons/Pause--56.png",
+        "Content/Hansa/UI/Icons/Pause--64.png",
+        "Content/Hansa/UI/Icons/Pause--80.png",
+        "Content/Hansa/UI/Icons/Pause--96.png",
+        "Content/Hansa/UI/Icons/Pause--112.png",
+        "Content/Hansa/UI/Icons/Pause--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: exactly two broad parallel upright pause bars, equal length and thickness. Hansa game GUI production asset \"Pause\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Play",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        447,
+        422,
+        806,
+        829
+      ],
+      "master": "SourceArt/UI/Icons/icons--play--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Play--16.png",
+        "Content/Hansa/UI/Icons/Play--20.png",
+        "Content/Hansa/UI/Icons/Play--24.png",
+        "Content/Hansa/UI/Icons/Play--28.png",
+        "Content/Hansa/UI/Icons/Play--32.png",
+        "Content/Hansa/UI/Icons/Play--40.png",
+        "Content/Hansa/UI/Icons/Play--48.png",
+        "Content/Hansa/UI/Icons/Play--56.png",
+        "Content/Hansa/UI/Icons/Play--64.png",
+        "Content/Hansa/UI/Icons/Play--80.png",
+        "Content/Hansa/UI/Icons/Play--96.png",
+        "Content/Hansa/UI/Icons/Play--112.png",
+        "Content/Hansa/UI/Icons/Play--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: exactly one solid right-pointing equilateral play triangle. Hansa game GUI production asset \"Play\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Wealthy",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1295,
+        1214
+      ],
+      "crop": [
+        237,
+        160,
+        1071,
+        1050
+      ],
+      "master": "SourceArt/UI/Icons/icons--wealthy--default--1295x1214--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Wealthy--16.png",
+        "Content/Hansa/UI/Icons/Wealthy--20.png",
+        "Content/Hansa/UI/Icons/Wealthy--24.png",
+        "Content/Hansa/UI/Icons/Wealthy--28.png",
+        "Content/Hansa/UI/Icons/Wealthy--32.png",
+        "Content/Hansa/UI/Icons/Wealthy--40.png",
+        "Content/Hansa/UI/Icons/Wealthy--48.png",
+        "Content/Hansa/UI/Icons/Wealthy--56.png",
+        "Content/Hansa/UI/Icons/Wealthy--64.png",
+        "Content/Hansa/UI/Icons/Wealthy--80.png",
+        "Content/Hansa/UI/Icons/Wealthy--96.png",
+        "Content/Hansa/UI/Icons/Wealthy--112.png",
+        "Content/Hansa/UI/Icons/Wealthy--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one prosperous medieval merchant bust wearing a broad fur collar and soft tall cap; broad silhouette without facial detail. Hansa game GUI production asset \"Wealthy\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Fast",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        271,
+        417,
+        997,
+        831
+      ],
+      "master": "SourceArt/UI/Icons/icons--fast--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Fast--16.png",
+        "Content/Hansa/UI/Icons/Fast--20.png",
+        "Content/Hansa/UI/Icons/Fast--24.png",
+        "Content/Hansa/UI/Icons/Fast--28.png",
+        "Content/Hansa/UI/Icons/Fast--32.png",
+        "Content/Hansa/UI/Icons/Fast--40.png",
+        "Content/Hansa/UI/Icons/Fast--48.png",
+        "Content/Hansa/UI/Icons/Fast--56.png",
+        "Content/Hansa/UI/Icons/Fast--64.png",
+        "Content/Hansa/UI/Icons/Fast--80.png",
+        "Content/Hansa/UI/Icons/Fast--96.png",
+        "Content/Hansa/UI/Icons/Fast--112.png",
+        "Content/Hansa/UI/Icons/Fast--160.png"
+      ],
+      "prompt": "Create an isolated transparent PNG cutout icon of two separate bold right-pointing triangles arranged horizontally. SQUARE CANVAS, equal width and height. Actual alpha channel must be fully transparent outside the object. Hansa GUI icon Fast, intended display 32x32 pixels; use closest supported native square resolution. Match Hansa engraved brass family: Brass #C19A52, dark Ink #202628 broad outline, Linen #F2E9D8 small highlights, Oak #795137 shading. Fish and iron use Frost #9CC3CF and Slate #29424D. Broad clean silhouette, minimal shallow bevel, upper-left lighting, generous padding. Absolutely flat empty transparent surroundings, no external lighting or aura, no external shadow. Only the icon cutout on transparent alpha. No frame, lettering or numbers. Keep square canvas even for horizontal shapes. This replaces a rejected opaque generation; real transparent background is essential. Resampling to display size is approved.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Grain",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1270,
+        1239
+      ],
+      "crop": [
+        358,
+        251,
+        936,
+        989
+      ],
+      "master": "SourceArt/UI/Icons/icons--grain--default--1270x1239--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Grain--16.png",
+        "Content/Hansa/UI/Icons/Grain--20.png",
+        "Content/Hansa/UI/Icons/Grain--24.png",
+        "Content/Hansa/UI/Icons/Grain--28.png",
+        "Content/Hansa/UI/Icons/Grain--32.png",
+        "Content/Hansa/UI/Icons/Grain--40.png",
+        "Content/Hansa/UI/Icons/Grain--48.png",
+        "Content/Hansa/UI/Icons/Grain--56.png",
+        "Content/Hansa/UI/Icons/Grain--64.png",
+        "Content/Hansa/UI/Icons/Grain--80.png",
+        "Content/Hansa/UI/Icons/Grain--96.png",
+        "Content/Hansa/UI/Icons/Grain--112.png",
+        "Content/Hansa/UI/Icons/Grain--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one tied sheaf of three golden wheat heads. Hansa game GUI production asset \"Grain\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Fastest",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        135,
+        437,
+        1119,
+        818
+      ],
+      "master": "SourceArt/UI/Icons/icons--fastest--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Fastest--16.png",
+        "Content/Hansa/UI/Icons/Fastest--20.png",
+        "Content/Hansa/UI/Icons/Fastest--24.png",
+        "Content/Hansa/UI/Icons/Fastest--28.png",
+        "Content/Hansa/UI/Icons/Fastest--32.png",
+        "Content/Hansa/UI/Icons/Fastest--40.png",
+        "Content/Hansa/UI/Icons/Fastest--48.png",
+        "Content/Hansa/UI/Icons/Fastest--56.png",
+        "Content/Hansa/UI/Icons/Fastest--64.png",
+        "Content/Hansa/UI/Icons/Fastest--80.png",
+        "Content/Hansa/UI/Icons/Fastest--96.png",
+        "Content/Hansa/UI/Icons/Fastest--112.png",
+        "Content/Hansa/UI/Icons/Fastest--160.png"
+      ],
+      "prompt": "Create an isolated transparent PNG cutout icon of three separate bold right-pointing triangles arranged horizontally. SQUARE CANVAS, equal width and height. Actual alpha channel must be fully transparent outside the object. Hansa GUI icon Fastest, intended display 32x32 pixels; use closest supported native square resolution. Match Hansa engraved brass family: Brass #C19A52, dark Ink #202628 broad outline, Linen #F2E9D8 small highlights, Oak #795137 shading. Fish and iron use Frost #9CC3CF and Slate #29424D. Broad clean silhouette, minimal shallow bevel, upper-left lighting, generous padding. Absolutely flat empty transparent surroundings, no external lighting or aura, no external shadow. Only the icon cutout on transparent alpha. No frame, lettering or numbers. Keep square canvas even for horizontal shapes. This replaces a rejected opaque generation; real transparent background is essential. Resampling to display size is approved.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Flour",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1294,
+        1216
+      ],
+      "crop": [
+        247,
+        200,
+        1047,
+        1017
+      ],
+      "master": "SourceArt/UI/Icons/icons--flour--default--1294x1216--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Flour--16.png",
+        "Content/Hansa/UI/Icons/Flour--20.png",
+        "Content/Hansa/UI/Icons/Flour--24.png",
+        "Content/Hansa/UI/Icons/Flour--28.png",
+        "Content/Hansa/UI/Icons/Flour--32.png",
+        "Content/Hansa/UI/Icons/Flour--40.png",
+        "Content/Hansa/UI/Icons/Flour--48.png",
+        "Content/Hansa/UI/Icons/Flour--56.png",
+        "Content/Hansa/UI/Icons/Flour--64.png",
+        "Content/Hansa/UI/Icons/Flour--80.png",
+        "Content/Hansa/UI/Icons/Flour--96.png",
+        "Content/Hansa/UI/Icons/Flour--112.png",
+        "Content/Hansa/UI/Icons/Flour--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one pale linen flour sack with open folded mouth and a broad wheat-ear emblem. Hansa game GUI production asset \"Flour\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Timber",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1402,
+        1122
+      ],
+      "crop": [
+        302,
+        250,
+        1121,
+        921
+      ],
+      "master": "SourceArt/UI/Icons/icons--timber--default--1402x1122--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Timber--16.png",
+        "Content/Hansa/UI/Icons/Timber--20.png",
+        "Content/Hansa/UI/Icons/Timber--24.png",
+        "Content/Hansa/UI/Icons/Timber--28.png",
+        "Content/Hansa/UI/Icons/Timber--32.png",
+        "Content/Hansa/UI/Icons/Timber--40.png",
+        "Content/Hansa/UI/Icons/Timber--48.png",
+        "Content/Hansa/UI/Icons/Timber--56.png",
+        "Content/Hansa/UI/Icons/Timber--64.png",
+        "Content/Hansa/UI/Icons/Timber--80.png",
+        "Content/Hansa/UI/Icons/Timber--96.png",
+        "Content/Hansa/UI/Icons/Timber--112.png",
+        "Content/Hansa/UI/Icons/Timber--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: two round uncut timber logs with circular cut ends and bark; clearly different from sawn planks. Hansa game GUI production asset \"Timber\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Salt",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1402,
+        1122
+      ],
+      "crop": [
+        426,
+        247,
+        1076,
+        857
+      ],
+      "master": "SourceArt/UI/Icons/icons--salt--default--1402x1122--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Salt--16.png",
+        "Content/Hansa/UI/Icons/Salt--20.png",
+        "Content/Hansa/UI/Icons/Salt--24.png",
+        "Content/Hansa/UI/Icons/Salt--28.png",
+        "Content/Hansa/UI/Icons/Salt--32.png",
+        "Content/Hansa/UI/Icons/Salt--40.png",
+        "Content/Hansa/UI/Icons/Salt--48.png",
+        "Content/Hansa/UI/Icons/Salt--56.png",
+        "Content/Hansa/UI/Icons/Salt--64.png",
+        "Content/Hansa/UI/Icons/Salt--80.png",
+        "Content/Hansa/UI/Icons/Salt--96.png",
+        "Content/Hansa/UI/Icons/Salt--112.png",
+        "Content/Hansa/UI/Icons/Salt--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: three angular white salt crystals in a small dark wooden scoop; no flour sack. Hansa game GUI production asset \"Salt\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Iron",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        134,
+        278,
+        1149,
+        1008
+      ],
+      "master": "SourceArt/UI/Icons/icons--iron--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Iron--16.png",
+        "Content/Hansa/UI/Icons/Iron--20.png",
+        "Content/Hansa/UI/Icons/Iron--24.png",
+        "Content/Hansa/UI/Icons/Iron--28.png",
+        "Content/Hansa/UI/Icons/Iron--32.png",
+        "Content/Hansa/UI/Icons/Iron--40.png",
+        "Content/Hansa/UI/Icons/Iron--48.png",
+        "Content/Hansa/UI/Icons/Iron--56.png",
+        "Content/Hansa/UI/Icons/Iron--64.png",
+        "Content/Hansa/UI/Icons/Iron--80.png",
+        "Content/Hansa/UI/Icons/Iron--96.png",
+        "Content/Hansa/UI/Icons/Iron--112.png",
+        "Content/Hansa/UI/Icons/Iron--160.png"
+      ],
+      "prompt": "Create an isolated transparent PNG cutout icon of one blue-gray iron ingot in three-quarter view angled diagonally. SQUARE CANVAS, equal width and height. Actual alpha channel must be fully transparent outside the object. Hansa GUI icon Iron, intended display 32x32 pixels; use closest supported native square resolution. Match Hansa engraved brass family: Brass #C19A52, dark Ink #202628 broad outline, Linen #F2E9D8 small highlights, Oak #795137 shading. Fish and iron use Frost #9CC3CF and Slate #29424D. Broad clean silhouette, minimal shallow bevel, upper-left lighting, generous padding. Absolutely flat empty transparent surroundings, no external lighting or aura, no external shadow. Only the icon cutout on transparent alpha. No frame, lettering or numbers. Keep square canvas even for horizontal shapes. This replaces a rejected opaque generation; real transparent background is essential. Resampling to display size is approved.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Close",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1261,
+        1247
+      ],
+      "crop": [
+        358,
+        367,
+        901,
+        907
+      ],
+      "master": "SourceArt/UI/Icons/icons--close--default--1261x1247--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Close--16.png",
+        "Content/Hansa/UI/Icons/Close--20.png",
+        "Content/Hansa/UI/Icons/Close--24.png",
+        "Content/Hansa/UI/Icons/Close--28.png",
+        "Content/Hansa/UI/Icons/Close--32.png",
+        "Content/Hansa/UI/Icons/Close--40.png",
+        "Content/Hansa/UI/Icons/Close--48.png",
+        "Content/Hansa/UI/Icons/Close--56.png",
+        "Content/Hansa/UI/Icons/Close--64.png",
+        "Content/Hansa/UI/Icons/Close--80.png",
+        "Content/Hansa/UI/Icons/Close--96.png",
+        "Content/Hansa/UI/Icons/Close--112.png",
+        "Content/Hansa/UI/Icons/Close--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one bold diagonal X, close-button symbol. Hansa game GUI production asset \"Close\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Tools",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1278,
+        1230
+      ],
+      "crop": [
+        196,
+        196,
+        1095,
+        1045
+      ],
+      "master": "SourceArt/UI/Icons/icons--tools--default--1278x1230--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Tools--16.png",
+        "Content/Hansa/UI/Icons/Tools--20.png",
+        "Content/Hansa/UI/Icons/Tools--24.png",
+        "Content/Hansa/UI/Icons/Tools--28.png",
+        "Content/Hansa/UI/Icons/Tools--32.png",
+        "Content/Hansa/UI/Icons/Tools--40.png",
+        "Content/Hansa/UI/Icons/Tools--48.png",
+        "Content/Hansa/UI/Icons/Tools--56.png",
+        "Content/Hansa/UI/Icons/Tools--64.png",
+        "Content/Hansa/UI/Icons/Tools--80.png",
+        "Content/Hansa/UI/Icons/Tools--96.png",
+        "Content/Hansa/UI/Icons/Tools--112.png",
+        "Content/Hansa/UI/Icons/Tools--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one crossed iron hammer and broad wrench with oak handles. Hansa game GUI production asset \"Tools\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Pin",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1310,
+        1200
+      ],
+      "crop": [
+        481,
+        387,
+        857,
+        812
+      ],
+      "master": "SourceArt/UI/Icons/icons--pin--default--1310x1200--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Pin--16.png",
+        "Content/Hansa/UI/Icons/Pin--20.png",
+        "Content/Hansa/UI/Icons/Pin--24.png",
+        "Content/Hansa/UI/Icons/Pin--28.png",
+        "Content/Hansa/UI/Icons/Pin--32.png",
+        "Content/Hansa/UI/Icons/Pin--40.png",
+        "Content/Hansa/UI/Icons/Pin--48.png",
+        "Content/Hansa/UI/Icons/Pin--56.png",
+        "Content/Hansa/UI/Icons/Pin--64.png",
+        "Content/Hansa/UI/Icons/Pin--80.png",
+        "Content/Hansa/UI/Icons/Pin--96.png",
+        "Content/Hansa/UI/Icons/Pin--112.png",
+        "Content/Hansa/UI/Icons/Pin--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one simple brass pushpin in diagonal view. Hansa game GUI production asset \"Pin\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Search",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1346,
+        1168
+      ],
+      "crop": [
+        349,
+        271,
+        995,
+        899
+      ],
+      "master": "SourceArt/UI/Icons/icons--search--default--1346x1168--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Search--16.png",
+        "Content/Hansa/UI/Icons/Search--20.png",
+        "Content/Hansa/UI/Icons/Search--24.png",
+        "Content/Hansa/UI/Icons/Search--28.png",
+        "Content/Hansa/UI/Icons/Search--32.png",
+        "Content/Hansa/UI/Icons/Search--40.png",
+        "Content/Hansa/UI/Icons/Search--48.png",
+        "Content/Hansa/UI/Icons/Search--56.png",
+        "Content/Hansa/UI/Icons/Search--64.png",
+        "Content/Hansa/UI/Icons/Search--80.png",
+        "Content/Hansa/UI/Icons/Search--96.png",
+        "Content/Hansa/UI/Icons/Search--112.png",
+        "Content/Hansa/UI/Icons/Search--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one broad magnifying glass, clear round lens and handle. Hansa game GUI production asset \"Search\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Minus",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        268,
+        536,
+        985,
+        717
+      ],
+      "master": "SourceArt/UI/Icons/icons--minus--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Minus--16.png",
+        "Content/Hansa/UI/Icons/Minus--20.png",
+        "Content/Hansa/UI/Icons/Minus--24.png",
+        "Content/Hansa/UI/Icons/Minus--28.png",
+        "Content/Hansa/UI/Icons/Minus--32.png",
+        "Content/Hansa/UI/Icons/Minus--40.png",
+        "Content/Hansa/UI/Icons/Minus--48.png",
+        "Content/Hansa/UI/Icons/Minus--56.png",
+        "Content/Hansa/UI/Icons/Minus--64.png",
+        "Content/Hansa/UI/Icons/Minus--80.png",
+        "Content/Hansa/UI/Icons/Minus--96.png",
+        "Content/Hansa/UI/Icons/Minus--112.png",
+        "Content/Hansa/UI/Icons/Minus--160.png"
+      ],
+      "prompt": "Create an isolated transparent PNG cutout icon of a bold short horizontal subtraction bar. SQUARE CANVAS, equal width and height. Actual alpha channel must be fully transparent outside the object. Hansa GUI icon Minus, intended display 32x32 pixels; use closest supported native square resolution. Match Hansa engraved brass family: Brass #C19A52, dark Ink #202628 broad outline, Linen #F2E9D8 small highlights, Oak #795137 shading. Fish and iron use Frost #9CC3CF and Slate #29424D. Broad clean silhouette, minimal shallow bevel, upper-left lighting, generous padding. Absolutely flat empty transparent surroundings, no external lighting or aura, no external shadow. Only the icon cutout on transparent alpha. No frame, lettering or numbers. Keep square canvas even for horizontal shapes. This replaces a rejected opaque generation; real transparent background is essential. Resampling to display size is approved.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Star",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1261,
+        1247
+      ],
+      "crop": [
+        264,
+        271,
+        994,
+        941
+      ],
+      "master": "SourceArt/UI/Icons/icons--star--default--1261x1247--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Star--16.png",
+        "Content/Hansa/UI/Icons/Star--20.png",
+        "Content/Hansa/UI/Icons/Star--24.png",
+        "Content/Hansa/UI/Icons/Star--28.png",
+        "Content/Hansa/UI/Icons/Star--32.png",
+        "Content/Hansa/UI/Icons/Star--40.png",
+        "Content/Hansa/UI/Icons/Star--48.png",
+        "Content/Hansa/UI/Icons/Star--56.png",
+        "Content/Hansa/UI/Icons/Star--64.png",
+        "Content/Hansa/UI/Icons/Star--80.png",
+        "Content/Hansa/UI/Icons/Star--96.png",
+        "Content/Hansa/UI/Icons/Star--112.png",
+        "Content/Hansa/UI/Icons/Star--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one solid five-point favorite star. Hansa game GUI production asset \"Star\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Plus",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1303,
+        1207
+      ],
+      "crop": [
+        448,
+        405,
+        855,
+        808
+      ],
+      "master": "SourceArt/UI/Icons/icons--plus--default--1303x1207--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Plus--16.png",
+        "Content/Hansa/UI/Icons/Plus--20.png",
+        "Content/Hansa/UI/Icons/Plus--24.png",
+        "Content/Hansa/UI/Icons/Plus--28.png",
+        "Content/Hansa/UI/Icons/Plus--32.png",
+        "Content/Hansa/UI/Icons/Plus--40.png",
+        "Content/Hansa/UI/Icons/Plus--48.png",
+        "Content/Hansa/UI/Icons/Plus--56.png",
+        "Content/Hansa/UI/Icons/Plus--64.png",
+        "Content/Hansa/UI/Icons/Plus--80.png",
+        "Content/Hansa/UI/Icons/Plus--96.png",
+        "Content/Hansa/UI/Icons/Plus--112.png",
+        "Content/Hansa/UI/Icons/Plus--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one bold plus sign with equal arms. Hansa game GUI production asset \"Plus\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Down",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1295,
+        1214
+      ],
+      "crop": [
+        376,
+        336,
+        920,
+        923
+      ],
+      "master": "SourceArt/UI/Icons/icons--down--default--1295x1214--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Down--16.png",
+        "Content/Hansa/UI/Icons/Down--20.png",
+        "Content/Hansa/UI/Icons/Down--24.png",
+        "Content/Hansa/UI/Icons/Down--28.png",
+        "Content/Hansa/UI/Icons/Down--32.png",
+        "Content/Hansa/UI/Icons/Down--40.png",
+        "Content/Hansa/UI/Icons/Down--48.png",
+        "Content/Hansa/UI/Icons/Down--56.png",
+        "Content/Hansa/UI/Icons/Down--64.png",
+        "Content/Hansa/UI/Icons/Down--80.png",
+        "Content/Hansa/UI/Icons/Down--96.png",
+        "Content/Hansa/UI/Icons/Down--112.png",
+        "Content/Hansa/UI/Icons/Down--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one broad downward-pointing arrow. Hansa game GUI production asset \"Down\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Lock",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        416,
+        348,
+        838,
+        903
+      ],
+      "master": "SourceArt/UI/Icons/icons--lock--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Lock--16.png",
+        "Content/Hansa/UI/Icons/Lock--20.png",
+        "Content/Hansa/UI/Icons/Lock--24.png",
+        "Content/Hansa/UI/Icons/Lock--28.png",
+        "Content/Hansa/UI/Icons/Lock--32.png",
+        "Content/Hansa/UI/Icons/Lock--40.png",
+        "Content/Hansa/UI/Icons/Lock--48.png",
+        "Content/Hansa/UI/Icons/Lock--56.png",
+        "Content/Hansa/UI/Icons/Lock--64.png",
+        "Content/Hansa/UI/Icons/Lock--80.png",
+        "Content/Hansa/UI/Icons/Lock--96.png",
+        "Content/Hansa/UI/Icons/Lock--112.png",
+        "Content/Hansa/UI/Icons/Lock--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one closed padlock with broad arched shackle. Hansa game GUI production asset \"Lock\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Back",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        244,
+        310,
+        1010,
+        946
+      ],
+      "master": "SourceArt/UI/Icons/icons--back--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Back--16.png",
+        "Content/Hansa/UI/Icons/Back--20.png",
+        "Content/Hansa/UI/Icons/Back--24.png",
+        "Content/Hansa/UI/Icons/Back--28.png",
+        "Content/Hansa/UI/Icons/Back--32.png",
+        "Content/Hansa/UI/Icons/Back--40.png",
+        "Content/Hansa/UI/Icons/Back--48.png",
+        "Content/Hansa/UI/Icons/Back--56.png",
+        "Content/Hansa/UI/Icons/Back--64.png",
+        "Content/Hansa/UI/Icons/Back--80.png",
+        "Content/Hansa/UI/Icons/Back--96.png",
+        "Content/Hansa/UI/Icons/Back--112.png",
+        "Content/Hansa/UI/Icons/Back--160.png"
+      ],
+      "prompt": "Create an isolated transparent PNG cutout icon of one bold left-pointing arrow. SQUARE CANVAS, equal width and height. Actual alpha channel must be fully transparent outside the object. Hansa GUI icon Back, intended display 32x32 pixels; use closest supported native square resolution. Match Hansa engraved brass family: Brass #C19A52, dark Ink #202628 broad outline, Linen #F2E9D8 small highlights, Oak #795137 shading. Fish and iron use Frost #9CC3CF and Slate #29424D. Broad clean silhouette, minimal shallow bevel, upper-left lighting, generous padding. Absolutely flat empty transparent surroundings, no external lighting or aura, no external shadow. Only the icon cutout on transparent alpha. No frame, lettering or numbers. Keep square canvas even for horizontal shapes. This replaces a rejected opaque generation; real transparent background is essential. Resampling to display size is approved.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Settings",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1275,
+        1233
+      ],
+      "crop": [
+        378,
+        353,
+        898,
+        876
+      ],
+      "master": "SourceArt/UI/Icons/icons--settings--default--1275x1233--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Settings--16.png",
+        "Content/Hansa/UI/Icons/Settings--20.png",
+        "Content/Hansa/UI/Icons/Settings--24.png",
+        "Content/Hansa/UI/Icons/Settings--28.png",
+        "Content/Hansa/UI/Icons/Settings--32.png",
+        "Content/Hansa/UI/Icons/Settings--40.png",
+        "Content/Hansa/UI/Icons/Settings--48.png",
+        "Content/Hansa/UI/Icons/Settings--56.png",
+        "Content/Hansa/UI/Icons/Settings--64.png",
+        "Content/Hansa/UI/Icons/Settings--80.png",
+        "Content/Hansa/UI/Icons/Settings--96.png",
+        "Content/Hansa/UI/Icons/Settings--112.png",
+        "Content/Hansa/UI/Icons/Settings--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one simple six-tooth gear with a circular opening. Hansa game GUI production asset \"Settings\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Up",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1263,
+        1245
+      ],
+      "crop": [
+        397,
+        351,
+        865,
+        883
+      ],
+      "master": "SourceArt/UI/Icons/icons--up--default--1263x1245--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Up--16.png",
+        "Content/Hansa/UI/Icons/Up--20.png",
+        "Content/Hansa/UI/Icons/Up--24.png",
+        "Content/Hansa/UI/Icons/Up--28.png",
+        "Content/Hansa/UI/Icons/Up--32.png",
+        "Content/Hansa/UI/Icons/Up--40.png",
+        "Content/Hansa/UI/Icons/Up--48.png",
+        "Content/Hansa/UI/Icons/Up--56.png",
+        "Content/Hansa/UI/Icons/Up--64.png",
+        "Content/Hansa/UI/Icons/Up--80.png",
+        "Content/Hansa/UI/Icons/Up--96.png",
+        "Content/Hansa/UI/Icons/Up--112.png",
+        "Content/Hansa/UI/Icons/Up--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one broad upward-pointing arrow. Hansa game GUI production asset \"Up\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Research",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1267,
+        1241
+      ],
+      "crop": [
+        260,
+        343,
+        1003,
+        923
+      ],
+      "master": "SourceArt/UI/Icons/icons--research--default--1267x1241--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Research--16.png",
+        "Content/Hansa/UI/Icons/Research--20.png",
+        "Content/Hansa/UI/Icons/Research--24.png",
+        "Content/Hansa/UI/Icons/Research--28.png",
+        "Content/Hansa/UI/Icons/Research--32.png",
+        "Content/Hansa/UI/Icons/Research--40.png",
+        "Content/Hansa/UI/Icons/Research--48.png",
+        "Content/Hansa/UI/Icons/Research--56.png",
+        "Content/Hansa/UI/Icons/Research--64.png",
+        "Content/Hansa/UI/Icons/Research--80.png",
+        "Content/Hansa/UI/Icons/Research--96.png",
+        "Content/Hansa/UI/Icons/Research--112.png",
+        "Content/Hansa/UI/Icons/Research--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one open book with a small brass magnifying glass. Hansa game GUI production asset \"Research\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Eye",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        207,
+        366,
+        1046,
+        884
+      ],
+      "master": "SourceArt/UI/Icons/icons--eye--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Eye--16.png",
+        "Content/Hansa/UI/Icons/Eye--20.png",
+        "Content/Hansa/UI/Icons/Eye--24.png",
+        "Content/Hansa/UI/Icons/Eye--28.png",
+        "Content/Hansa/UI/Icons/Eye--32.png",
+        "Content/Hansa/UI/Icons/Eye--40.png",
+        "Content/Hansa/UI/Icons/Eye--48.png",
+        "Content/Hansa/UI/Icons/Eye--56.png",
+        "Content/Hansa/UI/Icons/Eye--64.png",
+        "Content/Hansa/UI/Icons/Eye--80.png",
+        "Content/Hansa/UI/Icons/Eye--96.png",
+        "Content/Hansa/UI/Icons/Eye--112.png",
+        "Content/Hansa/UI/Icons/Eye--160.png"
+      ],
+      "prompt": "Create an isolated transparent PNG cutout icon of a simplified open eye with a brass iris. SQUARE CANVAS, equal width and height. Actual alpha channel must be fully transparent outside the object. Hansa GUI icon Eye, intended display 32x32 pixels; use closest supported native square resolution. Match Hansa engraved brass family: Brass #C19A52, dark Ink #202628 broad outline, Linen #F2E9D8 small highlights, Oak #795137 shading. Fish and iron use Frost #9CC3CF and Slate #29424D. Broad clean silhouette, minimal shallow bevel, upper-left lighting, generous padding. Absolutely flat empty transparent surroundings, no external lighting or aura, no external shadow. Only the icon cutout on transparent alpha. No frame, lettering or numbers. Keep square canvas even for horizontal shapes. This replaces a rejected opaque generation; real transparent background is essential. Resampling to display size is approved.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Save",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1263,
+        1246
+      ],
+      "crop": [
+        356,
+        402,
+        908,
+        839
+      ],
+      "master": "SourceArt/UI/Icons/icons--save--default--1263x1246--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Save--16.png",
+        "Content/Hansa/UI/Icons/Save--20.png",
+        "Content/Hansa/UI/Icons/Save--24.png",
+        "Content/Hansa/UI/Icons/Save--28.png",
+        "Content/Hansa/UI/Icons/Save--32.png",
+        "Content/Hansa/UI/Icons/Save--40.png",
+        "Content/Hansa/UI/Icons/Save--48.png",
+        "Content/Hansa/UI/Icons/Save--56.png",
+        "Content/Hansa/UI/Icons/Save--64.png",
+        "Content/Hansa/UI/Icons/Save--80.png",
+        "Content/Hansa/UI/Icons/Save--96.png",
+        "Content/Hansa/UI/Icons/Save--112.png",
+        "Content/Hansa/UI/Icons/Save--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one folded parchment document with wax seal; save/archive action. Hansa game GUI production asset \"Save\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Map",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        232,
+        277,
+        1024,
+        964
+      ],
+      "master": "SourceArt/UI/Icons/icons--map--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Map--16.png",
+        "Content/Hansa/UI/Icons/Map--20.png",
+        "Content/Hansa/UI/Icons/Map--24.png",
+        "Content/Hansa/UI/Icons/Map--28.png",
+        "Content/Hansa/UI/Icons/Map--32.png",
+        "Content/Hansa/UI/Icons/Map--40.png",
+        "Content/Hansa/UI/Icons/Map--48.png",
+        "Content/Hansa/UI/Icons/Map--56.png",
+        "Content/Hansa/UI/Icons/Map--64.png",
+        "Content/Hansa/UI/Icons/Map--80.png",
+        "Content/Hansa/UI/Icons/Map--96.png",
+        "Content/Hansa/UI/Icons/Map--112.png",
+        "Content/Hansa/UI/Icons/Map--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one folded nautical chart with a simple route line and two dots; no words. Hansa game GUI production asset \"Map\". Request 32x32 pixels, or the closest supported native size. At larger canvas size keep the icon small and centred. Style anchor: the Hansa restrained engraved brass family, with broad painted shapes and a simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Objects use their natural material colors: wooden items oak, bricks #A44C3F, fish and iron #9CC3CF/#29424D, grain and bread golden ochre, flour and salt linen-white. Abstract controls use pale brass/chalk; no badges unless explicitly requested. Upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, legible at 20px. No background at all: no grey checkerboard, no grid, no cloth, no solid backdrop, no external shadow. No words, numbers, labels, watermark, coin, frame or scene unless explicitly in subject. Produce actual RGBA transparency, not a picture of transparency. One distinct icon only, never a contact sheet. This source may be proportionally resized with quality review.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Ship",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        109,
+        117,
+        1154,
+        1084
+      ],
+      "master": "SourceArt/UI/Icons/icons--ship--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Ship--16.png",
+        "Content/Hansa/UI/Icons/Ship--20.png",
+        "Content/Hansa/UI/Icons/Ship--24.png",
+        "Content/Hansa/UI/Icons/Ship--28.png",
+        "Content/Hansa/UI/Icons/Ship--32.png",
+        "Content/Hansa/UI/Icons/Ship--40.png",
+        "Content/Hansa/UI/Icons/Ship--48.png",
+        "Content/Hansa/UI/Icons/Ship--56.png",
+        "Content/Hansa/UI/Icons/Ship--64.png",
+        "Content/Hansa/UI/Icons/Ship--80.png",
+        "Content/Hansa/UI/Icons/Ship--96.png",
+        "Content/Hansa/UI/Icons/Ship--112.png",
+        "Content/Hansa/UI/Icons/Ship--160.png"
+      ],
+      "prompt": "Single Hansa game GUI icon: side silhouette of a Hanseatic cog ship, oak hull, one mast and simple linen square sail. Generate transparent PNG with REAL empty alpha. Target32x32 pixels closest supported native square size. Center entire icon with padding. Hansa engraved brass style anchor: Brass#C19A52, Ink#202628 broad outline, Linen#F2E9D8 sail, Oak#795137 hull. Upper-left light, shallow bevel, simple broad shapes readable20px. No background, black backdrop, glow, shadow, checkerboard, scene, water, letters or numbers. One isolated icon. Proportional resampling is approved and actual-size quality will be checked.",
+      "alpha": "RGBA",
+      "qa": "Accepted: original inspected; genuine RGBA verified; 16/20/24/32/48px reviewed on linen and navy; menu captures checked."
+    },
+    {
+      "name": "Warehouse",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        128,
+        131,
+        1151,
+        1089
+      ],
+      "master": "SourceArt/UI/Icons/icons--warehouse--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Warehouse--16.png",
+        "Content/Hansa/UI/Icons/Warehouse--20.png",
+        "Content/Hansa/UI/Icons/Warehouse--24.png",
+        "Content/Hansa/UI/Icons/Warehouse--28.png",
+        "Content/Hansa/UI/Icons/Warehouse--32.png",
+        "Content/Hansa/UI/Icons/Warehouse--40.png",
+        "Content/Hansa/UI/Icons/Warehouse--48.png",
+        "Content/Hansa/UI/Icons/Warehouse--56.png",
+        "Content/Hansa/UI/Icons/Warehouse--64.png",
+        "Content/Hansa/UI/Icons/Warehouse--80.png",
+        "Content/Hansa/UI/Icons/Warehouse--96.png",
+        "Content/Hansa/UI/Icons/Warehouse--112.png",
+        "Content/Hansa/UI/Icons/Warehouse--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: a small Hanseatic warehouse, broad low oak cargo doors, red-brick walls, steep red tiled roof with a loading hoist over the door, and two large wooden crates at the entrance. Distinct warehouse silhouette, not a tall merchant residence. Hansa game GUI production asset \"Warehouse\". Request 48x48 pixels, or closest supported native size. Style anchor: Hansa restrained engraved brass family, broad painted shapes, simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading, Hanseatic Brick #A44C3F roof and walls. Three-quarter view, upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, readable at 32px. No background at all: no checkerboard, grid, cloth, solid backdrop, external shadow. No words, numbers, labels, watermark, frame or surrounding scene. Actual RGBA transparency. One distinct icon only, never a contact sheet. Preserve aspect ratio; approved proportional display-size variants will be produced.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; display and runtime QA in Docs/Development/BuildingConstructionIcons.md"
+    },
+    {
+      "name": "Dock",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        113,
+        127,
+        1156,
+        1155
+      ],
+      "master": "SourceArt/UI/Icons/icons--dock--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Dock--16.png",
+        "Content/Hansa/UI/Icons/Dock--20.png",
+        "Content/Hansa/UI/Icons/Dock--24.png",
+        "Content/Hansa/UI/Icons/Dock--28.png",
+        "Content/Hansa/UI/Icons/Dock--32.png",
+        "Content/Hansa/UI/Icons/Dock--40.png",
+        "Content/Hansa/UI/Icons/Dock--48.png",
+        "Content/Hansa/UI/Icons/Dock--56.png",
+        "Content/Hansa/UI/Icons/Dock--64.png",
+        "Content/Hansa/UI/Icons/Dock--80.png",
+        "Content/Hansa/UI/Icons/Dock--96.png",
+        "Content/Hansa/UI/Icons/Dock--112.png",
+        "Content/Hansa/UI/Icons/Dock--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: a small medieval harbour dock: a stout L-shaped oak timber pier on visible pilings, one simple wooden cargo hoist crane and a coiled rope on the pier, with a small Baltic Blue #397FA3 water patch tucked within the L. No house, ship or anchor emblem. Distinct working dock silhouette. Hansa game GUI production asset \"Dock\". Request 48x48 pixels, or closest supported native size. Style anchor: Hansa restrained engraved brass family, broad painted shapes, simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading. Three-quarter view, upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, readable at 32px. No background at all outside the subject: no checkerboard, grid, cloth, solid backdrop, external shadow. No words, numbers, labels, watermark, frame or surrounding scene. Actual RGBA transparency. One distinct icon only, never a contact sheet. Preserve aspect ratio; approved proportional display-size variants will be produced.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; display and runtime QA in Docs/Development/BuildingConstructionIcons.md"
+    },
+    {
+      "name": "Market",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        139,
+        81,
+        1148,
+        1169
+      ],
+      "master": "SourceArt/UI/Icons/icons--market--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Market--16.png",
+        "Content/Hansa/UI/Icons/Market--20.png",
+        "Content/Hansa/UI/Icons/Market--24.png",
+        "Content/Hansa/UI/Icons/Market--28.png",
+        "Content/Hansa/UI/Icons/Market--32.png",
+        "Content/Hansa/UI/Icons/Market--40.png",
+        "Content/Hansa/UI/Icons/Market--48.png",
+        "Content/Hansa/UI/Icons/Market--56.png",
+        "Content/Hansa/UI/Icons/Market--64.png",
+        "Content/Hansa/UI/Icons/Market--80.png",
+        "Content/Hansa/UI/Icons/Market--96.png",
+        "Content/Hansa/UI/Icons/Market--112.png",
+        "Content/Hansa/UI/Icons/Market--160.png"
+      ],
+      "prompt": "Generate one transparent PNG icon, isolated on a genuinely empty alpha channel. Subject: one medieval market stall with a broad red-and-linen striped canvas awning over an oak counter, two simple produce baskets and sacks, no house or town hall. Distinct public market silhouette. Hansa game GUI production asset \"Market\". Request 48x48 pixels, or closest supported native size. Style anchor: Hansa restrained engraved brass family, broad painted shapes, simple dark Ink #202628 contour. Warm Brass #C19A52 and pale Linen #F2E9D8 highlights, Oak #795137 shading, Hanseatic Brick #A44C3F awning stripes. Three-quarter view, upper-left lighting, minimal shallow bevel, very little texture. Strong solid silhouette, broad strokes, generous openings, readable at 32px. No background at all: no checkerboard, grid, cloth backdrop, solid backdrop, external shadow. No words, numbers, labels, watermark, frame or surrounding scene. Actual RGBA transparency. One distinct icon only, never a contact sheet. Preserve aspect ratio; approved proportional display-size variants will be produced.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; display and runtime QA in Docs/Development/BuildingConstructionIcons.md"
+    },
+    {
+      "name": "Hops",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        178,
+        134,
+        1077,
+        1104
+      ],
+      "master": "SourceArt/UI/Icons/icons--hops--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Hops--16.png",
+        "Content/Hansa/UI/Icons/Hops--20.png",
+        "Content/Hansa/UI/Icons/Hops--24.png",
+        "Content/Hansa/UI/Icons/Hops--28.png",
+        "Content/Hansa/UI/Icons/Hops--32.png",
+        "Content/Hansa/UI/Icons/Hops--40.png",
+        "Content/Hansa/UI/Icons/Hops--48.png",
+        "Content/Hansa/UI/Icons/Hops--56.png",
+        "Content/Hansa/UI/Icons/Hops--64.png",
+        "Content/Hansa/UI/Icons/Hops--80.png",
+        "Content/Hansa/UI/Icons/Hops--96.png",
+        "Content/Hansa/UI/Icons/Hops--112.png",
+        "Content/Hansa/UI/Icons/Hops--160.png"
+      ],
+      "prompt": "Hansa GUI icon, original late-medieval Hanseatic visual language, warm natural materials with restrained brass-gold edging, strong readable silhouette, slightly elevated three-quarter view, painterly engraved detail, centered single subject, transparent background, generous clear margin, no cast shadow outside the silhouette, no frame, no badge, no text, no letters, no numbers, no watermark, not photorealistic, readable at 20 to 48 pixels. Subject: A small cluster of fresh green hop cones on one curling vine.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; actual-size light/dark review passed"
+    },
+    {
+      "name": "Malt",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        151,
+        179,
+        1088,
+        1041
+      ],
+      "master": "SourceArt/UI/Icons/icons--malt--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Malt--16.png",
+        "Content/Hansa/UI/Icons/Malt--20.png",
+        "Content/Hansa/UI/Icons/Malt--24.png",
+        "Content/Hansa/UI/Icons/Malt--28.png",
+        "Content/Hansa/UI/Icons/Malt--32.png",
+        "Content/Hansa/UI/Icons/Malt--40.png",
+        "Content/Hansa/UI/Icons/Malt--48.png",
+        "Content/Hansa/UI/Icons/Malt--56.png",
+        "Content/Hansa/UI/Icons/Malt--64.png",
+        "Content/Hansa/UI/Icons/Malt--80.png",
+        "Content/Hansa/UI/Icons/Malt--96.png",
+        "Content/Hansa/UI/Icons/Malt--112.png",
+        "Content/Hansa/UI/Icons/Malt--160.png"
+      ],
+      "prompt": "Hansa GUI icon, original late-medieval Hanseatic visual language, warm natural materials with restrained brass-gold edging, strong readable silhouette, slightly elevated three-quarter view, painterly engraved detail, centered single subject, transparent background, generous clear margin, no cast shadow outside the silhouette, no frame, no badge, no text, no letters, no numbers, no watermark, not photorealistic, readable at 20 to 48 pixels. Subject: An open linen sack filled with golden malted grain, with three kernels beside it.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; actual-size light/dark review passed"
+    },
+    {
+      "name": "Barrels",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        97,
+        163,
+        1172,
+        1070
+      ],
+      "master": "SourceArt/UI/Icons/icons--barrels--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Barrels--16.png",
+        "Content/Hansa/UI/Icons/Barrels--20.png",
+        "Content/Hansa/UI/Icons/Barrels--24.png",
+        "Content/Hansa/UI/Icons/Barrels--28.png",
+        "Content/Hansa/UI/Icons/Barrels--32.png",
+        "Content/Hansa/UI/Icons/Barrels--40.png",
+        "Content/Hansa/UI/Icons/Barrels--48.png",
+        "Content/Hansa/UI/Icons/Barrels--56.png",
+        "Content/Hansa/UI/Icons/Barrels--64.png",
+        "Content/Hansa/UI/Icons/Barrels--80.png",
+        "Content/Hansa/UI/Icons/Barrels--96.png",
+        "Content/Hansa/UI/Icons/Barrels--112.png",
+        "Content/Hansa/UI/Icons/Barrels--160.png"
+      ],
+      "prompt": "Hansa GUI icon, original late-medieval Hanseatic visual language, warm natural materials with restrained brass-gold edging, strong readable silhouette, slightly elevated three-quarter view, painterly engraved detail, centered single subject, transparent background, generous clear margin, no cast shadow outside the silhouette, no frame, no badge, no text, no letters, no numbers, no watermark, not photorealistic, readable at 20 to 48 pixels. Subject: One sturdy empty oak beer barrel with dark iron hoops.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; actual-size light/dark review passed"
+    },
+    {
+      "name": "LumberCamp",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        106,
+        195,
+        1168,
+        1066
+      ],
+      "master": "SourceArt/UI/Icons/icons--lumbercamp--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/LumberCamp--16.png",
+        "Content/Hansa/UI/Icons/LumberCamp--20.png",
+        "Content/Hansa/UI/Icons/LumberCamp--24.png",
+        "Content/Hansa/UI/Icons/LumberCamp--28.png",
+        "Content/Hansa/UI/Icons/LumberCamp--32.png",
+        "Content/Hansa/UI/Icons/LumberCamp--40.png",
+        "Content/Hansa/UI/Icons/LumberCamp--48.png",
+        "Content/Hansa/UI/Icons/LumberCamp--56.png",
+        "Content/Hansa/UI/Icons/LumberCamp--64.png",
+        "Content/Hansa/UI/Icons/LumberCamp--80.png",
+        "Content/Hansa/UI/Icons/LumberCamp--96.png",
+        "Content/Hansa/UI/Icons/LumberCamp--112.png",
+        "Content/Hansa/UI/Icons/LumberCamp--160.png"
+      ],
+      "prompt": "Hansa GUI icon, original late-medieval Hanseatic visual language, warm natural materials with restrained brass-gold edging, strong readable silhouette, slightly elevated three-quarter view, painterly engraved detail, centered single subject, transparent background, generous clear margin, no cast shadow outside the silhouette, no frame, no badge, no text, no letters, no numbers, no watermark, not photorealistic, readable at 20 to 48 pixels. Subject: A compact timber-cutting hut with stacked round logs and a woodcutter's axe.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; actual-size light/dark review passed"
+    },
+    {
+      "name": "HopFarm",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        61,
+        108,
+        1207,
+        1151
+      ],
+      "master": "SourceArt/UI/Icons/icons--hopfarm--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/HopFarm--16.png",
+        "Content/Hansa/UI/Icons/HopFarm--20.png",
+        "Content/Hansa/UI/Icons/HopFarm--24.png",
+        "Content/Hansa/UI/Icons/HopFarm--28.png",
+        "Content/Hansa/UI/Icons/HopFarm--32.png",
+        "Content/Hansa/UI/Icons/HopFarm--40.png",
+        "Content/Hansa/UI/Icons/HopFarm--48.png",
+        "Content/Hansa/UI/Icons/HopFarm--56.png",
+        "Content/Hansa/UI/Icons/HopFarm--64.png",
+        "Content/Hansa/UI/Icons/HopFarm--80.png",
+        "Content/Hansa/UI/Icons/HopFarm--96.png",
+        "Content/Hansa/UI/Icons/HopFarm--112.png",
+        "Content/Hansa/UI/Icons/HopFarm--160.png"
+      ],
+      "prompt": "Hansa GUI icon, original late-medieval Hanseatic visual language, warm natural materials with restrained brass-gold edging, strong readable silhouette, slightly elevated three-quarter view, painterly engraved detail, centered single subject, transparent background, generous clear margin, no cast shadow outside the silhouette, no frame, no badge, no text, no letters, no numbers, no watermark, not photorealistic, readable at 20 to 48 pixels. Subject: A compact hop farm with a thatched hut and two rows of tall hop trellises.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; actual-size light/dark review passed"
+    },
+    {
+      "name": "MaltHouse",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        135,
+        80,
+        1126,
+        1166
+      ],
+      "master": "SourceArt/UI/Icons/icons--malthouse--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/MaltHouse--16.png",
+        "Content/Hansa/UI/Icons/MaltHouse--20.png",
+        "Content/Hansa/UI/Icons/MaltHouse--24.png",
+        "Content/Hansa/UI/Icons/MaltHouse--28.png",
+        "Content/Hansa/UI/Icons/MaltHouse--32.png",
+        "Content/Hansa/UI/Icons/MaltHouse--40.png",
+        "Content/Hansa/UI/Icons/MaltHouse--48.png",
+        "Content/Hansa/UI/Icons/MaltHouse--56.png",
+        "Content/Hansa/UI/Icons/MaltHouse--64.png",
+        "Content/Hansa/UI/Icons/MaltHouse--80.png",
+        "Content/Hansa/UI/Icons/MaltHouse--96.png",
+        "Content/Hansa/UI/Icons/MaltHouse--112.png",
+        "Content/Hansa/UI/Icons/MaltHouse--160.png"
+      ],
+      "prompt": "Hansa GUI icon, original late-medieval Hanseatic visual language, warm natural materials with restrained brass-gold edging, strong readable silhouette, slightly elevated three-quarter view, painterly engraved detail, centered single subject, transparent background, generous clear margin, no cast shadow outside the silhouette, no frame, no badge, no text, no letters, no numbers, no watermark, not photorealistic, readable at 20 to 48 pixels. Subject: A compact brick-and-timber malt house with kiln roof vent and a grain sack.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; actual-size light/dark review passed"
+    },
+    {
+      "name": "Cooperage",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        69,
+        123,
+        1198,
+        1115
+      ],
+      "master": "SourceArt/UI/Icons/icons--cooperage--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Cooperage--16.png",
+        "Content/Hansa/UI/Icons/Cooperage--20.png",
+        "Content/Hansa/UI/Icons/Cooperage--24.png",
+        "Content/Hansa/UI/Icons/Cooperage--28.png",
+        "Content/Hansa/UI/Icons/Cooperage--32.png",
+        "Content/Hansa/UI/Icons/Cooperage--40.png",
+        "Content/Hansa/UI/Icons/Cooperage--48.png",
+        "Content/Hansa/UI/Icons/Cooperage--56.png",
+        "Content/Hansa/UI/Icons/Cooperage--64.png",
+        "Content/Hansa/UI/Icons/Cooperage--80.png",
+        "Content/Hansa/UI/Icons/Cooperage--96.png",
+        "Content/Hansa/UI/Icons/Cooperage--112.png",
+        "Content/Hansa/UI/Icons/Cooperage--160.png"
+      ],
+      "prompt": "Hansa GUI icon, original late-medieval Hanseatic visual language, warm natural materials with restrained brass-gold edging, strong readable silhouette, slightly elevated three-quarter view, painterly engraved detail, centered single subject, transparent background, generous clear margin, no cast shadow outside the silhouette, no frame, no badge, no text, no letters, no numbers, no watermark, not photorealistic, readable at 20 to 48 pixels. Subject: A compact open-front cooper's workshop with barrel, staves, hoops, and workbench.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; actual-size light/dark review passed"
+    },
+    {
+      "name": "Brewery",
+      "mode": "built-in ImageGen",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "crop": [
+        153,
+        96,
+        1148,
+        1150
+      ],
+      "master": "SourceArt/UI/Icons/icons--brewery--default--1254x1254--v1.png",
+      "variants": [
+        "Content/Hansa/UI/Icons/Brewery--16.png",
+        "Content/Hansa/UI/Icons/Brewery--20.png",
+        "Content/Hansa/UI/Icons/Brewery--24.png",
+        "Content/Hansa/UI/Icons/Brewery--28.png",
+        "Content/Hansa/UI/Icons/Brewery--32.png",
+        "Content/Hansa/UI/Icons/Brewery--40.png",
+        "Content/Hansa/UI/Icons/Brewery--48.png",
+        "Content/Hansa/UI/Icons/Brewery--56.png",
+        "Content/Hansa/UI/Icons/Brewery--64.png",
+        "Content/Hansa/UI/Icons/Brewery--80.png",
+        "Content/Hansa/UI/Icons/Brewery--96.png",
+        "Content/Hansa/UI/Icons/Brewery--112.png",
+        "Content/Hansa/UI/Icons/Brewery--160.png"
+      ],
+      "prompt": "Hansa GUI icon, original late-medieval Hanseatic visual language, warm natural materials with restrained brass-gold edging, strong readable silhouette, slightly elevated three-quarter view, painterly engraved detail, centered single subject, transparent background, generous clear margin, no cast shadow outside the silhouette, no frame, no badge, no text, no letters, no numbers, no watermark, not photorealistic, readable at 20 to 48 pixels. Subject: A compact brick-and-timber brewhouse with chimney and visible copper brewing kettle.",
+      "alpha": "RGBA",
+      "qa": "Original inspected; RGBA validated; actual-size light/dark review passed"
+    }
+  ],
+  "rejected": []
+}

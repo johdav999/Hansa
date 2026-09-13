@@ -8,7 +8,7 @@
 
 namespace
 {
-	const Hansa::UI::FHansaHudSemanticNode* FindNode(
+	const Hansa::UI::FHansaHudSemanticNode* RootHudTestsFindNode(
 		const TArray<Hansa::UI::FHansaHudSemanticNode>& Nodes,
 		const TCHAR* Id)
 	{
@@ -86,7 +86,17 @@ bool FHansaHudOpenCloseFocusTest::RunTest(const FString& Parameters)
 		.InitialViewportSize(FIntPoint(1280, 720));
 
 	TArray<Hansa::UI::FHansaHudSemanticNode> Nodes = Hud->GetSemanticSnapshot();
-	const Hansa::UI::FHansaHudSemanticNode* AlertStack = FindNode(Nodes, TEXT("HUD.AlertStack"));
+	const Hansa::UI::FHansaHudSemanticNode* Fps = RootHudTestsFindNode(Nodes, TEXT("HUD.TopStatus.FPS"));
+	TestTrue(TEXT("The running HUD exposes an FPS count"), Fps != nullptr && Fps->State.Value == TEXT("FPS —"));
+	for (int32 Frame = 0; Frame < 31; ++Frame)
+	{
+		Hud->Tick(FGeometry(), static_cast<double>(Frame) / 60.0, 1.0f / 60.0f);
+	}
+	Nodes = Hud->GetSemanticSnapshot();
+	Fps = RootHudTestsFindNode(Nodes, TEXT("HUD.TopStatus.FPS"));
+	TestTrue(TEXT("The FPS count updates from a half-second frame sample"),
+		Fps != nullptr && Fps->State.Value == TEXT("FPS 60"));
+	const Hansa::UI::FHansaHudSemanticNode* AlertStack = RootHudTestsFindNode(Nodes, TEXT("HUD.AlertStack"));
 	TestNotNull(TEXT("Alert stack exposes a semantic role and state"), AlertStack);
 	if (AlertStack != nullptr)
 	{
@@ -96,26 +106,26 @@ bool FHansaHudOpenCloseFocusTest::RunTest(const FString& Parameters)
 
 	TestTrue(TEXT("Semantic activation closes the alert stack"), Hud->ActivateSemanticId(TEXT("HUD.AlertStack.Toggle")));
 	Nodes = Hud->GetSemanticSnapshot();
-	AlertStack = FindNode(Nodes, TEXT("HUD.AlertStack"));
+	AlertStack = RootHudTestsFindNode(Nodes, TEXT("HUD.AlertStack"));
 	TestTrue(TEXT("Collapsed alert state is observable"), AlertStack != nullptr && AlertStack->State.Value == TEXT("false"));
 	TestTrue(TEXT("Semantic activation reopens the alert stack"), Hud->ActivateSemanticId(TEXT("HUD.AlertStack.Toggle")));
 
 	Model->SetSelection(FText::FromString(TEXT("Selected · Bakery")), FText::FromString(TEXT("Bakery")),
 		FText::FromString(TEXT("Produces bread")), true);
 	Nodes = Hud->GetSemanticSnapshot();
-	const Hansa::UI::FHansaHudSemanticNode* Inspector = FindNode(Nodes, TEXT("HUD.InspectorHost"));
+	const Hansa::UI::FHansaHudSemanticNode* Inspector = RootHudTestsFindNode(Nodes, TEXT("HUD.InspectorHost"));
 	TestTrue(TEXT("Selection events open the inspector host"), Inspector != nullptr && Inspector->State.bVisible && Inspector->State.Value == TEXT("true"));
 	TestTrue(TEXT("Semantic close uses the normal inspector intent"), Hud->ActivateSemanticId(TEXT("Inspector.Close")));
 	Nodes = Hud->GetSemanticSnapshot();
-	Inspector = FindNode(Nodes, TEXT("HUD.InspectorHost"));
+	Inspector = RootHudTestsFindNode(Nodes, TEXT("HUD.InspectorHost"));
 	TestTrue(TEXT("Closed inspector state is observable"), Inspector != nullptr && !Inspector->State.bVisible && Inspector->State.Value == TEXT("false"));
 
 	TestTrue(TEXT("Fast speed accepts semantic focus"), Hud->FocusSemanticId(TEXT("HUD.TopStatus.Speed.Fast")));
 	Nodes = Hud->GetSemanticSnapshot();
-	const Hansa::UI::FHansaHudSemanticNode* Fast = FindNode(Nodes, TEXT("HUD.TopStatus.Speed.Fast"));
-	const Hansa::UI::FHansaHudSemanticNode* FocusLayer = FindNode(Nodes, TEXT("HUD.FocusLayer"));
+	const Hansa::UI::FHansaHudSemanticNode* Fast = RootHudTestsFindNode(Nodes, TEXT("HUD.TopStatus.Speed.Fast"));
+	const Hansa::UI::FHansaHudSemanticNode* FocusLayer = RootHudTestsFindNode(Nodes, TEXT("HUD.FocusLayer"));
 	TestTrue(TEXT("Focused state is independent of hover"), Fast != nullptr && Fast->State.bFocused);
-	TestTrue(TEXT("Focus layer announces the focused semantic target"), FocusLayer != nullptr && FocusLayer->State.bVisible &&
+	TestTrue(TEXT("Hidden focus metadata retains the target without showing developer IDs"), FocusLayer != nullptr && !FocusLayer->State.bVisible &&
 		FocusLayer->State.Value == TEXT("HUD.TopStatus.Speed.Fast"));
 	TestTrue(TEXT("Focused speed can be activated through the semantic intent"), Hud->ActivateSemanticId(TEXT("HUD.TopStatus.Speed.Fast")));
 	TestEqual(TEXT("Activation updates speed without polling"), Model->GetSnapshot().Speed, EHansaHudGameSpeed::Fast);

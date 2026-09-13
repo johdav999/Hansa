@@ -1,0 +1,309 @@
+{
+  "prompt": "P15",
+  "approvalDate": "2026-09-08",
+  "approval": "Also approve promoting P14 and P15",
+  "status": "promoted-and-bound; playable/Shipping acceptance remains open",
+  "productionRoot": "/Game/Mesh/hansa-market",
+  "catalogVersion": 5,
+  "registryHash": "DAA463F7043FD66F",
+  "economicsUnchanged": true,
+  "stagingDependenciesFound": 0,
+  "definitions": [
+    {
+      "path": "/Game/Hansa/Core/Buildings/DA_Building_Market",
+      "stableId": "Building.Market",
+      "before": {
+        "revision": 1,
+        "mesh": {
+          "refPath": "/Engine/BasicShapes/Cube.Cube"
+        },
+        "actor": "None"
+      },
+      "after": {
+        "revision": 2,
+        "mesh": {
+          "refPath": "/Game/Mesh/hansa-market/Meshes/SM_HansaMarket.SM_HansaMarket"
+        },
+        "actor": {
+          "refPath": "/Game/Mesh/hansa-market/BP_Market_Review.BP_Market_Review_C"
+        }
+      },
+      "sha256": "BD48EB7CBA6C69D7B834D5E45D70BC9909F7D3ABCCEFD8BC372617218888B8F9"
+    }
+  ],
+  "assets": [
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/BP_Market_Review",
+      "sourceSha256": "555c447a0bfc2b2694d54817cc4e76e2c44e9cf2b34521b91c6a4c02d56aa6ff",
+      "destination": "/Game/Mesh/hansa-market/BP_Market_Review",
+      "class": "Blueprint",
+      "sha256": "617DD34BDD4CC8E0C22E5E4E8FF7D0065028D9D8A05153031BA01B3597F8F43B"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Meshes/SM_HansaMarket_Stall",
+      "sourceSha256": "9d3b4ff0a60fb23bbb86929e767c1741d1acb7c0598b368570b145068e8e6e0d",
+      "destination": "/Game/Mesh/hansa-market/Meshes/SM_HansaMarket_Stall",
+      "class": "StaticMesh",
+      "sha256": "AB504FD7072C6DCEC70DE3849822FD4E2C04F7F7A4D99D257FFF354BF6D01B2C"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Materials/M_Market_Oak",
+      "sourceSha256": "a8ad60d72ce13fc70129dad5d01cfac94364f0a2b5b57b012725aeef17cb3a46",
+      "destination": "/Game/Mesh/hansa-market/Materials/M_Market_Oak",
+      "class": "Material",
+      "sha256": "B58F8C9B48F419C0B9245E3E4BF18FD1841FA0747317C7E8D6D2DF6538664A07"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Oak_Roughness",
+      "sourceSha256": "816abe8190751cda23b7f0ff4d0ae741ede176029e08319b89aeb86e96f34253",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Oak_Roughness",
+      "class": "Texture2D",
+      "sha256": "7CFA548AF9A560904E71466B0F7D77D296E028CE9875F69404066F697A487780"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Oak_Normal",
+      "sourceSha256": "be51dcc5f2edf331b54c9c0a9ff26bb2237636578df34ef208843afee5874be1",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Oak_Normal",
+      "class": "Texture2D",
+      "sha256": "AC7C4F432A8DF27F966774F21FB1A2FA1DB9E7DC8BB6E69AF5B611C3A948EC4C"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Oak_BaseColor",
+      "sourceSha256": "e6967e679eaaf810b33f2d5610f2ec2d6bd4f6af8a76b903c31ab68ae4f4a5de",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Oak_BaseColor",
+      "class": "Texture2D",
+      "sha256": "89C4D165FA7EB82FA2A03B1A03E19D389830559933DA89ABAC4A08C1E556A348"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Meshes/SM_HansaMarket_Scales",
+      "sourceSha256": "824f5c082423f426810605a6472808e84d1069a115f25266fb8afaa590b07ba6",
+      "destination": "/Game/Mesh/hansa-market/Meshes/SM_HansaMarket_Scales",
+      "class": "StaticMesh",
+      "sha256": "A1C1A111434349074F3A21BD5688C97A93992E849BF8968EF437B7BEC93D53B3"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Materials/M_Market_Stone",
+      "sourceSha256": "8e0b085b22f02c0b0789ccf231238247825093d4ed74b005f1637ea76ea97655",
+      "destination": "/Game/Mesh/hansa-market/Materials/M_Market_Stone",
+      "class": "Material",
+      "sha256": "F9ECEB427BBC6C5689354BDF6F45638594B28C2A85AA951B078F19E0DAE8B0C3"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Stone_Roughness",
+      "sourceSha256": "2ca53e4ac9e0f4fd9b10f6533ca05323998d66ed1c84b30850c3b597e04dcec3",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Stone_Roughness",
+      "class": "Texture2D",
+      "sha256": "1DCFC2D4FDBAEB3A0B8543693FEBA3EA84DBCE2CE3E2C6D6362D7E2885C8FF1B"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Stone_Normal",
+      "sourceSha256": "a86ec9d8b99b02e15c3eec55e5998011dbf58819c989313f782be9eba6c880fd",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Stone_Normal",
+      "class": "Texture2D",
+      "sha256": "A82AB0E8132C5CDC217D1E8A96ABC47AD38735E9C154494B9F95D42A6C1DFB15"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Stone_BaseColor",
+      "sourceSha256": "29c12148883996857625144268bed6d0a178c0a319a4a3b9870d23240633e0e5",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Stone_BaseColor",
+      "class": "Texture2D",
+      "sha256": "D5A4C8D140D1EF670729BC2938A23FED280D49AA0471FB8D761CBCB769CF381F"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Materials/M_Market_Iron",
+      "sourceSha256": "68f28e8b1adfaac6148e1e6ae5fb9c64f99c6572a2aab0105d1c3452f0894154",
+      "destination": "/Game/Mesh/hansa-market/Materials/M_Market_Iron",
+      "class": "Material",
+      "sha256": "EB6E3EBF28E45E7A7C8AD3B0F77D2089A2A27AEB2AEC8DC417DFA0313152E988"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Iron_Roughness",
+      "sourceSha256": "53bf379347e03306cebf27e8dba6e88e34d360f39b17ebfcfbdc7727074e72e7",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Iron_Roughness",
+      "class": "Texture2D",
+      "sha256": "7EDA04DE4828C0766A41EDC6CBED355F7C39E5D32FAC2AE6812FC8301DD4745E"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Iron_Normal",
+      "sourceSha256": "ee09a6cffe19c69052c49741e5df8303fc26da97c2641912b5653a1519663df1",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Iron_Normal",
+      "class": "Texture2D",
+      "sha256": "62E672B0E31CF9615C4980248DBDEB5D969886B5F348BB4220D2545071453F1D"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Iron_BaseColor",
+      "sourceSha256": "b92b944b7cbd7295ae55435d1cca333ce8ad5b336d77b32a11331863515175ec",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Iron_BaseColor",
+      "class": "Texture2D",
+      "sha256": "ED11CA8AD994D19137B54B590A855AC3769A9DC0881CC80F8F427532A6D15817"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Materials/M_Market_Brass",
+      "sourceSha256": "8dff9500d36dfc17924362feeae03cdef3410c8bf4fe22d7f2098c98def8eb17",
+      "destination": "/Game/Mesh/hansa-market/Materials/M_Market_Brass",
+      "class": "Material",
+      "sha256": "B08C43DA3322F1C83D7B8DE95E200662CD1CDA097280DBB7925D6ABE7F609A28"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Brass_Roughness",
+      "sourceSha256": "ac6d9279c4d4edeb5a8cc4817250a31152b64e24c5ce843bed7ddafb0abff9e0",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Brass_Roughness",
+      "class": "Texture2D",
+      "sha256": "2F679D0E39020CEBAE554FE102581B750033CB79865DA4640B011486F30FBD2A"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Brass_Normal",
+      "sourceSha256": "dd11b1d5a8c1beaef173c353afa2ef3402a0709e08fc15315428a0c2eea9effc",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Brass_Normal",
+      "class": "Texture2D",
+      "sha256": "BCB852B9AA5150A98F4A83E152B2E59BB841FC365370C4611C0F81BA3DF5E09F"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Brass_BaseColor",
+      "sourceSha256": "bff5c898e7d5f7f9270aff3d30260c9c1bf9ee0ff3248a9e3e802a23d1723586",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Brass_BaseColor",
+      "class": "Texture2D",
+      "sha256": "0DD1024537FDCC5DA105FDC37DD0CC3B9E1CB8177203A11BF24D661036F5A8D5"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Meshes/SM_HansaMarket_Cargo",
+      "sourceSha256": "5bef2102c117aa924a4b988b826ec1f5d7f934fe44e7834da70d112a5c8d19cc",
+      "destination": "/Game/Mesh/hansa-market/Meshes/SM_HansaMarket_Cargo",
+      "class": "StaticMesh",
+      "sha256": "4C15707FAB6D6F57E2F54D8366790AEBF9E00585E48983B84AA45550ACB746CD"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Materials/M_Market_Wicker",
+      "sourceSha256": "bb7f95902a217ea83081943c5f3d38302606192e4f3237f86f6ac676fbf83509",
+      "destination": "/Game/Mesh/hansa-market/Materials/M_Market_Wicker",
+      "class": "Material",
+      "sha256": "B1C001CE75F0E1FA900A1C55B2DFC7C91D2C8179A00029C4D24AF89A841393A1"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Wicker_Roughness",
+      "sourceSha256": "d13777a3b1259c39529413da69021e1bb69c2c1c3a1765be572e6cae2b07c744",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Wicker_Roughness",
+      "class": "Texture2D",
+      "sha256": "87453A137E121CD754A126A0D0BA4340E4B20901110213FB837EA1C0D5E29902"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Wicker_Normal",
+      "sourceSha256": "21c7c6da3e459fd3e9168b1029614dc7ad31e613d5edadaf5b6b687f80046841",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Wicker_Normal",
+      "class": "Texture2D",
+      "sha256": "D53CAF3664039BD4A105B89A25EDD18A82098DFA8A6D6582C9A1DC00008ADAA3"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Wicker_BaseColor",
+      "sourceSha256": "c2a4e1577dad4238ec0dfacef38a3f171b1a4710b4c383ccc957a703d2e6c611",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Wicker_BaseColor",
+      "class": "Texture2D",
+      "sha256": "1A12D7D5A3DAB01901A52C7B6897E5D5761EDA97FBB6ED8DDFAF01347DCCAF5C"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Materials/M_Market_Sack",
+      "sourceSha256": "5b0c5c616e3994cb884846c7e85ad695bfd3b8c86e0e08e21527b4ab8cfa0d9f",
+      "destination": "/Game/Mesh/hansa-market/Materials/M_Market_Sack",
+      "class": "Material",
+      "sha256": "A5FBEDD082AC0C48AAFBA8E30C0F545A55D0F918FCE48EF85766D28EC96A37E0"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Sack_Roughness",
+      "sourceSha256": "1c9ba1ec823dfd62d28ec5e8c7530aa4dfe26a95ba36c806fe8fb69d6b0c0f4d",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Sack_Roughness",
+      "class": "Texture2D",
+      "sha256": "D8C93A7C71381E2D9E2A9FF2E2591EE6AC1BE7EBE18C84A2478068B7904E1263"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Sack_Normal",
+      "sourceSha256": "99f4b473bdd7f60071da55e545e0faea9d020cb9489e6c8c439390fe7af31ac0",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Sack_Normal",
+      "class": "Texture2D",
+      "sha256": "0B35CEF7F3DE7DDC379A4FF4ADC245A816710832B9C2C280E89735AA0299D1B8"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Sack_BaseColor",
+      "sourceSha256": "68e41bc4d97f8706d7fc5040a9cb1466b813ff9d0ba7286121109a0f4278935b",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Sack_BaseColor",
+      "class": "Texture2D",
+      "sha256": "DD0A00E93F97C64C8E221984F8A17182D0C3EDE2AE72582727B39D9302DFC9C3"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Meshes/SM_HansaMarket_Basket",
+      "sourceSha256": "271b45143f447d4e1862788bbff4b1c7315f9e8bec9e58dc06ebe68496a1c626",
+      "destination": "/Game/Mesh/hansa-market/Meshes/SM_HansaMarket_Basket",
+      "class": "StaticMesh",
+      "sha256": "D86992C36D8CB2383161EA25EFEE73F6DB9C60655ACBF3B87F8D3C2001051AD5"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Meshes/SM_HansaMarket_Awning",
+      "sourceSha256": "f56d5561484af88540a7a15a25e68e9ad29c8a44a1a6c86d8ba8cb5ae98d903e",
+      "destination": "/Game/Mesh/hansa-market/Meshes/SM_HansaMarket_Awning",
+      "class": "StaticMesh",
+      "sha256": "570F5A1D2164B445429226D3D9B5E1A21CBB64D71EC504837956B4CD0A68CCEC"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Materials/M_Market_Canvas",
+      "sourceSha256": "f5a0bbd5432b7c3958fc959af06b851d9619123a10f04d34ce546b14b0e4b539",
+      "destination": "/Game/Mesh/hansa-market/Materials/M_Market_Canvas",
+      "class": "Material",
+      "sha256": "932016A5E86F6A7FF4CBF359B2E53741A39497EE97AA031E3D8CD92A9BAA48E9"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Canvas_Roughness",
+      "sourceSha256": "f24494ff0a33eab03480d0232a24bb1d05958d6c8e0c4b822903a6daf70011d3",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Canvas_Roughness",
+      "class": "Texture2D",
+      "sha256": "33BB8542642A91A0D2A3C03A34B7B59B60ED8C2979F681E3DCB5775F32BE7B70"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Canvas_Normal",
+      "sourceSha256": "2376b4b5f569f37695c82bf954503b45d52014c3e5bb3a1c04e8e1edce882cc1",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Canvas_Normal",
+      "class": "Texture2D",
+      "sha256": "986657C2974FA12F449DDF06153CAC1B0115D0941E897B349DE8F12B140D04A1"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Canvas_BaseColor",
+      "sourceSha256": "d7b346a136c80b662f6501a26c5e5c09cce77d6c05f9e9a8783c0871b4998e68",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Canvas_BaseColor",
+      "class": "Texture2D",
+      "sha256": "67FF29A273E77D31CB47D788AD4B421B96C794C46E4C81849C7424C62CF25352"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Meshes/SM_HansaMarket",
+      "sourceSha256": "f217abbac2abe4668fe5e4fa53926140b68b4b3da0063c238ed4d0e7ca3427d1",
+      "destination": "/Game/Mesh/hansa-market/Meshes/SM_HansaMarket",
+      "class": "StaticMesh",
+      "sha256": "31C349D197095775990F64987649EA209809F694BD8B8815F27B7CA02CFAA3CE"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Materials/M_Market_Clay",
+      "sourceSha256": "aed2782c4e8029069dd4e781329601ecb82508a5988368f8f8b1d69c73139d18",
+      "destination": "/Game/Mesh/hansa-market/Materials/M_Market_Clay",
+      "class": "Material",
+      "sha256": "116D78C139A919CAD611AD4BBA45600EE8A300E04EA7AF34B1E5AC6777337BF8"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Clay_Roughness",
+      "sourceSha256": "24621f120f30301dad1b86468fe514ec2a14bea4ed07e8bc3ebc7df22b53e42b",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Clay_Roughness",
+      "class": "Texture2D",
+      "sha256": "F5E46D24D3ADD0ACC82AACB655CAEB879A929B4E7FABA5C4506335A15E0A5EB5"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Clay_Normal",
+      "sourceSha256": "86d76ab7186d97bef52e72077e044bddb0163b4077351776d1b8999c859f76b5",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Clay_Normal",
+      "class": "Texture2D",
+      "sha256": "538181E4B0E043636BA76B5E76D0DFAAEB8CA07C3DAF483EEAFC4D15F3485EA2"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Market_P15/Textures/T_Market_Clay_BaseColor",
+      "sourceSha256": "353dcd66fab7b31c4b05625cefd93970bda355f8638740d4f22a5d8e709f54c2",
+      "destination": "/Game/Mesh/hansa-market/Textures/T_Market_Clay_BaseColor",
+      "class": "Texture2D",
+      "sha256": "D07FD8894AB8ADB0B1FBCE43D6B8C646011B302A273A3F24FD0FB390FB8E40D5"
+    }
+  ]
+}

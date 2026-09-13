@@ -42,7 +42,8 @@ namespace Hansa::Simulation
 		RouteRejected,
 		RouteStateInvalid,
 		VehicleAlreadyAssigned,
-		ResearchRejected
+		ResearchRejected,
+		TargetHasCargoObligations
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaCommandGatewayError Error);

@@ -247,7 +247,7 @@ The default HUD leaves at least 70% of the center unobstructed.
 - Current workforce by tier, collapsed into shortage/surplus summary.
 - Selected city/region breadcrumb.
 - Season, date, and weather/route condition.
-- Pause and speed controls centered for rapid recognition.
+- Pause and speed controls at the top right, using distinct icons and explanatory tooltips.
 - Influence, research, reputation, and victory progress as compact indicators.
 - Multiplayer connection/host state and main menu at the far end.
 
@@ -564,12 +564,24 @@ Every remote price shows the city and report date. When planning a route, expect
 
 ## 20. Iconography and imagery
 
+### Mandatory ImageGen use for every GUI image and icon
+
+- Always use ImageGen to create or revise every image and every icon used in the GUI, including goods, resources, population tiers, navigation, status indicators, and speed controls.
+- Generate each distinct image or icon individually. A composed screen mockup or a generic component reference does not satisfy this requirement for the individual images and icons it contains.
+- Use the selected ImageGen artwork in the implemented GUI. Do not substitute manually drawn Slate/C++ shapes, improvised SVGs, font glyphs, emoji, stock icons, or placeholder symbols for the generated icon artwork.
+- Use built-in ImageGen by default. Use an explicit API/CLI workflow only when the user authorizes it. If generation is unavailable, report the blocker instead of silently substituting another method.
+- Reuse an existing approved ImageGen asset when appropriate; preserve its source and prompt record. Save every new selected asset in the repository with its individual prompt, native dimensions, generation mode, and revision notes.
+- Inspect each image and icon at its intended native display size and verify the assembled GUI visually. Passing layout or behavior tests alone does not establish production visual quality.
+- Continue to implement layout, dynamic text, values, tooltips, hit targets, focus states, and interactions natively in UMG/Slate. Native widget implementation does not exempt its images or icons from ImageGen generation.
+- The no-resampling, transparency, style consistency, and asset-validation rules in this brief and UIAssetWorkflow.md still apply. This requirement supersedes earlier guidance permitting GUI icons to be replaced with manually drawn native or vector symbols unless the user explicitly authorizes an exception.
+
 ### Icon style
 
 - Strong silhouette at 20–24 px.
 - Slightly engraved/inked character at large sizes, flat at small sizes.
 - Consistent three-quarter or profile view by category.
-- Goods use literal objects: grain sheaf, barrel, fish, plank, tool.
+- Goods use literal objects: grain sheaf, hop cones, malt sack, empty barrel, beer vessel, fish, plank, tool.
+- Beer-chain building cards use distinct literal silhouettes for the lumber camp, hop farm, malt house, cooperage, and brewery; their labels and native state treatments remain separate from the artwork.
 - Systems use abstract symbols only when common: gear, route arrow, scales, hourglass.
 - Never distinguish two goods only by color.
 
@@ -684,3 +696,206 @@ The generated images are visual direction references, not production-ready layou
 ### European trade map
 
 ![European trade map reference](Images/UI/hansa-ui-trade-map.png)
+
+
+### EMVP-P21 implementation anchor
+
+The shared native component contract and selected ImageGen references are recorded
+in [EnhancedMvpUiSystem.md](Development/EnhancedMvpUiSystem.md). The adopted project
+fonts are Source Serif 4 Semibold (headings and tabular Data), Atkinson Hyperlegible
+Regular (Body/Caption), and Noto Sans Symbols 2 (legacy symbol fallback). Existing
+palette, spacing, accessibility and responsive rules above remain authoritative.
+
+
+### Production-unit inspector anchor (2026-09-09)
+
+The approved [bakery panel](Images/UI/Bakery/bakery--panel--baking--1024x1536--v1.png)
+extends the existing inspector family to farms, mills, bakeries and generic recipe
+units. Preserve its navy identity header, engraved good ports around a batch ring,
+recipe band, stock/reservation ledger, workforce, production record and causal
+card. Main actions are pause/resume, storage, production chain, pin and frame.
+Secondary details are available through the header information control.
+
+The ring represents batch progress, never productivity. Available input excludes
+reservations; reserved-for-this-batch belongs to this unit, and output stock is
+separate from lifetime batch output. Unknown inventory is explicitly unavailable.
+Native geometry and shared typography/palette implement the reference within the
+existing responsive host. At smaller sizes or large text, retain readable controls
+with scrolling and focus reveal. Never resample the reference or source imagery.
+See [implementation and verification](Development/ProductionInspectorImplementation.md).
+
+
+### Compact production inspector revision (2026-09-10)
+
+The user's latest production inspector direction supersedes the tall ledger
+layout above. Default production cards are 320 by 480 Slate units at 1080p,
+anchored bottom-right above the toolbar, bounded by available viewport height.
+A restrained original Hansa worker engraving sits in a linen/brass arch above
+the navy production-name header. The default body contains the input-good icons,
+animated batch ring and output-good icons, with quantities and brief state text.
+Pause/Details controls precede a compact coin/labor footer. Existing stock,
+reservation, workforce breakdown, causal history and secondary actions expand
+under Details. No second palette or font family is introduced.
+
+Hovering the batch circle opens a navy/brass popup showing total batch duration
+at 1x and current percent completed. Unknown operating cost remains a blank value
+as explicitly requested; no construction cost, input-price estimate or invented
+upkeep is substituted. Labor displays the actual required workforce and exposes
+its allocated/required tier breakdown in a tooltip and Details. The initial
+portrait is shared across bread-chain units. This request authorizes production
+worker portrait decoration above the operational data.
+
+See [compact panel component record](Development/CompactProductionInspector.md).
+
+
+### Product construction tray revision (2026-09-10)
+
+Bottom construction categories use icon-only native glyph buttons with localized
+name tooltips and semantic/controller labels. Production opens compact end-good
+selectors. Clicking Bread opens an above-row recipe panel: Farm, Mill, Bakery.
+The same authored chain metadata drives Fish and Planks. Compact native building
+tiles keep detailed costs, footprint, labor and availability in tooltips.
+Select a building, move to preview its ghost, then press to construct. Holding
+and moving stamps validated nonoverlapping buildings along the mouse stroke;
+release stops the stroke and retains selection for another click. Escape cancels.
+Road drawing retains its connected path preview and release-to-build behavior.
+See [component inventory and references](Development/ProductConstructionTray.md).
+
+
+### Residence inspector (2026-09-10)
+
+Residences use a compact native inspector with an original citizen portrait above
+the navy identity header, then current residents / maximum house capacity and
+individual citizen needs. Each need has a good/service icon, text label, numeric
+fulfillment percentage and bar. Tooltip details distinguish access, affordability
+and reliability. Values come from the authoritative per-residence cohort, never
+city averages. Unevaluated needs show a dash and explicit pending tooltip. Default
+size is 320x520 Slate units, constrained by available height; scrolling and existing
+accessibility preferences retain all needs/actions. Detailed causes and existing
+upgrade/frame/pin actions remain under Details. See Development/ResidenceInspector.md.
+
+### Construction header removal (2026-09-10)
+
+The construction tray has no top instruction/Collapse bar. Building choices begin
+immediately at the top of the expanded tray. Placement hints remain in building
+tooltips; existing category toggles and Escape handle closing/cancellation.
+
+### Camera drag control (2026-09-10)
+
+Hold the right mouse button over the world and move the pointer to translate the
+camera opposite to the pointer: dragging right moves left, dragging up moves backward.
+Movement follows camera yaw and remains within city bounds. A stationary held
+pointer does not pan; edge scrolling is suppressed during the gesture.
+Release, leaving the world viewport, or losing application focus ends the drag.
+Right press retains construction cancellation. Keyboard/controller panning remains
+the non-drag alternative. Drag sensitivity is authored on the camera pawn.
+
+### Selected market demand inspector (2026-09-10)
+
+Selecting a completed market opens a compact native linen inspector with a navy
+identity header, labeled product glyphs, and rounded supply-fulfillment bars.
+Show the numeric percentage and supplied / required units beside each good.
+The scope is explicitly city-wide, using a rolling window of 30 game days:
+sum consumed / sum required per good across all recorded consumption ticks.
+Show the actual recorded duration until a full window is available. Do not substitute stock, incoming
+shipments, population satisfaction, or an unweighted mean of residence percentages.
+Services and prospective needs in empty homes are excluded. Pending evaluation,
+no demand, and unavailable city data are explicit; none means fully supplied.
+Use existing typography/palette and focusable rows with a visible outline;
+Details exposes causes, related market view, history and existing actions.
+See [component record](Development/MarketInspector.md).
+
+
+### Top menu revision (2026-09-10)
+
+The left group shows icons followed by total player money, signed money change
+across 30 game days, and total population in the current city. The center top row
+shows Bread alone by default, centered as its existing bread image plus a signed
+supply-minus-demand rate (units per game day). Empty product slots do not render
+or occupy space; directly below are laborer and wealthy citizen resident counts. The
+current two-tier scenario maps wealthy citizens to artisans, explained in the
+tooltip. Top-right controls use individually ImageGen-generated pause, play,
+double and triple triangle icons, with tooltips explaining pause, 1x, 4x and 12x; selection and focus remain
+visible. City/date and existing navigation remain in a secondary row. Every metric
+has an explanatory tooltip. Unknown values display a dash. See Development/TopMenu.md.
+
+
+### Three separate top panels (2026-09-10)
+
+The top menu uses three independent compact navy/brass panels anchored top-left,
+top-center and top-right, with transparent world-visible gaps. No full-width
+surface connects them. Preserve all existing content and tooltips: money, monthly
+change, population and city controls left; products, citizen tiers and date/time
+center; speed, connection and navigation right. Navigation wraps inside its panel
+at compact widths and large text. Existing artwork replacement remains governed
+by the mandatory ImageGen rule and the unresolved native-size constraint.
+
+## GUI ImageGen resizing exception — approved 2026-09-10
+
+For GUI icons and GUI images, the user authorizes proportional resizing of genuine ImageGen artwork when the generator cannot deliver the requested native display size. Request the closest practical size first. Preserve the original generated master and aspect ratio; transparent-margin cropping and high-quality proportional resampling into documented display-size variants are allowed. Review each result at actual display size, including small UI scale, on its intended background. Regenerate unreadable artwork rather than accepting blurred details. Never stretch, squash, or replace the generated artwork with manually drawn icons. Record generated dimensions, crop, output dimensions, prompt, and quality review. This exception supersedes conflicting no-resampling and native/vector icon advice in this document for GUI images only. Other game imagery retains its existing rules.
+
+### Compact Road control (2026-09-10)
+
+The Roads tray uses an icon-only button sized to its existing 48-unit icon.
+Its localized name, costs and placement hints remain in the tooltip. The complete
+secondary action panel (Grid, Road overlay, Favorite, Compare, Rotate, Repeat,
+Build here and Cancel) is collapsed for Roads and excluded from controller focus.
+Road path drawing, release-to-build, keyboard shortcuts and Escape remain available.
+This is a native layout correction reusing the existing artwork and shared states;
+no new raster asset or visual reference is introduced.
+
+### Compact building controls for all categories (2026-09-10)
+
+Apply the compact Road control revision to every building category, including
+Residences, Production, Storage, Harbor and Civic/Market. All building choices
+are 48x48 icon-only buttons using existing artwork, with names and details in
+tooltips. No category displays the secondary action row. Existing hover, pressed,
+selected, disabled, warning/error and focus outlines remain native shared states.
+
+Ctrl + right-button drag rotates the camera around its current focus using
+horizontal pointer movement (right increases yaw, left decreases it). Either Ctrl
+key works; pressing/releasing Ctrl during a held drag switches rotation/panning.
+Vertical movement changes pitch (2026-09-12 user clarification): dragging up tilts
+the viewing direction upward; dragging down tilts it downward. Pitch starts at
+-55 degrees and is clamped to -80 through -15 degrees to avoid flipping or looking
+below the focus plane. Diagonal drags change yaw and pitch independently, preserving
+the current focus and zoom distance. Rotation suppresses edge scrolling
+and ends on the same release, viewport-leave and focus-loss conditions as panning.
+Rotation sensitivity is authored through DragRotationDegreesPerPixel on the pawn.
+
+### Construction building inspector (2026-09-11)
+
+Under-construction buildings reuse the ordinary compact building inspector shell
+and existing worker portrait. Its animated circle shows elapsed / total
+construction ticks, with construction wording and a build-time tooltip. Hide
+production-only ports, records, cost/labor footer and pause controls during
+construction. Details retains cancellation refunds and the confirmed cancel
+action. Completion returns to the building's ordinary operating inspector.
+This is reuse of the approved component design and artwork; no new raster asset.
+
+### Residence rolling consumption (2026-09-11)
+
+Residence product rows now use that residence's actual consumed / required
+quantities over the last 30 game days, with a percentage and quantity caption.
+The state area shows recorded duration until a full window exists. Empty homes
+show no demand or pending history, never a prospective product percentage.
+Basic services retain their current metric with an explicit current-service
+label; no product quantities are invented for services. Reuse the approved
+portrait, icons, typography, bars, shell and interactions. The normal residence
+host is 320x600 Slate units, bounded by available viewport height and scrollable;
+quantity rows and controller focus remain reachable at compact resolutions.
+See Development/ResidenceRollingFulfillment.md.
+
+
+### Production product stock popups (2026-09-11)
+
+Hovering or keyboard/controller focusing any input or output good reuses the
+compact inspector's navy/brass tooltip with native Chalk Body text:
+`{quantity} in storage` and `{quantity} in markets` on separate lines.
+Storage counts the selected building's physical input/output buffers, including
+reserved goods; a shared buffer is counted once. Markets counts the city's shared
+market pools plus actual loaded cargo travelling to/from those pools, including
+local deliveries and intercity vehicles. Pending pickups remain in source stock;
+completed deliveries count at their destination. Unknown quantities say Unavailable.
+The popup refreshes with the presenter while open. Existing artwork and native
+surface/focus styles are reused; no raster or new visual family is introduced.

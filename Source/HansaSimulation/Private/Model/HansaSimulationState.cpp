@@ -77,7 +77,8 @@ namespace Hansa::Simulation
 	}
 
 	THansaValueResult<FHansaSimulationState> FHansaSimulationState::TryCreate(
-		FHansaSimulationInitialization Initialization)
+		FHansaSimulationInitialization Initialization,
+		TSharedPtr<const FHansaPlacementTopology> ImmutablePlacementTopology)
 	{
 		const THansaValueResult<FHansaSimulationClock> ValidClock = FHansaSimulationClock::TryCreate(
 			Initialization.Clock.GetVersion(),
@@ -102,7 +103,7 @@ namespace Hansa::Simulation
 			return THansaValueResult<FHansaSimulationState>::Failure(ValidInventoryLedger.Error);
 		}
 		THansaValueResult<FHansaPlacementState> ValidPlacement = FHansaPlacementState::TryCreate(
-			MoveTemp(Initialization.Placement));
+			MoveTemp(Initialization.Placement), MoveTemp(ImmutablePlacementTopology));
 		if (!ValidPlacement)
 		{
 			return THansaValueResult<FHansaSimulationState>::Failure(ValidPlacement.Error);
@@ -336,6 +337,26 @@ namespace Hansa::Simulation
 					!ContainsBuilding(Initialization.Buildings, Inventory.BuildingId)))
 			{
 				return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
+			}
+			if (Inventory.OwnerKind == EHansaInventoryOwnerKind::City && Inventory.BuildingId.IsValid())
+			{
+				const FHansaBuildingState* MarketBuilding = Initialization.Buildings.FindByPredicate(
+					[&Inventory](const FHansaBuildingState& Building)
+					{
+						return Building.Id == Inventory.BuildingId &&
+							Building.DefinitionId.ToString() == TEXT("Building.Market");
+					});
+				const FHansaPlacedBuildingRecord* MarketPlacement =
+					ValidPlacement.Value.FindPlacement(Inventory.BuildingId);
+				if (MarketBuilding == nullptr || MarketPlacement == nullptr)
+				{
+					return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
+				}
+				if (MarketPlacement->Spec.CityId != Inventory.CityId ||
+					MarketPlacement->Spec.BuildingDefinitionId.ToString() != TEXT("Building.Market"))
+				{
+					return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
+				}
 			}
 		}
 		for (FHansaVehicleState& Vehicle : Initialization.Vehicles)

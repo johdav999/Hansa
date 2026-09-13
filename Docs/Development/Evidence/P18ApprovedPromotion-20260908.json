@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "prompt": "P18",
+  "approval": "Contiune and implement MPVP-P18 so it i completed. I also approve to prompte it",
+  "approvedOn": "2026-09-08",
+  "productionRoot": "/Game/Mesh/hansa-dirt-road",
+  "status": "completed-promoted-current-mvp-contract",
+  "catalogVersion": 7,
+  "registryHash": "22248A11101B32B0",
+  "economicsUnchanged": true,
+  "compatibility": "new-game-required",
+  "previousRegistryHash": "483D86D8C5549199",
+  "stagingDependenciesFound": 0,
+  "assets": [
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/BP_Road_Review",
+      "destination": "/Game/Mesh/hansa-dirt-road/BP_Road_Review",
+      "class": "Blueprint",
+      "sourceSha256": "116863191FB68AE93DD1F42AA1FB471056938E3BF356486366C231F372DE993C",
+      "sha256": "BEA17F290526B76660482AFE7BF914FEC9D1E6B1BCC9042D5DA85D468BB7D9EE",
+      "cookedSha256": "47378B1DD406257E6EAE3B54715E5AFCDC4A92543FD52FF3E5AB6033D4828C9B"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/Meshes/SM_HansaRoad_TJunction",
+      "destination": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_TJunction",
+      "class": "StaticMesh",
+      "sourceSha256": "75156725F2DBA7C687F9FF6B6F2C7AA0F7F72E0555CE0F74B98D24A59FC9D660",
+      "sha256": "11E0FF2DE8B590A36805A9CE2C79B2507514CB181CF837A186C9CCD5B9FE7CEA",
+      "cookedSha256": "2DB00572C58B4F902A00B2E6B293318F2D2F49FEE6F52E10E5AE990A07050D77"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/Materials/M_Road_Earth",
+      "destination": "/Game/Mesh/hansa-dirt-road/Materials/M_Road_Earth",
+      "class": "Material",
+      "sourceSha256": "A07C6468A5B0D93DDE3A688D9B73570E16C175DE6D6200B2AF1474C3DC73FDBC",
+      "sha256": "A74C0BF6EA7907ACB0566D171F47B8F16E27D023526D0C9E55D949D925BD8802",
+      "cookedSha256": "911A25327545F990547AA7A5E893D780DB0E495D8B9084BC2AAA57507CF400E6"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/Textures/T_Road_Roughness",
+      "destination": "/Game/Mesh/hansa-dirt-road/Textures/T_Road_Roughness",
+      "class": "Texture2D",
+      "sourceSha256": "5BA45073B98BB9CB5B393892722CCB230886972B892E5465EE919B7CB7A1ED5F",
+      "sha256": "E46DD4E39841BF650574070FEAF00BAA1B7F348D04F9B4E87DFF95B3B859BCCA",
+      "cookedSha256": "4448B69F82D869DB8A8B0B250BF350D433BA0183A18C37E2E13178E1B68A8729"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/Textures/T_Road_Normal",
+      "destination": "/Game/Mesh/hansa-dirt-road/Textures/T_Road_Normal",
+      "class": "Texture2D",
+      "sourceSha256": "A8157A219922A7F1E9891223321504568B9AA2C42478D25CF2F2044D9D9BE78F",
+      "sha256": "DC13D02257CC819E5BE6B7A15974609458BCC23C8B0531BCCE9B6B37860BDAE5",
+      "cookedSha256": "80700F673208081CD97E8DC3AED5FEC4F6603F0D31753464C33D64B243A2E0FE"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/Textures/T_Road_BaseColor",
+      "destination": "/Game/Mesh/hansa-dirt-road/Textures/T_Road_BaseColor",
+      "class": "Texture2D",
+      "sourceSha256": "3E7277B34FBF7D4EE8E0A3BC302644D65DD5DC97C21D3F073F4D92B0F97A2616",
+      "sha256": "6727D532A551F5CF1643D8B2F1F04E133CC698FAB01B1F16BA2436A9B0E5BBD4",
+      "cookedSha256": "05F4BB5DCCD6C1A31D53C16E5518E587145F21DA4E0D754B1D4CC5196B3C0765"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/Meshes/SM_HansaRoad_Straight",
+      "destination": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Straight",
+      "class": "StaticMesh",
+      "sourceSha256": "B553C1BFAE1DB80D709CD8B0E5545081FB6D17A0259CA03F900B7F1DEEA8E74A",
+      "sha256": "94A8CD25DEEB22AE8AA509C33D7D3F2D770834A4E2E5D1BB40DCFEAE188CA410",
+      "cookedSha256": "914ADD928230250E7973A6187983412EF63714202695BD80D983E3FED39387A3"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/Meshes/SM_HansaRoad_Isolated",
+      "destination": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Isolated",
+      "class": "StaticMesh",
+      "sourceSha256": "8410F4002B8D2759ED7680D65AC95B498CBE42EA02BA6525F4E58120B275F4E6",
+      "sha256": "FFB123164D0C99579BD4EFB3557D8DE7AB287D37DFF27700CE2B305996883E46",
+      "cookedSha256": "925D517F7C0423DBE1FB0C99EE8A839846B214F0B13FB2B2C321B3358EC1F1B0"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/Meshes/SM_HansaRoad_End",
+      "destination": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_End",
+      "class": "StaticMesh",
+      "sourceSha256": "3A3A35C6204B3E1D4EF77147FFAC1E193FBE2CE7DE9B4DB4E64F07B65CED238E",
+      "sha256": "F00A9C1492DB473F32FEE32C424A5D03B1317ECD97E5FA9E0FED00DFA2E8B666",
+      "cookedSha256": "C43B6BD67BA08EBF9B8CBA8E63E409ED3297679C63529386023A63F61EA91AD1"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/Meshes/SM_HansaRoad_Crossroads",
+      "destination": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Crossroads",
+      "class": "StaticMesh",
+      "sourceSha256": "34E2AC31B7830D6657C9244F99B0332F5F26DA302E293C57A346578AEF6FAB5E",
+      "sha256": "A5A9055D43E02F46A4F7D2EA7FF6DF0DDDC4177B0563F9ED0B4A26D4829A1FEE",
+      "cookedSha256": "7E29900AE9A7A35C68787602093373932964CD21EDE0523E8B7436CF4E067C5E"
+    },
+    {
+      "source": "/Game/Hansa/Generated/Staging/Road_P18/Meshes/SM_HansaRoad_Corner",
+      "destination": "/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Corner",
+      "class": "StaticMesh",
+      "sourceSha256": "235F20D320F45C61C3B3C70105314E15FBC12D97357BC5CA7403A3DB36C693FB",
+      "sha256": "A4DEBB666FE2F97FCEF173A0970B27169C201769E3AED4187431E0C954C066ED",
+      "cookedSha256": "B690DDDC12218C23BEDA94BBCB997EE849207D7D55678B5DEAC0FBE575055DED"
+    }
+  ],
+  "definitions": [
+    {
+      "stableId": "Building.Road",
+      "path": "/Game/Hansa/Core/Buildings/DA_Building_Road",
+      "authoredRevision": 2,
+      "contentHash": "64FB950BBE107411",
+      "sha256": "2912B896FB43C9B1C0E042A1630FB914D9079982CECB952AA20EDAAEDE2059D5"
+    }
+  ],
+  "groundAmendment": "Final source/package hashes include 75 cm land datum and 10 cm shore-rise material amendment; initial plan retained as history.",
+  "validation": {
+    "debugGameEditorBuild": "passed",
+    "developmentEditorBuild": "passed",
+    "targetedAutomation": {
+      "passed": 18,
+      "failed": 0,
+      "testsWithWarnings": 1
+    },
+    "manifestAfterUpdate": "passed",
+    "groundDetailNative1920x1080": "passed and inspected",
+    "shippingBinary": "passed",
+    "productionReferences": "passed",
+    "cookedPackages": "passed; all eleven road packages present",
+    "finalIoStoreContainerAudited": false,
+    "evidenceRoot": "SourceArt/Generated/Roads/HansaRoad_P18_20260908/evidence"
+  },
+  "limitations": [
+    "Current MVP ground and three shore boxes only; not arbitrary Landscape conformance.",
+    "No new weather simulation or gate rule.",
+    "Existing world dressing and overall MVP readiness outside P18.",
+    "Actual viewport drag reports existing glyph fallback/render-thread warnings.",
+    "Cooker-only metadata is recorded separately, not shipped-package evidence."
+  ]
+}

@@ -15,10 +15,12 @@ namespace Hansa::Simulation
 	{
 	public:
 		TArray<uint8> Bytes;
+		uint32 FormatVersion = FHansaSaveEnvelope::CurrentFormatVersion;
 		bool bReading = false;
 		bool bValid = true;
 		int32 Offset = 0;
 		int64 AllocationBudget = FHansaSaveEnvelope::MaximumBytes * 4LL;
+		TArray<FHansaPlacementMapInitialization> LegacyPlacementMaps;
 
 		FHansaSaveCodec() = default;
 		explicit FHansaSaveCodec(TConstArrayView<uint8> Input) : bReading(true) { Bytes.Append(Input); }
@@ -75,7 +77,8 @@ namespace Hansa::Simulation
 			else if constexpr (std::is_same_v<T, EHansaLogisticsPriority>) Max = 3;
 			else if constexpr (std::is_same_v<T, EHansaLogisticsRequestStatus>) Max = 2;
 			else if constexpr (std::is_same_v<T, EHansaLogisticsBottleneck>) Max = 6;
-			else if constexpr (std::is_same_v<T, EHansaLogisticsJobStatus>) Max = 2;
+			else if constexpr (std::is_same_v<T, EHansaLogisticsJobStatus>) Max = 4;
+			else if constexpr (std::is_same_v<T, EHansaLogisticsRoadPathFailure>) Max = 13;
 			else if constexpr (std::is_same_v<T, EHansaCommandOrigin>) Max = 3;
 			else if constexpr (std::is_same_v<T, EHansaScenarioOutcome>) Max = 2;
 			else if constexpr (std::is_same_v<T, EHansaGameplayCommandType>) Max = 12;
@@ -146,6 +149,66 @@ namespace Hansa::Simulation
 #include "HansaSaveFields.inl"
 #include "HansaSaveValidation.inl"
 
+		static bool MigrateV5LocalLogistics(
+			FHansaSimulationState& State,
+			const FHansaEconomicRegistry* Registry)
+		{
+			const int64 CurrentTick = State.Clock.GetTick().GetValue();
+			for (FHansaLogisticsJobState& Job : State.LocalLogisticsJobs)
+			{
+				const int32 LegacyTravelTicks = static_cast<int32>(FMath::Clamp<int64>(
+					Job.DeliveryTick.GetValue() - Job.PickupTick.GetValue(), 1, MAX_int32));
+				Job.ElapsedTravelTicks = Job.Status == EHansaLogisticsJobStatus::AwaitingPickup
+					? 0
+					: static_cast<int32>(FMath::Clamp<int64>(
+						CurrentTick - Job.PickupTick.GetValue(), 0, LegacyTravelTicks));
+				Job.RemainingTravelTicks = Job.Status == EHansaLogisticsJobStatus::Completed
+					? 0 : FMath::Max(1, LegacyTravelTicks - Job.ElapsedTravelTicks);
+				const FHansaLogisticsRoadPathProjection Path = FHansaLocalLogisticsQueries::QueryRoadPath(
+					Job.SourceInventoryId, Job.DestinationInventoryId,
+					State.InventoryLedger.CreateReadOnlyAccess(), State.Placement, State.Buildings, Registry);
+				if (Path.bConnected)
+				{
+					Job.SelectedMarketBuildingId = Path.SelectedMarketBuildingId;
+					Job.RouteCells = Path.RouteCells;
+					Job.RoadDistanceCells = Path.RoadDistanceCells;
+					const int32 NewTravelTicks = static_cast<int32>(FMath::Min<int64>(MAX_int32,
+						FMath::Max<int64>(1, static_cast<int64>(Path.RoadDistanceCells) *
+							State.LocalLogisticsSettings.TicksPerRoadCell)));
+					if (Job.Status != EHansaLogisticsJobStatus::Completed)
+					{
+						Job.RemainingTravelTicks = FMath::Max(1, NewTravelTicks - Job.ElapsedTravelTicks);
+					}
+				}
+				else if (Job.Status == EHansaLogisticsJobStatus::AwaitingPickup)
+				{
+					if (Job.SourceReservationId.IsValid())
+					{
+						const FHansaInventoryTransactionResult Release = State.InventoryLedger.TryReleaseReservation(
+							Job.SourceReservationId, State.Clock.GetTick(),
+							State.InventoryLedger.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
+						if (!Release.IsSuccess()) return false;
+						Job.SourceReservationId = FHansaReservationId();
+					}
+					Job.Status = EHansaLogisticsJobStatus::PausedAwaitingPickup;
+					Job.PauseReason = Path.Failure;
+				}
+				else if (Job.Status == EHansaLogisticsJobStatus::InTransit)
+				{
+					Job.Status = EHansaLogisticsJobStatus::PausedInTransit;
+					Job.PauseReason = Path.Failure;
+				}
+				if (Job.Status == EHansaLogisticsJobStatus::InTransit ||
+					Job.Status == EHansaLogisticsJobStatus::PausedInTransit ||
+					Job.Status == EHansaLogisticsJobStatus::Completed)
+				{
+					Job.SourceReservationId = FHansaReservationId();
+				}
+			}
+			return true;
+		}
+
+		void Value(FHansaSaveRouteLabel& V) { Value(V.RouteValue); Value(V.Label); }
 		void Value(FHansaGameplayCommand& V)
 		{
 			Value(V.Header); Value(V.Type);
@@ -181,15 +244,24 @@ namespace Hansa::Simulation
 			Codec.Value(Snapshot.State); Codec.Value(Snapshot.Players);
 			Codec.Value(Snapshot.NextCommandId); Codec.Value(Snapshot.NextBuildingId);
 			Codec.Value(Snapshot.PendingCommands); Codec.Value(Snapshot.Scenario);
+			if (Codec.FormatVersion >= 3) Codec.Value(Snapshot.RouteLabels);
 		}
 		bool Validate(const FHansaSaveSnapshot& S, const FHansaSimulationDefinitionContext& D)
 		{
-			if (!S.State.IsInitialized() || !D.IsValid() || !FHansaSaveCodec::ValidateState(S.State)) return false;
+			if (!S.State.IsInitialized() || !D.IsValid() || !FHansaSaveCodec::ValidateState(S.State, D)) return false;
 			FDateTime Timestamp;
 			if (S.BuildVersion.IsEmpty() || !FDateTime::ParseIso8601(*S.SavedUtc, Timestamp) || !S.SavedUtc.EndsWith(TEXT("Z"))) return false;
 			const auto View = S.State.CreateReadOnlyAccess(D);
 			if (S.NextCommandId != 0 && S.NextCommandId <= View.GetLastProcessedCommandId().GetValue()) return false;
 			for (const auto& B : View.GetBuildings()) if (S.NextBuildingId != 0 && S.NextBuildingId <= B.Id.GetValue()) return false;
+			TSet<uint64> LabelIds;
+            for (const auto& L : S.RouteLabels)
+            {
+                if (!L.RouteValue || LabelIds.Contains(L.RouteValue) || L.Label.IsEmpty() || L.Label.Len() > 48 || L.Label.TrimStartAndEnd() != L.Label) return false;
+                for (TCHAR C : L.Label) if (C < 32 || C == 127) return false;
+                if (!View.QueryRoute(FHansaRouteId::TryCreate(L.RouteValue).Value).IsSet()) return false;
+                LabelIds.Add(L.RouteValue);
+            }
 			TSet<uint64> Principals;
 			for (const auto& Player : S.Players)
 			{
@@ -243,9 +315,10 @@ namespace Hansa::Simulation
 		uint32 Pipeline = FHansaSimulationState::CurrentSystemPipelineVersion, Fingerprint = FHansaSimulationState::DeterminismFingerprintVersion;
 		uint64 Content = Definitions.GetDefinitionHash();
 		uint64 Registry = Definitions.GetEconomicRegistry() ? Definitions.GetEconomicRegistry()->GetRegistryHash() : 0;
+		uint64 PlacementTopology = Copy.State.CreateReadOnlyAccess(Definitions).GetPlacement().GetTopologyHash();
 		FString Scenario = Definitions.GetScenarioId().ToString();
 		Header.Value(M); Header.Value(Format); Header.Value(Simulation); Header.Value(Pipeline); Header.Value(Fingerprint);
-		Header.Value(Content); Header.Value(Registry); Header.Value(Scenario);
+		Header.Value(Content); Header.Value(Registry); Header.Value(PlacementTopology); Header.Value(Scenario);
 		Header.Value(Copy.BuildVersion); Header.Value(Copy.SavedUtc); Header.Value(Copy.DisplayName);
 		Header.Value(Copy.MigrationHistory);
 		Header.Value(Result.AuthoritativeHash); Header.Value(Result.CampaignHash);
@@ -268,14 +341,16 @@ namespace Hansa::Simulation
 		uint32 MagicValue = 0; FHansaSaveMetadata Candidate;
 		Header.Value(MagicValue); Header.Value(Candidate.FormatVersion);
 		if (MagicValue != Magic) return Failure(EHansaSaveError::CorruptData, TEXT("File is not a Hansa save."));
-		if (Candidate.FormatVersion != 1 && Candidate.FormatVersion != CurrentFormatVersion)
+		if (Candidate.FormatVersion < 1 || Candidate.FormatVersion > CurrentFormatVersion)
 		{
 			OutMetadata.FormatVersion = Candidate.FormatVersion;
 			FHansaSaveResult Result = Failure(EHansaSaveError::UnsupportedFormat, TEXT("Save format is unsupported; use a compatible game build."));
 			Result.SourceFormatVersion = Candidate.FormatVersion; return Result;
 		}
 		Header.Value(Candidate.SimulationVersion); Header.Value(Candidate.PipelineVersion); Header.Value(Candidate.FingerprintVersion);
-		Header.Value(Candidate.ContentHash); Header.Value(Candidate.RegistryHash); Header.Value(Candidate.ScenarioId);
+		Header.Value(Candidate.ContentHash); Header.Value(Candidate.RegistryHash);
+		if (Candidate.FormatVersion >= 7) Header.Value(Candidate.PlacementTopologyHash);
+		Header.Value(Candidate.ScenarioId);
 		Header.Value(Candidate.BuildVersion); Header.Value(Candidate.SavedUtc);
 		if (Candidate.FormatVersion == 1) Candidate.DisplayName = Candidate.ScenarioId;
 		else { Header.Value(Candidate.DisplayName); TArray<FString> MigrationHistory; Header.Value(MigrationHistory); }
@@ -300,16 +375,37 @@ namespace Hansa::Simulation
 		uint32 M = 0, Format = 0, Simulation = 0, Pipeline = 0, Fingerprint = 0;
 		Header.Value(M); Header.Value(Format);
 		if (M != Magic) return Failure(EHansaSaveError::CorruptData, TEXT("File is not a Hansa save."));
-		if (Format != 1 && Format != CurrentFormatVersion) return Failure(EHansaSaveError::UnsupportedFormat, TEXT("Save format is unsupported; use a compatible game build."));
+		if (Format < 1 || Format > CurrentFormatVersion) return Failure(EHansaSaveError::UnsupportedFormat, TEXT("Save format is unsupported; use a compatible game build."));
 		Header.Value(Simulation); Header.Value(Pipeline); Header.Value(Fingerprint);
-		if (Simulation != FHansaSimulationClock::CurrentSimulationVersion || Pipeline != FHansaSimulationState::CurrentSystemPipelineVersion || Fingerprint != FHansaSimulationState::DeterminismFingerprintVersion)
+		const bool bLegacyConsumption = Format < 4 && Fingerprint == 16;
+        const bool bLegacyResidenceConsumption = Format == 4 && Fingerprint == 17;
+		const bool bLegacyLocalLogistics = Format == 5 && Fingerprint == 18;
+		const bool bLegacyTopology = Format == 6 && Fingerprint == 19;
+        if (Simulation != FHansaSimulationClock::CurrentSimulationVersion || Pipeline != FHansaSimulationState::CurrentSystemPipelineVersion ||
+			(!bLegacyConsumption && !bLegacyResidenceConsumption && !bLegacyLocalLogistics && !bLegacyTopology &&
+                (Format != CurrentFormatVersion || Fingerprint != FHansaSimulationState::DeterminismFingerprintVersion)))
 			return Failure(EHansaSaveError::IncompatibleSimulation, TEXT("Save simulation rules differ from this build; an explicit migration is required."));
-		uint64 Content = 0, Registry = 0; FString Scenario;
-		Header.Value(Content); Header.Value(Registry); Header.Value(Scenario);
-		if (!Definitions.IsValid() || Content != Definitions.GetDefinitionHash() || Registry != (Definitions.GetEconomicRegistry() ? Definitions.GetEconomicRegistry()->GetRegistryHash() : 0))
+		uint64 Content = 0, Registry = 0, PlacementTopologyHash = 0; FString Scenario;
+		Header.Value(Content); Header.Value(Registry);
+		if (Format >= 7) Header.Value(PlacementTopologyHash);
+		Header.Value(Scenario);
+		if (!Definitions.IsValid())
 			return Failure(EHansaSaveError::IncompatibleContent, TEXT("Save content/registry hash differs; install the original content or an explicit definition migration."));
+		const uint64 CurrentRegistryHash = Definitions.GetEconomicRegistry()
+			? Definitions.GetEconomicRegistry()->GetRegistryHash()
+			: 0;
+		TOptional<FString> DefinitionMigration;
+		if (Content != Definitions.GetDefinitionHash() || Registry != CurrentRegistryHash)
+		{
+			DefinitionMigration = Definitions.FindCompatibleDefinitionMigration(Content, Registry);
+			if (!DefinitionMigration.IsSet())
+				return Failure(EHansaSaveError::IncompatibleContent, TEXT("Save content/registry hash differs; install the original content or an explicit definition migration."));
+		}
 		if (Scenario != Definitions.GetScenarioId().ToString()) return Failure(EHansaSaveError::IncompatibleScenario, TEXT("Save belongs to a different scenario."));
+		if (Format >= 7 && PlacementTopologyHash != Definitions.GetPlacementTopologyHash())
+			return Failure(EHansaSaveError::IncompatibleContent, TEXT("Save placement topology differs; install the original map definition or an explicit topology migration."));
 		FHansaSaveSnapshot Candidate; FHansaSaveResult Result; Result.SourceFormatVersion = Format;
+		if (DefinitionMigration.IsSet()) Result.AppliedMigrations.Add(DefinitionMigration.GetValue());
 		Header.Value(Candidate.BuildVersion); Header.Value(Candidate.SavedUtc);
 		if (Format == 1)
 		{
@@ -326,11 +422,83 @@ namespace Hansa::Simulation
 		TArray<uint8> Uncompressed; Uncompressed.SetNumUninitialized(Size);
 		if (!FCompression::UncompressMemory(NAME_Zlib, Uncompressed.GetData(), Size, Compressed.GetData(), Compressed.Num()) || HashBytes(Uncompressed) != Result.CampaignHash)
 			return Failure(EHansaSaveError::CorruptData, TEXT("Compressed save payload failed validation."));
-		FHansaSaveCodec Body(Uncompressed); Payload(Body, Candidate);
-		if (!Body.Finished() || !Validate(Candidate, Definitions) ||
+		FHansaSaveCodec Body(Uncompressed); Body.FormatVersion = Format; Payload(Body, Candidate);
+		if (Format < 7)
+		{
+			TSharedPtr<const FHansaPlacementTopology> LegacyTopology;
+			if (!Body.LegacyPlacementMaps.IsEmpty())
+			{
+				auto CreatedTopology = FHansaPlacementTopology::TryCreate(MoveTemp(Body.LegacyPlacementMaps));
+				if (!CreatedTopology)
+					return Failure(EHansaSaveError::CorruptData, TEXT("Legacy save placement topology is invalid."));
+				LegacyTopology = MakeShared<FHansaPlacementTopology>(MoveTemp(CreatedTopology.Value));
+			}
+			Candidate.State.Placement.Topology = LegacyTopology;
+			if (Candidate.State.Placement.GetTopologyHash() != Definitions.GetPlacementTopologyHash())
+				return Failure(EHansaSaveError::IncompatibleContent, TEXT("Legacy save placement topology differs; install the original map definition or an explicit topology migration."));
+		}
+		else
+		{
+			Candidate.State.Placement.Topology = Definitions.GetPlacementTopologyShared();
+		}
+		if (Format < 3) { Result.AppliedMigrations.Add(TEXT("Hansa.Save.2To3.EmptyCosmeticRouteLabels")); Candidate.MigrationHistory.Add(TEXT("Hansa.Save.2To3.EmptyCosmeticRouteLabels")); }
+		TOptional<FHansaSimulationDefinitionContext> SavedDefinitions;
+		const FHansaSimulationDefinitionContext* HashDefinitions = &Definitions;
+		if (DefinitionMigration.IsSet())
+		{
+			const auto CreatedSavedDefinitions = FHansaSimulationDefinitionContext::TryCreate(
+				Definitions.GetScenarioId(), Content);
+			if (!CreatedSavedDefinitions.IsSuccess())
+				return Failure(EHansaSaveError::IncompatibleContent, TEXT("The registered definition migration has an invalid source catalog hash."));
+			SavedDefinitions = CreatedSavedDefinitions.Value;
+			HashDefinitions = &SavedDefinitions.GetValue();
+		}
+		if (!Body.Finished() ||
 			Candidate.State.CreateReadOnlyAccess(Definitions).GetClock().GetVersion().GetValue() != Simulation ||
-			FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash() != Result.AuthoritativeHash)
+			(bLegacyConsumption ? FHansaStateHasher::ComputeLegacyV16(Candidate.State, *HashDefinitions) :
+				bLegacyResidenceConsumption ? FHansaStateHasher::ComputeLegacyV17(Candidate.State, *HashDefinitions) :
+				bLegacyLocalLogistics ? FHansaStateHasher::ComputeLegacyV18(Candidate.State, *HashDefinitions) :
+				bLegacyTopology ? FHansaStateHasher::ComputeLegacyV19(Candidate.State, *HashDefinitions) :
+				FHansaStateHasher::Compute(Candidate.State, *HashDefinitions)).GetOverallHash() != Result.AuthoritativeHash)
 			return Failure(EHansaSaveError::CorruptData, TEXT("Authoritative save records or round-trip hash are invalid."));
+		if (Format < 6)
+		{
+			if (!FHansaSaveCodec::MigrateV5LocalLogistics(Candidate.State, Definitions.GetEconomicRegistry()))
+				return Failure(EHansaSaveError::CorruptData, TEXT("Legacy logistics reservations could not be migrated safely."));
+			const FString Migration = TEXT("Hansa.Save.5To6.PersistLocalDeliveryRoutesAndPauses");
+			Result.AppliedMigrations.Add(Migration);
+			Candidate.MigrationHistory.Add(Migration);
+			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+		}
+		if (!Validate(Candidate, Definitions))
+			return Failure(EHansaSaveError::CorruptData, TEXT("Migrated authoritative save records are invalid."));
+        if (bLegacyConsumption)
+        {
+            const FString Migration = TEXT("Hansa.Save.3To4.StartConsumptionHistory");
+            Result.AppliedMigrations.Add(Migration);
+            Candidate.MigrationHistory.Add(Migration);
+            Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+        }
+		if (Format < 5)
+        {
+            const FString Migration = TEXT("Hansa.Save.4To5.StartResidenceConsumptionHistory");
+            Result.AppliedMigrations.Add(Migration);
+            Candidate.MigrationHistory.Add(Migration);
+            Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+		}
+		if (Format < 7)
+		{
+			const FString Migration = TEXT("Hansa.Save.6To7.MovePlacementTopologyToDefinitions");
+			Result.AppliedMigrations.Add(Migration);
+			Candidate.MigrationHistory.Add(Migration);
+			Candidate.State.Placement.Topology = Definitions.GetPlacementTopologyShared();
+			Candidate.State.InvalidateAllStateHashCaches();
+			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+		}
+		if (DefinitionMigration.IsSet())
+		{
+			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+		}
 		OutSnapshot = MoveTemp(Candidate);
 		return Result;
 	}
@@ -376,5 +544,3 @@ namespace Hansa::Simulation
 		OutEvaluator = MoveTemp(E); return true;
 	}
 }
-
-

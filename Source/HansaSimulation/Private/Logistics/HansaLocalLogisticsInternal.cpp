@@ -34,9 +34,16 @@ namespace Hansa::Simulation
 			int32 Count = 0;
 			for (const FHansaLogisticsJobState& Job : Jobs)
 			{
-				Count += Job.Status != EHansaLogisticsJobStatus::Completed ? 1 : 0;
+				Count += Job.Status == EHansaLogisticsJobStatus::AwaitingPickup ||
+					Job.Status == EHansaLogisticsJobStatus::InTransit ? 1 : 0;
 			}
 			return Count;
+		}
+
+		int32 RouteTravelTicks(const FHansaLocalLogisticsSettings& Settings, const int32 RoadDistanceCells)
+		{
+			return static_cast<int32>(FMath::Min<int64>(MAX_int32,
+				FMath::Max<int64>(1, static_cast<int64>(RoadDistanceCells) * Settings.TicksPerRoadCell)));
 		}
 
 		int64 CommittedDestinationQuantity(
@@ -210,7 +217,7 @@ namespace Hansa::Simulation
 					if (!Candidate.IsSet() || InventoryCity(Candidate.GetValue(), Placement) != CityId ||
 						!CandidateStock.IsSet() || CandidateStock->Available.GetRawValue() <= 0 ||
 						!FHansaLocalLogisticsQueries::QueryRoadPath(CandidateId, Production.InputInventoryId,
-							InventoryView, Placement, Buildings).bConnected)
+							InventoryView, Placement, Buildings, &Registry).bConnected)
 					{
 						continue;
 					}
@@ -276,7 +283,7 @@ namespace Hansa::Simulation
 					if (!Candidate.IsSet() || !Accepted.IsSet() || Candidate->FreeCapacity.GetRawValue() <= 0 ||
 						InventoryCity(Candidate.GetValue(), Placement) != CityId ||
 						!FHansaLocalLogisticsQueries::QueryRoadPath(Production.OutputInventoryId, CandidateId,
-							InventoryView, Placement, Buildings).bConnected)
+							InventoryView, Placement, Buildings, &Registry).bConnected)
 					{
 						continue;
 					}
@@ -310,14 +317,84 @@ namespace Hansa::Simulation
 		FHansaInventoryLedger& InventoryLedger,
 		const FHansaPlacementState& Placement,
 		const TConstArrayView<FHansaBuildingState> Buildings,
+		const FHansaEconomicRegistry* Registry,
 		const FHansaSimulationTick CurrentTick)
 	{
 		// Pickup and delivery are separate ledger events; cargo lives in the job between them.
+		// A pre-pickup topology pause releases its source reservation immediately. The same job
+		// reacquires stock after reconnection, preventing disconnected jobs from deadlocking stock.
 		for (FHansaLogisticsJobState& Job : Jobs)
 		{
-			if (Job.Status == EHansaLogisticsJobStatus::AwaitingPickup &&
-				Job.PickupTick.GetValue() <= CurrentTick.GetValue())
+			if (Job.Status == EHansaLogisticsJobStatus::Completed)
 			{
+				continue;
+			}
+			FHansaLogisticsRequestState* Request = FindRequest(Requests, Job.RequestId);
+			const FHansaLogisticsRoadPathProjection Path = FHansaLocalLogisticsQueries::QueryRoadPath(
+				Job.SourceInventoryId, Job.DestinationInventoryId,
+				InventoryLedger.CreateReadOnlyAccess(), Placement, Buildings, Registry);
+
+			if (Job.Status == EHansaLogisticsJobStatus::AwaitingPickup ||
+				Job.Status == EHansaLogisticsJobStatus::PausedAwaitingPickup)
+			{
+				if (!Path.bConnected)
+				{
+					if (Job.SourceReservationId.IsValid())
+					{
+						const FHansaInventoryTransactionResult Release = InventoryLedger.TryReleaseReservation(
+							Job.SourceReservationId, CurrentTick,
+							InventoryLedger.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
+						if (Release.IsSuccess())
+						{
+							Job.SourceReservationId = FHansaReservationId();
+						}
+					}
+					Job.Status = EHansaLogisticsJobStatus::PausedAwaitingPickup;
+					Job.PauseReason = Path.Failure;
+					if (Request != nullptr)
+					{
+						Request->Status = EHansaLogisticsRequestStatus::InProgress;
+						Request->Bottleneck = EHansaLogisticsBottleneck::DisconnectedRoad;
+					}
+					continue;
+				}
+
+				Job.SelectedMarketBuildingId = Path.SelectedMarketBuildingId;
+				Job.RouteCells = Path.RouteCells;
+				Job.RoadDistanceCells = Path.RoadDistanceCells;
+				Job.RemainingTravelTicks = RouteTravelTicks(Settings, Path.RoadDistanceCells);
+				const bool bResuming = Job.Status == EHansaLogisticsJobStatus::PausedAwaitingPickup;
+				if (bResuming)
+				{
+					const TOptional<FHansaInventoryStockProjection> SourceStock =
+						InventoryLedger.CreateReadOnlyAccess().QueryStock(Job.SourceInventoryId, Job.GoodId);
+					if (!SourceStock.IsSet() || SourceStock->Available < Job.Quantity)
+					{
+						if (Request != nullptr) Request->Bottleneck = EHansaLogisticsBottleneck::SourceStockUnavailable;
+						continue;
+					}
+					const FHansaReservationId ReservationId =
+						FHansaReservationId::TryCreate(NextReservationValue++).Value;
+					const FHansaInventoryTransactionResult Reservation = InventoryLedger.TryReserve(
+						Job.SourceInventoryId, ReservationId, Job.GoodId, Job.Quantity, CurrentTick,
+						InventoryLedger.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
+					if (!Reservation.IsSuccess())
+					{
+						if (Request != nullptr) Request->Bottleneck = EHansaLogisticsBottleneck::SourceStockUnavailable;
+						continue;
+					}
+					Job.SourceReservationId = ReservationId;
+					Job.PickupTick = TickOffset(CurrentTick, Settings.PickupDelayTicks);
+					Job.Status = EHansaLogisticsJobStatus::AwaitingPickup;
+					Job.PauseReason = EHansaLogisticsRoadPathFailure::None;
+					if (Request != nullptr) Request->Bottleneck = EHansaLogisticsBottleneck::None;
+				}
+				Job.DeliveryTick = TickOffset(Job.PickupTick, Job.RemainingTravelTicks);
+				if (bResuming || Job.PickupTick.GetValue() > CurrentTick.GetValue())
+				{
+					continue;
+				}
+
 				const FHansaInventoryTransactionResult Pickup = InventoryLedger.TryTransfer(
 					FHansaInventoryEndpoint::Inventory(Job.SourceInventoryId),
 					FHansaInventoryEndpoint::Sink(TEXT("LocalLogistics.Pickup")),
@@ -327,22 +404,79 @@ namespace Hansa::Simulation
 				if (Pickup.IsSuccess())
 				{
 					Job.CargoQuantity = Job.Quantity;
+					Job.SourceReservationId = FHansaReservationId();
+					Job.ElapsedTravelTicks = 0;
+					Job.RemainingTravelTicks = RouteTravelTicks(Settings, Job.RoadDistanceCells);
+					Job.DeliveryTick = TickOffset(CurrentTick, Job.RemainingTravelTicks);
 					Job.Status = EHansaLogisticsJobStatus::InTransit;
+					Job.PauseReason = EHansaLogisticsRoadPathFailure::None;
+					if (Request != nullptr) Request->Bottleneck = EHansaLogisticsBottleneck::None;
 				}
+				else
+				{
+					if (Job.SourceReservationId.IsValid())
+					{
+						const FHansaInventoryTransactionResult Release = InventoryLedger.TryReleaseReservation(
+							Job.SourceReservationId, CurrentTick,
+							InventoryLedger.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
+						if (Release.IsSuccess()) Job.SourceReservationId = FHansaReservationId();
+					}
+					Job.Status = EHansaLogisticsJobStatus::PausedAwaitingPickup;
+					Job.PauseReason = EHansaLogisticsRoadPathFailure::None;
+					if (Request != nullptr) Request->Bottleneck = EHansaLogisticsBottleneck::SourceStockUnavailable;
+				}
+				continue;
 			}
-			if (Job.Status == EHansaLogisticsJobStatus::InTransit &&
-				Job.DeliveryTick.GetValue() <= CurrentTick.GetValue())
+
+			if (Job.Status == EHansaLogisticsJobStatus::InTransit ||
+				Job.Status == EHansaLogisticsJobStatus::PausedInTransit)
 			{
+				if (!Path.bConnected)
+				{
+					Job.Status = EHansaLogisticsJobStatus::PausedInTransit;
+					Job.PauseReason = Path.Failure;
+					if (Request != nullptr) Request->Bottleneck = EHansaLogisticsBottleneck::DisconnectedRoad;
+					continue;
+				}
+				const bool bWasPaused = Job.Status == EHansaLogisticsJobStatus::PausedInTransit;
+				const bool bRouteChanged = Job.RouteCells != Path.RouteCells ||
+					Job.SelectedMarketBuildingId != Path.SelectedMarketBuildingId;
+				if (bWasPaused || bRouteChanged || Job.RouteCells.IsEmpty())
+				{
+					Job.SelectedMarketBuildingId = Path.SelectedMarketBuildingId;
+					Job.RouteCells = Path.RouteCells;
+					Job.RoadDistanceCells = Path.RoadDistanceCells;
+					const int32 NewTravelTicks = RouteTravelTicks(Settings, Path.RoadDistanceCells);
+					Job.RemainingTravelTicks = FMath::Max(1, NewTravelTicks - Job.ElapsedTravelTicks);
+					Job.DeliveryTick = TickOffset(CurrentTick, Job.RemainingTravelTicks);
+				}
+				Job.Status = EHansaLogisticsJobStatus::InTransit;
+				Job.PauseReason = EHansaLogisticsRoadPathFailure::None;
+				if (Request != nullptr) Request->Bottleneck = EHansaLogisticsBottleneck::None;
+				if (bWasPaused || bRouteChanged)
+				{
+					continue;
+				}
+				if (Job.RemainingTravelTicks > 0)
+				{
+					++Job.ElapsedTravelTicks;
+					--Job.RemainingTravelTicks;
+					Job.DeliveryTick = TickOffset(CurrentTick, Job.RemainingTravelTicks);
+				}
+				if (Job.RemainingTravelTicks > 0)
+				{
+					continue;
+				}
 				const FHansaInventoryTransactionResult Delivery = InventoryLedger.TryTransfer(
 					FHansaInventoryEndpoint::Source(TEXT("LocalLogistics.Delivery")),
 					FHansaInventoryEndpoint::Inventory(Job.DestinationInventoryId),
 					Job.GoodId, Job.CargoQuantity, CurrentTick,
 					InventoryLedger.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
-				FHansaLogisticsRequestState* Request = FindRequest(Requests, Job.RequestId);
 				if (Delivery.IsSuccess())
 				{
 					Job.CargoQuantity = FHansaQuantity();
 					Job.Status = EHansaLogisticsJobStatus::Completed;
+					Job.PauseReason = EHansaLogisticsRoadPathFailure::None;
 					if (Request != nullptr)
 					{
 						Request->RemainingQuantity = FHansaQuantity::TrySubtract(
@@ -404,7 +538,7 @@ namespace Hansa::Simulation
 				continue;
 			}
 			const FHansaLogisticsRoadPathProjection Path = FHansaLocalLogisticsQueries::QueryRoadPath(
-				Request.SourceInventoryId, Request.DestinationInventoryId, InventoryView, Placement, Buildings);
+				Request.SourceInventoryId, Request.DestinationInventoryId, InventoryView, Placement, Buildings, Registry);
 			if (!Path.bConnected)
 			{
 				Request.Bottleneck = EHansaLogisticsBottleneck::DisconnectedRoad;
@@ -462,6 +596,10 @@ namespace Hansa::Simulation
 			Job.DeliveryTick = TickOffset(Job.PickupTick,
 				FMath::Max<int64>(1, static_cast<int64>(Path.RoadDistanceCells) * Settings.TicksPerRoadCell));
 			Job.RoadDistanceCells = Path.RoadDistanceCells;
+			Job.SelectedMarketBuildingId = Path.SelectedMarketBuildingId;
+			Job.RouteCells = Path.RouteCells;
+			Job.ElapsedTravelTicks = 0;
+			Job.RemainingTravelTicks = RouteTravelTicks(Settings, Path.RoadDistanceCells);
 			Jobs.Add(MoveTemp(Job));
 			Request.InFlightQuantity = FHansaQuantity::TryAdd(Request.InFlightQuantity, Quantity).Value;
 			Request.Status = EHansaLogisticsRequestStatus::InProgress;

@@ -1,0 +1,487 @@
+{
+  "build": "Saved/BuildArtifacts/20260909-102920931-build-HansaEditor-Win64-Development",
+  "captureMethod": "Unreal real game viewport readback, RenderOffscreen, no resampling",
+  "profiles": [
+    "1920x1080-scale100-default",
+    "1280x720-scale140-accessible"
+  ],
+  "images": [
+    {
+      "file": "gui-1920x1080-scale100-default-hud.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "4b345dddc8e503f31d9cc6676fbeacebb9ca8f6bdf021cff81740b6c1d4915f4",
+      "evidence": "gui-1920x1080-scale100-default-hud.tsv"
+    },
+    {
+      "file": "gui-1920x1080-scale100-default-inspector.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "62609ff2c1dc497878b8872a2f9a1ff62b8959be278e639a439027355a2840a5",
+      "evidence": "gui-1920x1080-scale100-default-inspector.tsv"
+    },
+    {
+      "file": "gui-1920x1080-scale100-default-construction.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "7b770d3909a77e8a7f92e804007af3dbc3c39299ecbd9192bd3c0973d5facac0",
+      "evidence": "gui-1920x1080-scale100-default-construction.tsv"
+    },
+    {
+      "file": "gui-1920x1080-scale100-default-city.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "f133d2a77d845de29d511ec995d24fcbf3995b155b301c3dd3104e10838e7149",
+      "evidence": "gui-1920x1080-scale100-default-city.tsv"
+    },
+    {
+      "file": "gui-1920x1080-scale100-default-market.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "557c68232cb4fd26bdbbb224bc36430a33952612debc8af8e8c97c6227b38f5b",
+      "evidence": "gui-1920x1080-scale100-default-market.tsv"
+    },
+    {
+      "file": "gui-1920x1080-scale100-default-trade.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "79710ed645549d0a555a505d3c9f467910eaca5a04d7ed3ecde01879696b094e",
+      "evidence": "gui-1920x1080-scale100-default-trade.tsv"
+    },
+    {
+      "file": "gui-1920x1080-scale100-default-research.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "e9e8f25b366bbd71304cabeb18a7274f4959a151950ea64d1d1f10768b2d279d",
+      "evidence": "gui-1920x1080-scale100-default-research.tsv"
+    },
+    {
+      "file": "gui-1920x1080-scale100-default-scenario.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "7dd13dc7208901f76f2c5b47b5d324e74652e4dbbc27701828926405d66a2fc5",
+      "evidence": "gui-1920x1080-scale100-default-scenario.tsv"
+    },
+    {
+      "file": "gui-1920x1080-scale100-default-saveload.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "8602e4741c0c6dd9c38ec765289e4f61d6b70f785e47eb013935d8f9134ef079",
+      "evidence": "gui-1920x1080-scale100-default-saveload.tsv"
+    },
+    {
+      "file": "gui-1280x720-scale140-accessible-hud.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "acfd8b4f47d40d8bd504e028438adf5c073f1537b9920fffdd96bc849e12b971",
+      "evidence": "gui-1280x720-scale140-accessible-hud.tsv"
+    },
+    {
+      "file": "gui-1280x720-scale140-accessible-inspector.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "15a68bd343d319d810e24245962d9329e0016cc4d3630d6b770a155acb4271b9",
+      "evidence": "gui-1280x720-scale140-accessible-inspector.tsv"
+    },
+    {
+      "file": "gui-1280x720-scale140-accessible-construction.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "454cb838d65de2ef7d81b863284fcc974b3da8be5daf26efcd891d90fc365dce",
+      "evidence": "gui-1280x720-scale140-accessible-construction.tsv"
+    },
+    {
+      "file": "gui-1280x720-scale140-accessible-city.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "fd484904394c1e0f7b76a4ad68209a1a857ea0bda0baa15fae51179c84bf2148",
+      "evidence": "gui-1280x720-scale140-accessible-city.tsv"
+    },
+    {
+      "file": "gui-1280x720-scale140-accessible-market.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "4e5426fb39ab30931df5d7f0a8c6e059e8449ef9b32a7b3b9709da1532c6bda2",
+      "evidence": "gui-1280x720-scale140-accessible-market.tsv"
+    },
+    {
+      "file": "gui-1280x720-scale140-accessible-trade.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "099844f0f6af44d0a968e55a040aaadeb9103dc7fdc2e97c69bde43b9c2522f2",
+      "evidence": "gui-1280x720-scale140-accessible-trade.tsv"
+    },
+    {
+      "file": "gui-1280x720-scale140-accessible-research.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "e1bd3bf567618ba48cd36c69238f2b4a6a7ffc2b484f4710f839d2974d30bada",
+      "evidence": "gui-1280x720-scale140-accessible-research.tsv"
+    },
+    {
+      "file": "gui-1280x720-scale140-accessible-scenario.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "88efcf3d168ae6f8d60ce50dcadeb62b68a4c9038106af77774620aa65f8dc12",
+      "evidence": "gui-1280x720-scale140-accessible-scenario.tsv"
+    },
+    {
+      "file": "gui-1280x720-scale140-accessible-saveload.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "010a701628233e20e8558afd860463aa4aacbc5afa3ba1fb83cab6c292b71a2d",
+      "evidence": "gui-1280x720-scale140-accessible-saveload.tsv"
+    }
+  ],
+  "finalRunResults": [
+    {
+      "path": "Saved/BuildArtifacts/20260909-102948431-gui-repair-1920-1080/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-102948658-gui-repair-2560-1440/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-102948859-gui-repair-1280-720/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-102949662-automation-Hansa.UI/UnrealEditor.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.BuildMenu.BakeryFitsBesideRoad"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.BuildMenu.CatalogAndLockedReasons"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.BuildMenu.CompactTrayAndControllerNavigation"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.BuildMenu.DirectRoadDrawing"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.BuildMenu.PlayerIntentCommandGatewayFlow"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.BuildMenu.SemanticsShortcutsAndFocus"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.BuildMenu.ShorelineBuildingsUseAuthoritativeTarget"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.BuildMenu.StableCardFocusAndChainEdges"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.BuildMenu.ViewportDragJourney"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.CityOverview.AuthoritativeProjectionAndCausalLinks"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.CityOverview.EmptyLoadingErrorAndLongLabels"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.CityOverview.P24RemoteKnowledgeAndSelection"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.CityOverview.RootHudAndNativeEvidence"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.CityOverview.SemanticsTabsFocusAndVirtualization"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.ActionGeometry"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.LiveStatus"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.HUD.Layout.NativeSafeAreas"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.HUD.PresentationModel.EventUpdates"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.HUD.Semantics.OpenCloseFocus"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.HUD.P23StableAlertFocus"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.HUD.SemanticContract"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Inspector.AlertNavigationAndFocus"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Inspector.FramePreservesWidgetStructure"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Inspector.LocalizationAndScreenshotContract"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Inspector.P23ActionIdentityAndUnavailableStates"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Inspector.PostPlacementResidenceAndProductionActions"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Inspector.SharedCausalModel"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.MarketTable.NativeResolutionEvidence"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.MarketTable.ProductionConsumptionAndBuildingContract"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.MarketTable.SortFilterSearchAndStableSelection"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.MarketTable.TenGoodsProjectionAndReportStates"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.MarketTable.VirtualizationSemanticsAndCityIntegration"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Navigation.KeyboardControllerParity"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Research.SemanticsAndControllerFocus"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.RuntimeScenario.PlayableShortageProjection"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.SaveLoad.SemanticsFocusAndActionableError"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Scenario.StartProgressSuccessFailureSemantics"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.SelectedGood.ActionsPersistenceAndSemanticData"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.SelectedGood.AuthoritativeCausalProjectionAndBoundedHistory"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Style.ComponentAccessibility"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Style.ComponentActivation"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Style.ContrastAndSeverity"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Style.NativeWidgetStyles"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.Style.TokenContract"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.TradeMap.ProjectionAndSimpleEditor"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.TradeMap.RuntimeCommandCommit"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.TradeMap.SemanticsAndResponsiveNativeEvidence"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.World.DataDrivenPresentation"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.World.LaborerResidenceUsesApprovedMesh"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.World.MillBlueprintPresentation"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.World.PlacementGhostAuthoredPresentation"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.World.PlacementProjectionActorLifecycle"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.World.PlacementProjectionRegistry"
+        },
+        {
+          "result": "Success",
+          "test": "Hansa.UI.World.StrategyCameraIntents"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103029535-gui-repair-1920-1080/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103030422-gui-repair-1280-720/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103035876-gui-repair-3440-1440/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103110014-gui-repair-1280-720/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103110087-gui-repair-1920-1080/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103125044-gui-repair-1920-1080/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.MarketPolish.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103152928-gui-repair-1920-1080/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.CityOverviewPolish.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103610279-gui-repair-2560-1440/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103611336-gui-repair-3440-1440/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103653728-gui-repair-2560-1440/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260909-103655808-gui-repair-3440-1440/Unreal.log",
+      "results": [
+        {
+          "result": "Success",
+          "test": "Hansa.UI.GuiRepair.RealViewport"
+        }
+      ]
+    }
+  ],
+  "artisticApproval": false,
+  "humanUatComplete": false
+}

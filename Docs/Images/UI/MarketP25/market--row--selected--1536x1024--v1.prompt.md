@@ -1,0 +1,5 @@
+# Market row reference
+
+Mode: built-in ImageGen. Native target: 1536×1024. Reference only. Revision 1. Inspection: readable hierarchy and consistent palette. Generated units/dates and data are illustrative; use authoritative ticks and mk in native implementation. No production import or resampling.
+
+Use case ui-mockup. One reusable Hansa Market ledger row reference only on a native1536x1024 canvas, generous blank Linen surrounding it. Baltic Navy #152A35, Harbor Slate #29424D, Linen #F2E9D8, Ink #202628, Brass #C19A52 selected border. Atkinson Hyperlegible direction, even front lighting, thin2px rules,8px grid, no texture, ornament or watermark. One selected Bread row with five aligned columns Good, Stock, Reserve, Demand, Price, and a secondary wrapped line showing trend, incoming, report age, shortage text. Use clear text, no pictogram font glyphs. Illustrative data only; shipping implementation native Slate. Reference same family as composed Market design. Never embed this image into shipping UI.

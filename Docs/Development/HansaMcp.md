@@ -86,6 +86,8 @@ The wire operation allowlist is:
 
 Within `gameplay_query`, S06-P03 adds `city.population` and `population.cohort`. The first returns city totals, typed trend, tier workforce, satisfaction, market access and staple reserve; the second returns one cohort's identities, capacity, workforce, factors and per-need consumption evidence. `gameplay_command` accepts the guarded `residence.upgrade` command. The game remains authoritative for every result and progression check; the sidecar only validates and forwards the bounded contract.
 
+Physical market connectivity adds `building.list`, `building.market_access`, `logistics.requests`, `logistics.jobs`, and `logistics.path`. The building query takes a positive `buildingId`; the path query takes positive `sourceInventoryId` and `destinationInventoryId`. Results include selected market building ID, road distance, ordered route cells, typed cause/message/remedy keys, delivery progress, and pause reason. `building.remove` and `building.place` continue through the normal gameplay gateway, so automation can sever and restore roads without mutating stock, jobs, or topology directly. The playable strategic fixture and the actor-free production fixture expose the same field contract from their authoritative state.
+
 Failures preserve `code`, `correlationId`, safe `message`, `remedy` and `retryable`. MCP tool failures use `isError: true` plus the same structured object so Codex can correct the call. Malformed MCP methods remain JSON-RPC protocol errors.
 
 ## Shutdown and reconnect
@@ -104,7 +106,7 @@ STDOUT is reserved for MCP JSON-RPC and never receives logs. Structured operatio
 pwsh -NoProfile -File Scripts\RunHansaMcpTests.ps1
 ```
 
-The fake endpoint runs through the same frame encoder/decoder and covers session lifecycle, both fixture list/load paths, production, causal market, city-population and cohort-needs queries, guarded residence progression, shortage waits, controlled production recovery, read-only assertions, bounded step/run/run-until, fixed-slot save/load/wait/round-trip assertions, semantic inspection/actions, observable waits, both screenshot sizes, ping, health, authentication rejection and missing capability. A real local named-pipe test delays endpoint startup to prove bounded reconnect. No game process, network access or live provider call is used.
+The fake endpoint runs through the same frame encoder/decoder and covers session lifecycle, both fixture list/load paths, production, physical building-to-market access, local road paths and jobs, causal market, city-population and cohort-needs queries, guarded residence progression, shortage waits, controlled production recovery, read-only assertions, bounded step/run/run-until, fixed-slot save/load/wait/round-trip assertions, semantic inspection/actions, observable waits, both screenshot sizes, ping, health, authentication rejection and missing capability. A real local named-pipe test delays endpoint startup to prove bounded reconnect. No game process, network access or live provider call is used.
 
 The S05-P04 placement flow is available as `npm --prefix Tools/HansaMcp run smoke:placement`. It loads `empty_lubeck_build_v1`, commits a road through normal semantic input, proves the Warehouse `RoadRequired` failure, moves to the road-adjacent target, confirms the authoritative entity, waits on its semantic state, and captures native 1280×720 and 1920×1080 evidence.
 

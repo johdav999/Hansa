@@ -2,6 +2,7 @@
 
 #include "Containers/Array.h"
 #include "Containers/ArrayView.h"
+#include "Templates/SharedPointer.h"
 #include "Model/HansaIds.h"
 #include "Model/HansaValueResult.h"
 
@@ -86,6 +87,33 @@ namespace Hansa::Simulation
 		TArray<FHansaPlacementGridCell> Cells;
 	};
 
+	/**
+	 * Canonical immutable surveyed map data. The potentially million-cell topology is allocated once and shared by
+	 * definition contexts and state snapshots; transactional state copies never duplicate or mutate these records.
+	 */
+	class HANSASIMULATION_API FHansaPlacementTopology final
+	{
+	public:
+		FHansaPlacementTopology();
+
+		static THansaValueResult<FHansaPlacementTopology> TryCreate(
+			TArray<FHansaPlacementMapInitialization> Maps);
+
+		[[nodiscard]] bool IsValid() const { return TopologyHash != 0; }
+		[[nodiscard]] uint64 GetTopologyHash() const { return TopologyHash; }
+		[[nodiscard]] uint32 GetRecordCount() const { return RecordCount; }
+		[[nodiscard]] TConstArrayView<FHansaPlacementMapInitialization> GetMaps() const { return Maps; }
+		[[nodiscard]] const FHansaPlacementMapInitialization* FindMap(FHansaCityDefinitionId CityId) const;
+		[[nodiscard]] const FHansaPlacementGridCell* FindCell(
+			FHansaCityDefinitionId CityId,
+			FHansaGridCoordinate Coordinate) const;
+
+	private:
+		TArray<FHansaPlacementMapInitialization> Maps;
+		uint64 TopologyHash = 0;
+		uint32 RecordCount = 0;
+	};
+
 	/** Per-house unlock supplied by scenario/research state; absence is a deterministic prerequisite failure. */
 	struct FHansaPlacementEntitlement final
 	{
@@ -144,13 +172,21 @@ namespace Hansa::Simulation
 		TArray<FHansaGridCoordinate> OccupiedCells;
 	};
 
-	/** Canonical authoritative map/occupancy records. Mutation is private to the command pipeline. */
+	/** Sparse authoritative placement/occupancy records plus a shared immutable topology handle. */
 	class HANSASIMULATION_API FHansaPlacementState final
 	{
 	public:
-		static THansaValueResult<FHansaPlacementState> TryCreate(FHansaPlacementInitialization Initialization);
+		static THansaValueResult<FHansaPlacementState> TryCreate(
+			FHansaPlacementInitialization Initialization,
+			TSharedPtr<const FHansaPlacementTopology> ImmutableTopology = nullptr);
 
-		[[nodiscard]] TConstArrayView<FHansaPlacementMapInitialization> GetMaps() const { return Maps; }
+		[[nodiscard]] TConstArrayView<FHansaPlacementMapInitialization> GetMaps() const
+		{
+			return Topology.IsValid() ? Topology->GetMaps() : TConstArrayView<FHansaPlacementMapInitialization>();
+		}
+		[[nodiscard]] const FHansaPlacementTopology* GetTopology() const { return Topology.Get(); }
+		[[nodiscard]] uint64 GetTopologyHash() const { return Topology.IsValid() ? Topology->GetTopologyHash() : 0; }
+		[[nodiscard]] uint32 GetTopologyRecordCount() const { return Topology.IsValid() ? Topology->GetRecordCount() : 0; }
 		[[nodiscard]] TConstArrayView<FHansaPlacementEntitlement> GetEntitlements() const { return Entitlements; }
 		[[nodiscard]] TConstArrayView<FHansaPlacedBuildingRecord> GetPlacements() const { return Placements; }
 		[[nodiscard]] const FHansaPlacementMapInitialization* FindMap(FHansaCityDefinitionId CityId) const;
@@ -161,11 +197,12 @@ namespace Hansa::Simulation
 
 	private:
 		friend class FHansaSaveCodec;
+		friend class FHansaSaveEnvelope;
 		friend class FHansaPlacementRules;
 		friend class FHansaSimulationPipeline;
 		friend class FHansaStateHasher;
 
-		TArray<FHansaPlacementMapInitialization> Maps;
+		TSharedPtr<const FHansaPlacementTopology> Topology;
 		TArray<FHansaPlacementEntitlement> Entitlements;
 		TArray<FHansaPlacedBuildingRecord> Placements;
 	};
@@ -208,6 +245,7 @@ namespace Hansa::Simulation
 		void RotateClockwise();
 		void BeginRoadDrag(FHansaGridCoordinate Start);
 		void UpdateRoadDrag(FHansaGridCoordinate End);
+		void CancelRoadDrag();
 		void Cancel();
 		void OnConfirmationSucceeded();
 

@@ -1,4 +1,5 @@
 #include "World/HansaLubeckWorldFoundation.h"
+#include "World/HansaTerrainPlacement.h"
 
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
@@ -162,17 +163,17 @@ AHansaLubeckWorldFoundation::AHansaLubeckWorldFoundation()
 	AddBox(TEXT("PierSouth"), FVector(1225.0, -1850.0, 65.0), FVector(18.0, 3.0, 1.0), FRotator::ZeroRotator,
 		TEXT("Hansa.World.Surface.Harbor"), true);
 
-	// Datum roads make the start area and harbor approach legible; authoritative roads arrive in S05-P02/P03.
-	AddBox(TEXT("RoadHarbor"), FVector(-1900.0, -500.0, 90.0), FVector(42.0, 2.5, 0.25), FRotator::ZeroRotator,
-		TEXT("Hansa.World.Surface.Road"), true);
-	AddBox(TEXT("RoadSpine"), FVector(-3200.0, 700.0, 90.0), FVector(2.5, 52.0, 0.25), FRotator::ZeroRotator,
-		TEXT("Hansa.World.Surface.Road"), true);
+	// Roads are exclusively authoritative player/scenario placements.
+
 }
 
 void AHansaLubeckWorldFoundation::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+	if (Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld())) bUseAuthoredWorld = true;
 	PlaceholderMaterials.Reset();
+	SunLight->SetVisibility(!bUseAuthoredWorld);
+	SkyLight->SetVisibility(!bUseAuthoredWorld);
 
 	for (UStaticMeshComponent* Component : TopologyComponents)
 	{
@@ -181,6 +182,10 @@ void AHansaLubeckWorldFoundation::OnConstruction(const FTransform& Transform)
 			continue;
 		}
 
+        Component->SetVisibility(!bUseAuthoredWorld, true);
+        Component->SetCollisionEnabled(bUseAuthoredWorld || Component->ComponentTags.Contains(TEXT("Hansa.World.Surface.Water"))
+            ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryAndPhysics);
+        if (bUseAuthoredWorld) continue;
 		const FName SurfaceTag = Component->ComponentTags[0];
 		UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create(PlaceholderBaseMaterial, this);
 		if (Material != nullptr)
@@ -194,18 +199,23 @@ void AHansaLubeckWorldFoundation::OnConstruction(const FTransform& Transform)
 
 FTransform AHansaLubeckWorldFoundation::GetAutomationStartTransform() const
 {
+	if (Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld()))
+		return FTransform(FRotator(0,35,0), Hansa::Game::TerrainPlacement::Ground(
+			GetWorld(), Hansa::Game::LubeckPlacementGrid::SurveyStartLocation(), 100.0));
 	return AutomationStart != nullptr ? AutomationStart->GetComponentTransform() :
 		Hansa::Game::LubeckMap::AutomationStartTransform() * GetActorTransform();
 }
 
 FVector2D AHansaLubeckWorldFoundation::GetCameraBoundsMin() const
 {
+	if (Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld())) return FVector2D(-201200.0,-201600.0);
 	const FVector Origin = CameraBounds->Bounds.Origin - CameraBounds->Bounds.BoxExtent;
 	return FVector2D(Origin.X, Origin.Y);
 }
 
 FVector2D AHansaLubeckWorldFoundation::GetCameraBoundsMax() const
 {
+	if (Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld())) return FVector2D(201600.0,201200.0);
 	const FVector End = CameraBounds->Bounds.Origin + CameraBounds->Bounds.BoxExtent;
 	return FVector2D(End.X, End.Y);
 }
@@ -220,6 +230,13 @@ bool AHansaLubeckWorldFoundation::WorldToPlacementCell(
 		Hansa::Game::LubeckPlacementGrid::WorldToGrid(LocalLocation);
 	OutX = Coordinate.X;
 	OutY = Coordinate.Y;
+	if (Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld()))
+	{
+		return Coordinate.X >= Hansa::Game::LubeckPlacementGrid::SurveyMinX &&
+			Coordinate.X <= Hansa::Game::LubeckPlacementGrid::SurveyMaxX &&
+			Coordinate.Y >= Hansa::Game::LubeckPlacementGrid::SurveyMinY &&
+			Coordinate.Y <= Hansa::Game::LubeckPlacementGrid::SurveyMaxY;
+	}
 	return Coordinate.X >= 0 && Coordinate.X < Hansa::Game::LubeckPlacementGrid::WidthCells &&
 		Coordinate.Y >= 0 && Coordinate.Y < Hansa::Game::LubeckPlacementGrid::HeightCells;
 }
@@ -227,10 +244,10 @@ bool AHansaLubeckWorldFoundation::WorldToPlacementCell(
 FVector AHansaLubeckWorldFoundation::PlacementCellToWorld(
 	const int32 X,
 	const int32 Y,
-	const float Height) const
+	const float Height, const float GroundDatum) const
 {
-	return GetActorTransform().TransformPosition(
-		Hansa::Game::LubeckPlacementGrid::GridToWorld({ X, Y }, Height));
+	return GroundPlacementPosition(GetActorTransform().TransformPosition(
+		Hansa::Game::LubeckPlacementGrid::GridToWorld({ X, Y }, Height)), GroundDatum);
 }
 
 AHansaLubeckAutomationStart::AHansaLubeckAutomationStart(const FObjectInitializer& ObjectInitializer)
@@ -243,4 +260,17 @@ AHansaLubeckAutomationStart::AHansaLubeckAutomationStart(const FObjectInitialize
 	StableStartId = Hansa::Game::LubeckMap::AutomationStartId();
 	PlayerStartTag = StableStartId;
 	Tags.Add(StableStartId);
+}
+
+FTransform AHansaLubeckWorldFoundation::GetCargoBerthTransform() const
+{
+    // The complete 7.81 m beam clears the north pier's eastern end (x=2125).
+    return FTransform(FRotator(0,90,0),FVector(2650,850,-125))*GetActorTransform();
+}
+
+FVector AHansaLubeckWorldFoundation::GroundPlacementPosition(FVector Position, double LocalDatum) const
+{
+    FVector Local = GetActorTransform().InverseTransformPosition(Position);
+    Local.Z = LocalDatum;
+    return Hansa::Game::TerrainPlacement::Ground(GetWorld(), Position, GetActorTransform().TransformPosition(Local).Z);
 }

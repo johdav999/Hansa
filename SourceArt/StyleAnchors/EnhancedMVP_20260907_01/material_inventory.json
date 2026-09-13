@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "baselinePixelsPerMeter": 512,
+  "families": {
+    "masonry": ["lime plaster", "lime mortar", "brick", "fieldstone", "limestone"],
+    "timber": ["weathered oak", "recessed structural timber"],
+    "roofing": ["clay tile", "lead where functionally justified"],
+    "metal": ["non-metallic default", "forged iron metallic only"],
+    "road": ["compacted earth", "damp rut", "sparse aggregate"],
+    "weathering": ["ground damp", "rain runoff", "handled wear", "functional soot"]
+  },
+  "requiredTextureInputs": ["base-color", "normal", "roughness"],
+  "generatedMapsFromUnrelatedColorProhibited": true
+}

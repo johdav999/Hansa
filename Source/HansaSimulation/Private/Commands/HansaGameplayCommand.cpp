@@ -4,13 +4,13 @@ namespace Hansa::Simulation
 {
 	namespace
 	{
-		constexpr uint64 FnvOffset = 14695981039346656037ULL;
-		constexpr uint64 FnvPrime = 1099511628211ULL;
+		constexpr uint64 GameplayCommandFnvOffset = 14695981039346656037ULL;
+		constexpr uint64 GameplayCommandFnvPrime = 1099511628211ULL;
 
 		void AddByte(uint64& Hash, const uint8 Value)
 		{
 			Hash ^= Value;
-			Hash *= FnvPrime;
+			Hash *= GameplayCommandFnvPrime;
 		}
 
 		void AddUInt16(uint64& Hash, const uint16 Value)
@@ -314,7 +314,7 @@ namespace Hansa::Simulation
 
 	uint64 FHansaGameplayCommand::ComputeStableFingerprint() const
 	{
-		uint64 Hash = FnvOffset;
+		uint64 Hash = GameplayCommandFnvOffset;
 		AddUInt16(Hash, Header.SchemaVersion);
 		AddByte(Hash, static_cast<uint8>(Type));
 		AddUInt64(Hash, Header.CommandId.GetValue());

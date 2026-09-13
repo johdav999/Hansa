@@ -67,6 +67,7 @@ struct HANSA_API FHansaTradeMapRoutePresentation final
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bActive = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bOwnedByPlayer = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bCanToggleActive = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bCanCancel = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bTraveling = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bReserveRisk = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bProfitKnown = false;
@@ -77,6 +78,17 @@ USTRUCT(BlueprintType)
 struct HANSA_API FHansaTradeMapSnapshot final
 {
 	GENERATED_BODY()
+    bool bCreating = false;
+    bool bShipInTransit = false;
+    FVector2D ShipPosition = FVector2D::ZeroVector;
+    bool bReview = false;
+    bool bCanCreate = false;
+    bool bReassignCog = false;
+    int64 CogValue = 0;
+    FString DraftName;
+    FText CogLabel;
+    FText CreatorReview;
+    FText Validation;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") TArray<FHansaTradeMapCityPresentation> Cities;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") TArray<FHansaTradeMapRoutePresentation> Routes;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") TArray<FHansaTradeMapStopPresentation> Stops;
@@ -107,7 +119,7 @@ public:
 	void BindRuntime(UHansaRuntimeSimulationHost* RuntimeHost);
 	bool ApplyProjection(const Hansa::Simulation::FHansaSimulationProjection& Projection,
 		const Hansa::Simulation::FHansaEconomicRegistry& Registry);
-	bool Open(FName FocusOrigin = TEXT("HUD.TopStatus.TradeMap"), FName PreferredGood = NAME_None);
+	bool Open(FName FocusOrigin = TEXT("HUD.TopStatus.TradeMap"), FName PreferredGood = NAME_None, FName SourceCity = TEXT("City.Lubeck"));
 	bool CloseIntent();
 	bool CycleModeFilterIntent();
 	bool SelectRouteIntent(int64 RouteValue);
@@ -116,8 +128,22 @@ public:
 	bool AdjustQuantityIntent(int32 DeltaMilliUnits);
 	bool AdjustMinimumReserveIntent(int32 DeltaMilliUnits);
 	bool MoveStopIntent(int32 Direction);
+    TFunction<bool(FName)> VisitRequested;
+    bool VisitSelectedStopIntent();
+    bool BeginCreateIntent(FName Good = NAME_None, FName SourceCity = TEXT("City.Lubeck"));
+    bool DiscardCreateIntent();
+    bool AddStopIntent();
+    bool RemoveStopIntent();
+    bool CycleStopCityIntent();
+    bool CycleStopGoodIntent();
+    bool CycleCogIntent();
+    bool SetRouteNameIntent(const FString& Name);
+    bool ReviewCreateIntent();
+    bool EditCreateIntent();
+    bool CreateAndActivateIntent();
 	bool CommitIntent();
 	bool ToggleActiveIntent();
+    bool CancelRouteIntent();
 	void SetCompact(bool bCompact);
 	void SetFocusedSemanticId(FName SemanticId);
 	[[nodiscard]] const FHansaTradeMapSnapshot& GetSnapshot() const { return Snapshot; }
@@ -127,6 +153,7 @@ public:
 	FHansaTradeMapFocusRestoreRequested& OnFocusRestoreRequested() { return FocusRestoreRequested; }
 private:
 	void RebuildStops();
+    void UpdateCreatorReview();
 	void PublishIfChanged(const FHansaTradeMapSnapshot& Previous);
 	const FHansaTradeMapRoutePresentation* FindSelectedRoute() const;
 	UPROPERTY(VisibleAnywhere, Category="Hansa|UI|Trade") FHansaTradeMapSnapshot Snapshot;
