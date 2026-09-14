@@ -47,7 +47,7 @@ namespace Hansa::Editor::Tests
 	}
 
 	bool LoadReviewedEconomicCatalog(FReviewedEconomicCatalog& OutCatalog, FString& OutError,
-		const TCHAR* ManifestName = TEXT("economic_catalog_v16.json"))
+		const TCHAR* ManifestName = TEXT("economic_catalog_v18.json"))
 	{
 		const FString ManifestPath = FPaths::Combine(
 			FPaths::ProjectDir(), TEXT("Tests"), TEXT("Golden"), ManifestName);
@@ -732,7 +732,46 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 	}
 	TestEqual(TEXT("Reviewed manifest covers every authored definition"), ReviewedCatalog.Definitions.Num(), 81);
 
-	TArray<const UHansaDefinitionBase*> VersionFifteenDefinitions = LoadedDefinitions;
+	TArray<const UHansaDefinitionBase*> VersionSeventeenDefinitions = LoadedDefinitions;
+	TArray<TStrongObjectPtr<UHansaBuildingDefinition>> VersionSeventeenPresentations;
+	for (int32 Index = 0; Index < VersionSeventeenDefinitions.Num(); ++Index)
+	{
+		const auto* Building = Cast<UHansaBuildingDefinition>(VersionSeventeenDefinitions[Index]);
+		if (!Building || (Building->StableDefinitionId != TEXT("Building.MaltHouse") &&
+			Building->StableDefinitionId != TEXT("Building.Cooperage"))) continue;
+		TStrongObjectPtr<UHansaBuildingDefinition> Previous(
+			DuplicateObject<UHansaBuildingDefinition>(Building, GetTransientPackage()));
+		Previous->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Engine/BasicShapes/Cube.Cube")));
+		Previous->AuthoredRevision = 1;
+		Previous->RefreshContentHash();
+		VersionSeventeenDefinitions[Index] = Previous.Get();
+		VersionSeventeenPresentations.Add(MoveTemp(Previous));
+	}
+	const auto VersionSeventeen = FHansaEconomicDefinitionCompiler::Compile(VersionSeventeenDefinitions);
+	TestTrue(TEXT("Catalog v17 reconstruction compiles"), VersionSeventeen.IsValid());
+	TestEqual(TEXT("Catalog v18 changes only the malt house and cooperage presentation meshes"),
+		VersionSeventeen.Registry.GetRegistryHash(), FHansaLubeckScenarioInitializer::ImmediatePreviousMvpRegistryHash);
+
+	TArray<const UHansaDefinitionBase*> VersionSixteenDefinitions = VersionSeventeenDefinitions;
+	TStrongObjectPtr<UHansaBuildingDefinition> VersionSixteenLaborerResidence;
+	for (int32 Index = 0; Index < VersionSixteenDefinitions.Num(); ++Index)
+	{
+		const auto* Building = Cast<UHansaBuildingDefinition>(VersionSixteenDefinitions[Index]);
+		if (!Building || Building->StableDefinitionId != TEXT("Building.Residence.Laborer")) continue;
+		VersionSixteenLaborerResidence.Reset(
+			DuplicateObject<UHansaBuildingDefinition>(Building, GetTransientPackage()));
+		VersionSixteenLaborerResidence->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(
+			TEXT("/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Laborer_A.SM_Residence_Laborer_A")));
+		VersionSixteenLaborerResidence->RefreshContentHash();
+		VersionSixteenDefinitions[Index] = VersionSixteenLaborerResidence.Get();
+		break;
+	}
+	const auto VersionSixteen = FHansaEconomicDefinitionCompiler::Compile(VersionSixteenDefinitions);
+	TestTrue(TEXT("Catalog v16 reconstruction compiles"), VersionSixteen.IsValid());
+	TestEqual(TEXT("Catalog v17 changes only the reviewed R07 laborer residence presentation"),
+		VersionSixteen.Registry.GetRegistryHash(), 0xB65512A7BFAC9E0CULL);
+
+	TArray<const UHansaDefinitionBase*> VersionFifteenDefinitions = VersionSixteenDefinitions;
 	TArray<TStrongObjectPtr<UHansaDefinitionBase>> VersionFifteenOwned;
 	for (int32 Index = 0; Index < VersionFifteenDefinitions.Num(); ++Index)
 	{
@@ -780,7 +819,7 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 	const auto VersionFifteen = FHansaEconomicDefinitionCompiler::Compile(VersionFifteenDefinitions);
 	TestTrue(TEXT("Catalog v15 reconstruction compiles"), VersionFifteen.IsValid());
 	TestEqual(TEXT("Catalog v16 changes only the eight reviewed staple capacity assets"),
-		VersionFifteen.Registry.GetRegistryHash(), FHansaLubeckScenarioInitializer::ImmediatePreviousMvpRegistryHash);
+		VersionFifteen.Registry.GetRegistryHash(), FHansaLubeckScenarioInitializer::PreviousStarterBalanceMvpRegistryHash);
 
 	TArray<const UHansaDefinitionBase*> VersionFourteenDefinitions = VersionFifteenDefinitions;
 	TStrongObjectPtr<UHansaBuildingDefinition> VersionFourteenFishery;
@@ -1176,7 +1215,7 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Reloaded laborer residence retains the approved presentation mesh"),
 		AuthoredLaborerResidence != nullptr &&
 		AuthoredLaborerResidence->PresentationMesh.ToSoftObjectPath().ToString() ==
-			TEXT("/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Laborer_A.SM_Residence_Laborer_A"));
+			TEXT("/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A"));
 	TestTrue(TEXT("Reloaded artisan residence retains its hosted tier"), ArtisanResidence != nullptr &&
 		ArtisanResidence->ResidentPopulationTierId == TEXT("PopulationTier.Artisan"));
 	TestTrue(TEXT("Reloaded residence progression remains direct and authored"), LaborerResidence != nullptr &&

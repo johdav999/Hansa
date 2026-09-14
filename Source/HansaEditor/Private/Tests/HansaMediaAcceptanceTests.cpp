@@ -33,12 +33,12 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaMediaAcceptance, "Hansa.Integration.Autho
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FHansaMediaAcceptance::RunTest(const FString&)
 {
-    const FString Root = FPlatformMisc::GetEnvironmentVariable(TEXT("HANSA_MEDIA_ACCEPTANCE_ROOT"));
+    const FString AcceptanceRoot = FPlatformMisc::GetEnvironmentVariable(TEXT("HANSA_MEDIA_ACCEPTANCE_ROOT"));
     const FString Phase = FPlatformMisc::GetEnvironmentVariable(TEXT("HANSA_MEDIA_ACCEPTANCE_PHASE"));
-    if (Root.IsEmpty()) { AddInfo(TEXT("Run Scripts/RunMediaAcceptance.ps1 for the connected worker/editor proof.")); return true; }
+    if (AcceptanceRoot.IsEmpty()) { AddInfo(TEXT("Run Scripts/RunMediaAcceptance.ps1 for the connected worker/editor proof.")); return true; }
     if (!TestTrue(TEXT("Known acceptance phase"), Phase == TEXT("promote") || Phase == TEXT("verify"))) return false;
     TSharedPtr<FJsonObject> Plan;
-    if (!TestTrue(TEXT("Read worker plan"), ReadAcceptanceJson(Root / TEXT("media-plan.json"), Plan))) return false;
+    if (!TestTrue(TEXT("Read worker plan"), ReadAcceptanceJson(AcceptanceRoot / TEXT("media-plan.json"), Plan))) return false;
     if (!TestTrue(TEXT("Only original mocked fixtures may be auto-approved"), Plan->GetBoolField(TEXT("mockOnly")))) return false;
     const FString RunId = Plan->GetStringField(TEXT("runId"));
     FGuid Parsed;
@@ -49,7 +49,7 @@ bool FHansaMediaAcceptance::RunTest(const FString&)
     TSharedPtr<FJsonObject> Prior;
     if (bVerify)
     {
-        if (!TestTrue(TEXT("Read prior Editor result"), ReadAcceptanceJson(Root / TEXT("editor-promote.json"), Prior))) return false;
+        if (!TestTrue(TEXT("Read prior Editor result"), ReadAcceptanceJson(AcceptanceRoot / TEXT("editor-promote.json"), Prior))) return false;
         const FString Jobs = TEXT("Saved/GenerationJobs/MediaAcceptance_") + RunId;
         if (!TestFalse(TEXT("Transient worker state is actually deleted"), IFileManager::Get().DirectoryExists(*(FPaths::ProjectDir() / Jobs)))) return false;
     }
@@ -100,7 +100,7 @@ bool FHansaMediaAcceptance::RunTest(const FString&)
                 Preview->SetStringField(TEXT("scene"), TEXT("HarborProp-v1-1280x720-automation"));
                 TestEqual(TEXT("Native capture width"), Capture->Source.GetSizeX(), int64(1280));
                 TestEqual(TEXT("Native capture height"), Capture->Source.GetSizeY(), int64(720));
-                IFileManager::Get().Copy(*(Root / TEXT("harbor-preview.png")), *CaptureFile);
+                IFileManager::Get().Copy(*(AcceptanceRoot / TEXT("harbor-preview.png")), *CaptureFile);
             }
             else Preview->SetBoolField(TEXT("audioPlaybackStarted"), true);
             if (!WriteAcceptanceJson(FPaths::ProjectDir() / (ReceiptPath + TEXT(".preview.json")), Preview)) return false;
@@ -143,5 +143,5 @@ bool FHansaMediaAcceptance::RunTest(const FString&)
     Evidence->SetBoolField(TEXT("mockOnly"), true); Evidence->SetBoolField(TEXT("humanListeningProven"), false);
     Evidence->SetBoolField(TEXT("freshEditorWithoutWorkerState"), bVerify);
     Evidence->SetArrayField(TEXT("items"), Results);
-    return WriteAcceptanceJson(Root / (TEXT("editor-") + Phase + TEXT(".json")), Evidence) && !HasAnyErrors();
+    return WriteAcceptanceJson(AcceptanceRoot / (TEXT("editor-") + Phase + TEXT(".json")), Evidence) && !HasAnyErrors();
 }

@@ -25,6 +25,8 @@
 #include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/World.h"
+#include "LandscapeProxy.h"
+#include "ProceduralMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "UObject/ConstructorHelpers.h"
 #include "UObject/UObjectGlobals.h"
@@ -186,6 +188,20 @@ AHansaBuildingWorldProjectionActor::AHansaBuildingWorldProjectionActor()
 	SelectionOutline->SetStaticMesh(CubeMesh);
 	ConfigurePresentationComponent(*SelectionOutline);
 	SelectionOutline->ComponentTags.Add(TEXT("Hansa.Projection.SelectionOutline"));
+	SelectionOutline->SetVisibility(false, true);
+
+	SelectionCornerSegments.Reserve(8);
+	for (int32 SegmentIndex = 0; SegmentIndex < 8; ++SegmentIndex)
+	{
+		UStaticMeshComponent* Segment = CreateDefaultSubobject<UStaticMeshComponent>(
+			FName(*FString::Printf(TEXT("SelectionCorner_%d"), SegmentIndex)));
+		Segment->SetupAttachment(SceneRoot);
+		Segment->SetStaticMesh(CubeMesh);
+		ConfigurePresentationComponent(*Segment);
+		Segment->ComponentTags.Add(TEXT("Hansa.Projection.SelectionCorner"));
+		Segment->SetVisibility(false, true);
+		SelectionCornerSegments.Add(Segment);
+	}
 
 	StatusMarker = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StatusMarker"));
 	StatusMarker->SetupAttachment(SceneRoot);
@@ -230,6 +246,17 @@ void AHansaBuildingWorldProjectionActor::EnsureMaterials()
 		{
 			Component->SetMaterial(0, Material);
 			DynamicMaterials.Add(Material);
+		}
+	}
+	if (SelectionHaloMaterial == nullptr)
+	{
+		SelectionHaloMaterial = UMaterialInstanceDynamic::Create(BaseMaterial, this);
+	}
+	if (DynamicMaterials.Num() == 4)
+	{
+		for (UStaticMeshComponent* Segment : SelectionCornerSegments)
+		{
+			Segment->SetMaterial(0, DynamicMaterials[2]);
 		}
 	}
 }
@@ -376,9 +403,9 @@ void AHansaBuildingWorldProjectionActor::ApplyProjection(
 		0.0, 0.0, bAuthoredVisual ? MeshBottom + PlaceholderHeight * 0.5 : -(Height - PlaceholderHeight) * 0.5));
 	ConstructionPlaceholder->SetRelativeScale3D(
 		FVector(Width / 100.0, Depth / 100.0, PlaceholderHeight / 100.0));
-	SelectionOutline->SetRelativeLocation(
-		FVector(0.0, 0.0, bRoad && bAuthoredActor ? 13.0 : bHarborDeckDatum ? -3.0 : bAuthoredVisual ? MeshBottom - 3.0 : -Height * 0.5 - 3.0));
-	SelectionOutline->SetRelativeScale3D(FVector((Width + 40.0) / 100.0, (Depth + 40.0) / 100.0, 0.06));
+	const double SelectionGroundZ = bRoad && bAuthoredActor ? 13.0 :
+		bHarborDeckDatum ? -3.0 : bAuthoredVisual ? MeshBottom - 3.0 : -Height * 0.5 - 3.0;
+	ConfigureSelectionFootprint(Width, Depth, SelectionGroundZ);
 	StatusMarker->SetRelativeLocation(
 		FVector(0.0, 0.0, bAuthoredVisual ? MeshBottom + Height + 100.0 : Height * 0.5 + 100.0));
 	StatusMarker->SetRelativeScale3D(FVector(0.45, 0.45, 0.8));
@@ -406,9 +433,205 @@ void AHansaBuildingWorldProjectionActor::ApplyProjection(
 
 void AHansaBuildingWorldProjectionActor::SetSelected(const bool bInSelected)
 {
+	if (bSelected == bInSelected)
+	{
+		SelectionOutline->SetVisibility(bSelected, true);
+		for (UStaticMeshComponent* Segment : SelectionCornerSegments)
+		{
+			Segment->SetVisibility(bSelected, true);
+		}
+		return;
+	}
 	bSelected = bInSelected;
 	// Selection must preserve production visibility and hidden fallback meshes.
 	SelectionOutline->SetVisibility(bSelected, true);
+	for (UStaticMeshComponent* Segment : SelectionCornerSegments)
+	{
+		Segment->SetVisibility(bSelected, true);
+	}
+	SetSelectionDepthEnabled(bSelected);
+	if (bSelected)
+	{
+		RebuildSelectionContours();
+	}
+	else
+	{
+		DestroySelectionContours();
+	}
+}
+
+void AHansaBuildingWorldProjectionActor::ConfigureSelectionFootprint(
+	const double Width, const double Depth, const double GroundZ)
+{
+	const double HalfWidth = (Width + 40.0) * 0.5;
+	const double HalfDepth = (Depth + 40.0) * 0.5;
+	const double BracketLength = FMath::Clamp(FMath::Min(Width, Depth) * 0.18, 70.0, 140.0);
+	const double BracketThickness = 12.0;
+	const double MarkerHeight = 6.0;
+
+	int32 SegmentIndex = 0;
+	for (const double XSign : { -1.0, 1.0 })
+	{
+		for (const double YSign : { -1.0, 1.0 })
+		{
+			UStaticMeshComponent* Horizontal = SelectionCornerSegments[SegmentIndex++];
+			Horizontal->SetRelativeLocation(FVector(
+				XSign * (HalfWidth - BracketLength * 0.5), YSign * HalfDepth, GroundZ));
+			Horizontal->SetRelativeRotation(FRotator::ZeroRotator);
+			Horizontal->SetRelativeScale3D(FVector(
+				BracketLength / 100.0, BracketThickness / 100.0, MarkerHeight / 100.0));
+
+			UStaticMeshComponent* Vertical = SelectionCornerSegments[SegmentIndex++];
+			Vertical->SetRelativeLocation(FVector(
+				XSign * HalfWidth, YSign * (HalfDepth - BracketLength * 0.5), GroundZ));
+			Vertical->SetRelativeRotation(FRotator::ZeroRotator);
+			Vertical->SetRelativeScale3D(FVector(
+				BracketThickness / 100.0, BracketLength / 100.0, MarkerHeight / 100.0));
+		}
+	}
+
+	// SelectionOutline remains the stable public/test component, but is now the small
+	// non-colour diamond cue from the approved reference rather than an opaque slab.
+	SelectionOutline->SetRelativeLocation(FVector(0.0, -HalfDepth - 48.0, GroundZ));
+	SelectionOutline->SetRelativeRotation(FRotator(0.0, 45.0, 0.0));
+	SelectionOutline->SetRelativeScale3D(FVector(0.34, 0.34, MarkerHeight / 100.0));
+}
+
+void AHansaBuildingWorldProjectionActor::SetSelectionDepthEnabled(const bool bEnabled)
+{
+	TArray<UPrimitiveComponent*> Primitives;
+	if (BuildingMesh != nullptr)
+	{
+		Primitives.Add(BuildingMesh);
+	}
+	if (ConstructionPlaceholder != nullptr)
+	{
+		Primitives.Add(ConstructionPlaceholder);
+	}
+	if (AActor* Presentation = BuildingPresentation != nullptr ? BuildingPresentation->GetChildActor() : nullptr)
+	{
+		TArray<UPrimitiveComponent*> PresentationPrimitives;
+		Presentation->GetComponents<UPrimitiveComponent>(PresentationPrimitives, true);
+		Primitives.Append(PresentationPrimitives);
+	}
+	for (UPrimitiveComponent* Primitive : Primitives)
+	{
+		if (Primitive == nullptr)
+		{
+			continue;
+		}
+		Primitive->SetRenderCustomDepth(bEnabled);
+		if (bEnabled)
+		{
+			Primitive->SetCustomDepthStencilValue(1);
+		}
+	}
+}
+
+UStaticMeshComponent* AHansaBuildingWorldProjectionActor::CreateSelectionShell(
+	UStaticMeshComponent& Source, UMaterialInterface& Material, const float WorldExpansion,
+	const TCHAR* LayerName, const int32 SourceIndex)
+{
+	UStaticMesh* SourceMesh = Source.GetStaticMesh();
+	if (SourceMesh == nullptr)
+	{
+		return nullptr;
+	}
+	const FBox LocalBounds = SourceMesh->GetBoundingBox();
+	const float MaxExtent = FMath::Max(LocalBounds.GetExtent().GetMax(), 1.0f);
+	const float ScaleFactor = 1.0f + FMath::Clamp(WorldExpansion / MaxExtent, 0.002f, 0.03f);
+
+	const FName ShellName = MakeUniqueObjectName(
+		this, UStaticMeshComponent::StaticClass(),
+		FName(*FString::Printf(TEXT("Selection%s_%d"), LayerName, SourceIndex)));
+	UStaticMeshComponent* Shell = NewObject<UStaticMeshComponent>(this, ShellName);
+	AddInstanceComponent(Shell);
+	Shell->SetStaticMesh(SourceMesh);
+	ConfigurePresentationComponent(*Shell);
+	Shell->SetReverseCulling(true);
+	Shell->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Shell->SetGenerateOverlapEvents(false);
+	Shell->SetCanEverAffectNavigation(false);
+	Shell->ComponentTags.Add(TEXT("Hansa.Projection.SelectionContour"));
+	for (int32 MaterialIndex = 0; MaterialIndex < FMath::Max(1, Source.GetNumMaterials()); ++MaterialIndex)
+	{
+		Shell->SetMaterial(MaterialIndex, &Material);
+	}
+	Shell->RegisterComponent();
+	Shell->AttachToComponent(&Source, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	Shell->SetRelativeLocation(LocalBounds.GetCenter() * (1.0f - ScaleFactor));
+	Shell->SetRelativeRotation(FRotator::ZeroRotator);
+	Shell->SetRelativeScale3D(FVector(ScaleFactor));
+	Shell->SetVisibility(true, true);
+	return Shell;
+}
+
+void AHansaBuildingWorldProjectionActor::DestroySelectionContours()
+{
+	for (UStaticMeshComponent* Shell : SelectionContourMeshes)
+	{
+		if (IsValid(Shell))
+		{
+			Shell->DestroyComponent();
+		}
+	}
+	for (UStaticMeshComponent* Shell : SelectionHaloMeshes)
+	{
+		if (IsValid(Shell))
+		{
+			Shell->DestroyComponent();
+		}
+	}
+	SelectionContourMeshes.Reset();
+	SelectionHaloMeshes.Reset();
+}
+
+void AHansaBuildingWorldProjectionActor::RebuildSelectionContours()
+{
+	DestroySelectionContours();
+	if (!bSelected || DynamicMaterials.Num() != 4 || DynamicMaterials[2] == nullptr ||
+		SelectionHaloMaterial == nullptr)
+	{
+		return;
+	}
+
+	TArray<UStaticMeshComponent*> Sources;
+	if (BuildingMesh != nullptr && BuildingMesh->IsVisible())
+	{
+		Sources.Add(BuildingMesh);
+	}
+	if (ConstructionPlaceholder != nullptr && ConstructionPlaceholder->IsVisible())
+	{
+		Sources.Add(ConstructionPlaceholder);
+	}
+	if (AActor* Presentation = BuildingPresentation != nullptr ? BuildingPresentation->GetChildActor() : nullptr;
+		Presentation != nullptr && !Presentation->IsHidden())
+	{
+		TArray<UStaticMeshComponent*> PresentationSources;
+		Presentation->GetComponents<UStaticMeshComponent>(PresentationSources, true);
+		Sources.Append(PresentationSources);
+	}
+
+	int32 SourceIndex = 0;
+	for (UStaticMeshComponent* Source : Sources)
+	{
+		if (Source == nullptr || Source->GetStaticMesh() == nullptr || !Source->IsVisible() ||
+			(Source->GetOwner() != nullptr && Source->GetOwner()->IsHidden()))
+		{
+			continue;
+		}
+		if (UStaticMeshComponent* Halo = CreateSelectionShell(
+			*Source, *SelectionHaloMaterial, 8.0f, TEXT("Halo"), SourceIndex))
+		{
+			SelectionHaloMeshes.Add(Halo);
+		}
+		if (UStaticMeshComponent* Contour = CreateSelectionShell(
+			*Source, *DynamicMaterials[2], 4.0f, TEXT("Contour"), SourceIndex))
+		{
+			SelectionContourMeshes.Add(Contour);
+		}
+		++SourceIndex;
+	}
 }
 
 FName AHansaBuildingWorldProjectionActor::GetStatusName() const
@@ -476,6 +699,10 @@ void AHansaBuildingWorldProjectionActor::ApplyVisualState()
 	}
 	ConstructionPlaceholder->SetVisibility(bConstructing && GrainFarm == nullptr && Bakery == nullptr && LumberCamp == nullptr && Sawmill == nullptr && Residence == nullptr && Market == nullptr && Warehouse == nullptr && Harbor == nullptr && Road == nullptr, true);
 	SelectionOutline->SetVisibility(bSelected, true);
+	for (UStaticMeshComponent* Segment : SelectionCornerSegments)
+	{
+		Segment->SetVisibility(bSelected, true);
+	}
 	StatusMarker->SetVisibility(bConstructing || bBlocked, true);
 	StatusMarker->SetStaticMesh(bBlocked ? SphereMesh : ConeMesh);
 	RoadDisconnectedMarker->SetVisibility(bRoadDisconnected, true);
@@ -492,6 +719,15 @@ void AHansaBuildingWorldProjectionActor::ApplyVisualState()
 		DynamicMaterials[2]->SetVectorParameterValue(TEXT("Color"), HansaColor(TEXT("C19A52")));
 		DynamicMaterials[3]->SetVectorParameterValue(
 			TEXT("Color"), bBlocked ? HansaColor(TEXT("762F32")) : HansaColor(TEXT("D09132")));
+		if (SelectionHaloMaterial != nullptr)
+		{
+			SelectionHaloMaterial->SetVectorParameterValue(TEXT("Color"), HansaColor(TEXT("397FA3")));
+		}
+	}
+	SetSelectionDepthEnabled(bSelected);
+	if (bSelected)
+	{
+		RebuildSelectionContours();
 	}
 }
 
@@ -536,6 +772,11 @@ AHansaBuildingPlacementGhost::AHansaBuildingPlacementGhost()
 	StatusText->SetCastShadow(false);
 	StatusText->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Tags.Add(TEXT("Hansa.Placement.Ghost"));
+    TerrainFeedbackMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("TerrainFeedback"));
+    TerrainFeedbackMesh->SetupAttachment(SceneRoot);
+    TerrainFeedbackMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    TerrainFeedbackMesh->SetCanEverAffectNavigation(false);
+    TerrainFeedbackMesh->SetCastShadow(false);
 	SetActorHiddenInGame(true);
 }
 
@@ -575,7 +816,8 @@ void AHansaBuildingPlacementGhost::ApplyPreview(
 	const TConstArrayView<FIntPoint> FootprintCells,
 	const EHansaPlacementFeedback Feedback,
 	const FText& Reason,
-	const AHansaLubeckWorldFoundation& Foundation)
+	const AHansaLubeckWorldFoundation& Foundation,
+	const bool bDeferRoadFeedback)
 {
 	PreviewBuildingId = BuildingDefinitionId;
 	ActiveRoadPieceCount = 0;
@@ -661,6 +903,8 @@ void AHansaBuildingPlacementGhost::ApplyPreview(
 	if (auto* Road=Cast<AHansaRoadPresentation>(BuildingPresentation->GetChildActor())) Road->ApplyGround(Foundation);
 
 	ActiveFootprintCellCount = Cells.Num();
+	TerrainFeedbackMesh->SetVisibility(false);
+	for (UStaticMeshComponent* Outline : OutlineMeshes) Outline->SetVisibility(true);
 	for (int32 Index = 0; Index < Cells.Num(); ++Index)
 	{
 		UStaticMeshComponent* CellMesh = AcquireFootprintCell(Index);
@@ -688,6 +932,7 @@ void AHansaBuildingPlacementGhost::ApplyPreview(
 	StatusText->SetRelativeLocation(FVector(0.0, 0.0, FMath::Max(180.0, VisualHeight + 90.0)));
 	ApplyFeedbackVisuals(Feedback, Reason);
 	SetActorHiddenInGame(false);
+	if (BuildingDefinitionId == TEXT("Building.Road") && !bDeferRoadFeedback) FitRoadFeedbackToTerrain(Foundation);
 }
 
 void AHansaBuildingPlacementGhost::ApplyRoadPreview(
@@ -700,7 +945,7 @@ void AHansaBuildingPlacementGhost::ApplyRoadPreview(
 	Coordinates.Reserve(Cells.Num());
 	for (const FHansaRoadPreviewCell& Cell : Cells) Coordinates.Add(Cell.Cell);
 	const FIntPoint Anchor = Coordinates.IsEmpty() ? FIntPoint::ZeroValue : Coordinates.Last();
-	ApplyPreview(TEXT("Building.Road"), Anchor, 0, Coordinates, Feedback, Reason, Foundation);
+	ApplyPreview(TEXT("Building.Road"), Anchor, 0, Coordinates, Feedback, Reason, Foundation, true);
 
 	BuildingMesh->SetVisibility(false, true);
 	BuildingPresentation->SetVisibility(false, true);
@@ -794,8 +1039,77 @@ void AHansaBuildingPlacementGhost::ApplyRoadPreview(
 	{
 		RoadPieceMeshes[Index]->SetVisibility(false, true);
 	}
+	FitRoadFeedbackToTerrain(Foundation);
 }
 
+void AHansaBuildingPlacementGhost::FitRoadFeedbackToTerrain(const AHansaLubeckWorldFoundation& Foundation)
+{
+    // Centre-grounded cubes intersect slopes. Ground a tessellated surface for
+    // each coloured cell and for the long border instead.
+    TerrainFeedbackMesh->ClearAllMeshSections();
+    const FTransform WorldToGhost = GetActorTransform().Inverse();
+    const double Datum = Cast<AHansaRoadPresentation>(BuildingPresentation->GetChildActor())
+        ? AHansaRoadPresentation::GroundBaseHeight() : 100.0;
+    int32 SectionIndex = 0;
+    auto AddSurface = [&](UStaticMeshComponent* Source, double Clearance)
+    {
+        const FTransform Transform = Source->GetComponentTransform();
+        const FVector Size = Transform.GetScale3D().GetAbs() * 100.0;
+        const int32 Columns = FMath::Max(1, FMath::CeilToInt(Size.X / 50.0));
+        const int32 Rows = FMath::Max(1, FMath::CeilToInt(Size.Y / 50.0));
+        FHitResult CentreHit;
+        const FVector Centre = Transform.GetLocation();
+        Hansa::Game::TerrainPlacement::Trace(GetWorld(), Centre + FVector(0,0,1000000), Centre - FVector(0,0,1000000), CentreHit);
+        const auto* Landscape = Cast<ALandscapeProxy>(CentreHit.GetActor());
+        if (Landscape && !Landscape->GetActorUpVector().Equals(FVector::UpVector, .0001)) Landscape = nullptr;
+        auto GroundPoint = [&](FVector Point)
+        {
+            if (Landscape)
+            {
+                const TOptional<float> Height = Landscape->GetHeightAtLocation(Point);
+                if (Height.IsSet()) { Point.Z = Height.GetValue() + Clearance; return Point; }
+            }
+            FVector Local = Foundation.GetActorTransform().InverseTransformPosition(Point);
+            Local.Z = Datum;
+            Point.Z = Foundation.GetActorTransform().TransformPosition(Local).Z + Clearance;
+            return Foundation.GroundPlacementPosition(Point, Datum);
+        };
+        TArray<FVector> Vertices;
+        TArray<int32> Triangles;
+        for (int32 Y = 0; Y <= Rows; ++Y)
+            for (int32 X = 0; X <= Columns; ++X)
+                Vertices.Add(GroundPoint(Transform.TransformPosition(FVector(
+                    -50.0 + 100.0 * X / Columns, -50.0 + 100.0 * Y / Rows, 0))));
+        TArray<double> Lift;
+        Lift.Init(0.0, Vertices.Num());
+        for (int32 Y = 0; Y < Rows; ++Y)
+            for (int32 X = 0; X < Columns; ++X)
+            {
+                const int32 A = Y * (Columns + 1) + X, B = A + 1, C = A + Columns + 1, D = C + 1;
+                // Catch crests between samples without lifting the whole cell.
+                const double Residual = FMath::Max(0.0, GroundPoint((Vertices[A] + Vertices[D]) * .5).Z
+                    - (Vertices[A].Z + Vertices[D].Z) * .5);
+                for (int32 I : {A, B, C, D}) Lift[I] = FMath::Max(Lift[I], Residual);
+                Triangles.Append({A, D, B, A, C, D});
+            }
+        for (int32 I = 0; I < Vertices.Num(); ++I)
+        {
+            Vertices[I].Z += Lift[I];
+            Vertices[I] = WorldToGhost.TransformPosition(Vertices[I]);
+        }
+        TerrainFeedbackMesh->CreateMeshSection(SectionIndex, Vertices, Triangles,
+            TArray<FVector>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>(), false);
+        TerrainFeedbackMesh->SetMaterial(SectionIndex++, Source->GetMaterial(0));
+        Source->SetVisibility(false);
+    };
+    for (int32 Index = 0; Index < ActiveFootprintCellCount; ++Index)
+    {
+        UStaticMeshComponent* Cell = FootprintCellMeshes[Index];
+        AddSurface(Cell, Cell->GetMaterial(0) == RoadInvalidMaterial ? (Index % 2 == 0 ? 22.0 : 34.0) : 12.0);
+    }
+    for (UStaticMeshComponent* Outline : OutlineMeshes) AddSurface(Outline, 24.0);
+    TerrainFeedbackMesh->SetVisibility(ActiveFootprintCellCount > 0);
+}
 void AHansaBuildingPlacementGhost::ApplyFeedbackVisuals(
 	const EHansaPlacementFeedback Feedback, const FText& Reason)
 {

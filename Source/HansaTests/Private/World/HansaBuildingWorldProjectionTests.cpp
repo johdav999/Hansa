@@ -228,6 +228,16 @@ bool FHansaPlacementProjectionActorLifecycleTest::RunTest(const FString& Paramet
 		Manager->SelectBuilding(Warehouse->GetBuildingId());
 		TestTrue(TEXT("Selection is presentation-only and shows a native outline"),
 			Warehouse->IsSelected() && Warehouse->SelectionOutline->IsVisible());
+		TestEqual(TEXT("Selection uses four L-shaped footprint brackets"),
+			Warehouse->SelectionCornerSegments.Num(), 8);
+		TestFalse(TEXT("Every footprint bracket segment is visible while selected"),
+			Warehouse->SelectionCornerSegments.ContainsByPredicate(
+				[](const UStaticMeshComponent* Segment) { return Segment == nullptr || !Segment->IsVisible(); }));
+		TestTrue(TEXT("Selected visible geometry receives a mesh-hugging contour"),
+			!Warehouse->SelectionContourMeshes.IsEmpty() &&
+			Warehouse->SelectionContourMeshes.Num() == Warehouse->SelectionHaloMeshes.Num());
+		TestTrue(TEXT("Selected geometry is custom-depth compatible"),
+			Warehouse->ConstructionPlaceholder->bRenderCustomDepth);
 		FHansaBuildingWorldProjection Blocked = MakeWorldProjection(
 			1, TEXT("Building.Warehouse"), 2, FHansaRate::Scale);
 		Blocked.Status = EHansaBuildingWorldStatus::Blocked;
@@ -667,9 +677,19 @@ bool FHansaSelectionPreservesProductionVisibilityTest::RunTest(const FString& Pa
     TestFalse(TEXT("Unavailable production artwork hides the fallback cube"), Actor->BuildingMesh->IsVisible());
     Actor->SetSelected(true);
     TestTrue(TEXT("Building selection shows its outline"), Actor->SelectionOutline->IsVisible());
+	TestEqual(TEXT("Building selection exposes four shape-redundant footprint corners"),
+		Actor->SelectionCornerSegments.Num(), 8);
+	TestTrue(TEXT("Selected fallback geometry is custom-depth tagged"),
+		Actor->ConstructionPlaceholder->bRenderCustomDepth);
     TestFalse(TEXT("Selection preserves hidden fallback"), Actor->BuildingMesh->IsVisible());
     Actor->SetSelected(false);
     TestFalse(TEXT("Ground click clears outline"), Actor->SelectionOutline->IsVisible());
+	TestFalse(TEXT("Ground click clears every footprint corner"),
+		Actor->SelectionCornerSegments.ContainsByPredicate(
+			[](const UStaticMeshComponent* Segment) { return Segment != nullptr && Segment->IsVisible(); }));
+	TestTrue(TEXT("Ground click destroys transient mesh contours"),
+		Actor->SelectionContourMeshes.IsEmpty() && Actor->SelectionHaloMeshes.IsEmpty());
+	TestFalse(TEXT("Ground click clears custom depth"), Actor->ConstructionPlaceholder->bRenderCustomDepth);
     TestFalse(TEXT("Ground click does not reveal a red fallback cube"), Actor->BuildingMesh->IsVisible());
     Actor->SetSelected(false);
     TestFalse(TEXT("Repeated ground clicks keep fallback hidden"), Actor->BuildingMesh->IsVisible());

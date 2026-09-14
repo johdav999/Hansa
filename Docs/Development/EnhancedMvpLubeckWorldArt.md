@@ -2,6 +2,40 @@
 
 Status 2026-09-09: **implemented staging workflow; P30 incomplete and not accepted for production**.
 
+## Locked midday presentation — 2026-09-14
+
+The current user direction supersedes the variable in-game time-of-day presentation: normal play is locked to
+`12:00`. Authoritative simulation ticks and elapsed days continue to advance normally, so economy, production,
+trade, research, saves, determinism, seasonal state, and the displayed day number retain their existing behavior.
+`UHansaRuntimeSimulationHost::TryGetPresentationCalendar`, replicated-client lighting fallbacks, the strategy-camera
+exposure, and the HUD clock all consume the shared presentation lock. The solar evaluator remains continuous and
+season-aware for future use and focused tests, but normal gameplay evaluates it at seasonal noon.
+
+## Simulation lighting revision — 2026-09-14
+
+The world-art actor now evaluates a continuous presentation-only solar curve from the authoritative simulation
+calendar and its fractional visual tick. The curve models Lübeck latitude over a 360-day presentation year with day
+zero as the spring equinox, so sunset varies by season without changing simulation authority or save data. Daylight
+uses a 17.5 klux ceiling (about 15 klux at the locked spring-noon presentation), a 4-degree source angle,
+neutral-warm 5700 K sun, stronger 1.8-intensity/7500 K skylight fill, and EV100 14.
+Directional contact shadows are explicitly disabled. SSAO is reduced from Unreal's 0.5 default to 0.35 and Lumen
+AO from 1.0 to 0.70, retaining grounding in creases without compounding the broad solar shadow.
+Direct sunlight fades to zero below the horizon while skylight, color temperature, and exposure transition through
+twilight into an art-directed EV3.5/0.65 cool-skylight moonlit baseline, while daylight remains EV14/1.8. The runtime represents the EV curve with a manual f/4, ISO 100 shutter-speed curve plus a separate constant +3.8-stop terrain/material calibration. This is a +0.3-stop lift over the previous calibration: enough to preserve midtone brightness after reducing the direct sun, without changing the authored EV100 14. The authored EV remains explicit and deterministic when scalability or headless capture disables eye adaptation. Unreal local exposure is neutralized in both project defaults and the
+unbound world-art post process. Cached-lighting pre-exposure is centered at EV8, covering Unreal 5.8's -4 to 16 EV
+safe range without clipping Lumen or skylight data. `Hansa.World.LubeckArt.SimulationLightingCurve` covers daylight bounds, seasonal
+21:00 behavior, exposure/source-angle targets, cool fill, and continuity across an hour boundary. The current
+`ProductionLockedMiddayViewport` test advances the underlying simulation to Day 5 at 22:00, then verifies the host,
+HUD, sun, exposure, and native terrain viewport remain locked to calibrated 12:00 presentation with a clipping ceiling.
+The existing day/evening review presets remain explicit developer overrides; `ClearLightingPresetOverride` restores
+the normal locked-midday presentation.
+The production `L_Lubeck_MVP` map owns its active lights through `AHansaLubeckWorldFoundation`, so that actor also
+samples the same curve and owns the live movable sun, stable neutral-cubemap skylight, sky atmosphere, and exposure
+component. The specified skylight source keeps the cool evening fill readable after the atmospheric capture goes dark.
+Maps such as the configured terrain-preview startup map that contain standalone authored light actors are controlled by
+`AHansaGameState`; it applies the same curve and pushes exposure to the strategy camera's final post-process layer.
+`Hansa.World.LubeckArt.ProductionLightingOwner` prevents a curve-only implementation from missing the live map again.
+
 The required production assembly cannot truthfully pass while P11 Fishery has no model, P16 Warehouse remains unimported, P20 vegetation/shared dressing is incomplete, and the authoritative initial session projects Building.Brewery as an Engine cube. P30 does not substitute unrelated buildings, hide authoritative entities, or promote unseen assets. The production `L_Lubeck_MVP` map is unchanged by this task.
 
 ## Implemented candidate

@@ -15,6 +15,8 @@ class HANSA_API AHansaGameState : public AGameStateBase
 public:
 	AHansaGameState();
 
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void PublishAuthoritativeProjection(const FHansaClientProjectionSnapshot& Projection);
 
@@ -35,4 +37,18 @@ public:
 
 	UPROPERTY(Replicated, VisibleAnywhere, Category = "Hansa|Multiplayer")
 	TArray<FHansaReplicatedVictoryObjective> VictoryObjectives;
+
+	/** Map-independent exposure used by both embedded and standalone environment-light rigs. */
+	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Lighting")
+	TObjectPtr<class UPostProcessComponent> LightingExposure;
+
+private:
+	void RefreshStandaloneLightingActors();
+	void ApplySimulationLighting();
+
+	TWeakObjectPtr<class ADirectionalLight> StandaloneSun;
+	TWeakObjectPtr<class ASkyLight> StandaloneSky;
+
+	UPROPERTY()
+	TObjectPtr<class UTextureCube> AmbientLightingCube;
 };

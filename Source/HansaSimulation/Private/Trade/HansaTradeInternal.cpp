@@ -17,7 +17,7 @@ namespace Hansa::Simulation
 			return Houses.FindByPredicate([Id](const FHansaHouseState& House) { return House.Id == Id; });
 		}
 
-		bool HasPlacementMap(const FHansaPlacementState& Placement, const FHansaCityDefinitionId CityId)
+		bool TradeInternalHasPlacementMap(const FHansaPlacementState& Placement, const FHansaCityDefinitionId CityId)
 		{
 			for (const FHansaPlacementMapInitialization& Map : Placement.GetMaps())
 			{
@@ -31,7 +31,7 @@ namespace Hansa::Simulation
 			const FHansaPlacementState& Placement, const TConstArrayView<FHansaBuildingState> Buildings,
 			const FHansaEconomicRegistry& Registry)
 		{
-			if (!HasPlacementMap(Placement, Inventory.CityId)) return true;
+			if (!TradeInternalHasPlacementMap(Placement, Inventory.CityId)) return true;
 			if (!FHansaLocalLogisticsQueries::QueryRoadPath(
 				Inventory.Id, Inventory.Id, Inventories.CreateReadOnlyAccess(), Placement, Buildings, &Registry).bMarketEligible)
 			{

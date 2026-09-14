@@ -16,6 +16,7 @@ class UStaticMesh;
 class UStaticMeshComponent;
 class UChildActorComponent;
 class UTextRenderComponent;
+class UProceduralMeshComponent;
 enum class EHansaPlacementFeedback : uint8;
 struct FHansaRoadPreviewCell;
 
@@ -116,6 +117,18 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
 	TObjectPtr<UStaticMeshComponent> SelectionOutline;
 
+	/** Eight short brass bars form four terrain-level L brackets around the authoritative footprint. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
+	TArray<TObjectPtr<UStaticMeshComponent>> SelectionCornerSegments;
+
+	/** Transient inverted-hull copies of visible authored meshes; one set per selected actor only. */
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
+	TArray<TObjectPtr<UStaticMeshComponent>> SelectionContourMeshes;
+
+	/** Slightly larger blue shells separate the brass contour from bright terrain and dark shadows. */
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
+	TArray<TObjectPtr<UStaticMeshComponent>> SelectionHaloMeshes;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
 	TObjectPtr<UStaticMeshComponent> StatusMarker;
 
@@ -125,6 +138,13 @@ public:
 private:
 	void EnsureMaterials();
 	void ApplyVisualState();
+	void ConfigureSelectionFootprint(double Width, double Depth, double GroundZ);
+	void RebuildSelectionContours();
+	void DestroySelectionContours();
+	void SetSelectionDepthEnabled(bool bEnabled);
+	UStaticMeshComponent* CreateSelectionShell(
+		UStaticMeshComponent& Source, UMaterialInterface& Material, float WorldExpansion,
+		const TCHAR* LayerName, int32 SourceIndex);
 
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Projection")
 	TObjectPtr<USceneComponent> SceneRoot;
@@ -146,6 +166,9 @@ private:
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMaterialInstanceDynamic>> DynamicMaterials;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMaterialInstanceDynamic> SelectionHaloMaterial;
 
 	Hansa::Simulation::FHansaBuildingId BuildingId;
 	FString BuildingDefinitionId;
@@ -178,7 +201,8 @@ public:
 		TConstArrayView<FIntPoint> FootprintCells,
 		EHansaPlacementFeedback Feedback,
 		const FText& Reason,
-		const AHansaLubeckWorldFoundation& Foundation);
+		const AHansaLubeckWorldFoundation& Foundation,
+		bool bDeferRoadFeedback = false);
 	void ApplyRoadPreview(
 		TConstArrayView<FHansaRoadPreviewCell> Cells,
 		EHansaPlacementFeedback Feedback,
@@ -195,6 +219,7 @@ private:
 	UStaticMeshComponent* AcquireFootprintCell(int32 Index);
 	UStaticMeshComponent* AcquireRoadPiece(int32 Index);
 	void ApplyFeedbackVisuals(EHansaPlacementFeedback Feedback, const FText& Reason);
+	void FitRoadFeedbackToTerrain(const AHansaLubeckWorldFoundation& Foundation);
 
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TObjectPtr<USceneComponent> SceneRoot;
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TObjectPtr<UStaticMeshComponent> BuildingMesh;
@@ -203,6 +228,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TArray<TObjectPtr<UStaticMeshComponent>> RoadPieceMeshes;
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TArray<TObjectPtr<UStaticMeshComponent>> OutlineMeshes;
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Placement") TObjectPtr<UTextRenderComponent> StatusText;
+	UPROPERTY(Transient) TObjectPtr<UProceduralMeshComponent> TerrainFeedbackMesh;
 	UPROPERTY() TObjectPtr<UStaticMesh> CubeMesh;
 	UPROPERTY() TObjectPtr<UMaterialInterface> BaseMaterial;
 	UPROPERTY() TObjectPtr<UHansaDefinitionBase> PresentationDefinition;

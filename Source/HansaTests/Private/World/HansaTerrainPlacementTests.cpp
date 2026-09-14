@@ -5,6 +5,7 @@
 #include "World/HansaLubeckPlacementGrid.h"
 #include "UI/HansaBuildMenuPresentationModel.h"
 #include "Components/StaticMeshComponent.h"
+#include "ProceduralMeshComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
@@ -84,6 +85,39 @@ bool FHansaTerrainPlacementTest::RunTest(const FString& Parameters)
     Terrain->SetActorRotation(FRotator(12,0,0));
     const FQuat Slope=RoadRotation(World,Nominal,FQuat::Identity);
     TestFalse(TEXT("Road tiles follow terrain slope"),Slope.Equals(FQuat::Identity,.001));
+    TArray<FHansaRoadPreviewCell> RoadCells = {
+        {FIntPoint(18,16), EHansaRoadPreviewCellState::NewValid, NAME_None},
+        {FIntPoint(19,16), EHansaRoadPreviewCellState::ExistingRoad, NAME_None},
+        {FIntPoint(19,17), EHansaRoadPreviewCellState::Invalid, TEXT("Occupied")}
+    };
+    Ghost->ApplyRoadPreview(RoadCells, EHansaPlacementFeedback::Invalid, FText::GetEmpty(), *Foundation);
+    auto* Overlay = Ghost->FindComponentByClass<UProceduralMeshComponent>();
+    TestNotNull(TEXT("Road feedback has a terrain mesh"), Overlay);
+    if (Overlay)
+    {
+        TestEqual(TEXT("Every cell and all four borders are fitted"), Overlay->GetNumSections(), 7);
+        bool bAllGrounded = true;
+        for (int32 SectionIndex = 0; SectionIndex < Overlay->GetNumSections(); ++SectionIndex)
+        {
+            const FProcMeshSection* Section = Overlay->GetProcMeshSection(SectionIndex);
+            TestTrue(TEXT("Overlay surfaces have intermediate terrain samples"), Section && Section->ProcVertexBuffer.Num() > 4);
+            if (!Section) continue;
+            const double Clearance = SectionIndex == 2 ? 22.0 : SectionIndex < 3 ? 12.0 : 24.0;
+            for (const FProcMeshVertex& Vertex : Section->ProcVertexBuffer)
+            {
+                const FVector Point = Overlay->GetComponentTransform().TransformPosition(Vertex.Position);
+                FHitResult GroundHit;
+                bAllGrounded &= Trace(World, Point + FVector(0,0,10000), Point - FVector(0,0,10000), GroundHit)
+                    && FMath::IsNearlyEqual(Point.Z - GroundHit.ImpactPoint.Z, Clearance, .2);
+            }
+        }
+        TestTrue(TEXT("All road cell and border vertices follow the slope with clearance"), bAllGrounded);
+        RoadCells.SetNum(1);
+        Ghost->ApplyRoadPreview(RoadCells, EHansaPlacementFeedback::Valid, FText::GetEmpty(), *Foundation);
+        TestEqual(TEXT("Shorter drag removes superseded geometry"), Overlay->GetNumSections(), 5);
+        Ghost->ApplyPreview(TEXT("Building.Bakery"), Cells[0], 0, Cells, EHansaPlacementFeedback::Valid, FText::GetEmpty(), *Foundation);
+        TestFalse(TEXT("Switching to buildings hides road terrain overlay"), Overlay->IsVisible());
+    }
     return !HasAnyErrors();
 }
 #endif

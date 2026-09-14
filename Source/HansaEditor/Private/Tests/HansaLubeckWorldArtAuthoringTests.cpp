@@ -59,16 +59,17 @@ namespace
         auto* XY=Expression<UMaterialExpressionComponentMask>(M);XY->R=true;XY->G=true;XY->Input.Connect(0,Pos);
         auto* Scale=Expression<UMaterialExpressionConstant>(M);Scale->R=.0025f; // approved native 4 m P18 source scale
         auto* UV=Expression<UMaterialExpressionMultiply>(M);UV->A.Connect(0,XY);UV->B.Connect(0,Scale);
-        auto Sample=[&](const TCHAR* Name,EMaterialSamplerType Type){auto* E=Expression<UMaterialExpressionTextureSample>(M);E->Texture=LoadObject<UTexture2D>(nullptr,*FString::Printf(TEXT("/Game/Mesh/hansa-dirt-road/Textures/%s.%s"),Name,Name));E->SamplerType=Type;E->Coordinates.Connect(0,UV);return E;};
-        auto* Base=Sample(TEXT("T_Road_BaseColor"),SAMPLERTYPE_Color);
-        auto* Normal=Sample(TEXT("T_Road_Normal"),SAMPLERTYPE_Normal);
-        auto* Rough=Sample(TEXT("T_Road_Roughness"),SAMPLERTYPE_Masks);
+        auto Sample=[&](const TCHAR* Name){auto* E=Expression<UMaterialExpressionTextureSample>(M);E->Texture=LoadObject<UTexture2D>(nullptr,*FString::Printf(TEXT("/Game/Hansa/Generated/Staging/LubeckTerrain_20260907/Textures/%s.%s"),Name,Name));E->SamplerType=SAMPLERTYPE_Color;E->Coordinates.Connect(0,UV);return E;};
+        auto* Grass=Sample(TEXT("T_Terrain_Lubeck_GrassLoam"));
+        auto* Bank=Sample(TEXT("T_Terrain_Lubeck_BankLoam"));
         auto* Tint=Expression<UMaterialExpressionCustom>(M);Tint->OutputType=CMOT_Float3;
         FCustomInput P;P.InputName=TEXT("P");P.Input.Connect(0,Pos);Tint->Inputs.Add(P);
-        FCustomInput C;C.InputName=TEXT("Soil");C.Input.Connect(0,Base);Tint->Inputs.Add(C);
-        // Restrained macro breakup and bank moisture. This is gameplay grading, never a historical cover claim.
-        Tint->Code=TEXT("float macro=0.94+0.06*sin(P.x/3700.0)*sin(P.y/5100.0); float dry=saturate((P.z+40.0)/110.0); return Soil*lerp(float3(.40,.43,.38),float3(.74,.80,.55),dry)*macro;");
-        M->GetEditorOnlyData()->BaseColor.Connect(0,Tint);M->GetEditorOnlyData()->Normal.Connect(0,Normal);M->GetEditorOnlyData()->Roughness.Connect(0,Rough);
+        FCustomInput G;G.InputName=TEXT("Grass");G.Input.Connect(0,Grass);Tint->Inputs.Add(G);
+        FCustomInput B;B.InputName=TEXT("Bank");B.Input.Connect(0,Bank);Tint->Inputs.Add(B);
+        // Restrained macro breakup and a source-authored loam transition. This is gameplay grading, never a historical cover claim.
+        Tint->Code=TEXT("float macro=0.94+0.06*sin(P.x/3700.0)*sin(P.y/5100.0); float dry=saturate((P.z+40.0)/110.0); return lerp(Bank,Grass,dry)*macro;");
+        auto* Rough=Expression<UMaterialExpressionConstant>(M);Rough->R=.84f;
+        M->GetEditorOnlyData()->BaseColor.Connect(0,Tint);M->GetEditorOnlyData()->Roughness.Connect(0,Rough);
         M->PostEditChange();return Save(M)?M:nullptr;
     }
     UStaticMesh* WaterMesh()
@@ -98,11 +99,11 @@ bool FLubeckWorldArtAuthoring::RunTest(const FString&)
     auto* F=W->SpawnActor<AHansaLubeckWorldFoundation>();F->bUseAuthoredWorld=true;F->RerunConstructionScripts();
     W->SpawnActor<AHansaLubeckAutomationStart>(AHansaLubeckAutomationStart::StaticClass(),Hansa::Game::LubeckMap::AutomationStartTransform());
     W->SpawnActor<AHansaLubeckWorldArt>();
-    constexpr int Side=505;TArray<uint16> Heights;Heights.Reserve(Side*Side);
-    for(int Y=0;Y<Side;++Y)for(int X=0;X<Side;++X)Heights.Add(FMath::Clamp(FMath::RoundToInt(Hansa::Game::LubeckWorldArt::GroundHeight(FVector2D(-25200+X*100,-25200+Y*100))*128./25.+32768.),0,65535));
+    constexpr int HeightmapSide=505;TArray<uint16> Heights;Heights.Reserve(HeightmapSide*HeightmapSide);
+    for(int Y=0;Y<HeightmapSide;++Y)for(int X=0;X<HeightmapSide;++X)Heights.Add(FMath::Clamp(FMath::RoundToInt(Hansa::Game::LubeckWorldArt::GroundHeight(FVector2D(-25200+X*100,-25200+Y*100))*128./25.+32768.),0,65535));
     auto* L=W->SpawnActor<ALandscape>(FVector(-25200,-25200,0),FRotator::ZeroRotator);L->SetActorScale3D(FVector(100,100,25));L->SetActorLabel(TEXT("Terrain.Lubeck.GameplayGrading"));L->Tags.Add(TEXT("Presentation.Terrain.Lubeck.GameplayGrading"));
     TMap<FGuid,TArray<uint16>> HL;HL.Add(FGuid(),MoveTemp(Heights));TMap<FGuid,TArray<FLandscapeImportLayerInfo>> ML;ML.Add(FGuid(),{});
-    L->Import(FGuid::NewGuid(),0,0,Side-1,Side-1,1,63,HL,nullptr,ML,ELandscapeImportAlphamapType::Additive,TArrayView<const FLandscapeLayer>());
+    L->Import(FGuid::NewGuid(),0,0,HeightmapSide-1,HeightmapSide-1,1,63,HL,nullptr,ML,ELandscapeImportAlphamapType::Additive,TArrayView<const FLandscapeLayer>());
     L->LandscapeMaterial=Material;if(auto* Layer=L->GetEditLayer(0)){Layer->SetName(TEXT("Gameplay_Grading"),true);Layer->SetLocked(true,true);}L->PostEditChange();
     W->GetSubsystem<ULandscapeSubsystem>()->ChangeGridSize(L->GetLandscapeInfo(),4);
     auto* Water=W->SpawnActor<AWaterBodyCustom>(FVector(0,0,Hansa::Game::LubeckWorldArt::WaterHeight),FRotator::ZeroRotator);Water->SetActorLabel(TEXT("Water.Lubeck.Trave.Gameplay"));Water->Tags.Add(TEXT("Water.Lubeck.Trave.Gameplay"));
@@ -126,14 +127,22 @@ bool FLubeckArtRevision::RunTest(const FString&)
     FWorldPartitionHelpers::ForEachActorWithLoading(W->GetWorldPartition(),[](const FWorldPartitionActorDescInstance*){return true;},LoadParams,LoadedActors);
 
     auto* M=LoadObject<UMaterial>(nullptr,*(Root/TEXT("M_Lubeck_Ground.M_Lubeck_Ground")));if(!M)return false;
-    for(UMaterialExpression* E:M->GetExpressionCollection().Expressions)if(auto* S=Cast<UMaterialExpressionTextureSample>(E))if(S->Texture&&S->Texture->GetName()==TEXT("T_Road_Roughness"))S->SamplerType=SAMPLERTYPE_Masks;
+    bool bGrass=false,bBank=false;
+    for(UMaterialExpression* E:M->GetExpressionCollection().Expressions)
+        if(auto* S=Cast<UMaterialExpressionTextureSample>(E);S&&S->Texture)
+        {
+            const FString Name=S->Texture->GetName();
+            if(Name.StartsWith(TEXT("T_Road_"))){AddError(TEXT("Terrain candidate still reuses road textures; run ConfigureRoadTerrain before revision."));return false;}
+            bGrass|=Name==TEXT("T_Terrain_Lubeck_GrassLoam");bBank|=Name==TEXT("T_Terrain_Lubeck_BankLoam");
+        }
+    if(!bGrass||!bBank){AddError(TEXT("Terrain candidate requires distinct grass-loam and bank-loam sources."));return false;}
     M->PostEditChange();M->MarkPackageDirty();
     auto* Parent=LoadObject<UMaterialInterface>(nullptr,TEXT("/Water/Materials/WaterSurface/Water_Material_CustomMesh.Water_Material_CustomMesh"));if(!Parent){AddError(TEXT("Native Water custom-mesh material unavailable"));return false;}
     auto* MI=LoadObject<UMaterialInstanceConstant>(nullptr,*(Root/TEXT("MI_Lubeck_Trave.MI_Lubeck_Trave")));
     if(!MI){MI=NewObject<UMaterialInstanceConstant>(CreatePackage(*(Root/TEXT("MI_Lubeck_Trave"))),TEXT("MI_Lubeck_Trave"),RF_Public|RF_Standalone);FAssetRegistryModule::AssetCreated(MI);}
     MI->SetParentEditorOnly(Parent);MI->PostEditChange();MI->MarkPackageDirty();
     for(TActorIterator<AWaterBodyCustom> I(W);I;++I){I->GetWaterBodyComponent()->SetWaterMaterial(MI);I->PostEditChange();I->MarkPackageDirty();}
-    for(TActorIterator<AHansaLubeckWorldArt> I(W);I;++I){I->Exposure->Settings.AutoExposureMinBrightness=13;I->Exposure->Settings.AutoExposureMaxBrightness=13;I->MarkPackageDirty();}
+    for(TActorIterator<AHansaLubeckWorldArt> I(W);I;++I){I->Exposure->Settings.AutoExposureMinBrightness=14;I->Exposure->Settings.AutoExposureMaxBrightness=14;I->Exposure->Settings.LocalExposureHighlightContrastScale=1;I->Exposure->Settings.LocalExposureShadowContrastScale=1;I->MarkPackageDirty();}
     UEditorLoadingAndSavingUtils::GetDirtyMapPackages(Dirty);UEditorLoadingAndSavingUtils::GetDirtyContentPackages(Content);for(auto* P:Content)Dirty.AddUnique(P);
     return TestTrue(TEXT("Save only reviewed candidate material/exposure changes"),UEditorLoadingAndSavingUtils::SavePackages(Dirty,true));
 }

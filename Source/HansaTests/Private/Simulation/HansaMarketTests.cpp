@@ -21,7 +21,7 @@ namespace Hansa::Tests::Market
 	}
 
 	template <typename TId>
-	TId Entity(const uint64 Value) { return Require(TId::TryCreate(Value)); }
+	TId MarketEntity(const uint64 Value) { return Require(TId::TryCreate(Value)); }
 
 	FHansaGoodId Good(const TCHAR* Value) { return Require(FHansaGoodId::TryParse(Value)); }
 	FHansaSimulationTick Tick(const int64 Value) { return Require(FHansaSimulationTick::TryCreate(Value)); }
@@ -85,18 +85,18 @@ namespace Hansa::Tests::Market
 
 		if (bPopulation || bProduction)
 		{
-			Initialization.Houses.Add({ Entity<FHansaHouseId>(1), FHansaMoney::FromRaw(100000) });
+			Initialization.Houses.Add({ MarketEntity<FHansaHouseId>(1), FHansaMoney::FromRaw(100000) });
 			FHansaBuildingState BuildingState;
-			BuildingState.Id = Entity<FHansaBuildingId>(1);
+			BuildingState.Id = MarketEntity<FHansaBuildingId>(1);
 			BuildingState.DefinitionId = Require(FHansaBuildingTypeId::TryParse(TEXT("Building.Residence.Laborer")));
-			BuildingState.OwnerId = Entity<FHansaHouseId>(1);
+			BuildingState.OwnerId = MarketEntity<FHansaHouseId>(1);
 			BuildingState.ConstructionProgress = FHansaRate::FromPartsPerMillion(FHansaRate::Scale);
 			BuildingState.ConstructionState = EHansaConstructionState::Completed;
 			Initialization.Buildings.Add(BuildingState);
 		}
 
 		FHansaInventoryInitialization Inventory;
-		Inventory.Id = Entity<FHansaInventoryId>(1);
+		Inventory.Id = MarketEntity<FHansaInventoryId>(1);
 		Inventory.OwnerKind = EHansaInventoryOwnerKind::City;
 		Inventory.CityId = City;
 		Inventory.Capacity = FHansaQuantity::FromRaw(100000000);
@@ -108,10 +108,10 @@ namespace Hansa::Tests::Market
 		if (bPopulation)
 		{
 			FHansaPopulationCohortInitialization Cohort;
-			Cohort.Id = Entity<FHansaPopulationCohortId>(1);
-			Cohort.ResidenceBuildingId = Entity<FHansaBuildingId>(1);
+			Cohort.Id = MarketEntity<FHansaPopulationCohortId>(1);
+			Cohort.ResidenceBuildingId = MarketEntity<FHansaBuildingId>(1);
 			Cohort.CityId = City;
-			Cohort.ConsumptionInventoryId = Entity<FHansaInventoryId>(1);
+			Cohort.ConsumptionInventoryId = MarketEntity<FHansaInventoryId>(1);
 			Cohort.TierId = Require(FHansaPopulationTierId::TryParse(TEXT("PopulationTier.Laborer")));
 			Cohort.Residents = 10;
 			Cohort.ResidenceCapacity = 10;
@@ -121,11 +121,11 @@ namespace Hansa::Tests::Market
 		if (bProduction)
 		{
 			FHansaProductionInitialization Production;
-			Production.Id = Entity<FHansaProductionId>(1);
-			Production.BuildingId = Entity<FHansaBuildingId>(1);
+			Production.Id = MarketEntity<FHansaProductionId>(1);
+			Production.BuildingId = MarketEntity<FHansaBuildingId>(1);
 			Production.RecipeId = Require(FHansaRecipeId::TryParse(TEXT("Recipe.MarketTest")));
-			Production.InputInventoryId = Entity<FHansaInventoryId>(1);
-			Production.OutputInventoryId = Entity<FHansaInventoryId>(1);
+			Production.InputInventoryId = MarketEntity<FHansaInventoryId>(1);
+			Production.OutputInventoryId = MarketEntity<FHansaInventoryId>(1);
 			Initialization.Productions.Add(Production);
 		}
 
@@ -137,7 +137,7 @@ namespace Hansa::Tests::Market
 		FHansaCityMarketInitialization Market;
 		Market.CityId = City;
 		Market.GoodId = Good(MarketGood);
-		Market.InventoryIds.Add(Entity<FHansaInventoryId>(1));
+		Market.InventoryIds.Add(MarketEntity<FHansaInventoryId>(1));
 		Market.DesiredReserve = FHansaQuantity::FromRaw(Reserve);
 		Market.ConfirmedIncomingSupplyPerUpdate = FHansaQuantity::FromRaw(Incoming);
 		Market.MinimumPriceMilliMarks = 100;
@@ -155,7 +155,7 @@ namespace Hansa::Tests::Market
 		const FHansaCityDefinitionId City = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")));
 		Initialization.Cities.Add({ City, FHansaQuantity() });
 		FHansaInventoryInitialization Inventory;
-		Inventory.Id = Entity<FHansaInventoryId>(1);
+		Inventory.Id = MarketEntity<FHansaInventoryId>(1);
 		Inventory.OwnerKind = EHansaInventoryOwnerKind::City;
 		Inventory.CityId = City;
 		Inventory.Capacity = FHansaQuantity::FromRaw(1000000);
@@ -173,7 +173,7 @@ namespace Hansa::Tests::Market
 			FHansaCityMarketInitialization Market;
 			Market.CityId = City;
 			Market.GoodId = Good(GoodId);
-			Market.InventoryIds.Add(Entity<FHansaInventoryId>(1));
+			Market.InventoryIds.Add(MarketEntity<FHansaInventoryId>(1));
 			Market.DesiredReserve = FHansaQuantity::FromRaw(5000);
 			Market.MinimumPriceMilliMarks = 100;
 			Market.MaximumPriceMilliMarks = 5000;
@@ -203,8 +203,8 @@ namespace Hansa::Tests::Market
 		Initialization.Cities = { { Lubeck, FHansaQuantity() }, { Rostock, FHansaQuantity() } };
 
 		for (const TPair<FHansaInventoryId, FHansaCityDefinitionId>& Entry : {
-			TPair<FHansaInventoryId, FHansaCityDefinitionId>(Entity<FHansaInventoryId>(1), Lubeck),
-			TPair<FHansaInventoryId, FHansaCityDefinitionId>(Entity<FHansaInventoryId>(2), Rostock) })
+			TPair<FHansaInventoryId, FHansaCityDefinitionId>(MarketEntity<FHansaInventoryId>(1), Lubeck),
+			TPair<FHansaInventoryId, FHansaCityDefinitionId>(MarketEntity<FHansaInventoryId>(2), Rostock) })
 		{
 			FHansaInventoryInitialization Inventory;
 			Inventory.Id = Entry.Key;
@@ -222,7 +222,7 @@ namespace Hansa::Tests::Market
 			FHansaCityMarketInitialization Market;
 			Market.CityId = bSource ? Rostock : Lubeck;
 			Market.GoodId = Good(TEXT("Good.Bread"));
-			Market.InventoryIds = { Entity<FHansaInventoryId>(bSource ? 2 : 1) };
+			Market.InventoryIds = { MarketEntity<FHansaInventoryId>(bSource ? 2 : 1) };
 			Market.DesiredReserve = FHansaQuantity::FromRaw(10'000);
 			Market.bMarketOnly = bSource;
 			if (bSource)
@@ -349,7 +349,7 @@ bool FHansaMarketLiveProductionStockTest::RunTest(const FString&)
     for (int32 Index = 0; Index < 31; ++Index)
         if (!TestTrue(TEXT("Production tick succeeds"), Step(State, Definitions, Cache))) return false;
     const auto View = State.CreateReadOnlyAccess(Definitions);
-    const auto Stock = View.GetInventories().QueryStock(Entity<FHansaInventoryId>(1), Good(TEXT("Good.Bread")));
+    const auto Stock = View.GetInventories().QueryStock(MarketEntity<FHansaInventoryId>(1), Good(TEXT("Good.Bread")));
     if (!TestTrue(TEXT("Bread stock exists"), Stock.IsSet())) return false;
     TestEqual(TEXT("Three completed batches deposit three breads"), Stock->Stock.GetRawValue(), int64(3000));
     const auto Bread = Market(State, Definitions, TEXT("Good.Bread"));
@@ -361,7 +361,7 @@ bool FHansaMarketLiveProductionStockTest::RunTest(const FString&)
     FHansaSimulationTransientCache ConsumedCache;
     TestTrue(TEXT("Citizen consumption tick succeeds"), Step(Consumed, Definitions, ConsumedCache));
     const auto Remaining = Consumed.CreateReadOnlyAccess(Definitions).GetInventories().QueryStock(
-        Entity<FHansaInventoryId>(1), Good(TEXT("Good.Bread")));
+        MarketEntity<FHansaInventoryId>(1), Good(TEXT("Good.Bread")));
     TestTrue(TEXT("Residents consume bread"), Remaining.IsSet() && Remaining->Stock.GetRawValue() < 3000);
     TestEqual(TEXT("Market removes consumed bread immediately"),
         Market(Consumed, Definitions, TEXT("Good.Bread")).CurrentStock.GetRawValue(), Remaining->Available.GetRawValue());

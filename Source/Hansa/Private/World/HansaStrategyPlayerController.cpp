@@ -210,11 +210,11 @@ void AHansaStrategyPlayerController::SetupInputComponent()
 	Enhanced->BindAction(SelectAction, ETriggerEvent::Canceled, this, &AHansaStrategyPlayerController::HandleSelectReleased);
 	InputComponent->BindKey(EKeys::RightMouseButton, IE_Pressed, this, &AHansaStrategyPlayerController::HandleCameraDragPressed);
     InputComponent->BindKey(EKeys::RightMouseButton, IE_Released, this, &AHansaStrategyPlayerController::HandleCameraDragReleased);
-	InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &AHansaStrategyPlayerController::HandlePlacementCancel);
+	InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &AHansaStrategyPlayerController::HandleEscapeIntent);
     InputComponent->BindKey(EKeys::Gamepad_Special_Right,IE_Pressed,this,&AHansaStrategyPlayerController::HandleSessionMenu);
     InputComponent->BindKey(EKeys::F1,IE_Pressed,this,&AHansaStrategyPlayerController::HandleContextHelp);
     InputComponent->BindKey(EKeys::Gamepad_Special_Left,IE_Pressed,this,&AHansaStrategyPlayerController::HandleContextHelp);
-	InputComponent->BindKey(EKeys::Gamepad_FaceButton_Right, IE_Pressed, this, &AHansaStrategyPlayerController::HandlePlacementCancel);
+	InputComponent->BindKey(EKeys::Gamepad_FaceButton_Right, IE_Pressed, this, &AHansaStrategyPlayerController::HandleEscapeIntent);
 }
 
 bool AHansaStrategyPlayerController::TraceWorldSelection(FHitResult& OutHit) const
@@ -611,7 +611,7 @@ void AHansaStrategyPlayerController::UpdateCameraDrag()
     }
     PreviousCameraDragPointer = Pointer;
 }
-void AHansaStrategyPlayerController::HandlePlacementCancel()
+void AHansaStrategyPlayerController::HandleEscapeIntent()
 {
     if(const auto* Build=GetBuildMenuModel();Build&&!Build->GetSnapshot().SelectedBuildingId.IsNone()){bRoadPointerHeld=false;CancelBuildingPlacement();return;}
     if(auto* Hud=Cast<AHansaRootHud>(GetHUD());Hud&&Hud->GetRootWidget())Hud->GetRootWidget()->OnKeyDown(FGeometry(),FKeyEvent(EKeys::Escape,FModifierKeysState(),0,false,0,0));

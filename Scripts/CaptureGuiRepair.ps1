@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('Production','P30Candidate')][string]$World = 'Production',
+    [ValidateSet('Production','TerrainPreview','P30Candidate')][string]$World = 'Production',
     [switch]$P31Candidate,
     [switch]$P33Candidate,
     [switch]$NoZenDdc,
@@ -16,7 +16,11 @@ param(
 $context = Get-HansaBuildContext -EngineRoot $EngineRoot
 $artifactDirectory = New-HansaArtifactDirectory -Context $context -Operation "gui-repair-$Width-$Height"
 $unrealLog = Join-Path $artifactDirectory 'Unreal.log'
-$map = if ($World -eq 'P30Candidate') { '/Game/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate' } else { '/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP' }
+$map = switch ($World) {
+    'P30Candidate' { '/Game/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate' }
+    'TerrainPreview' { '/Game/Hansa/Generated/Staging/LubeckTerrain_20260907/L_Lubeck_Terrain_Preview_WP' }
+    default { '/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP' }
+}
 $arguments = @($context.ProjectFile, $map,
     '-game', '-unattended', '-nop4', '-nosplash', '-NoSound', '-windowed', '-ForceRes',
     "-ResX=$Width", "-ResY=$Height", "-HansaGuiScale=$($UiScale.ToString([Globalization.CultureInfo]::InvariantCulture))", '-RenderOffscreen',

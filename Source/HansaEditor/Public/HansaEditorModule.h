@@ -5,6 +5,8 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogHansaEditor, Log, All);
 
+class IInputProcessor;
+
 class HANSAEDITOR_API FHansaEditorModule final : public IModuleInterface
 {
 public:
@@ -16,6 +18,7 @@ public:
 private:
 	void RegisterTerrainTools();
 	FDelegateHandle TerrainRegistrationHandle;
+	TSharedPtr<IInputProcessor> PieEscapeInputProcessor;
 	TSharedRef<class SDockTab> SpawnAuthoringStudioTab(const class FSpawnTabArgs& SpawnTabArgs);
 	void RegisterMenus();
 };

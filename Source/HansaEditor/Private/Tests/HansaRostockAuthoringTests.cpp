@@ -31,8 +31,8 @@
 namespace {
 ALandscape* BuildRostockTerrain(UWorld* W,UMaterial* Ground)
 {
-    constexpr int Side=253;TArray<uint16> Heights;Heights.Reserve(Side*Side);
-    for(int Y=0;Y<Side;++Y)for(int X=0;X<Side;++X)Heights.Add(FMath::RoundToInt(AHansaRostockQuarter::GroundHeight(-31500+Y*250)*128./25.+32768));
+    constexpr int HeightmapSide=253;TArray<uint16> Heights;Heights.Reserve(HeightmapSide*HeightmapSide);
+    for(int Y=0;Y<HeightmapSide;++Y)for(int X=0;X<HeightmapSide;++X)Heights.Add(FMath::RoundToInt(AHansaRostockQuarter::GroundHeight(-31500+Y*250)*128./25.+32768));
     auto* L=W->SpawnActor<ALandscape>(FVector(-31500,-31500,0),FRotator::ZeroRotator);L->SetActorScale3D(FVector(250,250,25));L->SetActorLabel(TEXT("Terrain.Rostock.InterpretedQuarter"));
     TMap<FGuid,TArray<uint16>> HL;HL.Add(FGuid(),MoveTemp(Heights));TMap<FGuid,TArray<FLandscapeImportLayerInfo>> ML;ML.Add(FGuid(),{});
     L->Import(FGuid::NewGuid(),0,0,252,252,1,63,HL,nullptr,ML,ELandscapeImportAlphamapType::Additive,TArrayView<const FLandscapeLayer>());
@@ -47,14 +47,14 @@ bool FHansaRostockAuthoring::RunTest(const FString&)
     if(!FParse::Param(FCommandLine::Get(),TEXT("P31Authoring"))){AddInfo(TEXT("Explicit -P31Authoring required; no assets changed."));return true;}
     TArray<UPackage*> Dirty,Content;UEditorLoadingAndSavingUtils::GetDirtyMapPackages(Dirty);UEditorLoadingAndSavingUtils::GetDirtyContentPackages(Content);
     if(!Dirty.IsEmpty()||!Content.IsEmpty()||GEditor->PlayWorld){AddError(TEXT("Refusing dirty editor or PIE"));return false;}
-    const FString Root=TEXT("/Game/Hansa/Generated/Staging/Rostock_P31"),Map=Root/TEXT("L_Rostock_Quarter");
+    const FString CandidateRoot=TEXT("/Game/Hansa/Generated/Staging/Rostock_P31"),Map=CandidateRoot/TEXT("L_Rostock_Quarter");
     if(FPackageName::DoesPackageExist(Map)){AddError(TEXT("Candidate already exists; refusing overwrite"));return false;}
     auto* SourceMaterial=LoadObject<UMaterial>(nullptr,TEXT("/Game/Hansa/Generated/Staging/LubeckWorldArt_P30/M_Lubeck_Ground.M_Lubeck_Ground"));
     auto* SourceWater=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Hansa/Generated/Staging/LubeckWorldArt_P30/SM_Lubeck_RiverSurface.SM_Lubeck_RiverSurface"));
     if(!SourceMaterial||!SourceWater){AddError(TEXT("P30 native ground/water authoring sources are required"));return false;}
-    auto* Ground=DuplicateObject<UMaterial>(SourceMaterial,CreatePackage(*(Root/TEXT("M_Rostock_Ground"))),TEXT("M_Rostock_Ground"));Ground->SetFlags(RF_Public|RF_Standalone);Ground->PostEditChange();Ground->MarkPackageDirty();
-    auto* Mesh=DuplicateObject<UStaticMesh>(SourceWater,CreatePackage(*(Root/TEXT("SM_Rostock_Warnow"))),TEXT("SM_Rostock_Warnow"));Mesh->SetFlags(RF_Public|RF_Standalone);Mesh->MarkPackageDirty();
-    auto* WaterMI=NewObject<UMaterialInstanceConstant>(CreatePackage(*(Root/TEXT("MI_Rostock_Warnow"))),TEXT("MI_Rostock_Warnow"),RF_Public|RF_Standalone);
+    auto* Ground=DuplicateObject<UMaterial>(SourceMaterial,CreatePackage(*(CandidateRoot/TEXT("M_Rostock_Ground"))),TEXT("M_Rostock_Ground"));Ground->SetFlags(RF_Public|RF_Standalone);Ground->PostEditChange();Ground->MarkPackageDirty();
+    auto* Mesh=DuplicateObject<UStaticMesh>(SourceWater,CreatePackage(*(CandidateRoot/TEXT("SM_Rostock_Warnow"))),TEXT("SM_Rostock_Warnow"));Mesh->SetFlags(RF_Public|RF_Standalone);Mesh->MarkPackageDirty();
+    auto* WaterMI=NewObject<UMaterialInstanceConstant>(CreatePackage(*(CandidateRoot/TEXT("MI_Rostock_Warnow"))),TEXT("MI_Rostock_Warnow"),RF_Public|RF_Standalone);
     WaterMI->SetParentEditorOnly(LoadObject<UMaterialInterface>(nullptr,TEXT("/Water/Materials/WaterSurface/Water_Material_CustomMesh.Water_Material_CustomMesh")));WaterMI->PostEditChange();WaterMI->MarkPackageDirty();
     UWorld* W=GEditor->NewMap(false);if(!W)return false;
     auto* Quarter=W->SpawnActor<AHansaRostockQuarter>();Quarter->SetActorLabel(TEXT("City.Rostock.TradeQuarter"));
@@ -72,15 +72,15 @@ bool FHansaRostockRevision::RunTest(const FString&)
     if(!FParse::Param(FCommandLine::Get(),TEXT("P31Authoring"))){AddInfo(TEXT("Explicit authoring flag required"));return true;}
     TArray<UPackage*> Dirty,Content;UEditorLoadingAndSavingUtils::GetDirtyMapPackages(Dirty);UEditorLoadingAndSavingUtils::GetDirtyContentPackages(Content);
     if(!Dirty.IsEmpty()||!Content.IsEmpty()||GEditor->PlayWorld)return false;
-    const FString Root=TEXT("/Game/Hansa/Generated/Staging/Rostock_P31");if(!FEditorFileUtils::LoadMap(Root/TEXT("L_Rostock_Quarter"),false,true))return false;
+    const FString RevisionRoot=TEXT("/Game/Hansa/Generated/Staging/Rostock_P31");if(!FEditorFileUtils::LoadMap(RevisionRoot/TEXT("L_Rostock_Quarter"),false,true))return false;
     UWorld* W=GEditor->GetEditorWorldContext().World();
-    auto* Ground=LoadObject<UMaterial>(nullptr,*(Root/TEXT("M_Rostock_Ground.M_Rostock_Ground")));auto* MI=LoadObject<UMaterialInstanceConstant>(nullptr,*(Root/TEXT("MI_Rostock_Warnow.MI_Rostock_Warnow")));
+    auto* Ground=LoadObject<UMaterial>(nullptr,*(RevisionRoot/TEXT("M_Rostock_Ground.M_Rostock_Ground")));auto* MI=LoadObject<UMaterialInstanceConstant>(nullptr,*(RevisionRoot/TEXT("MI_Rostock_Warnow.MI_Rostock_Warnow")));
     if(!Ground||!MI)return false;
     // Native single-layer volume shading; no fluid-simulation/WaterInfo texture dependency for this custom surface.
-    auto* WaterMaterial=LoadObject<UMaterial>(nullptr,*(Root/TEXT("M_Rostock_Warnow.M_Rostock_Warnow")));
+    auto* WaterMaterial=LoadObject<UMaterial>(nullptr,*(RevisionRoot/TEXT("M_Rostock_Warnow.M_Rostock_Warnow")));
     if(!WaterMaterial)
     {
-        WaterMaterial=NewObject<UMaterial>(CreatePackage(*(Root/TEXT("M_Rostock_Warnow"))),TEXT("M_Rostock_Warnow"),RF_Public|RF_Standalone);
+        WaterMaterial=NewObject<UMaterial>(CreatePackage(*(RevisionRoot/TEXT("M_Rostock_Warnow"))),TEXT("M_Rostock_Warnow"),RF_Public|RF_Standalone);
         WaterMaterial->SetShadingModel(MSM_SingleLayerWater);WaterMaterial->BlendMode=BLEND_Opaque;
         auto Scalar=[&](float V){auto* E=NewObject<UMaterialExpressionConstant>(WaterMaterial);E->R=V;WaterMaterial->GetExpressionCollection().AddExpression(E);return E;};
         auto Vector=[&](FLinearColor V){auto* E=NewObject<UMaterialExpressionConstant3Vector>(WaterMaterial);E->Constant=V;WaterMaterial->GetExpressionCollection().AddExpression(E);return E;};
@@ -94,7 +94,7 @@ bool FHansaRostockRevision::RunTest(const FString&)
         N->Code=TEXT("return normalize(float3(.08*sin(P.x/47.+T*.6)+.04*sin(P.y/89.-T*.4), .07*cos(P.y/61.+T*.5), 1.));");Data->Normal.Connect(0,N);
         WaterMaterial->PostEditChange();WaterMaterial->MarkPackageDirty();
     }
-    auto* WaterMesh=LoadObject<UStaticMesh>(nullptr,*(Root/TEXT("SM_Rostock_Warnow.SM_Rostock_Warnow")));
+    auto* WaterMesh=LoadObject<UStaticMesh>(nullptr,*(RevisionRoot/TEXT("SM_Rostock_Warnow.SM_Rostock_Warnow")));
     if(!WaterMesh)return false;
     FMeshDescription Surface;FStaticMeshAttributes Attributes(Surface);Attributes.Register();auto Positions=Attributes.GetVertexPositions();auto Normals=Attributes.GetVertexInstanceNormals();auto UV=Attributes.GetVertexInstanceUVs();UV.SetNumChannels(1);
     TArray<FVertexInstanceID> Corners;

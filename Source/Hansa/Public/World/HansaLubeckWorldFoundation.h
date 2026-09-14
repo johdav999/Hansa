@@ -9,9 +9,16 @@
 class UArrowComponent;
 class UBoxComponent;
 class UDirectionalLightComponent;
+class UPostProcessComponent;
 class USceneComponent;
+class USkyAtmosphereComponent;
 class USkyLightComponent;
 class UStaticMeshComponent;
+
+namespace Hansa::Game::LubeckWorldArt
+{
+	struct FHansaLightingState;
+}
 
 namespace Hansa::Game::LubeckMap
 {
@@ -35,6 +42,8 @@ public:
 	AHansaLubeckWorldFoundation();
 
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	/** Only enable in an assembled map with its own validated Landscape, water and harbor. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Hansa|World|Assembly", meta=(HansaAIAccess="Never", ToolTip="Suppresses legacy topology rendering and collision; authored map surfaces must replace them."))
@@ -81,7 +90,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Placeholder Lighting")
 	TObjectPtr<USkyLightComponent> SkyLight;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Placeholder Lighting")
+	TObjectPtr<USkyAtmosphereComponent> SkyAtmosphere;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Placeholder Lighting")
+	TObjectPtr<UPostProcessComponent> Exposure;
+
 private:
+	void ApplyLightingState(const Hansa::Game::LubeckWorldArt::FHansaLightingState& State);
+	bool ApplyAuthoritativeSimulationLighting();
+
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|World")
 	TObjectPtr<USceneComponent> SceneRoot;
 

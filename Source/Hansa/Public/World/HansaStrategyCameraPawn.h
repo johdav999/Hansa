@@ -63,6 +63,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Hansa|Camera")
 	float GetZoomDistance() const { return CameraState.ZoomDistance; }
 
+	/** Applies the presentation lighting EV to the final player view. */
+	void SetPresentationExposureEV100(float EV100);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|Camera", meta = (ClampMin = "0.0"))
 	float EdgePanMarginPixels = 18.0f;
 

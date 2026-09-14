@@ -32,13 +32,15 @@ class HANSA_API FHansaLubeckScenarioInitializer final
 public:
 	static constexpr const TCHAR* GrainShortageId = TEXT("lubeck_grain_shortage_v1");
 	static constexpr const TCHAR* EmptyBuildId = TEXT("empty_lubeck_build_v1");
-	/** Catalog 16 raises staple capacity fivefold and retunes its capital and workforce costs. */
-	static constexpr int32 MvpCatalogVersion = 16;
+	/** Catalog 18 assigns visible approved presentation meshes to the malt house and cooperage. */
+	static constexpr int32 MvpCatalogVersion = 18;
 	/** P33 review candidate; cannot be selected in Shipping. */
 	static constexpr uint64 P33CandidateRegistryHash = 0x92658D0E14439F91ULL;
-	static constexpr uint64 MvpRegistryHash = 0xB65512A7BFAC9E0CULL;
-	static constexpr int32 ImmediatePreviousMvpCatalogVersion = 15;
-	static constexpr uint64 ImmediatePreviousMvpRegistryHash = 0xF1A0A054CB2DFCD9ULL;
+	static constexpr uint64 MvpRegistryHash = 0x1C2B54191C78E4CAULL;
+	static constexpr int32 ImmediatePreviousMvpCatalogVersion = 17;
+	static constexpr uint64 ImmediatePreviousMvpRegistryHash = 0x968431FAD59A2C51ULL;
+	static constexpr int32 PreviousStarterBalanceMvpCatalogVersion = 15;
+	static constexpr uint64 PreviousStarterBalanceMvpRegistryHash = 0xF1A0A054CB2DFCD9ULL;
 	static constexpr int32 PreviousFisheryPresentationMvpCatalogVersion = 14;
 	static constexpr uint64 PreviousFisheryPresentationMvpRegistryHash = 0x73EC37D013D49BA0ULL;
 	static constexpr int32 PreviousPresentationMvpCatalogVersion = 13;

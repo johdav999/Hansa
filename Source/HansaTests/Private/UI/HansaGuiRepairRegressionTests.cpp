@@ -32,6 +32,25 @@ bool FGuiRuntimeStatusRegression::RunTest(const FString&)
  return !HasAnyErrors();
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FGuiLockedMiddayClockRegression,"Hansa.UI.GuiRepair.LockedMiddayClock",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FGuiLockedMiddayClockRegression::RunTest(const FString&)
+{
+ using namespace Hansa::Simulation;
+ auto Created=FHansaProductionFixture::TryCreateGrainShortage();
+ if(!TestTrue(TEXT("Production fixture is available"),Created.IsSuccess()))return false;
+ auto Fixture=Created.Value;if(!Fixture.Step(23).IsSuccess())return false;
+ auto Projection=Fixture.BuildProjection();if(!Projection)return false;
+ const auto& P=Projection.Value;
+ TestEqual(TEXT("Authoritative fixture time still advances beneath presentation"),P.GetCalendar().HourOfDay,uint8(23));
+ TStrongObjectPtr<UHansaHudPresentationModel> Model(NewObject<UHansaHudPresentationModel>());Model->InitializeDefaults();
+ const auto City=FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")).Value;
+ Model->ApplyRuntimeStatus(P,City,P.GetHouses()[0].Id);
+ const FString Display=Model->GetSnapshot().DateAndSeason.ToString();
+ TestTrue(TEXT("HUD preserves the authoritative simulation day"),Display.Contains(FText::AsNumber(P.GetCalendar().ElapsedDays+1).ToString()));
+ TestTrue(TEXT("HUD time remains locked to noon"),Display.Contains(TEXT("12:00")));
+ return !HasAnyErrors();
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FGuiActionGeometryRegression,"Hansa.UI.GuiRepair.ActionGeometry",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FGuiActionGeometryRegression::RunTest(const FString&)
 {

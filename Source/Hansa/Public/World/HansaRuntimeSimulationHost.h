@@ -120,6 +120,11 @@ public:
 	[[nodiscard]] Hansa::Simulation::FHansaCityDefinitionId GetCityId() const;
 	[[nodiscard]] int32 GetPlacedBuildingCount() const;
 	[[nodiscard]] int64 GetSimulationTick() const;
+	/** Authoritative calendar plus the fractional visual tick; read-only and excluded from deterministic state. */
+	[[nodiscard]] bool TryGetPresentationCalendar(
+		Hansa::Simulation::FHansaCalendarProjection& OutCalendar,
+		double& OutTickFraction,
+		uint16& OutMinutesPerTick) const;
 	[[nodiscard]] uint64 GetLastProcessedCommandSequence() const;
 	[[nodiscard]] FString GetBuildingWorldStatus(int64 BuildingValue) const;
 	[[nodiscard]] Hansa::Simulation::THansaValueResult<Hansa::Simulation::FHansaSimulationProjection> BuildProjection() const;

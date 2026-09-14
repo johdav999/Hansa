@@ -182,9 +182,9 @@ bool FHansaP33EconomyPlaythroughTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Shortages raise prices relative to delivered surplus"), ResultFor(TEXT("shortage"))->GetNumberField(TEXT("breadPriceMilliMarks")) > ResultFor(TEXT("surplus"))->GetNumberField(TEXT("breadPriceMilliMarks")));
 	TestTrue(TEXT("Premature upgrades cost laborer supply and wellbeing"), ResultFor(TEXT("upgrade"))->GetNumberField(TEXT("satisfactionBasisPoints")) < ResultFor(TEXT("growth"))->GetNumberField(TEXT("satisfactionBasisPoints")));
 	TestTrue(TEXT("Trade interruption eventually reduces wellbeing"), ResultFor(TEXT("trade-dependence"))->GetNumberField(TEXT("satisfactionBasisPoints")) < ResultFor(TEXT("surplus"))->GetNumberField(TEXT("satisfactionBasisPoints")));
-	auto Root = MakeShared<FJsonObject>(); Root->SetArrayField(TEXT("playthroughs"), Results);
-	Root->SetStringField(TEXT("candidateRegistryHash"), FString::Printf(TEXT("%016llX"), Compiled.Registry.GetRegistryHash()));
-	FString Json; FJsonSerializer::Serialize(Root, TJsonWriterFactory<>::Create(&Json));
+	auto EvidenceRoot = MakeShared<FJsonObject>(); EvidenceRoot->SetArrayField(TEXT("playthroughs"), Results);
+	EvidenceRoot->SetStringField(TEXT("candidateRegistryHash"), FString::Printf(TEXT("%016llX"), Compiled.Registry.GetRegistryHash()));
+	FString Json; FJsonSerializer::Serialize(EvidenceRoot, TJsonWriterFactory<>::Create(&Json));
 	const FString File = FPaths::ProjectDir() / TEXT("Docs/Development/EconomyP33/playthroughs.json");
 	IFileManager::Get().MakeDirectory(*FPaths::GetPath(File), true);
 	TestTrue(TEXT("Playthrough evidence saved"), FFileHelper::SaveStringToFile(Json, *File));

@@ -5,12 +5,20 @@
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
 #include "Engine/Engine.h"
+#include "Engine/DirectionalLight.h"
 #include "Engine/GameViewportClient.h"
+#include "Engine/PostProcessVolume.h"
+#include "Engine/SkyLight.h"
 #include "Engine/StaticMesh.h"
+#include "Engine/TextureCube.h"
 #include "EngineUtils.h"
 #include "StaticMeshResources.h"
 #include "Components/StaticMeshComponent.h"
+#include "Camera/CameraComponent.h"
+#include "Components/DirectionalLightComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"
+#include "Components/PostProcessComponent.h"
+#include "Components/SkyLightComponent.h"
 #include "ImageUtils.h"
 #include "RenderTimer.h"
 #include "Framework/Application/SlateApplication.h"
@@ -20,6 +28,7 @@
 #include "UI/HansaScenarioPresentationModel.h"
 #include "UI/HansaBuildMenuPresentationModel.h"
 #include "World/HansaGameMode.h"
+#include "World/HansaGameState.h"
 #include "World/HansaRuntimeSimulationHost.h"
 #include "World/HansaStrategyCameraPawn.h"
 #include "World/HansaLubeckWorldArt.h"
@@ -113,4 +122,116 @@ private:
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLubeckArtViewport,"Hansa.World.LubeckArt.RealViewport",EAutomationTestFlags::ClientContext|EAutomationTestFlags::EngineFilter|EAutomationTestFlags::NonNullRHI)
 bool FLubeckArtViewport::RunTest(const FString&){ADD_LATENT_AUTOMATION_COMMAND(FLubeckArtCapture(this));return true;}
+
+namespace
+{
+class FLubeckProductionLockedMiddayCapture final:public IAutomationLatentCommand
+{
+public:
+    explicit FLubeckProductionLockedMiddayCapture(FAutomationTestBase* In):Test(In),Start(FPlatformTime::Seconds()){}
+    bool Update()override
+    {
+        if(FPlatformTime::Seconds()-Start>60){Test->AddError(TEXT("Production locked-midday viewport timed out"));return true;}
+        if(!GEngine||!GEngine->GameViewport)return false;
+        auto* Viewport=GEngine->GameViewport.Get();auto* World=Viewport->GetWorld();
+        auto* Controller=World?World->GetFirstPlayerController():nullptr;auto* Hud=Controller?Cast<AHansaRootHud>(Controller->GetHUD()):nullptr;
+        auto* Mode=World?Cast<AHansaGameMode>(World->GetAuthGameMode()):nullptr;auto* Host=Mode?Mode->GetSimulationHost():nullptr;
+        auto* Camera=Controller?Cast<AHansaStrategyCameraPawn>(Controller->GetPawn()):nullptr;
+        if(!Hud||!Hud->GetRootWidget()||!Host||!Camera||HansaWaitForFrontend(Hud))return false;
+        if(Prepared)Host->SetSpeed(EHansaRuntimeSimulationSpeed::Paused);
+        if(!Prepared)
+        {
+            Hud->GetScenarioPresentationModel()->AcknowledgeBriefing();Hud->GetScenarioPresentationModel()->DismissHelp();
+            Host->SetSpeed(EHansaRuntimeSimulationSpeed::Paused);
+            constexpr int64 DayFiveAtUnderlying2200=4*24+22;
+            if(Host->GetSimulationTick()<DayFiveAtUnderlying2200)Host->AdvanceTicks(DayFiveAtUnderlying2200-Host->GetSimulationTick());
+            Camera->bEnableMouseEdgePan=false;Camera->ClearCameraIntents();
+            ReadyAt=FPlatformTime::Seconds()+8;Prepared=true;return false;
+        }
+        if(FPlatformTime::Seconds()<ReadyAt)return false;
+        Hansa::Simulation::FHansaCalendarProjection Calendar;double Fraction=0;uint16 MinutesPerTick=0;
+        Test->TestTrue(TEXT("Production exposes the presentation calendar"),Host->TryGetPresentationCalendar(Calendar,Fraction,MinutesPerTick));
+        Test->TestEqual(TEXT("Production capture is displayed day five"),Calendar.ElapsedDays,int64(4));
+        Test->TestEqual(TEXT("Underlying simulation advanced to 22:00"),Host->GetSimulationTick(),int64(4*24+22));
+        Test->TestEqual(TEXT("Production presentation hour is locked to noon"),Calendar.HourOfDay,uint8(12));
+        Test->TestEqual(TEXT("Production presentation minute is locked to zero"),Calendar.MinuteOfHour,uint8(0));
+        Test->TestEqual(TEXT("Fractional presentation time is locked"),Fraction,0.0);
+        Test->TestTrue(TEXT("HUD displays the same noon lock"),Hud->GetPresentationModel()->GetSnapshot().DateAndSeason.ToString().Contains(TEXT("12:00")));
+        AHansaLubeckWorldFoundation* Foundation=nullptr;for(TActorIterator<AHansaLubeckWorldFoundation> It(World);It;++It){Foundation=*It;break;}
+        ADirectionalLight* StandaloneSunActor=nullptr;for(TActorIterator<ADirectionalLight> It(World);It;++It){StandaloneSunActor=*It;break;}
+        ASkyLight* StandaloneSkyActor=nullptr;for(TActorIterator<ASkyLight> It(World);It;++It){StandaloneSkyActor=*It;break;}
+        UDirectionalLightComponent* ActiveSun=StandaloneSunActor?Cast<UDirectionalLightComponent>(StandaloneSunActor->GetLightComponent()):(Foundation?Foundation->SunLight.Get():nullptr);
+        USkyLightComponent* ActiveSky=StandaloneSkyActor?StandaloneSkyActor->GetLightComponent():(Foundation?Foundation->SkyLight.Get():nullptr);
+        AHansaGameState* GameState=World->GetGameState<AHansaGameState>();
+        UPostProcessComponent* ActiveExposure=GameState?GameState->LightingExposure.Get():(Foundation?Foundation->Exposure.Get():nullptr);
+        Test->TestNotNull(TEXT("Loaded map exposes an active sun"),ActiveSun);
+        Test->TestNotNull(TEXT("Loaded map exposes an active skylight"),ActiveSky);
+        Test->TestNotNull(TEXT("Loaded map exposes simulation exposure"),ActiveExposure);
+        if(ActiveSun)
+        {
+            Test->TestTrue(TEXT("Direct sunlight remains in the softer Baltic midday band"),ActiveSun->Intensity>=14000.f&&ActiveSun->Intensity<=16000.f);
+            Test->TestEqual(TEXT("Production contact shadows remain disabled"),ActiveSun->ContactShadowLength,0.f);
+        }
+        if(ActiveSky)Test->TestTrue(TEXT("Production skylight provides the stronger cool fill"),ActiveSky->Intensity>=1.7f&&ActiveSky->Intensity<=1.9f);
+		const Hansa::Game::LubeckWorldArt::FHansaLightingState ExpectedLighting=
+			Hansa::Game::LubeckWorldArt::EvaluateLighting(Calendar,Fraction,MinutesPerTick);
+		Test->TestEqual(TEXT("Final camera consumes the continuous EV100 curve"),Camera->Camera->PostProcessSettings.AutoExposureMinBrightness,ExpectedLighting.ExposureEV100);
+		Test->TestEqual(TEXT("Final camera uses deterministic manual exposure"),Camera->Camera->PostProcessSettings.AutoExposureMethod,AEM_Manual);
+		Test->TestEqual(TEXT("Final camera keeps terrain compensation separate"),Camera->Camera->PostProcessSettings.AutoExposureBias,Hansa::Game::LubeckWorldArt::ExposureCompensationStops);
+		Test->TestEqual(TEXT("Final camera disables local highlight exposure"),Camera->Camera->PostProcessSettings.LocalExposureHighlightContrastScale,1.f);
+		Test->TestEqual(TEXT("Final camera disables local shadow exposure"),Camera->Camera->PostProcessSettings.LocalExposureShadowContrastScale,1.f);
+		Test->TestEqual(TEXT("Final camera restrains SSAO"),Camera->Camera->PostProcessSettings.AmbientOcclusionIntensity,Hansa::Game::LubeckWorldArt::AmbientOcclusionIntensity);
+		Test->TestEqual(TEXT("Final camera restrains Lumen AO"),Camera->Camera->PostProcessSettings.LumenAmbientOcclusionIntensity,Hansa::Game::LubeckWorldArt::LumenAmbientOcclusionIntensity);
+        TArray<FColor> Pixels;FIntVector Size;
+        if(!Viewport->GetGameViewportWidget()||!FSlateApplication::Get().TakeScreenshot(Viewport->GetGameViewportWidget().ToSharedRef(),Pixels,Size)||Pixels.IsEmpty())
+        {Test->AddError(TEXT("Production locked-midday screenshot failed"));return true;}
+        int32 X=1920,Y=1080;FParse::Value(FCommandLine::Get(),TEXT("ResX="),X);FParse::Value(FCommandLine::Get(),TEXT("ResY="),Y);
+        Test->TestTrue(TEXT("Production locked-midday capture remains native size"),Size.X==X&&Size.Y==Y);
+		if(World->GetPackage()->GetName().Contains(TEXT("LubeckTerrain")))
+		{
+			double LuminanceSum=0.0;int32 SampleCount=0,NearWhiteCount=0;
+			const int32 StartX=Size.X*220/1920,EndX=Size.X*1760/1920;
+			const int32 StartY=Size.Y*140/1080,EndY=Size.Y*1000/1080;
+			for(int32 PixelY=StartY;PixelY<EndY;PixelY+=4)for(int32 PixelX=StartX;PixelX<EndX;PixelX+=4)
+			{
+				const FColor& Pixel=Pixels[PixelY*Size.X+PixelX];
+				const double Luminance=.2126*Pixel.R+.7152*Pixel.G+.0722*Pixel.B;
+				LuminanceSum+=Luminance;NearWhiteCount+=Luminance>=242.0;++SampleCount;
+			}
+			const double MeanLuminance=SampleCount?LuminanceSum/SampleCount:0.0;
+			const double NearWhiteFraction=SampleCount?double(NearWhiteCount)/SampleCount:1.0;
+			Test->TestTrue(TEXT("Locked-midday terrain remains in the calibrated luminance band"),MeanLuminance>=90.0&&MeanLuminance<=170.0);
+			Test->TestTrue(TEXT("Terrain capture avoids chalky near-white clipping"),NearWhiteFraction<.005);
+		}
+        const FString Base=FPaths::ProjectSavedDir()/FString::Printf(TEXT("P30/production-day5-locked-1200-%dx%d"),X,Y);
+        if(ActiveSun&&ActiveSky&&ActiveExposure)
+        {
+            FString Diagnostics=FString::Printf(TEXT("map=%s owner=%s\ncamera=%s rotation=%s zoom=%.1f\ncameraPostProcessWeight=%.3f cameraMethod=%d cameraEV=%.3f cameraBias=%.3f\nsunVisible=%d sunLux=%.3f\nskyVisible=%d skyIntensity=%.3f source=%d cubemap=%s\nexposureEnabled=%d registered=%d active=%d priority=%.3f method=%d ev=%.3f bias=%.3f\n"),
+                *World->GetPackage()->GetName(),StandaloneSunActor?TEXT("standalone-map-lights"):TEXT("foundation-components"),
+                *Camera->GetActorLocation().ToString(),*Camera->GetActorRotation().ToString(),Camera->GetZoomDistance(),
+				Camera->Camera->PostProcessBlendWeight,int32(Camera->Camera->PostProcessSettings.AutoExposureMethod),
+				Camera->Camera->PostProcessSettings.AutoExposureMinBrightness,Camera->Camera->PostProcessSettings.AutoExposureBias,
+                int32(ActiveSun->IsVisible()),ActiveSun->Intensity,
+                int32(ActiveSky->IsVisible()),ActiveSky->Intensity,int32(ActiveSky->SourceType.GetValue()),ActiveSky->Cubemap?*ActiveSky->Cubemap->GetPathName():TEXT("none"),
+                int32(ActiveExposure->bEnabled),int32(ActiveExposure->IsRegistered()),int32(ActiveExposure->IsActive()),
+                ActiveExposure->Priority,int32(ActiveExposure->Settings.AutoExposureMethod),
+                ActiveExposure->Settings.AutoExposureMinBrightness,ActiveExposure->Settings.AutoExposureBias);
+            for(TActorIterator<APostProcessVolume> It(World);It;++It)
+                Diagnostics+=FString::Printf(TEXT("postProcessVolume=%s enabled=%d unbound=%d priority=%.3f blendWeight=%.3f minOverride=%d maxOverride=%d min=%.3f max=%.3f biasOverride=%d bias=%.3f\n"),
+                    *It->GetName(),int32(It->bEnabled),int32(It->bUnbound),It->Priority,It->BlendWeight,
+                    int32(It->Settings.bOverride_AutoExposureMinBrightness),int32(It->Settings.bOverride_AutoExposureMaxBrightness),
+                    It->Settings.AutoExposureMinBrightness,It->Settings.AutoExposureMaxBrightness,
+                    int32(It->Settings.bOverride_AutoExposureBias),It->Settings.AutoExposureBias);
+            FFileHelper::SaveStringToFile(Diagnostics,*(Base+TEXT("-diagnostics.txt")));
+        }
+        TArray64<uint8> Png;FImageUtils::PNGCompressImageArray(Size.X,Size.Y,Pixels,Png);
+        Test->TestTrue(TEXT("Production lighting capture saved"),FFileHelper::SaveArrayToFile(Png,*(Base+TEXT(".png"))));
+        return true;
+    }
+private:
+    FAutomationTestBase* Test;double Start=0,ReadyAt=0;bool Prepared=false;
+};
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLubeckProductionLockedMiddayViewport,"Hansa.World.LubeckArt.ProductionLockedMiddayViewport",EAutomationTestFlags::ClientContext|EAutomationTestFlags::EngineFilter|EAutomationTestFlags::NonNullRHI)
+bool FLubeckProductionLockedMiddayViewport::RunTest(const FString&){ADD_LATENT_AUTOMATION_COMMAND(FLubeckProductionLockedMiddayCapture(this));return true;}
 #endif

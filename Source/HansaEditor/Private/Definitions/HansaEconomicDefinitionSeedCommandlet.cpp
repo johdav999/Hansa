@@ -587,8 +587,18 @@ namespace Hansa::Editor::EconomicDefinitions
 		ConfigureConstructionCard(AddBuilding(Definitions, EffectiveOuter, TEXT("Building.Sawmill"), TEXT("Sawmill"), TEXT("Sawmill"), { Amount(TEXT("Good.Timber"), 5000), Amount(TEXT("Good.Tools"), 1000) }, { TEXT("Recipe.SawPlanks") }, 1700, 4, 3, 180, 40000, 0, 6, 1, true, false), EHansaConstructionMenuCategory::Production, 1, TEXT(""), TEXT("Good.Planks"), 2, 2);
 		AddBuilding(Definitions, EffectiveOuter, TEXT("Building.Smithy"), TEXT("Smithy"), TEXT("Smithy and tool workshop"), { Amount(TEXT("Good.Planks"), 5000), Amount(TEXT("Good.Iron"), 3000) }, { TEXT("Recipe.SmithTools") }, 2400, 3, 3, 220, 25000, 0, 4, 4, true, false);
 		ConfigureConstructionCard(AddBuilding(Definitions, EffectiveOuter, TEXT("Building.HopFarm"), TEXT("HopFarm"), TEXT("Hop farm"), { Amount(TEXT("Good.Timber"), 3000), Amount(TEXT("Good.Tools"), 500) }, { TEXT("Recipe.GrowHops") }, 1100, 4, 4, 140, 30000, 0, 4, 0, true, false), EHansaConstructionMenuCategory::Production, 0, TEXT(""), TEXT("Good.Beer"), 1, 4);
-		ConfigureConstructionCard(AddBuilding(Definitions, EffectiveOuter, TEXT("Building.MaltHouse"), TEXT("MaltHouse"), TEXT("Malt house"), { Amount(TEXT("Good.Timber"), 3000), Amount(TEXT("Good.Planks"), 3000), Amount(TEXT("Good.Tools"), 1000) }, { TEXT("Recipe.MaltGrain") }, 1600, 3, 3, 160, 30000, 0, 3, 1, true, false), EHansaConstructionMenuCategory::Production, 1, TEXT("Requires generic grain from a grain farm"), TEXT("Good.Beer"), 2, 4);
-		ConfigureConstructionCard(AddBuilding(Definitions, EffectiveOuter, TEXT("Building.Cooperage"), TEXT("Cooperage"), TEXT("Cooperage"), { Amount(TEXT("Good.Timber"), 4000), Amount(TEXT("Good.Planks"), 2000), Amount(TEXT("Good.Tools"), 1000) }, { TEXT("Recipe.MakeBarrels") }, 1800, 3, 3, 180, 30000, 0, 3, 2, true, false), EHansaConstructionMenuCategory::Production, 2, TEXT("Requires timber from a lumber camp"), TEXT("Good.Beer"), 3, 4);
+		UHansaBuildingDefinition* MaltHouse = AddBuilding(Definitions, EffectiveOuter, TEXT("Building.MaltHouse"), TEXT("MaltHouse"), TEXT("Malt house"), { Amount(TEXT("Good.Timber"), 3000), Amount(TEXT("Good.Planks"), 3000), Amount(TEXT("Good.Tools"), 1000) }, { TEXT("Recipe.MaltGrain") }, 1600, 3, 3, 160, 30000, 0, 3, 1, true, false);
+		ConfigureConstructionCard(MaltHouse, EHansaConstructionMenuCategory::Production, 1, TEXT("Requires generic grain from a grain farm"), TEXT("Good.Beer"), 2, 4);
+		MaltHouse->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(
+			TEXT("/Game/Mesh/hansa-bakery/P10/Meshes/SM_Bakery_Body.SM_Bakery_Body")));
+		MaltHouse->AuthoredRevision = 2;
+		MaltHouse->RefreshContentHash();
+		UHansaBuildingDefinition* Cooperage = AddBuilding(Definitions, EffectiveOuter, TEXT("Building.Cooperage"), TEXT("Cooperage"), TEXT("Cooperage"), { Amount(TEXT("Good.Timber"), 4000), Amount(TEXT("Good.Planks"), 2000), Amount(TEXT("Good.Tools"), 1000) }, { TEXT("Recipe.MakeBarrels") }, 1800, 3, 3, 180, 30000, 0, 3, 2, true, false);
+		ConfigureConstructionCard(Cooperage, EHansaConstructionMenuCategory::Production, 2, TEXT("Requires timber from a lumber camp"), TEXT("Good.Beer"), 3, 4);
+		Cooperage->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(
+			TEXT("/Game/Mesh/hansa-sawmill/Meshes/SM_HansaSawmill.SM_HansaSawmill")));
+		Cooperage->AuthoredRevision = 2;
+		Cooperage->RefreshContentHash();
 		UHansaBuildingDefinition* Brewery = AddBuilding(Definitions, EffectiveOuter, TEXT("Building.Brewery"), TEXT("Brewery"), TEXT("Brewery"), { Amount(TEXT("Good.Planks"), 6000), Amount(TEXT("Good.Tools"), 1500) }, { TEXT("Recipe.BrewBeer") }, 2200, 4, 3, 220, 50000, 0, 4, 2, true, false);
 		ConfigureConstructionCard(Brewery, EHansaConstructionMenuCategory::Production, 3, TEXT("Requires malt, hops, and empty barrels"), TEXT("Good.Beer"), 4, 4);
 		Brewery->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(
@@ -731,7 +741,7 @@ namespace Hansa::Editor::EconomicDefinitions
 		const TArray<TTuple<FString, FString, FString>> Presentations = {
 			{TEXT("Building.LumberCamp"), TEXT("/Game/Mesh/hansa-lumber-camp/MeshesCM/SM_HansaLumberCamp.SM_HansaLumberCamp"), TEXT("/Game/Mesh/hansa-lumber-camp/BP_LumberCamp_Review.BP_LumberCamp_Review_C")},
 			{TEXT("Building.Sawmill"), TEXT("/Game/Mesh/hansa-sawmill/Meshes/SM_HansaSawmill.SM_HansaSawmill"), TEXT("/Game/Mesh/hansa-sawmill/BP_Sawmill_Review.BP_Sawmill_Review_C")},
-			{TEXT("Building.Residence.Laborer"), TEXT("/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Laborer_A.SM_Residence_Laborer_A"), TEXT("/Game/Mesh/hansa-residences/BP_Residence_Laborer_Review.BP_Residence_Laborer_Review_C")},
+			{TEXT("Building.Residence.Laborer"), TEXT("/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A"), TEXT("/Game/Mesh/hansa-residences/BP_Residence_Laborer_Review.BP_Residence_Laborer_Review_C")},
 			{TEXT("Building.Residence.Artisan"), TEXT("/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Artisan_A.SM_Residence_Artisan_A"), TEXT("/Game/Mesh/hansa-residences/BP_Residence_Artisan_Review.BP_Residence_Artisan_Review_C")},
 			{TEXT("Building.Market"), TEXT("/Game/Mesh/hansa-market/Meshes/SM_HansaMarket.SM_HansaMarket"), TEXT("/Game/Mesh/hansa-market/BP_Market_Review.BP_Market_Review_C")},
 			{TEXT("Building.Dock"), TEXT("/Game/Mesh/hansa-harbor/Meshes/SM_HansaDock_Deck4m.SM_HansaDock_Deck4m"), TEXT("/Game/Mesh/hansa-harbor/BP_Harbor_Review.BP_Harbor_Review_C")},

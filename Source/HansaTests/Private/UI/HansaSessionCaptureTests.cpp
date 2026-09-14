@@ -51,7 +51,13 @@ public:
    switch(Stage){
     case 0:Test->TestTrue(TEXT("Normal New Game has no starting buildings or roads"),Host->BuildProjection().Value.GetBuildingWorldProjections().IsEmpty());Test->TestTrue(TEXT("First launch focuses Begin without test navigation"),Root->ResolveSemanticWidget(TEXT("Scenario.Begin"))->HasKeyboardFocus());FParse::Value(FCommandLine::Get(),TEXT("HansaGuiScale="),Scale);Root->SetPreferences({false,false,false,Scale});Saves->UseIsolatedAutomationSlots();Model->LoadHelpPreferences(FPaths::ProjectSavedDir()/TEXT("Automation/Session")/(FGuid::NewGuid().ToString()+TEXT(".ini")));Model->ResetHelp();Tick=Host->GetSimulationTick();Test->TestTrue(TEXT("First launch opens briefing"),Model->GetSnapshot().bOpen&&Model->GetSnapshot().bReady);break;
     case 1:{int32 VisibleBuildings=0;for(TActorIterator<AHansaBuildingWorldProjectionActor> It(W);It;++It)if(!It->IsActorBeingDestroyed()&&!It->IsHidden())++VisibleBuildings;Test->TestEqual(TEXT("Old world building actors are removed on New Game"),VisibleBuildings,0);}Press(TEXT("Scenario.Begin"));Test->TestTrue(TEXT("Begin offers camera guidance"),Model->GetSnapshot().bCoachVisible);break;
-    case 2:Press(TEXT("Session.Help.Dismiss"));Press(TEXT("HUD.TopStatus.Session"));Tick=Host->GetSimulationTick();break;
+    case 2:
+     Press(TEXT("Session.Help.Dismiss"));
+     FSlateApplication::Get().ProcessKeyDownEvent(FKeyEvent(EKeys::Escape,FModifierKeysState(),0,false,0,0));
+     FSlateApplication::Get().ProcessKeyUpEvent(FKeyEvent(EKeys::Escape,FModifierKeysState(),0,false,0,0));
+     Test->TestTrue(TEXT("Escape opens the paused session menu"),Model->GetSnapshot().bOpen&&Model->GetSnapshot().bPauseMenu);
+     Tick=Host->GetSimulationTick();
+     break;
     case 3:Press(TEXT("Scenario.Progress"));break;
     case 4:Press(TEXT("Scenario.SaveLoad"));Press(TEXT("SaveLoad.Slot.manual"));Press(TEXT("SaveLoad.Action.Save"));Test->TestTrue(TEXT("Native save succeeded"),Saves->FindSlot(EHansaSaveSlotId::Manual)->bCanLoad);break;
     case 5:Press(TEXT("SaveLoad.Action.Load"));Test->TestTrue(TEXT("Load asks before replacing session"),Hud->GetSaveLoadPresentationModel()->GetSnapshot().Confirmation==EHansaSaveLoadConfirmation::Load);break;

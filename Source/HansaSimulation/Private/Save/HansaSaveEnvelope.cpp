@@ -453,8 +453,11 @@ namespace Hansa::Simulation
 			SavedDefinitions = CreatedSavedDefinitions.Value;
 			HashDefinitions = &SavedDefinitions.GetValue();
 		}
-		if (!Body.Finished() ||
-			Candidate.State.CreateReadOnlyAccess(Definitions).GetClock().GetVersion().GetValue() != Simulation ||
+		if (!Body.Finished())
+			return Failure(EHansaSaveError::CorruptData, TEXT("Authoritative save payload contains invalid or incomplete records."));
+		if (Candidate.State.CreateReadOnlyAccess(Definitions).GetClock().GetVersion().GetValue() != Simulation)
+			return Failure(EHansaSaveError::CorruptData, TEXT("Authoritative save clock does not match its header."));
+		if (
 			(bLegacyConsumption ? FHansaStateHasher::ComputeLegacyV16(Candidate.State, *HashDefinitions) :
 				bLegacyResidenceConsumption ? FHansaStateHasher::ComputeLegacyV17(Candidate.State, *HashDefinitions) :
 				bLegacyLocalLogistics ? FHansaStateHasher::ComputeLegacyV18(Candidate.State, *HashDefinitions) :

@@ -87,16 +87,16 @@ struct FMediaFixture
             Manifest->SetObjectField(TEXT("parameters"), Parameters);
         }
         if (!SaveJson(Absolute / TEXT("job-manifest.json"), Manifest)) return false;
-        FString SourceHash, ManifestHash;
+        FString SourceHash, ManifestFileHash;
         if (!FHansaStagedMedia::HashFile(SourceFile, SourceHash) ||
-            !FHansaStagedMedia::HashFile(Absolute / TEXT("job-manifest.json"), ManifestHash)) return false;
+            !FHansaStagedMedia::HashFile(Absolute / TEXT("job-manifest.json"), ManifestFileHash)) return false;
         TSharedRef<FJsonObject> Descriptor = MakeShared<FJsonObject>();
         Descriptor->SetNumberField(TEXT("schemaVersion"), 1);
         Descriptor->SetNumberField(TEXT("outputIndex"), 0);
         Descriptor->SetStringField(TEXT("jobId"), FGuid::NewGuid().ToString());
         Descriptor->SetStringField(TEXT("sha256"), SourceHash);
         Descriptor->SetStringField(TEXT("manifestHash"), FString::ChrN(64, 'a'));
-        Descriptor->SetStringField(TEXT("manifestFileSha256"), ManifestHash);
+        Descriptor->SetStringField(TEXT("manifestFileSha256"), ManifestFileHash);
         Descriptor->SetStringField(TEXT("sourcePath"), SourceDirectory / (TEXT("source.") + Extension));
         Descriptor->SetStringField(TEXT("manifestPath"), SourceDirectory / TEXT("job-manifest.json"));
         Descriptor->SetStringField(TEXT("mediaType"), Extension == TEXT("wav") ? TEXT("audio/wav") : TEXT("model/gltf-binary"));

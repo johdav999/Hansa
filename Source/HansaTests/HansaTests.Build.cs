@@ -24,6 +24,7 @@ public class HansaTests : ModuleRules
 			"InputCore",
 			"Json",
 			"Landscape",
+			"ProceduralMeshComponent",
             "RenderCore",
 			"Slate",
 			"SlateCore"

@@ -172,20 +172,20 @@ namespace Hansa::Editor::VisibleContent
 			OutError = FString::Printf(TEXT("Unable to read visible-content manifest '%s'."), *Path);
 			return false;
 		}
-		TSharedPtr<FJsonObject> Root;
-		if (!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json), Root) || !Root.IsValid())
+		TSharedPtr<FJsonObject> RootObject;
+		if (!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json), RootObject) || !RootObject.IsValid())
 		{
 			OutError = FString::Printf(TEXT("Unable to parse visible-content manifest '%s'."), *Path);
 			return false;
 		}
 		double SchemaVersion = 0.0;
-		if (!Root->TryGetNumberField(TEXT("schemaVersion"), SchemaVersion) ||
-			!ReadRequiredString(Root, TEXT("manifestId"), OutManifest.ManifestId, OutError) ||
-			!ReadRequiredString(Root, TEXT("goldenSessionId"), OutManifest.GoldenSessionId, OutError) ||
-			!ReadRequiredStringArray(Root, TEXT("requiredCategories"), OutManifest.RequiredCategories, OutError, false) ||
-			!ReadRequiredStringArray(Root, TEXT("goldenPathPresentationDefinitions"),
+		if (!RootObject->TryGetNumberField(TEXT("schemaVersion"), SchemaVersion) ||
+			!ReadRequiredString(RootObject, TEXT("manifestId"), OutManifest.ManifestId, OutError) ||
+			!ReadRequiredString(RootObject, TEXT("goldenSessionId"), OutManifest.GoldenSessionId, OutError) ||
+			!ReadRequiredStringArray(RootObject, TEXT("requiredCategories"), OutManifest.RequiredCategories, OutError, false) ||
+			!ReadRequiredStringArray(RootObject, TEXT("goldenPathPresentationDefinitions"),
 				OutManifest.GoldenPathPresentationDefinitions, OutError, false) ||
-			!ReadRequiredStringArray(Root, TEXT("requiredScreenIds"), OutManifest.RequiredScreenIds, OutError, false))
+			!ReadRequiredStringArray(RootObject, TEXT("requiredScreenIds"), OutManifest.RequiredScreenIds, OutError, false))
 		{
 			if (OutError.IsEmpty())
 			{
@@ -196,7 +196,7 @@ namespace Hansa::Editor::VisibleContent
 		OutManifest.SchemaVersion = static_cast<int32>(SchemaVersion);
 
 		const TArray<TSharedPtr<FJsonValue>>* Resolutions = nullptr;
-		if (!Root->TryGetArrayField(TEXT("requiredNativeResolutions"), Resolutions) || Resolutions == nullptr || Resolutions->IsEmpty())
+		if (!RootObject->TryGetArrayField(TEXT("requiredNativeResolutions"), Resolutions) || Resolutions == nullptr || Resolutions->IsEmpty())
 		{
 			OutError = TEXT("Manifest requires a non-empty requiredNativeResolutions array.");
 			return false;
@@ -228,7 +228,7 @@ namespace Hansa::Editor::VisibleContent
 		}
 
 		const TArray<TSharedPtr<FJsonValue>>* Entries = nullptr;
-		if (!Root->TryGetArrayField(TEXT("entries"), Entries) || Entries == nullptr || Entries->IsEmpty())
+		if (!RootObject->TryGetArrayField(TEXT("entries"), Entries) || Entries == nullptr || Entries->IsEmpty())
 		{
 			OutError = TEXT("Manifest requires a non-empty entries array.");
 			return false;

@@ -26,6 +26,7 @@ public class Hansa : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"Landscape",
+			"ProceduralMeshComponent",
             "RenderCore",
             "RHI",
 			"EnhancedInput",

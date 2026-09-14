@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "World/HansaLubeckWorldFoundation.h"
+#include "World/HansaLubeckWorldArt.h"
 
 AHansaStrategyCameraPawn::AHansaStrategyCameraPawn()
 {
@@ -28,10 +29,48 @@ AHansaStrategyCameraPawn::AHansaStrategyCameraPawn()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
+	SetPresentationExposureEV100(14.0f);
 
 	CameraState.Focus = FVector2D(-3200.0, -700.0);
 	CameraState.YawDegrees = 35.0f;
 	CameraState.ZoomDistance = CameraBoom->TargetArmLength;
+}
+
+void AHansaStrategyCameraPawn::SetPresentationExposureEV100(const float EV100)
+{
+	if (Camera == nullptr) return;
+	FPostProcessSettings& Settings = Camera->PostProcessSettings;
+	Camera->PostProcessBlendWeight = 1.0f;
+	Settings.bOverride_AutoExposureMethod = true;
+	Settings.AutoExposureMethod = AEM_Manual;
+	Settings.bOverride_AutoExposureMinBrightness = true;
+	Settings.bOverride_AutoExposureMaxBrightness = true;
+	Settings.AutoExposureMinBrightness = EV100;
+	Settings.AutoExposureMaxBrightness = EV100;
+	Settings.bOverride_AutoExposureBias = true;
+	Settings.AutoExposureBias = Hansa::Game::LubeckWorldArt::ExposureCompensationStops;
+	Settings.bOverride_CameraShutterSpeed = true;
+	Settings.CameraShutterSpeed = Hansa::Game::LubeckWorldArt::ExposureShutterSpeedForEV100(EV100);
+	Settings.bOverride_CameraISO = true;
+	Settings.CameraISO = 100.0f;
+	Settings.bOverride_DepthOfFieldFstop = true;
+	Settings.DepthOfFieldFstop = 4.0f;
+	Settings.bOverride_AutoExposureApplyPhysicalCameraExposure = true;
+	Settings.AutoExposureApplyPhysicalCameraExposure = true;
+	Settings.bOverride_LocalExposureHighlightContrastScale = true;
+	Settings.LocalExposureHighlightContrastScale = 1.0f;
+	Settings.bOverride_LocalExposureShadowContrastScale = true;
+	Settings.LocalExposureShadowContrastScale = 1.0f;
+	Settings.bOverride_LocalExposureDetailStrength = true;
+	Settings.LocalExposureDetailStrength = 1.0f;
+	Settings.bOverride_LocalExposureHighlightContrastCurve = true;
+	Settings.LocalExposureHighlightContrastCurve = nullptr;
+	Settings.bOverride_LocalExposureShadowContrastCurve = true;
+	Settings.LocalExposureShadowContrastCurve = nullptr;
+	Settings.bOverride_AmbientOcclusionIntensity = true;
+	Settings.AmbientOcclusionIntensity = Hansa::Game::LubeckWorldArt::AmbientOcclusionIntensity;
+	Settings.bOverride_LumenAmbientOcclusionIntensity = true;
+	Settings.LumenAmbientOcclusionIntensity = Hansa::Game::LubeckWorldArt::LumenAmbientOcclusionIntensity;
 }
 
 void AHansaStrategyCameraPawn::BeginPlay()

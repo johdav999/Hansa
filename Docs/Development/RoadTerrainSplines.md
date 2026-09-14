@@ -53,6 +53,14 @@ Placement previews cannot paint the Landscape. Removal, visibility changes, repl
 
 The reflected component exposes `SurfaceClearance` (0.5–10 cm) and `SplineErrorTolerance` (0.25–5 cm), with units, tooltips, clamps and AI-access metadata. Road asset validation rejects invalid settings. These are presentation settings in the ordinary Blueprint/component Details workflow, not a second economic-definition schema. No gameplay migration is required.
 
+### Road and terrain albedo correction — 2026-09-14
+
+Road and terrain albedo are authored independently. `M_Road_Terrain` samples the existing brown `T_Road_BaseColor`, applies the exposed `RoadAlbedoScale` default of 0.58 before both the material Base Color and RVT writer, and keeps Emissive disconnected. The engine white texture remains only the neutral default for the road height-field object; it is never a Base Color fallback.
+
+The terrain masters retain their own grass-loam, bank-loam and shore-wetness sources. The P30 ground no longer samples any `T_Road_*` texture: grass-loam and bank-loam are blended by height, roughness is an independent 0.84 scalar, and the obsolete road normal input is disconnected. Base-color textures use sRGB with `TC_Default`; road normal, road roughness and shore wetness remain linear with `TC_Normalmap` or `TC_Masks` as appropriate.
+
+The RVT writer and both Landscape receivers use `BaseColor_Normal_Specular_Mask_YCoCg`. Receiver color and roughness blends are gated by the RVT `Mask` output, selected by name rather than an engine-version-dependent numeric pin. The material commandlet repairs already-marked graphs on every run instead of treating the marker as proof that their pin wiring is current.
+
 ## Reproduction and evidence
 
 Build the Development Editor, then run:
@@ -72,7 +80,7 @@ Build the Development Editor, then run:
 
 The material commandlet backs up existing packages and amends graphs idempotently. Its command-line-only GameFeatureData setting follows the existing project's commandlet workaround; it does not change gameplay configuration or spend provider credits.
 
-The terrain tests cover planar grades and cross-slopes, shared boundaries, preview/no-RVT behavior, cached fitting, terrain changes, missing terrain, adaptive splitting, material parenting, shader coordinate wiring, absence of RVT feedback, junction runs, closed loops and insertion-order independence. Existing command tests cover preview/final masks, neighbouring junction updates, invalid strokes, cancellation, removal and save/load restoration.
+The terrain tests cover planar grades and cross-slopes, shared boundaries, preview/no-RVT behavior, cached fitting, terrain changes, missing terrain, adaptive splitting, material parenting, shader coordinate wiring, absence of RVT feedback, exact RVT mask pinning, road emissive and albedo-source rules, texture color-space/compression rules, terrain-source separation, junction runs, closed loops and insertion-order independence. Existing command tests cover preview/final masks, neighbouring junction updates, invalid strokes, cancellation, removal and save/load restoration.
 
 The viewport test enters the actual game through the frontend, selects a free area with terrain height variation, draws roads through ordinary placement intents, captures the previous rigid presentation in memory, then captures fitted roads, gameplay zoom, junction removal, save restoration and RVT-disabled geometry. It checks actual RVT writer registration. It does not save the game map or replace its terrain with a synthetic render fixture.
 
@@ -80,7 +88,7 @@ Final native PNG captures and the evidence index are retained in `Docs/Images/Wo
 
 ## Acceptance limits
 
-Road-specific automated checks and inspected game captures are distinct from full-game MVP acceptance. Existing competing directional-light warnings and pale scene exposure remain outside this change. The survey/P30 maps keep their existing staging status. The Shipping checks cover runtime compilation, binary/receipt exclusions, production references and expanded cooked Lübeck packages; they do not establish a clean-checkout packaged-game playthrough or final IoStore distribution acceptance.
+Road-specific automated checks and inspected game captures are distinct from full-game MVP acceptance. Existing competing directional-light warnings remain outside this change; the material correction deliberately does not use exposure or lighting as an albedo workaround. The survey/P30 maps keep their existing staging status. The Shipping checks cover runtime compilation, binary/receipt exclusions, production references and expanded cooked Lübeck packages; they do not establish a clean-checkout packaged-game playthrough or final IoStore distribution acceptance.
 
 
 ## Changed implementation paths

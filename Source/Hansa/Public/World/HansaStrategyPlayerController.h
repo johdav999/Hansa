@@ -70,6 +70,8 @@ public:
 	bool ResolvePlacementCellAtScreenPosition(FVector2D ScreenPosition, FIntPoint& OutCell, FVector& OutWorldLocation) const;
 	void CancelBuildingPlacement();
 	void RefreshBuildingPlacementPresentation();
+	/** Routes the platform Back/Escape intent through placement cancellation and the HUD layer stack. */
+	void HandleEscapeIntent();
 	[[nodiscard]] AHansaBuildingPlacementGhost* GetPlacementGhost() const { return PlacementGhost.Get(); }
 
 	UPROPERTY(BlueprintAssignable, Category = "Hansa|World|Selection")
@@ -115,7 +117,6 @@ private:
 	void HandleSelect(const FInputActionValue& Value);
 	void HandleSelectHeld(const FInputActionValue& Value);
 	void HandleSelectReleased(const FInputActionValue& Value);
-	void HandlePlacementCancel();
     void HandleCameraDragPressed();
     void HandleCameraDragReleased();
     void UpdateCameraDrag();

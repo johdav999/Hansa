@@ -2,6 +2,7 @@
 
 #include "Market/HansaMarket.h"
 #include "Queries/HansaSimulationReadOnly.h"
+#include "World/HansaPresentationClock.h"
 
 #define LOCTEXT_NAMESPACE "HansaHudPresentationModel"
 
@@ -58,7 +59,7 @@ void UHansaHudPresentationModel::InitializeDefaults()
     Defaults.TopProducts={BuildBreadBalance(nullptr,0)};
 	Defaults.MoneyTrendTooltip=LOCTEXT("MonthlyPending","Money change over the last 30 game days, including all income and spending. Waiting for a complete observed month; history restarts after loading a game.");
 	Defaults.CityBreadcrumb = LOCTEXT("DefaultCityBreadcrumb", "Free City  /  Lübeck");
-	Defaults.DateAndSeason = LOCTEXT("DefaultDateSeason", "Spring · 1280");
+	Defaults.DateAndSeason = LOCTEXT("DefaultDateSeason", "Day 1 · 12:00");
 	Defaults.Research = LOCTEXT("DefaultResearch", "Guild influence 14");
 	Defaults.Connection = LOCTEXT("DefaultConnection", "Connected");
 	Defaults.SelectionSummary = LOCTEXT("DefaultSelection", "Build and selection");
@@ -240,7 +241,8 @@ void UHansaHudPresentationModel::ApplyRuntimeStatus(const Hansa::Simulation::FHa
      return M.CityId==CityId && M.GoodId.ToString()==TEXT("Good.Bread");
  });
  Updated.TopProducts={BuildBreadBalance(BreadMarket,Projection.GetClock().GetMinutesPerTick())};
- Updated.DateAndSeason=FText::Format(LOCTEXT("RuntimeCalendar","Day {0} · {1}"),FText::AsNumber(Calendar.ElapsedDays+1),FText::FromString(FString::Printf(TEXT("%02d:%02d"),Calendar.HourOfDay,Calendar.MinuteOfHour)));
+ const Hansa::Simulation::FHansaCalendarProjection DisplayCalendar=Hansa::Game::PresentationClock::AtMidday(Calendar);
+ Updated.DateAndSeason=FText::Format(LOCTEXT("RuntimeCalendar","Day {0} · {1}"),FText::AsNumber(DisplayCalendar.ElapsedDays+1),FText::FromString(FString::Printf(TEXT("%02d:%02d"),DisplayCalendar.HourOfDay,DisplayCalendar.MinuteOfHour)));
  const auto* Research=Projection.GetResearch().FindByPredicate([&](const auto& R){return R.HouseId==HouseId;});
  Updated.Research=Research?FText::Format(LOCTEXT("RuntimeResearch","Research · {0} points available"),FText::AsNumber(Research->AvailableResearchPoints)):LOCTEXT("ResearchUnavailable","Research unavailable");
  ApplySnapshot(Updated);

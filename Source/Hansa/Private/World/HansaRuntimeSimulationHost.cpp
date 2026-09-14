@@ -1,4 +1,5 @@
 #include "World/HansaRuntimeSimulationHost.h"
+#include "World/HansaPresentationClock.h"
 #include "World/HansaCargoProjectionManager.h"
 
 #include "Definitions/HansaEconomicRegistry.h"
@@ -182,6 +183,22 @@ void UHansaRuntimeSimulationHost::SetSpeed(const EHansaRuntimeSimulationSpeed Ne
 bool UHansaRuntimeSimulationHost::IsReady() const
 {
 	return Runtime.IsValid() && Runtime->bReady;
+}
+
+bool UHansaRuntimeSimulationHost::TryGetPresentationCalendar(
+	FHansaCalendarProjection& OutCalendar,
+	double& OutTickFraction,
+	uint16& OutMinutesPerTick) const
+{
+	if (!IsReady()) return false;
+	const FHansaSimulationClock& Clock = Runtime->State.CreateReadOnlyAccess(Runtime->Definitions).GetClock();
+	const THansaValueResult<FHansaCalendarProjection> Calendar = Clock.TryProjectCalendar();
+	if (!Calendar) return false;
+	OutCalendar = Calendar.Value;
+	OutTickFraction = GetPresentationTickFraction();
+	OutMinutesPerTick = Clock.GetMinutesPerTick();
+	Hansa::Game::PresentationClock::LockToMidday(OutCalendar, &OutTickFraction);
+	return true;
 }
 
 double UHansaRuntimeSimulationHost::TicksPerSecond() const
