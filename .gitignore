@@ -45,6 +45,22 @@ cmake-build-*/
 # Blender recovery copies and regenerable NumPy terrain arrays stay local.
 *.blend1
 *.npy
+# Local-only asset archives: keep final masters, production Content and scripts.
+/Deliverables/PreservedFish/preservedfish-candidate.zip
+/SourceArt/Terrain/HansaWorld/Prototype_20260918/sources/etopo.tif
+/SourceArt/Generated/**/checkpoints/*.blend
+!/SourceArt/Generated/Buildings/HansaFishPreservation_20260916/checkpoints/HansaFishPreservation-r4.blend
+/SourceArt/Generated/Animations/Animal.Rabbit.Locomotion/r03-locomotion/*.blend
+/SourceArt/Generated/Animations/Animal.Rabbit.Locomotion/r03-locomotion/*.fbx
+/SourceArt/Generated/Animations/Animal.Rabbit.Locomotion/r04-skin-review/Rabbit_Corrected_Rig_Diagnostic.blend
+/SourceArt/Generated/Animations/Animal.Rabbit.Locomotion/r05-locomotion/Rabbit_Locomotion_Review.blend
+/SourceArt/Generated/Buildings/HansaGrainFarm_20260907_01/exports/HansaGrainFarm_v[0-4].blend
+/SourceArt/Generated/Buildings/HansaGrainFarm_20260907_01/exports/HansaGrainFarm_clean_reimport.blend
+/SourceArt/Generated/Buildings/HansaHopFarm_20260912_01/exports/HansaHopFarm_clean_reimport_*.blend
+/SourceArt/Generated/Buildings/HansaWoodcutterYard_20260916/review-r0[1-4]/*.blend
+/SourceArt/Generated/Trees/LubeckSummer/v1/family_preview.blend
+/SourceArt/Generated/Trees/LubeckSummer/v1/grove_preview.blend
+/Docs/Images/UI/CogSelection/legacy/*.png
 *.log
 *.tmp
 *.user

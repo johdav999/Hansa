@@ -51,6 +51,3 @@
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.mov filter=lfs diff=lfs merge=lfs -text
 *.avi filter=lfs diff=lfs merge=lfs -text
-
-# Large deliverable archive; preserve it without exceeding Git blob limits.
-Deliverables/PreservedFish/preservedfish-candidate.zip filter=lfs diff=lfs merge=lfs -text
