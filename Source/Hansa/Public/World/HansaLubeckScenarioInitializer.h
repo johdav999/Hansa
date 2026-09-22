@@ -12,6 +12,14 @@ enum class EHansaRuntimeScenario : uint8
 	EmptyLubeckBuild
 };
 
+struct HANSA_API FHansaHouseStartOpportunity final
+{
+	Hansa::Simulation::FHansaHouseId HouseId;
+	Hansa::Simulation::FHansaCityDefinitionId CityId;
+	Hansa::Simulation::FHansaGridCoordinate Anchor;
+	int32 BuildableCellCount = 0;
+};
+
 /** Runtime-safe output shared by playable Development and Shipping initialization. */
 struct HANSA_API FHansaLubeckScenarioState final
 {
@@ -19,6 +27,8 @@ struct HANSA_API FHansaLubeckScenarioState final
 	Hansa::Simulation::FHansaSimulationState State;
 	Hansa::Simulation::FHansaHouseId HouseId;
 	Hansa::Simulation::FHansaHouseId RivalHouseId;
+	TArray<Hansa::Simulation::FHansaHouseId> HouseIds;
+	TArray<FHansaHouseStartOpportunity> StartingOpportunities;
 	Hansa::Simulation::FHansaCityDefinitionId CityId;
 	uint64 NextBuildingId = 1;
 };
@@ -32,13 +42,20 @@ class HANSA_API FHansaLubeckScenarioInitializer final
 public:
 	static constexpr const TCHAR* GrainShortageId = TEXT("lubeck_grain_shortage_v1");
 	static constexpr const TCHAR* EmptyBuildId = TEXT("empty_lubeck_build_v1");
-	/** Catalog 18 assigns visible approved presentation meshes to the malt house and cooperage. */
-	static constexpr int32 MvpCatalogVersion = 18;
+	/** Normal-game regional production economy, including artisan supply chains. */
+	static constexpr int32 MvpCatalogVersion = 35;
 	/** P33 review candidate; cannot be selected in Shipping. */
+	static constexpr uint64 ArtisanProductionCandidateRegistryHash = 0x11B70A39FD538FE7ULL; // Explicit development review catalog; never replaces the accepted catalog implicitly.
+	static constexpr uint64 TextileProductionCandidateRegistryHash = 0x386F8F6145FE5135ULL; // Verified from a fresh disk reload of the staged candidate catalog.
+	static constexpr uint64 FirewoodCandidateRegistryHash = 0x8BB8ACD607E70FDBULL; // Development-only staged catalog, verified after disk reload; accepted MVP pin is unchanged.
 	static constexpr uint64 P33CandidateRegistryHash = 0x92658D0E14439F91ULL;
-	static constexpr uint64 MvpRegistryHash = 0x1C2B54191C78E4CAULL;
-	static constexpr int32 ImmediatePreviousMvpCatalogVersion = 17;
-	static constexpr uint64 ImmediatePreviousMvpRegistryHash = 0x968431FAD59A2C51ULL;
+	static constexpr uint64 MvpRegistryHash = 0x2A9D09E1C63AA6E1ULL;
+	static constexpr int32 ImmediatePreviousMvpCatalogVersion = 34;
+	static constexpr uint64 ImmediatePreviousMvpRegistryHash = 0xD18AC831ED9C7710ULL;
+	static constexpr int32 PreviousTradeStationSitesMvpCatalogVersion = 33;
+	static constexpr uint64 PreviousTradeStationSitesMvpRegistryHash = 0x92ABF14E33AA3606ULL;
+	static constexpr int32 PreviousTradePresenceMvpCatalogVersion = 32;
+	static constexpr uint64 PreviousTradePresenceMvpRegistryHash = 0x745A749EF5C268A0ULL;
 	static constexpr int32 PreviousStarterBalanceMvpCatalogVersion = 15;
 	static constexpr uint64 PreviousStarterBalanceMvpRegistryHash = 0xF1A0A054CB2DFCD9ULL;
 	static constexpr int32 PreviousFisheryPresentationMvpCatalogVersion = 14;

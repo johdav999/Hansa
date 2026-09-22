@@ -5,6 +5,26 @@
 #define LOCTEXT_NAMESPACE "HansaTradeRouteCreator"
 using namespace Hansa::Simulation;
 
+namespace
+{
+    void AppendCreateIntentStops(const TConstArrayView<FHansaRouteStop> Stops, FHansaClientCommandIntent& Intent)
+    {
+        for (const FHansaRouteStop& Stop : Stops)
+        {
+            FHansaClientRouteStopIntent& ClientStop = Intent.RouteStops.AddDefaulted_GetRef();
+            ClientStop.CityId = Stop.CityId.ToString();
+            for (const FHansaRouteCargoAction& Action : Stop.Actions)
+            {
+                FHansaClientRouteActionIntent& ClientAction = ClientStop.Actions.AddDefaulted_GetRef();
+                ClientAction.Kind = static_cast<uint8>(Action.Kind);
+                ClientAction.GoodId = Action.GoodId.ToString();
+                ClientAction.QuantityMilliUnits = Action.QuantityLimit.GetRawValue();
+                ClientAction.MinimumSourceReserveMilliUnits = Action.MinimumSourceReserve.GetRawValue();
+            }
+        }
+    }
+}
+
 bool UHansaTradeMapPresentationModel::BeginCreateIntent(FName Good, FName SourceCity)
 {
     if (Snapshot.bCreating) return false;
@@ -111,6 +131,7 @@ void UHansaTradeMapPresentationModel::UpdateCreatorReview()
     Snapshot.CogLabel = FText::Format(LOCTEXT("CogLabel", "Cog {0} · {1} units capacity"), FText::AsNumber(Snapshot.CogValue), FText::AsNumber(V->Capacity.GetRawValue()/1000));
     const auto* Assigned = P.Value.GetRoutes().FindByPredicate([&](const auto& R){ return R.VehicleId == V->Id && R.Lifecycle != EHansaRouteLifecycleState::Cancelled; });
     Snapshot.bReassignCog = Assigned && Assigned->Lifecycle==EHansaRouteLifecycleState::Inactive && Assigned->CurrentStopIndex==0 && V->Cargo.GetRawValue()==0;
+    FString StationReview;
     int32 Ticks = 0; int64 Peak = 0, Cargo = 0;
     TMap<FString,int64> CargoByGood;
     bool bCapacityRisk = false, bStockRisk = false, bUnknown = false, bStale = false, bUnload = false;
@@ -129,10 +150,40 @@ void UHansaTradeMapPresentationModel::UpdateCreatorReview()
         {
             bOversizedAction |= Action.QuantityLimit.GetRawValue() > V->Capacity.GetRawValue();
             int64& Held = CargoByGood.FindOrAdd(Action.GoodId.ToString());
+            if (IsStationTransfer(Action.Kind))
+            {
+                const FHansaTradeStationProjection* Station = nullptr;
+                for (const auto& Entry : P.Value.GetTradeStations()) if (Entry.Station.OwnerId == V->OwnerId && Entry.Station.CityId == Stop.CityId && Entry.Station.Status != EHansaTradeStationStatus::Closed) { Station = &Entry; break; }
+                const FHansaInventoryProjection* Storage = nullptr;
+                if (Station) for (const auto& Inv : P.Value.GetInventories()) if (Inv.Id == Station->Station.InventoryId) { Storage = &Inv; break; }
+                if (Step < DraftStops.Num())
+                {
+                    if (!Storage) StationReview += LOCTEXT("StationUnavailable", "\nStation storage unavailable. Establish or restore your station before activating this route.").ToString();
+                    else
+                    {
+                        const auto* Stock = Storage->Stocks.FindByPredicate([&](const auto& S){return S.GoodId == Action.GoodId;});
+                        int64 Reserve = Action.MinimumSourceReserve.GetRawValue();
+                        for (const auto& O : Station->Station.Orders) if (!O.bCancelled && O.Terms.Side == EHansaStationOrderSide::Release && O.Terms.GoodId == Action.GoodId) Reserve = FMath::Max(Reserve, O.Terms.TargetOrReserveMilliUnits);
+                        const int64 Prepared = Stock ? FMath::Max<int64>(0, FMath::Min(Stock->Available.GetRawValue(), Stock->Stock.GetRawValue()-Reserve)) : 0;
+                        StationReview += FText::Format(LOCTEXT("StationCargoReview", "\nStation #{0}: {1} units stock, {2} protected reserve, at most {3} prepared; storage {4}/{5}. City market ↔ factor orders ↔ station ↔ Cog ↔ destination. Transfers settle no money."),
+                            FText::AsNumber(Station->Station.Id.GetValue()), FText::AsNumber(Stock ? double(Stock->Stock.GetRawValue())/1000. : 0.), FText::AsNumber(double(Reserve)/1000.), FText::AsNumber(double(Prepared)/1000.), FText::AsNumber(double(Storage->UsedCapacity.GetRawValue())/1000.), FText::AsNumber(double(Storage->Capacity.GetRawValue())/1000.)).ToString();
+                    }
+                }
+                const int64 Qty = Action.QuantityLimit.GetRawValue();
+                if (IsRouteLoad(Action.Kind))
+                {
+                    const auto* Stock = Storage ? Storage->Stocks.FindByPredicate([&](const auto& S){return S.GoodId == Action.GoodId;}) : nullptr;
+                    bStockRisk |= !Stock || Stock->Available.GetRawValue() - Action.MinimumSourceReserve.GetRawValue() < Qty;
+                    bCapacityRisk |= Qty > V->Capacity.GetRawValue() - Cargo;
+                    const int64 Loaded = FMath::Min(Qty, FMath::Max<int64>(0,V->Capacity.GetRawValue()-Cargo)); Held += Loaded; Cargo += Loaded; Peak = FMath::Max(Peak,Cargo);
+                }
+                else { const int64 Unloaded=FMath::Min(Held,Qty);Held-=Unloaded;Cargo-=Unloaded;bUnload|=Unloaded>0; }
+                continue;
+            }
             const auto PortReport=Runtime->QueryKnownMarketPrice(Stop.CityId,Action.GoodId);
             bUnknown |= !PortReport.IsSet() || PortReport->InformationState==EHansaMarketInformationState::Unknown;
             bStale |= PortReport.IsSet() && PortReport->InformationState!=EHansaMarketInformationState::Current;
-            if (Action.Kind == EHansaRouteCargoActionKind::Load)
+            if (IsRouteLoad(Action.Kind))
             {
                 const int64 Qty = Action.QuantityLimit.GetRawValue();
                 bCapacityRisk |= Qty > V->Capacity.GetRawValue() - Cargo;
@@ -150,11 +201,12 @@ void UHansaTradeMapPresentationModel::UpdateCreatorReview()
         }
     }
     const int64 Cost = Ticks * V->UpkeepPfennigPerTravelTick;
-    Snapshot.CreatorReview = FText::Format(LOCTEXT("Review", "Peak cargo (first two circuits)  {0} / {1} units\nRound trip  {2} travel ticks + {3} port ticks\nUpkeep  {4} pfennig / circuit\nExpected cash result  {5} to {5} pfennig\nInventory transfer · no automatic sale revenue.\n{6}\n{7}\n{8}"),
+    Snapshot.CreatorReview = FText::Format(LOCTEXT("Review", "Peak cargo (first two circuits)  {0} / {1} units\nRound trip  {2} travel ticks + {3} port ticks\nUpkeep  {4} pfennig / circuit\nKnown minimum cash result  {5} pfennig before trade settlement\nStation and home actions transfer goods without payment. Market actions buy or sell at execution prices. Factor orders settle separately; future proceeds are not guaranteed.\n{6}\n{7}\n{8}"),
         FText::AsNumber(double(Peak)/1000.0), FText::AsNumber(V->Capacity.GetRawValue()/1000), FText::AsNumber(Ticks), FText::AsNumber(DraftStops.Num()), FText::AsNumber(Cost), FText::AsNumber(-Cost),
         Snapshot.bReassignCog ? LOCTEXT("Reassign", "Reassigns this Cog and cancels its stopped route when you activate.") : Assigned ? LOCTEXT("AssignedBusy", "Cog is assigned and unavailable. No route will be changed.") : LOCTEXT("Available", "Cog available; no existing route will be replaced."),
         bUnknown ? LOCTEXT("UnknownReports", "? Stock report unavailable. Delivery quantity cannot be predicted.") : bStale ? LOCTEXT("StaleReports", "! Estimated or older stock reports. Verify supply before departure.") : LOCTEXT("FreshReports", "Current stock reports; supply may change before loading."),
         bCapacityRisk ? LOCTEXT("CapacityRisk", "! Loading will be limited by free capacity.") : bStockRisk ? LOCTEXT("StockRisk", "! Stock above reserve may be insufficient; partial loads are possible.") : LOCTEXT("Reserves", "Minimum reserves are always protected; destination capacity may limit unloading."));
+    if (!StationReview.IsEmpty()) Snapshot.CreatorReview = FText::Format(LOCTEXT("BufferedReview", "{0}{1}"), Snapshot.CreatorReview, FText::FromString(StationReview));
     if (Snapshot.DraftName.IsEmpty() || Snapshot.DraftName.Len() > 48 || Snapshot.DraftName.TrimStartAndEnd() != Snapshot.DraftName)
         Snapshot.Validation = LOCTEXT("NameInvalid", "Enter a route name of 1–48 characters without leading or trailing spaces.");
     else if (bOversizedAction) Snapshot.Validation = LOCTEXT("OversizedAction", "Reduce each cargo quantity to the Cog capacity or below, then review again.");
@@ -166,8 +218,12 @@ void UHansaTradeMapPresentationModel::UpdateCreatorReview()
     else
     {
         uint64 Id = 0;
-        Snapshot.bCanCreate = !!Runtime->CreateTradeRoute(V->Id, DraftStops, Snapshot.DraftName, Snapshot.bReassignCog, true, Id);
-        Snapshot.Validation = Snapshot.bCanCreate ? LOCTEXT("Valid", "Ready. Review the voyage, then create and activate.") : LOCTEXT("Rejected", "The route could not be validated. Check the name, Cog, stops and goods; your draft is preserved.");
+        const FHansaCommandGatewayResult Result = Runtime->CreateTradeRoute(V->Id, DraftStops, Snapshot.DraftName, Snapshot.bReassignCog, true, Id);
+        Snapshot.bCanCreate = !!Result;
+        Snapshot.Validation = Snapshot.bCanCreate ? LOCTEXT("Valid", "Ready. Review the voyage, then create and activate.")
+            : Result.GetError() == EHansaCommandGatewayError::ResearchEffectRequired
+                ? LOCTEXT("ReserveResearchRequired", "Complete Reserve instructions research before using a minimum reserve. Open Research, finish the required technology, then review this preserved draft again.")
+                : LOCTEXT("Rejected", "The route could not be validated. Check the name, Cog, stops and goods; your draft is preserved.");
     }
 }
 
@@ -184,12 +240,28 @@ bool UHansaTradeMapPresentationModel::EditCreateIntent()
 }
 bool UHansaTradeMapPresentationModel::CreateAndActivateIntent()
 {
-    if (!Snapshot.bCreating || !Snapshot.bReview || !Runtime.IsValid()) return false;
+    if (!Snapshot.bCreating || !Snapshot.bReview || (!Runtime.IsValid() && !NetworkCommandIntent)) return false;
     const auto Previous = Snapshot; UpdateCreatorReview();
     if (!Snapshot.bCanCreate) { Snapshot.EditorStatus = Snapshot.Validation; PublishIfChanged(Previous); return false; }
+	if (NetworkCommandIntent)
+	{
+		FHansaClientCommandIntent Intent; Intent.Type = EHansaClientIntentType::CreateRoute;
+		Intent.VehicleId = Snapshot.CogValue; Intent.RouteName = Snapshot.DraftName;
+		Intent.bReassignStoppedVehicle = Snapshot.bReassignCog; AppendCreateIntentStops(DraftStops, Intent);
+		const bool bSent = NetworkCommandIntent(Intent);
+		if (bSent)
+		{
+			Snapshot.bCreating = false; Snapshot.bReview = false; Snapshot.bDirty = false; Snapshot.bCanCreate = false;
+			Snapshot.EditorStatus = LOCTEXT("CreatePending", "Route creation sent to the authoritative server.");
+		}
+		else Snapshot.EditorStatus = LOCTEXT("CreateSendFailed", "Route creation could not be sent; your draft is preserved.");
+		PublishIfChanged(Previous); return bSent;
+	}
     uint64 Id = 0;
     const auto Result = Runtime->CreateTradeRoute(FHansaVehicleId::TryCreate(Snapshot.CogValue).Value, DraftStops, Snapshot.DraftName, Snapshot.bReassignCog, false, Id);
-    if (!Result) { Snapshot.Validation = LOCTEXT("CreateFailed", "Departure failed because the route or Cog changed. Your draft is preserved; review and retry."); PublishIfChanged(Previous); return false; }
+    if (!Result) { Snapshot.Validation = Result.GetError() == EHansaCommandGatewayError::ResearchEffectRequired
+        ? LOCTEXT("CreateResearchRequired", "Complete the required route research, then review this preserved draft again.")
+        : LOCTEXT("CreateFailed", "Departure failed because the route or Cog changed. Your draft is preserved; review and retry."); PublishIfChanged(Previous); return false; }
     Snapshot.bCreating = false; Snapshot.bReview = false; Snapshot.bDirty = false; Snapshot.bCanCreate = false;
     Snapshot.SelectedRouteValue = Id; Snapshot.ModeFilter = EHansaTradeMapModeFilter::Sea;
     const auto P = Runtime->BuildProjection(); if (P) ApplyProjection(P.Value, *Runtime->GetEconomicRegistry());

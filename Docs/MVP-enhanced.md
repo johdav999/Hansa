@@ -1,5 +1,8 @@
 # Hansa — Enhanced Playable MVP Prompt Plan
 
+Current scope amendment (2026-09-16): `firewood.md` and `Docs/MVP.md` extend the target to fourteen goods and five local chains: bread, fish, planks, beer and firewood. Firewood adds seasonal household heating and bakery/malt-house/brewery process fuel. The older P00–P33 wording and dated evidence below describe their original thirteen-good milestone; they do not exclude this authorized fifth chain. The firewood candidate is still staged, with independent acceptance and asset promotion gates tracked in `Docs/Development/FirewoodImplementation.md`.
+
+
 ## 1. Purpose
 
 This plan closes the gap between the current integrated simulation MVP and a game slice that a player can start, understand, play, and enjoy without operating a prescribed automation scenario.

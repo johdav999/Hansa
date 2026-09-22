@@ -1,0 +1,88 @@
+{
+  "32_preview_compounds": {
+    "samples": 180,
+    "wall_ms": {
+      "median": 6.9238,
+      "p95": 8.2521
+    },
+    "game_ms": {
+      "median": 1.61875,
+      "p95": 1.9264
+    },
+    "render_ms": {
+      "median": 6.90905,
+      "p95": 8.0637
+    },
+    "draw_calls": {
+      "median": 2500.0,
+      "p95": 2527.0
+    },
+    "primitives": {
+      "median": 833449.0,
+      "p95": 1190949.0
+    },
+    "process_bytes": {
+      "median": 4611764224.0,
+      "p95": 4611866624.0
+    },
+    "world_actors": {
+      "median": 96.0,
+      "p95": 96.0
+    },
+    "compound_actors": {
+      "median": 32.0,
+      "p95": 32.0
+    },
+    "instances": {
+      "median": 721.0,
+      "p95": 721.0
+    },
+    "batches": {
+      "median": 208.0,
+      "p95": 208.0
+    }
+  },
+  "empty": {
+    "samples": 180,
+    "wall_ms": {
+      "median": 5.6959,
+      "p95": 6.5054
+    },
+    "game_ms": {
+      "median": 1.4638,
+      "p95": 1.6177
+    },
+    "render_ms": {
+      "median": 5.677350000000001,
+      "p95": 6.4127
+    },
+    "draw_calls": {
+      "median": 161.0,
+      "p95": 189.0
+    },
+    "primitives": {
+      "median": 831061.0,
+      "p95": 1188561.0
+    },
+    "process_bytes": {
+      "median": 4499666944.0,
+      "p95": 4499681280.0
+    },
+    "world_actors": {
+      "median": 64.0,
+      "p95": 64.0
+    },
+    "compound_actors": {
+      "median": 0.0,
+      "p95": 0.0
+    },
+    "instances": {
+      "median": 0.0,
+      "p95": 0.0
+    },
+    "batches": {
+      "median": 0.0,
+      "p95": 0.0
+    }
+  }
+}

@@ -1,0 +1,3 @@
+[2026.09.17-16.47.09:623][886]LogAutomationController: Display: Test Completed. Result={Success} Name={RealViewport} Path={Hansa.UI.ShipNavigation.RealViewport}
+[2026.09.17-16.47.09:623][886]LogAutomationController: BeginEvents: Hansa.UI.ShipNavigation.RealViewport
+[2026.09.17-16.47.09:626][888]LogExit: Display: **** TestExit: Automation Test Queue Empty ****

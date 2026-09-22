@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "prompt": "TR-08",
+  "status": "Verified",
+  "completedUtc": "2026-09-21T05:37:00Z",
+  "versions": {
+    "saveEnvelope": 18,
+    "determinismFingerprint": 30,
+    "gameplayCommand": 13,
+    "multiplayerClientIntent": 7,
+    "simulation": 1,
+    "pipeline": 1,
+    "economicCatalog": 34
+  },
+  "branches": [
+    {
+      "id": "Warehouse",
+      "moneyPfennig": 90000,
+      "goods": [
+        {
+          "id": "Good.Planks",
+          "quantityMilliUnits": 8000
+        },
+        {
+          "id": "Good.Tools",
+          "quantityMilliUnits": 1000
+        }
+      ],
+      "effect": {
+        "storageCapacityBonusMilliUnits": 75000
+      }
+    },
+    {
+      "id": "Market",
+      "moneyPfennig": 75000,
+      "goods": [
+        {
+          "id": "Good.Planks",
+          "quantityMilliUnits": 6000
+        },
+        {
+          "id": "Good.Tools",
+          "quantityMilliUnits": 2000
+        }
+      ],
+      "effect": {
+        "additionalOrderSlots": 4,
+        "priceLimitedOrders": true
+      }
+    },
+    {
+      "id": "Harbor",
+      "moneyPfennig": 110000,
+      "goods": [
+        {
+          "id": "Good.Planks",
+          "quantityMilliUnits": 10000
+        },
+        {
+          "id": "Good.Tools",
+          "quantityMilliUnits": 3000
+        }
+      ],
+      "effect": {
+        "stationTransferCapBonusMilliUnits": 50000
+      }
+    }
+  ],
+  "respec": {
+    "allowed": true,
+    "moneyRefundBasisPoints": 2500,
+    "goodsRefunded": false
+  },
+  "build": {
+    "status": "Succeeded",
+    "configuration": "Development",
+    "artifact": "Saved/BuildArtifacts/20260921-073619406-automation-Hansa.Integration.TradePresence.MerchantOfficeProgression/BuildEditor.log"
+  },
+  "tests": [
+    {
+      "filter": "Hansa.Integration.TradePresence.MerchantOfficeProgression",
+      "status": "Succeeded",
+      "testsFound": 1,
+      "artifact": "Saved/BuildArtifacts/20260921-073619406-automation-Hansa.Integration.TradePresence.MerchantOfficeProgression",
+      "coverage": [
+        "atomic selection/respec",
+        "cost rollback",
+        "stale review",
+        "exclusivity",
+        "capability replacement",
+        "save/reload",
+        "semantic ordinary input",
+        "controller focus",
+        "1280x720 compact",
+        "1920x1080 wide"
+      ]
+    },
+    {
+      "filter": "Hansa.Editor.TradePresence.DefinitionsDeterminismAndValidation",
+      "status": "Succeeded",
+      "testsFound": 1,
+      "artifact": "Saved/BuildArtifacts/20260921-073424215-automation-Hansa.Editor.TradePresence.DefinitionsDeterminismAndValidation"
+    },
+    {
+      "filter": "Hansa.Integration.TradePresence.StationOrders",
+      "status": "Succeeded",
+      "testsFound": 1,
+      "artifact": "Saved/BuildArtifacts/20260921-073419838-automation-Hansa.Integration.TradePresence.StationOrders"
+    }
+  ],
+  "visualReferences": [
+    {
+      "path": "Docs/Images/UI/TradePresence/trade-presence--specializations-screen--comparison--1536x1024--v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2712141,
+      "sha256": "70BCA28CCBC8D67EE712AD62B3BF7ECB31A10B921EC810578CCAF6CEE748751B",
+      "generationMode": "built-in ImageGen",
+      "shipping": false
+    },
+    {
+      "path": "Docs/Images/UI/TradePresence/trade-presence--specializations-inspector--comparison--1024x1536--v1.png",
+      "width": 1024,
+      "height": 1536,
+      "bytes": 2670401,
+      "sha256": "A97379AEC332A1AE61CDFB6C7AFDE08BCB9E6630C84AC3C08DF496977EFD0DF3",
+      "generationMode": "built-in ImageGen",
+      "shipping": false
+    }
+  ],
+  "limitations": [
+    "Full packaged-game viewport capture is scheduled for TR-14 release UAT.",
+    "Visual references are non-shipping; the functional comparison surface is native Slate."
+  ]
+}

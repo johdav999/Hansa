@@ -1,0 +1,6 @@
+[2026.09.17-17.17.51:854][345]LogAutomationController: Display: Test Completed. Result={Success} Name={OrderContinuity} Path={Hansa.ShipNavigation.OrderContinuity}
+[2026.09.17-17.17.51:854][345]LogAutomationController: Order start=X=-35000.000 Y=8200.000 Z=0.000 after=X=-35000.000 Y=8200.000 Z=0.000 observed=X=-35000.000 Y=8200.000 Z=0.000 fraction=0.400000
+[2026.09.17-17.17.51:854][345]LogAutomationController: Reverse before=X=-34733.333 Y=8200.000 Z=0.000 after=X=-34733.333 Y=8200.000 Z=0.000 fraction=0.600000
+[2026.09.17-17.17.52:708][347]LogAutomationController: Display: Test Completed. Result={Success} Name={StartMoveSaveReturn} Path={Hansa.ShipNavigation.StartMoveSaveReturn}
+[2026.09.17-17.17.52:724][349]LogAutomationController: Display: Test Completed. Result={Success} Name={WaterOnlyPath} Path={Hansa.ShipNavigation.WaterOnlyPath}
+[2026.09.17-17.17.52:731][350]LogAutomationCommandLine: Display: **** TEST COMPLETE. EXIT CODE: 0 ****

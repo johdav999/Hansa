@@ -68,10 +68,11 @@ void AHansaRootHud::CancelCityVisit()
 {
     const bool HadVisit=bCityVisitLoading||ViewedCity==TEXT("City.Rostock");bCityVisitLoading=false;GetWorldTimerManager().ClearTimer(CityVisitTimeout);
     if(RostockLevel)RostockLevel->SetShouldBeVisible(false);
+	if(RostockTradeStationPresentation)RostockTradeStationPresentation->SetActorHiddenInGame(true);
     for(TActorIterator<AHansaCargoProjectionManager> It(GetWorld());It;++It)It->SetRostockVisible(false);
     ViewedCity=TEXT("City.Lubeck");if(BuildMenuPresentationModel)BuildMenuPresentationModel->SetConstructionAllowed(true);
     if(HadVisit)if(auto* C=PlayerOwner?Cast<AHansaStrategyCameraPawn>(PlayerOwner->GetPawn()):nullptr){C->RestoreHomeBounds();C->RestoreViewState(HomeView);}
-    CityVisitStatus=LOCTEXT("Home","Lübeck · construction available.");SelectedRostockRole=NAME_None;
+    CityVisitStatus=LOCTEXT("Home","Lübeck · construction available.");SelectedRostockRole=NAME_None;SelectedTradeStationValue=0;
     if(HadVisit)RefreshCityOverview();else PublishCityVisit();
 }
 void AHansaRootHud::PublishCityVisit()
@@ -82,7 +83,7 @@ void AHansaRootHud::PublishCityVisit()
         if(SimulationHost){
             const auto Projection=SimulationHost->BuildProjection();
             const auto City=Hansa::Simulation::FHansaCityDefinitionId::TryParse(ViewedCity.ToString());
-            if(Projection && City)PresentationModel->ApplyRuntimeStatus(Projection.Value,City.Value,SimulationHost->GetHouseId());
+            if(Projection && City)PresentationModel->ApplyRuntimeStatus(Projection.Value,City.Value,SimulationHost->GetHouseId(),SimulationHost->GetEconomicRegistry());
         }
         auto S=PresentationModel->GetSnapshot();S.bRemoteCityView=ViewedCity==TEXT("City.Rostock")||bCityVisitLoading;
         S.CityBreadcrumb=ViewedCity==TEXT("City.Rostock")?LOCTEXT("Breadcrumb","Trade city / Rostock"):LOCTEXT("HomeBreadcrumb","Free City / Lübeck");
@@ -105,6 +106,17 @@ void AHansaRootHud::RefreshRostockPresentation()
 {
     if(ViewedCity!=TEXT("City.Rostock")||!SimulationHost)return;
     const auto P=SimulationHost->BuildProjection();if(!P)return;
+	const auto* Station=P.Value.GetTradeStations().FindByPredicate([this](const auto& V){return V.Station.OwnerId==SimulationHost->GetHouseId()&&V.Station.CityId.ToString()==TEXT("City.Rostock")&&V.Station.Status==Hansa::Simulation::EHansaTradeStationStatus::Active;});
+	if(Station)
+	{
+		if(!RostockTradeStationPresentation)
+		{
+			UClass* PresentationClass=LoadClass<AActor>(nullptr,*Station->PresentationClassPath);
+			if(PresentationClass){FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;RostockTradeStationPresentation=GetWorld()->SpawnActor<AActor>(PresentationClass,AHansaRostockQuarter::VisitOffset()+FVector(1900,1750,100),FRotator(0,90,0),Params);if(RostockTradeStationPresentation){RostockTradeStationPresentation->Tags.AddUnique(TEXT("TradeStation"));RostockTradeStationPresentation->Tags.AddUnique(TEXT("City.Rostock"));auto* Selection=NewObject<UBoxComponent>(RostockTradeStationPresentation,TEXT("TradeStationSelection"));Selection->SetBoxExtent(FVector(650,650,350));Selection->SetCollisionEnabled(ECollisionEnabled::QueryOnly);Selection->SetCollisionResponseToAllChannels(ECR_Ignore);Selection->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);Selection->SetGenerateOverlapEvents(false);Selection->ComponentTags.Add(TEXT("TradeStation"));if(auto* Root=RostockTradeStationPresentation->GetRootComponent())Selection->AttachToComponent(Root,FAttachmentTransformRules::KeepRelativeTransform);Selection->RegisterComponent();}}
+		}
+		if(RostockTradeStationPresentation)RostockTradeStationPresentation->SetActorHiddenInGame(false);
+	}
+	else if(RostockTradeStationPresentation)RostockTradeStationPresentation->SetActorHiddenInGame(true);
     int32 AtBerth=0,Approaching=0,Missing=0;int64 Cargo=0;FText LatestReceipt;int64 ReceiptTick=-1;
     for(TActorIterator<AHansaCargoProjectionManager> It(GetWorld());It;++It)
     {
@@ -120,7 +132,7 @@ void AHansaRootHud::RefreshRostockPresentation()
         }
     }
     for(const auto& Route:P.Value.GetRoutes())
-        if(Route.OwnerId==SimulationHost->GetHouseId() && Route.LastTransfer.Kind==Hansa::Simulation::EHansaRouteCargoActionKind::Unload && Route.LastTransfer.CityId.ToString()==TEXT("City.Rostock") && Route.LastTransfer.AppliedQuantity.GetRawValue()>0 && Route.LastTransfer.Tick.GetValue()>ReceiptTick)
+        if(Route.OwnerId==SimulationHost->GetHouseId() && !Hansa::Simulation::IsRouteLoad(Route.LastTransfer.Kind) && Route.LastTransfer.CityId.ToString()==TEXT("City.Rostock") && Route.LastTransfer.AppliedQuantity.GetRawValue()>0 && Route.LastTransfer.Tick.GetValue()>ReceiptTick)
         {
             ReceiptTick=Route.LastTransfer.Tick.GetValue();
             LatestReceipt=FText::Format(LOCTEXT("Receipt","Last recorded unload: {0} {1}, tick {2}."),FText::AsNumber(double(Route.LastTransfer.AppliedQuantity.GetRawValue())/1000.),FText::FromString(Route.LastTransfer.GoodId.ToString().RightChop(5)),FText::AsNumber(ReceiptTick));
@@ -128,6 +140,25 @@ void AHansaRootHud::RefreshRostockPresentation()
     RostockArrivalSummary=FText::Format(LOCTEXT("Arrival","{0} at berth · {1} approaching · {2} units aboard. Cargo is the current route projection; market reports retain their age."),FText::AsNumber(AtBerth),FText::AsNumber(Approaching),FText::AsNumber(double(Cargo)/1000.));
     if(Missing>0)RostockArrivalSummary=FText::Format(LOCTEXT("MissingCargoSkin","{0} Presentation unavailable for {1} vessel(s); inspect the route for cargo."),RostockArrivalSummary,FText::AsNumber(Missing));
     if(!LatestReceipt.IsEmpty())RostockArrivalSummary=FText::Format(LOCTEXT("ArrivalReceipt","{0} {1}"),RostockArrivalSummary,LatestReceipt);
+}
+bool AHansaRootHud::InspectRostockTradeStation()
+{
+    if(ViewedCity!=TEXT("City.Rostock")||!SimulationHost||!InspectorPresentationModel)return false;
+    const auto Projection=SimulationHost->BuildProjection();if(!Projection)return false;
+    const auto* Station=Projection.Value.GetTradeStations().FindByPredicate([this](const auto& Value)
+    {
+        return Value.Station.OwnerId==SimulationHost->GetHouseId()&&Value.Station.CityId.ToString()==TEXT("City.Rostock")&&Value.Station.Status!=Hansa::Simulation::EHansaTradeStationStatus::Closed;
+    });
+    if(!Station)return false;
+    const auto* Presence=Projection.Value.GetForeignPresences().FindByPredicate([this](const auto& Value)
+    {
+        return Value.HouseId==SimulationHost->GetHouseId()&&Value.CityId.ToString()==TEXT("City.Rostock");
+    });
+    if(!Presence)return false;
+    SelectedTradeStationValue=static_cast<int64>(Station->Station.Id.GetValue());
+    InspectorPresentationModel->ShowTradeStation(*Station,*Presence,TEXT("World.Selection.TradeStation"));
+    if(RootHudWidget)RootHudWidget->FocusSemanticId(TEXT("Inspector.Close"));
+    return true;
 }
 bool AHansaRootHud::InspectCargo(FName Id)
 {

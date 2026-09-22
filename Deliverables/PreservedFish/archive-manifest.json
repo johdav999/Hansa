@@ -1,0 +1,4151 @@
+{
+  "archiveSha256": "8b5e529d1f3db6565d3a245aee6d2be00103c5ec34ad03d20f881f411bc3d6a0",
+  "archiveBytes": 177005107,
+  "files": [
+    {
+      "path": "Config/DefaultEditor.ini",
+      "size": 58482,
+      "sha256": "25920e87560682479062a06afef5e0046d23789e72200634d852becbe1db407b"
+    },
+    {
+      "path": "Config/DefaultEditorPerProjectUserSettings.ini",
+      "size": 157,
+      "sha256": "958950c01ee1adcd03483eb9d21aef28306d4a6f8856bdf2d75f0a875e246951"
+    },
+    {
+      "path": "Config/DefaultEngine.ini",
+      "size": 3799,
+      "sha256": "31429625ec15e4f053aac259a7aa7e57a3f9aed6520bfff98ba570a62a3b4eb4"
+    },
+    {
+      "path": "Config/DefaultGame.ini",
+      "size": 5806,
+      "sha256": "11e4ef3bca451e39f18a7fa63cc1b4287e2cf8f9413227aa01eae77e9ef9fb75"
+    },
+    {
+      "path": "Config/DefaultInput.ini",
+      "size": 9026,
+      "sha256": "fc9bf4eb5d2727bb6f80f24ffcb846698ddc717dae0dc9455524ebf472eeced0"
+    },
+    {
+      "path": "Content/Hansa/Core/AI/DA_AITuning_MerchantRival.uasset",
+      "size": 2838,
+      "sha256": "c2e1835ef3aa4fac12bb851dcabd7ecc7cb63d74beaac0e1228df36ebc6131d1"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/ArtisanPlots/DA_Building_Residence_Artisan_Plot.uasset",
+      "size": 3774,
+      "sha256": "443c35dc0a66ce110775f774bcaf85645b9a0434631d3bf9b6527f2ab52ff43d"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/BP_HansaWindmill_Animated.uasset",
+      "size": 38338,
+      "sha256": "c5be7b4cb93f7f3b0720771e1b4bc3862689cbfff1979ec8c8336ef3e9dcf041"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Bakery.uasset",
+      "size": 3528,
+      "sha256": "7ca90ae7a3c5965cde5fd1d24ec919c4307d39ce1b0aa866fa5f27e123e814dc"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Brewery.uasset",
+      "size": 3957,
+      "sha256": "28e2d4537d6e8daf4868e209eeb355ed7adc71178bc5caf235052e271c311e93"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Cooperage.uasset",
+      "size": 4021,
+      "sha256": "90ca6c1d3c13bdbfc77faa83650543cfe93729224bab8c8a7a3b478cc2335b22"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Dock.uasset",
+      "size": 3941,
+      "sha256": "dafe6229302d7fcd59eab8209f1f33e55ce398e57ac4b9b5c730aa943d9fa33a"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Fishery.uasset",
+      "size": 3575,
+      "sha256": "95e0fddf82d6c4d4bcb89f1b653cd24675467fd49dec5fa9e24fa17956f26616"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Fishery_SaltingShed.uasset",
+      "size": 3212,
+      "sha256": "d43cb738f79cfa1193e20ee69f0a1cf6309cfd9ae05664b5bf35305e29b7ec16"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_GrainFarm.uasset",
+      "size": 3512,
+      "sha256": "25f1bbdad87cc87b6158591ed7626a9b2c4a3b447b5cdb4fcf0ba1ab9c85789c"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_HopFarm.uasset",
+      "size": 2947,
+      "sha256": "b77cdd017f32f7c9452f90014db26d43a7666063daa8c3d5132a986c99144bf1"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_LumberCamp.uasset",
+      "size": 3585,
+      "sha256": "e2420cee367221593c1cac660d28d72a116e5dc84a172e79b96acbacb09d4083"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_MaltHouse.uasset",
+      "size": 4034,
+      "sha256": "790db2b54c86313d9bebc59544a8f8810f17ffa390f8ba68c47c5e88403d8ecf"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Market.uasset",
+      "size": 3936,
+      "sha256": "c635c66a153991cafc0330444e33eaba7acaba39fd00e7bdcac15e892a80f819"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Mill.uasset",
+      "size": 3490,
+      "sha256": "32b7ee7ce0b53b734f5d590f792c1967316ac152fa519d67aaf087c36558679c"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Residence_Artisan.uasset",
+      "size": 4572,
+      "sha256": "b5e8c9ce576ed7df09d90ee656f4bb9d9a5ae172ec7b17b2f37550f07716e824"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Residence_Laborer.uasset",
+      "size": 4277,
+      "sha256": "910972cc4b8e0e23c170a877eb875f71915a1413e40eca0cd877ac7fa70ae034"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Road.uasset",
+      "size": 3411,
+      "sha256": "dcdeb1ff47c5d5928bf0cec260bd210e0ad2d2e62a7206914cefc23175e32688"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Sawmill.uasset",
+      "size": 3640,
+      "sha256": "c0e76e7f5e138f2fbb4419ac29df39f632fc11e898dea8b300fc34f426f91f70"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Smithy.uasset",
+      "size": 2931,
+      "sha256": "6801a3ef1769f61fffe1a66fa98be1bda0e769065991f46585425b34029e550f"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/DA_Building_Warehouse.uasset",
+      "size": 3557,
+      "sha256": "76b3b836fa96b7082834f457dd5a86bc4d7b98475ba2fe85fc01165f7edef520"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_CornerCourt_Stage1.uasset",
+      "size": 4072,
+      "sha256": "ecfb239b6bcf68ee9f3047d601c8a138ff29e6e5c3f6ab62e82227456da6a0f4"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_CornerCourt_Stage2.uasset",
+      "size": 4183,
+      "sha256": "07f410f95a8a36253f3ad6fc3b01123865d0a8da32ae6776e88d3b9763205784"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_CornerCourt_Stage3.uasset",
+      "size": 4074,
+      "sha256": "57fe41a450a57a80e87fa9518665e363ff652920af2ac426d300d61f968e974a"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_CraftCourt_Stage1.uasset",
+      "size": 4060,
+      "sha256": "616a989b9c5f43355753f418cdf035b2826dc109ebf370c91160b771b9f91ca1"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_CraftCourt_Stage2.uasset",
+      "size": 4171,
+      "sha256": "44a0f76b7234f60baeb827045c81037d14050d8b74e98fa66301270c4c513332"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_CraftCourt_Stage3.uasset",
+      "size": 4063,
+      "sha256": "1b7b7de9bc035b63768c94084d738831e441082e26f657f680854c50641f48d6"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_NarrowGang_Stage1.uasset",
+      "size": 4059,
+      "sha256": "ba264dfc6ed3c5914ba1989a2d5c3f947883e7a17d09fcdda9b90666b84cda9c"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_NarrowGang_Stage2.uasset",
+      "size": 4170,
+      "sha256": "4789754eb634f8e94dd99239fb8d81e4853edfac190fb9a3ca1c28c2f50a1617"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_NarrowGang_Stage3.uasset",
+      "size": 4062,
+      "sha256": "198e9c231512702c1c931c355d86df0f5b6605efcc4165d177782a6543cbd9b9"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_SharedCourt_Stage1.uasset",
+      "size": 4072,
+      "sha256": "d110a628cc6151e6d987abdc49de07233e0ed9bc81694c93240b355879ca0944"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_SharedCourt_Stage2.uasset",
+      "size": 4183,
+      "sha256": "79a896be3884face382969125c9c12a8a8aec7a5753c920f2629fe305c5e779b"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/LabourCourts/DA_Building_Residence_Laborer_SharedCourt_Stage3.uasset",
+      "size": 4074,
+      "sha256": "9cd0a462a87d3ec3ff9c026da2b9580a4fb0c6fcd4e97480abd2cfe74ca40d91"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/BP_Windmill_Rotor.uasset",
+      "size": 37522,
+      "sha256": "7a65ecb564789206b15a4f09c3832aefcaf41373ed3e5725f8206b15a801d8ed"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Materials/M_Windmill_Fieldstone.uasset",
+      "size": 13869,
+      "sha256": "2a1128aab8236aa9f72f922c6e83c58efbc5e8bcedf932d0c6a6fb60cea9cda8"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Materials/M_Windmill_ForgedIron.uasset",
+      "size": 12547,
+      "sha256": "1f0aa6cf328286eab78efcff84698c6fb6a2eaf617f61e56923881fe8a5cd510"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Materials/M_Windmill_Masonry.uasset",
+      "size": 14373,
+      "sha256": "79fa41a80286704627ae47b724a6eaa3f9ca695af943999668aeef702737623a"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Materials/M_Windmill_OldBrick.uasset",
+      "size": 13581,
+      "sha256": "2bdceeae887d8a50787954e6cc89d6ebd0a06681cbb922d125a2a59b0a592c78"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Materials/M_Windmill_RecessTimber.uasset",
+      "size": 12774,
+      "sha256": "db6817c3e82863eff59f9b294e6f598faf17117b86848d456b95b78b797e598e"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Materials/M_Windmill_SagePaint.uasset",
+      "size": 13559,
+      "sha256": "6c27c31ba8391aab9131d77917d55d92944c53f650300185c3ca41c09e4e8188"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Materials/M_Windmill_WeatheredTimber.uasset",
+      "size": 14026,
+      "sha256": "634be9df938c7a7ad0259433a39e5f4317006cf17de0dd93cad4bc5b776a444f"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Materials/M_Windmill_WindowGlass.uasset",
+      "size": 13649,
+      "sha256": "3e8a062307704ec4ed9adbd61330be4eab52060b8a220402ada74d165be50883"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Meshes/SM_Windmill_Body.uasset",
+      "size": 7074388,
+      "sha256": "656a1292bc40cd5aafef9651813510e8b282bc5cfd91fb76a22bf48edc8e4686"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Meshes/SM_Windmill_Rotor.uasset",
+      "size": 721923,
+      "sha256": "d8a97d7b02cd45514cae0a37a182f335a06f5f0441a48b1a716d457655e67be1"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_Fieldstone_BaseColor.uasset",
+      "size": 2224640,
+      "sha256": "842256e4ea35fe2ec286b8798f2e0fec3b09225b2be1e051c937262bd524a3c0"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_Fieldstone_Normal.uasset",
+      "size": 1030743,
+      "sha256": "af5af3b7e93944386291d0460c41fc6b491d2ffba04b17f5151f323a39da8ccb"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_Fieldstone_Roughness.uasset",
+      "size": 13191,
+      "sha256": "26e64454532b1cda0e47669acac99195bef77ac41e9ccafeed2d3ceadf20aa17"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_ForgedIron_BaseColor.uasset",
+      "size": 13017,
+      "sha256": "5cd8688f6cd900074849854410de2d21b8f25b266ec14347ca172799b5cc2d27"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_ForgedIron_Normal.uasset",
+      "size": 869664,
+      "sha256": "6b3cb470fb1c9273e09acd86d8ce1858e4e9e9c0c46c8cf407f05984d0225693"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_ForgedIron_Roughness.uasset",
+      "size": 528946,
+      "sha256": "59e7f6de6415b1dbc909fc537ca6c4aa3924e5bd3197ef7a5efbaf8cb9a06f48"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_Masonry_BaseColor.uasset",
+      "size": 2282217,
+      "sha256": "a170336d602410a1e59a3da6eb590e4e875aeb2e40864337df8c7e9ef8f91806"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_Masonry_Normal.uasset",
+      "size": 1700640,
+      "sha256": "cac1b1cd92674ee0802247d0300a547a6ac84761b5b53e5c98e63e36ce19e00c"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_Masonry_Roughness.uasset",
+      "size": 516881,
+      "sha256": "a9a185f470219f7624a98b5695966d6e2eb4425d5a9ae674387a468155ca0833"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_OldBrick_BaseColor.uasset",
+      "size": 2208641,
+      "sha256": "f5471435fed6ea6717627b3eb60e0a43f305ce35d33581679b7f1b1838f41acc"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_OldBrick_Normal.uasset",
+      "size": 1300507,
+      "sha256": "c22557898be96bf0ec00b1524ff977487bf6c8b31cbc92da5bae34c02de03874"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_OldBrick_Roughness.uasset",
+      "size": 529429,
+      "sha256": "2a6ee95b1416946940a29ea13ddd754c50bf2f2f74facb9fe95f830c6fe2c3c3"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_RecessTimber_BaseColor.uasset",
+      "size": 13063,
+      "sha256": "44acdf50189248f7d9a0cfd05763bd770bf0424682a069fcbbb24bc1d649ecdf"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_RecessTimber_Normal.uasset",
+      "size": 1155049,
+      "sha256": "7ab480aa697f769c45f4360f41070c24abdd9b8d0d7577ec4d33837da787e3b2"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_RecessTimber_Roughness.uasset",
+      "size": 528980,
+      "sha256": "5ea01be583564ec08f234d2e5b849df406945abad2d5fc233e8d29cb0c860900"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_SagePaint_BaseColor.uasset",
+      "size": 1794032,
+      "sha256": "647418c75266d941167bf007b55acb3f8d96a30b78428a511f5518de8dbee4e7"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_SagePaint_Normal.uasset",
+      "size": 265909,
+      "sha256": "99330842b2bc74645300b50ca21656805b4d01cccf3791e8f537fb74ac82c3d8"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_SagePaint_Roughness.uasset",
+      "size": 209360,
+      "sha256": "9d68bf5b33eadb3b8ab7ab97c7d58d8afb7bcb35f4b009e0237d7066a9054f5f"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_WeatheredTimber_BaseColor.uasset",
+      "size": 1909297,
+      "sha256": "dbf0b9c61245576c94f65cb2c63d3966f2ddd30a1a02a03a931663f163959c95"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_WeatheredTimber_Normal.uasset",
+      "size": 420061,
+      "sha256": "8fbd49ca08f06af9ae03ad24ca30f98c6068315f26426d5e2d4bcdd1aaae777a"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_WeatheredTimber_Roughness.uasset",
+      "size": 209387,
+      "sha256": "2e6ff414a1a85cf83797c3bb928f08c814ff126478caac32943458462641f191"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_WindowGlass_BaseColor.uasset",
+      "size": 13040,
+      "sha256": "50d29f33f4640e22e73b84c5240d192a95bb5e0536a8bc507ce05535de9a6d6b"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_WindowGlass_Normal.uasset",
+      "size": 616893,
+      "sha256": "0df93984396ffae16cdf9504b244a98962922b5c95e9f99bb22267bf1d00864a"
+    },
+    {
+      "path": "Content/Hansa/Core/Buildings/Windmill/Textures/T_Windmill_WindowGlass_Roughness.uasset",
+      "size": 529074,
+      "sha256": "e66cd2f5e89cdec9e842e7ec2b73bec74139837f1e3fdbf81a809cb085670c18"
+    },
+    {
+      "path": "Content/Hansa/Core/CityMarkets/DA_City_Hamburg.uasset",
+      "size": 8560,
+      "sha256": "872aaf23089dcbc1465ef26154e74abc86450313f3f7f6fa4e6da7fab9006267"
+    },
+    {
+      "path": "Content/Hansa/Core/CityMarkets/DA_City_Lubeck.uasset",
+      "size": 8330,
+      "sha256": "66b52dedc6be89a23642404c5264e9b9661e45e6784423e24b1a83de5da857f0"
+    },
+    {
+      "path": "Content/Hansa/Core/CityMarkets/DA_City_Luneburg.uasset",
+      "size": 8603,
+      "sha256": "a8b34c4b4e9b0ec0b7f3aba6c667a7921bbb04ec8ce46dacc8ae5f62f48727d2"
+    },
+    {
+      "path": "Content/Hansa/Core/CityMarkets/DA_City_Rostock.uasset",
+      "size": 8560,
+      "sha256": "4693f40e67b8ae230faf65d39ab4432624f107579d4242021922cfa82936022f"
+    },
+    {
+      "path": "Content/Hansa/Core/Compounds/ArtisanPlots/DA_Compound_ArtisanPlot.uasset",
+      "size": 20694,
+      "sha256": "4c1f58a14e7afa12e7e3c1191e1d3e4f707dc05cf34be19ea359de9bd082bc7b"
+    },
+    {
+      "path": "Content/Hansa/Core/Compounds/LabourCourts/DA_Compound_CornerCourt.uasset",
+      "size": 773824,
+      "sha256": "1939c133d98d79c36207b95bffaf749a24413b8bb048ded383af18efb6d56316"
+    },
+    {
+      "path": "Content/Hansa/Core/Compounds/LabourCourts/DA_Compound_CraftCourt.uasset",
+      "size": 767857,
+      "sha256": "d092e77e4f5ff53999bf4be8ec69eccd283f8a5393ac328098a041a2489f2f0c"
+    },
+    {
+      "path": "Content/Hansa/Core/Compounds/LabourCourts/DA_Compound_NarrowGang.uasset",
+      "size": 680422,
+      "sha256": "95b97e54621bc59a73f28477bdf8e061f2cdd779eeec91070350ebbcad81cf88"
+    },
+    {
+      "path": "Content/Hansa/Core/Compounds/LabourCourts/DA_Compound_SharedCourt.uasset",
+      "size": 779246,
+      "sha256": "4cbec00d9dda246eceac72847db897b31ec8a1b3e87762cf02227d77d0d58e42"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Barrels.uasset",
+      "size": 2109,
+      "sha256": "4584a1506f27e291c687cdd33cbca39beb3e17f843a43604eb0bc41c5d3d835d"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Beer.uasset",
+      "size": 2149,
+      "sha256": "9bafcd25fb8aef9aa06f923ca55a0872156c1379c59d5122d6510ea2fb2b7aea"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Bread.uasset",
+      "size": 2156,
+      "sha256": "c1272e9675a91ee1eafc4d64104c6922980cf9e29e3b70ad4aca16407ed2f9bf"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Fish.uasset",
+      "size": 2095,
+      "sha256": "6bd71023a285ed254464f20550134aa1f765b53b91a98811e05457530e649733"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Flour.uasset",
+      "size": 1972,
+      "sha256": "bfd51c5514432f99229b582ba5b8511cf4e4f07fa310c17c834767a23d4357f4"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Grain.uasset",
+      "size": 1889,
+      "sha256": "6b2949aebdbcadb8eb743070e93dce658f65f7fae7a102fc2a3827b86283f38d"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Hops.uasset",
+      "size": 1964,
+      "sha256": "07b24fd2df85515401f8452e83567adf353edc51148421c1c70bba647b1e9368"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Iron.uasset",
+      "size": 1901,
+      "sha256": "fabf7c62de64948e41e49a61b3d3941c180200cf713399b15d7a133754d0fb1d"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Malt.uasset",
+      "size": 1900,
+      "sha256": "f6b416fe5801ac3cd07820314b7eba327e32db3cbc9745c36208d9d5604afbf5"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Planks.uasset",
+      "size": 1917,
+      "sha256": "b2e722c8d5e44bd73ddc3c2dadcce4115914d5d67168ad9007c227388eaab52a"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_PreservedFish.uasset",
+      "size": 2108,
+      "sha256": "80bfaac108e245495733ebdc4f4fb9c6f410d89328d37e57e1f55e7b6f763241"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Salt.uasset",
+      "size": 1901,
+      "sha256": "1f5681a46b8c90d18ecd7705089c00430b32a4266dd8230f668fef331319c8af"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Timber.uasset",
+      "size": 1917,
+      "sha256": "ac14c1004cf729134a485751164bd230686b5b6af389670d7c5d0a2261500822"
+    },
+    {
+      "path": "Content/Hansa/Core/Goods/DA_Good_Tools.uasset",
+      "size": 2009,
+      "sha256": "3b7e55e626f8f6131431b6bdb2400701948566fd833d8d315ed4391d363bae42"
+    },
+    {
+      "path": "Content/Hansa/Core/Needs/DA_Need_BasicServices.uasset",
+      "size": 1986,
+      "sha256": "ea306eb5f321b41f4b414130246a7e72a59d4386404ba56806349ca1db200bd5"
+    },
+    {
+      "path": "Content/Hansa/Core/Needs/DA_Need_Beer.uasset",
+      "size": 1788,
+      "sha256": "05bb832688c1c72db03221ee6b88a82c3c25f24ea68ed110748dc7986843cf4d"
+    },
+    {
+      "path": "Content/Hansa/Core/Needs/DA_Need_Bread.uasset",
+      "size": 1797,
+      "sha256": "1d419bdb8deee6145afcad6b44a7fabbb1fb98153e4c50168360558bb1985ff6"
+    },
+    {
+      "path": "Content/Hansa/Core/Needs/DA_Need_Fish.uasset",
+      "size": 2259,
+      "sha256": "ab9b1ac2cb5737e3aec00968003db2b5f5bf1bfaa243cd46a222347b32bdddf2"
+    },
+    {
+      "path": "Content/Hansa/Core/Needs/DA_Need_Tools.uasset",
+      "size": 1797,
+      "sha256": "e134a9407740fb58b29a55ac78373bc9e8f2cfc6b9b58b5d65fa731214968877"
+    },
+    {
+      "path": "Content/Hansa/Core/PopulationTiers/DA_PopulationTier_Artisan.uasset",
+      "size": 2951,
+      "sha256": "a8090b70271f262325202251cbd0fdb323a316e1256b6e4b92b30ae7582c7867"
+    },
+    {
+      "path": "Content/Hansa/Core/PopulationTiers/DA_PopulationTier_Laborer.uasset",
+      "size": 3060,
+      "sha256": "6205109705ac30847c5fb30eda5933ee132b9c96a819364c8b84e32053319849"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_BakeBread.uasset",
+      "size": 2576,
+      "sha256": "4796967316c2ca3f8d47e74ef154e93c3db0b4b1d043fb4a3ebc130daba809a4"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_BrewBeer.uasset",
+      "size": 2618,
+      "sha256": "2d0b0c251a44e2da9eedaa8189593b73b10ee253611c38e71414a90760c9428b"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_CatchFish.uasset",
+      "size": 2436,
+      "sha256": "e4f985aa72a893a170514d9d874df88d060e0942e443deafe1875bddd33e7864"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_FellTimber.uasset",
+      "size": 2275,
+      "sha256": "d3711c1941d1b52b389346480a9a16bf3b1ec4376acde81a20838f997026d678"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_GrowGrain.uasset",
+      "size": 2437,
+      "sha256": "324c5f78b06af07c30391956e3d645f5343179d07529b2be787cac77a903ed61"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_GrowHops.uasset",
+      "size": 2257,
+      "sha256": "f1f951f949696b19eee23882c7ad6932cb3097d5d2ed81329ac5ec587d1acafa"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_MakeBarrels.uasset",
+      "size": 2430,
+      "sha256": "30fc057aa79b4b576f02f03d1c9bee83ff1b61f01dd6ec9cb1c8bd472d5a134c"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_MaltGrain.uasset",
+      "size": 2362,
+      "sha256": "bdbbe4883e87f7b9268dd52244658f6531a760be241165da03993aa0717c98a0"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_MillFlour.uasset",
+      "size": 2576,
+      "sha256": "6ddf25c28a18d70d1c983ab89924bc46cb3d25fce8fc57212f4b610d98af3bb4"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_SaltedCatch.uasset",
+      "size": 2541,
+      "sha256": "80caab57ff6b50de6873db380325cff01a3f4b214e6457c3cc9d8314af3852a0"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_SawPlanks.uasset",
+      "size": 2413,
+      "sha256": "c5045a144a7e98f61f1a88ba3e750e861a3cb61b52d32dac7d40174abb139509"
+    },
+    {
+      "path": "Content/Hansa/Core/Recipes/DA_Recipe_SmithTools.uasset",
+      "size": 2418,
+      "sha256": "2fc7efdbddac39adf8b9d98067c32d6632ee19321ab4183ad58f6802a50d0adf"
+    },
+    {
+      "path": "Content/Hansa/Core/Routes/DA_Route_BalticSea.uasset",
+      "size": 2274,
+      "sha256": "7ec2cccaa823df0660dd633c2bf85a479d8d9a27515e57b3c8398b08690be064"
+    },
+    {
+      "path": "Content/Hansa/Core/Routes/DA_Route_SaltRoad.uasset",
+      "size": 2357,
+      "sha256": "b718652c51c9cb011938e9031d13ee851931f3a766c3df4129a8072062ac5c5c"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/DA_Scenario_LubeckGrainShortageV1.uasset",
+      "size": 2523,
+      "sha256": "cb6ae8950155e119dc23b34921446775574e67e2a131f139fc0d1dee64adad30"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_ActiveLandRoute.uasset",
+      "size": 2335,
+      "sha256": "e33a1f742d13a1cca08bfdf046b3e1103cde7f2aa5d2caf398899713d70a7f92"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_ActiveProductionEconomy.uasset",
+      "size": 2487,
+      "sha256": "d599a66beea617f137b796b5819f44c1e3e42f4ca26eafe59016017157972ad2"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_ActiveSeaRoute.uasset",
+      "size": 2326,
+      "sha256": "5cb7482cd582c08394cb71621e1afa7f6287812e7350614f2d3e8838f16b93bd"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_AffordableBread.uasset",
+      "size": 2521,
+      "sha256": "8574b160647bf58d9a77f4c22f13c22f3a3c6eafc4be2691c13589c7945b2e98"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_CivicSatisfaction.uasset",
+      "size": 2491,
+      "sha256": "a2291b0bbb4b89e167393164e1b73ce2b94b7ec9a669cee04adfae8e9a7cfd1c"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_CompletedResearch.uasset",
+      "size": 2432,
+      "sha256": "0dfb1b2324c6c5cdfe91977da34b169d731f6767e3ff95d089ef409f3c427188"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_CompletedTradeLegs.uasset",
+      "size": 2430,
+      "sha256": "285683587a63f32bb5507849a2331d1b693b591e9d592a7e9d9d1c4b901ae1e3"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_SafeBreadReserve.uasset",
+      "size": 2533,
+      "sha256": "c7ac8ae156c4f30f82ffb947d4ded7695c7bcf7d581d0ff0adae7293ccacad74"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_SafeGrainReserve.uasset",
+      "size": 2533,
+      "sha256": "41a1b0dfb9d6978d07c34dd17ca34e8ee84f1e2458f073ab54a8b0d2a1f4407d"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_SolventHouse.uasset",
+      "size": 2167,
+      "sha256": "5b28de102ab1c6abf33a58c8efbca55fd5452dd4e9dffdf6e7a2c1e214f8b1e1"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Objectives/DA_ScenarioObjective_StablePopulation.uasset",
+      "size": 2511,
+      "sha256": "6e8b937e1741b2ac6b4c5f9a46597e5293b3b232429a2f0e95b95986b3524629"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Victories/DA_Victory_ProsperityEconomic.uasset",
+      "size": 2367,
+      "sha256": "8367dbe001a225038c619b227a12e7fb8cd8cca6517f3fa2ba1fd8056ab4f893"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Victories/DA_Victory_ResearchCivic.uasset",
+      "size": 2347,
+      "sha256": "1fb1058e7d24d29f58f266c0b8456b36a881cf260c0b3e8a661379968d9d44a1"
+    },
+    {
+      "path": "Content/Hansa/Core/Scenarios/Victories/DA_Victory_TradeNetwork.uasset",
+      "size": 2371,
+      "sha256": "42f0b17be3db5a8c07e7fa7d8d5106e27a3fca9000a8accbd1f76b7f1381df2b"
+    },
+    {
+      "path": "Content/Hansa/Core/Technologies/DA_Technology_Commerce_MarketReports.uasset",
+      "size": 2761,
+      "sha256": "437431283c4659cf6751f432b973c926fc60f0793b8ba6d3b82dea6ef0673cf8"
+    },
+    {
+      "path": "Content/Hansa/Core/Technologies/DA_Technology_Commerce_ReserveAutomation.uasset",
+      "size": 2878,
+      "sha256": "97b5f0eb47945a0c023506940ae8a68181c2bcde30a97247b7bb09fb8ac6b6cc"
+    },
+    {
+      "path": "Content/Hansa/Core/Technologies/DA_Technology_Commerce_TransactionFriction.uasset",
+      "size": 2909,
+      "sha256": "f2d2970a13c1dadc5cfdc43ce0f8608e5086286851b442c569fed6d73d8a2564"
+    },
+    {
+      "path": "Content/Hansa/Core/Technologies/DA_Technology_Logistics_CartCapacity.uasset",
+      "size": 3023,
+      "sha256": "e7e1af84334c387d74667cf9ac8cd9c92f2ae73501fd47b7cafd2f44af446e92"
+    },
+    {
+      "path": "Content/Hansa/Core/Technologies/DA_Technology_Logistics_RouteScheduling.uasset",
+      "size": 3035,
+      "sha256": "ccdd8b7a190826ab52e99230594c6a86c04ff71077ea6345924d8eeeee66e0fc"
+    },
+    {
+      "path": "Content/Hansa/Core/Technologies/DA_Technology_Logistics_WarehouseHandling.uasset",
+      "size": 2957,
+      "sha256": "a8bf3a7ac7d0c2d16bbf88c89cc5ef143f907ed822b4714ad19ae451c896a116"
+    },
+    {
+      "path": "Content/Hansa/Core/Technologies/DA_Technology_Production_ImprovedMilling.uasset",
+      "size": 2929,
+      "sha256": "71e87d4b92f9a6836ba15b76726a2cbe02ad9d75e8031df5e9ca4fc4351c5036"
+    },
+    {
+      "path": "Content/Hansa/Core/Technologies/DA_Technology_Production_ImprovedSawmilling.uasset",
+      "size": 3072,
+      "sha256": "382e2d530fc6317836b9549d06af53a0213dc967649f7098a0d0ac761a29ba68"
+    },
+    {
+      "path": "Content/Hansa/Core/Technologies/DA_Technology_Production_ImprovedSmithing.uasset",
+      "size": 3062,
+      "sha256": "820d99b9fc557c344c2a004fef135f4a3e768869c99b0ebd0c1ac0220b53a2e8"
+    },
+    {
+      "path": "Content/Hansa/Core/Vehicles/DA_Vehicle_Cog.uasset",
+      "size": 2565,
+      "sha256": "cda360b1be74e99b9db3e41fa753597a1b531ec2415bc5f014a0e705164b85b5"
+    },
+    {
+      "path": "Content/Hansa/Core/Vehicles/DA_Vehicle_Wagon.uasset",
+      "size": 2791,
+      "sha256": "a4e9ef0803117ac5e0bf4cb366de86a8bb1dfb007744d0463b431ead92f9f6b4"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--112.png",
+      "size": 18960,
+      "sha256": "c9a9d985ee82f4965c595b28fb276b6ec725f5bc95b640345a28e9ab76ea38e3"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--16.png",
+      "size": 805,
+      "sha256": "50e710482003a55d4996272d2c8ed0a5703a91b8bb80cdbce600b606ec0669e9"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--160.png",
+      "size": 36215,
+      "sha256": "3f5b6910261236dee6251010cae43e12f4996a375913a9e88344136c43bca22e"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--20.png",
+      "size": 1111,
+      "sha256": "0e1703da927a02bf20adaed04ecf7473c403249bda26c265def6927988ad3a80"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--24.png",
+      "size": 1463,
+      "sha256": "e1144bb5881d35cfc9c05ac3c34c4c255a9195dc9b98feb97d2db1cc66ceec4a"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--28.png",
+      "size": 1891,
+      "sha256": "31acf73f5e641e71628f58f4b565cbb96ae13c90e23b2d4f7af425a0a88ee126"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--32.png",
+      "size": 2259,
+      "sha256": "12aad41f1a583c25be0ca2b4fbdc95ffb07147255a7334ed32a536440ca312a0"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--40.png",
+      "size": 3237,
+      "sha256": "5654634969c9908a79e79918e3d0f0d9d6495278ae0f3a90cb97e1b6a428d17b"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--48.png",
+      "size": 4370,
+      "sha256": "ec752f258b80dc85d2a13bce1202ca17be77cd757ecfed6a7f90cb08ef557551"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--56.png",
+      "size": 5653,
+      "sha256": "7442537008c9e0a6e8f90fad8a9603c50042ce35592c8f6e032881ec90428190"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--64.png",
+      "size": 7136,
+      "sha256": "7a620fee77c60c331969733a226b189b4a45dc23ec88071a2e58bccea5a27076"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--80.png",
+      "size": 10478,
+      "sha256": "09e2b14a78ccbc56b2f80f60f4007f0bd542e4ccc686c3b64d140f8057211d19"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/PreservedFish--96.png",
+      "size": 14383,
+      "sha256": "cda5ef560abad2f21ab6f53fa8090ffa1e02f2d10a3ef34680e43dea403e6158"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/M_Fishery_Fieldstone.uasset",
+      "size": 10530,
+      "sha256": "cbe147791e4d477551e75b6b7d8fd5e879d181fdd5dc68e4dc19d07b00a80cd7"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/M_Fishery_Fish.uasset",
+      "size": 10729,
+      "sha256": "a8f796672658280a777f4cb9ef8cb73aa8f026c07322cfd3719be08820cfcedb"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/M_Fishery_Iron.uasset",
+      "size": 9730,
+      "sha256": "2a2e98404b76f275df36fe34bd61b202b09992eea74a1fdbfdb2174c0da2a1da"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/M_Fishery_Net.uasset",
+      "size": 10545,
+      "sha256": "b3e9d861d315ef1e7fa0b05bcce9512b37ec8259863164e7632722a9511f7e84"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/M_Fishery_Oak.uasset",
+      "size": 16564,
+      "sha256": "f85716a911ec1a87c9ad10bec37e3b1131ec365387ed25e06a8761afc4cfe6dc"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/M_Fishery_Rope.uasset",
+      "size": 10570,
+      "sha256": "6c51e89075406ea6efb50003f36062108b89beaca8daf282ea7eb8ebb2f46f4f"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/M_Fishery_Thatch.uasset",
+      "size": 19619,
+      "sha256": "102746d4f64dab81e894d2808f23c1de54d0c6f532a08ea94fe2d69561c7b129"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/M_Fishery_WetOak.uasset",
+      "size": 15744,
+      "sha256": "8136b3deb068e7a74527c52231728cb25d30b6438326f2cd14f3505f75de9968"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/M_Preservation_Herring.uasset",
+      "size": 10788,
+      "sha256": "494cfce9341b07608a4df38923c3ef0d0e60c84e75b2b2960c919c924719c207"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/M_Preservation_Salt.uasset",
+      "size": 10633,
+      "sha256": "9a985aa7e5f989610ee6876f223c9757a3f9f708707041de9ab74d24aedb7522"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/SM_HansaFisheryPreservation.uasset",
+      "size": 981816,
+      "sha256": "89bee0ddf39d25c65187c704ed9b9736fba6389a29d279fed982acb35ed5ed11"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/oak-basecolor.uasset",
+      "size": 3269498,
+      "sha256": "ff9315057178c8e9bd5de1c740fcd8999abf93ffd68340629bde2c41cc6c6a67"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/oak-basecolor_ncl1_1.uasset",
+      "size": 3269529,
+      "sha256": "730ffc2e2ae719ffa98066f3368e381e2bebff5f6984b5e01988b6a4e66f05d7"
+    },
+    {
+      "path": "Content/Mesh/hansa-fish-preservation/thatch-basecolor.uasset",
+      "size": 2984346,
+      "sha256": "bb19c495f8235d5a731584afcbd7cf511f239df25e6ea429eb80622b487515ac"
+    },
+    {
+      "path": "Content/PreservationBaseline/DA_Good_Fish.uasset",
+      "size": 1964,
+      "sha256": "a1df670a908f99d18fb98f5becd53073689d47e2c88c782c7653604653850b2e"
+    },
+    {
+      "path": "Content/PreservedFishPreview/L_PreservedFish.umap",
+      "size": 51460,
+      "sha256": "bc1dbc0e80831f6f0576a3aa4aaf8b79e478abdda7e77ca79bf04920efcb60c7"
+    },
+    {
+      "path": "Delivery/README.md",
+      "size": 3360,
+      "sha256": "e69f6821bfc0944bcb5a0f351f0778ecf20c60cac4acfd7533f26f2b73ce3dbe"
+    },
+    {
+      "path": "Delivery/preservedfish-source.patch",
+      "size": 220920,
+      "sha256": "ae419e3189761836017b3e0c2c5d976cc3aa398b2c594af7efb957d42ef45f51"
+    },
+    {
+      "path": "Delivery/source-manifest.json",
+      "size": 26463,
+      "sha256": "832f0d577a093125afb338b73a764b9bd37c8f1f7ef99a5389e50a60244e8b21"
+    },
+    {
+      "path": "Delivery/verification.json",
+      "size": 12453,
+      "sha256": "a21c28d0201c4ba7f10a3876f507dac6e5f26b545443b6990bde2bdcce518b1d"
+    },
+    {
+      "path": "Docs/Development/EconomicCatalogVersioning.md",
+      "size": 16802,
+      "sha256": "5904465c881271f483b9227cf2cf58403e824f998c23cd184efa964d90504acc"
+    },
+    {
+      "path": "Docs/Development/PreservedFish.md",
+      "size": 12911,
+      "sha256": "c4e30c17a20d8cad095dd6ec8de618907fd2147f412022952a920a4b0f45050c"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1280x720-stage0.png",
+      "size": 544385,
+      "sha256": "e94f99d8fe1163cce73af1ffd6a6fd071c7f82cfec11bf20073d441c3f36450a"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1280x720-stage0.tsv",
+      "size": 22986,
+      "sha256": "5939ed502e2c89f08b8a7aea17bd2972b1e786f98e4d87160152f9ee31e10df6"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1280x720-stage1.png",
+      "size": 545242,
+      "sha256": "aec3ea918d2d61706dc56d743b57c943fb64af0e7400efea13b3835d6282405e"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1280x720-stage1.tsv",
+      "size": 24048,
+      "sha256": "e79c6b0d2079ce025442089d39a9d2d9db5650aa101fa28f497dc354c52f2a88"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1280x720-stage2.png",
+      "size": 517330,
+      "sha256": "cb7a1a14117561109ff034128699d5bef2b5d5e69f5bfb701ada45ec7d32e49f"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1280x720-stage2.tsv",
+      "size": 23852,
+      "sha256": "1aed2e4aa496f0f3fea533662f5825637c45946f9732c50c3e231504a27a47f8"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1920x1080-stage0.png",
+      "size": 1362945,
+      "sha256": "ed84cc754ce893ef99575a86c2db8618ec46b1605223f8850a24a00c6aee58f4"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1920x1080-stage0.tsv",
+      "size": 21768,
+      "sha256": "4bfdf90d1a67c524a4038631a2aa6bbb88e4ab79aeaa2810aa2f7b5664567747"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1920x1080-stage1.png",
+      "size": 1357609,
+      "sha256": "a270c4542001d917efbca2672221f586c0f58249a2f07b0a85d0527860e5a839"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1920x1080-stage1.tsv",
+      "size": 22830,
+      "sha256": "0a03c983207e69feefa889b1bfc8c0ac8e43d6df6f66a68e082cfd55a2f4724c"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1920x1080-stage2.png",
+      "size": 1318224,
+      "sha256": "1e7443b18583d62e0a9c308afc7b6ad490cfe264a4ba63a8a37d16e024b780a6"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/Verification/preservedfish-1920x1080-stage2.tsv",
+      "size": 22634,
+      "sha256": "633f15eabe5f49527273a32491fb61168fc440e61a4c58612a26af4eaaaaca89"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/preservedfish--controls--reference--v1.png",
+      "size": 678246,
+      "sha256": "a0a225ca07f6e532f14593d3ea577dd31322a47a888f2c107f1811c7984e0968"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/preservedfish--controls--reference--v1.prompt.md",
+      "size": 1527,
+      "sha256": "c509b95214dbf98012843d4b85000b4fbb6d6b3218b6ed3a839006e663f04bfc"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/preservedfish--inspector--reference--1536x1024--v2.png",
+      "size": 2297129,
+      "sha256": "cdc5e8b885ef7113e69b6013311d2d7b666d7d6bdae6d48933255af22eb78070"
+    },
+    {
+      "path": "Docs/Images/UI/PreservedFish/preservedfish--inspector--reference--1536x1024--v2.prompt.md",
+      "size": 1938,
+      "sha256": "6da6bbcdebf56070642b43d8ce75ceb83b60ecb5cd4ba25f355872a83a8d3178"
+    },
+    {
+      "path": "Docs/MVP.md",
+      "size": 46436,
+      "sha256": "3127c54a3450853e62a77cc46a16d849349099fd77d7f998d4de75830435ef4d"
+    },
+    {
+      "path": "Evidence/authoring-save-final-2.log",
+      "size": 331982,
+      "sha256": "24df07a8e9fabd45014288239d52a5d4b495041914db81acb409fdc537625b0a"
+    },
+    {
+      "path": "Evidence/balance-final.log",
+      "size": 313637,
+      "sha256": "17f3fd6c47da7f92ae5df3730845758ef31872d6d3459c105f34395254674441"
+    },
+    {
+      "path": "Evidence/build-23.log",
+      "size": 235829,
+      "sha256": "ed65656c780aad16a2d473542b01f79c00329756b33f00702e9922df5a3bc02a"
+    },
+    {
+      "path": "Evidence/catalog-idempotence.log",
+      "size": 269056,
+      "sha256": "f85a1c5ba450a0f0f840e6438ae2de61279a672068d073d51cacc5fdc6a06773"
+    },
+    {
+      "path": "Evidence/correct_unreal_materials.py",
+      "size": 2337,
+      "sha256": "baa3d0c721127e16710b5fefbb1db293fdac355ae286ad3d85f2e3506e5fb84a"
+    },
+    {
+      "path": "Evidence/final-tests-1.log",
+      "size": 339213,
+      "sha256": "c3ee537832271b9520b0099da35d042453412d658656da18f0784608274ac135"
+    },
+    {
+      "path": "Evidence/modest-stock-strategies.csv",
+      "size": 2361,
+      "sha256": "0963df349b7c8a9da4e72190cd4db1e7d3a46b399eb840b97b756f9a25704311"
+    },
+    {
+      "path": "Evidence/shipping-boundary-audit-final.json",
+      "size": 5946,
+      "sha256": "e79da71ecd1b70081f8f41fcd016013d86e47493f62e35d240206bd14f9f5916"
+    },
+    {
+      "path": "Evidence/shipping-build-final.log",
+      "size": 52471,
+      "sha256": "e285c7fea482ba56a4613b90fe508237e88c7d01dc5134d72e48296a19b834ec"
+    },
+    {
+      "path": "Evidence/shipping-cook-final.log",
+      "size": 80588,
+      "sha256": "863e88057f7dd4c1bc1b640343eb60f90fad7592774f4af0420f60213e1bcfd9"
+    },
+    {
+      "path": "Evidence/ui-1280-7.log",
+      "size": 270195,
+      "sha256": "a61bb244e801d9adcdae164b0a99b46c9cd9edbd3eeaf6bade85e1744c1f26f5"
+    },
+    {
+      "path": "Evidence/ui-1920-final.log",
+      "size": 270098,
+      "sha256": "e932e67f4842a625e5caf1da4cdecbc166a8ceb2644490b35064556df5407f2a"
+    },
+    {
+      "path": "Hansa.uproject",
+      "size": 1293,
+      "sha256": "916baf826f2013cc247c3b143383c9250943fcffd5b86f019583919ed0381417"
+    },
+    {
+      "path": "Source/Hansa.Target.cs",
+      "size": 545,
+      "sha256": "755b8461f072883eba1f5f66f2b8605b5b6802fbc1b91293cd806427eca8ebb0"
+    },
+    {
+      "path": "Source/Hansa/Hansa.Build.cs",
+      "size": 1265,
+      "sha256": "5d74a8d6088753487d94fac4211e43323631c5fab1cfa45774661aa8cd3c647c"
+    },
+    {
+      "path": "Source/Hansa/Hansa.cpp",
+      "size": 439,
+      "sha256": "e5cdf6fe16b7f26290f7d8cce816ad75567c7f573f21a7a2b010941cba1ce498"
+    },
+    {
+      "path": "Source/Hansa/Hansa.h",
+      "size": 229,
+      "sha256": "0f136e6c5962a107b703af95f5fb10293418a3f5934538ba1174f628f2fcf985"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaDefinitionBase.cpp",
+      "size": 8521,
+      "sha256": "51de81a0fdbc36518085488baad006dcca228daaff69c5027ff8b190fec66a69"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaEconomicDefinitionCompiler.cpp",
+      "size": 57599,
+      "sha256": "10bab9a2465f22c449befd3645d2fc3a6a7096af27b4dcc4ebfeb250755f9d08"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaEconomicDefinitions.cpp",
+      "size": 22132,
+      "sha256": "18c477a74f96c32fe9d53057a6d699705939b84812c1f2bf468ffec4f6eb0d52"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaMarketDefinitions.cpp",
+      "size": 7069,
+      "sha256": "50917cdafd241ee518faddf14430e310d416e290212adf3a42e9da3a95a6208a"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaMerchantAIDefinitions.cpp",
+      "size": 3564,
+      "sha256": "f86c37b5e7a266547056c7cb2fed951695052f7661d003d5db66999f3462c10b"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaPopulationDefinitions.cpp",
+      "size": 8105,
+      "sha256": "5551ed5692b9e54fd5d8d9ee9e3fa6a6ff84bef8f9bf24b4fe03f1bf005a687d"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaResearchDefinitions.cpp",
+      "size": 3494,
+      "sha256": "a755b653aa85a2b84ac8acd61cebf899b5e781adbf3721ce344e2087cb398374"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaResidentialCompoundDefinition.cpp",
+      "size": 15336,
+      "sha256": "63f052402305ba427c47759f2f50bc542462ac16e7cb45053f5f580f5c23f690"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaScenarioDefinitions.cpp",
+      "size": 5772,
+      "sha256": "85225657f2dcf449c9842b11b147489713bfffe4b9b946dfdc77fcff2cc1c7ee"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaTradeDefinitions.cpp",
+      "size": 6185,
+      "sha256": "d70716a8dcebf26b2eea91fc946cc4426646fadaa92a0033f35ba7b04aec4f5b"
+    },
+    {
+      "path": "Source/Hansa/Private/Network/HansaMultiplayerAuthority.cpp",
+      "size": 21220,
+      "sha256": "885f340ee174d3d2917d9e3e5a526cb2e2efaa37070182b5b43855da8f44c959"
+    },
+    {
+      "path": "Source/Hansa/Private/Save/HansaSaveSubsystem.cpp",
+      "size": 8017,
+      "sha256": "c7e8d7742e1d7153ce5b7c60d04fa17de8f992df375e447008fd84abd7c88c3d"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaBuildMenuPresentationModel.cpp",
+      "size": 54814,
+      "sha256": "3a216927df53a3bc2e1b2868d656c87a98287607ab15422cc602963c8b105486"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaCityOverviewPresentationModel.cpp",
+      "size": 35002,
+      "sha256": "ec16fb7158d86da44aa244d6b71b6b6d58033f850676ac4c98a929c9a0df47fc"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaFrontendPresentationModel.cpp",
+      "size": 6195,
+      "sha256": "c1c6a288b2fb06ce1b4cf91f0a9bca29e0e7f252d713105eb61c9fa3834f449b"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaHudLayout.cpp",
+      "size": 1545,
+      "sha256": "adc25e2844a454b3122c7df32dfb224172df5abebbd2cb8079f8e5496fee0abe"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaHudPresentationModel.cpp",
+      "size": 18152,
+      "sha256": "a34368dbcd18ca9fa519efd7ce139dfe658db8c41227d615308ef8f96ccf9109"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaHudSemanticIds.cpp",
+      "size": 7456,
+      "sha256": "4c28627da065fd5d78e1a5185c1b97d95d2ea066e297f659a6dee564df7eda3d"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaInspectorPresentationModel.cpp",
+      "size": 80649,
+      "sha256": "cc44ec706c01c6467fbde664d14c353296d4ee4674c276eb9b8d108a1d70b262"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaMarketInspectorData.cpp",
+      "size": 5044,
+      "sha256": "03aaa06e2d5573dcc08e38ccecaf20be44e750a822650f0477c89888b5a2e52e"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaMarketTablePresentationModel.cpp",
+      "size": 41082,
+      "sha256": "ccc6adc360b948c459c1c9d94710d7212061d491956a6ceaadf63c219cc6b92d"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaProductionInspectorData.cpp",
+      "size": 13370,
+      "sha256": "f570ef292307096722651c3645bb5bb31ee759be10c4ec3c72a9812c8929d966"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaResearchPresentationModel.cpp",
+      "size": 8860,
+      "sha256": "3af5744269289969b2b2d8e8f1e2dca3177e6d86a6795bd6222ee76c2b71a020"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaRootHud.cpp",
+      "size": 32296,
+      "sha256": "9e58945c6864168f7e37df0d4cdf02af98640b8f5f2f9c7db395e76946300214"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaRootHudCityVisit.cpp",
+      "size": 10863,
+      "sha256": "8107212809f97a360a41304b771341a0a32674876616a4ea4eb247dbf7751a17"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaSaveLoadPresentationModel.cpp",
+      "size": 4911,
+      "sha256": "1f2259786cdf87a58ba34af6574491deb98ef23b9c99f7f870cf2630e332b1db"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaScenarioPresentationModel.cpp",
+      "size": 10700,
+      "sha256": "a1ba85b406f90dc63dc595b55fa1248b919aabceb2d7c9a930f254d2fd64ad90"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaTradeMapPresentationModel.cpp",
+      "size": 27495,
+      "sha256": "cacf4494e956706384dceb37eaccbea1c9cab337d1cc0af4a5ccfd004a59f2e6"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaTradeRouteCreator.cpp",
+      "size": 14445,
+      "sha256": "32927177abc5ae7c19519be197dc9b309fc52336b5f0da20f41e33a80628fdf2"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaUiComponents.cpp",
+      "size": 20141,
+      "sha256": "a0ec20433729a27e97769b1a628295817793f2b7e1672e3f4439c860928ffdea"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaUiNavigation.cpp",
+      "size": 1450,
+      "sha256": "0c0503dde9bf46ff45440d2652c94322d897e39762d1ce1217f13a788a71e6ad"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaUiStyle.cpp",
+      "size": 19405,
+      "sha256": "62e1313680f6dcddc2c6528def613130b0e80f67dd5f7cd65110eb5f182f9005"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaBuildMenu.cpp",
+      "size": 34771,
+      "sha256": "8ca49613e5e6d95b745bbb2188b7fe02bf458b527aad4d0f07248e926e20f9d9"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaCityOverview.cpp",
+      "size": 40287,
+      "sha256": "2f65ece2c843038aa1ca71ff8c39692e280aa8481854cb17a02710a5d70c875a"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaContextInspector.cpp",
+      "size": 32779,
+      "sha256": "a54f9dd59f26108b78badaf2c6d3e95318877b85a5e0cf8a4ff76c75501b4b77"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaFrontend.cpp",
+      "size": 13624,
+      "sha256": "0c2ee51758bd70df76a408701430c7cd0a653cebb60ec42ac81c857b01d9fb24"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaMarketDemandRow.h",
+      "size": 4492,
+      "sha256": "c5126021f6e5ef0301b17cd35ed8d5a8bb59d4b24ceb7959cf839fc5cf345aaa"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaMarketTable.cpp",
+      "size": 53026,
+      "sha256": "639a75cc7b163c42954907298115b1138f0ddd8c9d2889a8c30cebeb5cecb959"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaProductionInspector.cpp",
+      "size": 46683,
+      "sha256": "6dfea8d5eb153d6702e9b186f1c6900b825be40e3c3c89b6ba6622da43552f69"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaResearchScreen.cpp",
+      "size": 26872,
+      "sha256": "c550892de08667882729c216dc60504573f20870bbef505d454ac06d3ad89565"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaResidenceInspector.cpp",
+      "size": 16529,
+      "sha256": "81ad2e22096064c2668a6ce2511a4224dd9b5ae76424d8f1d10aaa895d646eb3"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaRootHud.cpp",
+      "size": 98751,
+      "sha256": "e5d8d89eb3711b9d69d7272e6383d7965413bb6bba1635c8e807a77344e03329"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaSaveLoadScreen.cpp",
+      "size": 25345,
+      "sha256": "bba7a1933091791df77b3a61249b6cfe84df4852eccdbf4e9a7365ea2a607b25"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaScenarioScreen.cpp",
+      "size": 24149,
+      "sha256": "c862335694c8eef243f7a3de253cf5a36036d0d6c41678c01c8e9f8ee7a130c4"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaSessionCoach.cpp",
+      "size": 4501,
+      "sha256": "67715eff9036e131d4bab48cc21bcebf12e00d5ee9eff83aae1335b364eeea82"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaTradeMap.cpp",
+      "size": 41671,
+      "sha256": "fb54b770374ad543010abe8596fad4bb95cea276aa16c2e6f267f1569674b569"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaUiPreferences.cpp",
+      "size": 3768,
+      "sha256": "9df342716e2af48b5578f920ddf2697de0a1c61671b89ad2491fb49544dc57ec"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaBakeryPresentation.cpp",
+      "size": 2162,
+      "sha256": "228a4140668ddc61bbc9e8b314f88fe4c4392cdfc8ca8072a65f81ad680da3c3"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaBuildingWorldProjection.cpp",
+      "size": 69702,
+      "sha256": "aec7b7d1fa3f44f07c52786a1ac54ca4cf52ee3fd85b077898999ef38a46af7c"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaCargoProjectionManager.cpp",
+      "size": 20693,
+      "sha256": "98e56d82205f7218e3de8edeab0931f66b4a864cd7bd858f86bd2608d888112d"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaCargoVehiclePresentation.cpp",
+      "size": 6450,
+      "sha256": "fad4d5e835ddd637d21b519471d0925ccf4a40c47656b27d43984635e9935fcd"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaCompoundGround.cpp",
+      "size": 3430,
+      "sha256": "e91ab527d02bf3be155198fc85d2bb2f2c06d137ac2d54a01a49a264c74fdcd6"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaCompoundPresentation.cpp",
+      "size": 16753,
+      "sha256": "db0021db4d81d609f7e4f0de37ccfd1ac9cc918d87bf350e762ac271660087bb"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaGameMode.cpp",
+      "size": 13036,
+      "sha256": "eb3391d03e5125b44e9b281f99a898188b49fe6d706e97455e4bdc1a2e2435fb"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaGameState.cpp",
+      "size": 8349,
+      "sha256": "3b8dbc19daf562a95298914301318e8f3668d8007bafb48a8e8209543a158e7c"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaGrainFarmPresentation.cpp",
+      "size": 2791,
+      "sha256": "4cb025a52e86aa9397e72e27214bd5f5c107bd1a3d31f9a5e1515eafc6f43432"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaHarborPresentation.cpp",
+      "size": 3640,
+      "sha256": "937f982da46164d8ec1492e87d18b3b6f098fc5822f2a0e56e48409f79e882a6"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaLubeckPlacementGrid.cpp",
+      "size": 4894,
+      "sha256": "c5a8d2a6673fcd36604534bcceec79b8fd3e04b4c6e522869fdacaef2978fa3b"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaLubeckScenarioInitializer.cpp",
+      "size": 31700,
+      "sha256": "ec17ee37be39b61c0ab37c9cdb95290702007536364abae1e90c5284822ae0a9"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaLubeckSurveyPlacement.cpp",
+      "size": 1940,
+      "sha256": "b0d2e49753ba335fa87a9e63fa691beb92a9f2d76dd92ed20a1fe88e8cba2f8a"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaLubeckSurveyPlacement.generated.inl",
+      "size": 166105,
+      "sha256": "f691c398d4297bf6f3c8a1bbcdff6c6233d17f8f285acdb452e0298c0ac5ad2d"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaLubeckTrees.generated.inl",
+      "size": 5725,
+      "sha256": "e2cbbef27904f99ee458bb88b246213f7bf5b3264b971645121a2d17b751bc50"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaLubeckWorldArt.cpp",
+      "size": 14303,
+      "sha256": "d819cfc33da705afb793251c8b606ec3447e20ccd3049de0e598df9c65062b26"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaLubeckWorldFoundation.cpp",
+      "size": 16476,
+      "sha256": "25ffe91c60477728442275851ff382a96e680d6b684f57b60bca5724bd75b3f4"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaLumberCampPresentation.cpp",
+      "size": 1909,
+      "sha256": "86c7653c43bf337cc7b741978a0d942a7a5ea1dd8aba3a87b1b53ad394453f6c"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaMarketPresentation.cpp",
+      "size": 2460,
+      "sha256": "4a85d0b9b04f475ca8bced8ea9cbc8db986102948877af76fc1c299cb75f41d7"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaPlayerState.cpp",
+      "size": 580,
+      "sha256": "b7ca113e74b83debbe843047f37be1bc760a21ab2084886f07a42fa4a015b664"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaResidencePresentation.cpp",
+      "size": 1744,
+      "sha256": "f7d5be5ffe3b8119ba4cc1d4ad93f8b4bc6612f1669dba62da4eddb5aba086bf"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaRoadPresentation.cpp",
+      "size": 7629,
+      "sha256": "11bc0ffa3f7276e6d09ef3465c9fd675855d7fe48304910dd942a92d52424282"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaRoadRuns.cpp",
+      "size": 2412,
+      "sha256": "3c6d1e74b5a8a8cdd28cef6cbe2f309e0fe181e4c9df5b6dc3b8a5fe5a069f5b"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaRoadSplineComponent.cpp",
+      "size": 17520,
+      "sha256": "05aa20efdb0b17512ebba2e6405d1fc704bb5cfec766c28e4331ef0b614c3ec1"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaRostockQuarter.cpp",
+      "size": 4767,
+      "sha256": "41210fd10cab47e98eb18eb0f74731ee25fbffa4ed37b7d977d880bb32698c06"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaRuntimeSimulationHost.cpp",
+      "size": 47193,
+      "sha256": "fd28899d18f68a81e71d8f4cfcd3357d6427fdc0f367036ab855d3300e566d2a"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaSawmillPresentation.cpp",
+      "size": 1783,
+      "sha256": "45ed391b20cd0e6f5806bf745ec4bbb4bbee60e0f57f232a78f157c91535f9c4"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaStrategyCameraModel.cpp",
+      "size": 3405,
+      "sha256": "fa94b31afb880fd1d00e251a0bad37eeb85306598f1c81a8d4eedafed50d22b6"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaStrategyCameraPawn.cpp",
+      "size": 10387,
+      "sha256": "ae7dc58875ef90d307ea3273105c342dae13c9ef2f33955b993f00b7d1f1f982"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaStrategyPlayerController.cpp",
+      "size": 36927,
+      "sha256": "577ba27869f88078e37a42f0ea11cd4333e7dfb704fb5f154b9b6404cef25580"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaTerrainPlacement.cpp",
+      "size": 2188,
+      "sha256": "8b1dd3bcec8aab805d17bc9d789d433d3c6fc7ccf27b5870db936609a224525f"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaWarehousePresentation.cpp",
+      "size": 3424,
+      "sha256": "409175c6b727177872845b6694f05fc573c5d8942c1819d6956fa2a148259dde"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaDefinitionBase.h",
+      "size": 7905,
+      "sha256": "c68d91f319e0c2d0c57d434f7d77a6c7efc64320e499fd3225f070c372608f58"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaEconomicDefinitionCompiler.h",
+      "size": 1359,
+      "sha256": "2ee4cdc511396528998fc64a0375d8cd5b963fda7b97013830ba3b03f95e0e78"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaEconomicDefinitions.h",
+      "size": 26970,
+      "sha256": "6de6fbdf349ca58b7b1496e1e5d7460d8d6a201b25fad1f30fea9345c28acc69"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaMarketDefinitions.h",
+      "size": 13870,
+      "sha256": "ec2d9b7946d1a4c36833d4616d0e03acedbf5fa3739c974856ddd54263eba7d1"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaMerchantAIDefinitions.h",
+      "size": 10307,
+      "sha256": "f239851f044fa7b722df87c8dee74c80737a64c0e2872c958bb3cc7e6c8cca39"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaPopulationDefinitions.h",
+      "size": 12052,
+      "sha256": "e79f5aface613dde59c00224d8e9a44259cdb69f2f957207b7435e28925eee3f"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaResearchDefinitions.h",
+      "size": 5852,
+      "sha256": "1eaa1390bccb8c4c43d05a096a348997f51cc8452273e320bb380953baf2ab69"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaResidentialCompoundDefinition.h",
+      "size": 17470,
+      "sha256": "e713e8d8bb62539c35630790cc32b7147e858b1a48237c87f37634e3ed602700"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaScenarioDefinitions.h",
+      "size": 9259,
+      "sha256": "07bb94ca781abc2615483de023cb069fffe872405f6808f3e177e2a5b16f5016"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaTradeDefinitions.h",
+      "size": 6179,
+      "sha256": "fea84a16d6b2599b11edd756335b8a8f8009def9042bc002aeda03e860760ed6"
+    },
+    {
+      "path": "Source/Hansa/Public/HansaLog.h",
+      "size": 95,
+      "sha256": "d5c614ef262ce837b8f70d3d5e2eb2e3deacf554ab4494766f206efd56f63d97"
+    },
+    {
+      "path": "Source/Hansa/Public/Network/HansaMultiplayerAuthority.h",
+      "size": 1896,
+      "sha256": "7dcbf813d095356a1ab403febef3030591ed849b6ae9b5880075be9359e58fc8"
+    },
+    {
+      "path": "Source/Hansa/Public/Network/HansaMultiplayerTypes.h",
+      "size": 5221,
+      "sha256": "c12ac336a22395719ec20945e232011f9b37a50129fa624079e409b6a29037c6"
+    },
+    {
+      "path": "Source/Hansa/Public/Save/HansaSaveSubsystem.h",
+      "size": 3631,
+      "sha256": "a6061e033da13034a044de27a1d2622efbf68154b4fe53926f2072ab63797e2d"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaBuildMenuPresentationModel.h",
+      "size": 11417,
+      "sha256": "4683272a1e1703053668790db48fc9fc443200f84c4cb6fcade8550b74f0d113"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaCityOverviewPresentationModel.h",
+      "size": 8533,
+      "sha256": "dc98feada5368ba60eba4c72873f212eb34dc8026660f1136ef44ce0b2ff72db"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaFrontendPresentationModel.h",
+      "size": 1783,
+      "sha256": "47cb52ba02df41529fb7fd94ece440932b24ab632271bc5400b87f49b0cc8c61"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaHudLayout.h",
+      "size": 659,
+      "sha256": "bc4810b233db96c05ce3961bee95fee13c9265863acd7ca0260178ea12785dd2"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaHudPresentationModel.h",
+      "size": 8064,
+      "sha256": "35a6f1896f0db0fc09abf6f8e8ffee13e9356eb03c07c02bc8e4f2a04c9ab72c"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaHudSemanticIds.h",
+      "size": 491,
+      "sha256": "67c8fb79f59bb48e637d01b2b4e70ca7156608a7aadde6a9f3f5262af0aa85a5"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaHudSemantics.h",
+      "size": 717,
+      "sha256": "ad8f4750d0a6c9c0562e6cb8f2976af5abf9d8c762979b62c91fde7601b858a7"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaInspectorPresentationModel.h",
+      "size": 14474,
+      "sha256": "d870d83e3bbba3acb0338c0276b873532080f56bfa91e54bfb6ebc5c4fd81fb3"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaMarketTablePresentationModel.h",
+      "size": 14256,
+      "sha256": "5d019e8da737bcd627ec06952b15223913b4146f5e02cbc07fb50e152ff2fb54"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaProductionStockSummary.h",
+      "size": 876,
+      "sha256": "f0f081c64abcab83e89cb111da1cdb577f35d483cb483bd066d3546be4200f5d"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaResearchPresentationModel.h",
+      "size": 3409,
+      "sha256": "ab808015de2f1bc9d76483c9daf0d52ec3d8113a78c88d6e08c1c0e532fa8cd7"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaRootHud.h",
+      "size": 6463,
+      "sha256": "3635127b8d452345f4d462f36efd19fcc5d188b47d28a375149cdb970851675a"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaSaveLoadPresentationModel.h",
+      "size": 3371,
+      "sha256": "9ae7c324dab9fe7408e06fdae7905bdc66417eb72417e7187958eb01426b4b62"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaScenarioPresentationModel.h",
+      "size": 5606,
+      "sha256": "1caa2c99483177b4ae17c9f603456a29b2793bd3a03a25721e3d488dee8d2ed6"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaTradeMapPresentationModel.h",
+      "size": 9803,
+      "sha256": "c74ef9ec3d3b876d0035114437df97522dcb8689d30878bc648faf93dc78235c"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaUiComponents.h",
+      "size": 7372,
+      "sha256": "ce6e2e8d291f76fad07688054158300a3b74828169345b7c7954d26a4ac890b6"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaUiNavigation.h",
+      "size": 577,
+      "sha256": "f113948de85bb458398efbf3b5fe8f3fd7853e5f26bb34b8bc1634b7adbdaa38"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaUiStyle.h",
+      "size": 5097,
+      "sha256": "cf5f42dc258909ccde15413c06ac95df19f43bfdfb1f3c340b4681aff9709be7"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaBuildMenu.h",
+      "size": 4050,
+      "sha256": "96f0516f46afe146a71bb541c97391926997fecb3c3dc9c222ebe0bc72104760"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaCityOverview.h",
+      "size": 5014,
+      "sha256": "f3830cb6b1a1244daca59d262fadd14823d7aec4e98995474373b7f09c4b66ef"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaContextInspector.h",
+      "size": 4360,
+      "sha256": "b46cb6f2c945303b9f842d0927dbcdaf193b7ea683409705cc266cbe5c35a29c"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaFrontend.h",
+      "size": 1828,
+      "sha256": "2b1c266bfa743ee866e97b6115fce5a3fe708839e809fec7638faa8813fc7a6c"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaMarketTable.h",
+      "size": 5388,
+      "sha256": "6c10349a15b2ff8df80605c13b3be4af884562762124897e2b98c684f5d7ecf3"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaProductionInspector.h",
+      "size": 3429,
+      "sha256": "6c2a94c5ec0a25888f84a173adb943c051aed16b84d22cb19d87665cf2f8291c"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaResearchScreen.h",
+      "size": 2831,
+      "sha256": "90da82f7f0289a0b5b934eebbc21fd681e5a4fb4d348f1d8a24017dbbff2cfbf"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaResidenceInspector.h",
+      "size": 1864,
+      "sha256": "f5c2fd0dab049cee6225b01c1bef379dc2c93f1b5234b0338417bd35a1a2058b"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaRootHud.h",
+      "size": 12160,
+      "sha256": "98a24a09cb4aac23159b3102407d5c6151c4160c43e9f3f9b54415cb65b8fec5"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaSaveLoadScreen.h",
+      "size": 2941,
+      "sha256": "da57f9e0d25ed99f3786ff35158432edc1659b79d9d637465f8a2d11e6da4bbb"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaScenarioScreen.h",
+      "size": 3010,
+      "sha256": "fe6b930e96c947427756b80856a184920d809e86f1bc664ac443c8cc9c6e7612"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaSessionCoach.h",
+      "size": 1250,
+      "sha256": "fc38fcb06783b41295df7f394764108fc07d0d99657e6a90e453ee3a4ad5e578"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaTradeMap.h",
+      "size": 3474,
+      "sha256": "32d52227403fba92e45a85ddb739bef96d95388c795565df5811cab24870ab9a"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaUiPreferences.h",
+      "size": 903,
+      "sha256": "c4264ee2de5131423f17041ac79b0a02ea9a4b937758abbceee43e1c0e8ae140"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaBakeryPresentation.h",
+      "size": 1095,
+      "sha256": "170e0882f0eb040a321a2cd072ab3b689c9b208ba9b99b9121b661b5a4b08b56"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaBuildingWorldProjection.h",
+      "size": 13367,
+      "sha256": "9ca989957af0dda3d0263b2a235a6afc1dc3ebab9d4aecdf172efde2b652edc1"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaCargoProjectionManager.h",
+      "size": 5367,
+      "sha256": "7e75ed22f3cc6f632df3c5b2a88026152bf01b5a1ae00d97a19993b018163b6c"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaCargoVehiclePresentation.h",
+      "size": 2882,
+      "sha256": "f712f9cc86ee3327d3dafdfab9eea8a3d157b968b151765f8be67e9ec46c478a"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaCompoundGround.h",
+      "size": 1148,
+      "sha256": "c4d0ca6da44452d2e300262edf4fb334e2b79996a94f83f2bae0acacedb415ae"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaCompoundPresentation.h",
+      "size": 3152,
+      "sha256": "d50effe9685d67f260fd0b07d6922225a223d1af7d9c2acad515f3e41c5d762e"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaGameMode.h",
+      "size": 2111,
+      "sha256": "be233774e7c2d54760dd9ebaeaa8829f54fb1bb32c698958d2ceed7678397862"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaGameState.h",
+      "size": 1763,
+      "sha256": "8c7876fb11cf2b890b0bdbf7e7d569e2d84be051f9d460603e99cba646c5bbf8"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaGrainFarmPresentation.h",
+      "size": 1124,
+      "sha256": "61a2204b69d46a56747e15d0257e971ee36ff07debed891ecc841f047a984480"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaHarborPresentation.h",
+      "size": 1819,
+      "sha256": "0f862a511c52ab49183b806e17eb4490a0cb1747e589e90b68cd6c8fc055282e"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaLubeckPlacementGrid.h",
+      "size": 1745,
+      "sha256": "c863ed4ae361f7c1b1c3cc7049e7d9a059c6dda590e0fc9a437751639154818c"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaLubeckScenarioInitializer.h",
+      "size": 3009,
+      "sha256": "4a71ebb12e4dc2c927fc54362e19d61b73a3772f6aeafb1a2168ed68de637238"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaLubeckWorldArt.h",
+      "size": 3137,
+      "sha256": "84611ac900122ee5621f61e17fdeb1fa8b1fa0977528a8ac7b977184b833aaf1"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaLubeckWorldFoundation.h",
+      "size": 4936,
+      "sha256": "38bea18ac34bf66bbe8ce74659aec4406d65fa4c1ef506b6475c01a9bd8aa5ff"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaLumberCampPresentation.h",
+      "size": 1188,
+      "sha256": "a69f6e3636ece9af4b49dd940418f911e9edd1ee81a374894fd6640afdcdb70c"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaMarketPresentation.h",
+      "size": 1468,
+      "sha256": "0c19ed951e16f3246d08e6944e9db46e6b3689761fa66cf077383dfc5071a66c"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaPlayerState.h",
+      "size": 698,
+      "sha256": "fffddf52fb799bdba97ccb37fb84ee6a8294eff062c509c88fe0c0a3a907a5f6"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaPresentationClock.h",
+      "size": 672,
+      "sha256": "4fedee7fbf95c77cb75867e1a11285ea3b8477dd5c44402811804f5de987ca2b"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaResidencePresentation.h",
+      "size": 1448,
+      "sha256": "c6768114d11f5f3c93f358297fea915313b4fe94bea4b3f8e1a002d8cd212b3a"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaRoadPresentation.h",
+      "size": 2795,
+      "sha256": "10ede86bdb11921d0a5cbb39256206138235883957c869360021549c53d6b49f"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaRoadRuns.h",
+      "size": 348,
+      "sha256": "7181e12ee3a453cb0426e14337bbb3ec0cab5f5004e41d707508c327d801903d"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaRoadSplineComponent.h",
+      "size": 2722,
+      "sha256": "51864150c56012ab8c0ec4867b49de64ba1d420a34079e74a046a43a679fb4f2"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaRoadTopology.h",
+      "size": 1687,
+      "sha256": "63fb6f653fb09bdaa649a61707170d3a979381ac0c9edea6406514f43655dd87"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaRostockQuarter.h",
+      "size": 810,
+      "sha256": "93bd7485935656079bd78fcdfaed7534d8018a4e90ff92d0f3f0c56ffb69f876"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaRuntimeSimulationHost.h",
+      "size": 9664,
+      "sha256": "a865ee1efcd2a0440624ead9c1dd27592c87c0fea8bd80e0dc437d32f8e85be7"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaSawmillPresentation.h",
+      "size": 1188,
+      "sha256": "5d50c48d908a320fd6d25d3b9119a3150df8ff1af5de85229f34e61c61c112ce"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaStrategyCameraModel.h",
+      "size": 2295,
+      "sha256": "728460999f92179a425fc017eb31e4be5b7245aef9ddcf3f298ecc11e412de46"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaStrategyCameraPawn.h",
+      "size": 4718,
+      "sha256": "3ea9455c7ca4000e855270f677e3c7268c6d59ee0d69b859f4efc40cbac5762b"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaStrategyPlayerController.h",
+      "size": 6426,
+      "sha256": "f2ec1e271326b1d20410e4c60c53abbd96ed619dc09138530cd5dc0ee96f2194"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaTerrainPlacement.h",
+      "size": 622,
+      "sha256": "b1f2881c7d4ceef6ca9ec74447e11b7041014aa8252957ca9b359f97eb01f044"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaWarehousePresentation.h",
+      "size": 1638,
+      "sha256": "b778906d29f247cfb8f4e2c0f6ed6c0be4861e8d2ded5fe70c9354f06e79c511"
+    },
+    {
+      "path": "Source/HansaAutomation/HansaAutomation.Build.cs",
+      "size": 621,
+      "sha256": "368005a1b09d1de619a33931c78b0115da4c7f40499920667a499a735b81bef0"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Endpoint/HansaAutomationNamedPipeEndpoint.cpp",
+      "size": 90514,
+      "sha256": "1f3e3a7226c6f10f067b8410ce452db9d99fe86edc4cae5075aba2319869393b"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Endpoint/HansaAutomationNamedPipeEndpoint.h",
+      "size": 2587,
+      "sha256": "a755bd1e802c85dd77bd4a451908e969543e3a1b95aeb9b4c2c956157f9b5375"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Gameplay/HansaPlacementAutomationFixture.cpp",
+      "size": 54169,
+      "sha256": "f8b7be1de06d1ee7926a843d36a3086290ea6491d38b88e6c58503d4876d2388"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Gameplay/HansaProductionFixtureService.cpp",
+      "size": 68012,
+      "sha256": "59f4f15c078af5f7a35036072a07c52ff9a8b95fda1f2a9b24bb1d619495ec43"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Gameplay/HansaProductionFixtureService.h",
+      "size": 2222,
+      "sha256": "0cb62713a54f6172d4e0a9efa3cc352e51dd7d0fcba5980cbaab59b58602585d"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Gameplay/HansaStrategicAutomationFixture.cpp",
+      "size": 47375,
+      "sha256": "badfdd05a19e123454fd2c489cfa6dc53fe5a51922f1f7924b0015e060e2ebbd"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/HansaAutomationModule.cpp",
+      "size": 5207,
+      "sha256": "967a91cbd9253d5eb5da41042995215d9beef5e806ed22018ba82cee4315ae8f"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Multiplayer/HansaMultiplayerAutomationService.cpp",
+      "size": 16531,
+      "sha256": "798ddd87b0616368b50387ca166589758f6d52646fa543fc0b97b0987a171d9d"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Multiplayer/HansaMultiplayerAutomationService.h",
+      "size": 1485,
+      "sha256": "073db05545c0a145534d21bfe572e15a4ef5323d172d15f61d63314eddcfca42"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Protocol/HansaAutomationProtocol.cpp",
+      "size": 5849,
+      "sha256": "a51ed8a536c6f1a14d40176741fa87ae731367f0bc1a031f6b94c96d0854a055"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Screenshot/HansaNativeScreenshotService.cpp",
+      "size": 7134,
+      "sha256": "8a4204edb5d8c18f445c754e1f5683697eff12f94af8e52adb88b0e6203a842e"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/SemanticUI/HansaSemanticUiRegistry.cpp",
+      "size": 5385,
+      "sha256": "2493ea8258980be1e6463f02a63a44578770bc3f55cdb14ab1ea6a84091cfc54"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Session/HansaAutomationSessionService.cpp",
+      "size": 16631,
+      "sha256": "8131d42633857fcee0728477be7164df1ee4e098f9e14debd2a9b39123444092"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Synchronization/HansaAutomationWaitService.cpp",
+      "size": 4081,
+      "sha256": "767e0a89454561e0dd817468fddc34ff4761fd8f3544d8a7315f8c558d419be6"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/UI/HansaAutomationProofScreen.cpp",
+      "size": 11784,
+      "sha256": "55ad44434fe16456cec1a9dbafa2668780db98a39a4789cac09288db51d5a907"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/UI/HansaAutomationProofScreen.h",
+      "size": 1900,
+      "sha256": "b3dd10130f3fa39283f1f948a873547651a56ffcad26d5e86bb0dbb87af2482d"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/UI/HansaPlacementAutomationScreen.cpp",
+      "size": 20771,
+      "sha256": "2bc2f6ff51411f4440b66c9f5d56aedbad630be2daa86c7b102b256a71c349af"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/UI/HansaPlacementAutomationScreen.h",
+      "size": 2068,
+      "sha256": "ea1fa0fb5323251bbc4dc9ce6bb05d5f3eae880001f2cc38e1dce6b4df4fc9f8"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/UI/HansaRouteDeliveryAutomationScreen.cpp",
+      "size": 17721,
+      "sha256": "0934ac558ac13a011a2d5d7ad4d8a0c5910739b5068e8e5f2f1142c1995bd6b9"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/UI/HansaRouteDeliveryAutomationScreen.h",
+      "size": 2135,
+      "sha256": "bbaef2c25695179ed6b4f6b6dd7b9aab9774a4aba1236214958da58c36b990ad"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/UI/HansaStrategicAutomationScreen.cpp",
+      "size": 19227,
+      "sha256": "b585ccd1360c54bb306f099cd94c0a82da4589a8996b0e14ca0d36010744e454"
+    },
+    {
+      "path": "Source/HansaAutomation/Public/Gameplay/HansaPlacementAutomationFixture.h",
+      "size": 5581,
+      "sha256": "9e8b279157753ac17330dad88ec811260b060628532435d9c73822f8db2362fc"
+    },
+    {
+      "path": "Source/HansaAutomation/Public/Gameplay/HansaStrategicAutomationFixture.h",
+      "size": 3739,
+      "sha256": "1dda9dca243d5e00f5cb62e889b1c93253bf1a5c7f46d2b0c025f78ca87467d3"
+    },
+    {
+      "path": "Source/HansaAutomation/Public/HansaAutomationModule.h",
+      "size": 1193,
+      "sha256": "2955437606e549b38442423408427d1bf956bba97b13c81cd367174d8d37477c"
+    },
+    {
+      "path": "Source/HansaAutomation/Public/Protocol/HansaAutomationProtocol.h",
+      "size": 4263,
+      "sha256": "1934c87d2d8a6f81ab0a5d3fbadaf10cb008a6c540ee2c19b498514d5326a512"
+    },
+    {
+      "path": "Source/HansaAutomation/Public/Screenshot/HansaNativeScreenshotService.h",
+      "size": 1972,
+      "sha256": "c3aad1abd03d5490560cdbf3335a3c016c837fe4d14aa0aa7f25fa60bd515be9"
+    },
+    {
+      "path": "Source/HansaAutomation/Public/SemanticUI/HansaSemanticUiRegistry.h",
+      "size": 3229,
+      "sha256": "0b395d517c1968c762bfc512e5e155966264afb9facb8f2089f3aa7eb0407dfc"
+    },
+    {
+      "path": "Source/HansaAutomation/Public/Session/HansaAutomationSessionService.h",
+      "size": 3621,
+      "sha256": "75059876c6490308fe0fb6c8df91f3a5b20c5c9c1247cdb8870cde7ccfea776c"
+    },
+    {
+      "path": "Source/HansaAutomation/Public/Synchronization/HansaAutomationWaitService.h",
+      "size": 1909,
+      "sha256": "ead2205e11301652f26993ff35a93a1f7e069ce40750072c82015dfeca88a9ac"
+    },
+    {
+      "path": "Source/HansaAutomation/Public/UI/HansaStrategicAutomationScreen.h",
+      "size": 1997,
+      "sha256": "60217da2e34c2c5f40a17e42d3047554d564e504efa9cce375817205ae2ce55b"
+    },
+    {
+      "path": "Source/HansaEditor.Target.cs",
+      "size": 465,
+      "sha256": "309ef14e34390e39c7dc6020d8cdbda2d230d93e4bb65ea395de319f67abcc12"
+    },
+    {
+      "path": "Source/HansaEditor/HansaEditor.Build.cs",
+      "size": 1073,
+      "sha256": "a7937ccb7e146376943e370c28a7527e0a194250af630563bafd8750f5c90c90"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaArtisanPlotsCommandlet.cpp",
+      "size": 9065,
+      "sha256": "6696b4986e04d33c99325da05f5d18ab39db208e63d181dc930d93c381c03399"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaArtisanPlotsCommandlet.h",
+      "size": 293,
+      "sha256": "7845d5a6fe4b8906291c38bb0f5a98183f7a706e27c8ed6b0d8cda0bba4ac48d"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaCompoundAuthoring.cpp",
+      "size": 3542,
+      "sha256": "bf0456c9a1933163aa6c4f15cab512d86264f3561d3ac4450000ed29d3bc8d8d"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaCompoundAuthoring.h",
+      "size": 770,
+      "sha256": "9cd6536ece0f822ceb6e17170ce70f5627f6d75efc621480a5cbce7cad5cbb98"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaCompoundGroundMaterialsCommandlet.cpp",
+      "size": 3276,
+      "sha256": "70c670d0ee907e00c9c525bed4dbda07b78f443abe933bc1366b9f3033aa371d"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaCompoundGroundMaterialsCommandlet.h",
+      "size": 326,
+      "sha256": "7a54c663615706ae97ec82984cb59312cc9380266c19aad43768a0d6011dbbc7"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaCompoundPreviewCommandlet.cpp",
+      "size": 3453,
+      "sha256": "edf5fd9d70a3691468dfb2d69af9f01d6a575236593b6f0c998921ea6532a13c"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaCompoundPreviewCommandlet.h",
+      "size": 378,
+      "sha256": "2d95f891389084c26fe79d3753dfb2db32c6f457ad8eccd050b8f58a5986d5ea"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaCourtDecorationCommandlet.cpp",
+      "size": 6330,
+      "sha256": "a4cd713e1db107ccf2ca692c3bb67ed667f785dd1703d9fc87005b3439612a10"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaCourtDecorationCommandlet.h",
+      "size": 382,
+      "sha256": "dfe45e3300947131728de33709ec042f3ce522731016f69488a1eae6f9fd3a35"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaLabourCourtBindingsCommandlet.cpp",
+      "size": 4494,
+      "sha256": "3023422fd996bc1f8cddfac060c5956b5ca370b5eeb21699dd38f9ba47c7257e"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaLabourCourtBindingsCommandlet.h",
+      "size": 418,
+      "sha256": "ca12e1fcbff9b10e45c1927a5d5113e0d3ab643c6b04e3cfc48d14412cfee4df"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaLabourCourtsCommandlet.cpp",
+      "size": 5957,
+      "sha256": "3db4ad700a24e7346cf5af53fded9486b80f5cb7066bc27889f6b921c5d83cd5"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Compounds/HansaLabourCourtsCommandlet.h",
+      "size": 366,
+      "sha256": "2535fc4624da29aa64a357fc5011c904b7e2fa1a03feed52d1dd762fe47102d8"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaEconomicDefinitionSeedCommandlet.cpp",
+      "size": 91974,
+      "sha256": "33aa42c0f2c1ebeb1116bd138b21bc76593af824fb99d93d911a3c071295b40d"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaEconomicDefinitionSeeder.h",
+      "size": 708,
+      "sha256": "9f6546087f6a47104943f8e95103144b5b5a964a8db7c51b7a2073aeddb0d6b2"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaEconomicDefinitionValidateCommandlet.cpp",
+      "size": 4152,
+      "sha256": "50b15f63d5065fdfa8780586669cea8b2463de61c730ba22d56a50119d682a05"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaEconomicImpact.h",
+      "size": 2361,
+      "sha256": "7e926e709a10880c713d2a8e3e193af1a7ab9bab1b089b06e9ab44ecfb532f29"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaFirewoodCommandlet.cpp",
+      "size": 7070,
+      "sha256": "8a3d83f30f731aa92c655a64c90815d291f6e2d065f6e225be56f17e67a5f1f5"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaFoundationSampleDefinition.cpp",
+      "size": 1223,
+      "sha256": "9c06e84baf2324b9536746e9a7ee8403165eeef233a38b04026df809e9f6d019"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaP33EconomyCandidate.cpp",
+      "size": 8145,
+      "sha256": "755d210f7ae46818052ed72acd5546bd5f85a05807c822e1beb5bcdf5825ac3c"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaPreservationContentCommandlet.cpp",
+      "size": 6345,
+      "sha256": "0d7865c51906b41031d976639a98aaf13c60cc83dd1cbe2297cd49ca8f4c097b"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaAudioTake.cpp",
+      "size": 8328,
+      "sha256": "743b5c6eb697a0923b121a3f30434239e3cbeb4bdfef3c1d8a3500af94e20c7d"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaAudioTake.h",
+      "size": 622,
+      "sha256": "c6ed89ad4154f44014f85e1c60cd97970de660017c8dc80580c285544f9fbf01"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaDefinitionProposalReview.cpp",
+      "size": 30507,
+      "sha256": "2ec68037f2fea3dbaa7bc021e20cf3ec7ee26f014fbad4c5b070a31414617ddd"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaDefinitionProposalReview.h",
+      "size": 2971,
+      "sha256": "87b27e624a2371883f542dba110801aa10a92f47ee51bd9abad73514b789174f"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaGenerationWorkerBridge.cpp",
+      "size": 38562,
+      "sha256": "2e2eee6b34a6c14353e93549137e386a03bc4722ca3240e834638ffc672c57e4"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaGenerationWorkerBridge.h",
+      "size": 5736,
+      "sha256": "3589797fefa6adf770634d927f66c0842f324d177b68cf5b28e1b049ed2ae1ad"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaMediaAuditCommandlet.cpp",
+      "size": 1511,
+      "sha256": "cec30aab177a11bd2c59e82fe61a3d4699d88d4d349a3e36fe5d79e782ed090b"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaMediaAuditCommandlet.h",
+      "size": 292,
+      "sha256": "abdde92712458345f56357c73ad26a23e490c24cfe874a65c53cfa0e1b26d937"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaStagedMedia.cpp",
+      "size": 44236,
+      "sha256": "66aa02f45119b8f1ea9fdb43a8544928b63daf9c81e2af1fd36f68bc9d6b0f10"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaStagedMedia.h",
+      "size": 1223,
+      "sha256": "fa5ebab33265168e71b5c0a7ec644456fe8dc9692c445a72dfdacf2dc3984242"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaStaticProp.cpp",
+      "size": 13683,
+      "sha256": "fd0c2c20ba208993f46ecbf98461c3c0ea8e13eb14a21420033365d8fbae6150"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Generation/HansaStaticProp.h",
+      "size": 785,
+      "sha256": "58cea4ea8804f0b22b94991edade1ff85eb57761bb0721a77d291470ea9d8464"
+    },
+    {
+      "path": "Source/HansaEditor/Private/HansaEditorModule.cpp",
+      "size": 6205,
+      "sha256": "d631c3a892a7515a2575c8d3901b2f1215a02d7a75d69fa07b5c9f4c3e847a7c"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Schema/HansaEditorSchemaRegistry.cpp",
+      "size": 15390,
+      "sha256": "47b9130eebe68bb8c2c93667f221c86c972f1d49242735107457f128ad1cfda4"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Studio/SHansaAuthoringStudio.cpp",
+      "size": 35632,
+      "sha256": "529ed0443b765417a06792d15900909c1bbc6fca3bd243af01ab22796ddcc98a"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Studio/SHansaAuthoringStudio.h",
+      "size": 3321,
+      "sha256": "961785761110b264aa4ea6e7f809c56628bf4a48762db26aaeccc40329106ace"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Studio/SHansaGenerationJobsPanel.cpp",
+      "size": 35143,
+      "sha256": "8fb019cf4d6740c046065a0a24228f8d8ae7b6e03c78326e95937a53f76fc957"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Studio/SHansaGenerationJobsPanel.h",
+      "size": 4033,
+      "sha256": "e5d4818767a4b483d221c15682268303c3576cd6d5b3adf6f3e7734019c8401e"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Studio/SHansaResearchGraphPanel.cpp",
+      "size": 5316,
+      "sha256": "d90ba580370b236ef04c31a154a9c26c69f6cf11d071614aba4a827cc1cef72a"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Studio/SHansaResearchGraphPanel.h",
+      "size": 1186,
+      "sha256": "7aba86133e22a39c95ed112ce3cb484c13e7625581ae38c7cf30529df50e5de7"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Terrain/HansaCityTerrainToolset.cpp",
+      "size": 10208,
+      "sha256": "d334b5860f8ccf3cfeec876edf6b87492dbce27c74babd6b48ad1ce39960b12a"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Terrain/HansaCityTerrainToolset.h",
+      "size": 934,
+      "sha256": "f9c385d1c346e8b1cc95a343c8ab6471b63d18f901f546869bcdaaf493dcd2de"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaArtisanPlotsTests.cpp",
+      "size": 9199,
+      "sha256": "dfb9507445a7c5f473771bc51337da7678318460adea7344f4916ecc5bfb938b"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaCargoVehicleCaptureTests.cpp",
+      "size": 7091,
+      "sha256": "3ba3932f1714b9c852b302ba8b6122479e9308e76c9c5923b41226058f7a814e"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaCargoVehicleReviewFixture.h",
+      "size": 3882,
+      "sha256": "8b431344e201bf1243efb26a2e99244b3e0379b972f807ba453dd317cd396e37"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaCityTerrainToolsetTests.cpp",
+      "size": 3198,
+      "sha256": "e6ed1451458c061b24935db8d163988acbe344872a1f08a53eebd93455aa01af"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaCompoundTests.cpp",
+      "size": 22034,
+      "sha256": "e6ba95f4b324576d8c3ccc70edc33a43892447e314cfd006a27136a73535d1ea"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaEconomicDefinitionTests.cpp",
+      "size": 108468,
+      "sha256": "83430b2a070fb5cb6be8901b8e41862b09734b430b4e7545620c1ac0a04bb6a5"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaEditorSchemaTestDefinitions.h",
+      "size": 554,
+      "sha256": "f5e2c41e9504a8f1c1397cba1089eabc3cbb6e50266e1c6f293b9aa4c97e3e7a"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaEditorSchemaTests.cpp",
+      "size": 6127,
+      "sha256": "d32e16b4d4e2dc539cf1b8ce3662468c5942af1b6bb84f648485bacd1d7ea7cf"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaGenerationWorkerBridgeTests.cpp",
+      "size": 21106,
+      "sha256": "de13b6e332b25e5da2be18e96ffa0b60b3e35fa1bc900626fa2872a2653d9088"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaHarborCaptureTests.cpp",
+      "size": 4193,
+      "sha256": "2f18bcd1d093a16b15e6993754a251be62b57548730adcf4b1f4ecb91d723bd7"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaLabourCourtsTests.cpp",
+      "size": 12218,
+      "sha256": "07b176c63ebf1f66312a1f2c3a359df8d67a3058eb320bb0f659964a71e73687"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaLubeckWorldArtAuthoringTests.cpp",
+      "size": 15548,
+      "sha256": "d4c23f2e426680bf6b24060539a20ce0519eaa2ec95df91fd77b90fdf5e47b3e"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaMediaAcceptanceTests.cpp",
+      "size": 10493,
+      "sha256": "c58390bbd659023e862c382302018ee8d3b179ddd66dd82bb2e8ce9a15154451"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaMerchantAITuningTests.cpp",
+      "size": 2589,
+      "sha256": "56a593ddab4d71dca1cbf7bb14611911749cde1133a71c796272246620aa6ea6"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaOpenAIAcceptanceTests.cpp",
+      "size": 15452,
+      "sha256": "9fa541aa24165c2490209343d5d50a7c2b1f750dd2c7cf34e9c6851f3b714cc0"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaOpenAIProposalTests.cpp",
+      "size": 14951,
+      "sha256": "e75c918cc055b077279cc71b6132011c7172d4315ef5ea9ceefed60c7f4e6a75"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaP33EconomyTests.cpp",
+      "size": 13985,
+      "sha256": "35f402901b7e0ef2f595f6596d373d3a35d6255e113769126bca8041f39d3b6e"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaPreservationTradeTests.cpp",
+      "size": 11319,
+      "sha256": "36d386daa40edc5cfdc72f8e8e4ff11caf89d7c270cf57876c36f4d9c79c52d9"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaRoadKitTests.cpp",
+      "size": 14647,
+      "sha256": "09ac0837f0fef511fba03ccf6af7fc81f707d651a9465b9e00ca49db99d778f4"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaRoadTerrainMaterialTests.cpp",
+      "size": 9170,
+      "sha256": "93734ad36c2ad691c4d0cbcc9a74dc2352ee018caa4102727c30ae96e8d7f115"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaRostockAuthoringTests.cpp",
+      "size": 11639,
+      "sha256": "4872930fcf15d63e5ef01b7331184f75c72f96e5561ae655fcc587f848e4b430"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaScenarioDefinitionTests.cpp",
+      "size": 5260,
+      "sha256": "1c4bc796401b662d958f703a5637b32707f9447f6c2c3591fef2344e382b5336"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaStagedMediaTests.cpp",
+      "size": 29261,
+      "sha256": "750d14ba4a7f9fd14071699428ac00470fc1fb3e14cdf5dfc0a22b617589eed7"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaVisibleContentManifestTests.cpp",
+      "size": 4681,
+      "sha256": "d0e6a8dc4f9b5b182a32b0c3781eb3ee2063c509e27c9b649b07c465dc8435d3"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Validation/HansaVisibleContentManifest.cpp",
+      "size": 17409,
+      "sha256": "5760efc8f616d928ff8c3ffbaeb8220f50856ea832b488b7794ec44410e7dd5c"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Validation/HansaVisibleContentManifest.h",
+      "size": 1773,
+      "sha256": "ede85904f03b2bf9f951a8d1bb55a0f44353f6c8632bec7ee412bf0f2c6ce430"
+    },
+    {
+      "path": "Source/HansaEditor/Private/World/HansaRoadMaterialCommandlet.cpp",
+      "size": 18604,
+      "sha256": "1459f5bc76e2539341df17ed0e7cd6b94f179abb37549d790935fbc79f183cd0"
+    },
+    {
+      "path": "Source/HansaEditor/Public/Definitions/HansaEconomicDefinitionSeedCommandlet.h",
+      "size": 434,
+      "sha256": "5c2874b0a2f65461476155128425d249a16231574cc60971bd868f1817fb540a"
+    },
+    {
+      "path": "Source/HansaEditor/Public/Definitions/HansaEconomicDefinitionValidateCommandlet.h",
+      "size": 462,
+      "sha256": "fe5c764e103295c8d28046f0dcfae866bff174669d84f193a9a49001713f494b"
+    },
+    {
+      "path": "Source/HansaEditor/Public/Definitions/HansaFirewoodCommandlet.h",
+      "size": 384,
+      "sha256": "c7b39250a4fc3f8264959410f8bceefca8b0a3400d375e0f2e221b29b8283cd4"
+    },
+    {
+      "path": "Source/HansaEditor/Public/Definitions/HansaFoundationSampleDefinition.h",
+      "size": 1277,
+      "sha256": "621ac6a470adf256b9b81cfd111144e98205925ada8a170070479d71702701ba"
+    },
+    {
+      "path": "Source/HansaEditor/Public/Definitions/HansaPreservationContentCommandlet.h",
+      "size": 320,
+      "sha256": "c853612c4cb5680c9cb0f7ec87c30d635751e4448c436058563b4ef93ffc28a9"
+    },
+    {
+      "path": "Source/HansaEditor/Public/HansaEditorModule.h",
+      "size": 622,
+      "sha256": "922e8ba30ce2f79c2da6e243dbd1bbc8fee8536dea185d80865f591df0b3cfb5"
+    },
+    {
+      "path": "Source/HansaEditor/Public/Schema/HansaEditorSchemaRegistry.h",
+      "size": 2212,
+      "sha256": "c4e746abb6bd19b5b87881ce86abe6228e0aa647bffadbcff79bb6596d07a54a"
+    },
+    {
+      "path": "Source/HansaEditor/Public/World/HansaRoadMaterialCommandlet.h",
+      "size": 403,
+      "sha256": "4918e5359700e674aa2f3eaaab26b56f48f6ee1574ae3b535fa422480c648a22"
+    },
+    {
+      "path": "Source/HansaServer.Target.cs",
+      "size": 557,
+      "sha256": "b22a92906017a60dc2a94a4e0c96b395050639cabdec6829728ad35444e4e031"
+    },
+    {
+      "path": "Source/HansaSimulation/HansaSimulation.Build.cs",
+      "size": 483,
+      "sha256": "e6954117311822629d39689d0a6d446ddfe522bbdd39374583d668e28376a6db"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/AI/HansaMerchantAI.cpp",
+      "size": 13073,
+      "sha256": "8d840c5e09709203d17aeb56e0454174562bc457f9f1add0f6f1e40896b970fb"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Commands/HansaGameplayCommand.cpp",
+      "size": 17435,
+      "sha256": "086b910f454c74b288f9aaba5988ef01679286f5e251f0605bb8d0cf0af274bd"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Commands/HansaGameplayCommandGateway.cpp",
+      "size": 3298,
+      "sha256": "3b24e912b2a5dc1d79b19c8d5e50834562b73c54dd65f76a8256ff11b515667c"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Construction/HansaConstruction.cpp",
+      "size": 684,
+      "sha256": "392608625a3e0b93e238edee44cf70c23810205dee23dee2ba7ccb8f07267902"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Construction/HansaConstructionInternal.cpp",
+      "size": 10351,
+      "sha256": "d986d4a428d9fc3a14554e3136bcc464fdc827a927cb74f37353330f85c03153"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Construction/HansaConstructionInternal.h",
+      "size": 1491,
+      "sha256": "dca2a7fa4ad11f7d454dae5aaa6e198e53ec37c60acd3fb7e40aeddaec37a080"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Definitions/HansaEconomicRegistry.cpp",
+      "size": 6151,
+      "sha256": "6e2c7f0f72f0168e1bd1b3600efb94dfe255d178b0a4b5ade8012034063027f9"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Definitions/HansaSimulationDefinitionContext.cpp",
+      "size": 4408,
+      "sha256": "593c13fd46568bf086cc0e99e4c97035f4f243c956a18eb1120e21226cc003ca"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Diagnostics/HansaDeterminismEvidence.cpp",
+      "size": 5437,
+      "sha256": "56990109d19ebf7c8928560cf1ac241a81d7c4f3b67ec8c4d8c8b987d0a2dc40"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Diagnostics/HansaDeterminismTrace.cpp",
+      "size": 10071,
+      "sha256": "c3d6b8a16adac74f89479ea44eb9133983d4e54ebee152ce500bd6bd0a7449dd"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Diagnostics/HansaStateHash.cpp",
+      "size": 43010,
+      "sha256": "9fbba90faf90f073d9d02ae61902bddcbadff53a05d2fc335c9deae0b744f664"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Events/HansaDomainEvent.cpp",
+      "size": 4870,
+      "sha256": "b2c33710f90f42439095c091767cd1cebec2e122ccb9f323caa775f5cfbb7af0"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Fixtures/HansaDeterministicFixture.cpp",
+      "size": 7449,
+      "sha256": "c2b07beb9e54ea411956afcf1b433dc1abb8865a6bb8b41a1ed4f8ffcaec1efd"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Fixtures/HansaProductionFixture.cpp",
+      "size": 50227,
+      "sha256": "00c756c79a8db7fed98c961d461fc0375fb79637e76d62912edc9c04219516f1"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/HansaSimulationModule.cpp",
+      "size": 471,
+      "sha256": "3df09c17e67e3c61c05af77612e3e39ef79b4366ba136f179248a6da1af40687"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Inventory/HansaInventory.cpp",
+      "size": 33608,
+      "sha256": "8b99eabd2a112858e7ee98a1ef6fbb02bd237cbbc2bf7df287ec27bd986d0e47"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Inventory/HansaSpoilage.cpp",
+      "size": 5477,
+      "sha256": "1b8a8b3cc8f4c530e9721a1c13b68ec83384ff5bf8075aac4da54731502fb77c"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Inventory/HansaSpoilageInternal.h",
+      "size": 553,
+      "sha256": "511b1a347557e6164ce45233b8bf551558c42230876e02009a772404d8b36b27"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Logistics/HansaLocalLogistics.cpp",
+      "size": 35072,
+      "sha256": "dac923c0e8c78454f82120803161b4a7bcbf1e9f7500c6baf9c2eea802ca71b1"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Logistics/HansaLocalLogisticsInternal.cpp",
+      "size": 25021,
+      "sha256": "8096843e714e03a114ac43098ecd051836c6d86cb23498817eebdc93527b9629"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Logistics/HansaLocalLogisticsInternal.h",
+      "size": 1201,
+      "sha256": "fb8dcb07b5d5a836d63d8ecdf3c8398bbc6c30829142cfd3b202a58278f27485"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Market/HansaMarket.cpp",
+      "size": 24622,
+      "sha256": "ca762bdc9d35d437a2dc0e14feb10363b632457d67ce7a5eca888f3b6acad25b"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Market/HansaMarketInternal.h",
+      "size": 696,
+      "sha256": "22cc9f94345a099012e0194779768d72638a20b601c75982b2e838d03803b69f"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Math/HansaDeterministicRandom.cpp",
+      "size": 3662,
+      "sha256": "9f3ddb41252c36ea4621229a0aaa08420fd7e109e5005b3400a915efb0765c07"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Math/HansaFixedPoint.cpp",
+      "size": 5632,
+      "sha256": "1c5d961c8b1d3ba24a5a49598b0e031f944e78b6fe82e894ccc59b43a5dfba07"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Model/HansaIds.cpp",
+      "size": 2584,
+      "sha256": "d4d6b9d0cd98341502630a2172a90700d5a5b82d7408b31522f21e042dba6472"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Model/HansaSimulationState.cpp",
+      "size": 30915,
+      "sha256": "ebea18f34430a3f228c5e599d4452047d3fd60d90f5d5fbd3ad32dbd78e2d495"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Model/HansaSimulationTime.cpp",
+      "size": 3490,
+      "sha256": "a5e785797b5204f894c9c5fe548556dc91ed2a5193c95edaf546ecd7e359c4d5"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Model/HansaValueResult.cpp",
+      "size": 1086,
+      "sha256": "d6ebdef80c9463bd9a4921963105a5916d5bf800fe4f07643571429d3101f1ec"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Placement/HansaPlacement.cpp",
+      "size": 29936,
+      "sha256": "c79c6e0ada122c48216bd73729cf8c1203762f762093fb666431a9ed55c26c44"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Population/HansaConsumptionHistory.cpp",
+      "size": 5560,
+      "sha256": "149f594b160398ac5e0f64c2e6ea96a3165efc264e08aa2a4d0abd7aaad09b59"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Population/HansaHeating.cpp",
+      "size": 4412,
+      "sha256": "b8835f5cf8da59cc92831fd8602fec867e008b87bf2b0852fc7cfbe1c89f582f"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Population/HansaPopulation.cpp",
+      "size": 33858,
+      "sha256": "eed1fa2fc116c287a492850a701d03894d58433c399b3130f1fecdb04d5d64fd"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Population/HansaPopulationInternal.h",
+      "size": 1051,
+      "sha256": "c5ee6a5937d7766477a7b16eb4e6c8e31913c18018b5a640c0d2c8f22083e939"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Population/HansaSeasonalNeeds.cpp",
+      "size": 1645,
+      "sha256": "e9137e1464032309b56803ce11e147340a01473ac24e30dec5bf7762aa80023b"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Production/HansaProduction.cpp",
+      "size": 25302,
+      "sha256": "6258c5bd266e09b0a9c9692bfa1828a7f82ee7b3ed3f3ab059c03cf84f185ad5"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Production/HansaProductionInternal.h",
+      "size": 1476,
+      "sha256": "35f5ef998a0123e2def7ba2cf0d6291acaf4a7e86984e32f25bdbdf99e84cdac"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Queries/HansaSimulationProjectionDiff.cpp",
+      "size": 6649,
+      "sha256": "47e88df03efdd40168963db96eb71cd2b03d87c3398a295421134b006a3797b3"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Queries/HansaSimulationReadOnly.cpp",
+      "size": 73990,
+      "sha256": "a97557df030747f00ce2163b1832264d30b6575a905e980ba79b311c1504c83e"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Research/HansaResearch.cpp",
+      "size": 10999,
+      "sha256": "519e4e9264f4fcb6f8c4e244f931e75f47de52aff1f084edcebd52ff7be25f93"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Save/HansaPrimitiveSerialization.cpp",
+      "size": 11638,
+      "sha256": "a497ef7dc9458f9cc804a76d4f79978b63ddfa10c214dea902eb259996c46b85"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Save/HansaSaveEnvelope.cpp",
+      "size": 36634,
+      "sha256": "2d8a5addf985871e703390306493c171b34adc17e31d72846884b44568ecdba5"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Save/HansaSaveFields.inl",
+      "size": 13905,
+      "sha256": "4f2c88c3ad980ae12710746621ee053a06387522cf5f0a98c22fe0e60cbe429b"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Save/HansaSaveValidation.inl",
+      "size": 12209,
+      "sha256": "081d3bd0458a9659d078bad3539fbb19e5e98cc6a14a736815dfa594e910f657"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Scenario/HansaScenario.cpp",
+      "size": 9523,
+      "sha256": "07facac0479c7d186d386324869dc8d1f331e604442dd4b2440340bcbf26be59"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Systems/HansaSimulationPipeline.cpp",
+      "size": 62051,
+      "sha256": "4010dea58072ff1666273dded66a18073277c3e90f465781c67f9db76e9095d5"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Trade/HansaTrade.cpp",
+      "size": 2323,
+      "sha256": "fb978f14322b7a5450b1301cd098ee2b648326612edb361c2e62e45d289d8d34"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Trade/HansaTradeInternal.cpp",
+      "size": 18171,
+      "sha256": "9100894d29afab49aa87025ef28882dbf822543f3082c02e5407ab10ed444b98"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Trade/HansaTradeInternal.h",
+      "size": 1704,
+      "sha256": "be631ad7622d66b6ebd56ca45cd82aa65cf2382fac657705edcfb52ef4b7b043"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/AI/HansaMerchantAI.h",
+      "size": 2961,
+      "sha256": "01e75d121cae68c19f1af435b44a5839d241b361858522140d0b06c1236efc46"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Commands/HansaGameplayCommand.h",
+      "size": 8753,
+      "sha256": "890a9ea3c16df3abe8ee6a980b40c643941f72589dfe2445bd92e1a6ac12911e"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Commands/HansaGameplayCommandGateway.h",
+      "size": 4321,
+      "sha256": "221574b63dafef327d2257d4fe73d409a1c8f176ac61016c1430195c6fa60383"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Construction/HansaConstruction.h",
+      "size": 1707,
+      "sha256": "0c4bb9c1c8a384487b64aa0c28d3f1e304f55490e52e6bdf4e6be37a648613ea"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Definitions/HansaEconomicRegistry.h",
+      "size": 11897,
+      "sha256": "6c28d14e1ff551ae5344738e2450dc6edbea226f8c02c0fb401f559c32d4089e"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Definitions/HansaSimulationDefinitionContext.h",
+      "size": 2985,
+      "sha256": "18c8d207b9e409c541a9f5864146424013e2f34bd23678e76513b1d41079603b"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Diagnostics/HansaDeterminismEvidence.h",
+      "size": 496,
+      "sha256": "e3ef23afac67fc84d9d781b21e7823b96f1fa70fad13f1751c634621e834e81e"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Diagnostics/HansaDeterminismTrace.h",
+      "size": 3244,
+      "sha256": "e18c21f9f929705d3c6e9e84794c0b7639bc45fd30f3862510bc138b32b6777b"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Diagnostics/HansaStateHash.h",
+      "size": 3981,
+      "sha256": "e9f6f5ec966b844052249e2b39eac51efc94b1cb8895a01adff7e847c92a7084"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Events/HansaDomainEvent.h",
+      "size": 3690,
+      "sha256": "b311dcd41510ac5ec838a452c9b73cf00bd77cc180d85b85b260add78c428d87"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Fixtures/HansaDeterministicFixture.h",
+      "size": 3085,
+      "sha256": "4cdfa11bf1e4710d2d601d5b6acfb2730b16db94ca47f36843a9574e30042ee0"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Fixtures/HansaProductionFixture.h",
+      "size": 4015,
+      "sha256": "75ddf880b02a848e2df074a85377e2508383bb98d749139fcb16be3318a36671"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/HansaSimulationModule.h",
+      "size": 566,
+      "sha256": "5e596f53955a13da17c6747a5057e3ca0444acad82a562ccf5f2d2562accde8d"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Inventory/HansaInventory.h",
+      "size": 10363,
+      "sha256": "1153b81a552af2671beb185860b0c06603aa05b9a917604d3aba75aaad4eeb14"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Logistics/HansaLocalLogistics.h",
+      "size": 8074,
+      "sha256": "cc815736bc5e98b646619d56624781c01c9d85497aa0ff78434ff94dc36ca9b4"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Market/HansaMarket.h",
+      "size": 12868,
+      "sha256": "d99a19844514f40a3cecea76fd4e9723ee7734f43fc68c11017a76d2da96ed9b"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Math/HansaDeterministicRandom.h",
+      "size": 1804,
+      "sha256": "f3c3fe92207f53543ca02b4f70a103fab60738427126d922655e6942ea03dfbb"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Math/HansaFixedPoint.h",
+      "size": 4620,
+      "sha256": "8d0db8bfd8d6c47eb9a55c1a69ba7500d816e76ee4b0fc0c3c01b411327ed330"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Model/HansaIds.h",
+      "size": 8745,
+      "sha256": "d00aa1fec5819f9e41e6e53be24c49e4dc891585b987a25b81e6bc8934ceed35"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Model/HansaSimulationState.h",
+      "size": 6218,
+      "sha256": "a43851d845d3b7bdfa71216ba547cfb93220ddb22edf4135fcb4f528254e688c"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Model/HansaSimulationTime.h",
+      "size": 4453,
+      "sha256": "2f32da6f2fd998abcbeb0da2c903de3f6563e84dfbcc356ab40af0c7924d4367"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Model/HansaValueResult.h",
+      "size": 972,
+      "sha256": "e3132a57e515f9bd353bf39b526866ad9c15b808ccb74a5a4b25342ef56b83ca"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Placement/HansaPlacement.h",
+      "size": 10624,
+      "sha256": "1a83068d26d2ac1272b060da1ee93ff997391dc17067646ea48a01031fe5d11f"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Population/HansaConsumptionHistory.h",
+      "size": 2054,
+      "sha256": "9c901f1879496334c4168c8e445f2b40df631632a6ef3c9788261ca9745d8db2"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Population/HansaHeating.h",
+      "size": 1032,
+      "sha256": "988a48a7fbb12d579d90a530f2b2311e91c9edd1717bdf87c4372c8316c20eaf"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Population/HansaPopulation.h",
+      "size": 4027,
+      "sha256": "05f094527a4fda7f369f4b83dc6a5d9321136da02c462a3d611e5afba0925ec0"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Population/HansaSeasonalNeeds.h",
+      "size": 549,
+      "sha256": "b790a1b0950345b501b5bbaea5a1055eef93c75ebb84c4d59c5435d27b6a84d2"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Production/HansaProduction.h",
+      "size": 5349,
+      "sha256": "727091a6284fac55945ef93f40a7398e57f06220854c71d8b744fa9c8cf578b9"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Queries/HansaSimulationProjectionDiff.h",
+      "size": 1174,
+      "sha256": "96e9c6dbc4d227ffb87f0a39cd853d05bb535d047a0b0b330aca4888ff0b2e6c"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Queries/HansaSimulationReadOnly.h",
+      "size": 18587,
+      "sha256": "724fc0c070bd8d6547ca4571aadcacc71d345474d233b8e935c278903f4be386"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Research/HansaResearch.h",
+      "size": 5254,
+      "sha256": "0eb0f4b03713657f7ec76b4791204a38e6a443a2746ad946ab00992717c1f206"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Save/HansaPrimitiveSerialization.h",
+      "size": 4284,
+      "sha256": "3ae82b46685459f1574ffe7c9291bab2639b88005b3eba16c6b40acef5188a66"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Save/HansaSaveEnvelope.h",
+      "size": 3874,
+      "sha256": "c6c07360e3aee2acdcc3a516a0425a03accdf9889fc749383bbc36039dfaa43a"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Scenario/HansaScenario.h",
+      "size": 3696,
+      "sha256": "d19f220793aec148c975453d4990e44da70ad55b3435129f894932feb3295be0"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Systems/HansaSimulationPipeline.h",
+      "size": 2331,
+      "sha256": "acba511444c19be2eb2fe6222f0135e2c7aa708555febcba5ba52f358c988fde"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Trade/HansaTrade.h",
+      "size": 4724,
+      "sha256": "e55e2db63bdd190fa927c537c6383303fcda4aedfe1bafe804e9ed572fe168bf"
+    },
+    {
+      "path": "Source/HansaTests/HansaTests.Build.cs",
+      "size": 1039,
+      "sha256": "d8d57f85c28c69803da3759a8b53e60217d58144b30fcc64eab68b10f1260339"
+    },
+    {
+      "path": "Source/HansaTests/Private/AI/HansaMerchantAIInformationTests.cpp",
+      "size": 6719,
+      "sha256": "0b7b4639f7cfac8360d09262a2c86f1e30d680c06ffd64f2f6ac46b8bbec31c9"
+    },
+    {
+      "path": "Source/HansaTests/Private/AI/HansaMerchantAITests.cpp",
+      "size": 7439,
+      "sha256": "45271cc61c6bb47c5d8ca0c62efeadb09340f628dfaa29b387c99f8f39cb9c58"
+    },
+    {
+      "path": "Source/HansaTests/Private/Automation/HansaAutomationSessionTests.cpp",
+      "size": 23000,
+      "sha256": "2ac51df2eb48d51b1b1257adc056a89dd0cc31a577c4149c5d004585608f5b5b"
+    },
+    {
+      "path": "Source/HansaTests/Private/Automation/HansaIntegratedLubeckFixtureTests.cpp",
+      "size": 14747,
+      "sha256": "13dbdb911727f2b4d0fe4a2bae14d4bd6f483320310eb362571a9713f765b459"
+    },
+    {
+      "path": "Source/HansaTests/Private/Automation/HansaMvpGoldenEndToEndTests.cpp",
+      "size": 10388,
+      "sha256": "21f2214364efd7f4562fd4e59be38809c167e3abaff94f3f128a761ac7a242b2"
+    },
+    {
+      "path": "Source/HansaTests/Private/Automation/HansaMvpUiUatTests.cpp",
+      "size": 11051,
+      "sha256": "383dd3cb359e64927519cfb44ca5e3fd9fbc7ad013b00856d1cc49c0bb0b88f9"
+    },
+    {
+      "path": "Source/HansaTests/Private/Automation/HansaPlacementAutomationTests.cpp",
+      "size": 10388,
+      "sha256": "aa7f43b254de5318b476e03151ce726686855a25889cfbd1703426ec5d07b2c0"
+    },
+    {
+      "path": "Source/HansaTests/Private/Automation/HansaPlacementViewportDragTests.cpp",
+      "size": 9076,
+      "sha256": "98a2016b5a68661a55cfa5fb995668ffd651921c8e4f9ce77b228a175a14307b"
+    },
+    {
+      "path": "Source/HansaTests/Private/Automation/HansaRouteDeliveryFixtureTests.cpp",
+      "size": 10807,
+      "sha256": "ee2db8e5bc63d303aee121da2dc51927c186ad1564e490f1168a95ee01cf2c8f"
+    },
+    {
+      "path": "Source/HansaTests/Private/Automation/HansaSaveRoundTripTests.cpp",
+      "size": 3210,
+      "sha256": "70e9aa4836541fd5781ddb46b020ac3031860676332b67752a2450feffdab9a8"
+    },
+    {
+      "path": "Source/HansaTests/Private/Automation/HansaShortageDiagnosisUatTests.cpp",
+      "size": 19317,
+      "sha256": "0dbb93bba5858b371896ecb0a71fcd32a8f071a99df50d9602ca2c63d9d105fe"
+    },
+    {
+      "path": "Source/HansaTests/Private/Automation/HansaStrategicVerticalSliceTests.cpp",
+      "size": 7682,
+      "sha256": "0f1bb93a0f8e2797bf1004262de009c5443980fb6f34b3ad6ff7ef404260bac6"
+    },
+    {
+      "path": "Source/HansaTests/Private/HansaTestsModule.cpp",
+      "size": 278,
+      "sha256": "a0d14e7dbeea5365c81cd67a2de430996275fc5ed598ae09e0ef7b6c18ee0fae"
+    },
+    {
+      "path": "Source/HansaTests/Private/Multiplayer/HansaMultiplayerAuthorityTests.cpp",
+      "size": 16105,
+      "sha256": "f6a7e25e6993db9d5af1ab9d8cc802df4daa237d1a83f2421af7a23d748d15f0"
+    },
+    {
+      "path": "Source/HansaTests/Private/Research/HansaResearchTests.cpp",
+      "size": 8071,
+      "sha256": "71645f118337cd8797437bc4a7f5321c432f2b3481b888c1c16102f4799279c2"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaCommandGatewayTests.cpp",
+      "size": 13984,
+      "sha256": "4aa5774b8675e7677419679edca2f4d9bd44654a8061e1efe1bac54f80ff08d3"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaConstructionTests.cpp",
+      "size": 15122,
+      "sha256": "9124519f985cdab606152ce6514ce2fe01d619ecac9704b37805977ba9b5a816"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaConsumptionHistoryTests.cpp",
+      "size": 5029,
+      "sha256": "5a190dbcb796ac45633995f27a51a8049a7497f644a03403264f6565f5794308"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaDeterminismDiagnosticsTests.cpp",
+      "size": 19484,
+      "sha256": "61b37f86661994f6b6b5d42e62643b62eadc44b2e2e8a8f998c6084c61fca399"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaGrainShortageFixtureTests.cpp",
+      "size": 12129,
+      "sha256": "1c16a5ae0e8f19b7b964db6f0072f63624814359d1247c53be6057f5474c4eb5"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaInventoryTests.cpp",
+      "size": 25196,
+      "sha256": "667b2fa6ea9f8f8a789ff9e880acd606349d02c0a1096ccd87cdac3940fa433b"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaLocalLogisticsTests.cpp",
+      "size": 57638,
+      "sha256": "249cd0c0fde1bada87d15987bfd5ab8df043c0e41832b476560b339fd0e05bba"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaMarketTests.cpp",
+      "size": 36116,
+      "sha256": "7fb440e9fbb14f786b4486f75e7a7757380926e02e7ea68e5f5a58fd2d21a174"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaPlacementTests.cpp",
+      "size": 21222,
+      "sha256": "1087c0d263c487625e8674066db96b5a5425802ef8953867d4dbb1b4a4563dce"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaPopulationTests.cpp",
+      "size": 53404,
+      "sha256": "91132c71f7a28d987a5acdc012386a48722594956a3905408b3592e9ac508e0d"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaPreservedFishTests.cpp",
+      "size": 13838,
+      "sha256": "593f489986a705ed63b235f0116daf13bbc870ca62c37452c3b1a10689143a71"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaPrimitiveTests.cpp",
+      "size": 20470,
+      "sha256": "b71523662726d8b07ee307075860221a1ef5d59096f0717e1a5685771a2226a0"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaProductionTests.cpp",
+      "size": 43599,
+      "sha256": "3c9598a06049b48cf3c0cf667cfd92ada41af4066a964df2a0bcabdf88891530"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaSaveCommandTests.cpp",
+      "size": 3726,
+      "sha256": "bdbf7871ca965bf153957e02c1eb08495c5f93a1b33ca9e1447c5bb864823e1c"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaSaveEnvelopeTests.cpp",
+      "size": 13607,
+      "sha256": "d987bcf3b3ab1c479d02605c4838858b7c3e2507e7632c4d8799e3f0fa543dd9"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaSaveScenarioTests.cpp",
+      "size": 3967,
+      "sha256": "684da60d7f0a41db91bcad7c17a9872d9666389509d10c6945504a6a922e4272"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaScenarioTests.cpp",
+      "size": 9677,
+      "sha256": "48d29967b027968a62472e126e33af0ca1faa92df69d7f8e10f0978832ea440b"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaSimulationPipelineTests.cpp",
+      "size": 21124,
+      "sha256": "3360748c33522dd0975e8f8040c53c7f02a796c5f7dcabcf50f492db167d5c9d"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaTradeTests.cpp",
+      "size": 16415,
+      "sha256": "86dcb7dc9ec05a0550255399cbf5aa405b1df6cc3caaec34721edc15946e6d4f"
+    },
+    {
+      "path": "Source/HansaTests/Private/Tests/HansaModuleSmokeTests.cpp",
+      "size": 7218,
+      "sha256": "95f2bedad18dfead0969176e051f8eb0be6425ad094fc100bfe9c31cdb4e0efd"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaAlertPanelCaptureTests.cpp",
+      "size": 5100,
+      "sha256": "34ea69b56c9ea8c132c52526d29d409b7751a4424c1fa6c6ed73c4ac05360c26"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaBuildMenuTests.cpp",
+      "size": 34569,
+      "sha256": "69c35b8368042e4d4fa4264bec4d995b94b54f170a7ff3037061bbab246cb2c9"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaBuildingStrokeTests.cpp",
+      "size": 2256,
+      "sha256": "2493a09d12bad0e841385bc5b29299a7b051885a1fcb19cf8f9c37ab6737d23c"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaCityOverviewPolishCaptureTests.cpp",
+      "size": 9721,
+      "sha256": "ab0b793ed741dbe65eac858b741a061eb290e2c208e9441c5a88bb0f10e3e067"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaCityOverviewPolishTests.cpp",
+      "size": 5211,
+      "sha256": "4eb7a733427d20a303e11a2b2cbddd2890b0293ccedb1b0a11e1db34442bf810"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaCityOverviewTests.cpp",
+      "size": 17027,
+      "sha256": "bdc513a7bc321719502babd546ffa40332d715dc256854b42f7bca3bd804e68f"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaClickConstructionCaptureTests.cpp",
+      "size": 9483,
+      "sha256": "467b40656b1fd3bcfd957a6b90b8f590786f0bc5786978d66d27e37d56e4054f"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaCompoundSettlementCaptureTests.cpp",
+      "size": 22736,
+      "sha256": "16607685be3f3af541e1afc8362c9655b57d84aa0a724d31798bd090168b006a"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaConstructionCaptureTests.cpp",
+      "size": 7420,
+      "sha256": "b3365c6fd428723b0e5b0cfcd843c510ecd2e65a26630b72d07ae5ccaf9b9e10"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaConstructionTestSettings.h",
+      "size": 1315,
+      "sha256": "2b2a5b1347253e1ac492309057e5dd604f6624a28054e87dee488d5e3322c349"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaConstructionTrayTests.cpp",
+      "size": 4833,
+      "sha256": "24023a7583f1f72576a935b3d4f3669753f3206017a85667d552f3f9e3857f95"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaFrontendCaptureSupport.h",
+      "size": 839,
+      "sha256": "fa42018c9043b32fc5d98d769653a31798d0bfc1ec3ebd6a315831dd07137991"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaFrontendCaptureTests.cpp",
+      "size": 8800,
+      "sha256": "a7d02e0045bd79de88c536abe688a796ab0f68fd22c01a3bdde4f32207539eb0"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaFrontendDisplayTests.cpp",
+      "size": 2290,
+      "sha256": "fdbd4f40c28747251bcf0528d904c45244964f26b225b0bfb0ed2a5a316e9abd"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaFrontendTests.cpp",
+      "size": 5027,
+      "sha256": "3850fac7bc21bb314696599e0109feea43bc89196061f8c27631118a3da029b8"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaGeneratedIconTests.cpp",
+      "size": 1463,
+      "sha256": "0489653b3242de17bab9e0efd2a23b3fb4b849a37c37a456aa7f993c81b0e8b8"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaGuiRepairCaptureTests.cpp",
+      "size": 9360,
+      "sha256": "bf74412fdc58ae8d99e7e314aa9c8cb0c53c97cfb575a467dd3f850f204961d0"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaGuiRepairRegressionTests.cpp",
+      "size": 4895,
+      "sha256": "d67c218eaf05609160b94a8e07f86e92665ad2ddcc261e71ed27ab4f81431afc"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaHudPolishCaptureTests.cpp",
+      "size": 10839,
+      "sha256": "37ecb9ee6f09cd28066fe8725a26f98d62eaad915c9e95a54fcea331a4f18033"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaHudPolishTests.cpp",
+      "size": 4152,
+      "sha256": "9b2118c964f4faf23fa59b907fadb24691c3483462455e47724ca963d693755a"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaInspectorTests.cpp",
+      "size": 28581,
+      "sha256": "0981eb2fcee099524d5cd54f3abb4ddd6ff6a8265ba364411e3ffca1623dc5a7"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaMarketInspectorCaptureTests.cpp",
+      "size": 7066,
+      "sha256": "cd57f32686654bd95ecfe49b913d3c8e02ebe103429161b0a987669147c47af3"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaMarketInspectorTestSupport.h",
+      "size": 2114,
+      "sha256": "6872d37b3ced3c467a5f6a30afeb0b7c3579af03255e577f96b82dfd134c554e"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaMarketInspectorTests.cpp",
+      "size": 5814,
+      "sha256": "cfb02221c6a3856151fbd514acb705a66284548729b50b0cb069adc4b18a791e"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaMarketPolishCaptureTests.cpp",
+      "size": 9110,
+      "sha256": "fb822742608adedfd65f2675d3b074cf52747feb682dd1e43c5ed38b4b19904e"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaMarketProductionTests.cpp",
+      "size": 4227,
+      "sha256": "11b83451ade5ff271e856deff6d7dba1dcae40bf530bf69caf7cef4fef015d41"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaMarketRangeCaptureTests.cpp",
+      "size": 6535,
+      "sha256": "d12badd843f277d4cfd49185a21b6fc86dad0a0af98cfb4fefaf0bee846be54b"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaMarketTableTests.cpp",
+      "size": 17732,
+      "sha256": "25d6109de2307ed1912e27b29fcb6a20cdef412b146a7da85ed7794339f21b20"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaPreservedFishCaptureTests.cpp",
+      "size": 6673,
+      "sha256": "37b8df13e9b6f73cfb36358ab9d44654d536ca6b399c116aca731dbe74e3ec15"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaProductionInspectorCaptureTests.cpp",
+      "size": 25219,
+      "sha256": "c4fdff797bb191d2ea03564403fd6780ddd2b3e52f2c474d521d8b5595889334"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaProductionInspectorTests.cpp",
+      "size": 19783,
+      "sha256": "ce3040d2a9397380cc3b023059611697919c787f65f1501beb0d225b5e452e05"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaRandomLabourHouseTests.cpp",
+      "size": 4844,
+      "sha256": "4c36a3a89cd5aec568f4511de295481abea30f88f1d0bd66336e279aa29cdfe6"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaResearchCaptureTests.cpp",
+      "size": 6703,
+      "sha256": "d7972ff37e0e2087ccdb5bc78907e030a02c544755385d8ff2f9b8b1a4752f16"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaResearchIntegrationTests.cpp",
+      "size": 6613,
+      "sha256": "2096b1356c37384ae391e69400be500654f428a7e900a7cc675aecd123d1c71f"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaResearchScreenTests.cpp",
+      "size": 5186,
+      "sha256": "4d467dabb1b18139d3728f3cf1326a01f036a74d30186d650006545ebd2d7196"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaResidenceInspectorCaptureTests.cpp",
+      "size": 10591,
+      "sha256": "c7be047e8ee6feb35595e732261479732d631ab766d832c699d04b2f9a53de88"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaResidenceInspectorTests.cpp",
+      "size": 11727,
+      "sha256": "3011a08a4d8a5f9157c4c7988987f8e31cf500349e1ab491ecbb8f03db6f3270"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaRootHudTests.cpp",
+      "size": 7372,
+      "sha256": "f5c776b8d1eab27609a3b32fd51d18c6ab4df29923f088d58257f781baa8eb5b"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaSaveLoadUiTests.cpp",
+      "size": 2032,
+      "sha256": "d66778a1b449f8980e15771a661a0f70897d4a7154b44d52bef36c0cafeac858"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaScenarioScreenTests.cpp",
+      "size": 5350,
+      "sha256": "7fe7c8ac5fa13ca6f843cc9289cc744e5972c30804b7e6bf67cb7871d470039c"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaSelectedGoodPanelTests.cpp",
+      "size": 8109,
+      "sha256": "50502fa8e93e4dd2bb8848f7abbe2a72ba72044acf0d2e1f14426d6a1f998cef"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaSessionCaptureTests.cpp",
+      "size": 10821,
+      "sha256": "ef31aae68c12ceabbcdfe8ae792ee48ea419d82273285158dced31a51435c71c"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaSessionTests.cpp",
+      "size": 3512,
+      "sha256": "c0cdd75776d6f81c8efd6affa92e378c00cea9c9922cb8b2510c7b02a596ca34"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTopMenuCaptureTests.cpp",
+      "size": 6651,
+      "sha256": "fa51e544b0af17dffa1e40f50006f878b7e9705b45014de1a25f318576d7d740"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTopMenuTests.cpp",
+      "size": 6631,
+      "sha256": "e89b50d12817a704c86e2d0e5f3891780f9f54b023efe986154282a2c7af7f1d"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeCreatorCaptureTests.cpp",
+      "size": 7877,
+      "sha256": "40fd41bc9aa80141de3a9b101d932b8e3b0739468354202948b77b8929fbaddf"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeCreatorTests.cpp",
+      "size": 7263,
+      "sha256": "f7caa3f871efd3937c28a0036b1bbd429fc17232178abdaa7b8dba134f761fcb"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeJourneyCaptureTests.cpp",
+      "size": 10102,
+      "sha256": "82845b902bfd75937668b1d1564e1039cd56ad4bb2c0e3248810a7f37e86fd13"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeJourneySupport.h",
+      "size": 2694,
+      "sha256": "9b0c275c2a72dcd061286ed0949796bbbdb234faed527c34ec25e45685a02eee"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeJourneyTests.cpp",
+      "size": 9288,
+      "sha256": "df964d79430c7c709811aee99a1e1238f52d19c3360bb5f2018578e5c3dd9ca6"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeMapTests.cpp",
+      "size": 12810,
+      "sha256": "ec80153d491cd71484d4f4bddd63028032f52558b560d68c6788edc50dbe089c"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaUiComponentTests.cpp",
+      "size": 3613,
+      "sha256": "d45c4bf7e9e9f0b83a22bf9f9e2b84e7ffefc192665a486cd91ea3fbde13d78c"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaUiNavigationTests.cpp",
+      "size": 2262,
+      "sha256": "f5ab3e6f1d326c7bf8a5116bb6a557e06826a2c7f0145eaa251a49ab9ee5bb8d"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaUiStyleTests.cpp",
+      "size": 10777,
+      "sha256": "1bb0d64b0e9ef400ccd528ed19658fbf55d11d871cfa27a3661e479833e6ee55"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaUiSystemCaptureTests.cpp",
+      "size": 6006,
+      "sha256": "e2f54cae86cb19bfc51d648ed6821ed2548e66150b2c2d280d67f7ebd4837cdf"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaBuildingWorldProjectionTests.cpp",
+      "size": 47414,
+      "sha256": "1a3343ac86f8d264e0136878d948e9420c234f2b1049db921d7c5d29342328ac"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaCargoVehiclePresentationTests.cpp",
+      "size": 5380,
+      "sha256": "cdab8798469e7b347c736a3a92ce4b10efd49359b5c98a35e06d53562b649d0a"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaCargoWorldCaptureTests.cpp",
+      "size": 16742,
+      "sha256": "dec271f808871a8e77245c2d452d74c54e58850b260d2ffccb503898a4733801"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaCargoWorldTests.cpp",
+      "size": 30042,
+      "sha256": "950601d6f8940aa32f0d044f5080d439e6caddef72f01e775bb6056c615b3d60"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaCompoundGroundTests.cpp",
+      "size": 9466,
+      "sha256": "9b26a32f8c4249ddb1d69da9d2b8e6d64875d27fa20361ab03272f98a10f3d63"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaFisheryPresentationAssetTests.cpp",
+      "size": 4284,
+      "sha256": "891e54fab4ca216ad3c5cd4d50d0c4652ceaa8c530a97ca78c60167191bc3585"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaGrainFarmPresentationTests.cpp",
+      "size": 2961,
+      "sha256": "fecdf7e6bb7d1e571b4e6960da71fe55851c8b6ad6e7ec9b2bea046bcc26f4d2"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaHarborPresentationTests.cpp",
+      "size": 3405,
+      "sha256": "5ed790d55a126f5be81132dc3e1a2c557a4d4329965ae6a33ba9d26a0e60a627"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaHarborProjectionTests.cpp",
+      "size": 3868,
+      "sha256": "6b63a582a75e57e8749bd8d7e915e484bfb4ea01920fff2605c2accf25986480"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaLubeckWorldArtCaptureTests.cpp",
+      "size": 20479,
+      "sha256": "39253f92ab965761fa58a47ab2a495a72314401a65b1666a29c33c2441f135e1"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaLubeckWorldArtTests.cpp",
+      "size": 7745,
+      "sha256": "0bc911ac41c3da62ca89a22b3c30269b2f2f279957da438ca2d626bef8a050a3"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaLumberCampPresentationTests.cpp",
+      "size": 5003,
+      "sha256": "1e576184c04b8626bb6a82d3decafad7b0f11b06371f2418f3ae3883bdd33942"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaMarketPresentationTests.cpp",
+      "size": 5758,
+      "sha256": "a2b7bc733f53974af48b9d41c9b059575876b6d0097e230d13439abac93c089b"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaPlayerSaveDiagnosticTests.cpp",
+      "size": 1942,
+      "sha256": "0530dae0b217c3e723ecb06c6a694a46cb431d62ebd617d58ceb9288ed40881d"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaPromotedFamilyTests.cpp",
+      "size": 3685,
+      "sha256": "53888923fe9d402ddfbe1a874e4aaf8046d68d87e1817eec65ad9de45db4fed0"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaResidenceConsumptionMigrationTests.cpp",
+      "size": 1971,
+      "sha256": "2052cb514377b474905f67381fa0b58015265f265b2ecd9536194b970a1fb673"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaResidencePresentationTests.cpp",
+      "size": 9478,
+      "sha256": "d2ee9e640f244164c3328ee79e39bc7b24e45ef0efbba644e2eb6381fdc4d544"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRoadConnectionIndicatorTests.cpp",
+      "size": 5247,
+      "sha256": "73b97113595b95ac3945148e9f88804115fe7c57b6580a29b014959e9ad49f20"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRoadProjectionTests.cpp",
+      "size": 11893,
+      "sha256": "c35dc0d411a19ba6cc8dfd0ec4f25b6d0ecd0ef3ce0ba176b1da36f541c80f0e"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRoadTerrainCaptureTests.cpp",
+      "size": 11587,
+      "sha256": "686551097b56f54ecff566a752be8f402eb43a0fedd731877e1d1bf4ae4af04b"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRoadTerrainTests.cpp",
+      "size": 6766,
+      "sha256": "546efd9e9ff32e75e1ccfb2208dbdbd1c077e75cd0a24a147b8f5f97a7835e73"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRoadTopologyTests.cpp",
+      "size": 967,
+      "sha256": "7a31ee4a2154e19c4f846f83f390dbd9c78031f6c3a8062b37d4fca4b2f18024"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRostockCaptureTests.cpp",
+      "size": 12692,
+      "sha256": "50a21289f1bfb7601dbcc555972f1c42bf281c282da1b5612fd6c0780ebea144"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRostockTests.cpp",
+      "size": 3487,
+      "sha256": "a44ac2c5434f85bee18881f7c14863ab40bb6186b5b7e715856d3d6e9803e7f5"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRuntimeSaveTests.cpp",
+      "size": 12276,
+      "sha256": "ffdb0b4a00bb7f7c4526a94a536923db2d99e9768b23f5306098e116ba9f37fa"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRuntimeSimulationHostTests.cpp",
+      "size": 42730,
+      "sha256": "1cd92d810d4dd5e94ad1847133a0d479dcdef6610bd8a7d2d1d5e133296817a8"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaSawmillPresentationTests.cpp",
+      "size": 6400,
+      "sha256": "3873ccc76a6174b05e8790101a069160ced587e5fd17876a341e8bd2107970dc"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaStrategyCameraDragTests.cpp",
+      "size": 9728,
+      "sha256": "33211fe924cb5431503e81e81570036552d62c9f643694e8b57c31e1487de5e3"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaStrategyCameraTests.cpp",
+      "size": 9946,
+      "sha256": "fafe11d5fb898ec04711fc6521342e519680d37962d388c465b590e377f22a26"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaSurveyOpeningTests.cpp",
+      "size": 8400,
+      "sha256": "8bcae49c5fd491add300af6a5c23a3c17b0c2939158c169141e555497624dc8b"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaTerrainPlacementTests.cpp",
+      "size": 7666,
+      "sha256": "b6309bed9e4240218a0082aa250bcc52f52a11d92a3fb051300619a5f9676d60"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaWarehousePresentationTests.cpp",
+      "size": 3286,
+      "sha256": "32ca9e323b5e76085c46393447db7adf09b28cfe124bcdedf7cc7e81a91e8e54"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaWorldStyleAnchorTests.cpp",
+      "size": 5072,
+      "sha256": "2166e392ecc802e1911f5dbdacf36f0d73d9e29f6f8f666d6d26e2047207d6fb"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/EVALUATION.md",
+      "size": 2432,
+      "sha256": "48f195e948ad4d4161b9f20ad122498c99f59ed1c7504458839db2c86fcbe53a"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/ITERATIONS.md",
+      "size": 1956,
+      "sha256": "b651e7d92f7b41a180c7a7924468bea3e3a8c2cb9b44455d9dc539073b6ca773"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/MATERIAL_ASSESSMENT.md",
+      "size": 1234,
+      "sha256": "df9d8caf63b6094c48e576f73d3f7e00b9143999b67f854714234b3a225010d9"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/PROVENANCE.md",
+      "size": 687,
+      "sha256": "d676af5d04fc9c073fe07fac30586e812fff1dc0e3567865d66fe7ad4cd405fd"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/README.md",
+      "size": 1108,
+      "sha256": "495be100bc89df88da522af40693fe568be89189dfa85e21222b7bd092415cfa"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/checkpoints/HansaFishPreservation-r1.blend",
+      "size": 8898228,
+      "sha256": "103056a1131bacb75f0b17c3b7c06461f6dd9a0404d7ab587cd56933d6bc74a9"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/checkpoints/HansaFishPreservation-r2.blend",
+      "size": 9153212,
+      "sha256": "25e9f323c5d8e90c524dd881b017377f79423273a673d9c8589c9f84630e0ef1"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/checkpoints/HansaFishPreservation-r3.blend",
+      "size": 9620500,
+      "sha256": "7a28c4cc7deb9520d18dc5bd5038ee40730f8f8cf26885fb98a1a4a3e6a6d4c5"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/checkpoints/HansaFishPreservation-r4.blend",
+      "size": 9676812,
+      "sha256": "f9a27087b13b62e51a34a7d10141544d2ecd0f51baf12fbf7ec98ccb030a8077"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/checkpoints/reimport-fbx-corrected.blend",
+      "size": 16369144,
+      "sha256": "bf88111de0298d274dd35477955972833d9bfba4109198b06820f04ea133f3e2"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/checkpoints/reimport-fbx.blend",
+      "size": 10616728,
+      "sha256": "bd08e5fe34eb9c9a37eff5ea5f7c655e0671f62690ecbbbb217df01878a714a2"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/checkpoints/reimport-glb.blend",
+      "size": 20503300,
+      "sha256": "b78078d0c135b876b29e555e69645ec4a6468d479c0c24f4dd1ddfe4518f6cb0"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/evidence/baseline-sha256.json",
+      "size": 199,
+      "sha256": "8a96da8f5211056beff770782529ebbb11533ae00c2bf9b656905ad391f2408e"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/evidence/export-verification.json",
+      "size": 789,
+      "sha256": "b3cf2c485c1ae4b29d8132de28ff948d393f1d707d2eddb824d6f1cde3e91cb8"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/evidence/master-audit.json",
+      "size": 2697,
+      "sha256": "416466adc6b0a96cbd51214a4c3fd99f605adee9829721caa6eca6a85bb51bba"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/evidence/source-manifest-r1.json",
+      "size": 1586,
+      "sha256": "2a5025641afcc3d760c882f5d24712b0ab7a0fb3ccbaad1168d0870e704f31cf"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/evidence/source-manifest-r2.json",
+      "size": 1586,
+      "sha256": "fb5abf838d535089fc0945f0943c7703e22ff37322dfeba545b5097e290eebdd"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/evidence/source-manifest-r3.json",
+      "size": 1586,
+      "sha256": "ff917e5325853842f998e355c9091ed263411b82e8d862f8df2575f8e8d32972"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/evidence/source-manifest-r4.json",
+      "size": 1586,
+      "sha256": "e5e48d3fd10bfbf86e3d2d8b5741b45a5253b50a0977adcad988b9b5e283dc19"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/evidence/unreal-collision-audit.json",
+      "size": 10769,
+      "sha256": "960f0298e6b51a3cccdc3bde59dac152fe8cd7fdbeb22f88984b47383d6d6ad0"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/evidence/unreal-mesh-audit.json",
+      "size": 921,
+      "sha256": "4bf0ba513d1ae83fa19db66a848595811f744625104d0ecd4db88d6df445a67c"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/exports/SM_HansaFisheryPreservation.fbm/oak-basecolor.png",
+      "size": 2870030,
+      "sha256": "92674a78242ac7f2ee0b0c8e4579e61e7d0f5179fe4103dc99178a43a7c9d87d"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/exports/SM_HansaFisheryPreservation.fbm/thatch-basecolor.png",
+      "size": 2845240,
+      "sha256": "5a8655f049f91f34995f6b65961559ac67dee6d4f77ec25aabc2b0f1e864ea6b"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/exports/SM_HansaFisheryPreservation.fbx",
+      "size": 6687452,
+      "sha256": "5ab236e17d1824762906b5d24a3b05f83cd6f692c477299df27beb3660ce9248"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/exports/SM_HansaFisheryPreservation.glb",
+      "size": 8695588,
+      "sha256": "d817ee2730957441f07bbb3d75b132c875857cfb236aa423d20224141a707ed3"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/material-gap-ledger.md",
+      "size": 1093,
+      "sha256": "5036b71e8d5aa9dc1b16d7f32dd5687e1ca579b5a6eef09b39aa8dc4a7b40038"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/reference_manifest.csv",
+      "size": 1783,
+      "sha256": "a555e45e942ff2af622a281e71746b2c0e8959a9558cda2f611594d6c19f224e"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r1-hero.png",
+      "size": 1314322,
+      "sha256": "18acffff6687370d1036dd911dad7a6a802b829e74e8bd8e403d147282e40fed"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r1-shore.png",
+      "size": 1273011,
+      "sha256": "c38eec1d84a3941fe5fdc229049a8158a327a0e208edb1f1728e00e1a3a9c710"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r1-work-detail.png",
+      "size": 1429452,
+      "sha256": "e8af08e8ae175d78386438f567abdf8151fd424ff287ee9a5f58cda3febec22d"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r2-hero.png",
+      "size": 1315424,
+      "sha256": "22bd859143118c20b6ab20dfcdff526735f4bdc4521d6ed9a2f0e090151161bf"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r2-shore.png",
+      "size": 1272988,
+      "sha256": "a914c8e63dc86d43b721ff6b1a3926f54b3ce8e2fc3f950bdf2d9248970c2c87"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r2-work-detail.png",
+      "size": 1431280,
+      "sha256": "b93b4a2781532f2ab53c46e48bf58a146dc3557ea9a5695ca908218918e6eee4"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r3-hero.png",
+      "size": 1266630,
+      "sha256": "4ac8d416235a89877b02f349f7b2fcd4309370ece45c532ca5d7b90c5892d15c"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r3-shore.png",
+      "size": 1263464,
+      "sha256": "84e7bfc943b5f43069b69be4e53a11dca4d8862b971debdd09cf5182c4f86a23"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r3-work-detail.png",
+      "size": 1389927,
+      "sha256": "7e5538aab28288b60a907e43f4d368ca6a8cb63539263fe44563eae8490967b8"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r4-hero.png",
+      "size": 1274265,
+      "sha256": "6992b0beb126a4c7561a8136a4f6d6647c7bcb5b85d6d2c513eb9958f90f8a8c"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r4-shore.png",
+      "size": 1281791,
+      "sha256": "1a04ab2e7f8e72be9842be5863e7fad4aed2d7e296a574bbe732f27fcd50df1e"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/r4-work-detail.png",
+      "size": 1433155,
+      "sha256": "b3636349d8624a304981e28b8ae3d9d9182a10fe2073091379f265260cb49c9e"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/reimport-fbx-corrected.png",
+      "size": 1378192,
+      "sha256": "23b0dee405af7b1ab67d75008eaaf66c2603b48ddd5092980a83f5cc227790be"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/reimport-fbx.png",
+      "size": 1094822,
+      "sha256": "47c0f5830ac39a5b80f9767ab1a7270b28435c6fc2759f1b639fa0a1cdee1947"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/reimport-glb.png",
+      "size": 1271958,
+      "sha256": "7f765594fe1bfcf721e4d635e6ac47938ce01af0fce1bf642555ec71b255eb2c"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-00.png",
+      "size": 1176072,
+      "sha256": "a6c812fe77569e2d14a9f4ac53f407047e85bcac5ba414012b4202af414581e3"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-01.png",
+      "size": 1228860,
+      "sha256": "fb15c3af5a8933272f0f8007a2fb9ca136b7b1370a5e0981387cd92e60c4f345"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-02.png",
+      "size": 1179438,
+      "sha256": "ec9c9a0c155cf2b09030c08bb07509cfb15cfb8642dc1d076889ac487c60b84f"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-03.png",
+      "size": 1096732,
+      "sha256": "66d0fe1bf9cdfa1e319e422a9c28246598cc79aa599c691df8b5bd3e5583d38e"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-04.png",
+      "size": 1155311,
+      "sha256": "298bf883a18a96d665fc1719e64d15947d7d6c0c200875fd16264baaf13be756"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-05.png",
+      "size": 1127124,
+      "sha256": "b5a9f9afff066204b4bc4c0d9e6b1b9409e2e0bce99ed308055687623b4d8df4"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-06.png",
+      "size": 1117579,
+      "sha256": "67fd90afd214eb4646858c7157d12bb312cdd1d86f8c432c641231358e26c416"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-07.png",
+      "size": 1203075,
+      "sha256": "943a09901e2e9f67f2486a46a9323504af9e971c250138b58c4db2b95824726d"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-08.png",
+      "size": 1246150,
+      "sha256": "c0f7cf778d23ce2b7ce3453fff35ac216cad9f4c8b50ed4c9477432446b522f6"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-09.png",
+      "size": 1188282,
+      "sha256": "9e1d706e5a150911d393cc9616085b0a7cf913e6a5e7e864ab8a49d3c1f7d004"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-10.png",
+      "size": 1297033,
+      "sha256": "ddd316e90c27d1f2d49cc4983715d5f0841061530f1b9ff17b131338eda81108"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable-11.png",
+      "size": 1244912,
+      "sha256": "370e7aa177c374008b8ef6ec53c53484935cc8d3194ff3aed7220ad33ea4a266"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/turntable.mp4",
+      "size": 562713,
+      "sha256": "d1c30a1975ec807a558c6b3e09b2e1c2c1d8123d1e5327098898529845954d45"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/unreal-asset-initial.png",
+      "size": 82322,
+      "sha256": "7bc06466e443b04d0169b334d7b8f0d7c633fa21c8f8004de28c24b092a61491"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/unreal-material-closeup.png",
+      "size": 4067997,
+      "sha256": "d4173cd69288bbed73631e355cb96fbc55e5c4a85ee67661bd0085ec8af53745"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/unreal-preview-initial.png",
+      "size": 2413972,
+      "sha256": "1c48bcb753b10caf535e3f61e2718bf38a59e5c90fbdca8c83aa80588ea24f8f"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/renders/unreal-preview-reopened.png",
+      "size": 3257148,
+      "sha256": "0e3d358d67c6d4d8f29bd5c8cc33808d007cc86d865096e7675c04cc8536d12f"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/scripts/audit_master.py",
+      "size": 1516,
+      "sha256": "854e4c039916d0b7850bd2a1a7835db3ffc904b8051cab1c49213e8f951f35dc"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/scripts/build_preservation.py",
+      "size": 22935,
+      "sha256": "514c09114fbe6bf348b8da2864fb99bd85db94d647dce8686338afa6c291131c"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/scripts/fix_fbx_materials.py",
+      "size": 1585,
+      "sha256": "5108c372d72439b68ffd2ff61b1e19702e288f5f759c6d884233eb250d09f4d5"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/scripts/verify_exports.py",
+      "size": 2522,
+      "sha256": "cab63b7fac452148dfff54dc2ba053ec9130570f551c9f4911534fc4cf7910d2"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/textures/oak-basecolor.png",
+      "size": 2870030,
+      "sha256": "92674a78242ac7f2ee0b0c8e4579e61e7d0f5179fe4103dc99178a43a7c9d87d"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/textures/oak-basecolor.prompt.md",
+      "size": 1294,
+      "sha256": "4333c875fb0cd999f54aebf3571102c1cedd2ff110fda457723efe93e412cd9b"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/textures/thatch-basecolor.png",
+      "size": 2845240,
+      "sha256": "5a8655f049f91f34995f6b65961559ac67dee6d4f77ec25aabc2b0f1e864ea6b"
+    },
+    {
+      "path": "SourceArt/Generated/Buildings/HansaFishPreservation_20260916/textures/thatch-basecolor.prompt.md",
+      "size": 1263,
+      "sha256": "8003060fda434e4c65caa05079c340f95d1c48311412c2a8e61358c0ede136db"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R04/baseline/CornerCourt.json",
+      "size": 427849,
+      "sha256": "11f6a4613530f47b0fed57c7bea49ff3906e1590f80740d1fa554768007ebb35"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R04/baseline/CraftCourt.json",
+      "size": 417738,
+      "sha256": "d9bb5243e3d87ba2c8042cce38f496a9fabdfdcb6d4e1d0937cd9fa6bb96ba9c"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R04/baseline/NarrowGang.json",
+      "size": 372394,
+      "sha256": "c98911b0b015f541b6596d86e9f90274ef6e71f8a0dfea72837604d40e9ba2cd"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R04/baseline/SharedCourt.json",
+      "size": 410229,
+      "sha256": "751749f3d69a635b9e3f4989972334cea1a67fd7b9830201d509a8a5f78c8074"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R05/baseline/CornerCourt.json",
+      "size": 671481,
+      "sha256": "ad6bea5a24b9cc911fe5b149ce2946c6973dd1aee1375eb8949d8237d29e79ce"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R05/baseline/CraftCourt.json",
+      "size": 661338,
+      "sha256": "45672bbb27f7a12385c7e929a16247a8ec39fc5093c5f7454a833d71af8277db"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R05/baseline/NarrowGang.json",
+      "size": 601150,
+      "sha256": "4d8b95aa77056bd5375bc86fe76bf875b07c1ea0bf2aee5d831e8cd09fcdf86f"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R05/baseline/SharedCourt.json",
+      "size": 670449,
+      "sha256": "a0f03924f50066849e80528921f2ae0e7869ccd7b8930c174b3c8483d546a8cc"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R06/baseline/CornerCourt.json",
+      "size": 962913,
+      "sha256": "5025c656c9cceb379ee3d6bd50a4d4c2b08356eed73646666d5585d040a6a590"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R06/baseline/CraftCourt.json",
+      "size": 955566,
+      "sha256": "5b56d76ce2bd0f33cce9e0a36d55cc81daaf31a9f2e5c1af96b4dd986081fe47"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R06/baseline/NarrowGang.json",
+      "size": 842606,
+      "sha256": "9878a22d1f17c213bba3a161823845d6a8599fa33a5c3e649a117b0bf0daf205"
+    },
+    {
+      "path": "SourceArt/Generated/Compounds/LabourCourts_20260915/R06/baseline/SharedCourt.json",
+      "size": 970177,
+      "sha256": "b05ac51d16a4ded53c3009533e58e071b8c6091bec701a303fb2bd2ea4677e66"
+    },
+    {
+      "path": "SourceArt/UI/PreservedFish/display-size-review-final.png",
+      "size": 186679,
+      "sha256": "439b5b2943c46633963d2ed7548f139e2f2a2d6740f3706d67049ac0c61f4373"
+    },
+    {
+      "path": "SourceArt/UI/PreservedFish/display-size-review.png",
+      "size": 66111,
+      "sha256": "056d8d99212ef94bbadb2375120ff8dda7ee34f89c5351c6f7495a96ab58a93c"
+    },
+    {
+      "path": "SourceArt/UI/PreservedFish/preservedfish--good--default--1254x1254--v1.png",
+      "size": 1848330,
+      "sha256": "46fa81e8909892b5f238710aa8976b64c30bbf9b9fae6ff602de7d963f2b355c"
+    },
+    {
+      "path": "SourceArt/UI/PreservedFish/preservedfish--good--default--1254x1254--v1.prompt.md",
+      "size": 1990,
+      "sha256": "329ebf5a1ba6153897c8996f058f405e5b19e38f87c36ff179f33570d5f0aafe"
+    },
+    {
+      "path": "Tests/Fixtures/economic_invalid_references_v1.json",
+      "size": 641,
+      "sha256": "48f82c5024b3a24a141416c72522e821aaa8640e41cf2ca03d83071c879affc0"
+    },
+    {
+      "path": "Tests/Fixtures/fixture.example.json",
+      "size": 366,
+      "sha256": "f4e2a2db86edda13e73e056c38691c078464a783d11b798b43f2ae7d5237cc89"
+    },
+    {
+      "path": "Tests/Fixtures/foundation_determinism_v1.json",
+      "size": 703,
+      "sha256": "2f2dcd3516fac7c27beb5ad7b1c05d1fcebe5e6c0e2344752882cacf8f59878d"
+    },
+    {
+      "path": "Tests/Fixtures/research_completion_stale_v7.hansa",
+      "size": 6232,
+      "sha256": "6bd90b49fecd236a6f8e6fa46f8938b0c6f1af11eae3dad684b810eb52b95800"
+    },
+    {
+      "path": "Tests/Fixtures/residence_consumption_prior_v4.hansa",
+      "size": 8933,
+      "sha256": "a641c6616716f8686c6350d8879fdbf7d353751b00801110bd1b27b4697dfea1"
+    },
+    {
+      "path": "Tests/Fixtures/route_delivery_v1.json",
+      "size": 1568,
+      "sha256": "336842d18f654b3bfbd94b5eaf754db5a1ec85dd1a1771a8a387eda80092767e"
+    },
+    {
+      "path": "Tests/Fixtures/save_envelope_v1.hansa",
+      "size": 1868,
+      "sha256": "ebd88ef0eda4c2187ecd5805e5316bea38844b5ee3323095890b956e6e280287"
+    },
+    {
+      "path": "Tests/Fixtures/save_envelope_v2.hansa",
+      "size": 1912,
+      "sha256": "64a1e15d4495749d15ac696cbb0c396a27059edee2a42a1db80f0cc96cd79ef6"
+    },
+    {
+      "path": "Tests/Fixtures/trade_journey_p34_v1.json",
+      "size": 485,
+      "sha256": "3e7a0a737ab66caf6a70a21d77394a64457763e5b63aadc58de601bb124b36f1"
+    },
+    {
+      "path": "Tests/Fixtures/two_player_authority_v1.json",
+      "size": 1843,
+      "sha256": "8a9c1ea443e4a552ef0589b5a2e4fec373faa664cf17b54a1b3d81cb787e5dc6"
+    },
+    {
+      "path": "Tests/Golden/Editor/foundation_sample.schema.json",
+      "size": 6829,
+      "sha256": "e9ebcd983b431fe04ff5c41b45166a8b42e5102ed9cc924263971cdf50935ae7"
+    },
+    {
+      "path": "Tests/Golden/Media/README.md",
+      "size": 324,
+      "sha256": "28098a4cee7da2019298e157685c6e2fe8ddaf2464c6e3fb7cbef763fe398476"
+    },
+    {
+      "path": "Tests/Golden/Media/audio-take.mp3",
+      "size": 17179,
+      "sha256": "a5d6d4e3523212316f8733feb5fd21f954bce48b167e436f90bb85ee34e715fd"
+    },
+    {
+      "path": "Tests/Golden/Media/audio-take.source.md",
+      "size": 630,
+      "sha256": "2e182fd63d21cb02ed7e1566008ab6735354edbb7ddb487cc888d9f5cf9d3677"
+    },
+    {
+      "path": "Tests/Golden/Media/audio-take.wav",
+      "size": 88244,
+      "sha256": "78e5524325203e9804f4bc8e28a4445b19c5f0fc97eed51660e487d1bb59537c"
+    },
+    {
+      "path": "Tests/Golden/Media/harbor-prop.glb",
+      "size": 692,
+      "sha256": "f24be5bd2465af063feb1521a38f5e635a7ad961724bff3c3041c5f75c7ab8a5"
+    },
+    {
+      "path": "Tests/Golden/Media/tone.wav",
+      "size": 12044,
+      "sha256": "5cc46052a677e73aaa552519ca43035c4e014fc6cb868719745d7e3d9e862fd7"
+    },
+    {
+      "path": "Tests/Golden/Media/triangle.glb",
+      "size": 608,
+      "sha256": "97ff7ff023958d6942d1e84da5c2757992e942e24418515c8530e1d44375a0a6"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v10.json",
+      "size": 12031,
+      "sha256": "2b4da8b253adc026eeb771a5874f3706c51e0de1ca440e66817f8ae574ce1fc8"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v11.json",
+      "size": 11637,
+      "sha256": "8372e881a6f570466c6ddc8ff2053d1dc6fee222b13f4c1249adfd2e00a3ae32"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v12.json",
+      "size": 11591,
+      "sha256": "506611e4ba9c2d5e0c2109239d3e2387bd7a634b048fedee51c27eb4a97a95de"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v13.json",
+      "size": 12330,
+      "sha256": "d8fb9cbe3af67e03238a303cad39a31cbd24ded25ce3824aaa4cdc375a6f0f90"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v14.json",
+      "size": 12041,
+      "sha256": "3aecd7fbd32bdbd4c82a2b8b79e58beadec531bb4e5527ba3e2f86b433c4c961"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v15.json",
+      "size": 12041,
+      "sha256": "cdc7f72497e26ca981e2081dadb759a19101ceb3bc9f91631418bd93b2cfab0a"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v16.json",
+      "size": 12042,
+      "sha256": "5b016ee9e816e21fc09e9cdf9dec11826a84770b3a49833c7df0472953c01029"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v17.json",
+      "size": 12095,
+      "sha256": "be558ecc341dd335ae02b664bd7e45a12a92f751b4638b87a72104ddbfdc235c"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v18.json",
+      "size": 12100,
+      "sha256": "cdff2cc579fd89400e2c6e57dabb094c327aa6243e1998dae4d1c2a97a0f38a5"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v19.json",
+      "size": 16369,
+      "sha256": "6a97eee1b7b650a25533be22afd126211d6603d486736c307ecc9ec2bbe40d86"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v2.json",
+      "size": 10909,
+      "sha256": "659a0c3c7b923581a73c2991e212eeb0c438cd776897f5264670ba76dc841138"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v20.json",
+      "size": 14888,
+      "sha256": "bfa190be927c1eae8ac6f563fa1dbf81dc2e500c6405e8de3d0091f666a8cc4e"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v21.json",
+      "size": 14888,
+      "sha256": "125efc2fa47f2e2ed3fc355f1fe11f343d200840b3018161384e3c0e4be25417"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v22.json",
+      "size": 16158,
+      "sha256": "2a5958083cc83149a5b65a6e504ba1cbcd7fa1fb6895d638c5b0bfd8f7ab9211"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v23.json",
+      "size": 16158,
+      "sha256": "bc574c1b08f4c0513b0d7bb296cd5023b75002949964e47fc78ad9e9fd6cf0cf"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v24.json",
+      "size": 15205,
+      "sha256": "463428bc5f046c5a3229274f94820f5d618058c0be5a58b3fcc3d55539535cc6"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v25_preservedfish.json",
+      "size": 16979,
+      "sha256": "653209ff8fe33b2d1b7d52e709690ff3953cb719b09bf8dbf5e1278465161244"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v3.json",
+      "size": 10923,
+      "sha256": "d0be7f7e056a689a71870ec940dccbfd78a3a0fccc6a26f44a17c28bd0dd2598"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v4.json",
+      "size": 11645,
+      "sha256": "beaedd2c54eb70dd1f480bb486d3050848d6e0431c65243c78473b9326f97c4b"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v5.json",
+      "size": 11642,
+      "sha256": "fa6bf4e35050d5d33e6470a349dd697c2b8e7bc6dfbe46300b26fb43dfda48f2"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v6.json",
+      "size": 11618,
+      "sha256": "a9f54e6746b3d5628edb791d676a5214b59316251f9dea1c75a77a8b6b80d1fc"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v7.json",
+      "size": 11618,
+      "sha256": "32f1a1d08c2b5ee8e1912fb4fb9ac3a87cfb1021c4659b8cd9d393fee0dfafdc"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v8.json",
+      "size": 11624,
+      "sha256": "c4ccd612e1a220c3eb1324fe4cad3b79cdf05e03f187d11437b73d12bcec2fd4"
+    },
+    {
+      "path": "Tests/Golden/economic_catalog_v9.json",
+      "size": 12012,
+      "sha256": "e2200a90150ff75547cf0b401fbebf45cf76b1e9cabfb57702a4d2996a49b3aa"
+    },
+    {
+      "path": "Tests/Golden/enhanced_mvp_grain_farm_asset_family_v1.json",
+      "size": 3247,
+      "sha256": "ba2f1a9e83e0e35003b1b68a0541539547138d49b0175349811cd0bcce26fe5a"
+    },
+    {
+      "path": "Tests/Golden/enhanced_mvp_market_asset_family_v1.json",
+      "size": 1466,
+      "sha256": "16845c3fdd533315afa932375210aa461d1eaeb4eb9b43df4d0dd55996143e18"
+    },
+    {
+      "path": "Tests/Golden/enhanced_mvp_mill_asset_v1.json",
+      "size": 1194,
+      "sha256": "37ca3c5b1330b4bb0014d802304dd615316fa3858e102f687b8eeb7271c82733"
+    },
+    {
+      "path": "Tests/Golden/enhanced_mvp_residence_asset_family_v1.json",
+      "size": 1508,
+      "sha256": "9691d56262c1778c7f5c0f305ecc2bc964c9fd241b5daa8ca8092dbb190b92c7"
+    },
+    {
+      "path": "Tests/Golden/enhanced_mvp_sawmill_asset_family_v1.json",
+      "size": 1997,
+      "sha256": "44c6652c91b40b406439ebd8570c2abdc158ff8f7a256512c2940e7da97bb5cb"
+    },
+    {
+      "path": "Tests/Golden/enhanced_mvp_visible_content_v1.json",
+      "size": 153601,
+      "sha256": "69662176d886c7429d02ad7300cbaec7da3223ce5e6b64fef7e75a0e9f1da22e"
+    },
+    {
+      "path": "Tests/Golden/enhanced_mvp_world_style_anchors_v1.json",
+      "size": 8910,
+      "sha256": "896e0eedaa5d3835d0a1adae10b584d1c00e9f5c6be168a8898b31bcd165656f"
+    },
+    {
+      "path": "Tests/Golden/lubeck_grain_shortage_v1.json",
+      "size": 1182,
+      "sha256": "59084574c5d256a2e45d4f5bee1a67e6c56d7e6f8a7f890a1e70eeee41443e32"
+    },
+    {
+      "path": "Tests/Golden/mvp_production_chains_v1.json",
+      "size": 228,
+      "sha256": "263194e35808d851cc341d79831c55a9612b24028a8652829bda6397ebe5cfbc"
+    },
+    {
+      "path": "Tests/Native/HansaRoadTopologyContract.cpp",
+      "size": 1182,
+      "sha256": "0e572cc242801270098dae8b02ed554fa43ad299241f7b7e75e0f13f330e7c6c"
+    },
+    {
+      "path": "Tests/Python/__pycache__/test_terrain_contract.cpython-312.pyc",
+      "size": 10176,
+      "sha256": "782728b266e90de4860ab2ada97eb34ed0714afffa0365d1aab4c08fcec4c2fa"
+    },
+    {
+      "path": "Tests/Python/test_terrain_contract.py",
+      "size": 5361,
+      "sha256": "064be8b41d93dc7762ac1945df9fae5855fe593ab3b1a840e85065ac195305ad"
+    },
+    {
+      "path": "Tests/README.md",
+      "size": 4825,
+      "sha256": "98648970b421dc0fe2954f0cf77d76e5a2b00ee10f91a1c340c3e0efa5e7a014"
+    }
+  ]
+}

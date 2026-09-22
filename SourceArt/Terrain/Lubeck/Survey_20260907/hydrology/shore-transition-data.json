@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "dimensions": [
+    2017,
+    2017
+  ],
+  "mode": "geospatial data derivation; no image generation",
+  "channels": {
+    "R": "distance outside OSM water / 32 metres, saturated",
+    "G": "nearest authored water-spline level / 400 centimetres",
+    "B": "distance outside authored linear water spline footprint / 32 metres, saturated"
+  },
+  "waterLevelsCm": [
+    90,
+    232,
+    355
+  ],
+  "worldUv": "(P.xy + float2(201550,201650))/403200",
+  "sourceSha256": {
+    "osm-water-complete.json": "e6ffaa5263ae5b16f1fc9f8760a7d4172cbf3f9b679a2db1d6174245bc21bf3a",
+    "water-build.json": "aa4dda886323a1dbfc63b3de2b66d0e77ac7071a9b298690fc753ec2a85b434c",
+    "shore-wetness.png": "72b61418d83c4e5e8d7defb205841c2a5c64ab503fa7581cdeed6e371f9cb29b"
+  },
+  "limitations": "Modern draft geography; 2m source grid, nearest-reach levels are an approximation near confluences. No change to measured elevation or Water actors."
+}

@@ -1,4 +1,7 @@
 Below is a sequential prompt pack. Run them in order so asset names and compound definitions remain consistent.
+
+Mandatory skill requirement: Use `$hansamodels` for this prompt pack. Invoke and follow the complete skill workflow whenever any prompt creates, revises, evaluates, exports, verifies, or imports a 3D asset, including asset corrections discovered during later integration and polish work. Do not substitute an abbreviated modelling workflow.
+
 Prompt 1 — Audit assets and create the missing labour-housing kit
 Use $hansamodels.
 

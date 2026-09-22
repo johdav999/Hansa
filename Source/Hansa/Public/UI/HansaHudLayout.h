@@ -9,7 +9,7 @@ namespace Hansa::UI
 		FIntPoint ViewportSize = FIntPoint(1280, 720);
 		float SafeArea = 16.0f;
 		float TopBarHeight = 64.0f;
-		float AlertWidth = 320.0f;
+		float AlertWidth = 260.0f;
 		float AlertExpandedHeight = 256.0f;
 		float BottomWidth = 720.0f;
 		float BottomHeight = 76.0f;

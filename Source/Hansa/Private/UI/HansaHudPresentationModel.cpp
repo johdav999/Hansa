@@ -30,7 +30,7 @@ bool operator==(const FHansaHudPresentationSnapshot& Left, const FHansaHudPresen
 		HudPresentationModelTextEqual(Left.Population, Right.Population) && HudPresentationModelTextEqual(Left.Workforce, Right.Workforce) &&
 		Left.WealthyCitizens.EqualTo(Right.WealthyCitizens) && Left.MoneyTrendTooltip.EqualTo(Right.MoneyTrendTooltip) && Left.TopProducts == Right.TopProducts &&
 		Left.bRemoteCityView == Right.bRemoteCityView && HudPresentationModelTextEqual(Left.CityBreadcrumb, Right.CityBreadcrumb) && HudPresentationModelTextEqual(Left.DateAndSeason, Right.DateAndSeason) &&
-		HudPresentationModelTextEqual(Left.Research, Right.Research) && HudPresentationModelTextEqual(Left.Connection, Right.Connection) &&
+		HudPresentationModelTextEqual(Left.ResearchPoints, Right.ResearchPoints) && HudPresentationModelTextEqual(Left.Research, Right.Research) && HudPresentationModelTextEqual(Left.Connection, Right.Connection) &&
 		Left.Speed == Right.Speed && Left.Alerts == Right.Alerts && Left.Notifications == Right.Notifications &&
 		HudPresentationModelTextEqual(Left.SelectionSummary, Right.SelectionSummary) && HudPresentationModelTextEqual(Left.InspectorTitle, Right.InspectorTitle) &&
 		HudPresentationModelTextEqual(Left.InspectorSummary, Right.InspectorSummary) &&
@@ -60,7 +60,7 @@ void UHansaHudPresentationModel::InitializeDefaults()
 	Defaults.MoneyTrendTooltip=LOCTEXT("MonthlyPending","Money change over the last 30 game days, including all income and spending. Waiting for a complete observed month; history restarts after loading a game.");
 	Defaults.CityBreadcrumb = LOCTEXT("DefaultCityBreadcrumb", "Free City  /  Lübeck");
 	Defaults.DateAndSeason = LOCTEXT("DefaultDateSeason", "Day 1 · 12:00");
-	Defaults.Research = LOCTEXT("DefaultResearch", "Guild influence 14");
+	Defaults.Research = LOCTEXT("DefaultResearch", "Research unavailable"); Defaults.ResearchPoints=FText::FromString(TEXT("—"));
 	Defaults.Connection = LOCTEXT("DefaultConnection", "Connected");
 	Defaults.SelectionSummary = LOCTEXT("DefaultSelection", "Build and selection");
 	FHansaHudAlertPresentation Objective;
@@ -205,7 +205,7 @@ FHansaHudProductSummary UHansaHudPresentationModel::BuildBreadBalance(
 }
 
 void UHansaHudPresentationModel::ApplyRuntimeStatus(const Hansa::Simulation::FHansaSimulationProjection& Projection,
- const Hansa::Simulation::FHansaCityDefinitionId CityId,const Hansa::Simulation::FHansaHouseId HouseId)
+ const Hansa::Simulation::FHansaCityDefinitionId CityId,const Hansa::Simulation::FHansaHouseId HouseId, const Hansa::Simulation::FHansaEconomicRegistry* Registry)
 {
  auto Updated=Snapshot;
  const auto* House=Projection.GetHouses().FindByPredicate([&](const auto& H){return H.Id==HouseId;});
@@ -243,7 +243,17 @@ void UHansaHudPresentationModel::ApplyRuntimeStatus(const Hansa::Simulation::FHa
  Updated.TopProducts={BuildBreadBalance(BreadMarket,Projection.GetClock().GetMinutesPerTick())};
  const Hansa::Simulation::FHansaCalendarProjection DisplayCalendar=Hansa::Game::PresentationClock::AtMidday(Calendar);
  Updated.DateAndSeason=FText::Format(LOCTEXT("RuntimeCalendar","Day {0} · {1}"),FText::AsNumber(DisplayCalendar.ElapsedDays+1),FText::FromString(FString::Printf(TEXT("%02d:%02d"),DisplayCalendar.HourOfDay,DisplayCalendar.MinuteOfHour)));
+ if(Registry){
+     const auto* Seasonal=Registry->GetNeeds().FindByPredicate([](const auto& N){return N.bSeasonal && N.SeasonDays>0;});
+     if(Seasonal){
+         const int64 Days=Calendar.ElapsedDays;
+         const int32 Index=Seasonal->FixedSeason>=0?Seasonal->FixedSeason:int32((Days/Seasonal->SeasonDays)%4);
+         const FText Seasons[]={LOCTEXT("Summer","Summer"),LOCTEXT("Autumn","Autumn"),LOCTEXT("Winter","Winter"),LOCTEXT("Spring","Spring")};
+         Updated.DateAndSeason=FText::Format(LOCTEXT("SeasonCampaignYear","{0} · Year {1}"),Seasons[FMath::Clamp(Index,0,3)],FText::AsNumber(Days/(Seasonal->SeasonDays*4LL)+1));
+     }
+ }
  const auto* Research=Projection.GetResearch().FindByPredicate([&](const auto& R){return R.HouseId==HouseId;});
+ Updated.ResearchPoints=Research?FText::AsNumber(Research->AvailableResearchPoints):FText::FromString(TEXT("—"));
  Updated.Research=Research?FText::Format(LOCTEXT("RuntimeResearch","Research · {0} points available"),FText::AsNumber(Research->AvailableResearchPoints)):LOCTEXT("ResearchUnavailable","Research unavailable");
  ApplySnapshot(Updated);
 }

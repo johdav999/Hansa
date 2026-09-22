@@ -1,5 +1,9 @@
 # Hansa — Editor and AI-Assisted Authoring Architecture
 
+## Regional production definitions
+
+Regional economy content follows the normal generic definition path. `UHansaProductionChainDefinition` and `UHansaRegionEconomicProfileDefinition` are stable-ID primary assets with schema metadata, deterministic hashes, compiler validation, JSON-schema/export compatibility, and compiled runtime forms. `UHansaCityMarketProfileDefinition` owns the region reference and city industry bindings. Editor tooling edits these relationships as references and must not introduce a parallel produced-goods list. Impact analysis includes chain → recipe, region → chain/good/city, and city → region/chain edges. Runtime/editor parity also covers industry blockers, incoming shipment projections, save fields, and state hashing.
+
 ## 1. Purpose
 
 This document defines the approach for a first-class Hansa authoring environment inside Unreal Editor. It covers:
@@ -778,3 +782,44 @@ From this point, use the feature-parity contract rather than scheduling “edito
 - [Tripo auto-rigging documentation](https://developers.tripo3d.ai/en/docs/animations-rig)
 - [ElevenLabs text-to-dialogue API](https://elevenlabs.io/docs/api-reference/text-to-dialogue/convert)
 - [ElevenLabs text-to-sound-effects API](https://elevenlabs.io/docs/api-reference/text-to-sound-effects/convert)
+
+
+## Residential compound parcels (2026-09-14)
+
+Residential compounds use one logical building with data-driven instanced children and an explicitly larger occupied footprint. The compound schema, editor validation, draft binding, save compatibility, road access and preview contract are documented in [Residential compounds — prompt 2](Development/ResidentialCompounds-Prompt2.md). Existing 8 × 8 m residences must not be expanded or visually shrunk to accommodate multiple houses.
+
+
+### Authored labour courts and ground surfaces (2026-09-15)
+
+The prompt 3 compound pack and exact promotion snapshot are documented in [LabourHousingCompounds-Prompt3.md](Development/LabourHousingCompounds-Prompt3.md). The existing slot Group admits Surface for walkable ground sheets only: positive XY sizing, unit Z scale, at most 2cm geometry/placed height. Structural slots retain exact unit scale and overlap/access checks. This adds no serialized property or save-format change; revised metadata and JSON schema describe the compatible semantics. AuthoredCourts tests reject tall fake surfaces and validate every stage/context and stable upgrade alternative. Generated definitions remain staged until explicit snapshot approval; the opt-in preview commandlet cannot promote them.
+
+### Compound terrain fitting (2026-09-15)
+
+Compound Surface slots now describe walkable coverage rather than visible flat sheets. The runtime and native Details preview fit each structure, yard and access path to terrain, and placement validates the same 15-degree / 120cm support policy. Existing definition serialization and content hashes are preserved; metadata and impact reporting describe the compatible change. Native material authoring reuses approved textures without a generation provider. See [implementation, migration and evidence contract](Development/CompoundTerrainPlacement.md).
+
+### Labour court decoration (2026-09-15)
+Existing weighted variants now include occasional bounded yaw alternatives; new optional props and early fence runs reuse approved meshes. Every possible rotated envelope remains subject to the same doorway, path, overlap and footprint validators. No schema change. See [revision and catalogue compatibility](Development/LabourCourtDecoration.md).
+
+### Continuous labour-court boundaries (2026-09-16)
+R05 keeps the existing schema and exact unit scale. Required fence runs close three sides, with the local +X road front open. Validation permits only bounded thin fence end joints; overlapping structures, stacked fences and crossing panels remain invalid. Principal yaw may be within 25 degrees of +X, and every variant still proves path/doorway clearance. Catalogue v21 preserves the native v20 baseline and tests both lineages. See [court revision](Development/LabourCourtDecoration.md).
+
+### Artisan presentation family — 2026-09-16
+
+`AHansaResidencePresentation` exposes optional `VariantC` and `VariantD` in native Blueprint Details alongside A/B. Both additional meshes enable four-way deterministic parcel selection; incomplete optional pairs preserve the legacy two-way path. This is cosmetic actor metadata, not a new gameplay definition schema or simulation field. The artisan Data Asset uses the existing presentation class/mesh schema, validation and dependency impact analysis. Catalog v22, the seed builder and full-manifest reconstruction tests account for the new paths. The generation source pack retains ImageGen prompts, packed Blender source, exports, mesh/material checks and the binding diff under `SourceArt/Generated/Buildings/ArtisanHouse`. Developer preview levels stay NeverCook; no generation SDK or provider identity enters runtime code.
+
+
+### Artisan street plots — 2026-09-16
+
+Residential compounds now validate Laborer and Artisan household tiers. Owning-building tier/footprint checks, larger-parcel new-ID binding rules, generic schema, impact analysis and native previews apply equally to both. Two equally weighted artisan layouts use the existing persistent parcel seed; decorative workshops create no simulation production or extra residents. Compound JSON export now preserves localization identity using Unreal complex text strings while retaining compatibility with existing plain-string imports. See [Artisan plots](Development/ArtisanPlots.md) for catalogue and rollback contracts.
+
+### Lumber-camp resource survey — 2026-09-16
+
+Recipe.FellTimber now checks standing trees against the immutable placement survey. Native recipe metadata, deterministic survey export/validation, topology impact and verified pre-tree save migration are described in [Lumber tree proximity](Development/LumberTreeProximity.md). Existing inspector components expose the causal blocker; no provider, media promotion or new economic-definition field is introduced.
+
+### Compact labour courts — 2026-09-17
+R07 reduces all four labour-court families to 75% of their former occupied area on the four-metre grid, preserves full-size buildings, adds existing lean-tos in early stages, and updates all twelve stage bindings. No schema field changes; native validation, catalogue v27, exact v26 reconstruction and new-game compatibility are documented in [Compact labour courts](Development/CompactLabourCourts.md).
+
+
+### Water navigation parity — 2026-09-17
+
+The user explicitly adds a starting selectable Cog and manual sailing across connected navigable water on the complete current map, including rivers. This supersedes the earlier river-navigation exclusion for this local exploration feature. Reuse the approved cargo inspector and ship assets. Right-click sets a course; right-drag retains camera panning. See [ship navigation contract](Development/ShipNavigation.md) for authoritative commands, terrain validation, save migration, semantic controls and evidence.

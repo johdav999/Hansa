@@ -21,7 +21,7 @@ bool FHansaPromotedFamilyTest::RunTest(const FString& Parameters)
         {TEXT("LumberCamp"), TEXT("hansa-lumber-camp"), 5},
         {TEXT("Sawmill"), TEXT("hansa-sawmill"), 5},
         {TEXT("Residence_Laborer"), TEXT("hansa-residences"), 1},
-        {TEXT("Residence_Artisan"), TEXT("hansa-residences"), 1},
+        {TEXT("Residence_Artisan"), TEXT("hansa-artisan-houses"), 1},
         {TEXT("Market"), TEXT("hansa-market"), 6},
         {TEXT("Dock"), TEXT("hansa-harbor"), 7}
     };

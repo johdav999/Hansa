@@ -106,6 +106,7 @@ void UHansaInspectorPresentationModel::BuildProductionDetail(
             Label.ReplaceInline(TEXT("_"), TEXT(" "));
             if(const auto* Good=Registry.FindGood(Amount.GoodId); Good && !Good->DisplayName.IsEmpty())Label=Good->DisplayName;
             Port.Label = FText::FromString(Label); Port.PerBatch = Amount.QuantityMilliUnits;
+            if(const auto* Total=P.OutputTotals.FindByPredicate([&](const auto& T){return T.GoodId.ToString()==Amount.GoodId;})) Port.ProducedTotal=Total->QuantityMilliUnits;
             Port.bStockKnown = Stockpile != nullptr;
             if (Stockpile)
             {
@@ -152,13 +153,22 @@ void UHansaInspectorPresentationModel::ApplyProductionConnectivity()
     else
     {
         Row.Value = FText::FromName(D.MarketAccessCode);
-        Row.State = FText::FromString(TEXT("Disconnected"));
+        Row.State = NSLOCTEXT("HansaInspector", "MarketNotInRange", "Market not in range");
     }
     Snapshot.Flows.Add(MoveTemp(Row));
 
     if (D.bHasMarketAccess && !D.bDeliveryBlocked) return;
     Snapshot.Causal.RelatedSemanticId = TEXT("BuildMenu.Category.Roads");
     Snapshot.Causal.Severity = EHansaCausalSeverity::Warning;
+    if (D.MarketAccessCode == TEXT("MarketNotInRange"))
+    {
+        Snapshot.Causal.StableCode = D.MarketAccessCode;
+        Snapshot.Causal.Problem = NSLOCTEXT("HansaInspector", "MarketNotInRange", "Market not in range");
+        Snapshot.Causal.Cause = NSLOCTEXT("HansaInspector", "MarketRangeCause", "The shortest completed road route exceeds the market's transport range.");
+        Snapshot.Causal.Remedy = NSLOCTEXT("HansaInspector", "MarketRangeRemedy", "Build a closer market or shorten the road route. Goods transport resumes when a market is in range.");
+        Snapshot.Causal.RelatedSemanticId = TEXT("BuildMenu.Category.Civic");
+        return;
+    }
     if (D.bDeliveryBlocked)
     {
         Snapshot.Causal.StableCode = TEXT("DeliveryBlocked");

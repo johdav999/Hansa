@@ -1,0 +1,100 @@
+[
+  {
+    "material": "M_MaltHouse_Brick",
+    "portable_material": "M_MaltHouse_Brick_Portable",
+    "maps": {
+      "BaseColor": "Model/Textures/T_MaltHouse_Brick_BaseColor.png",
+      "Roughness": "Model/Textures/T_MaltHouse_Brick_Roughness.png",
+      "NormalGL": "Model/Textures/T_MaltHouse_Brick_NormalGL.png"
+    },
+    "extent_m": 2.5,
+    "baked_density_px_m": 409.6,
+    "source": "malt-brick.png",
+    "normal_convention": "OpenGL +Y",
+    "metallic": 0
+  },
+  {
+    "material": "M_MaltHouse_Clay",
+    "portable_material": "M_MaltHouse_Clay_Portable",
+    "maps": {
+      "BaseColor": "Model/Textures/T_MaltHouse_Clay_BaseColor.png",
+      "Roughness": "Model/Textures/T_MaltHouse_Clay_Roughness.png",
+      "NormalGL": "Model/Textures/T_MaltHouse_Clay_NormalGL.png"
+    },
+    "extent_m": 2.5,
+    "baked_density_px_m": 409.6,
+    "source": "malt-clay.png",
+    "normal_convention": "OpenGL +Y",
+    "metallic": 0
+  },
+  {
+    "material": "M_MaltHouse_Iron",
+    "portable_material": "M_MaltHouse_Iron_Portable",
+    "maps": {
+      "BaseColor": "Model/Textures/T_MaltHouse_Iron_BaseColor.png",
+      "Roughness": "Model/Textures/T_MaltHouse_Iron_Roughness.png",
+      "NormalGL": "Model/Textures/T_MaltHouse_Iron_NormalGL.png"
+    },
+    "extent_m": 2.5,
+    "baked_density_px_m": 409.6,
+    "source": "procedural",
+    "normal_convention": "OpenGL +Y",
+    "metallic": 0.78
+  },
+  {
+    "material": "M_MaltHouse_Mortar",
+    "portable_material": "M_MaltHouse_Mortar_Portable",
+    "maps": {
+      "BaseColor": "Model/Textures/T_MaltHouse_Mortar_BaseColor.png",
+      "Roughness": "Model/Textures/T_MaltHouse_Mortar_Roughness.png",
+      "NormalGL": "Model/Textures/T_MaltHouse_Mortar_NormalGL.png"
+    },
+    "extent_m": 2.5,
+    "baked_density_px_m": 409.6,
+    "source": "procedural",
+    "normal_convention": "OpenGL +Y",
+    "metallic": 0
+  },
+  {
+    "material": "M_MaltHouse_Oak",
+    "portable_material": "M_MaltHouse_Oak_Portable",
+    "maps": {
+      "BaseColor": "Model/Textures/T_MaltHouse_Oak_BaseColor.png",
+      "Roughness": "Model/Textures/T_MaltHouse_Oak_Roughness.png",
+      "NormalGL": "Model/Textures/T_MaltHouse_Oak_NormalGL.png"
+    },
+    "extent_m": 2.5,
+    "baked_density_px_m": 409.6,
+    "source": "oak.png",
+    "normal_convention": "OpenGL +Y",
+    "metallic": 0
+  },
+  {
+    "material": "M_MaltHouse_Recess",
+    "portable_material": "M_MaltHouse_Recess_Portable",
+    "maps": {
+      "BaseColor": "Model/Textures/T_MaltHouse_Recess_BaseColor.png",
+      "Roughness": "Model/Textures/T_MaltHouse_Recess_Roughness.png",
+      "NormalGL": "Model/Textures/T_MaltHouse_Recess_NormalGL.png"
+    },
+    "extent_m": 2.5,
+    "baked_density_px_m": 409.6,
+    "source": "procedural",
+    "normal_convention": "OpenGL +Y",
+    "metallic": 0
+  },
+  {
+    "material": "M_MaltHouse_Sacking",
+    "portable_material": "M_MaltHouse_Sacking_Portable",
+    "maps": {
+      "BaseColor": "Model/Textures/T_MaltHouse_Sacking_BaseColor.png",
+      "Roughness": "Model/Textures/T_MaltHouse_Sacking_Roughness.png",
+      "NormalGL": "Model/Textures/T_MaltHouse_Sacking_NormalGL.png"
+    },
+    "extent_m": 2.5,
+    "baked_density_px_m": 409.6,
+    "source": "procedural",
+    "normal_convention": "OpenGL +Y",
+    "metallic": 0
+  }
+]

@@ -34,7 +34,33 @@ namespace Hansa::Simulation
 		RouteCargoTransferred,
 		RouteCargoMissed,
 		ResearchQueued,
-		ResearchCompleted
+		ResearchCompleted,
+		HeatingReserveChanged,
+        ProductionModeChanged,
+        ProductionUpgradeQueued,
+        HouseholdAvailabilityChanged,
+        RouteTradeSettled,
+        ShipMoveOrdered,
+        ShipArrived,
+		SpotTradeCompleted,
+		SpotTradePartial,
+		SpotTradeMissed,
+		TradeStationProposed,
+		TradeStationFunded,
+		TradeStationConstructionCompleted,
+		TradeStationClosed,
+        StationOrderChanged,
+        StationOrderExecuted,
+		PresenceContributionAccepted,
+		PresenceUpgradeRequested,
+		PresenceUpgradeFunded,
+		PresenceUpgradeCompleted,
+		PresenceSpecializationApplied,
+		CityPrivilegeGranted,
+		CityPrivilegeRevoked,
+		CityProjectFunded,
+		CityProjectCompleted,
+		CityAuthorityTransitioned
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaDomainEventType Type);
@@ -53,6 +79,8 @@ namespace Hansa::Simulation
 		[[nodiscard]] FHansaBuildingId GetBuildingId() const { return BuildingId; }
 		[[nodiscard]] FHansaRouteId GetRouteId() const { return RouteId; }
 		[[nodiscard]] FHansaVehicleId GetVehicleId() const { return VehicleId; }
+		[[nodiscard]] FHansaTradeStationId GetTradeStationId() const { return TradeStationId; }
+        uint64 GetStationOrderId() const { return StationOrderId; }
 		[[nodiscard]] const FHansaCityDefinitionId& GetCityId() const { return CityId; }
 		[[nodiscard]] const FHansaGoodId& GetGoodId() const { return GoodId; }
 		[[nodiscard]] EHansaRouteCargoActionKind GetRouteCargoActionKind() const { return RouteCargoActionKind; }
@@ -79,6 +107,8 @@ namespace Hansa::Simulation
 		FHansaBuildingId BuildingId;
 		FHansaRouteId RouteId;
 		FHansaVehicleId VehicleId;
+		FHansaTradeStationId TradeStationId;
+        uint64 StationOrderId = 0;
 		FHansaCityDefinitionId CityId;
 		FHansaGoodId GoodId;
 		EHansaRouteCargoActionKind RouteCargoActionKind = EHansaRouteCargoActionKind::Load;

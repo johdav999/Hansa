@@ -1,0 +1,5 @@
+# tannery
+
+Mode: built-in ImageGen generate. Requested 1024 square. Generated 1254x1254. Master retained. Inspection: native subject and silhouette accepted; display variant QA pending.
+
+One transparent construction icon for Hansa: medieval Hanseatic tannery live-work house, cream lime plaster with dark oak framing, steep orange-red tiled gable roof, two storeys. Beside the house a clearly visible open working yard with three round wooden tanning vats, dull brown liquid below the rims, and two tall timber drying racks with irregular tan cattle hides suspended by cords. Original plausible northern German medieval workshop, no modern equipment, no fantasy, no text, no people, no street or raised terrain slab. Realistically painted miniature, three-quarter elevated view from front-right showing the vats and hides clearly, soft upper-left illumination, natural muted warm materials, compact legible silhouette. Match navy/brass Hansa construction tray and Smithy icon style. Transparent clean alpha, no fringe, request native1024x1024 with generous margin. Single tannery only.

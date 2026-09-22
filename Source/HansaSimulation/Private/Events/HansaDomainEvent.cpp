@@ -26,6 +26,27 @@ namespace Hansa::Simulation
 		case EHansaDomainEventType::RouteArrived: return TEXT("RouteArrived");
 		case EHansaDomainEventType::RouteCargoTransferred: return TEXT("RouteCargoTransferred");
 		case EHansaDomainEventType::RouteCargoMissed: return TEXT("RouteCargoMissed");
+		case EHansaDomainEventType::ProductionModeChanged: return TEXT("ProductionModeChanged");
+		case EHansaDomainEventType::ProductionUpgradeQueued: return TEXT("ProductionUpgradeQueued");
+		case EHansaDomainEventType::ShipMoveOrdered: return TEXT("ShipMoveOrdered");
+        case EHansaDomainEventType::ShipArrived: return TEXT("ShipArrived");
+		case EHansaDomainEventType::SpotTradeCompleted: return TEXT("SpotTradeCompleted");
+		case EHansaDomainEventType::SpotTradePartial: return TEXT("SpotTradePartial");
+		case EHansaDomainEventType::SpotTradeMissed: return TEXT("SpotTradeMissed");
+		case EHansaDomainEventType::TradeStationProposed: return TEXT("TradeStationProposed");
+		case EHansaDomainEventType::TradeStationFunded: return TEXT("TradeStationFunded");
+		case EHansaDomainEventType::TradeStationConstructionCompleted: return TEXT("TradeStationConstructionCompleted");
+		case EHansaDomainEventType::TradeStationClosed: return TEXT("TradeStationClosed");
+        case EHansaDomainEventType::StationOrderChanged: return TEXT("StationOrderChanged");
+        case EHansaDomainEventType::StationOrderExecuted: return TEXT("StationOrderExecuted");
+		case EHansaDomainEventType::PresenceContributionAccepted: return TEXT("PresenceContributionAccepted");
+		case EHansaDomainEventType::PresenceUpgradeRequested: return TEXT("PresenceUpgradeRequested");
+		case EHansaDomainEventType::PresenceUpgradeFunded: return TEXT("PresenceUpgradeFunded");
+		case EHansaDomainEventType::PresenceUpgradeCompleted: return TEXT("PresenceUpgradeCompleted");
+		case EHansaDomainEventType::PresenceSpecializationApplied: return TEXT("PresenceSpecializationApplied");
+        case EHansaDomainEventType::RouteTradeSettled: return TEXT("RouteTradeSettled");
+        case EHansaDomainEventType::HouseholdAvailabilityChanged: return TEXT("HouseholdAvailabilityChanged");
+		case EHansaDomainEventType::HeatingReserveChanged: return TEXT("HeatingReserveChanged");
 		case EHansaDomainEventType::ResearchQueued: return TEXT("ResearchQueued");
 		case EHansaDomainEventType::ResearchCompleted: return TEXT("ResearchCompleted");
 		default: return TEXT("UnknownDomainEvent");
@@ -34,6 +55,8 @@ namespace Hansa::Simulation
 
 	FString FHansaDomainEvent::ToDebugString() const
 	{
+        if (Type == EHansaDomainEventType::StationOrderChanged || Type == EHansaDomainEventType::StationOrderExecuted)
+            return FString::Printf(TEXT("DomainEvent[type=%s;sequence=%llu;tick=%lld;station=%s;order=%llu;good=%s;quantity=%lld;moneyDelta=%lld]"),LexToString(Type),GlobalSequence,Tick.GetValue(),*TradeStationId.ToDebugString(),StationOrderId,*GoodId.ToString(),Value,RelatedValue);
 		if (Type == EHansaDomainEventType::BuildingPlaced)
 		{
 			return FString::Printf(

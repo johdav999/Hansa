@@ -4,6 +4,67 @@
 #include "HansaScenarioDefinitions.generated.h"
 
 UENUM(BlueprintType)
+enum class EHansaAuthoredSessionSlotState : uint8
+{
+	Human = 0 UMETA(DisplayName = "Human"),
+	AI UMETA(DisplayName = "AI"),
+	Open UMETA(DisplayName = "Open"),
+	Closed UMETA(DisplayName = "Closed"),
+	Reserved UMETA(DisplayName = "Reserved")
+};
+
+/** Authored bounds for one stable scenario house slot. */
+USTRUCT(BlueprintType)
+struct HANSA_API FHansaAuthoredScenarioSlotRule
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Multiplayer", meta = (
+		DisplayName = "Slot ID", ToolTip = "Stable scenario-local slot identity; never a connection or provider account.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "false", HansaAIAccess = "Generate",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "SessionSlotId"))
+	FString SlotId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Multiplayer", meta = (
+		DisplayName = "House ID", ToolTip = "Stable authoritative house identity assigned to this slot.", ClampMin = "1",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "false", HansaAIAccess = "Generate",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "UniquePositive",
+		HansaUnit = "StableIdentity", HansaMin = "1", HansaMax = "9223372036854775807"))
+	int64 HouseId = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Multiplayer", meta = (
+		DisplayName = "Default state", ToolTip = "Slot state used when a new lobby is created.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "AllowedSessionSlotState"))
+	EHansaAuthoredSessionSlotState DefaultState = EHansaAuthoredSessionSlotState::Closed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Multiplayer", meta = (
+		DisplayName = "Allowed states", ToolTip = "Unique slot states the server may select for this authored house.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "false", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "UniqueSessionSlotStates"))
+	TArray<EHansaAuthoredSessionSlotState> AllowedStates;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Multiplayer|Teams", meta = (
+		DisplayName = "Authored team ID", ToolTip = "Optional stable team identity; zero leaves team selection unconstrained.", ClampMin = "0",
+		HansaRequired = "false", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "NonNegative",
+		HansaUnit = "StableIdentity", HansaMin = "0", HansaMax = "9223372036854775807"))
+	int64 AuthoredTeamId = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Multiplayer|Teams", meta = (
+		DisplayName = "Team required", ToolTip = "Requires a nonzero team identity for this slot.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Boolean"))
+	bool bTeamRequired = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Multiplayer", meta = (
+		DisplayName = "Allow human takeover", ToolTip = "Allows an authorized human to replace AI control atomically in later session policy.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Boolean"))
+	bool bAllowHumanTakeover = true;
+};
+
+UENUM(BlueprintType)
 enum class EHansaAuthoredObjectiveMetric : uint8
 {
 	HouseMoneyAtLeast = 0 UMETA(DisplayName = "House money at least"),
@@ -110,7 +171,7 @@ protected:
 
 /** Scenario start policy, alternate endings and bounded insolvency defeat contract. */
 UCLASS(BlueprintType, meta = (
-	DisplayName = "Scenario definition", HansaSchemaId = "Hansa.ScenarioDefinition", HansaSchemaVersion = "1"))
+	DisplayName = "Scenario definition", HansaSchemaId = "Hansa.ScenarioDefinition", HansaSchemaVersion = "3"))
 class HANSA_API UHansaScenarioDefinition final : public UHansaDefinitionBase
 {
 	GENERATED_BODY()
@@ -129,6 +190,12 @@ public:
 		HansaRequired = "true", HansaReference = "Victory", HansaBulkEditable = "false", HansaAIAccess = "Generate",
 		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "ScenarioEndings"))
 	TArray<FString> VictoryIds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Scenario|Multiplayer", meta = (
+		DisplayName = "Multiplayer slots", ToolTip = "Two through eight stable house slots and their server-enforced lobby state constraints.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "false", HansaAIAccess = "Generate",
+		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "ScenarioSessionSlots"))
+	TArray<FHansaAuthoredScenarioSlotRule> MultiplayerSlots;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Scenario|Failure", meta = (
 		DisplayName = "Insolvency threshold", ToolTip = "House money at or below this amount starts the defeat sustain timer.",
@@ -151,8 +218,8 @@ public:
 	FText Briefing;
 
 	virtual void ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const override;
+	virtual void PostLoad() override;
 
 protected:
 	virtual void AppendDefinitionHashData(FString& InOutCanonicalData) const override;
 };
-

@@ -1,0 +1,34 @@
+[
+  {
+    "file": "etopo.tif",
+    "url": "https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO2022/data/60s/60s_bed_elev_gtif/ETOPO_2022_v1_60s_N90W180_bed.tif",
+    "sha256": "a2cc72f8a4292dee928f439069457cdefc1fba319876807c626edce40258ba7a",
+    "bytes": 478386633,
+    "accessed_utc": "2026-09-18T05:49:22.388182+00:00",
+    "license": "NOAA ETOPO: free private, academic and commercial use"
+  },
+  {
+    "file": "land.zip",
+    "url": "https://naturalearth.s3.amazonaws.com/10m_physical/ne_10m_land.zip",
+    "sha256": "e547d749445eaa0964aba76738090ec88f5e63c4585122170f98c67a7ea922dc",
+    "bytes": 3269070,
+    "accessed_utc": "2026-09-18T05:49:24.735564+00:00",
+    "license": "Natural Earth: public domain"
+  },
+  {
+    "file": "lakes.zip",
+    "url": "https://naturalearth.s3.amazonaws.com/10m_physical/ne_10m_lakes.zip",
+    "sha256": "0803a06f9c3cb4671d89b68c48b142aad9366ba40f665245e12a913fbc61722a",
+    "bytes": 2349685,
+    "accessed_utc": "2026-09-18T05:49:26.759059+00:00",
+    "license": "Natural Earth: public domain"
+  },
+  {
+    "file": "rivers.zip",
+    "url": "https://naturalearth.s3.amazonaws.com/10m_physical/ne_10m_rivers_lake_centerlines.zip",
+    "sha256": "ded71b01870855ccfe19b51f2ec14c9bb48fae23c0e9f3c11974d426433b5c38",
+    "bytes": 2079507,
+    "accessed_utc": "2026-09-18T05:49:28.997714+00:00",
+    "license": "Natural Earth: public domain"
+  }
+]

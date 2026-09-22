@@ -21,6 +21,24 @@ inline int64 Price(const FHansaSimulationProjection& P,const TCHAR* City)
 {
     const auto* M=P.GetMarkets().FindByPredicate([&](const auto& X){return X.CityId.ToString()==City&&X.GoodId.ToString()==TEXT("Good.Bread");});return M?M->CurrentPriceMilliMarks:-1;
 }
+inline bool UnlockReserveAutomation(UHansaRuntimeSimulationHost* Host)
+{
+    if (!Host) return false;
+    const TCHAR* Technologies[] = {
+        TEXT("Technology.Commerce.MarketReports"),
+        TEXT("Technology.Commerce.TransactionFriction"),
+        TEXT("Technology.Commerce.ReserveAutomation")
+    };
+    for (const TCHAR* Technology : Technologies)
+    {
+        if (Host->IsTechnologyCompleted(Technology)) continue;
+        if (!Host->QueueResearch(Technology)) return false;
+        for (int32 Tick = 0; Tick < 64 && !Host->IsTechnologyCompleted(Technology); ++Tick)
+            if (!Host->AdvanceTicks(1)) return false;
+        if (!Host->IsTechnologyCompleted(Technology)) return false;
+    }
+    return true;
+}
 inline FString Evidence(UHansaRuntimeSimulationHost* Host, uint64 Route)
 {
     const auto P=Host->BuildProjection().Value;

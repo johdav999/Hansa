@@ -82,6 +82,30 @@ namespace Hansa::Editor::Schema
 		return FString();
 	}
 
+ // Export nested reflected objects as real schemas, including asset access policy.
+ // A compound layout's slots, variants and access graph must not become untyped JSON blobs.
+ void WriteNestedSchema(const FProperty* Property,const TSharedRef<TJsonWriter<>>& Writer,int32 Depth=0)
+ {
+  Writer->WriteValue(TEXT("type"),JsonTypeForProperty(Property));
+  Writer->WriteValue(TEXT("description"),Property->GetToolTipText().ToString());
+  for(const auto& Pair:{TPair<FString,FString>(TEXT("x-hansa-ai-access"),TEXT("HansaAIAccess")),TPair<FString,FString>(TEXT("x-hansa-reference"),TEXT("HansaReference")),TPair<FString,FString>(TEXT("x-hansa-validation"),TEXT("HansaValidation"))})
+   if(Property->HasMetaData(*Pair.Value))Writer->WriteValue(Pair.Key,Property->GetMetaData(*Pair.Value));
+  if(Depth>12)return;
+  if(const auto* Array=CastField<FArrayProperty>(Property))
+  {
+   Writer->WriteObjectStart(TEXT("items"));WriteNestedSchema(Array->Inner,Writer,Depth+1);Writer->WriteObjectEnd();
+  }
+  else if(const auto* Struct=CastField<FStructProperty>(Property))
+  {
+   Writer->WriteValue(TEXT("additionalProperties"),false);Writer->WriteObjectStart(TEXT("properties"));
+   for(TFieldIterator<FProperty> It(Struct->Struct);It;++It)
+   {
+    Writer->WriteObjectStart(It->GetName());WriteNestedSchema(*It,Writer,Depth+1);Writer->WriteObjectEnd();
+   }
+   Writer->WriteObjectEnd();
+  }
+ }
+
 	bool ParseBooleanMetadata(const FProperty* Property, const FName Key)
 	{
 		return Property->GetMetaData(Key).Equals(TEXT("true"), ESearchCase::IgnoreCase);
@@ -306,9 +330,16 @@ FString FHansaEditorSchemaRegistry::ExportJsonSchema(const FHansaDefinitionClass
 		if (Property.JsonType == TEXT("array"))
 		{
 			Writer->WriteObjectStart(TEXT("items"));
-			Writer->WriteValue(TEXT("type"), Property.JsonItemType.IsEmpty() ? TEXT("string") : Property.JsonItemType);
+            if(const auto* Array=CastField<FArrayProperty>(Property.ReflectedProperty))Hansa::Editor::Schema::WriteNestedSchema(Array->Inner,Writer);
+            else Writer->WriteValue(TEXT("type"), Property.JsonItemType.IsEmpty() ? TEXT("string") : Property.JsonItemType);
 			Writer->WriteObjectEnd();
 		}
+        if(const auto* Struct=CastField<FStructProperty>(Property.ReflectedProperty))
+        {
+         Writer->WriteObjectStart(TEXT("properties"));
+         for(TFieldIterator<FProperty> It(Struct->Struct);It;++It){Writer->WriteObjectStart(It->GetName());Hansa::Editor::Schema::WriteNestedSchema(*It,Writer);Writer->WriteObjectEnd();}
+         Writer->WriteObjectEnd();Writer->WriteValue(TEXT("additionalProperties"),false);
+        }
 		if (Property.bReadOnly)
 		{
 			Writer->WriteValue(TEXT("readOnly"), true);

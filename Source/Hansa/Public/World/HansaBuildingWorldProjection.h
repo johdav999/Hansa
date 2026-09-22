@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Definitions/HansaResidentialCompoundDefinition.h"
 #include "Events/HansaDomainEvent.h"
 #include "GameFramework/Actor.h"
 #include "Queries/HansaSimulationReadOnly.h"
@@ -65,6 +66,24 @@ struct HANSA_API FHansaProductionWorldObservation
     UPROPERTY(BlueprintReadOnly) FString PresentationFailure;
 };
 
+/** Read-only compound evidence for editor tools, semantic automation and gameplay inspection. */
+USTRUCT(BlueprintType)
+struct HANSA_API FHansaCompoundWorldObservation
+{
+ GENERATED_BODY()
+ UPROPERTY(BlueprintReadOnly) bool bActive=false;
+ UPROPERTY(BlueprintReadOnly) FString DefinitionId;
+ UPROPERTY(BlueprintReadOnly) FString LayoutId;
+ UPROPERTY(BlueprintReadOnly) int32 InstanceCount=0;
+ UPROPERTY(BlueprintReadOnly) int32 BatchCount=0;
+ UPROPERTY(BlueprintReadOnly) int32 GroundSampleCount=0;
+ UPROPERTY(BlueprintReadOnly) double MaximumFoundationDepth=0;
+ UPROPERTY(BlueprintReadOnly) bool bTerrainComplete=false;
+ UPROPERTY(BlueprintReadOnly) int32 GrassExclusionCount=0;
+ UPROPERTY(BlueprintReadOnly) TArray<FString> Diagnostics;
+ UPROPERTY(BlueprintReadOnly) TArray<FHansaCompoundNode> WorldAccessNodes;
+};
+
 /** One managed, non-authoritative world representation of a placed building or road. */
 UCLASS(NotBlueprintable)
 class HANSA_API AHansaBuildingWorldProjectionActor final : public AActor
@@ -79,6 +98,7 @@ public:
 		const Hansa::Simulation::FHansaBuildingWorldProjection& Projection,
 		const AHansaLubeckWorldFoundation& Foundation, uint8 RoadNeighborMask = 0);
 	void SetSelected(bool bInSelected);
+    UFUNCTION(BlueprintPure, Category="Hansa|World|Projection") FHansaCompoundWorldObservation QueryCompound() const;
     void ApplyProduction(const Hansa::Simulation::FHansaProductionProjection* Production,
         TConstArrayView<Hansa::Simulation::FHansaInventoryProjection> Inventories);
     void SampleProduction(double TickFraction);
@@ -91,6 +111,8 @@ public:
 	[[nodiscard]] bool IsSelected() const { return bSelected; }
 	[[nodiscard]] bool IsRoad() const { return bRoad; }
 	[[nodiscard]] bool IsRoadDisconnectedIndicatorVisible() const { return bRoadDisconnected; }
+    UFUNCTION(BlueprintPure, Category="Hansa|World|Projection")
+    bool IsMarketNotInRangeIndicatorVisible() const { return bMarketNotInRange; }
 
 	UFUNCTION(BlueprintPure, Category = "Hansa|World|Projection")
 	int64 GetStableBuildingValue() const { return static_cast<int64>(BuildingId.GetValue()); }
@@ -110,7 +132,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
 	TObjectPtr<UChildActorComponent> BuildingPresentation;
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
 	TObjectPtr<UStaticMeshComponent> ConstructionPlaceholder;
 
@@ -121,30 +142,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
 	TArray<TObjectPtr<UStaticMeshComponent>> SelectionCornerSegments;
 
-	/** Transient inverted-hull copies of visible authored meshes; one set per selected actor only. */
-	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
-	TArray<TObjectPtr<UStaticMeshComponent>> SelectionContourMeshes;
-
-	/** Slightly larger blue shells separate the brass contour from bright terrain and dark shadows. */
-	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
-	TArray<TObjectPtr<UStaticMeshComponent>> SelectionHaloMeshes;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
 	TObjectPtr<UStaticMeshComponent> StatusMarker;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
 	TObjectPtr<UStaticMeshComponent> RoadDisconnectedMarker;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|World|Projection")
+    TObjectPtr<UStaticMeshComponent> MarketNotInRangeMarker;
+
 private:
 	void EnsureMaterials();
 	void ApplyVisualState();
 	void ConfigureSelectionFootprint(double Width, double Depth, double GroundZ);
-	void RebuildSelectionContours();
-	void DestroySelectionContours();
 	void SetSelectionDepthEnabled(bool bEnabled);
-	UStaticMeshComponent* CreateSelectionShell(
-		UStaticMeshComponent& Source, UMaterialInterface& Material, float WorldExpansion,
-		const TCHAR* LayerName, int32 SourceIndex);
 
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|World|Projection")
 	TObjectPtr<USceneComponent> SceneRoot;
@@ -167,9 +178,6 @@ private:
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMaterialInstanceDynamic>> DynamicMaterials;
 
-	UPROPERTY(Transient)
-	TObjectPtr<UMaterialInstanceDynamic> SelectionHaloMaterial;
-
 	Hansa::Simulation::FHansaBuildingId BuildingId;
 	FString BuildingDefinitionId;
 	Hansa::Simulation::EHansaBuildingWorldStatus WorldStatus =
@@ -180,6 +188,7 @@ private:
 	bool bSelected = false;
 	bool bRoad = false;
 	bool bRoadDisconnected = false;
+    bool bMarketNotInRange = false;
 	UPROPERTY(EditDefaultsOnly, Category = "Hansa|World|Projection", meta = (ClampMin = "0.0"))
 	float RoadDisconnectedRotationDegreesPerSecond = 45.0f;
 	FBox PresentationBounds = FBox(ForceInit);
@@ -202,7 +211,7 @@ public:
 		EHansaPlacementFeedback Feedback,
 		const FText& Reason,
 		const AHansaLubeckWorldFoundation& Foundation,
-		bool bDeferRoadFeedback = false);
+		bool bDeferRoadFeedback = false, uint8 AdjacentRoadMask = 0, uint64 ParcelSeed = 0);
 	void ApplyRoadPreview(
 		TConstArrayView<FHansaRoadPreviewCell> Cells,
 		EHansaPlacementFeedback Feedback,

@@ -64,13 +64,16 @@ namespace Hansa::Simulation
 			uint8 Max = 0;
 			if constexpr (std::is_same_v<T, EHansaConstructionState>) Max = 1;
 			else if constexpr (std::is_same_v<T, EHansaRouteMode>) Max = 1;
-			else if constexpr (std::is_same_v<T, EHansaRouteCargoActionKind>) Max = 1;
+			else if constexpr (std::is_same_v<T, EHansaRouteCargoActionKind>) Max = FormatVersion >= 16 ? 5 : 1;
 			else if constexpr (std::is_same_v<T, EHansaRouteLifecycleState>) Max = 3;
 			else if constexpr (std::is_same_v<T, EHansaRouteTransferOutcome>) Max = 3;
+			else if constexpr (std::is_same_v<T, EHansaSpotTradeSide>) Max = 1;
+			else if constexpr (std::is_same_v<T, EHansaSpotTradeOutcome>) Max = 3;
+			else if constexpr (std::is_same_v<T, EHansaSpotTradeBlocker>) Max = 5;
 			else if constexpr (std::is_same_v<T, EHansaResearchEffectKind>) Max = 7;
 			else if constexpr (std::is_same_v<T, EHansaPlacementTerrain>) Max = 2;
 			else if constexpr (std::is_same_v<T, EHansaGridRotation>) Max = 3;
-			else if constexpr (std::is_same_v<T, EHansaInventoryOwnerKind>) Max = 3;
+			else if constexpr (std::is_same_v<T, EHansaInventoryOwnerKind>) Max = static_cast<uint8>(EHansaInventoryOwnerKind::TradeStation);
 			else if constexpr (std::is_same_v<T, EHansaInventoryMovementKind>) Max = 5;
 			else if constexpr (std::is_same_v<T, EHansaProductionKind>) Max = 1;
 			else if constexpr (std::is_same_v<T, EHansaProductionBlocker>) Max = 8;
@@ -78,10 +81,24 @@ namespace Hansa::Simulation
 			else if constexpr (std::is_same_v<T, EHansaLogisticsRequestStatus>) Max = 2;
 			else if constexpr (std::is_same_v<T, EHansaLogisticsBottleneck>) Max = 6;
 			else if constexpr (std::is_same_v<T, EHansaLogisticsJobStatus>) Max = 4;
-			else if constexpr (std::is_same_v<T, EHansaLogisticsRoadPathFailure>) Max = 13;
+			else if constexpr (std::is_same_v<T, EHansaLogisticsRoadPathFailure>) Max = static_cast<uint8>(EHansaLogisticsRoadPathFailure::MarketNotInRange);
 			else if constexpr (std::is_same_v<T, EHansaCommandOrigin>) Max = 3;
 			else if constexpr (std::is_same_v<T, EHansaScenarioOutcome>) Max = 2;
-			else if constexpr (std::is_same_v<T, EHansaGameplayCommandType>) Max = 12;
+			else if constexpr (std::is_same_v<T, EHansaGameplayCommandType>) Max = static_cast<uint8>(EHansaGameplayCommandType::TransitionCityAuthority);
+			else if constexpr (std::is_same_v<T, EHansaPresenceUpgradeStatus>) Max = static_cast<uint8>(EHansaPresenceUpgradeStatus::Funded);
+			else if constexpr (std::is_same_v<T, EHansaPresenceHistoryKind>) Max = static_cast<uint8>(EHansaPresenceHistoryKind::SpecializationReversed);
+			else if constexpr (std::is_same_v<T, EHansaRemoteIndustryBlocker>) Max = static_cast<uint8>(EHansaRemoteIndustryBlocker::Disabled);
+			else if constexpr (std::is_same_v<T, EHansaForeignPresenceStatus>) Max = static_cast<uint8>(EHansaForeignPresenceStatus::Revoked);
+			else if constexpr (std::is_same_v<T, EHansaStationOrderSide>) Max = static_cast<uint8>(EHansaStationOrderSide::Release);
+            else if constexpr (std::is_same_v<T, EHansaStationOrderAction>) Max = static_cast<uint8>(EHansaStationOrderAction::Cancel);
+            else if constexpr (std::is_same_v<T, EHansaPresenceSpecializationAction>) Max = static_cast<uint8>(EHansaPresenceSpecializationAction::Respec);
+            else if constexpr (std::is_same_v<T, EHansaCityPrivilegeAction>) Max = static_cast<uint8>(EHansaCityPrivilegeAction::Revoke);
+            else if constexpr (std::is_same_v<T, EHansaCityPrivilegeStatus>) Max = static_cast<uint8>(EHansaCityPrivilegeStatus::Revoked);
+            else if constexpr (std::is_same_v<T, EHansaCityProjectStatus>) Max = static_cast<uint8>(EHansaCityProjectStatus::Completed);
+            else if constexpr (std::is_same_v<T, EHansaStationOrderOutcome>) Max = static_cast<uint8>(EHansaStationOrderOutcome::Cancelled);
+            else if constexpr (std::is_same_v<T, EHansaStationOrderBlocker>) Max = static_cast<uint8>(EHansaStationOrderBlocker::Arithmetic);
+            else if constexpr (std::is_same_v<T, EHansaTradeStationStatus>) Max = static_cast<uint8>(EHansaTradeStationStatus::Closed);
+            else if constexpr (std::is_same_v<T, EHansaTradeStationOperationalState>) Max = static_cast<uint8>(EHansaTradeStationOperationalState::Revoked);
 			else static_assert(std::is_same_v<T, EHansaRouteCargoCondition>, "Add save enum range");
 			if (Raw > Max) bValid = false;
 		}
@@ -149,6 +166,36 @@ namespace Hansa::Simulation
 #include "HansaSaveFields.inl"
 #include "HansaSaveValidation.inl"
 
+		// Format 7 could persist the cached research hash from the tick before
+		// completion. Accept only an exact reconstruction of that known stale hash;
+		// the stored payload, all other subsystem hashes and validation stay intact.
+		static bool MatchesStaleResearchCompletionHash(const FHansaSimulationState& State,
+			const FHansaSimulationDefinitionContext& Definitions, uint64 ExpectedHash)
+		{
+			const FHansaEconomicRegistry* Registry = Definitions.GetEconomicRegistry();
+			if (!Registry) return false;
+			for (int32 Index = 0; Index < State.Research.Num(); ++Index)
+			{
+				const auto& Research = State.Research[Index];
+				if (!Research.ActiveTechnologyId.IsEmpty()) continue;
+				for (const FString& TechnologyId : Research.CompletedTechnologyIds)
+				{
+					const auto* Technology = Registry->FindTechnology(TechnologyId);
+					if (!Technology || Technology->DurationTicks <= 1) continue;
+					FHansaSimulationState Previous = State;
+					auto& PriorResearch = Previous.Research[Index];
+					PriorResearch.ActiveTechnologyId = TechnologyId;
+					PriorResearch.ProgressTicks = Technology->DurationTicks - 1;
+					PriorResearch.CompletedTechnologyIds.Remove(TechnologyId);
+					PriorResearch.AppliedEffects.RemoveAll([&](const FHansaAppliedResearchEffect& Effect)
+						{ return Effect.SourceTechnologyId == TechnologyId; });
+					Previous.InvalidateAllStateHashCaches();
+					if (FHansaStateHasher::Compute(Previous, Definitions).GetOverallHash() == ExpectedHash)
+						return true;
+				}
+			}
+			return false;
+		}
 		static bool MigrateV5LocalLogistics(
 			FHansaSimulationState& State,
 			const FHansaEconomicRegistry* Registry)
@@ -208,6 +255,37 @@ namespace Hansa::Simulation
 			return true;
 		}
 
+        static bool MigrateNavigationCommandSchema(FHansaSaveSnapshot& Snapshot)
+        {
+            for (auto& Command:Snapshot.PendingCommands)
+            {
+                if (Command.Header.SchemaVersion!=7 || Command.Type==EHansaGameplayCommandType::MoveShip) return false;
+                Command.Header.SchemaVersion=FHansaCommandHeader::CurrentSchemaVersion;
+            }
+            return true;
+        }
+		static bool SeedInitialForeignPresences(FHansaSaveSnapshot& Snapshot, const FHansaEconomicRegistry* Registry)
+		{
+			if (!Registry) return false;
+			for (const FHansaHouseState& House : Snapshot.State.Houses)
+			{
+				for (const FHansaCityState& City : Snapshot.State.Cities)
+				{
+					const auto* Policy = Registry->FindCityTradePolicyForCity(City.DefinitionId.ToString());
+					if (!Policy || Policy->InitialStageId.IsEmpty()) continue;
+					const auto* Stage = Registry->FindPresenceStage(Policy->InitialStageId);
+					if (!Stage || !Policy->AllowedStageIds.Contains(Stage->StableId)) return false;
+					FHansaForeignPresenceState Presence;
+					Presence.HouseId=House.Id; Presence.CityId=City.DefinitionId; Presence.CurrentStageId=Stage->StableId;
+					Presence.GrantedCapabilityIds=Stage->GrantedCapabilityIds;
+					Presence.GrantedCapabilityIds.RemoveAll([&](const FString& Id){return Policy->DeniedCapabilityIds.Contains(Id);});
+					Presence.GrantedCapabilityIds.Sort(); Presence.EstablishedTick=Snapshot.State.Clock.GetTick(); Presence.LastUpgradeTick=Snapshot.State.Clock.GetTick();
+					Snapshot.State.ForeignPresences.Add(MoveTemp(Presence));
+				}
+			}
+			Snapshot.State.ForeignPresences.Sort([](const auto& Left,const auto& Right){return Left.HouseId!=Right.HouseId?Left.HouseId<Right.HouseId:Left.CityId<Right.CityId;});
+			Snapshot.State.InvalidateAllStateHashCaches(); return true;
+		}
 		void Value(FHansaSaveRouteLabel& V) { Value(V.RouteValue); Value(V.Label); }
 		void Value(FHansaGameplayCommand& V)
 		{
@@ -218,7 +296,7 @@ namespace Hansa::Simulation
 			HANSA_SAVE_COMMAND(CreateTestEntity); HANSA_SAVE_COMMAND(CancelTestEntity); HANSA_SAVE_COMMAND(NoOpTest);
 			HANSA_SAVE_COMMAND(SetProductionActive); HANSA_SAVE_COMMAND(PlaceBuilding); HANSA_SAVE_COMMAND(CancelConstruction);
 			HANSA_SAVE_COMMAND(RemoveBuilding); HANSA_SAVE_COMMAND(UpgradeResidence); HANSA_SAVE_COMMAND(CreateRoute);
-			HANSA_SAVE_COMMAND(EditRoute); HANSA_SAVE_COMMAND(SetRouteActive); HANSA_SAVE_COMMAND(CancelRoute); HANSA_SAVE_COMMAND(QueueResearch);
+			HANSA_SAVE_COMMAND(EditRoute); HANSA_SAVE_COMMAND(SetRouteActive); HANSA_SAVE_COMMAND(CancelRoute); HANSA_SAVE_COMMAND(QueueResearch); HANSA_SAVE_COMMAND(SetHeatingReserve); HANSA_SAVE_COMMAND(SetProductionMode); HANSA_SAVE_COMMAND(UpgradeProduction); HANSA_SAVE_COMMAND(SetHouseholdAvailability); HANSA_SAVE_COMMAND(MoveShip); HANSA_SAVE_COMMAND(SpotTrade); HANSA_SAVE_COMMAND(ProposeTradeStation); HANSA_SAVE_COMMAND(FundTradeStation); HANSA_SAVE_COMMAND(CloseTradeStation); HANSA_SAVE_COMMAND(ManageStationOrder); HANSA_SAVE_COMMAND(RequestPresenceUpgrade); HANSA_SAVE_COMMAND(FundPresenceUpgrade); HANSA_SAVE_COMMAND(ApplyPresenceSpecialization);
 #undef HANSA_SAVE_COMMAND
 			default: bValid = false;
 			}
@@ -299,6 +377,8 @@ namespace Hansa::Simulation
 			return Failure(EHansaSaveError::IncompatibleSimulation, TEXT("Simulation version is not supported by this build."));
 		FHansaSaveSnapshot Copy = Snapshot;
 		Copy.Players.Sort([](const auto& A, const auto& B) { return A.PrincipalId < B.PrincipalId; });
+		// Save integrity must be derived from records, independent of runtime caches.
+		Copy.State.InvalidateAllStateHashCaches();
 		FHansaSaveCodec Body; Payload(Body, Copy);
 		if (!Body.Finished()) return Failure(EHansaSaveError::InvalidSnapshot, TEXT("Save contains invalid values or exceeds archive limits."));
 		int32 CompressedSize = FCompression::CompressMemoryBound(NAME_Zlib, Body.Bytes.Num());
@@ -326,9 +406,34 @@ namespace Hansa::Simulation
 		if (!Header.Finished() || Header.Bytes.Num() > MaximumBytes - DigestBytes)
 			return Failure(EHansaSaveError::SizeLimitExceeded, TEXT("Save exceeds the 64 MiB archive limit."));
 		uint8 Digest[DigestBytes]; FSHA1::HashBuffer(Header.Bytes.GetData(), Header.Bytes.Num(), Digest);
-		Header.Bytes.Append(Digest, DigestBytes); OutBytes = MoveTemp(Header.Bytes);
+		Header.Bytes.Append(Digest, DigestBytes);
+		// Never publish success (or let a caller replace an existing slot) with
+		// an archive that the same build cannot read back.
+		FHansaSaveSnapshot Verified;
+		const FHansaSaveResult ReadBack = Decode(Header.Bytes, Definitions, Verified);
+		if (!ReadBack.IsSuccess() || !ReadBack.AppliedMigrations.IsEmpty() ||
+			ReadBack.AuthoritativeHash != Result.AuthoritativeHash || ReadBack.CampaignHash != Result.CampaignHash)
+			return Failure(EHansaSaveError::InvalidSnapshot, TEXT("Save round-trip verification failed; the existing save has not been replaced."));
+		OutBytes = MoveTemp(Header.Bytes);
 		return Result;
 	}
+
+#if WITH_DEV_AUTOMATION_TESTS
+	FHansaSaveResult FHansaSaveEnvelope::EncodeHistoricalFixtureForTests(const FHansaSaveSnapshot& Snapshot,
+		const FHansaSimulationDefinitionContext& Definitions,const uint32 FormatVersion,const uint32 FingerprintVersion,TArray<uint8>& OutBytes)
+	{
+		if(FormatVersion<1||FormatVersion>=CurrentFormatVersion||!Validate(Snapshot,Definitions))return Failure(EHansaSaveError::InvalidSnapshot,TEXT("Historical fixture request is invalid."));
+		FHansaSaveSnapshot Copy=Snapshot;Copy.Players.Sort([](const auto& A,const auto& B){return A.PrincipalId<B.PrincipalId;});Copy.State.InvalidateAllStateHashCaches();
+		FHansaSaveCodec Body;Body.FormatVersion=FormatVersion;Payload(Body,Copy);if(!Body.Finished())return Failure(EHansaSaveError::InvalidSnapshot,TEXT("Historical fixture body is invalid."));
+		int32 CompressedSize=FCompression::CompressMemoryBound(NAME_Zlib,Body.Bytes.Num());TArray<uint8> Compressed;Compressed.SetNumUninitialized(CompressedSize);
+		if(!FCompression::CompressMemory(NAME_Zlib,Compressed.GetData(),CompressedSize,Body.Bytes.GetData(),Body.Bytes.Num()))return Failure(EHansaSaveError::InvalidSnapshot,TEXT("Historical fixture compression failed."));Compressed.SetNum(CompressedSize);
+		FHansaSaveResult Result;Result.SourceFormatVersion=FormatVersion;Result.AuthoritativeHash=FHansaStateHasher::ComputeSavedVersion(Copy.State,Definitions,FingerprintVersion).GetOverallHash();Result.CampaignHash=HashBytes(Body.Bytes);
+		FHansaSaveCodec Header;uint32 M=Magic,Format=FormatVersion,Simulation=FHansaSimulationClock::CurrentSimulationVersion,Pipeline=FHansaSimulationState::CurrentSystemPipelineVersion,Fingerprint=FingerprintVersion;
+		uint64 Content=Definitions.GetDefinitionHash(),Registry=Definitions.GetEconomicRegistry()?Definitions.GetEconomicRegistry()->GetRegistryHash():0,Topology=Copy.State.CreateReadOnlyAccess(Definitions).GetPlacement().GetTopologyHash();FString Scenario=Definitions.GetScenarioId().ToString();
+		Header.Value(M);Header.Value(Format);Header.Value(Simulation);Header.Value(Pipeline);Header.Value(Fingerprint);Header.Value(Content);Header.Value(Registry);if(FormatVersion>=7)Header.Value(Topology);Header.Value(Scenario);Header.Value(Copy.BuildVersion);Header.Value(Copy.SavedUtc);if(FormatVersion>1){Header.Value(Copy.DisplayName);Header.Value(Copy.MigrationHistory);}Header.Value(Result.AuthoritativeHash);Header.Value(Result.CampaignHash);int32 Size=Body.Bytes.Num();Header.Value(Size);Header.Value(Compressed);
+		if(!Header.Finished())return Failure(EHansaSaveError::InvalidSnapshot,TEXT("Historical fixture header is invalid."));uint8 Digest[DigestBytes];FSHA1::HashBuffer(Header.Bytes.GetData(),Header.Bytes.Num(),Digest);Header.Bytes.Append(Digest,DigestBytes);OutBytes=MoveTemp(Header.Bytes);return Result;
+	}
+#endif
 
 	FHansaSaveResult FHansaSaveEnvelope::InspectMetadata(TConstArrayView<uint8> Bytes, FHansaSaveMetadata& OutMetadata)
 	{
@@ -381,8 +486,20 @@ namespace Hansa::Simulation
         const bool bLegacyResidenceConsumption = Format == 4 && Fingerprint == 17;
 		const bool bLegacyLocalLogistics = Format == 5 && Fingerprint == 18;
 		const bool bLegacyTopology = Format == 6 && Fingerprint == 19;
+        const bool bLegacyNavigation = Format == 9 && Fingerprint == 22;
+		const bool bLegacyPostNavigation = (Format == 10 && Fingerprint == 23) || (Format == 11 && Fingerprint == 24);
+		const bool bLegacySpotTrade = Format == 12 && Fingerprint == 25;
+		const bool bLegacyTradeStation = Format == 13 && Fingerprint == 26;
+		const bool bLegacyPresenceProgression = Format == 16 && Fingerprint == 28;
+		const bool bLegacyPresenceSpecializations = Format == 17 && Fingerprint == 29;
+		const bool bLegacyLeasedConstruction = Format == 18 && Fingerprint == 30;
+		const bool bLegacyPrivileges = Format == 19 && Fingerprint == 31;
+		const bool bLegacyTradeRecovery = Format == 20 && Fingerprint == 32;
+        const bool bLegacyRouteTargets = Format == 15 && Fingerprint == 28;
+        const bool bLegacyStationOrders = Format == 14 && Fingerprint == 27;
+        const bool bLegacyFood = (Format == 7 || Format == 8) && (Fingerprint == 20 || Fingerprint == 21);
         if (Simulation != FHansaSimulationClock::CurrentSimulationVersion || Pipeline != FHansaSimulationState::CurrentSystemPipelineVersion ||
-			(!bLegacyConsumption && !bLegacyResidenceConsumption && !bLegacyLocalLogistics && !bLegacyTopology &&
+			(!bLegacyConsumption && !bLegacyResidenceConsumption && !bLegacyLocalLogistics && !bLegacyTopology && !bLegacyFood && !bLegacyNavigation && !bLegacyPostNavigation && !bLegacySpotTrade && !bLegacyTradeStation && !bLegacyStationOrders && !bLegacyRouteTargets && !bLegacyPresenceProgression && !bLegacyPresenceSpecializations && !bLegacyLeasedConstruction && !bLegacyPrivileges && !bLegacyTradeRecovery &&
                 (Format != CurrentFormatVersion || Fingerprint != FHansaSimulationState::DeterminismFingerprintVersion)))
 			return Failure(EHansaSaveError::IncompatibleSimulation, TEXT("Save simulation rules differ from this build; an explicit migration is required."));
 		uint64 Content = 0, Registry = 0, PlacementTopologyHash = 0; FString Scenario;
@@ -402,8 +519,20 @@ namespace Hansa::Simulation
 				return Failure(EHansaSaveError::IncompatibleContent, TEXT("Save content/registry hash differs; install the original content or an explicit definition migration."));
 		}
 		if (Scenario != Definitions.GetScenarioId().ToString()) return Failure(EHansaSaveError::IncompatibleScenario, TEXT("Save belongs to a different scenario."));
-		if (Format >= 7 && PlacementTopologyHash != Definitions.GetPlacementTopologyHash())
-			return Failure(EHansaSaveError::IncompatibleContent, TEXT("Save placement topology differs; install the original map definition or an explicit topology migration."));
+        TSharedPtr<const FHansaPlacementTopology> PreTreeTopology;
+        if (Format >= 7 && PlacementTopologyHash != Definitions.GetPlacementTopologyHash())
+        {
+            // Only migrate an exact terrain/ownership match lacking the newly authored tree survey.
+            // Verify the saved state against that original topology before adding resource cells.
+            TArray<FHansaPlacementMapInitialization> Maps;
+            if (const auto* Current = Definitions.GetPlacementTopology()) Maps.Append(Current->GetMaps());
+            bool bHasTrees = false;
+            for (auto& Map : Maps) { bHasTrees |= !Map.TreeCells.IsEmpty(); Map.TreeCells.Reset(); }
+            auto Legacy = FHansaPlacementTopology::TryCreate(MoveTemp(Maps));
+            if (!bHasTrees || !Legacy || Legacy.Value.GetTopologyHash() != PlacementTopologyHash)
+                return Failure(EHansaSaveError::IncompatibleContent, TEXT("Save placement topology differs; install the original map definition or an explicit topology migration."));
+            PreTreeTopology = MakeShared<FHansaPlacementTopology>(MoveTemp(Legacy.Value));
+        }
 		FHansaSaveSnapshot Candidate; FHansaSaveResult Result; Result.SourceFormatVersion = Format;
 		if (DefinitionMigration.IsSet()) Result.AppliedMigrations.Add(DefinitionMigration.GetValue());
 		Header.Value(Candidate.BuildVersion); Header.Value(Candidate.SavedUtc);
@@ -439,7 +568,7 @@ namespace Hansa::Simulation
 		}
 		else
 		{
-			Candidate.State.Placement.Topology = Definitions.GetPlacementTopologyShared();
+			Candidate.State.Placement.Topology = PreTreeTopology.IsValid() ? PreTreeTopology : Definitions.GetPlacementTopologyShared();
 		}
 		if (Format < 3) { Result.AppliedMigrations.Add(TEXT("Hansa.Save.2To3.EmptyCosmeticRouteLabels")); Candidate.MigrationHistory.Add(TEXT("Hansa.Save.2To3.EmptyCosmeticRouteLabels")); }
 		TOptional<FHansaSimulationDefinitionContext> SavedDefinitions;
@@ -462,8 +591,17 @@ namespace Hansa::Simulation
 				bLegacyResidenceConsumption ? FHansaStateHasher::ComputeLegacyV17(Candidate.State, *HashDefinitions) :
 				bLegacyLocalLogistics ? FHansaStateHasher::ComputeLegacyV18(Candidate.State, *HashDefinitions) :
 				bLegacyTopology ? FHansaStateHasher::ComputeLegacyV19(Candidate.State, *HashDefinitions) :
-				FHansaStateHasher::Compute(Candidate.State, *HashDefinitions)).GetOverallHash() != Result.AuthoritativeHash)
-			return Failure(EHansaSaveError::CorruptData, TEXT("Authoritative save records or round-trip hash are invalid."));
+				FHansaStateHasher::ComputeSavedVersion(Candidate.State, *HashDefinitions, Fingerprint)).GetOverallHash() != Result.AuthoritativeHash)
+		{
+			if (Format != 7 || Fingerprint != 20 || DefinitionMigration.IsSet() ||
+				!Validate(Candidate, Definitions) ||
+				!FHansaSaveCodec::MatchesStaleResearchCompletionHash(Candidate.State, Definitions, Result.AuthoritativeHash))
+				return Failure(EHansaSaveError::CorruptData, TEXT("Authoritative save records or round-trip hash are invalid."));
+			const FString Migration = TEXT("Hansa.Save.7.RepairStaleResearchCompletionHash");
+			Result.AppliedMigrations.Add(Migration);
+			Candidate.MigrationHistory.Add(Migration);
+			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+		}
 		if (Format < 6)
 		{
 			if (!FHansaSaveCodec::MigrateV5LocalLogistics(Candidate.State, Definitions.GetEconomicRegistry()))
@@ -472,6 +610,134 @@ namespace Hansa::Simulation
 			Result.AppliedMigrations.Add(Migration);
 			Candidate.MigrationHistory.Add(Migration);
 			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+		}
+        if (PreTreeTopology.IsValid())
+        {
+            Candidate.State.Placement.Topology = Definitions.GetPlacementTopologyShared();
+            Candidate.State.InvalidateAllStateHashCaches();
+            const FString Migration = TEXT("Hansa.Save.7.AddStandingTreeSurvey");
+            Result.AppliedMigrations.Add(Migration);
+            Candidate.MigrationHistory.Add(Migration);
+            Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+        }
+        if (Format < 10)
+        {
+            if (!FHansaSaveCodec::MigrateNavigationCommandSchema(Candidate))
+                return Failure(EHansaSaveError::CorruptData,TEXT("Legacy pending ship command schema is invalid."));
+            const FString Migration=TEXT("Hansa.Save.9To10.PreserveLegacyShipBerths");
+            Result.AppliedMigrations.Add(Migration);Candidate.MigrationHistory.Add(Migration);
+            Result.AuthoritativeHash=FHansaStateHasher::Compute(Candidate.State,Definitions).GetOverallHash();
+        }
+		if (Format < 12)
+		{
+			if (!FHansaSaveCodec::SeedInitialForeignPresences(Candidate, Definitions.GetEconomicRegistry())) return Failure(EHansaSaveError::CorruptData, TEXT("Legacy foreign presence could not be migrated safely."));
+			const FString Migration = TEXT("Hansa.Save.11To12.SeedAuthoredForeignPresence");
+			Result.AppliedMigrations.Add(Migration); Candidate.MigrationHistory.Add(Migration);
+			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+		}
+		if (Format < 13)
+		{
+			for (FHansaGameplayCommand& Pending : Candidate.PendingCommands)
+			{
+				if (Pending.Header.SchemaVersion != 8 || Pending.Type == EHansaGameplayCommandType::SpotTrade)
+					return Failure(EHansaSaveError::CorruptData, TEXT("Legacy pending command schema is invalid for spot-trade migration."));
+				Pending.Header.SchemaVersion = FHansaCommandHeader::CurrentSchemaVersion;
+			}
+			Candidate.State.InvalidateAllStateHashCaches();
+			const FString Migration = TEXT("Hansa.Save.12To13.AddSpotTradeReceipts");
+			Result.AppliedMigrations.Add(Migration); Candidate.MigrationHistory.Add(Migration);
+			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+		}
+		if (Format < 14)
+		{
+			for (FHansaGameplayCommand& Pending : Candidate.PendingCommands)
+			{
+				const uint16 ExpectedSchema = Format == 13 ? 9 : FHansaCommandHeader::CurrentSchemaVersion;
+				if (Pending.Header.SchemaVersion != ExpectedSchema || Pending.Type == EHansaGameplayCommandType::ProposeTradeStation || Pending.Type == EHansaGameplayCommandType::FundTradeStation || Pending.Type == EHansaGameplayCommandType::CloseTradeStation)
+					return Failure(EHansaSaveError::CorruptData, TEXT("Legacy pending command schema is invalid for trade-station migration."));
+				Pending.Header.SchemaVersion = FHansaCommandHeader::CurrentSchemaVersion;
+			}
+			Candidate.State.InvalidateAllStateHashCaches();
+			const FString Migration = TEXT("Hansa.Save.13To14.AddTradeStationLifecycle");
+			Result.AppliedMigrations.Add(Migration); Candidate.MigrationHistory.Add(Migration);
+			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+		}
+        if (Format < 15)
+        {
+            for (auto& Pending : Candidate.PendingCommands)
+            {
+                const uint16 Expected = Format == 14 ? 10 : FHansaCommandHeader::CurrentSchemaVersion;
+                if (Pending.Header.SchemaVersion != Expected || Pending.Type == EHansaGameplayCommandType::ManageStationOrder)
+                    return Failure(EHansaSaveError::CorruptData, TEXT("Legacy pending order command is invalid."));
+                Pending.Header.SchemaVersion = FHansaCommandHeader::CurrentSchemaVersion;
+            }
+            Candidate.State.InvalidateAllStateHashCaches();
+            const FString Migration = TEXT("Hansa.Save.14To15.AddStationOrders");
+            Result.AppliedMigrations.Add(Migration); Candidate.MigrationHistory.Add(Migration);
+            Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+        }
+        if (Format < 16)
+        {
+            // Append-only action values: preserve every old city action, receipt and fingerprint.
+            const FString Migration = TEXT("Hansa.Save.15To16.ExplicitRouteTargets");
+            Result.AppliedMigrations.Add(Migration); Candidate.MigrationHistory.Add(Migration);
+        }
+		if(Format<17)
+		{
+			for(auto& Pending:Candidate.PendingCommands){const uint16 Expected=Format==16?11:FHansaCommandHeader::CurrentSchemaVersion;if(Pending.Header.SchemaVersion!=Expected||Pending.Type==EHansaGameplayCommandType::RequestPresenceUpgrade||Pending.Type==EHansaGameplayCommandType::FundPresenceUpgrade)return Failure(EHansaSaveError::CorruptData,TEXT("Legacy pending presence-upgrade command is invalid."));Pending.Header.SchemaVersion=FHansaCommandHeader::CurrentSchemaVersion;}
+			Candidate.State.InvalidateAllStateHashCaches();const FString Migration=TEXT("Hansa.Save.16To17.AddPresenceProgression");Result.AppliedMigrations.Add(Migration);Candidate.MigrationHistory.Add(Migration);Result.AuthoritativeHash=FHansaStateHasher::Compute(Candidate.State,Definitions).GetOverallHash();
+		}
+		if(Format<18)
+		{
+			for(auto& Pending:Candidate.PendingCommands){if(Pending.Header.SchemaVersion!=12||Pending.Type==EHansaGameplayCommandType::ApplyPresenceSpecialization)return Failure(EHansaSaveError::CorruptData,TEXT("Legacy pending specialization command is invalid."));Pending.Header.SchemaVersion=FHansaCommandHeader::CurrentSchemaVersion;}
+			for(auto& Presence:Candidate.State.ForeignPresences){Presence.ActiveSpecializationIds.Reset();Presence.SpecializationRevision=0;}
+			Candidate.State.InvalidateAllStateHashCaches();const FString Migration=TEXT("Hansa.Save.17To18.AddMerchantOfficeSpecializationsAndPriceLimits");Result.AppliedMigrations.Add(Migration);Candidate.MigrationHistory.Add(Migration);Result.AuthoritativeHash=FHansaStateHasher::Compute(Candidate.State,Definitions).GetOverallHash();
+		}
+		if(Format<19)
+		{
+			const auto* LeaseRegistry = Definitions.GetEconomicRegistry();
+			for(auto& Lease:Candidate.State.LeasedPlots)
+			{
+				const auto* Policy=LeaseRegistry?LeaseRegistry->FindCityTradePolicyForCity(Lease.CityId.ToString()):nullptr;
+				const auto* Site=Policy?Policy->TradeStationSites.FindByPredicate([&](const auto& V){return V.SiteId==Lease.SiteId;}):nullptr;
+				if(!Site)return Failure(EHansaSaveError::CorruptData,TEXT("Legacy leased plot has no authored site."));
+				Lease.BoundsMin=Site->LeaseBoundsMin;Lease.BoundsMax=Site->LeaseBoundsMax;Lease.PermittedBuildingCategories=Site->PermittedBuildingCategories;Lease.OccupyingBuildingIds.Reset();
+			}
+			Candidate.State.InvalidateAllStateHashCaches();const FString Migration=TEXT("Hansa.Save.18To19.AddBoundedForeignConstructionRights");Result.AppliedMigrations.Add(Migration);Candidate.MigrationHistory.Add(Migration);Result.AuthoritativeHash=FHansaStateHasher::Compute(Candidate.State,Definitions).GetOverallHash();
+		}
+		if(Format<20)
+		{
+			for(auto& Pending:Candidate.PendingCommands){if(Pending.Header.SchemaVersion!=13||Pending.Type==EHansaGameplayCommandType::ManageCityPrivilege||Pending.Type==EHansaGameplayCommandType::FundCityProject||Pending.Type==EHansaGameplayCommandType::TransitionCityAuthority)return Failure(EHansaSaveError::CorruptData,TEXT("Legacy pending privilege/project/charter command is invalid."));Pending.Header.SchemaVersion=FHansaCommandHeader::CurrentSchemaVersion;}
+			for(auto& Presence:Candidate.State.ForeignPresences){Presence.Privileges.Reset();Presence.CityProjects.Reset();Presence.bGovernanceAuthority=false;Presence.GovernanceCharterId.Reset();Presence.AuthorityRevision=0;}
+			Candidate.State.InvalidateAllStateHashCaches();const FString Migration=TEXT("Hansa.Save.19To20.AddCityPrivilegesProjectsAndCharters");Result.AppliedMigrations.Add(Migration);Candidate.MigrationHistory.Add(Migration);Result.AuthoritativeHash=FHansaStateHasher::Compute(Candidate.State,Definitions).GetOverallHash();
+		}
+		if(Format<21)
+		{
+			for(auto& Station:Candidate.State.TradeStations)
+			{
+				Station.OperationalState=Station.Status==EHansaTradeStationStatus::Closed?EHansaTradeStationOperationalState::VoluntarilyClosed:
+					Station.Status==EHansaTradeStationStatus::Suspended?EHansaTradeStationOperationalState::RightsSuspended:EHansaTradeStationOperationalState::Active;
+				Station.OperationalStateChangedTick=Station.Status==EHansaTradeStationStatus::Active?Station.CompletedTick:Candidate.State.Clock.GetTick();
+				Station.OutstandingUpkeepPfennig=0;
+			}
+			Candidate.State.InvalidateAllStateHashCaches();const FString Migration=TEXT("Hansa.Save.20To21.AddRecoverableTradeStationInterruptions");Result.AppliedMigrations.Add(Migration);Candidate.MigrationHistory.Add(Migration);Result.AuthoritativeHash=FHansaStateHasher::Compute(Candidate.State,Definitions).GetOverallHash();
+		}
+		if(const auto* RecoveryRegistry=Definitions.GetEconomicRegistry())
+		{
+			for(const auto& Station:Candidate.State.TradeStations)
+			{
+				const auto* Policy=RecoveryRegistry->FindCityTradePolicyForCity(Station.CityId.ToString());
+				if(!Policy)return Failure(EHansaSaveError::IncompatibleContent,TEXT("Trade-station recovery stopped: a city policy was removed. Restore compatible content or provide an explicit migration."));
+				const auto* Site=Policy->TradeStationSites.FindByPredicate([&](const auto& V){return V.SiteId==Station.SiteId;});
+				if(!Site)return Failure(EHansaSaveError::IncompatibleContent,TEXT("Trade-station recovery stopped: a station-site definition is missing. Restore it or provide an explicit migration."));
+				const auto* Lease=Candidate.State.LeasedPlots.FindByPredicate([&](const auto& V){return V.Id==Station.LeasedPlotId;});
+				if(!Lease)return Failure(EHansaSaveError::CorruptData,TEXT("Trade-station recovery stopped: the saved leased plot record is missing; restore a backup."));
+				if(Lease->BoundsMin.X!=Site->LeaseBoundsMin.X||Lease->BoundsMin.Y!=Site->LeaseBoundsMin.Y||Lease->BoundsMax.X!=Site->LeaseBoundsMax.X||Lease->BoundsMax.Y!=Site->LeaseBoundsMax.Y)
+					return Failure(EHansaSaveError::IncompatibleContent,TEXT("Trade-station recovery stopped: a leased plot changed bounds. Use an explicit plot migration; saved cargo and buildings were not deleted."));
+				const auto* Presence=Candidate.State.ForeignPresences.FindByPredicate([&](const auto& V){return V.HouseId==Station.OwnerId&&V.CityId==Station.CityId;});
+				if(Station.Status==EHansaTradeStationStatus::Active&&(!Presence||!Presence->GrantedCapabilityIds.Contains(TEXT("PresenceCapability.TradeStation"))))
+					return Failure(EHansaSaveError::IncompatibleContent,TEXT("Trade-station recovery stopped: the active presence no longer grants the TradeStation capability. Restore compatible rules or provide an explicit capability migration."));
+			}
 		}
 		if (!Validate(Candidate, Definitions))
 			return Failure(EHansaSaveError::CorruptData, TEXT("Migrated authoritative save records are invalid."));
@@ -498,6 +764,11 @@ namespace Hansa::Simulation
 			Candidate.State.InvalidateAllStateHashCaches();
 			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
 		}
+        if (Format < 8)
+        {
+            const FString Migration = TEXT("Hansa.Save.7To8.DefaultHouseholdHeatingPolicy");
+            Result.AppliedMigrations.Add(Migration); Candidate.MigrationHistory.Add(Migration);
+        }
 		if (DefinitionMigration.IsSet())
 		{
 			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();

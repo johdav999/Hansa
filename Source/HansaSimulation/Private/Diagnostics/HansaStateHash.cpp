@@ -164,6 +164,9 @@ namespace Hansa::Simulation
 		return ComputeVersion(State, Definitions, 19);
 	}
 
+    FHansaStateHashReport FHansaStateHasher::ComputeSavedVersion(const FHansaSimulationState& State,
+        const FHansaSimulationDefinitionContext& Definitions, uint32 Version)
+    { return ComputeVersion(State,Definitions,Version); }
     FHansaStateHashReport FHansaStateHasher::ComputeVersion(const FHansaSimulationState& State,
         const FHansaSimulationDefinitionContext& Definitions, const uint32 FingerprintVersion)
     {
@@ -229,7 +232,7 @@ namespace Hansa::Simulation
 			}));
 
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::SimulationMetadata, 1,
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				Builder.AddUInt32(State.Clock.GetVersion().GetValue());
 				Builder.AddInt64(State.Clock.GetTick().GetValue());
@@ -244,7 +247,7 @@ namespace Hansa::Simulation
 			}));
 
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::RandomStreams, State.RandomStreams.Num(),
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				for (const FHansaRandomStream& Stream : State.RandomStreams)
 				{
@@ -255,24 +258,74 @@ namespace Hansa::Simulation
 				}
 			}));
 
-		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Houses, State.Houses.Num(),
-			[&State](FNormalizedHashBuilder& Builder)
+		const uint32 HouseRecordCount = State.Houses.Num() + (FingerprintVersion >= 25 ? State.ForeignPresences.Num() : 0) +
+			(FingerprintVersion >= 27 ? State.TradeStations.Num() + State.LeasedPlots.Num() : 0);
+		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Houses, HouseRecordCount,
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				for (const FHansaHouseState& House : State.Houses)
 				{
-					Builder.AddUInt64(House.Id.GetValue());
-					Builder.AddUInt32(House.Id.GetGeneration());
-					Builder.AddInt64(House.Money.GetRawValue());
+					Builder.AddUInt64(House.Id.GetValue()); Builder.AddUInt32(House.Id.GetGeneration()); Builder.AddInt64(House.Money.GetRawValue());
+				}
+				if (FingerprintVersion >= 25) for (const FHansaForeignPresenceState& Presence : State.ForeignPresences)
+				{
+					Builder.AddUInt64(Presence.HouseId.GetValue()); Builder.AddUInt32(Presence.HouseId.GetGeneration());
+					Builder.AddAsciiString(Presence.CityId.ToString()); Builder.AddAsciiString(Presence.CurrentStageId);
+					Builder.AddUInt32(static_cast<uint32>(Presence.GrantedCapabilityIds.Num()));
+					for (const FString& CapabilityId : Presence.GrantedCapabilityIds) Builder.AddAsciiString(CapabilityId);
+					Builder.AddInt64(Presence.Contributions.LawfulTradeVolumeMilliUnits); Builder.AddInt64(Presence.Contributions.CompletedDeliveryCount); Builder.AddInt64(Presence.Contributions.InvestedPfennig);
+					if(FingerprintVersion>=30){Builder.AddUInt32(Presence.ActiveSpecializationIds.Num());for(const FString& SpecializationId:Presence.ActiveSpecializationIds)Builder.AddAsciiString(SpecializationId);Builder.AddInt64(Presence.SpecializationRevision);}if(FingerprintVersion>=29){Builder.AddInt64(Presence.Contributions.TransactionValuePfennig);Builder.AddInt64(Presence.Contributions.FulfilledShortageMilliUnits);Builder.AddInt64(Presence.Contributions.ReliableOperatingTicks);Builder.AddInt64(Presence.Contributions.SolventOperatingTicks);Builder.AddUInt64(Presence.LastAcceptedContributionEventSequence);Builder.AddUInt8(static_cast<uint8>(Presence.Upgrade.Status));Builder.AddAsciiString(Presence.Upgrade.TargetStageId);Builder.AddUInt64(Presence.Upgrade.FundingInventoryId.GetValue());Builder.AddUInt32(Presence.Upgrade.FundingInventoryId.GetGeneration());Builder.AddInt64(Presence.Upgrade.RequestedTick.GetValue());Builder.AddInt64(Presence.Upgrade.FundedTick.GetValue());Builder.AddInt64(Presence.Upgrade.CompletionTick.GetValue());Builder.AddInt64(Presence.Upgrade.SpentMoneyPfennig);Builder.AddUInt32(Presence.History.Num());for(const auto& Entry:Presence.History){Builder.AddUInt8(static_cast<uint8>(Entry.Kind));Builder.AddInt64(Entry.Tick.GetValue());Builder.AddUInt64(Entry.SourceEventSequence);Builder.AddAsciiString(Entry.StageId);Builder.AddInt64(Entry.QuantityMilliUnits);Builder.AddInt64(Entry.MoneyPfennig);}}
+					if(FingerprintVersion>=32){Builder.AddUInt32(Presence.Privileges.Num());for(const auto& V:Presence.Privileges){Builder.AddAsciiString(V.PrivilegeId);Builder.AddUInt64(V.GrantedLeaseId.GetValue());Builder.AddUInt8((uint8)V.Status);Builder.AddInt64(V.GrantedTick.GetValue());Builder.AddInt64(V.ExpiryTick.GetValue());Builder.AddInt64(V.SpentMoneyPfennig);}Builder.AddUInt32(Presence.CityProjects.Num());for(const auto& V:Presence.CityProjects){Builder.AddAsciiString(V.ProjectId);Builder.AddUInt8((uint8)V.Status);Builder.AddInt64(V.FundedTick.GetValue());Builder.AddInt64(V.CompletionTick.GetValue());Builder.AddInt64(V.SpentMoneyPfennig);Builder.AddUInt8(V.bSharedEffectApplied?1:0);}Builder.AddUInt8(Presence.bGovernanceAuthority?1:0);Builder.AddAsciiString(Presence.GovernanceCharterId);Builder.AddInt64(Presence.GovernanceGrantedTick.GetValue());Builder.AddInt64(Presence.AuthorityRevision);}
+					Builder.AddUInt8(static_cast<uint8>(Presence.Status)); Builder.AddInt64(Presence.EstablishedTick.GetValue()); Builder.AddInt64(Presence.LastUpgradeTick.GetValue());
+					Builder.AddUInt64(Presence.StationId.GetValue()); Builder.AddUInt32(Presence.StationId.GetGeneration()); Builder.AddUInt64(Presence.LeasedPlotId.GetValue()); Builder.AddUInt32(Presence.LeasedPlotId.GetGeneration());
+				}
+				if (FingerprintVersion >= 27) for (const FHansaTradeStationState& Station : State.TradeStations)
+				{
+					Builder.AddUInt64(Station.Id.GetValue()); Builder.AddUInt32(Station.Id.GetGeneration()); Builder.AddUInt64(Station.OwnerId.GetValue()); Builder.AddUInt32(Station.OwnerId.GetGeneration());
+					Builder.AddAsciiString(Station.CityId.ToString()); Builder.AddAsciiString(Station.SiteId); Builder.AddUInt64(Station.InventoryId.GetValue()); Builder.AddUInt32(Station.InventoryId.GetGeneration());
+					Builder.AddUInt64(Station.FactorId.GetValue()); Builder.AddUInt32(Station.FactorId.GetGeneration()); Builder.AddUInt64(Station.LeasedPlotId.GetValue()); Builder.AddUInt32(Station.LeasedPlotId.GetGeneration());
+					Builder.AddUInt8(static_cast<uint8>(Station.Status)); Builder.AddInt64(Station.ProposedTick.GetValue()); Builder.AddInt64(Station.FundedTick.GetValue()); Builder.AddInt64(Station.CompletionTick.GetValue()); Builder.AddInt64(Station.CompletedTick.GetValue());
+					Builder.AddInt64(Station.UpkeepPfennigPerTick); Builder.AddInt64(Station.SpentMoneyRaw); Builder.AddUInt64(Station.FundingInventoryId.GetValue()); Builder.AddUInt32(Station.FundingInventoryId.GetGeneration());
+					Builder.AddUInt32(Station.SpentGoods.Num()); for (const auto& Cost : Station.SpentGoods) { Builder.AddAsciiString(Cost.GoodId.ToString()); Builder.AddInt64(Cost.Quantity.GetRawValue()); }
+                    if (FingerprintVersion >= 28) {
+                        Builder.AddUInt32(Station.Orders.Num());
+                        for (const auto& O : Station.Orders) {
+                            Builder.AddUInt64(O.Id); Builder.AddUInt64(O.LastCommandId.GetValue()); Builder.AddUInt32(O.LastCommandId.GetGeneration());
+                            Builder.AddAsciiString(O.Terms.GoodId.ToString()); Builder.AddUInt8(static_cast<uint8>(O.Terms.Side));
+                            Builder.AddInt64(O.Terms.TargetOrReserveMilliUnits); Builder.AddInt64(O.Terms.CapMilliUnits); Builder.AddInt64(O.Terms.TotalBudgetPfennig);
+                            if(FingerprintVersion>=30){Builder.AddInt64(O.Terms.LimitUnitPriceMilliMarks);Builder.AddInt64(O.Terms.ReviewedMarketUpdateTick);Builder.AddInt64(O.Terms.ReviewedUnitPriceMilliMarks);}
+                            Builder.AddUInt8(O.bPaused); Builder.AddUInt8(O.bCancelled); Builder.AddInt64(O.SpentPfennig); Builder.AddInt64(O.NextUpdateTick);
+                            Builder.AddUInt32(O.History.Num());
+                            for (const auto& E : O.History) {
+                                Builder.AddInt64(E.Tick); Builder.AddInt64(E.MarketUpdateTick); Builder.AddInt64(E.RequestedMilliUnits); Builder.AddInt64(E.AppliedMilliUnits);
+                                Builder.AddInt64(E.UnitPriceMilliMarks); Builder.AddInt64(E.MoneyDelta); Builder.AddUInt64(E.FirstMovementSequence); Builder.AddUInt64(E.LastMovementSequence);
+                                Builder.AddUInt8(static_cast<uint8>(E.Outcome)); Builder.AddUInt8(static_cast<uint8>(E.Blocker));
+                            }
+                        }
+                    }
+					if (FingerprintVersion >= 33) { Builder.AddUInt8(static_cast<uint8>(Station.OperationalState)); Builder.AddInt64(Station.OperationalStateChangedTick.GetValue()); Builder.AddInt64(Station.OutstandingUpkeepPfennig); }
+				}
+				if (FingerprintVersion >= 27) for (const FHansaLeasedPlotState& Lease : State.LeasedPlots)
+				{
+					Builder.AddUInt64(Lease.Id.GetValue()); Builder.AddUInt32(Lease.Id.GetGeneration()); Builder.AddUInt64(Lease.StationId.GetValue()); Builder.AddUInt32(Lease.StationId.GetGeneration());
+					Builder.AddUInt64(Lease.OwnerId.GetValue()); Builder.AddUInt32(Lease.OwnerId.GetGeneration()); Builder.AddAsciiString(Lease.CityId.ToString()); Builder.AddAsciiString(Lease.SiteId); Builder.AddAsciiString(Lease.PlotCategory);
+					if (FingerprintVersion >= 31) { Builder.AddInt64(Lease.BoundsMin.X); Builder.AddInt64(Lease.BoundsMin.Y); Builder.AddInt64(Lease.BoundsMax.X); Builder.AddInt64(Lease.BoundsMax.Y); Builder.AddUInt32(Lease.PermittedBuildingCategories.Num()); for (const FString& Category : Lease.PermittedBuildingCategories) Builder.AddAsciiString(Category); Builder.AddUInt32(Lease.OccupyingBuildingIds.Num()); for (const FHansaBuildingId BuildingId : Lease.OccupyingBuildingIds) { Builder.AddUInt64(BuildingId.GetValue()); Builder.AddUInt32(BuildingId.GetGeneration()); } }
+					Builder.AddUInt8(Lease.bActive ? 1 : 0); Builder.AddUInt8(Lease.bOccupied ? 1 : 0);
 				}
 			}));
-
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Cities, State.Cities.Num(),
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				for (const FHansaCityState& City : State.Cities)
 				{
 					Builder.AddAsciiString(City.DefinitionId.ToString());
 					Builder.AddInt64(City.AggregateStock.GetRawValue());
+                    if (FingerprintVersion >= 22) Builder.AddUInt8(City.bPreservedFishHouseholdAvailable ? 1 : 0);
+					if (City.HeatingReserveDays != -1 || City.bReleaseHeatingReserve)
+					{
+						Builder.AddInt64(City.HeatingReserveDays);
+						Builder.AddInt64(City.bReleaseHeatingReserve ? 1 : 0);
+					}
 				}
 			}));
 
@@ -294,7 +347,7 @@ namespace Hansa::Simulation
 			}));
 
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Vehicles, State.Vehicles.Num(),
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				for (const FHansaVehicleState& Vehicle : State.Vehicles)
 				{
@@ -311,11 +364,28 @@ namespace Hansa::Simulation
 					Builder.AddAsciiString(Vehicle.CurrentCityId.ToString());
 					Builder.AddInt64(Vehicle.UpkeepPfennigPerTravelTick);
 					Builder.AddInt64(Vehicle.AccruedUpkeepPfennig);
+					if (FingerprintVersion >= 26)
+					{
+						const FHansaSpotTradeRecord& T=Vehicle.LastSpotTrade;
+						Builder.AddUInt64(T.CommandId.GetValue()); Builder.AddUInt32(T.CommandId.GetGeneration()); Builder.AddInt64(T.Tick.GetValue());
+						Builder.AddUInt64(T.HouseId.GetValue()); Builder.AddUInt32(T.HouseId.GetGeneration()); Builder.AddUInt64(T.VehicleId.GetValue()); Builder.AddUInt32(T.VehicleId.GetGeneration());
+						Builder.AddAsciiString(T.CityId.ToString()); Builder.AddAsciiString(T.GoodId.ToString()); Builder.AddUInt8(static_cast<uint8>(T.Side));
+						Builder.AddInt64(T.RequestedQuantity.GetRawValue()); Builder.AddInt64(T.AppliedQuantity.GetRawValue()); Builder.AddUInt8(static_cast<uint8>(T.Outcome)); Builder.AddUInt8(static_cast<uint8>(T.Blocker));
+						Builder.AddInt64(T.MarketUpdateTick); Builder.AddInt64(T.UnitPriceMilliMarks); Builder.AddInt64(T.SettledMoneyRaw);
+					}                    if (FingerprintVersion >= 23)
+                    {
+                        const auto& N=Vehicle.Navigation;
+                        Builder.AddAsciiString(N.CityId.ToString());
+                        Builder.AddInt32(N.Home.X);Builder.AddInt32(N.Home.Y);
+                        Builder.AddInt32(N.Cell.X);Builder.AddInt32(N.Cell.Y);
+                        Builder.AddInt32(N.NextIndex);Builder.AddInt32(N.Path.Num());
+                        for (auto C:N.Path) { Builder.AddInt32(C.X);Builder.AddInt32(C.Y); }
+                    }
 				}
 			}));
 
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Routes, State.Routes.Num(),
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				for (const FHansaRouteState& Route : State.Routes)
 				{
@@ -359,6 +429,7 @@ namespace Hansa::Simulation
 					Builder.AddInt64(Route.LastTransfer.RequestedQuantity.GetRawValue());
 					Builder.AddInt64(Route.LastTransfer.AppliedQuantity.GetRawValue());
 					Builder.AddUInt8(static_cast<uint8>(Route.LastTransfer.Outcome));
+                    if (FingerprintVersion >= 22) { Builder.AddInt64(Route.LastTransfer.UnitPriceMilliMarks); Builder.AddInt64(Route.LastTransfer.SettledMoneyRaw); }
 				}
 			}));
 
@@ -367,10 +438,16 @@ namespace Hansa::Simulation
 			State.InventoryLedger.Reservations.Num() +
 			State.InventoryLedger.RecentMovements.Num());
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Inventories, InventoryRecordCount,
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				Builder.AddUInt32(static_cast<uint32>(State.InventoryLedger.MovementCapacity));
 				Builder.AddUInt64(State.InventoryLedger.LastMovementSequence);
+                if (FingerprintVersion >= 22)
+                {
+                    Builder.AddUInt32(State.InventoryLedger.Spoilage.Num());
+                    for (const auto& Loss : State.InventoryLedger.Spoilage)
+                    { Builder.AddAsciiString(Loss.GoodId.ToString()); Builder.AddInt64(Loss.RemainderNumerator); Builder.AddInt64(Loss.DestroyedMilliUnits); }
+                }
 				Builder.AddUInt32(static_cast<uint32>(State.InventoryLedger.Inventories.Num()));
 				for (const FHansaInventoryRecord& Inventory : State.InventoryLedger.Inventories)
 				{
@@ -382,13 +459,19 @@ namespace Hansa::Simulation
 					Builder.AddUInt32(Inventory.BuildingId.GetGeneration());
 					Builder.AddUInt64(Inventory.VehicleId.GetValue());
 					Builder.AddUInt32(Inventory.VehicleId.GetGeneration());
+					if (FingerprintVersion >= 27) { Builder.AddUInt64(Inventory.TradeStationId.GetValue()); Builder.AddUInt32(Inventory.TradeStationId.GetGeneration()); }
 					Builder.AddInt64(Inventory.Capacity.GetRawValue());
 					Builder.AddUInt32(static_cast<uint32>(Inventory.AcceptedGoods.Num()));
 					for (const FHansaGoodId& GoodId : Inventory.AcceptedGoods)
 					{
 						Builder.AddAsciiString(GoodId.ToString());
 					}
-					Builder.AddUInt32(static_cast<uint32>(Inventory.Stocks.Num()));
+					if (FingerprintVersion >= 22)
+                    {
+                        Builder.AddUInt32(Inventory.HouseholdExcludedGoods.Num());
+                        for (const auto Good : Inventory.HouseholdExcludedGoods) Builder.AddAsciiString(Good.ToString());
+                    }
+                    Builder.AddUInt32(static_cast<uint32>(Inventory.Stocks.Num()));
 					for (const FHansaInventoryStockRecord& Stock : Inventory.Stocks)
 					{
 						Builder.AddAsciiString(Stock.GoodId.ToString());
@@ -430,7 +513,7 @@ namespace Hansa::Simulation
 			ProductionRecordCount += static_cast<uint32>(Production.InputReservations.Num());
 		}
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Productions, ProductionRecordCount,
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				Builder.AddUInt64(State.NextProductionReservationValue);
 				Builder.AddUInt32(static_cast<uint32>(State.Productions.Num()));
@@ -461,7 +544,15 @@ namespace Hansa::Simulation
 					Builder.AddAsciiString(Production.BlockingGoodId.ToString());
 					Builder.AddInt64(Production.BlockingRequiredQuantity.GetRawValue());
 					Builder.AddInt64(Production.BlockingAvailableQuantity.GetRawValue());
-					Builder.AddUInt32(static_cast<uint32>(Production.InputReservations.Num()));
+					if (FingerprintVersion >= 22)
+                    {
+                        Builder.AddAsciiString(Production.RequestedRecipeId.ToString());
+                        Builder.AddUInt8(Production.bFallbackToFresh ? 1 : 0);
+                        Builder.AddAsciiString(Production.PendingUpgradeBuildingId.ToString());
+                        Builder.AddUInt32(Production.OutputTotals.Num());
+                        for(const auto& Total:Production.OutputTotals){Builder.AddAsciiString(Total.GoodId.ToString());Builder.AddInt64(Total.QuantityMilliUnits);}
+                    }
+                    Builder.AddUInt32(static_cast<uint32>(Production.InputReservations.Num()));
 					for (const FHansaProductionInputReservation& Reservation : Production.InputReservations)
 					{
 						Builder.AddAsciiString(Reservation.GoodId.ToString());
@@ -535,6 +626,16 @@ namespace Hansa::Simulation
 						Builder.AddInt32(Need.ReliabilityBasisPoints);
 						Builder.AddInt32(Need.SatisfactionBasisPoints);
 						Builder.AddInt64(Need.ReserveMilliDays);
+                        if (FingerprintVersion >= 22)
+                        {
+                            Builder.AddUInt32(Need.SuppliedGoods.Num());
+                            for (const auto& Supply : Need.SuppliedGoods)
+                            {
+                                Builder.AddAsciiString(Supply.GoodId.ToString());
+                                Builder.AddInt64(Supply.QuantityMilliUnits);
+                                Builder.AddInt64(Supply.FulfillmentMilliUnits);
+                            }
+                        }
 					}
                     if (FingerprintVersion >= 18)
                     {
@@ -549,6 +650,12 @@ namespace Hansa::Simulation
                                 Builder.AddAsciiString(Good.GoodId.ToString());
                                 Builder.AddInt64(Good.Required);
                                 Builder.AddInt64(Good.Consumed);
+                                if (FingerprintVersion >= 22)
+                                {
+                                    Builder.AddUInt32(Good.SuppliedGoods.Num());
+                                    for (const auto& G:Good.SuppliedGoods)
+                                    {Builder.AddAsciiString(G.GoodId.ToString());Builder.AddInt64(G.QuantityMilliUnits);Builder.AddInt64(G.FulfillmentMilliUnits);}
+                                }
                             }
                         }
                     }
@@ -566,6 +673,12 @@ namespace Hansa::Simulation
                             Builder.AddAsciiString(Good.GoodId.ToString());
                             Builder.AddInt64(Good.Required);
                             Builder.AddInt64(Good.Consumed);
+                                if (FingerprintVersion >= 22)
+                                {
+                                    Builder.AddUInt32(Good.SuppliedGoods.Num());
+                                    for (const auto& G:Good.SuppliedGoods)
+                                    {Builder.AddAsciiString(G.GoodId.ToString());Builder.AddInt64(G.QuantityMilliUnits);Builder.AddInt64(G.FulfillmentMilliUnits);}
+                                }
                         }
                     }
                 }
@@ -576,8 +689,9 @@ namespace Hansa::Simulation
 		{
 			MarketRecordCount += static_cast<uint32>(Market.PriceHistory.Num() + Market.Report.PriceHistory.Num());
 		}
+		if(FingerprintVersion>=24) MarketRecordCount+=static_cast<uint32>(State.RemoteIndustries.Num()+State.RegionalShipments.Num());
 		Report.Subsystems.Add(BuildSubsystem(EHansaStateHashSubsystem::Market, MarketRecordCount,
-			[&State](FNormalizedHashBuilder& Builder)
+			[&State, FingerprintVersion](FNormalizedHashBuilder& Builder)
 			{
 				Builder.AddInt32(State.MarketSettings.UpdateCadenceTicks);
 				Builder.AddInt32(State.MarketSettings.PriceHistoryCapacity);
@@ -675,6 +789,20 @@ namespace Hansa::Simulation
 						Builder.AddInt64(Entry.UnmetDemand.GetRawValue());
 						Builder.AddInt32(Entry.MinimumConsumerAffordabilityBasisPoints);
 						Builder.AddInt64(Entry.PriceMilliMarks);
+					}
+				}
+				if(FingerprintVersion>=24)
+				{
+					Builder.AddUInt64(State.NextRegionalShipmentSequence);
+					Builder.AddUInt32(static_cast<uint32>(State.RemoteIndustries.Num()));
+					for(const auto& Industry:State.RemoteIndustries)
+					{
+						Builder.AddAsciiString(Industry.CityId.ToString());Builder.AddAsciiString(Industry.ProductionChainId);Builder.AddAsciiString(Industry.StageKey);Builder.AddAsciiString(Industry.RecipeId);Builder.AddInt64(Industry.CompletedCycles);Builder.AddUInt8(static_cast<uint8>(Industry.Blocker));Builder.AddAsciiString(Industry.BlockingGoodId.ToString());Builder.AddInt64(Industry.BlockingRequired.GetRawValue());Builder.AddInt64(Industry.BlockingAvailable.GetRawValue());Builder.AddInt64(Industry.LastProduced.GetRawValue());Builder.AddInt64(Industry.LastUpdateTick.GetValue());
+					}
+					Builder.AddUInt32(static_cast<uint32>(State.RegionalShipments.Num()));
+					for(const auto& Shipment:State.RegionalShipments)
+					{
+						Builder.AddUInt64(Shipment.Sequence);Builder.AddAsciiString(Shipment.RegionId);Builder.AddAsciiString(Shipment.SourceCityId.ToString());Builder.AddAsciiString(Shipment.DestinationCityId.ToString());Builder.AddAsciiString(Shipment.GoodId.ToString());Builder.AddInt64(Shipment.CommittedQuantity.GetRawValue());Builder.AddInt64(Shipment.DeliverableQuantity.GetRawValue());Builder.AddInt64(Shipment.DispatchTick.GetValue());Builder.AddInt64(Shipment.DeliveryTick.GetValue());Builder.AddInt64(Shipment.TransportCostMilliMarks);
 					}
 				}
 			}));

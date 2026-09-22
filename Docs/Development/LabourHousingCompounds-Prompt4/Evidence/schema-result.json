@@ -1,0 +1,14 @@
+{
+  "Operation": "RunAutomationTests",
+  "Status": "Succeeded",
+  "Filter": "Hansa.Architecture.Authoring.EconomicSchemaCoverage",
+  "Configuration": "Development",
+  "TestsFound": 1,
+  "EditorBuildSkipped": true,
+  "RenderingEnabled": false,
+  "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+  "EngineRoot": "H:\\Unreal\\UE_5.8",
+  "CompletedUtc": "2026-09-15T16:22:50.2401365Z",
+  "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundIntegration\\Tests\\20260915-182232099-automation-Hansa.Architecture.Authoring.EconomicSchemaCoverage\\UnrealEditor.log",
+  "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundIntegration\\Tests\\20260915-182232099-automation-Hansa.Architecture.Authoring.EconomicSchemaCoverage\\AutomationCommand.log"
+}

@@ -72,6 +72,17 @@ bool FHansaInspectorSharedCausalModelTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Output-full feedback gives a capacity remedy"),
 		Model->GetSnapshot().Causal.Remedy.ToString().Contains(TEXT("output capacity")));
 
+    FHansaProductionProjection NoTrees = *Blocked;
+    NoTrees.Blocker = EHansaProductionBlocker::NoNearbyTrees;
+    TestTrue(TEXT("Existing inspector accepts tree-range blocker"),
+        Model->ShowProduction(NoTrees, *Registry, Fixture.GetEvents(), TEXT("World.Selection")));
+    TestEqual(TEXT("Tree warning retains query/event identity"),
+        Model->GetSnapshot().Causal.StableCode, FName(TEXT("NoNearbyTrees")));
+    TestEqual(TEXT("Tree warning is readable"), Model->GetSnapshot().Causal.Problem.ToString(), FString(TEXT("No nearby trees")));
+    TestTrue(TEXT("Tree warning explains range and remedy"),
+        Model->GetSnapshot().Causal.Evidence.ToString().Contains(TEXT("48 m")) &&
+        Model->GetSnapshot().Causal.Remedy.ToString().Contains(TEXT("forest")));
+
 	if (Projection.Value.GetPopulationCohorts().IsEmpty())
 	{
 		AddError(TEXT("The reviewed fixture must expose a residence cohort"));

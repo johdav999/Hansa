@@ -1,0 +1,1093 @@
+{
+	"footprintWidthCells": 3,
+	"footprintHeightCells": 4,
+	"allowedRoadFrontMask": 15,
+	"populationTierId": "PopulationTier.Laborer",
+	"clearanceRadius": 60,
+	"boundsMin":
+	{
+		"x": -600,
+		"y": -800,
+		"z": 0
+	},
+	"boundsMax":
+	{
+		"x": 600,
+		"y": 800,
+		"z": 900
+	},
+	"layouts": [
+		{
+			"layoutId": "Straight",
+			"developmentStage": 1,
+			"context": "Straight",
+			"districtIds": [],
+			"weight": 1,
+			"slots": [
+				{
+					"slotId": "Principal",
+					"group": "Dwelling",
+					"bRequired": true,
+					"bPrincipal": true,
+					"presenceBasisPoints": 10000,
+					"entranceNodeId": "Front",
+					"variants": [
+						{
+							"variantId": "A",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": -400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35003662109375,
+								"y": -323.63766479492188,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.63760375976562,
+								"z": 619.0999755859375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						},
+						{
+							"variantId": "B",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_B.SM_Residence_Laborer_B",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": -400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35006713867188,
+								"y": -323.063720703125,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.06365966796875,
+								"z": 647.10003662109375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						}
+					]
+				},
+				{
+					"slotId": "RearHouse",
+					"group": "Dwelling",
+					"bRequired": true,
+					"bPrincipal": false,
+					"presenceBasisPoints": 10000,
+					"entranceNodeId": "Rear",
+					"variants": [
+						{
+							"variantId": "A",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": 400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35003662109375,
+								"y": -323.63766479492188,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.63760375976562,
+								"z": 619.0999755859375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						},
+						{
+							"variantId": "B",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_B.SM_Residence_Laborer_B",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": 400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35006713867188,
+								"y": -323.063720703125,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.06365966796875,
+								"z": 647.10003662109375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						}
+					]
+				}
+			],
+			"nodes": [
+				{
+					"nodeId": "Road",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 600,
+						"y": 0,
+						"z": 0
+					},
+					"bRoadEntrance": true,
+					"links": [
+						"Yard"
+					]
+				},
+				{
+					"nodeId": "Yard",
+					"purpose": "YardWork",
+					"position":
+					{
+						"x": 300,
+						"y": 0,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": [
+						"Front",
+						"Rear"
+					]
+				},
+				{
+					"nodeId": "Front",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 300,
+						"y": -400,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": []
+				},
+				{
+					"nodeId": "Rear",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 300,
+						"y": 400,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": []
+				}
+			]
+		},
+		{
+			"layoutId": "CornerLeft",
+			"developmentStage": 1,
+			"context": "CornerLeft",
+			"districtIds": [],
+			"weight": 1,
+			"slots": [
+				{
+					"slotId": "Principal",
+					"group": "Dwelling",
+					"bRequired": true,
+					"bPrincipal": true,
+					"presenceBasisPoints": 10000,
+					"entranceNodeId": "Front",
+					"variants": [
+						{
+							"variantId": "A",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": -400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35003662109375,
+								"y": -323.63766479492188,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.63760375976562,
+								"z": 619.0999755859375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						},
+						{
+							"variantId": "B",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_B.SM_Residence_Laborer_B",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": -400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35006713867188,
+								"y": -323.063720703125,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.06365966796875,
+								"z": 647.10003662109375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						}
+					]
+				},
+				{
+					"slotId": "RearHouse",
+					"group": "Dwelling",
+					"bRequired": true,
+					"bPrincipal": false,
+					"presenceBasisPoints": 10000,
+					"entranceNodeId": "Rear",
+					"variants": [
+						{
+							"variantId": "A",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": 400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35003662109375,
+								"y": -323.63766479492188,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.63760375976562,
+								"z": 619.0999755859375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						},
+						{
+							"variantId": "B",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_B.SM_Residence_Laborer_B",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": 400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35006713867188,
+								"y": -323.063720703125,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.06365966796875,
+								"z": 647.10003662109375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						}
+					]
+				}
+			],
+			"nodes": [
+				{
+					"nodeId": "Road",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 600,
+						"y": 0,
+						"z": 0
+					},
+					"bRoadEntrance": true,
+					"links": [
+						"Yard"
+					]
+				},
+				{
+					"nodeId": "Yard",
+					"purpose": "YardWork",
+					"position":
+					{
+						"x": 300,
+						"y": 0,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": [
+						"Front",
+						"Rear"
+					]
+				},
+				{
+					"nodeId": "Front",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 300,
+						"y": -400,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": []
+				},
+				{
+					"nodeId": "Rear",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 300,
+						"y": 400,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": []
+				}
+			]
+		},
+		{
+			"layoutId": "CornerRight",
+			"developmentStage": 1,
+			"context": "CornerRight",
+			"districtIds": [],
+			"weight": 1,
+			"slots": [
+				{
+					"slotId": "Principal",
+					"group": "Dwelling",
+					"bRequired": true,
+					"bPrincipal": true,
+					"presenceBasisPoints": 10000,
+					"entranceNodeId": "Front",
+					"variants": [
+						{
+							"variantId": "A",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": -400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35003662109375,
+								"y": -323.63766479492188,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.63760375976562,
+								"z": 619.0999755859375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						},
+						{
+							"variantId": "B",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_B.SM_Residence_Laborer_B",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": -400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35006713867188,
+								"y": -323.063720703125,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.06365966796875,
+								"z": 647.10003662109375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						}
+					]
+				},
+				{
+					"slotId": "RearHouse",
+					"group": "Dwelling",
+					"bRequired": true,
+					"bPrincipal": false,
+					"presenceBasisPoints": 10000,
+					"entranceNodeId": "Rear",
+					"variants": [
+						{
+							"variantId": "A",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": 400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35003662109375,
+								"y": -323.63766479492188,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.63760375976562,
+								"z": 619.0999755859375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						},
+						{
+							"variantId": "B",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_B.SM_Residence_Laborer_B",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": 400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35006713867188,
+								"y": -323.063720703125,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.06365966796875,
+								"z": 647.10003662109375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						}
+					]
+				}
+			],
+			"nodes": [
+				{
+					"nodeId": "Road",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 600,
+						"y": 0,
+						"z": 0
+					},
+					"bRoadEntrance": true,
+					"links": [
+						"Yard"
+					]
+				},
+				{
+					"nodeId": "Yard",
+					"purpose": "YardWork",
+					"position":
+					{
+						"x": 300,
+						"y": 0,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": [
+						"Front",
+						"Rear"
+					]
+				},
+				{
+					"nodeId": "Front",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 300,
+						"y": -400,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": []
+				},
+				{
+					"nodeId": "Rear",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 300,
+						"y": 400,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": []
+				}
+			]
+		},
+		{
+			"layoutId": "Edge",
+			"developmentStage": 1,
+			"context": "Edge",
+			"districtIds": [],
+			"weight": 1,
+			"slots": [
+				{
+					"slotId": "Principal",
+					"group": "Dwelling",
+					"bRequired": true,
+					"bPrincipal": true,
+					"presenceBasisPoints": 10000,
+					"entranceNodeId": "Front",
+					"variants": [
+						{
+							"variantId": "A",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": -400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35003662109375,
+								"y": -323.63766479492188,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.63760375976562,
+								"z": 619.0999755859375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						},
+						{
+							"variantId": "B",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_B.SM_Residence_Laborer_B",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": -400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35006713867188,
+								"y": -323.063720703125,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.06365966796875,
+								"z": 647.10003662109375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						}
+					]
+				},
+				{
+					"slotId": "RearHouse",
+					"group": "Dwelling",
+					"bRequired": true,
+					"bPrincipal": false,
+					"presenceBasisPoints": 10000,
+					"entranceNodeId": "Rear",
+					"variants": [
+						{
+							"variantId": "A",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": 400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35003662109375,
+								"y": -323.63766479492188,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.63760375976562,
+								"z": 619.0999755859375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						},
+						{
+							"variantId": "B",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_B.SM_Residence_Laborer_B",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": 400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35006713867188,
+								"y": -323.063720703125,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.06365966796875,
+								"z": 647.10003662109375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						}
+					]
+				}
+			],
+			"nodes": [
+				{
+					"nodeId": "Road",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 600,
+						"y": 0,
+						"z": 0
+					},
+					"bRoadEntrance": true,
+					"links": [
+						"Yard"
+					]
+				},
+				{
+					"nodeId": "Yard",
+					"purpose": "YardWork",
+					"position":
+					{
+						"x": 300,
+						"y": 0,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": [
+						"Front",
+						"Rear"
+					]
+				},
+				{
+					"nodeId": "Front",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 300,
+						"y": -400,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": []
+				},
+				{
+					"nodeId": "Rear",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 300,
+						"y": 400,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": []
+				}
+			]
+		},
+		{
+			"layoutId": "EstablishedFixture",
+			"developmentStage": 2,
+			"context": "Straight",
+			"districtIds": [],
+			"weight": 1,
+			"slots": [
+				{
+					"slotId": "Principal",
+					"group": "Dwelling",
+					"bRequired": true,
+					"bPrincipal": true,
+					"presenceBasisPoints": 10000,
+					"entranceNodeId": "Front",
+					"variants": [
+						{
+							"variantId": "A",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": -400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35003662109375,
+								"y": -323.63766479492188,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.63760375976562,
+								"z": 619.0999755859375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						},
+						{
+							"variantId": "B",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_B.SM_Residence_Laborer_B",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": -400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35006713867188,
+								"y": -323.063720703125,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.06365966796875,
+								"z": 647.10003662109375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						}
+					]
+				},
+				{
+					"slotId": "RearHouse",
+					"group": "Dwelling",
+					"bRequired": true,
+					"bPrincipal": false,
+					"presenceBasisPoints": 10000,
+					"entranceNodeId": "Rear",
+					"variants": [
+						{
+							"variantId": "A",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": 400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35003662109375,
+								"y": -323.63766479492188,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.63760375976562,
+								"z": 619.0999755859375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						},
+						{
+							"variantId": "B",
+							"mesh": "/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_B.SM_Residence_Laborer_B",
+							"materials": [],
+							"localPosition":
+							{
+								"x": -150,
+								"y": 400,
+								"z": -0
+							},
+							"localYaw": 0,
+							"scale":
+							{
+								"x": 1,
+								"y": 1,
+								"z": 1
+							},
+							"boundsMin":
+							{
+								"x": -356.35006713867188,
+								"y": -323.063720703125,
+								"z": 0
+							},
+							"boundsMax":
+							{
+								"x": 367,
+								"y": 323.06365966796875,
+								"z": 647.10003662109375
+							},
+							"weight": 1,
+							"bUseSimpleCollisionForAccess": false
+						}
+					]
+				}
+			],
+			"nodes": [
+				{
+					"nodeId": "Road",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 600,
+						"y": 0,
+						"z": 0
+					},
+					"bRoadEntrance": true,
+					"links": [
+						"Yard"
+					]
+				},
+				{
+					"nodeId": "Yard",
+					"purpose": "YardWork",
+					"position":
+					{
+						"x": 300,
+						"y": 0,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": [
+						"Front",
+						"Rear"
+					]
+				},
+				{
+					"nodeId": "Front",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 300,
+						"y": -400,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": []
+				},
+				{
+					"nodeId": "Rear",
+					"purpose": "Entrance",
+					"position":
+					{
+						"x": 300,
+						"y": 400,
+						"z": 0
+					},
+					"bRoadEntrance": false,
+					"links": []
+				}
+			]
+		}
+	],
+	"presentationMesh": "None",
+	"stableDefinitionId": "Compound.LaborerFixture",
+	"schemaVersion": 1,
+	"authoredRevision": 1,
+	"displayName": "Unnamed definition",
+	"localizationKey": "Game.Compound.Unnamed",
+	"definitionCategory": "Residential compounds",
+	"tags": [],
+	"contentSet": "Core",
+	"bDeprecated": false,
+	"replacementDefinitionId": "",
+	"assetBundleData": ""
+}

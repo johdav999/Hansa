@@ -259,8 +259,9 @@ namespace Hansa::UI
         }
         const bool Cargo=Snapshot.Kind==EHansaInspectorObjectKind::Cargo;
         const bool Market=Snapshot.Kind==EHansaInspectorObjectKind::Market;
-        ResultSectionHeading->SetText(Market?LOCTEXT("MarketSection","Market supply"):Cargo?LOCTEXT("CargoSection","Cargo aboard"):LOCTEXT("ResultSection", "Production summary"));
-        FlowSectionHeading->SetText(Market?LOCTEXT("DemandSection","Citizen demand"):Cargo?LOCTEXT("JourneySection","Journey status"):LOCTEXT("FlowsSection", "Inputs and outputs"));
+        const bool Station=Snapshot.Kind==EHansaInspectorObjectKind::TradeStation;
+        ResultSectionHeading->SetText(Market?LOCTEXT("MarketSection","Market supply"):Cargo?LOCTEXT("CargoSection","Cargo aboard"):Station?LOCTEXT("StationSummarySection","Station summary"):LOCTEXT("ResultSection", "Production summary"));
+        FlowSectionHeading->SetText(Market?LOCTEXT("DemandSection","Citizen demand"):Cargo?LOCTEXT("JourneySection","Journey status"):Station?LOCTEXT("StationDetailsSection","Station details"):LOCTEXT("FlowsSection", "Inputs and outputs"));
         IdentityGlyph->SetGlyph(Market?EUiGlyph::Civic:Cargo?EUiGlyph::Information:EUiGlyph::Building);
 		PresentedRevision = Revision; RootWidget->SetVisibility(Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed);
 		IdentityText->SetText(Snapshot.Identity.IsEmpty()?LOCTEXT("EmptyIdentity","No object selected"):Snapshot.Identity); StateText->SetText(Snapshot.State); ResultText->SetText(Snapshot.PrimaryResult.IsEmpty()?LOCTEXT("EmptyResult","Select an object in the city to inspect it."):Snapshot.PrimaryResult);
@@ -395,7 +396,7 @@ namespace Hansa::UI
 		Add(TEXT("Inspector.DataStatus"),TEXT("Inspector.Root"),TEXT("Selection data status"),EHansaHudSemanticRole::Status,false,false,TEXT("data-state"),UEnum::GetValueAsString(S.DataState),false,true,false,S.DataState==EHansaInspectorDataState::Error);
 		Add(TEXT("Inspector.Identity"), TEXT("Inspector.Root"), S.Identity.ToString(), EHansaHudSemanticRole::Status, false, false, TEXT("state"), S.State.ToString());
 		Add(TEXT("Inspector.Result"), TEXT("Inspector.Root"), TEXT("Most important result"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), S.PrimaryResult.ToString());
-		Add(TEXT("Inspector.Flows"), TEXT("Inspector.Root"), S.Kind == EHansaInspectorObjectKind::Market ? TEXT("Citizen demand") : S.Kind == EHansaInspectorObjectKind::Residence ? TEXT("Needs") : TEXT("Inputs and outputs"), EHansaHudSemanticRole::Panel, false, false, TEXT("count"), FString::FromInt(S.Flows.Num()));
+		Add(TEXT("Inspector.Flows"), TEXT("Inspector.Root"), S.Kind == EHansaInspectorObjectKind::Market ? TEXT("Citizen demand") : S.Kind == EHansaInspectorObjectKind::Residence ? TEXT("Needs") : S.Kind == EHansaInspectorObjectKind::TradeStation ? TEXT("Station details") : TEXT("Inputs and outputs"), EHansaHudSemanticRole::Panel, false, false, TEXT("count"), FString::FromInt(S.Flows.Num()));
         for (const auto& Flow : S.Flows)
         {
             const bool Market = S.Kind == EHansaInspectorObjectKind::Market;

@@ -1,0 +1,182 @@
+{
+  "build": "HansaEditor Win64 Development, isolated verification project",
+  "passed": 35,
+  "tests": [
+    {
+      "result": "Success",
+      "name": "MarketRangeAuthoring",
+      "path": "Hansa.Editor.Definitions.MarketRangeAuthoring"
+    },
+    {
+      "result": "Success",
+      "name": "VisibilityAndRotation",
+      "path": "Hansa.Integration.RoadConnectionIndicator.VisibilityAndRotation"
+    },
+    {
+      "result": "Success",
+      "name": "ConstructionProjectionCompletes",
+      "path": "Hansa.Integration.RuntimeSimulationHost.ConstructionProjectionCompletes"
+    },
+    {
+      "result": "Success",
+      "name": "EmptyNewGameResidenceAttractsLaborers",
+      "path": "Hansa.Integration.RuntimeSimulationHost.EmptyNewGameResidenceAttractsLaborers"
+    },
+    {
+      "result": "Success",
+      "name": "PauseAndSpeed",
+      "path": "Hansa.Integration.RuntimeSimulationHost.PauseAndSpeed"
+    },
+    {
+      "result": "Success",
+      "name": "PhysicalMarketConnectivityJourney",
+      "path": "Hansa.Integration.RuntimeSimulationHost.PhysicalMarketConnectivityJourney"
+    },
+    {
+      "result": "Success",
+      "name": "RoadAndMarketAccessAreIndependent",
+      "path": "Hansa.Integration.RuntimeSimulationHost.RoadAndMarketAccessAreIndependent"
+    },
+    {
+      "result": "Success",
+      "name": "SecondMarketRefreshesRange",
+      "path": "Hansa.Integration.RuntimeSimulationHost.SecondMarketRefreshesRange"
+    },
+    {
+      "result": "Success",
+      "name": "StarterEconomyLongRun",
+      "path": "Hansa.Integration.RuntimeSimulationHost.StarterEconomyLongRun"
+    },
+    {
+      "result": "Success",
+      "name": "SurveyWaterfrontOpening",
+      "path": "Hansa.Integration.RuntimeSimulationHost.SurveyWaterfrontOpening"
+    },
+    {
+      "result": "Success",
+      "name": "ActiveDeliveryUsesDeterministicAlternateRoute",
+      "path": "Hansa.Simulation.Logistics.ActiveDeliveryUsesDeterministicAlternateRoute"
+    },
+    {
+      "result": "Success",
+      "name": "CapacityPickupDelayAndCompletedDelivery",
+      "path": "Hansa.Simulation.Logistics.CapacityPickupDelayAndCompletedDelivery"
+    },
+    {
+      "result": "Success",
+      "name": "CompetingRequestsUseStablePriority",
+      "path": "Hansa.Simulation.Logistics.CompetingRequestsUseStablePriority"
+    },
+    {
+      "result": "Success",
+      "name": "DisconnectedRoadAndFullDestinationBottlenecks",
+      "path": "Hansa.Simulation.Logistics.DisconnectedRoadAndFullDestinationBottlenecks"
+    },
+    {
+      "result": "Success",
+      "name": "InTransitPauseSaveAndResume",
+      "path": "Hansa.Simulation.Logistics.InTransitPauseSaveAndResume"
+    },
+    {
+      "result": "Success",
+      "name": "MarketRoadRange",
+      "path": "Hansa.Simulation.Logistics.MarketRoadRange"
+    },
+    {
+      "result": "Success",
+      "name": "PausedJobReleasesFleetCapacity",
+      "path": "Hansa.Simulation.Logistics.PausedJobReleasesFleetCapacity"
+    },
+    {
+      "result": "Success",
+      "name": "PhysicalMarketAccessAndDeterministicSelection",
+      "path": "Hansa.Simulation.Logistics.PhysicalMarketAccessAndDeterministicSelection"
+    },
+    {
+      "result": "Success",
+      "name": "ProductionCreatesDeterministicRequests",
+      "path": "Hansa.Simulation.Logistics.ProductionCreatesDeterministicRequests"
+    },
+    {
+      "result": "Success",
+      "name": "StateHashIgnoresDiscoveryOrder",
+      "path": "Hansa.Simulation.Logistics.StateHashIgnoresDiscoveryOrder"
+    },
+    {
+      "result": "Success",
+      "name": "TopologyChangeBeforePickupReleasesReservation",
+      "path": "Hansa.Simulation.Logistics.TopologyChangeBeforePickupReleasesReservation"
+    },
+    {
+      "result": "Success",
+      "name": "BoundedGrowthAndDecline",
+      "path": "Hansa.Simulation.Population.BoundedGrowthAndDecline"
+    },
+    {
+      "result": "Success",
+      "name": "CityTierPooledWorkforce",
+      "path": "Hansa.Simulation.Population.CityTierPooledWorkforce"
+    },
+    {
+      "result": "Success",
+      "name": "CompoundStageProgression",
+      "path": "Hansa.Simulation.Population.CompoundStageProgression"
+    },
+    {
+      "result": "Success",
+      "name": "ConstructedResidenceAndMarketAccess",
+      "path": "Hansa.Simulation.Population.ConstructedResidenceAndMarketAccess"
+    },
+    {
+      "result": "Success",
+      "name": "ConsumptionAndProjection",
+      "path": "Hansa.Simulation.Population.ConsumptionAndProjection"
+    },
+    {
+      "result": "Success",
+      "name": "EmptyHomeRecovery",
+      "path": "Hansa.Simulation.Population.EmptyHomeRecovery"
+    },
+    {
+      "result": "Success",
+      "name": "FairScarcityAllocation",
+      "path": "Hansa.Simulation.Population.FairScarcityAllocation"
+    },
+    {
+      "result": "Success",
+      "name": "ManualResidenceProgression",
+      "path": "Hansa.Simulation.Population.ManualResidenceProgression"
+    },
+    {
+      "result": "Success",
+      "name": "ResidenceUpgradeCostFailureIsAtomic",
+      "path": "Hansa.Simulation.Population.ResidenceUpgradeCostFailureIsAtomic"
+    },
+    {
+      "result": "Success",
+      "name": "RollingConsumption",
+      "path": "Hansa.Simulation.Population.RollingConsumption"
+    },
+    {
+      "result": "Success",
+      "name": "StableLongRun",
+      "path": "Hansa.Simulation.Population.StableLongRun"
+    },
+    {
+      "result": "Success",
+      "name": "SuppliedHomesPastSeventyDays",
+      "path": "Hansa.Simulation.Population.SuppliedHomesPastSeventyDays"
+    },
+    {
+      "result": "Success",
+      "name": "WorkforceShortageAndRecovery",
+      "path": "Hansa.Simulation.Population.WorkforceShortageAndRecovery"
+    },
+    {
+      "result": "Success",
+      "name": "MarketRangeMarker",
+      "path": "Hansa.World.Projection.MarketRangeMarker"
+    }
+  ],
+  "runtime_note": "The open main editor still has its previously loaded binaries; rebuild/restart required."
+}

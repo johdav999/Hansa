@@ -8,6 +8,8 @@
 
 namespace Hansa::Simulation
 {
+	struct FHansaForeignPresenceState;
+	struct FHansaLeasedPlotState;
 	struct FHansaCompiledBuildingDefinition;
 	class FHansaEconomicRegistry;
 	class FHansaSimulationPipeline;
@@ -63,7 +65,14 @@ namespace Hansa::Simulation
 		CellBlocked,
 		Occupied,
 		ShorelineRequired,
-		RoadRequired
+		RoadRequired,
+		FoundationTooSteep,
+        NoNearbyTrees,
+		ForeignLeaseRequired,
+		ForeignLeaseSuspended,
+		ForeignLeaseBoundary,
+		ForeignBuildingCategoryDenied,
+		ForeignPresenceStageInsufficient
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaGridRotation Rotation);
@@ -85,6 +94,8 @@ namespace Hansa::Simulation
 		FHansaGridCoordinate BoundsMax;
 		FHansaBuildingTypeId RoadBuildingDefinitionId;
 		TArray<FHansaPlacementGridCell> Cells;
+		/** Surveyed standing trees, canonicalized and validated with the immutable map. */
+		TArray<FHansaGridCoordinate> TreeCells;
 	};
 
 	/**
@@ -156,6 +167,14 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaPlacementValidationResult final
 	{
 	public:
+        /** Append an authority-owned world-surface failure without changing occupied cells. */
+        FHansaPlacementValidationResult WithTerrainFailure(FHansaGridCoordinate Cell) const
+        {
+            auto Result = *this;
+            Result.Reasons.Add({EHansaPlacementFailure::FoundationTooSteep, Cell,
+                TEXT("Placement.Validation.FoundationTooSteep"), TEXT("Placement.Remedy.FoundationTooSteep")});
+            return Result;
+        }
 		[[nodiscard]] bool CanPlace() const { return Reasons.IsEmpty(); }
 		explicit operator bool() const { return CanPlace(); }
 		[[nodiscard]] EHansaPlacementFailure GetPrimaryFailure() const
@@ -194,6 +213,11 @@ namespace Hansa::Simulation
 			FHansaCityDefinitionId CityId,
 			FHansaGridCoordinate Coordinate) const;
 		[[nodiscard]] const FHansaPlacedBuildingRecord* FindPlacement(FHansaBuildingId BuildingId) const;
+		/** Euclidean distance from footprint cells; trees covered by buildings/roads do not count. */
+		[[nodiscard]] bool HasNearbyTrees(FHansaBuildingId BuildingId, int32 RadiusCells) const;
+        /** Shared by the uncommitted ghost and production; trees beneath the proposed footprint do not count. */
+        [[nodiscard]] bool HasNearbyTrees(FHansaCityDefinitionId CityId,
+            TConstArrayView<FHansaGridCoordinate> Footprint, int32 RadiusCells) const;
 
 	private:
 		friend class FHansaSaveCodec;
@@ -207,6 +231,9 @@ namespace Hansa::Simulation
 		TArray<FHansaPlacedBuildingRecord> Placements;
 	};
 
+ // Local +X is the authored front; rotation maps it to a single grid edge.
+ HANSASIMULATION_API bool IsCompoundFrontAdjacent(const FHansaPlacementSpec& Spec, FHansaGridCoordinate Cell, FHansaGridCoordinate RoadCell);
+
 	class HANSASIMULATION_API FHansaPlacementRules final
 	{
 	public:
@@ -214,7 +241,9 @@ namespace Hansa::Simulation
 			const FHansaPlacementState& State,
 			const FHansaEconomicRegistry& Definitions,
 			FHansaHouseId IssuingHouseId,
-			const FHansaPlacementSpec& Spec);
+			const FHansaPlacementSpec& Spec,
+			TConstArrayView<FHansaForeignPresenceState> ForeignPresences = {},
+			TConstArrayView<FHansaLeasedPlotState> LeasedPlots = {});
 
 	private:
 		friend class FHansaSimulationPipeline;

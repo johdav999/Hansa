@@ -38,8 +38,10 @@ namespace Hansa::Simulation
 			TArray<FHansaProductionState>& Productions,
 			uint64& NextReservationValue,
 			const TArray<FHansaBuildingState>& Buildings,
+			const FHansaPlacementState& Placement,
 			FHansaInventoryLedger& InventoryLedger,
 			const FHansaEconomicRegistry* EconomicRegistry,
+			TConstArrayView<FHansaHouseResearchState> Research,
 			FHansaSimulationTick Tick,
 			TArray<FHansaProductionStepEvent>& OutEvents);
 	};

@@ -5,6 +5,7 @@
 #include "Containers/UnrealString.h"
 #include "Model/HansaIds.h"
 #include "Model/HansaSimulationTime.h"
+#include "Multiplayer/HansaSessionModel.h"
 
 namespace Hansa::Simulation
 {
@@ -58,6 +59,7 @@ namespace Hansa::Simulation
 		int64 InsolvencyThresholdPfennig = 0;
 		int32 FailureSustainTicks = 1;
 		FString Briefing;
+		TArray<FHansaScenarioSlotRule> MultiplayerSlots;
 		uint64 ContentHash = 0;
 	};
 

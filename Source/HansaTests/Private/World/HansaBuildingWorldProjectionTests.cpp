@@ -1,4 +1,6 @@
 #include "World/HansaBuildingWorldProjection.h"
+
+#include "World/HansaTerrainPlacement.h"
 #include "World/HansaBakeryPresentation.h"
 #include "World/HansaHarborPresentation.h"
 #include "World/HansaResidencePresentation.h"
@@ -225,6 +227,7 @@ bool FHansaPlacementProjectionActorLifecycleTest::RunTest(const FString& Paramet
 			Warehouse->GetWorldStatus() == EHansaBuildingWorldStatus::UnderConstruction &&
 			Warehouse->ConstructionPlaceholder->IsVisible() && !Warehouse->BuildingMesh->IsVisible());
 		TestTrue(TEXT("Road projections use the road visual kind"), Road->IsRoad());
+		const int32 UnselectedComponentCount = Warehouse->GetComponents().Num();
 		Manager->SelectBuilding(Warehouse->GetBuildingId());
 		TestTrue(TEXT("Selection is presentation-only and shows a native outline"),
 			Warehouse->IsSelected() && Warehouse->SelectionOutline->IsVisible());
@@ -233,9 +236,8 @@ bool FHansaPlacementProjectionActorLifecycleTest::RunTest(const FString& Paramet
 		TestFalse(TEXT("Every footprint bracket segment is visible while selected"),
 			Warehouse->SelectionCornerSegments.ContainsByPredicate(
 				[](const UStaticMeshComponent* Segment) { return Segment == nullptr || !Segment->IsVisible(); }));
-		TestTrue(TEXT("Selected visible geometry receives a mesh-hugging contour"),
-			!Warehouse->SelectionContourMeshes.IsEmpty() &&
-			Warehouse->SelectionContourMeshes.Num() == Warehouse->SelectionHaloMeshes.Num());
+		TestEqual(TEXT("Selection does not duplicate visible geometry with coloured shells"),
+			Warehouse->GetComponents().Num(), UnselectedComponentCount);
 		TestTrue(TEXT("Selected geometry is custom-depth compatible"),
 			Warehouse->ConstructionPlaceholder->bRenderCustomDepth);
 		FHansaBuildingWorldProjection Blocked = MakeWorldProjection(
@@ -675,7 +677,13 @@ bool FHansaSelectionPreservesProductionVisibilityTest::RunTest(const FString& Pa
     Hansa::Simulation::FHansaProductionProjection Production{};
     Actor->ApplyProduction(&Production, {});
     TestFalse(TEXT("Unavailable production artwork hides the fallback cube"), Actor->BuildingMesh->IsVisible());
+    const int32 UnselectedComponentCount = Actor->GetComponents().Num();
+    UMaterialInterface* OriginalMaterial = Actor->ConstructionPlaceholder->GetMaterial(0);
     Actor->SetSelected(true);
+    TestEqual(TEXT("Selection preserves component count"), Actor->GetComponents().Num(), UnselectedComponentCount);
+    TestTrue(TEXT("Selection preserves authored material"), Actor->ConstructionPlaceholder->GetMaterial(0) == OriginalMaterial);
+    Actor->ApplyProduction(&Production, {});
+    TestEqual(TEXT("Selected refresh does not create coloured shells"), Actor->GetComponents().Num(), UnselectedComponentCount);
     TestTrue(TEXT("Building selection shows its outline"), Actor->SelectionOutline->IsVisible());
 	TestEqual(TEXT("Building selection exposes four shape-redundant footprint corners"),
 		Actor->SelectionCornerSegments.Num(), 8);
@@ -687,12 +695,94 @@ bool FHansaSelectionPreservesProductionVisibilityTest::RunTest(const FString& Pa
 	TestFalse(TEXT("Ground click clears every footprint corner"),
 		Actor->SelectionCornerSegments.ContainsByPredicate(
 			[](const UStaticMeshComponent* Segment) { return Segment != nullptr && Segment->IsVisible(); }));
-	TestTrue(TEXT("Ground click destroys transient mesh contours"),
-		Actor->SelectionContourMeshes.IsEmpty() && Actor->SelectionHaloMeshes.IsEmpty());
 	TestFalse(TEXT("Ground click clears custom depth"), Actor->ConstructionPlaceholder->bRenderCustomDepth);
     TestFalse(TEXT("Ground click does not reveal a red fallback cube"), Actor->BuildingMesh->IsVisible());
     Actor->SetSelected(false);
     TestFalse(TEXT("Repeated ground clicks keep fallback hidden"), Actor->BuildingMesh->IsVisible());
     return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaSelectionTerrainClearanceTest,
+    "Hansa.World.Projection.SelectionTerrainClearance",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaSelectionTerrainClearanceTest::RunTest(const FString& Parameters)
+{
+    using namespace Hansa::Tests::WorldProjection;
+    using namespace Hansa::Simulation;
+    UWorld* World = UWorld::CreateWorld(EWorldType::Game, false);
+    if (!TestNotNull(TEXT("Test world"), World)) return false;
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    ON_SCOPE_EXIT { World->DestroyWorld(false); GEngine->DestroyWorldContext(World); };
+    auto* Foundation = World->SpawnActor<AHansaLubeckWorldFoundation>();
+    auto* Actor = World->SpawnActor<AHansaBuildingWorldProjectionActor>();
+    auto Projection = MakeWorldProjection(901, TEXT("Building.SelectionTest"), 2, FHansaRate::Scale);
+    Projection.FootprintWidthCells = 4;
+    Projection.FootprintHeightCells = 4;
+    Actor->ApplyProjection(Projection, *Foundation);
+    const FVector Center = Actor->GetActorLocation();
+    auto* Terrain = World->SpawnActor<AStaticMeshActor>();
+    auto* Mesh = Terrain->GetStaticMeshComponent();
+    Mesh->SetMobility(EComponentMobility::Movable);
+    Mesh->SetStaticMesh(LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cube.Cube")));
+    Mesh->SetCollisionProfileName(TEXT("BlockAll"));
+    Terrain->Tags.Add(TEXT("Hansa.Terrain"));
+    Terrain->SetActorScale3D(FVector(80, 80, 1));
+    Terrain->SetActorLocation(FVector(Center.X, Center.Y, 50));
+    Terrain->SetActorRotation(FRotator(8, 0, 0));
+    for (const auto Rotation : { EHansaGridRotation::North, EHansaGridRotation::East })
+    {
+        Projection.Placement.Rotation = Rotation;
+        Actor->ApplyProjection(Projection, *Foundation);
+        Actor->SetSelected(true);
+        TArray<UStaticMeshComponent*> Markers;
+        for (UStaticMeshComponent* Segment : Actor->SelectionCornerSegments) Markers.Add(Segment);
+        Markers.Add(Actor->SelectionOutline);
+        TArray<FVector> Positions;
+        for (UStaticMeshComponent* Marker : Markers)
+        {
+            TestTrue(TEXT("Every selection marker visible"), Marker->IsVisible());
+            Positions.Add(Marker->GetComponentLocation());
+            for (const double X : { -50.0, 50.0 }) for (const double Y : { -50.0, 50.0 })
+            {
+                const FVector Bottom = Marker->GetComponentTransform().TransformPosition(FVector(X, Y, -50));
+                FHitResult Hit;
+                if (TestTrue(TEXT("Terrain exists beneath marker edge"), Hansa::Game::TerrainPlacement::Trace(
+                    World, Bottom + FVector(0, 0, 10000), Bottom - FVector(0, 0, 10000), Hit)))
+                    TestTrue(TEXT("Every marker edge clears sloping terrain"), Bottom.Z >= Hit.ImpactPoint.Z + 1.9);
+            }
+        }
+        Actor->ApplyProjection(Projection, *Foundation);
+        for (int32 Index = 0; Index < Markers.Num(); ++Index)
+            TestTrue(TEXT("Refresh does not accumulate marker lift"),
+                Markers[Index]->GetComponentLocation().Equals(Positions[Index], 0.01));
+    }
+    return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaMarketRangeMarkerTest,
+ "Hansa.World.Projection.MarketRangeMarker", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaMarketRangeMarkerTest::RunTest(const FString& Parameters)
+{
+ using namespace Hansa::Tests::WorldProjection;using namespace Hansa::Simulation;
+ UWorld* World=UWorld::CreateWorld(EWorldType::Game,false);
+ if(!TestNotNull(TEXT("World"),World))return false;
+ ON_SCOPE_EXIT{World->DestroyWorld(false);};
+ auto* Foundation=World->SpawnActor<AHansaLubeckWorldFoundation>();
+ auto* Actor=World->SpawnActor<AHansaBuildingWorldProjectionActor>();
+ auto P=MakeWorldProjection(902,TEXT("Building.RangeTest"),2,FHansaRate::Scale);
+ P.bRequiresRoad=true;P.bHasRoadAccess=true;P.bHasMarketAccess=false;
+ P.MarketAccessFailure=EHansaLogisticsRoadPathFailure::MarketNotInRange;
+ Actor->ApplyProjection(P,*Foundation);
+ TestTrue(TEXT("Out-of-range completed building has warning"),Actor->IsMarketNotInRangeIndicatorVisible());
+ TestTrue(TEXT("Warning uses imported 3D asset"),Actor->MarketNotInRangeMarker->GetStaticMesh() != nullptr);
+ const auto Before=Actor->MarketNotInRangeMarker->GetRelativeRotation();Actor->Tick(1.f);
+ TestFalse(TEXT("Market warning rotates"),Before.Equals(Actor->MarketNotInRangeMarker->GetRelativeRotation()));
+ TestEqual(TEXT("Warning cannot intercept selection"),Actor->MarketNotInRangeMarker->GetCollisionEnabled(),ECollisionEnabled::NoCollision);
+ P.bHasMarketAccess=true;Actor->ApplyProjection(P,*Foundation);
+ TestFalse(TEXT("Market recovery hides warning"),Actor->MarketNotInRangeMarker->IsVisible());
+ P.bHasMarketAccess=false;P.Status=EHansaBuildingWorldStatus::UnderConstruction;Actor->ApplyProjection(P,*Foundation);
+ TestFalse(TEXT("Construction does not show market warning"),Actor->MarketNotInRangeMarker->IsVisible());
+ return !HasAnyErrors();
 }
 #endif

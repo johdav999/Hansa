@@ -2,6 +2,7 @@ using UnrealBuildTool;
 
 public class HansaTests : ModuleRules
 {
+	// Keep new multiplayer command-path and projection sources visible to UBT's generated makefile.
 	// Coverage includes deterministic simulation, surveyed waterfront construction,
 	// versioned fixtures, and managed world-projection lifecycles.
 	public HansaTests(ReadOnlyTargetRules Target) : base(Target)
@@ -26,6 +27,7 @@ public class HansaTests : ModuleRules
 			"Landscape",
 			"ProceduralMeshComponent",
             "RenderCore",
+            "RHI",
 			"Slate",
 			"SlateCore"
 		});

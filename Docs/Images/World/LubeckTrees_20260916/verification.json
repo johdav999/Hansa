@@ -1,0 +1,1304 @@
+{
+  "map": "/Game/Hansa/Generated/Staging/LubeckTerrain_20260907/L_Lubeck_Terrain_Preview_WP",
+  "count": 320,
+  "seed": 20260916,
+  "by_species": {
+    "Beech": 77,
+    "Birch": 63,
+    "Oak": 102,
+    "Willow": 36,
+    "Alder": 42
+  },
+  "by_age": {
+    "Mature": 216,
+    "Young": 104
+  },
+  "reopened": true,
+  "sample_transform_checks": [
+    {
+      "id": "LubeckTree_0001",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0002",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0003",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0004",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0005",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0006",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0007",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0008",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0009",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0010",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0011",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0012",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0013",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0014",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0015",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0016",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0017",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0018",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0019",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0020",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0021",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0022",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0023",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0024",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0025",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0026",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0027",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0028",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0029",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0030",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0031",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0032",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0033",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0034",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0035",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0036",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0037",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0038",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0039",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0040",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0041",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0042",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0043",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0044",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0045",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0046",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0047",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0048",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0049",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0050",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0051",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0052",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0053",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0054",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0055",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0056",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0057",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0058",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0059",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0060",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0061",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0062",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0063",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0064",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0065",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0066",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0067",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0068",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0069",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0070",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0071",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0072",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0073",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0074",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0075",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0076",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0077",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0078",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0079",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0080",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0081",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0082",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0083",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0084",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0085",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0086",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0087",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0088",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0089",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0090",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0091",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0092",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0093",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0094",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0095",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0096",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0097",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0098",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0099",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0100",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0101",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0102",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0103",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0104",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0105",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0106",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0107",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0108",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0109",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0110",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0111",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0112",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0113",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0114",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0115",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0116",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0117",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0118",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0119",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0120",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0121",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0122",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0123",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0124",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0125",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0126",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0127",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0128",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0129",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0130",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0131",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0132",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0133",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0134",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0135",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0136",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0137",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0138",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0139",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0140",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0141",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0142",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0143",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0144",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0145",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0146",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0147",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0148",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0149",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0150",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0151",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0152",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0153",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0154",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0155",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0156",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0157",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0158",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0159",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0160",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0161",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0162",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0163",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0164",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0165",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0166",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0167",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0168",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0169",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0170",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0171",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0172",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0173",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0174",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0175",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0176",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0177",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0178",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0179",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0180",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0181",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0182",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0183",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0184",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0185",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0186",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0187",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0188",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0189",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0190",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0191",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0192",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0193",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0194",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0195",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0196",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0197",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0198",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0199",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0200",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0201",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0202",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0203",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0204",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0205",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0206",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0207",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0208",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0209",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0210",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0211",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0212",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0213",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0214",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0215",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0216",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0217",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0218",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0219",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0220",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0221",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0222",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0223",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0224",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0225",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0226",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0227",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0228",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0229",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0230",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0231",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0232",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0233",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0234",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0235",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0236",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0237",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0238",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0239",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0240",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0241",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0242",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0243",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0244",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0245",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0246",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0247",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0248",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0249",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0250",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0251",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0252",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0253",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0254",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0255",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0256",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0257",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0258",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0259",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0260",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0261",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0262",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0263",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0264",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0265",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0266",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0267",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0268",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0269",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0270",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0271",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0272",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0273",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0274",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0275",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0276",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0277",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0278",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0279",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0280",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0281",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0282",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0283",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0284",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0285",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0286",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0287",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0288",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0289",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0290",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0291",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0292",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0293",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0294",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0295",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0296",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0297",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0298",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0299",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0300",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0301",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0302",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0303",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0304",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0305",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0306",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0307",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0308",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0309",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0310",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0311",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0312",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0313",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0314",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0315",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0316",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0317",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0318",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0319",
+      "location_error_cm": 0.0
+    },
+    {
+      "id": "LubeckTree_0320",
+      "location_error_cm": 0.0
+    }
+  ],
+  "minimum_water_clearance_cm": 1333.6,
+  "maximum_source_slope_degrees": 12.21,
+  "tag": "HansaTree.LubeckPlacement.20260916",
+  "outliner_folder": "Environment/Trees/LubeckSummer",
+  "gameplay_integration": "Static environmental map actors only; harvesting, construction clearing and regrowth remain unimplemented."
+}

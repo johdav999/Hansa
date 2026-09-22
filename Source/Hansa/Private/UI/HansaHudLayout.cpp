@@ -31,7 +31,7 @@ namespace Hansa::UI
 		{
 			Result.SafeArea = 24.0f;
 			Result.TopBarHeight = 64.0f;
-			Result.AlertWidth = 336.0f;
+			Result.AlertWidth = 280.0f;
 			Result.AlertExpandedHeight = 320.0f;
 			Result.BottomWidth = 896.0f;
 			Result.BottomHeight = 76.0f;

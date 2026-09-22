@@ -151,10 +151,10 @@ namespace Hansa::Tests::Diagnostics
 			return false;
 		}
 		const TSharedPtr<FJsonObject>* Expected = nullptr;
-		if (!Parsed->TryGetObjectField(TEXT("expected"), Expected) || Expected == nullptr ||
+		if (!Parsed->TryGetObjectField(TEXT("expectedV28Command11"), Expected) || Expected == nullptr ||
 			!(*Expected)->TryGetStringField(TEXT("finalChecksum"), OutChecksum))
 		{
-			Test.AddError(TEXT("Reviewed fixture descriptor lacks expected.finalChecksum"));
+			Test.AddError(TEXT("Reviewed fixture descriptor lacks expectedV28Command11.finalChecksum"));
 			return false;
 		}
 		return true;
@@ -183,7 +183,7 @@ bool FHansaNormalizedStateHashTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Global fingerprint is derived from the normalized report"),
 		View.GetFingerprint().Value, Report.GetOverallHash());
 	TestEqual(TEXT("Fingerprint contract advanced for normalized subsystem hashing"),
-		FHansaSimulationState::DeterminismFingerprintVersion, uint32(20));
+		FHansaSimulationState::DeterminismFingerprintVersion, uint32(28));
 	TestEqual(TEXT("The first hash computes every subsystem"), Report.GetRecomputedSubsystemCount(), uint32(16));
 	const FHansaStateHashReport CachedReport = View.BuildStateHashReport();
 	TestEqual(TEXT("An unchanged state reuses every cached subsystem fingerprint"),

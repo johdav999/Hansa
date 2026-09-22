@@ -1,0 +1,523 @@
+{
+	"status": "draft-reload-verified-awaiting-review",
+	"pendingPresentation": "/Game/Hansa/Generated/Staging/FirewoodModel/Meshes/SM_WoodcutterYard",
+	"baseRegistryHash": "C1BDF313543BF44A",
+	"registryHash": "8BB8ACD607E70FDB",
+	"definitions": [
+		{
+			"stableId": "AITuning.MerchantRival",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_AITuning_MerchantRival.DA_AITuning_MerchantRival",
+			"hash": "08792B7922ADAB1A"
+		},
+		{
+			"stableId": "Building.Bakery",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Bakery.DA_Building_Bakery",
+			"hash": "57CC16AFDDA84A30"
+		},
+		{
+			"stableId": "Building.Brewery",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Brewery.DA_Building_Brewery",
+			"hash": "B7B0E24B4E3CFF1B"
+		},
+		{
+			"stableId": "Building.Cooperage",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Cooperage.DA_Building_Cooperage",
+			"hash": "C06FABB7394C4792"
+		},
+		{
+			"stableId": "Building.Dock",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Dock.DA_Building_Dock",
+			"hash": "56A02685E5715533"
+		},
+		{
+			"stableId": "Building.Fishery",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Fishery.DA_Building_Fishery",
+			"hash": "E70EB123783E9C5F"
+		},
+		{
+			"stableId": "Building.GrainFarm",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_GrainFarm.DA_Building_GrainFarm",
+			"hash": "CDF9144C14BCBC90"
+		},
+		{
+			"stableId": "Building.HopFarm",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_HopFarm.DA_Building_HopFarm",
+			"hash": "4FD343B232CACAFA"
+		},
+		{
+			"stableId": "Building.LumberCamp",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_LumberCamp.DA_Building_LumberCamp",
+			"hash": "7A7630E823E76028"
+		},
+		{
+			"stableId": "Building.MaltHouse",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_MaltHouse.DA_Building_MaltHouse",
+			"hash": "5BCA000BB1AB045D"
+		},
+		{
+			"stableId": "Building.Market",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Market.DA_Building_Market",
+			"hash": "2327B192D7DDD874"
+		},
+		{
+			"stableId": "Building.Mill",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Mill.DA_Building_Mill",
+			"hash": "B134F4034AC1E700"
+		},
+		{
+			"stableId": "Building.Residence.Artisan",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Artisan.DA_Building_Residence_Artisan",
+			"hash": "2A880C7F45698CF8"
+		},
+		{
+			"stableId": "Building.Residence.Artisan.Plot",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Artisan_Plot.DA_Building_Residence_Artisan_Plot",
+			"hash": "2520041BE4C722D0"
+		},
+		{
+			"stableId": "Building.Residence.Laborer",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer.DA_Building_Residence_Laborer",
+			"hash": "9B8788F64D10F941"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CornerCourt.Stage1",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_CornerCourt_Stage1.DA_Building_Residence_Laborer_CornerCourt_Stage1",
+			"hash": "84B1F3E9305F05C7"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CornerCourt.Stage2",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_CornerCourt_Stage2.DA_Building_Residence_Laborer_CornerCourt_Stage2",
+			"hash": "FC757E3250827644"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CornerCourt.Stage3",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_CornerCourt_Stage3.DA_Building_Residence_Laborer_CornerCourt_Stage3",
+			"hash": "7A4600984F825974"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CraftCourt.Stage1",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_CraftCourt_Stage1.DA_Building_Residence_Laborer_CraftCourt_Stage1",
+			"hash": "6B456D71F03B07EB"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CraftCourt.Stage2",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_CraftCourt_Stage2.DA_Building_Residence_Laborer_CraftCourt_Stage2",
+			"hash": "5B492AFF74581B2C"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CraftCourt.Stage3",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_CraftCourt_Stage3.DA_Building_Residence_Laborer_CraftCourt_Stage3",
+			"hash": "D0EC88ABBECE05B5"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.NarrowGang.Stage1",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_NarrowGang_Stage1.DA_Building_Residence_Laborer_NarrowGang_Stage1",
+			"hash": "FDC7EC6C32B2C109"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.NarrowGang.Stage2",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_NarrowGang_Stage2.DA_Building_Residence_Laborer_NarrowGang_Stage2",
+			"hash": "5DC5BE410FC0366C"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.NarrowGang.Stage3",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_NarrowGang_Stage3.DA_Building_Residence_Laborer_NarrowGang_Stage3",
+			"hash": "F2678677E7D46F06"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.SharedCourt.Stage1",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_SharedCourt_Stage1.DA_Building_Residence_Laborer_SharedCourt_Stage1",
+			"hash": "C95E4248602CAA77"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.SharedCourt.Stage2",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_SharedCourt_Stage2.DA_Building_Residence_Laborer_SharedCourt_Stage2",
+			"hash": "29CB749356463AEC"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.SharedCourt.Stage3",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Residence_Laborer_SharedCourt_Stage3.DA_Building_Residence_Laborer_SharedCourt_Stage3",
+			"hash": "03B54DCBBF48F730"
+		},
+		{
+			"stableId": "Building.Road",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Road.DA_Building_Road",
+			"hash": "FB79F1BE67547054"
+		},
+		{
+			"stableId": "Building.Sawmill",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Sawmill.DA_Building_Sawmill",
+			"hash": "B75E527EFD78CC4F"
+		},
+		{
+			"stableId": "Building.Smithy",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Smithy.DA_Building_Smithy",
+			"hash": "2E4F7A137573C36E"
+		},
+		{
+			"stableId": "Building.Warehouse",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_Warehouse.DA_Building_Warehouse",
+			"hash": "B7AC51DE335F5E73"
+		},
+		{
+			"stableId": "Building.WoodcutterYard",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Building_WoodcutterYard.DA_Building_WoodcutterYard",
+			"hash": "AACDFEE5B0456624"
+		},
+		{
+			"stableId": "City.Hamburg",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_City_Hamburg.DA_City_Hamburg",
+			"hash": "ED1BC8E749689BF1"
+		},
+		{
+			"stableId": "City.Lubeck",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_City_Lubeck.DA_City_Lubeck",
+			"hash": "F2870E65538F77D7"
+		},
+		{
+			"stableId": "City.Luneburg",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_City_Luneburg.DA_City_Luneburg",
+			"hash": "31C1F9544A91BD46"
+		},
+		{
+			"stableId": "City.Rostock",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_City_Rostock.DA_City_Rostock",
+			"hash": "E6F63BC84779D0BA"
+		},
+		{
+			"stableId": "Compound.Artisan.Plot",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Compound_Artisan_Plot.DA_Compound_Artisan_Plot",
+			"hash": "5729EB0235BB60A5"
+		},
+		{
+			"stableId": "Compound.Laborer.CornerCourt",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Compound_Laborer_CornerCourt.DA_Compound_Laborer_CornerCourt",
+			"hash": "C37F0D229521D5BD"
+		},
+		{
+			"stableId": "Compound.Laborer.CraftCourt",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Compound_Laborer_CraftCourt.DA_Compound_Laborer_CraftCourt",
+			"hash": "79E2B85962A86EA6"
+		},
+		{
+			"stableId": "Compound.Laborer.NarrowGang",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Compound_Laborer_NarrowGang.DA_Compound_Laborer_NarrowGang",
+			"hash": "757CCF0A0014E72D"
+		},
+		{
+			"stableId": "Compound.Laborer.SharedCourt",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Compound_Laborer_SharedCourt.DA_Compound_Laborer_SharedCourt",
+			"hash": "0DB830E78FB353CB"
+		},
+		{
+			"stableId": "Good.Barrels",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Barrels.DA_Good_Barrels",
+			"hash": "2E74196AA61E1083"
+		},
+		{
+			"stableId": "Good.Beer",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Beer.DA_Good_Beer",
+			"hash": "1F4AE1B6F6627F8D"
+		},
+		{
+			"stableId": "Good.Bread",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Bread.DA_Good_Bread",
+			"hash": "D43E72E128D930AB"
+		},
+		{
+			"stableId": "Good.Firewood",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Firewood.DA_Good_Firewood",
+			"hash": "E142E3725C2FCED6"
+		},
+		{
+			"stableId": "Good.Fish",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Fish.DA_Good_Fish",
+			"hash": "151944329AA434D2"
+		},
+		{
+			"stableId": "Good.Flour",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Flour.DA_Good_Flour",
+			"hash": "F98A986B598AECEC"
+		},
+		{
+			"stableId": "Good.Grain",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Grain.DA_Good_Grain",
+			"hash": "574858DAAB2D4423"
+		},
+		{
+			"stableId": "Good.Hops",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Hops.DA_Good_Hops",
+			"hash": "E19D50E813F3A389"
+		},
+		{
+			"stableId": "Good.Iron",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Iron.DA_Good_Iron",
+			"hash": "27146CC91F1DF41A"
+		},
+		{
+			"stableId": "Good.Malt",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Malt.DA_Good_Malt",
+			"hash": "D577052D06285983"
+		},
+		{
+			"stableId": "Good.Planks",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Planks.DA_Good_Planks",
+			"hash": "83611B41406C8F85"
+		},
+		{
+			"stableId": "Good.Salt",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Salt.DA_Good_Salt",
+			"hash": "96B12CF763C04EFE"
+		},
+		{
+			"stableId": "Good.Timber",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Timber.DA_Good_Timber",
+			"hash": "67CE9584ABEF16C8"
+		},
+		{
+			"stableId": "Good.Tools",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Good_Tools.DA_Good_Tools",
+			"hash": "3EAFB51F74C1149F"
+		},
+		{
+			"stableId": "Need.BasicServices",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Need_BasicServices.DA_Need_BasicServices",
+			"hash": "5217C5DF2A6AFD7A"
+		},
+		{
+			"stableId": "Need.Beer",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Need_Beer.DA_Need_Beer",
+			"hash": "D89506CD70CF93DB"
+		},
+		{
+			"stableId": "Need.Bread",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Need_Bread.DA_Need_Bread",
+			"hash": "E575CA605C077DA9"
+		},
+		{
+			"stableId": "Need.Fish",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Need_Fish.DA_Need_Fish",
+			"hash": "516E08C392A81692"
+		},
+		{
+			"stableId": "Need.Heating",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Need_Heating.DA_Need_Heating",
+			"hash": "A66BB198857D041C"
+		},
+		{
+			"stableId": "Need.Tools",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Need_Tools.DA_Need_Tools",
+			"hash": "AF96662DB853DDD4"
+		},
+		{
+			"stableId": "PopulationTier.Artisan",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_PopulationTier_Artisan.DA_PopulationTier_Artisan",
+			"hash": "B31B1FF476A4F500"
+		},
+		{
+			"stableId": "PopulationTier.Laborer",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_PopulationTier_Laborer.DA_PopulationTier_Laborer",
+			"hash": "A0CC09EFF1D3D381"
+		},
+		{
+			"stableId": "Recipe.BakeBread",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_BakeBread.DA_Recipe_BakeBread",
+			"hash": "3C8A11BACBC22C49"
+		},
+		{
+			"stableId": "Recipe.BrewBeer",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_BrewBeer.DA_Recipe_BrewBeer",
+			"hash": "DCA22DB5A971E19D"
+		},
+		{
+			"stableId": "Recipe.CatchFish",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_CatchFish.DA_Recipe_CatchFish",
+			"hash": "51FAAC0826A95131"
+		},
+		{
+			"stableId": "Recipe.FellTimber",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_FellTimber.DA_Recipe_FellTimber",
+			"hash": "AD03F90E9D225BBA"
+		},
+		{
+			"stableId": "Recipe.GrowGrain",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_GrowGrain.DA_Recipe_GrowGrain",
+			"hash": "45C86D3137F1A16B"
+		},
+		{
+			"stableId": "Recipe.GrowHops",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_GrowHops.DA_Recipe_GrowHops",
+			"hash": "5E127AF4A0FC1E04"
+		},
+		{
+			"stableId": "Recipe.MakeBarrels",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_MakeBarrels.DA_Recipe_MakeBarrels",
+			"hash": "501332D439E974BC"
+		},
+		{
+			"stableId": "Recipe.MaltGrain",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_MaltGrain.DA_Recipe_MaltGrain",
+			"hash": "6B6E5EC18779D29A"
+		},
+		{
+			"stableId": "Recipe.MillFlour",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_MillFlour.DA_Recipe_MillFlour",
+			"hash": "92EF1436BFE02AF4"
+		},
+		{
+			"stableId": "Recipe.SawPlanks",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_SawPlanks.DA_Recipe_SawPlanks",
+			"hash": "97EC4D2E57C45E4B"
+		},
+		{
+			"stableId": "Recipe.SmithTools",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_SmithTools.DA_Recipe_SmithTools",
+			"hash": "F842BD7B37B20BDF"
+		},
+		{
+			"stableId": "Recipe.SplitFirewood",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Recipe_SplitFirewood.DA_Recipe_SplitFirewood",
+			"hash": "C0CD30D44A068D78"
+		},
+		{
+			"stableId": "Route.BalticSea",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Route_BalticSea.DA_Route_BalticSea",
+			"hash": "07108D84E75E6F87"
+		},
+		{
+			"stableId": "Route.SaltRoad",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Route_SaltRoad.DA_Route_SaltRoad",
+			"hash": "A9BC1234E34AA54E"
+		},
+		{
+			"stableId": "Scenario.LubeckGrainShortageV1",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Scenario_LubeckGrainShortageV1.DA_Scenario_LubeckGrainShortageV1",
+			"hash": "7B1414BDBB15C6FA"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveLandRoute",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_ActiveLandRoute.DA_ScenarioObjective_ActiveLandRoute",
+			"hash": "1E52FCBEF0935246"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveProductionEconomy",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_ActiveProductionEconomy.DA_ScenarioObjective_ActiveProductionEconomy",
+			"hash": "C505209D20697D9B"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveSeaRoute",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_ActiveSeaRoute.DA_ScenarioObjective_ActiveSeaRoute",
+			"hash": "B0F4479A8A784F42"
+		},
+		{
+			"stableId": "ScenarioObjective.AffordableBread",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_AffordableBread.DA_ScenarioObjective_AffordableBread",
+			"hash": "862635CF1DCD119C"
+		},
+		{
+			"stableId": "ScenarioObjective.CivicSatisfaction",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_CivicSatisfaction.DA_ScenarioObjective_CivicSatisfaction",
+			"hash": "204B3B6DC6A9B259"
+		},
+		{
+			"stableId": "ScenarioObjective.CompletedResearch",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_CompletedResearch.DA_ScenarioObjective_CompletedResearch",
+			"hash": "D841CB81CFEF9256"
+		},
+		{
+			"stableId": "ScenarioObjective.CompletedTradeLegs",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_CompletedTradeLegs.DA_ScenarioObjective_CompletedTradeLegs",
+			"hash": "26571207A4E45780"
+		},
+		{
+			"stableId": "ScenarioObjective.SafeBreadReserve",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_SafeBreadReserve.DA_ScenarioObjective_SafeBreadReserve",
+			"hash": "7BA38F95AB9B5864"
+		},
+		{
+			"stableId": "ScenarioObjective.SafeGrainReserve",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_SafeGrainReserve.DA_ScenarioObjective_SafeGrainReserve",
+			"hash": "0CC2C92A699EBE55"
+		},
+		{
+			"stableId": "ScenarioObjective.SolventHouse",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_SolventHouse.DA_ScenarioObjective_SolventHouse",
+			"hash": "26767D09E92E24D3"
+		},
+		{
+			"stableId": "ScenarioObjective.StablePopulation",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_ScenarioObjective_StablePopulation.DA_ScenarioObjective_StablePopulation",
+			"hash": "A6493808DB007B94"
+		},
+		{
+			"stableId": "Technology.Commerce.MarketReports",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Technology_Commerce_MarketReports.DA_Technology_Commerce_MarketReports",
+			"hash": "B7ADB33E5434797E"
+		},
+		{
+			"stableId": "Technology.Commerce.ReserveAutomation",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Technology_Commerce_ReserveAutomation.DA_Technology_Commerce_ReserveAutomation",
+			"hash": "63BEEF03B6D5642E"
+		},
+		{
+			"stableId": "Technology.Commerce.TransactionFriction",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Technology_Commerce_TransactionFriction.DA_Technology_Commerce_TransactionFriction",
+			"hash": "15C731216683A1D8"
+		},
+		{
+			"stableId": "Technology.Logistics.CartCapacity",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Technology_Logistics_CartCapacity.DA_Technology_Logistics_CartCapacity",
+			"hash": "9B207DF9B5B905DE"
+		},
+		{
+			"stableId": "Technology.Logistics.RouteScheduling",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Technology_Logistics_RouteScheduling.DA_Technology_Logistics_RouteScheduling",
+			"hash": "ABD1FBDDA7C4C7C6"
+		},
+		{
+			"stableId": "Technology.Logistics.WarehouseHandling",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Technology_Logistics_WarehouseHandling.DA_Technology_Logistics_WarehouseHandling",
+			"hash": "0DB457D256A80CC6"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedMilling",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Technology_Production_ImprovedMilling.DA_Technology_Production_ImprovedMilling",
+			"hash": "59D4572FB4A779CB"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedSawmilling",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Technology_Production_ImprovedSawmilling.DA_Technology_Production_ImprovedSawmilling",
+			"hash": "7D08F2E536623283"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedSmithing",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Technology_Production_ImprovedSmithing.DA_Technology_Production_ImprovedSmithing",
+			"hash": "1AA384B311EDA522"
+		},
+		{
+			"stableId": "Vehicle.Cog",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Vehicle_Cog.DA_Vehicle_Cog",
+			"hash": "DCD93805FB2F658F"
+		},
+		{
+			"stableId": "Vehicle.Wagon",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Vehicle_Wagon.DA_Vehicle_Wagon",
+			"hash": "6950B7FF81C608BE"
+		},
+		{
+			"stableId": "Victory.ProsperityEconomic",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Victory_ProsperityEconomic.DA_Victory_ProsperityEconomic",
+			"hash": "22F7B7557A9C72EA"
+		},
+		{
+			"stableId": "Victory.ResearchCivic",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Victory_ResearchCivic.DA_Victory_ResearchCivic",
+			"hash": "E02C5A4034030B46"
+		},
+		{
+			"stableId": "Victory.TradeNetwork",
+			"asset": "/Game/Hansa/Generated/Staging/Firewood/DA_Victory_TradeNetwork.DA_Victory_TradeNetwork",
+			"hash": "972B848DD37EA304"
+		}
+	]
+}

@@ -77,6 +77,7 @@ namespace Hansa::Simulation
 		case EHansaLogisticsRoadPathFailure::SourceNotConnectedToMarket: return TEXT("SourceNotConnectedToMarket");
 		case EHansaLogisticsRoadPathFailure::DestinationNotConnectedToMarket: return TEXT("DestinationNotConnectedToMarket");
 		case EHansaLogisticsRoadPathFailure::EndpointsDisconnected: return TEXT("EndpointsDisconnected");
+		case EHansaLogisticsRoadPathFailure::MarketNotInRange: return TEXT("MarketNotInRange");
 		default: return TEXT("UnknownLogisticsRoadPathFailure");
 		}
 	}
@@ -173,6 +174,7 @@ namespace Hansa::Simulation
 		struct FMarketAccess
 		{
 			FHansaBuildingId BuildingId;
+            int32 MaximumRoadDistanceCells = 40;
 			TArray<FHansaGridCoordinate> Cells;
 		};
 
@@ -237,6 +239,10 @@ namespace Hansa::Simulation
 				Result.MessageKey = TEXT("Hansa.Logistics.Path.DestinationNotConnectedToMarket");
 				Result.RemedyKey = TEXT("Hansa.Logistics.Path.Remedy.ConnectDestinationRoadToMarket");
 				break;
+            case EHansaLogisticsRoadPathFailure::MarketNotInRange:
+                Result.MessageKey = TEXT("Hansa.Logistics.Path.MarketNotInRange");
+                Result.RemedyKey = TEXT("Hansa.Logistics.Path.Remedy.BuildCloserMarketOrShorterRoad");
+                break;
 			case EHansaLogisticsRoadPathFailure::EndpointsDisconnected:
 				Result.MessageKey = TEXT("Hansa.Logistics.Path.EndpointsDisconnected");
 				Result.RemedyKey = TEXT("Hansa.Logistics.Path.Remedy.JoinRoadNetworks");
@@ -263,12 +269,22 @@ namespace Hansa::Simulation
 			return Result;
 		}
 
+        TArray<FHansaGridCoordinate> BuildPlacementAccess(const FHansaPlacedBuildingRecord& Record,const TArray<FHansaGridCoordinate>& Roads,const FHansaEconomicRegistry* Registry)
+        {
+         auto Cells=BuildAccessCells(Record.OccupiedCells,Roads);
+         const auto* Definition=Registry?Registry->FindBuilding(Record.Spec.BuildingDefinitionId.ToString()):nullptr;
+         if(Definition&&Definition->CompoundRoadFrontMask)
+          Cells.RemoveAll([&](const FHansaGridCoordinate Road){return !Record.OccupiedCells.ContainsByPredicate([&](const FHansaGridCoordinate C){return IsCompoundFrontAdjacent(Record.Spec,C,Road);});});
+         return Cells;
+        }
+
 		FEndpointAccess BuildEndpointAccess(
 			const FHansaInventoryProjection& Inventory,
 			const FHansaPlacementState& Placement,
 			const TConstArrayView<FHansaBuildingState> Buildings,
 			const FHansaPlacementMapInitialization& Map,
-			const TArray<FHansaGridCoordinate>& RoadCells)
+			const TArray<FHansaGridCoordinate>& RoadCells,
+            const FHansaEconomicRegistry* Registry)
 		{
 			FEndpointAccess Result;
 			if (Inventory.OwnerKind == EHansaInventoryOwnerKind::City)
@@ -282,7 +298,7 @@ namespace Hansa::Simulation
 					for (const FHansaPlacedBuildingRecord& Record : Placement.GetPlacements())
 					{
 						if (Record.Spec.CityId != Map.CityId ||
-							Record.Spec.BuildingDefinitionId.ToString() != TEXT("Building.Market") ||
+							!IsMarketAccessProvider(Record, Registry) ||
 							!IsCompletedBuilding(Buildings, Record.BuildingId) ||
 							(Inventory.BuildingId.IsValid() && Record.BuildingId != Inventory.BuildingId))
 						{
@@ -295,8 +311,17 @@ namespace Hansa::Simulation
 					}
 					if (SelectedMarket != nullptr)
 					{
-						Result.BoundMarketBuildingId = SelectedMarket->BuildingId;
+						Result.BoundMarketBuildingId = Inventory.BuildingId;
 						Result.Cells = BuildAccessCells(SelectedMarket->OccupiedCells, RoadCells);
+                        if (!Inventory.BuildingId.IsValid())
+                        {
+                            // Shared city stock is available through every completed market.
+                            for (const FHansaPlacedBuildingRecord& Record : Placement.GetPlacements())
+                                if (Record.Spec.CityId == Map.CityId && IsMarketAccessProvider(Record, Registry) &&
+                                    IsCompletedBuilding(Buildings, Record.BuildingId))
+                                    for (const auto Cell : BuildAccessCells(Record.OccupiedCells, RoadCells))
+                                        Result.Cells.AddUnique(Cell);
+                        }
 					}
 					else if (Inventory.BuildingId.IsValid())
 					{
@@ -314,7 +339,7 @@ namespace Hansa::Simulation
 			}
 			Result.bValid = true;
 			Result.CityId = EndpointPlacement->Spec.CityId;
-			Result.Cells = BuildAccessCells(EndpointPlacement->OccupiedCells, RoadCells);
+			Result.Cells = BuildPlacementAccess(*EndpointPlacement, RoadCells, Registry);
 			return Result;
 		}
 
@@ -394,7 +419,8 @@ namespace Hansa::Simulation
 	FHansaLogisticsRoadPathProjection FHansaLocalLogisticsQueries::QueryBuildingRoadAccess(
 		const FHansaBuildingId SourceBuildingId,
 		const FHansaPlacementState& Placement,
-		const TConstArrayView<FHansaBuildingState> Buildings)
+		const TConstArrayView<FHansaBuildingState> Buildings,
+        const FHansaEconomicRegistry* Registry)
 	{
 		FHansaLogisticsRoadPathProjection Result;
 		const FHansaPlacedBuildingRecord* SourcePlacement = Placement.FindPlacement(SourceBuildingId);
@@ -423,7 +449,7 @@ namespace Hansa::Simulation
 			return Result;
 		}
 
-		Result.SourceAccessCells = BuildAccessCells(SourcePlacement->OccupiedCells, RoadCells);
+		Result.SourceAccessCells = BuildPlacementAccess(*SourcePlacement, RoadCells, Registry);
 		if (Result.SourceAccessCells.IsEmpty())
 		{
 			SetFailure(Result, EHansaLogisticsRoadPathFailure::SourceNotAdjacentToRoad);
@@ -468,9 +494,9 @@ namespace Hansa::Simulation
 		{
 			const TArray<FHansaGridCoordinate> CandidateRoads = BuildRoadCells(Placement, CandidateMap, Buildings);
 			const FEndpointAccess CandidateSource = BuildEndpointAccess(
-				Source.GetValue(), Placement, Buildings, CandidateMap, CandidateRoads);
+				Source.GetValue(), Placement, Buildings, CandidateMap, CandidateRoads, Registry);
 			const FEndpointAccess CandidateDestination = BuildEndpointAccess(
-				Destination.GetValue(), Placement, Buildings, CandidateMap, CandidateRoads);
+				Destination.GetValue(), Placement, Buildings, CandidateMap, CandidateRoads, Registry);
 			if (CandidateSource.bValid && CandidateDestination.bValid)
 			{
 				SourceAccess = CandidateSource;
@@ -489,9 +515,9 @@ namespace Hansa::Simulation
 			{
 				const TArray<FHansaGridCoordinate> CandidateRoads = BuildRoadCells(Placement, CandidateMap, Buildings);
 				const FEndpointAccess CandidateSource = BuildEndpointAccess(
-					Source.GetValue(), Placement, Buildings, CandidateMap, CandidateRoads);
+					Source.GetValue(), Placement, Buildings, CandidateMap, CandidateRoads, Registry);
 				const FEndpointAccess CandidateDestination = BuildEndpointAccess(
-					Destination.GetValue(), Placement, Buildings, CandidateMap, CandidateRoads);
+					Destination.GetValue(), Placement, Buildings, CandidateMap, CandidateRoads, Registry);
 				if (CandidateSource.bValid)
 				{
 					bSourceFound = true;
@@ -535,7 +561,7 @@ namespace Hansa::Simulation
 			return Result;
 		}
 		Result.SourceAccessCells = SourceAccess.Cells;
-		Result.DestinationAccessCells = DestinationAccess.Cells;
+        Result.DestinationAccessCells = DestinationAccess.Cells;
 		if (!SourceAccess.bCityInventory && SourceAccess.Cells.IsEmpty())
 		{
 			SetFailure(Result, EHansaLogisticsRoadPathFailure::SourceNotAdjacentToRoad);
@@ -560,6 +586,9 @@ namespace Hansa::Simulation
 			++OperationalMarketCount;
 			FMarketAccess Market;
 			Market.BuildingId = Record.BuildingId;
+            if (Registry != nullptr)
+                if (const auto* Definition = Registry->FindBuilding(Record.Spec.BuildingDefinitionId.ToString()))
+                    Market.MaximumRoadDistanceCells = Definition->MaximumMarketRoadDistanceCells;
 			Market.Cells = BuildAccessCells(Record.OccupiedCells, RoadCells);
 			if (!Market.Cells.IsEmpty())
 			{
@@ -587,6 +616,7 @@ namespace Hansa::Simulation
 			return Left.BuildingId.GetValue() < Right.BuildingId.GetValue();
 		});
 
+		bool bOutOfRange = false;
 		bool bSourceConnectedToAnyMarket = false;
 		bool bDestinationConnectedToAnyMarket = false;
 		int32 BestDeliveryDistance = INDEX_NONE;
@@ -594,16 +624,27 @@ namespace Hansa::Simulation
 		TArray<FHansaGridCoordinate> BestDeliveryPath;
 		for (const FMarketAccess& Market : Markets)
 		{
-			const TArray<FHansaGridCoordinate>& SourceCells = SourceAccess.Cells;
-			const TArray<FHansaGridCoordinate>& DestinationCells = DestinationAccess.Cells;
-			const int32 SourceMarketDistance = ShortestRoadDistance(RoadCells, SourceAccess.Cells, Market.Cells);
-			const int32 DestinationMarketDistance = ShortestRoadDistance(RoadCells, DestinationAccess.Cells, Market.Cells);
+			const TArray<FHansaGridCoordinate>& SourceCells = SourceAccess.bCityInventory && !SourceAccess.BoundMarketBuildingId.IsValid() ? Market.Cells : SourceAccess.Cells;
+			const TArray<FHansaGridCoordinate>& DestinationCells = DestinationAccess.bCityInventory && !DestinationAccess.BoundMarketBuildingId.IsValid() ? Market.Cells : DestinationAccess.Cells;
+			const int32 SourceMarketDistance = ShortestRoadDistance(RoadCells, SourceCells, Market.Cells);
+			const int32 DestinationMarketDistance = ShortestRoadDistance(RoadCells, DestinationCells, Market.Cells);
 			bSourceConnectedToAnyMarket |= SourceMarketDistance != INDEX_NONE;
 			bDestinationConnectedToAnyMarket |= DestinationMarketDistance != INDEX_NONE;
 			if (SourceMarketDistance == INDEX_NONE || DestinationMarketDistance == INDEX_NONE)
 			{
 				continue;
 			}
+            // A city inventory is physically bound to its own market, not a distant hub.
+            if (SourceAccess.bCityInventory && SourceAccess.BoundMarketBuildingId.IsValid() && !DestinationAccess.bCityInventory &&
+                SourceAccess.BoundMarketBuildingId != Market.BuildingId) continue;
+            if (DestinationAccess.bCityInventory && DestinationAccess.BoundMarketBuildingId.IsValid() && !SourceAccess.bCityInventory &&
+                DestinationAccess.BoundMarketBuildingId != Market.BuildingId) continue;
+            if ((!SourceAccess.bCityInventory && SourceMarketDistance + 2 > Market.MaximumRoadDistanceCells) ||
+                (!DestinationAccess.bCityInventory && DestinationMarketDistance + 2 > Market.MaximumRoadDistanceCells))
+            {
+                bOutOfRange = true;
+                continue;
+            }
 			const TArray<FHansaGridCoordinate> DeliveryPath = ShortestRoadPath(
 				RoadCells, SourceCells, DestinationCells);
 			if (DeliveryPath.IsEmpty())
@@ -623,7 +664,11 @@ namespace Hansa::Simulation
 
 		if (BestMarket == nullptr)
 		{
-			if (!bSourceConnectedToAnyMarket)
+            if (bOutOfRange)
+            {
+                SetFailure(Result, EHansaLogisticsRoadPathFailure::MarketNotInRange);
+            }
+			else if (!bSourceConnectedToAnyMarket)
 			{
 				SetFailure(Result, EHansaLogisticsRoadPathFailure::SourceNotConnectedToMarket);
 			}
@@ -644,8 +689,8 @@ namespace Hansa::Simulation
 		Result.Failure = EHansaLogisticsRoadPathFailure::None;
 		Result.MessageKey = NAME_None;
 		Result.RemedyKey = NAME_None;
-		Result.SourceAccessCells = SourceAccess.Cells;
-		Result.DestinationAccessCells = DestinationAccess.Cells;
+		Result.SourceAccessCells = SourceAccess.bCityInventory && !SourceAccess.BoundMarketBuildingId.IsValid() ? BestMarket->Cells : SourceAccess.Cells;
+        Result.DestinationAccessCells = DestinationAccess.bCityInventory && !DestinationAccess.BoundMarketBuildingId.IsValid() ? BestMarket->Cells : DestinationAccess.Cells;
 		Result.RouteCells = MoveTemp(BestDeliveryPath);
 		Result.RoadDistanceCells = FMath::Max(1, Result.RouteCells.Num() + 1);
 		return Result;
@@ -702,14 +747,26 @@ namespace Hansa::Simulation
 			SetFailure(Result, EHansaLogisticsRoadPathFailure::NoCompletedRoad);
 			return Result;
 		}
-		const TArray<FHansaGridCoordinate> SourceCells = BuildAccessCells(SourcePlacement->OccupiedCells, RoadCells);
+		const TArray<FHansaGridCoordinate> SourceCells = BuildPlacementAccess(*SourcePlacement, RoadCells, Registry);
 		if (SourceCells.IsEmpty())
 		{
 			SetFailure(Result, EHansaLogisticsRoadPathFailure::SourceNotAdjacentToRoad);
 			return Result;
 		}
-		const FEndpointAccess DestinationAccess = BuildEndpointAccess(
-			Destination.GetValue(), Placement, Buildings, *Map, RoadCells);
+        // A market provides access; its only connectivity requirement is its own road entrance.
+        if (IsMarketAccessProvider(*SourcePlacement, Registry))
+        {
+            Result.bConnected = true;
+            Result.bMarketEligible = true;
+            Result.SelectedMarketBuildingId = SourceBuildingId;
+            Result.SourceAccessCells = SourceCells;
+            Result.DestinationAccessCells = SourceCells;
+            Result.RouteCells = {SourceCells[0]};
+            Result.RoadDistanceCells = 0;
+            return Result;
+        }
+        const FEndpointAccess DestinationAccess = BuildEndpointAccess(
+			Destination.GetValue(), Placement, Buildings, *Map, RoadCells, Registry);
 		if (!DestinationAccess.bValid)
 		{
 			SetFailure(Result, EHansaLogisticsRoadPathFailure::DestinationEndpointUnavailable);
@@ -729,6 +786,9 @@ namespace Hansa::Simulation
 			++OperationalMarketCount;
 			FMarketAccess Market;
 			Market.BuildingId = Record.BuildingId;
+            if (Registry != nullptr)
+                if (const auto* Definition = Registry->FindBuilding(Record.Spec.BuildingDefinitionId.ToString()))
+                    Market.MaximumRoadDistanceCells = Definition->MaximumMarketRoadDistanceCells;
 			Market.Cells = BuildAccessCells(Record.OccupiedCells, RoadCells);
 			if (!Market.Cells.IsEmpty()) Markets.Add(MoveTemp(Market));
 		}
@@ -750,18 +810,26 @@ namespace Hansa::Simulation
 		const FMarketAccess* BestMarket = nullptr;
 		int32 BestDistance = INDEX_NONE;
 		TArray<FHansaGridCoordinate> BestPath;
+		bool bOutOfRange = false;
 		bool bSourceConnected = false;
 		bool bDestinationConnected = false;
 		for (const FMarketAccess& Market : Markets)
 		{
-			const int32 SourceMarketDistance = ShortestRoadDistance(RoadCells, SourceCells, Market.Cells);
+			const auto& DestinationCells = DestinationAccess.BoundMarketBuildingId.IsValid() ? DestinationAccess.Cells : Market.Cells;
+            const int32 SourceMarketDistance = ShortestRoadDistance(RoadCells, SourceCells, Market.Cells);
 			const int32 DestinationMarketDistance = ShortestRoadDistance(
-				RoadCells, DestinationAccess.Cells, Market.Cells);
+				RoadCells, DestinationCells, Market.Cells);
 			bSourceConnected |= SourceMarketDistance != INDEX_NONE;
 			bDestinationConnected |= DestinationMarketDistance != INDEX_NONE;
 			if (SourceMarketDistance == INDEX_NONE || DestinationMarketDistance == INDEX_NONE) continue;
+            if (DestinationAccess.BoundMarketBuildingId.IsValid() && DestinationAccess.BoundMarketBuildingId != Market.BuildingId) continue;
+            if (SourceBuildingId != Market.BuildingId && SourceMarketDistance + 2 > Market.MaximumRoadDistanceCells)
+            {
+                bOutOfRange = true;
+                continue;
+            }
 			const TArray<FHansaGridCoordinate> Path = ShortestRoadPath(
-				RoadCells, SourceCells, DestinationAccess.Cells);
+				RoadCells, SourceCells, DestinationCells);
 			const int32 Distance = Path.IsEmpty() ? INDEX_NONE : Path.Num() - 1;
 			if (Distance != INDEX_NONE && (BestMarket == nullptr || Distance < BestDistance ||
 				(Distance == BestDistance && Market.BuildingId.GetValue() < BestMarket->BuildingId.GetValue())))
@@ -773,7 +841,7 @@ namespace Hansa::Simulation
 		}
 		if (BestMarket == nullptr)
 		{
-			SetFailure(Result, !bSourceConnected
+			SetFailure(Result, bOutOfRange ? EHansaLogisticsRoadPathFailure::MarketNotInRange : !bSourceConnected
 				? EHansaLogisticsRoadPathFailure::SourceNotConnectedToMarket
 				: !bDestinationConnected
 					? EHansaLogisticsRoadPathFailure::DestinationNotConnectedToMarket
@@ -785,7 +853,7 @@ namespace Hansa::Simulation
 		Result.bMarketEligible = true;
 		Result.SelectedMarketBuildingId = BestMarket->BuildingId;
 		Result.SourceAccessCells = SourceCells;
-		Result.DestinationAccessCells = DestinationAccess.Cells;
+		Result.DestinationAccessCells = DestinationAccess.BoundMarketBuildingId.IsValid() ? DestinationAccess.Cells : BestMarket->Cells;
 		Result.RouteCells = MoveTemp(BestPath);
 		Result.RoadDistanceCells = FMath::Max(1, Result.RouteCells.Num() + 1);
 		return Result;

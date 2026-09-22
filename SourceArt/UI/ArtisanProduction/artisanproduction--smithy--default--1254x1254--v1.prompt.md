@@ -1,0 +1,5 @@
+# smithy
+
+Mode: built-in ImageGen generate. Requested 1024 square. Generated 1254x1254. Master retained. Inspection: native subject and silhouette accepted; display variant QA pending.
+
+One transparent construction icon for Hansa: medieval Hanseatic smithy live-work house, cream lime plaster walls with dark oak framing, steep orange-red clay tiled gable roof, two storeys. At the right side a small open lean-to forging area, square masonry hearth and tall narrow chimney passing through its board roof, dark iron horned anvil on wooden stump, a few iron bars on a bench. Original plausible northern German medieval workshop, no modern equipment, no fantasy, no lettering, no people, no street or terrain slab. Realistically painted miniature, three-quarter elevated isometric-like view from the front-right showing the forging area, soft upper-left light, natural muted warm materials. Clear compact silhouette, match Hansa navy/brass construction tray family. Transparent clean alpha, generous margin, 1024x1024 requested. Building occupies 78 percent of square. Single building only.

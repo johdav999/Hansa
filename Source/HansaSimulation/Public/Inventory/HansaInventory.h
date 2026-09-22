@@ -15,7 +15,8 @@ namespace Hansa::Simulation
 		City = 0,
 		Building,
 		Warehouse,
-		Vehicle
+		Vehicle,
+		TradeStation
 	};
 
 	enum class EHansaInventoryEndpointKind : uint8
@@ -50,7 +51,8 @@ namespace Hansa::Simulation
 		ReservationNotFound,
 		ReservationMismatch,
 		SequenceOutOfOrder,
-		ArithmeticOverflow
+		ArithmeticOverflow,
+		HouseholdReserveProtected
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaInventoryTransactionError Error);
@@ -79,6 +81,7 @@ namespace Hansa::Simulation
 		FHansaCityDefinitionId CityId;
 		FHansaBuildingId BuildingId;
 		FHansaVehicleId VehicleId;
+		FHansaTradeStationId TradeStationId;
 		FHansaQuantity Capacity;
 		TArray<FHansaGoodId> AcceptedGoods;
 		TArray<FHansaInventoryStockInitialization> InitialStock;
@@ -107,9 +110,11 @@ namespace Hansa::Simulation
 		FHansaCityDefinitionId CityId;
 		FHansaBuildingId BuildingId;
 		FHansaVehicleId VehicleId;
+		FHansaTradeStationId TradeStationId;
 		FHansaQuantity Capacity;
 		TArray<FHansaGoodId> AcceptedGoods;
 		TArray<FHansaInventoryStockRecord> Stocks;
+  TArray<FHansaGoodId> HouseholdExcludedGoods;
 	};
 
 	struct HANSASIMULATION_API FHansaInventoryMovement final
@@ -157,15 +162,25 @@ namespace Hansa::Simulation
 		FHansaCityDefinitionId CityId;
 		FHansaBuildingId BuildingId;
 		FHansaVehicleId VehicleId;
+		FHansaTradeStationId TradeStationId;
 		FHansaQuantity Capacity;
 		FHansaQuantity UsedCapacity;
 		FHansaQuantity FreeCapacity;
 		FHansaQuantity Reserved;
 		TArray<FHansaGoodId> AcceptedGoods;
 		TArray<FHansaInventoryStockProjection> Stocks;
+  TArray<FHansaGoodId> HouseholdExcludedGoods;
 	};
 
-	class FHansaInventoryReadOnlyAccess;
+	struct FHansaSpoilageRecord
+    {
+        FHansaGoodId GoodId;
+        // One global carry per good, shared by every physical store and local shipment.
+        int64 RemainderNumerator = 0;
+        int64 DestroyedMilliUnits = 0;
+    };
+
+    class FHansaInventoryReadOnlyAccess;
 	class FHansaStateHasher;
 
 	/** Owning immutable copy used by simulation snapshots, save work, and asynchronous readers. */
@@ -191,6 +206,14 @@ namespace Hansa::Simulation
 	 * Actor-independent authoritative inventory ledger. All successful mutations are
 	 * atomic and deterministic; failures return AppliedQuantity=0 and leave the ledger unchanged.
 	 */
+	/** Derived withdrawal floor for one actual household consumption pool. Not physical stock. */
+	struct FHansaHouseholdStockProtection
+	{
+		FHansaInventoryId InventoryId;
+		FHansaGoodId GoodId;
+		int64 TargetRaw = 0;
+	};
+
 	class HANSASIMULATION_API FHansaInventoryLedger final
 	{
 	public:
@@ -201,10 +224,16 @@ namespace Hansa::Simulation
 			int32 RecentMovementCapacity = 64);
 
 		[[nodiscard]] bool IsValid() const { return bInitialized; }
+		void SetHouseholdProtection(TArray<FHansaHouseholdStockProtection> Values) { HouseholdProtection = MoveTemp(Values); }
+		[[nodiscard]] int64 ProtectedRaw(FHansaInventoryId InventoryId, FHansaGoodId GoodId) const;
+
 		[[nodiscard]] FHansaInventoryReadOnlyAccess CreateReadOnlyAccess() const;
 
 		/** Register empty runtime storage without replacing stock, reservations or movement history. */
 		[[nodiscard]] bool TryAddEmptyInventory(FHansaInventoryInitialization Inventory);
+		/** Updates a runtime capacity when a deterministic gameplay modifier changes it. */
+		[[nodiscard]] bool TrySetCapacity(FHansaInventoryId InventoryId, FHansaQuantity Capacity);
+  [[nodiscard]] bool SetHouseholdAvailable(FHansaInventoryId InventoryId, FHansaGoodId GoodId, bool bAvailable);
 
 		[[nodiscard]] FHansaInventoryTransactionResult TryTransfer(
 			const FHansaInventoryEndpoint& Source,
@@ -230,10 +259,14 @@ namespace Hansa::Simulation
 
 	private:
 		friend class FHansaSaveCodec;
+        friend class FHansaSpoilageExecutor;
 		friend class FHansaInventoryReadOnlyAccess;
 		friend class FHansaStateHasher;
 
 		void AddRecentMovement(FHansaInventoryMovement Movement);
+		// Rebuilt from current cohorts/calendar/policy before mutations; excluded from saves/hash.
+		TArray<FHansaHouseholdStockProtection> HouseholdProtection;
+        TArray<FHansaSpoilageRecord> Spoilage;
 
 		bool bInitialized = false;
 		int32 MovementCapacity = 64;
@@ -248,6 +281,9 @@ namespace Hansa::Simulation
 	{
 	public:
 		[[nodiscard]] int32 GetInventoryCount() const;
+        [[nodiscard]] TArray<FHansaSpoilageRecord> QuerySpoilage() const;
+  [[nodiscard]] bool IsHouseholdAvailable(FHansaInventoryId InventoryId, FHansaGoodId GoodId) const;
+		[[nodiscard]] int64 QueryProtectedRaw(FHansaInventoryId InventoryId, FHansaGoodId GoodId) const;
 		[[nodiscard]] uint64 GetLastMovementSequence() const;
 		[[nodiscard]] TOptional<FHansaInventoryProjection> QueryInventory(FHansaInventoryId InventoryId) const;
 		[[nodiscard]] TOptional<FHansaQuantity> QueryCapacity(FHansaInventoryId InventoryId) const;

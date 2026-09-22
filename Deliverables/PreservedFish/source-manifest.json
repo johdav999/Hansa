@@ -1,0 +1,400 @@
+{
+  "catalogVersion": 25,
+  "registryHash": "D73BFD73C23C2D03",
+  "saveFormat": 9,
+  "fingerprint": 22,
+  "commandSchema": 7,
+  "isolation": "Eight early foundation files use pre-feature snapshots; others use isolation snapshot. Do not automatically apply over firewood work.",
+  "changedFiles": [
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaEconomicDefinitionCompiler.cpp",
+      "baselineSha256": "88d4851f592f0554fc73a78e0535ae45f50189975f8a0bbe87d7c67bfa3c249e",
+      "candidateSha256": "10bab9a2465f22c449befd3645d2fc3a6a7096af27b4dcc4ebfeb250755f9d08",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\baseline\\Source\\Hansa\\Private\\Definitions\\HansaEconomicDefinitionCompiler.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaEconomicDefinitions.cpp",
+      "baselineSha256": "daac49a7869da6e703178142d56b2d43749813215250a16a7a42fa141964af2d",
+      "candidateSha256": "18c477a74f96c32fe9d53057a6d699705939b84812c1f2bf468ffec4f6eb0d52",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\Definitions\\HansaEconomicDefinitions.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/Definitions/HansaPopulationDefinitions.cpp",
+      "baselineSha256": "403ec812089b75147cb7257d3a1f211627ff157d6dfcccf241dc6fe6177be92c",
+      "candidateSha256": "5551ed5692b9e54fd5d8d9ee9e3fa6a6ff84bef8f9bf24b4fe03f1bf005a687d",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\baseline\\Source\\Hansa\\Private\\Definitions\\HansaPopulationDefinitions.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaInspectorPresentationModel.cpp",
+      "baselineSha256": "9d747cdc34bdbf674b8faaf07b21b818ebd45381da8068d4f1fc920434d13b99",
+      "candidateSha256": "cc44ec706c01c6467fbde664d14c353296d4ee4674c276eb9b8d108a1d70b262",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\UI\\HansaInspectorPresentationModel.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaMarketTablePresentationModel.cpp",
+      "baselineSha256": "e3e1877b0af2f3ef3720c87eeed54a67ead1a3ed901329cb9e25e655be69a29a",
+      "candidateSha256": "ccc6adc360b948c459c1c9d94710d7212061d491956a6ceaadf63c219cc6b92d",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\UI\\HansaMarketTablePresentationModel.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaProductionInspectorData.cpp",
+      "baselineSha256": "028c6e75cd6aa33fae890a3641f73a259e39a8e79d405a5e1915d5a50f5b8c5e",
+      "candidateSha256": "f570ef292307096722651c3645bb5bb31ee759be10c4ec3c72a9812c8929d966",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\UI\\HansaProductionInspectorData.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaUiComponents.cpp",
+      "baselineSha256": "3c2bda8464f9c392813fa0d0392e2381279cb8c781cf0b12a33f7d01d3b1f1b8",
+      "candidateSha256": "a0ec20433729a27e97769b1a628295817793f2b7e1672e3f4439c860928ffdea",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\UI\\HansaUiComponents.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaProductionInspector.cpp",
+      "baselineSha256": "236622b39e9b0e9de10046a3da3eb088518f810105261cfd254df39b9155d920",
+      "candidateSha256": "6dfea8d5eb153d6702e9b186f1c6900b825be40e3c3c89b6ba6622da43552f69",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\UI\\SHansaProductionInspector.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaResidenceInspector.cpp",
+      "baselineSha256": "58339da904cb7881a5ccfcd3b9b06e9e6b94ea9ee18aba848afc38c80d81591f",
+      "candidateSha256": "81ad2e22096064c2668a6ce2511a4224dd9b5ae76424d8f1d10aaa895d646eb3",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\UI\\SHansaResidenceInspector.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaRootHud.cpp",
+      "baselineSha256": "3a7b7e3fcff84997696dea4a7d44fc86b9f0d720ec0ce4fa6c2ad63022d766f9",
+      "candidateSha256": "e5d8d89eb3711b9d69d7272e6383d7965413bb6bba1635c8e807a77344e03329",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\UI\\SHansaRootHud.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaTradeMap.cpp",
+      "baselineSha256": "51e73bf7e56e8a0dcde3fc4e98e4e0538756b476065e89a530338316643b8eb5",
+      "candidateSha256": "fb54b770374ad543010abe8596fad4bb95cea276aa16c2e6f267f1569674b569",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\UI\\SHansaTradeMap.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaLubeckScenarioInitializer.cpp",
+      "baselineSha256": "1eb15c7090f4a50f329ab2274228be4dfcd7362734306baf6e378d140ffdb739",
+      "candidateSha256": "ec17ee37be39b61c0ab37c9cdb95290702007536364abae1e90c5284822ae0a9",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\World\\HansaLubeckScenarioInitializer.cpp"
+    },
+    {
+      "path": "Source/Hansa/Private/World/HansaRuntimeSimulationHost.cpp",
+      "baselineSha256": "6fe4b43dcff0c5575634b378baaf6274dbf1f889d8d8eca7a3386338bdc50252",
+      "candidateSha256": "fd28899d18f68a81e71d8f4cfcd3357d6427fdc0f367036ab855d3300e566d2a",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Private\\World\\HansaRuntimeSimulationHost.cpp"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaEconomicDefinitions.h",
+      "baselineSha256": "c1294ec7a94beb3d5a18c860fe2511773ca45e2914d8735bf2f962c7cc6349bd",
+      "candidateSha256": "6de6fbdf349ca58b7b1496e1e5d7460d8d6a201b25fad1f30fea9345c28acc69",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Public\\Definitions\\HansaEconomicDefinitions.h"
+    },
+    {
+      "path": "Source/Hansa/Public/Definitions/HansaPopulationDefinitions.h",
+      "baselineSha256": "1bb212495666f66c1fe945778a0d530b1963bcce71af8ac05c5ee5a5e43c7a95",
+      "candidateSha256": "e79f5aface613dde59c00224d8e9a44259cdb69f2f957207b7435e28925eee3f",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\baseline\\Source\\Hansa\\Public\\Definitions\\HansaPopulationDefinitions.h"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaInspectorPresentationModel.h",
+      "baselineSha256": "ab12708032ec17a9a8d29a034d4596ad9b4743befda6afcc3b919e3be7de1b71",
+      "candidateSha256": "d870d83e3bbba3acb0338c0276b873532080f56bfa91e54bfb6ebc5c4fd81fb3",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Public\\UI\\HansaInspectorPresentationModel.h"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaUiComponents.h",
+      "baselineSha256": "1021a2814b8765564942e920e658562898412123a672245e96dd4fa0f01a0575",
+      "candidateSha256": "ce6e2e8d291f76fad07688054158300a3b74828169345b7c7954d26a4ac890b6",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Public\\UI\\HansaUiComponents.h"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaProductionInspector.h",
+      "baselineSha256": "514f02072d7a35e656f4c4e225c9b043985210c4f317a7cf9abfe613a20f56df",
+      "candidateSha256": "6c2a94c5ec0a25888f84a173adb943c051aed16b84d22cb19d87665cf2f8291c",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Public\\UI\\SHansaProductionInspector.h"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaLubeckScenarioInitializer.h",
+      "baselineSha256": "4f8334f48954aadfa3c59ea268d5e7076792d9e21956f58be9929befb4feeff8",
+      "candidateSha256": "4a71ebb12e4dc2c927fc54362e19d61b73a3772f6aeafb1a2168ed68de637238",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Public\\World\\HansaLubeckScenarioInitializer.h"
+    },
+    {
+      "path": "Source/Hansa/Public/World/HansaRuntimeSimulationHost.h",
+      "baselineSha256": "699d4e6b3a4c8c432810898f3e7ea6b5e95dc1e230a86927ce8d28ff3d3a2925",
+      "candidateSha256": "a865ee1efcd2a0440624ead9c1dd27592c87c0fea8bd80e0dc437d32f8e85be7",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\Hansa\\Public\\World\\HansaRuntimeSimulationHost.h"
+    },
+    {
+      "path": "Source/HansaAutomation/Private/Gameplay/HansaProductionFixtureService.cpp",
+      "baselineSha256": "17fa9d39877c51f3701542cc63f958e03d88a6de362242b1290839fd1d420601",
+      "candidateSha256": "59f4f15c078af5f7a35036072a07c52ff9a8b95fda1f2a9b24bb1d619495ec43",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaAutomation\\Private\\Gameplay\\HansaProductionFixtureService.cpp"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaEconomicDefinitionSeedCommandlet.cpp",
+      "baselineSha256": "bbbba7c171dcb32f3aa485df6453a693c6d5b4502a0a9c59792c7f5f1a3b5464",
+      "candidateSha256": "33aa42c0f2c1ebeb1116bd138b21bc76593af824fb99d93d911a3c071295b40d",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaEditor\\Private\\Definitions\\HansaEconomicDefinitionSeedCommandlet.cpp"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaEconomicImpact.h",
+      "baselineSha256": null,
+      "candidateSha256": "7e926e709a10880c713d2a8e3e193af1a7ab9bab1b089b06e9ab44ecfb532f29",
+      "baselineSource": null
+    },
+    {
+      "path": "Source/HansaEditor/Private/Definitions/HansaPreservationContentCommandlet.cpp",
+      "baselineSha256": null,
+      "candidateSha256": "0d7865c51906b41031d976639a98aaf13c60cc83dd1cbe2297cd49ca8f4c097b",
+      "baselineSource": null
+    },
+    {
+      "path": "Source/HansaEditor/Private/Studio/SHansaAuthoringStudio.cpp",
+      "baselineSha256": "5301b3a0bfaa68c66637e11cf4c8f6d0943ed9999c15ef07c8f0d52ce155a3c3",
+      "candidateSha256": "529ed0443b765417a06792d15900909c1bbc6fca3bd243af01ab22796ddcc98a",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaEditor\\Private\\Studio\\SHansaAuthoringStudio.cpp"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaEconomicDefinitionTests.cpp",
+      "baselineSha256": "07fb667fbb047dc0fd5a31e5f5328eda2c592ddded9b905aef4debf5eb6c39ac",
+      "candidateSha256": "83430b2a070fb5cb6be8901b8e41862b09734b430b4e7545620c1ac0a04bb6a5",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaEditor\\Private\\Tests\\HansaEconomicDefinitionTests.cpp"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaPreservationTradeTests.cpp",
+      "baselineSha256": null,
+      "candidateSha256": "36d386daa40edc5cfdc72f8e8e4ff11caf89d7c270cf57876c36f4d9c79c52d9",
+      "baselineSource": null
+    },
+    {
+      "path": "Source/HansaEditor/Public/Definitions/HansaPreservationContentCommandlet.h",
+      "baselineSha256": null,
+      "candidateSha256": "c853612c4cb5680c9cb0f7ec87c30d635751e4448c436058563b4ef93ffc28a9",
+      "baselineSource": null
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Commands/HansaGameplayCommand.cpp",
+      "baselineSha256": "3f03167eee6f52d601e1f4817bd3fa6c1e21405025f6c2232f76cc9366c23e20",
+      "candidateSha256": "086b910f454c74b288f9aaba5988ef01679286f5e251f0605bb8d0cf0af274bd",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Commands\\HansaGameplayCommand.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Diagnostics/HansaStateHash.cpp",
+      "baselineSha256": "6258d75842849b7609fc79a54bc7d54f1f6d7639de751b3ae53e860125724198",
+      "candidateSha256": "9fbba90faf90f073d9d02ae61902bddcbadff53a05d2fc335c9deae0b744f664",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Diagnostics\\HansaStateHash.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Events/HansaDomainEvent.cpp",
+      "baselineSha256": "0193f0f35d7cae138b399a198189c01e35484f9ad02dd9b014721d8acfc81e57",
+      "candidateSha256": "b2c33710f90f42439095c091767cd1cebec2e122ccb9f323caa775f5cfbb7af0",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Events\\HansaDomainEvent.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Fixtures/HansaProductionFixture.cpp",
+      "baselineSha256": "9867d7555aa26afd0f3a37c2d00409c24f0b7722b12074446f9377ed3ef2bf0e",
+      "candidateSha256": "00c756c79a8db7fed98c961d461fc0375fb79637e76d62912edc9c04219516f1",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Fixtures\\HansaProductionFixture.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Inventory/HansaInventory.cpp",
+      "baselineSha256": "91902ebde8241ea972e11d0401b78661edcfcdb70aa53067231bd6b09e68dfb7",
+      "candidateSha256": "8b99eabd2a112858e7ee98a1ef6fbb02bd237cbbc2bf7df287ec27bd986d0e47",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\baseline\\Source\\HansaSimulation\\Private\\Inventory\\HansaInventory.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Inventory/HansaSpoilage.cpp",
+      "baselineSha256": null,
+      "candidateSha256": "1b8a8b3cc8f4c530e9721a1c13b68ec83384ff5bf8075aac4da54731502fb77c",
+      "baselineSource": null
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Inventory/HansaSpoilageInternal.h",
+      "baselineSha256": null,
+      "candidateSha256": "511b1a347557e6164ce45233b8bf551558c42230876e02009a772404d8b36b27",
+      "baselineSource": null
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Logistics/HansaLocalLogisticsInternal.cpp",
+      "baselineSha256": "abd634daef3dd53df2c58e57f188de275e47fa43554c2c19237b9518c8155324",
+      "candidateSha256": "8096843e714e03a114ac43098ecd051836c6d86cb23498817eebdc93527b9629",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Logistics\\HansaLocalLogisticsInternal.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Market/HansaMarket.cpp",
+      "baselineSha256": "50a02aceff8afd362421f442cc4cf5f1f939c0d51f5b7d92b11e953e03fbab49",
+      "candidateSha256": "ca762bdc9d35d437a2dc0e14feb10363b632457d67ce7a5eca888f3b6acad25b",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Market\\HansaMarket.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Population/HansaConsumptionHistory.cpp",
+      "baselineSha256": "45887289e6a5217c7679377f10a642d74dc4842fc6de77dde2cbc9f2b852fe3a",
+      "candidateSha256": "149f594b160398ac5e0f64c2e6ea96a3165efc264e08aa2a4d0abd7aaad09b59",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Population\\HansaConsumptionHistory.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Population/HansaPopulation.cpp",
+      "baselineSha256": "1d0364a256ec2b902cbf95915c65df5cd68620eb06012a543cb26a9c805cc8b1",
+      "candidateSha256": "eed1fa2fc116c287a492850a701d03894d58433c399b3130f1fecdb04d5d64fd",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\baseline\\Source\\HansaSimulation\\Private\\Population\\HansaPopulation.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Production/HansaProduction.cpp",
+      "baselineSha256": "3f84c2abd3cb2413e371031172af62a5165d290fb26c90058599343c83b11978",
+      "candidateSha256": "6258c5bd266e09b0a9c9692bfa1828a7f82ee7b3ed3f3ab059c03cf84f185ad5",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Production\\HansaProduction.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Queries/HansaSimulationReadOnly.cpp",
+      "baselineSha256": "bcf302b5582fb4ac7671901e7ad638b5a9d47fd1115a65017879b4bcf161d235",
+      "candidateSha256": "a97557df030747f00ce2163b1832264d30b6575a905e980ba79b311c1504c83e",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Queries\\HansaSimulationReadOnly.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Save/HansaSaveEnvelope.cpp",
+      "baselineSha256": "25508edef1d1eb7a18408fac720a7b00063edbb57b4fa11c6a51126562c6f056",
+      "candidateSha256": "2d8a5addf985871e703390306493c171b34adc17e31d72846884b44568ecdba5",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Save\\HansaSaveEnvelope.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Save/HansaSaveFields.inl",
+      "baselineSha256": "5b4ea84baecca2db637a96c6bbe4445f3366cb25d7669f9a6eb89da40694d0c3",
+      "candidateSha256": "4f2c88c3ad980ae12710746621ee053a06387522cf5f0a98c22fe0e60cbe429b",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Save\\HansaSaveFields.inl"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Save/HansaSaveValidation.inl",
+      "baselineSha256": "c630ba3b1d0080db7ba780e61b3588c1d59b5c48a1af42690df85a5e9157c481",
+      "candidateSha256": "081d3bd0458a9659d078bad3539fbb19e5e98cc6a14a736815dfa594e910f657",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Save\\HansaSaveValidation.inl"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Systems/HansaSimulationPipeline.cpp",
+      "baselineSha256": "af7ad09b1355a7a422d1628ee60ea6a585bbe7dd2ced4ef87562969de4561c1b",
+      "candidateSha256": "4010dea58072ff1666273dded66a18073277c3e90f465781c67f9db76e9095d5",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Systems\\HansaSimulationPipeline.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Trade/HansaTradeInternal.cpp",
+      "baselineSha256": "c5b92c933c17692765b2acdb1651d768a0289478183b86bb90e1507a495ebcc8",
+      "candidateSha256": "9100894d29afab49aa87025ef28882dbf822543f3082c02e5407ab10ed444b98",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Trade\\HansaTradeInternal.cpp"
+    },
+    {
+      "path": "Source/HansaSimulation/Private/Trade/HansaTradeInternal.h",
+      "baselineSha256": "bdb879c56bfb44327d411f982ebbccb746f1500b45e3bf72bf20e03f3210dcee",
+      "candidateSha256": "be631ad7622d66b6ebd56ca45cd82aa65cf2382fac657705edcfb52ef4b7b043",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Private\\Trade\\HansaTradeInternal.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Commands/HansaGameplayCommand.h",
+      "baselineSha256": "b9b9055ec28b7ab120a83c79684631734d2703d54f42f71f0160ba66ca942772",
+      "candidateSha256": "890a9ea3c16df3abe8ee6a980b40c643941f72589dfe2445bd92e1a6ac12911e",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Public\\Commands\\HansaGameplayCommand.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Definitions/HansaEconomicRegistry.h",
+      "baselineSha256": "05e107fda88a2918855a88f00bd4bed42ccc1b99f9bb2f3ef4e64903ed9800a6",
+      "candidateSha256": "6c28d14e1ff551ae5344738e2450dc6edbea226f8c02c0fb401f559c32d4089e",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\baseline\\Source\\HansaSimulation\\Public\\Definitions\\HansaEconomicRegistry.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Events/HansaDomainEvent.h",
+      "baselineSha256": "c380b6c707c055a2ea00de15f6fbba148c5f32479f8da716702d886921947556",
+      "candidateSha256": "b311dcd41510ac5ec838a452c9b73cf00bd77cc180d85b85b260add78c428d87",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Public\\Events\\HansaDomainEvent.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Fixtures/HansaProductionFixture.h",
+      "baselineSha256": "3df8d5469b6e20faa04cbdd183b4422a595e2852ac609c98415d063877400630",
+      "candidateSha256": "75ddf880b02a848e2df074a85377e2508383bb98d749139fcb16be3318a36671",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Public\\Fixtures\\HansaProductionFixture.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Inventory/HansaInventory.h",
+      "baselineSha256": "cb5181987fb17d599fbae34ad7b1fdc388c93ec5e104f3fce0400f0b291ce34f",
+      "candidateSha256": "1153b81a552af2671beb185860b0c06603aa05b9a917604d3aba75aaad4eeb14",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\baseline\\Source\\HansaSimulation\\Public\\Inventory\\HansaInventory.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Model/HansaSimulationState.h",
+      "baselineSha256": "fe411bed8e0bd9b13d606bf00d3e17313f22933f01f75f83d77101ff985c0fa4",
+      "candidateSha256": "a43851d845d3b7bdfa71216ba547cfb93220ddb22edf4135fcb4f528254e688c",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Public\\Model\\HansaSimulationState.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Population/HansaConsumptionHistory.h",
+      "baselineSha256": "a591bec6f105e5ad9e99b7444752b697a88937108e284a71951bb99894520425",
+      "candidateSha256": "9c901f1879496334c4168c8e445f2b40df631632a6ef3c9788261ca9745d8db2",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Public\\Population\\HansaConsumptionHistory.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Population/HansaPopulation.h",
+      "baselineSha256": "ffbf1934ffb00b7c5b9218ec759709635c1d2160ace7e4633647e83f8d04169c",
+      "candidateSha256": "05f094527a4fda7f369f4b83dc6a5d9321136da02c462a3d611e5afba0925ec0",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\baseline\\Source\\HansaSimulation\\Public\\Population\\HansaPopulation.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Production/HansaProduction.h",
+      "baselineSha256": "4491c98e43b95563577de224e40f947e20b69d382394a4617b026b5611abd3b6",
+      "candidateSha256": "727091a6284fac55945ef93f40a7398e57f06220854c71d8b744fa9c8cf578b9",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Public\\Production\\HansaProduction.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Queries/HansaSimulationReadOnly.h",
+      "baselineSha256": "b148257a483304066c025a3e6c1e7e66b61a9c716e4dfd358c90928642099da2",
+      "candidateSha256": "724fc0c070bd8d6547ca4571aadcacc71d345474d233b8e935c278903f4be386",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Public\\Queries\\HansaSimulationReadOnly.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Save/HansaSaveEnvelope.h",
+      "baselineSha256": "77b17478a2c6aab874d5fd20caa38b654a1f22f64e4c0b26d26b9f9cd57b6898",
+      "candidateSha256": "c6c07360e3aee2acdcc3a516a0425a03accdf9889fc749383bbc36039dfaa43a",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Public\\Save\\HansaSaveEnvelope.h"
+    },
+    {
+      "path": "Source/HansaSimulation/Public/Trade/HansaTrade.h",
+      "baselineSha256": "bf8bddaccaee73692febaf5debe127119a9d57e1833b41053c41284a54263859",
+      "candidateSha256": "e55e2db63bdd190fa927c537c6383303fcda4aedfe1bafe804e9ed572fe168bf",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaSimulation\\Public\\Trade\\HansaTrade.h"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaPopulationTests.cpp",
+      "baselineSha256": "4ff4d80fe61980400af727c9a75864b90278f17944c06744eaa5d645a06393ad",
+      "candidateSha256": "91132c71f7a28d987a5acdc012386a48722594956a3905408b3592e9ac508e0d",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaTests\\Private\\Simulation\\HansaPopulationTests.cpp"
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaPreservedFishTests.cpp",
+      "baselineSha256": null,
+      "candidateSha256": "593f489986a705ed63b235f0116daf13bbc870ca62c37452c3b1a10689143a71",
+      "baselineSource": null
+    },
+    {
+      "path": "Source/HansaTests/Private/Simulation/HansaSaveEnvelopeTests.cpp",
+      "baselineSha256": "3c200d12923f20851a01053fbc5f983aaf1bce107149a3486cc4f6adc1b98e8d",
+      "candidateSha256": "d987bcf3b3ab1c479d02605c4838858b7c3e2507e7632c4d8799e3f0fa543dd9",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaTests\\Private\\Simulation\\HansaSaveEnvelopeTests.cpp"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaPreservedFishCaptureTests.cpp",
+      "baselineSha256": null,
+      "candidateSha256": "37b8df13e9b6f73cfb36358ab9d44654d536ca6b399c116aca731dbe74e3ec15",
+      "baselineSource": null
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRuntimeSaveTests.cpp",
+      "baselineSha256": "bad772e17d2ee1d0b9f198a99bcea44f16f3ec56556996a4a0341d0dd3320058",
+      "candidateSha256": "ffdb0b4a00bb7f7c4526a94a536923db2d99e9768b23f5306098e116ba9f37fa",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaTests\\Private\\World\\HansaRuntimeSaveTests.cpp"
+    },
+    {
+      "path": "Source/HansaTests/Private/World/HansaRuntimeSimulationHostTests.cpp",
+      "baselineSha256": "dbaf637e991c08a45d1b44677d7c9d5c94dd658153cb9b86793c5b7591235843",
+      "candidateSha256": "1cd92d810d4dd5e94ad1847133a0d479dcdef6610bd8a7d2d1d5e133296817a8",
+      "baselineSource": "Saved\\GenerationJobs\\preservedfish_20260916\\merge-base\\HansaTests\\Private\\World\\HansaRuntimeSimulationHostTests.cpp"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+
+Total time in Unreal Build Accelerator local executor: 105.53 seconds
+Output binary: H:\Unreal\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe
+
+Result: Succeeded
+Total execution time: 107.75 seconds
+Trace written to file C:\Users\Johan\AppData\Local\UnrealBuildTool\Trace.uba with size 105.4kb

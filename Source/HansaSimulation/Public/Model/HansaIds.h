@@ -71,6 +71,9 @@ namespace Hansa::Simulation
 	HANSA_DEFINITION_ID_TRAITS(FHansaVictoryIdTraits, "Victory", 20);
 	HANSA_DEFINITION_ID_TRAITS(FHansaScenarioIdTraits, "Scenario", 21);
 	HANSA_DEFINITION_ID_TRAITS(FHansaRouteDefinitionIdTraits, "Route", 22);
+	HANSA_DEFINITION_ID_TRAITS(FHansaPresenceCapabilityIdTraits, "PresenceCapability", 23);
+	HANSA_DEFINITION_ID_TRAITS(FHansaPresenceStageIdTraits, "PresenceStage", 24);
+	HANSA_DEFINITION_ID_TRAITS(FHansaCityTradePolicyIdTraits, "CityTradePolicy", 25);
 
 #undef HANSA_DEFINITION_ID_TRAITS
 
@@ -140,6 +143,9 @@ namespace Hansa::Simulation
 	using FHansaVictoryId = THansaDefinitionId<FHansaVictoryIdTraits>;
 	using FHansaScenarioId = THansaDefinitionId<FHansaScenarioIdTraits>;
 	using FHansaRouteDefinitionId = THansaDefinitionId<FHansaRouteDefinitionIdTraits>;
+	using FHansaPresenceCapabilityId = THansaDefinitionId<FHansaPresenceCapabilityIdTraits>;
+	using FHansaPresenceStageId = THansaDefinitionId<FHansaPresenceStageIdTraits>;
+	using FHansaCityTradePolicyId = THansaDefinitionId<FHansaCityTradePolicyIdTraits>;
 
 #define HANSA_ENTITY_ID_TRAITS(TraitsName, DebugText, TagValue) \
 	struct TraitsName final \
@@ -161,6 +167,13 @@ namespace Hansa::Simulation
 	HANSA_ENTITY_ID_TRAITS(FHansaPopulationCohortIdTraits, "PopulationCohort", 50);
 	HANSA_ENTITY_ID_TRAITS(FHansaLogisticsRequestIdTraits, "LogisticsRequest", 51);
 	HANSA_ENTITY_ID_TRAITS(FHansaLogisticsJobIdTraits, "LogisticsJob", 52);
+	HANSA_ENTITY_ID_TRAITS(FHansaCampaignIdTraits, "Campaign", 53);
+	HANSA_ENTITY_ID_TRAITS(FHansaSessionIdTraits, "Session", 54);
+	HANSA_ENTITY_ID_TRAITS(FHansaParticipantIdTraits, "Participant", 55);
+	HANSA_ENTITY_ID_TRAITS(FHansaTeamIdTraits, "Team", 56);
+	HANSA_ENTITY_ID_TRAITS(FHansaTradeStationIdTraits, "TradeStation", 57);
+	HANSA_ENTITY_ID_TRAITS(FHansaLeasedPlotIdTraits, "LeasedPlot", 58);
+	HANSA_ENTITY_ID_TRAITS(FHansaFactorIdTraits, "Factor", 59);
 
 #undef HANSA_ENTITY_ID_TRAITS
 
@@ -235,4 +248,11 @@ namespace Hansa::Simulation
 	using FHansaPopulationCohortId = THansaEntityId<FHansaPopulationCohortIdTraits>;
 	using FHansaLogisticsRequestId = THansaEntityId<FHansaLogisticsRequestIdTraits>;
 	using FHansaLogisticsJobId = THansaEntityId<FHansaLogisticsJobIdTraits>;
+	using FHansaCampaignId = THansaEntityId<FHansaCampaignIdTraits>;
+	using FHansaSessionId = THansaEntityId<FHansaSessionIdTraits>;
+	using FHansaParticipantId = THansaEntityId<FHansaParticipantIdTraits>;
+	using FHansaTeamId = THansaEntityId<FHansaTeamIdTraits>;
+	using FHansaTradeStationId = THansaEntityId<FHansaTradeStationIdTraits>;
+	using FHansaLeasedPlotId = THansaEntityId<FHansaLeasedPlotIdTraits>;
+	using FHansaFactorId = THansaEntityId<FHansaFactorIdTraits>;
 }

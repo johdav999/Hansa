@@ -1,5 +1,8 @@
 # Hansa — Integrated MVP Sprint and Prompt Plan
 
+Current scope amendment (2026-09-16): the authorized firewood work extends the target to fourteen goods and five local chains. References below to four-chain acceptance are historical milestone wording; current chain acceptance includes the woodcutter yard, household heating, workshop fuel, reserve controls and the gates in `firewood.md`.
+
+
 ## 1. Purpose
 
 This document converts [MVP.md](MVP.md) into an executable sprint backlog for the game, authoring editor, and hybrid MCP/semantic/screenshot testing stack. The three workstreams advance together. Editor support, deterministic fixtures, gameplay queries, semantic UI coverage, screenshots, tests, and Shipping exclusions are part of feature delivery rather than later cleanup.

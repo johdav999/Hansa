@@ -1,0 +1,2418 @@
+{
+	"status": "staged-economy-draft",
+	"baseRegistryHash": "BD2FC9656111389A",
+	"registryHash": "11B70A39FD538FE7",
+	"presentationStatus": "Staged workshop meshes bound; explicit production approval and in-game UAT required.",
+	"definitions": [
+		{
+			"stableId": "AITuning.MerchantRival",
+			"hash": "08792B7922ADAB1A",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_AITuning_MerchantRival.DA_AITuning_MerchantRival"
+		},
+		{
+			"stableId": "Building.Bakery",
+			"hash": "57CC16AFDDA84A30",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Bakery.DA_Building_Bakery"
+		},
+		{
+			"stableId": "Building.Brewery",
+			"hash": "B7B0E24B4E3CFF1B",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Brewery.DA_Building_Brewery"
+		},
+		{
+			"stableId": "Building.Cooperage",
+			"hash": "C06FABB7394C4792",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Cooperage.DA_Building_Cooperage"
+		},
+		{
+			"stableId": "Building.Dock",
+			"hash": "56A02685E5715533",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Dock.DA_Building_Dock"
+		},
+		{
+			"stableId": "Building.Fishery",
+			"hash": "196BDF458D5656E6",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Fishery.DA_Building_Fishery"
+		},
+		{
+			"stableId": "Building.Fishery.SaltingShed",
+			"hash": "92F4F851636E8ECA",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Fishery_SaltingShed.DA_Building_Fishery_SaltingShed"
+		},
+		{
+			"stableId": "Building.GrainFarm",
+			"hash": "CDF9144C14BCBC90",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_GrainFarm.DA_Building_GrainFarm"
+		},
+		{
+			"stableId": "Building.HopFarm",
+			"hash": "4FD343B232CACAFA",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_HopFarm.DA_Building_HopFarm"
+		},
+		{
+			"stableId": "Building.LumberCamp",
+			"hash": "7A7630E823E76028",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_LumberCamp.DA_Building_LumberCamp"
+		},
+		{
+			"stableId": "Building.MaltHouse",
+			"hash": "5BCA000BB1AB045D",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_MaltHouse.DA_Building_MaltHouse"
+		},
+		{
+			"stableId": "Building.Market",
+			"hash": "2327B192D7DDD874",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Market.DA_Building_Market"
+		},
+		{
+			"stableId": "Building.Mill",
+			"hash": "B134F4034AC1E700",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Mill.DA_Building_Mill"
+		},
+		{
+			"stableId": "Building.Residence.Artisan",
+			"hash": "2A880C7F45698CF8",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Artisan.DA_Building_Residence_Artisan"
+		},
+		{
+			"stableId": "Building.Residence.Laborer",
+			"hash": "9B8788F64D10F941",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer.DA_Building_Residence_Laborer"
+		},
+		{
+			"stableId": "Building.Road",
+			"hash": "FB79F1BE67547054",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Road.DA_Building_Road"
+		},
+		{
+			"stableId": "Building.Sawmill",
+			"hash": "B75E527EFD78CC4F",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Sawmill.DA_Building_Sawmill"
+		},
+		{
+			"stableId": "Building.Smithy",
+			"hash": "544F6C1D9F3B1738",
+			"change": "modified",
+			"propertyChanges": [
+				{
+					"property": "ConstructionTier",
+					"before": "Legacy",
+					"after": "Craftsmen"
+				},
+				{
+					"property": "bShowInConstructionMenu",
+					"before": "False",
+					"after": "True"
+				},
+				{
+					"property": "ConstructionChainOutputGoodId",
+					"before": "",
+					"after": "Good.Tools"
+				},
+				{
+					"property": "ConstructionChainStage",
+					"before": "0",
+					"after": "1"
+				},
+				{
+					"property": "ConstructionChainStageCount",
+					"before": "0",
+					"after": "1"
+				},
+				{
+					"property": "ConstructionPresentationPurpose",
+					"before": "",
+					"after": "Forge imported iron bars with locally produced charcoal into tools."
+				},
+				{
+					"property": "ConstructionCosts",
+					"before": "((GoodId=\"Good.Planks\",QuantityMilliUnits=5000),(GoodId=\"Good.Iron\",QuantityMilliUnits=3000))",
+					"after": "((GoodId=\"Good.Planks\",QuantityMilliUnits=6000),(GoodId=\"Good.Timber\",QuantityMilliUnits=4000),(GoodId=\"Good.Tools\",QuantityMilliUnits=500))"
+				},
+				{
+					"property": "ConstructionCostPfennig",
+					"before": "2400",
+					"after": "2800"
+				},
+				{
+					"property": "BuildTicks",
+					"before": "220",
+					"after": "120"
+				},
+				{
+					"property": "StorageCapacityMilliUnits",
+					"before": "25000",
+					"after": "80000"
+				},
+				{
+					"property": "LaborerWorkforce",
+					"before": "4",
+					"after": "0"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "/Engine/BasicShapes/Cube.Cube",
+					"after": "/Game/Hansa/Generated/Staging/ArtisanProductionModelsV1/SM_Smithy.SM_Smithy"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "1",
+					"after": "2"
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Smithy.DA_Building_Smithy"
+		},
+		{
+			"stableId": "Building.Warehouse",
+			"hash": "B7AC51DE335F5E73",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Warehouse.DA_Building_Warehouse"
+		},
+		{
+			"stableId": "Building.WoodcutterYard",
+			"hash": "916DD655C9ADFEE3",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_WoodcutterYard.DA_Building_WoodcutterYard"
+		},
+		{
+			"stableId": "Building.Residence.Artisan.Plot",
+			"hash": "2520041BE4C722D0",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Artisan_Plot.DA_Building_Residence_Artisan_Plot"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CornerCourt.Stage1",
+			"hash": "BB798C770E51DC1E",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_CornerCourt_Stage1.DA_Building_Residence_Laborer_CornerCourt_Stage1"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CornerCourt.Stage2",
+			"hash": "ED31D834A070D993",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_CornerCourt_Stage2.DA_Building_Residence_Laborer_CornerCourt_Stage2"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CornerCourt.Stage3",
+			"hash": "80E9BE6830CBAB53",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_CornerCourt_Stage3.DA_Building_Residence_Laborer_CornerCourt_Stage3"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CraftCourt.Stage1",
+			"hash": "961898EC004C7482",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_CraftCourt_Stage1.DA_Building_Residence_Laborer_CraftCourt_Stage1"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CraftCourt.Stage2",
+			"hash": "C719818A4E8373B7",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_CraftCourt_Stage2.DA_Building_Residence_Laborer_CraftCourt_Stage2"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CraftCourt.Stage3",
+			"hash": "48A59949B8EEA24E",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_CraftCourt_Stage3.DA_Building_Residence_Laborer_CraftCourt_Stage3"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.NarrowGang.Stage1",
+			"hash": "6D699E24D053EEFF",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_NarrowGang_Stage1.DA_Building_Residence_Laborer_NarrowGang_Stage1"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.NarrowGang.Stage2",
+			"hash": "4E4C77773D0FF07A",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_NarrowGang_Stage2.DA_Building_Residence_Laborer_NarrowGang_Stage2"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.NarrowGang.Stage3",
+			"hash": "7C70713CFF28C138",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_NarrowGang_Stage3.DA_Building_Residence_Laborer_NarrowGang_Stage3"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.SharedCourt.Stage1",
+			"hash": "58C544C87770843A",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_SharedCourt_Stage1.DA_Building_Residence_Laborer_SharedCourt_Stage1"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.SharedCourt.Stage2",
+			"hash": "3974FF6BD91628C3",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_SharedCourt_Stage2.DA_Building_Residence_Laborer_SharedCourt_Stage2"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.SharedCourt.Stage3",
+			"hash": "6D6068C0AF64CA5B",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Residence_Laborer_SharedCourt_Stage3.DA_Building_Residence_Laborer_SharedCourt_Stage3"
+		},
+		{
+			"stableId": "City.Hamburg",
+			"hash": "2E8B0DCC5AAAB4C5",
+			"change": "modified",
+			"propertyChanges": [
+				{
+					"property": "Goods",
+					"before": "((GoodId=\"Good.Grain\",DesiredReserveMilliUnits=30000,InitialStockMilliUnits=30000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=500,MaximumPriceMilliMarks=4000),(GoodId=\"Good.Flour\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=20000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=850,MaximumPriceMilliMarks=6800,InitialPriceMilliMarks=1700),(GoodId=\"Good.Bread\",DesiredReserveMilliUnits=24000,ConfirmedIncomingSupplyMilliUnits=2000,InitialStockMilliUnits=28000,BackgroundProductionMilliUnitsPerUpdate=1750,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=400,MaximumPriceMilliMarks=3200,InitialPriceMilliMarks=800),(GoodId=\"Good.Fish\",DesiredReserveMilliUnits=18000,ConfirmedIncomingSupplyMilliUnits=3000,InitialStockMilliUnits=26000,BackgroundProductionMilliUnitsPerUpdate=2500,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Salt\",DesiredReserveMilliUnits=12000,InitialStockMilliUnits=12000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1100,MaximumPriceMilliMarks=8800,InitialPriceMilliMarks=2200),(GoodId=\"Good.Timber\",DesiredReserveMilliUnits=24000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=350,MaximumPriceMilliMarks=2800,InitialPriceMilliMarks=700),(GoodId=\"Good.Planks\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=650,MaximumPriceMilliMarks=5200,InitialPriceMilliMarks=1300),(GoodId=\"Good.Iron\",DesiredReserveMilliUnits=10000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1300,MaximumPriceMilliMarks=10400,InitialPriceMilliMarks=2600),(GoodId=\"Good.Tools\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=3250,MaximumPriceMilliMarks=26000,InitialPriceMilliMarks=6500),(GoodId=\"Good.Beer\",DesiredReserveMilliUnits=16000,InitialStockMilliUnits=16000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=750,MaximumPriceMilliMarks=6000,InitialPriceMilliMarks=1500),(GoodId=\"Good.Hops\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Malt\",DesiredReserveMilliUnits=12000,InitialStockMilliUnits=12000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=700,MaximumPriceMilliMarks=5600,InitialPriceMilliMarks=1400),(GoodId=\"Good.Barrels\",DesiredReserveMilliUnits=6000,InitialStockMilliUnits=6000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1250,MaximumPriceMilliMarks=10000,InitialPriceMilliMarks=2500),(GoodId=\"Good.PreservedFish\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,MinimumPriceMilliMarks=1500,MaximumPriceMilliMarks=12000,InitialPriceMilliMarks=3000),(GoodId=\"Good.Firewood\",DesiredReserveMilliUnits=60000,InitialStockMilliUnits=60000,BackgroundProductionMilliUnitsPerUpdate=1250,BackgroundCitizenDemandMilliUnitsPerUpdate=750,InitialPriceMilliMarks=900))",
+					"after": "((GoodId=\"Good.Grain\",DesiredReserveMilliUnits=30000,InitialStockMilliUnits=30000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=500,MaximumPriceMilliMarks=4000),(GoodId=\"Good.Flour\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=20000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=850,MaximumPriceMilliMarks=6800,InitialPriceMilliMarks=1700),(GoodId=\"Good.Bread\",DesiredReserveMilliUnits=24000,ConfirmedIncomingSupplyMilliUnits=2000,InitialStockMilliUnits=28000,BackgroundProductionMilliUnitsPerUpdate=1750,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=400,MaximumPriceMilliMarks=3200,InitialPriceMilliMarks=800),(GoodId=\"Good.Fish\",DesiredReserveMilliUnits=18000,ConfirmedIncomingSupplyMilliUnits=3000,InitialStockMilliUnits=26000,BackgroundProductionMilliUnitsPerUpdate=2500,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Salt\",DesiredReserveMilliUnits=12000,InitialStockMilliUnits=12000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1100,MaximumPriceMilliMarks=8800,InitialPriceMilliMarks=2200),(GoodId=\"Good.Timber\",DesiredReserveMilliUnits=24000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=350,MaximumPriceMilliMarks=2800,InitialPriceMilliMarks=700),(GoodId=\"Good.Planks\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=650,MaximumPriceMilliMarks=5200,InitialPriceMilliMarks=1300),(GoodId=\"Good.Iron\",DesiredReserveMilliUnits=10000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1300,MaximumPriceMilliMarks=10400,InitialPriceMilliMarks=2600),(GoodId=\"Good.Tools\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=3250,MaximumPriceMilliMarks=26000,InitialPriceMilliMarks=6500),(GoodId=\"Good.Beer\",DesiredReserveMilliUnits=16000,InitialStockMilliUnits=16000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=750,MaximumPriceMilliMarks=6000,InitialPriceMilliMarks=1500),(GoodId=\"Good.Hops\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Malt\",DesiredReserveMilliUnits=12000,InitialStockMilliUnits=12000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=700,MaximumPriceMilliMarks=5600,InitialPriceMilliMarks=1400),(GoodId=\"Good.Barrels\",DesiredReserveMilliUnits=6000,InitialStockMilliUnits=6000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1250,MaximumPriceMilliMarks=10000,InitialPriceMilliMarks=2500),(GoodId=\"Good.PreservedFish\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,MinimumPriceMilliMarks=1500,MaximumPriceMilliMarks=12000,InitialPriceMilliMarks=3000),(GoodId=\"Good.Firewood\",DesiredReserveMilliUnits=60000,InitialStockMilliUnits=60000,BackgroundProductionMilliUnitsPerUpdate=1250,BackgroundCitizenDemandMilliUnitsPerUpdate=750,InitialPriceMilliMarks=900),(GoodId=\"Good.Charcoal\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=250,InitialPriceMilliMarks=1200),(GoodId=\"Good.RawHides\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=30000,BackgroundProductionMilliUnitsPerUpdate=1500,InitialPriceMilliMarks=2000),(GoodId=\"Good.TanningBark\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=30000,BackgroundProductionMilliUnitsPerUpdate=1500,InitialPriceMilliMarks=600),(GoodId=\"Good.Leather\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=250,InitialPriceMilliMarks=4500),(GoodId=\"Good.Shoes\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=250,BackgroundCitizenDemandMilliUnitsPerUpdate=125,InitialPriceMilliMarks=8000))"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "4",
+					"after": "5"
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_City_Hamburg.DA_City_Hamburg"
+		},
+		{
+			"stableId": "City.Lubeck",
+			"hash": "4F8C0819E5EDCCD3",
+			"change": "modified",
+			"propertyChanges": [
+				{
+					"property": "Goods",
+					"before": "((GoodId=\"Good.Grain\",DesiredReserveMilliUnits=30000,MinimumPriceMilliMarks=500,MaximumPriceMilliMarks=4000),(GoodId=\"Good.Flour\",DesiredReserveMilliUnits=20000,MinimumPriceMilliMarks=850,MaximumPriceMilliMarks=6800,InitialPriceMilliMarks=1700),(GoodId=\"Good.Bread\",DesiredReserveMilliUnits=24000,MinimumPriceMilliMarks=400,MaximumPriceMilliMarks=3200,InitialPriceMilliMarks=800),(GoodId=\"Good.Fish\",DesiredReserveMilliUnits=18000,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Salt\",DesiredReserveMilliUnits=12000,MinimumPriceMilliMarks=1100,MaximumPriceMilliMarks=8800,InitialPriceMilliMarks=2200),(GoodId=\"Good.Timber\",DesiredReserveMilliUnits=24000,MinimumPriceMilliMarks=350,MaximumPriceMilliMarks=2800,InitialPriceMilliMarks=700),(GoodId=\"Good.Planks\",DesiredReserveMilliUnits=18000,MinimumPriceMilliMarks=650,MaximumPriceMilliMarks=5200,InitialPriceMilliMarks=1300),(GoodId=\"Good.Iron\",DesiredReserveMilliUnits=10000,MinimumPriceMilliMarks=1300,MaximumPriceMilliMarks=10400,InitialPriceMilliMarks=2600),(GoodId=\"Good.Tools\",DesiredReserveMilliUnits=8000,MinimumPriceMilliMarks=3250,MaximumPriceMilliMarks=26000,InitialPriceMilliMarks=6500),(GoodId=\"Good.Beer\",DesiredReserveMilliUnits=16000,MinimumPriceMilliMarks=750,MaximumPriceMilliMarks=6000,InitialPriceMilliMarks=1500),(GoodId=\"Good.Hops\",DesiredReserveMilliUnits=8000,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Malt\",DesiredReserveMilliUnits=12000,MinimumPriceMilliMarks=700,MaximumPriceMilliMarks=5600,InitialPriceMilliMarks=1400),(GoodId=\"Good.Barrels\",DesiredReserveMilliUnits=6000,MinimumPriceMilliMarks=1250,MaximumPriceMilliMarks=10000,InitialPriceMilliMarks=2500),(GoodId=\"Good.PreservedFish\",DesiredReserveMilliUnits=18000,MinimumPriceMilliMarks=1500,MaximumPriceMilliMarks=12000,InitialPriceMilliMarks=3000),(GoodId=\"Good.Firewood\",DesiredReserveMilliUnits=60000,InitialStockMilliUnits=60000,InitialPriceMilliMarks=900))",
+					"after": "((GoodId=\"Good.Grain\",DesiredReserveMilliUnits=30000,MinimumPriceMilliMarks=500,MaximumPriceMilliMarks=4000),(GoodId=\"Good.Flour\",DesiredReserveMilliUnits=20000,MinimumPriceMilliMarks=850,MaximumPriceMilliMarks=6800,InitialPriceMilliMarks=1700),(GoodId=\"Good.Bread\",DesiredReserveMilliUnits=24000,MinimumPriceMilliMarks=400,MaximumPriceMilliMarks=3200,InitialPriceMilliMarks=800),(GoodId=\"Good.Fish\",DesiredReserveMilliUnits=18000,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Salt\",DesiredReserveMilliUnits=12000,MinimumPriceMilliMarks=1100,MaximumPriceMilliMarks=8800,InitialPriceMilliMarks=2200),(GoodId=\"Good.Timber\",DesiredReserveMilliUnits=24000,MinimumPriceMilliMarks=350,MaximumPriceMilliMarks=2800,InitialPriceMilliMarks=700),(GoodId=\"Good.Planks\",DesiredReserveMilliUnits=18000,MinimumPriceMilliMarks=650,MaximumPriceMilliMarks=5200,InitialPriceMilliMarks=1300),(GoodId=\"Good.Iron\",DesiredReserveMilliUnits=10000,MinimumPriceMilliMarks=1300,MaximumPriceMilliMarks=10400,InitialPriceMilliMarks=2600),(GoodId=\"Good.Tools\",DesiredReserveMilliUnits=8000,MinimumPriceMilliMarks=3250,MaximumPriceMilliMarks=26000,InitialPriceMilliMarks=6500),(GoodId=\"Good.Beer\",DesiredReserveMilliUnits=16000,MinimumPriceMilliMarks=750,MaximumPriceMilliMarks=6000,InitialPriceMilliMarks=1500),(GoodId=\"Good.Hops\",DesiredReserveMilliUnits=8000,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Malt\",DesiredReserveMilliUnits=12000,MinimumPriceMilliMarks=700,MaximumPriceMilliMarks=5600,InitialPriceMilliMarks=1400),(GoodId=\"Good.Barrels\",DesiredReserveMilliUnits=6000,MinimumPriceMilliMarks=1250,MaximumPriceMilliMarks=10000,InitialPriceMilliMarks=2500),(GoodId=\"Good.PreservedFish\",DesiredReserveMilliUnits=18000,MinimumPriceMilliMarks=1500,MaximumPriceMilliMarks=12000,InitialPriceMilliMarks=3000),(GoodId=\"Good.Firewood\",DesiredReserveMilliUnits=60000,InitialStockMilliUnits=60000,InitialPriceMilliMarks=900),(GoodId=\"Good.Charcoal\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,InitialPriceMilliMarks=1200),(GoodId=\"Good.RawHides\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=30000,InitialPriceMilliMarks=2000),(GoodId=\"Good.TanningBark\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=30000,InitialPriceMilliMarks=600),(GoodId=\"Good.Leather\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,InitialPriceMilliMarks=4500),(GoodId=\"Good.Shoes\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,InitialPriceMilliMarks=8000))"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "4",
+					"after": "5"
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_City_Lubeck.DA_City_Lubeck"
+		},
+		{
+			"stableId": "City.Luneburg",
+			"hash": "74BA68CAB83DA016",
+			"change": "modified",
+			"propertyChanges": [
+				{
+					"property": "Goods",
+					"before": "((GoodId=\"Good.Grain\",DesiredReserveMilliUnits=30000,InitialStockMilliUnits=30000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=500,MaximumPriceMilliMarks=4000),(GoodId=\"Good.Flour\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=20000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=850,MaximumPriceMilliMarks=6800,InitialPriceMilliMarks=1700),(GoodId=\"Good.Bread\",DesiredReserveMilliUnits=24000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=400,MaximumPriceMilliMarks=3200,InitialPriceMilliMarks=800),(GoodId=\"Good.Fish\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Salt\",DesiredReserveMilliUnits=12000,ConfirmedIncomingSupplyMilliUnits=5000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=3000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,CityModifierBasisPoints=-500,MinimumPriceMilliMarks=1100,MaximumPriceMilliMarks=8800,InitialPriceMilliMarks=2200),(GoodId=\"Good.Timber\",DesiredReserveMilliUnits=24000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=350,MaximumPriceMilliMarks=2800,InitialPriceMilliMarks=700),(GoodId=\"Good.Planks\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=650,MaximumPriceMilliMarks=5200,InitialPriceMilliMarks=1300),(GoodId=\"Good.Iron\",DesiredReserveMilliUnits=10000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1300,MaximumPriceMilliMarks=10400,InitialPriceMilliMarks=2600),(GoodId=\"Good.Tools\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=3250,MaximumPriceMilliMarks=26000,InitialPriceMilliMarks=6500),(GoodId=\"Good.Beer\",DesiredReserveMilliUnits=16000,InitialStockMilliUnits=16000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=750,MaximumPriceMilliMarks=6000,InitialPriceMilliMarks=1500),(GoodId=\"Good.Hops\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Malt\",DesiredReserveMilliUnits=12000,InitialStockMilliUnits=12000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=700,MaximumPriceMilliMarks=5600,InitialPriceMilliMarks=1400),(GoodId=\"Good.Barrels\",DesiredReserveMilliUnits=6000,InitialStockMilliUnits=6000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1250,MaximumPriceMilliMarks=10000,InitialPriceMilliMarks=2500),(GoodId=\"Good.PreservedFish\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,MinimumPriceMilliMarks=1500,MaximumPriceMilliMarks=12000,InitialPriceMilliMarks=3000),(GoodId=\"Good.Firewood\",DesiredReserveMilliUnits=60000,InitialStockMilliUnits=60000,BackgroundProductionMilliUnitsPerUpdate=1250,BackgroundCitizenDemandMilliUnitsPerUpdate=750,InitialPriceMilliMarks=900))",
+					"after": "((GoodId=\"Good.Grain\",DesiredReserveMilliUnits=30000,InitialStockMilliUnits=30000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=500,MaximumPriceMilliMarks=4000),(GoodId=\"Good.Flour\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=20000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=850,MaximumPriceMilliMarks=6800,InitialPriceMilliMarks=1700),(GoodId=\"Good.Bread\",DesiredReserveMilliUnits=24000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=400,MaximumPriceMilliMarks=3200,InitialPriceMilliMarks=800),(GoodId=\"Good.Fish\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Salt\",DesiredReserveMilliUnits=12000,ConfirmedIncomingSupplyMilliUnits=5000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=3000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,CityModifierBasisPoints=-500,MinimumPriceMilliMarks=1100,MaximumPriceMilliMarks=8800,InitialPriceMilliMarks=2200),(GoodId=\"Good.Timber\",DesiredReserveMilliUnits=24000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=350,MaximumPriceMilliMarks=2800,InitialPriceMilliMarks=700),(GoodId=\"Good.Planks\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=650,MaximumPriceMilliMarks=5200,InitialPriceMilliMarks=1300),(GoodId=\"Good.Iron\",DesiredReserveMilliUnits=10000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1300,MaximumPriceMilliMarks=10400,InitialPriceMilliMarks=2600),(GoodId=\"Good.Tools\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=3250,MaximumPriceMilliMarks=26000,InitialPriceMilliMarks=6500),(GoodId=\"Good.Beer\",DesiredReserveMilliUnits=16000,InitialStockMilliUnits=16000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=750,MaximumPriceMilliMarks=6000,InitialPriceMilliMarks=1500),(GoodId=\"Good.Hops\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Malt\",DesiredReserveMilliUnits=12000,InitialStockMilliUnits=12000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=700,MaximumPriceMilliMarks=5600,InitialPriceMilliMarks=1400),(GoodId=\"Good.Barrels\",DesiredReserveMilliUnits=6000,InitialStockMilliUnits=6000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1250,MaximumPriceMilliMarks=10000,InitialPriceMilliMarks=2500),(GoodId=\"Good.PreservedFish\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,MinimumPriceMilliMarks=1500,MaximumPriceMilliMarks=12000,InitialPriceMilliMarks=3000),(GoodId=\"Good.Firewood\",DesiredReserveMilliUnits=60000,InitialStockMilliUnits=60000,BackgroundProductionMilliUnitsPerUpdate=1250,BackgroundCitizenDemandMilliUnitsPerUpdate=750,InitialPriceMilliMarks=900),(GoodId=\"Good.Charcoal\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=250,InitialPriceMilliMarks=1200),(GoodId=\"Good.RawHides\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=30000,BackgroundProductionMilliUnitsPerUpdate=1500,InitialPriceMilliMarks=2000),(GoodId=\"Good.TanningBark\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=30000,BackgroundProductionMilliUnitsPerUpdate=1500,InitialPriceMilliMarks=600),(GoodId=\"Good.Leather\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=250,InitialPriceMilliMarks=4500),(GoodId=\"Good.Shoes\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=250,BackgroundCitizenDemandMilliUnitsPerUpdate=125,InitialPriceMilliMarks=8000))"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "4",
+					"after": "5"
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_City_Luneburg.DA_City_Luneburg"
+		},
+		{
+			"stableId": "City.Rostock",
+			"hash": "0291DCC671C20874",
+			"change": "modified",
+			"propertyChanges": [
+				{
+					"property": "Goods",
+					"before": "((GoodId=\"Good.Grain\",DesiredReserveMilliUnits=30000,ConfirmedIncomingSupplyMilliUnits=4000,InitialStockMilliUnits=40000,BackgroundProductionMilliUnitsPerUpdate=3000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=500,MaximumPriceMilliMarks=4000),(GoodId=\"Good.Flour\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=20000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=850,MaximumPriceMilliMarks=6800,InitialPriceMilliMarks=1700),(GoodId=\"Good.Bread\",DesiredReserveMilliUnits=24000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=400,MaximumPriceMilliMarks=3200,InitialPriceMilliMarks=800),(GoodId=\"Good.Fish\",DesiredReserveMilliUnits=18000,ConfirmedIncomingSupplyMilliUnits=3000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=2000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Salt\",DesiredReserveMilliUnits=12000,InitialStockMilliUnits=12000,BackgroundProductionMilliUnitsPerUpdate=2000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1100,MaximumPriceMilliMarks=8800,InitialPriceMilliMarks=2200),(GoodId=\"Good.Timber\",DesiredReserveMilliUnits=24000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=350,MaximumPriceMilliMarks=2800,InitialPriceMilliMarks=700),(GoodId=\"Good.Planks\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=650,MaximumPriceMilliMarks=5200,InitialPriceMilliMarks=1300),(GoodId=\"Good.Iron\",DesiredReserveMilliUnits=10000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1300,MaximumPriceMilliMarks=10400,InitialPriceMilliMarks=2600),(GoodId=\"Good.Tools\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=3250,MaximumPriceMilliMarks=26000,InitialPriceMilliMarks=6500),(GoodId=\"Good.Beer\",DesiredReserveMilliUnits=16000,InitialStockMilliUnits=16000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=750,MaximumPriceMilliMarks=6000,InitialPriceMilliMarks=1500),(GoodId=\"Good.Hops\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Malt\",DesiredReserveMilliUnits=12000,InitialStockMilliUnits=12000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=700,MaximumPriceMilliMarks=5600,InitialPriceMilliMarks=1400),(GoodId=\"Good.Barrels\",DesiredReserveMilliUnits=6000,InitialStockMilliUnits=6000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1250,MaximumPriceMilliMarks=10000,InitialPriceMilliMarks=2500),(GoodId=\"Good.PreservedFish\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,MinimumPriceMilliMarks=1500,MaximumPriceMilliMarks=12000,InitialPriceMilliMarks=3000),(GoodId=\"Good.Firewood\",DesiredReserveMilliUnits=60000,InitialStockMilliUnits=60000,BackgroundProductionMilliUnitsPerUpdate=1250,BackgroundCitizenDemandMilliUnitsPerUpdate=750,InitialPriceMilliMarks=900))",
+					"after": "((GoodId=\"Good.Grain\",DesiredReserveMilliUnits=30000,ConfirmedIncomingSupplyMilliUnits=4000,InitialStockMilliUnits=40000,BackgroundProductionMilliUnitsPerUpdate=3000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=500,MaximumPriceMilliMarks=4000),(GoodId=\"Good.Flour\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=20000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=850,MaximumPriceMilliMarks=6800,InitialPriceMilliMarks=1700),(GoodId=\"Good.Bread\",DesiredReserveMilliUnits=24000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=400,MaximumPriceMilliMarks=3200,InitialPriceMilliMarks=800),(GoodId=\"Good.Fish\",DesiredReserveMilliUnits=18000,ConfirmedIncomingSupplyMilliUnits=3000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=2000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Salt\",DesiredReserveMilliUnits=12000,InitialStockMilliUnits=12000,BackgroundProductionMilliUnitsPerUpdate=2000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1100,MaximumPriceMilliMarks=8800,InitialPriceMilliMarks=2200),(GoodId=\"Good.Timber\",DesiredReserveMilliUnits=24000,InitialStockMilliUnits=24000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=350,MaximumPriceMilliMarks=2800,InitialPriceMilliMarks=700),(GoodId=\"Good.Planks\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=650,MaximumPriceMilliMarks=5200,InitialPriceMilliMarks=1300),(GoodId=\"Good.Iron\",DesiredReserveMilliUnits=10000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1300,MaximumPriceMilliMarks=10400,InitialPriceMilliMarks=2600),(GoodId=\"Good.Tools\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=3250,MaximumPriceMilliMarks=26000,InitialPriceMilliMarks=6500),(GoodId=\"Good.Beer\",DesiredReserveMilliUnits=16000,InitialStockMilliUnits=16000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=750,MaximumPriceMilliMarks=6000,InitialPriceMilliMarks=1500),(GoodId=\"Good.Hops\",DesiredReserveMilliUnits=8000,InitialStockMilliUnits=8000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=900,MaximumPriceMilliMarks=7200,InitialPriceMilliMarks=1800),(GoodId=\"Good.Malt\",DesiredReserveMilliUnits=12000,InitialStockMilliUnits=12000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=700,MaximumPriceMilliMarks=5600,InitialPriceMilliMarks=1400),(GoodId=\"Good.Barrels\",DesiredReserveMilliUnits=6000,InitialStockMilliUnits=6000,BackgroundProductionMilliUnitsPerUpdate=1000,BackgroundCitizenDemandMilliUnitsPerUpdate=700,BackgroundIndustrialDemandMilliUnitsPerUpdate=300,MinimumPriceMilliMarks=1250,MaximumPriceMilliMarks=10000,InitialPriceMilliMarks=2500),(GoodId=\"Good.PreservedFish\",DesiredReserveMilliUnits=18000,InitialStockMilliUnits=18000,MinimumPriceMilliMarks=1500,MaximumPriceMilliMarks=12000,InitialPriceMilliMarks=3000),(GoodId=\"Good.Firewood\",DesiredReserveMilliUnits=60000,InitialStockMilliUnits=60000,BackgroundProductionMilliUnitsPerUpdate=1250,BackgroundCitizenDemandMilliUnitsPerUpdate=750,InitialPriceMilliMarks=900),(GoodId=\"Good.Charcoal\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=250,InitialPriceMilliMarks=1200),(GoodId=\"Good.RawHides\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=30000,BackgroundProductionMilliUnitsPerUpdate=1500,InitialPriceMilliMarks=2000),(GoodId=\"Good.TanningBark\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=30000,BackgroundProductionMilliUnitsPerUpdate=1500,InitialPriceMilliMarks=600),(GoodId=\"Good.Leather\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=250,InitialPriceMilliMarks=4500),(GoodId=\"Good.Shoes\",DesiredReserveMilliUnits=20000,InitialStockMilliUnits=10000,BackgroundProductionMilliUnitsPerUpdate=250,BackgroundCitizenDemandMilliUnitsPerUpdate=125,InitialPriceMilliMarks=8000))"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "5",
+					"after": "6"
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_City_Rostock.DA_City_Rostock"
+		},
+		{
+			"stableId": "Compound.Artisan.Plot",
+			"hash": "5729EB0235BB60A5",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Compound_Artisan_Plot.DA_Compound_Artisan_Plot"
+		},
+		{
+			"stableId": "Compound.Laborer.CornerCourt",
+			"hash": "76221E80D22F325B",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Compound_Laborer_CornerCourt.DA_Compound_Laborer_CornerCourt"
+		},
+		{
+			"stableId": "Compound.Laborer.CraftCourt",
+			"hash": "CCBB481345C75792",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Compound_Laborer_CraftCourt.DA_Compound_Laborer_CraftCourt"
+		},
+		{
+			"stableId": "Compound.Laborer.NarrowGang",
+			"hash": "6966477B41B2EC8F",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Compound_Laborer_NarrowGang.DA_Compound_Laborer_NarrowGang"
+		},
+		{
+			"stableId": "Compound.Laborer.SharedCourt",
+			"hash": "3DE859F4122D521D",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Compound_Laborer_SharedCourt.DA_Compound_Laborer_SharedCourt"
+		},
+		{
+			"stableId": "Good.Barrels",
+			"hash": "2E74196AA61E1083",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Barrels.DA_Good_Barrels"
+		},
+		{
+			"stableId": "Good.Beer",
+			"hash": "1F4AE1B6F6627F8D",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Beer.DA_Good_Beer"
+		},
+		{
+			"stableId": "Good.Bread",
+			"hash": "D43E72E128D930AB",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Bread.DA_Good_Bread"
+		},
+		{
+			"stableId": "Good.Firewood",
+			"hash": "E142E3725C2FCED6",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Firewood.DA_Good_Firewood"
+		},
+		{
+			"stableId": "Good.Fish",
+			"hash": "5CAC80DD0360463C",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Fish.DA_Good_Fish"
+		},
+		{
+			"stableId": "Good.Flour",
+			"hash": "F98A986B598AECEC",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Flour.DA_Good_Flour"
+		},
+		{
+			"stableId": "Good.Grain",
+			"hash": "574858DAAB2D4423",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Grain.DA_Good_Grain"
+		},
+		{
+			"stableId": "Good.Hops",
+			"hash": "E19D50E813F3A389",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Hops.DA_Good_Hops"
+		},
+		{
+			"stableId": "Good.Iron",
+			"hash": "27146CC91F1DF41A",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Iron.DA_Good_Iron"
+		},
+		{
+			"stableId": "Good.Malt",
+			"hash": "D577052D06285983",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Malt.DA_Good_Malt"
+		},
+		{
+			"stableId": "Good.Planks",
+			"hash": "83611B41406C8F85",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Planks.DA_Good_Planks"
+		},
+		{
+			"stableId": "Good.PreservedFish",
+			"hash": "1E5AF546EB206519",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_PreservedFish.DA_Good_PreservedFish"
+		},
+		{
+			"stableId": "Good.Salt",
+			"hash": "96B12CF763C04EFE",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Salt.DA_Good_Salt"
+		},
+		{
+			"stableId": "Good.Timber",
+			"hash": "67CE9584ABEF16C8",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Timber.DA_Good_Timber"
+		},
+		{
+			"stableId": "Good.Tools",
+			"hash": "3EAFB51F74C1149F",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Tools.DA_Good_Tools"
+		},
+		{
+			"stableId": "Need.BasicServices",
+			"hash": "5217C5DF2A6AFD7A",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Need_BasicServices.DA_Need_BasicServices"
+		},
+		{
+			"stableId": "Need.Beer",
+			"hash": "D89506CD70CF93DB",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Need_Beer.DA_Need_Beer"
+		},
+		{
+			"stableId": "Need.Bread",
+			"hash": "E575CA605C077DA9",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Need_Bread.DA_Need_Bread"
+		},
+		{
+			"stableId": "Need.Fish",
+			"hash": "10F0A278DBA1E8B1",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Need_Fish.DA_Need_Fish"
+		},
+		{
+			"stableId": "Need.Heating",
+			"hash": "AC0B8AC452A1457F",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Need_Heating.DA_Need_Heating"
+		},
+		{
+			"stableId": "Need.Tools",
+			"hash": "AF96662DB853DDD4",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Need_Tools.DA_Need_Tools"
+		},
+		{
+			"stableId": "PopulationTier.Artisan",
+			"hash": "78B50D96DDEABF6A",
+			"change": "modified",
+			"propertyChanges": [
+				{
+					"property": "Needs",
+					"before": "((NeedId=\"Need.Bread\",ConsumptionMilliUnitsPerResidentPerTick=140,ImportanceBasisPoints=3000),(NeedId=\"Need.Fish\",ConsumptionMilliUnitsPerResidentPerTick=60,ImportanceBasisPoints=1500),(NeedId=\"Need.Beer\",ConsumptionMilliUnitsPerResidentPerTick=70,ImportanceBasisPoints=2000),(NeedId=\"Need.Tools\",ConsumptionMilliUnitsPerResidentPerTick=20,ImportanceBasisPoints=1500),(NeedId=\"Need.BasicServices\",ImportanceBasisPoints=2000),(NeedId=\"Need.Heating\",ConsumptionMilliUnitsPerResidentPerTick=1,ImportanceBasisPoints=4000))",
+					"after": "((NeedId=\"Need.Bread\",ConsumptionMilliUnitsPerResidentPerTick=140,ImportanceBasisPoints=3000),(NeedId=\"Need.Fish\",ConsumptionMilliUnitsPerResidentPerTick=60,ImportanceBasisPoints=1500),(NeedId=\"Need.Beer\",ConsumptionMilliUnitsPerResidentPerTick=70,ImportanceBasisPoints=2000),(NeedId=\"Need.Tools\",ConsumptionMilliUnitsPerResidentPerTick=20,ImportanceBasisPoints=1500),(NeedId=\"Need.BasicServices\",ImportanceBasisPoints=2000),(NeedId=\"Need.Heating\",ConsumptionMilliUnitsPerResidentPerTick=1,ImportanceBasisPoints=4000),(NeedId=\"Need.Shoes\",ConsumptionMilliUnitsPerResidentPerTick=1,ImportanceBasisPoints=1000))"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "2",
+					"after": "3"
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_PopulationTier_Artisan.DA_PopulationTier_Artisan"
+		},
+		{
+			"stableId": "PopulationTier.Laborer",
+			"hash": "A0CC09EFF1D3D381",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_PopulationTier_Laborer.DA_PopulationTier_Laborer"
+		},
+		{
+			"stableId": "Recipe.BakeBread",
+			"hash": "3C8A11BACBC22C49",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_BakeBread.DA_Recipe_BakeBread"
+		},
+		{
+			"stableId": "Recipe.BrewBeer",
+			"hash": "DCA22DB5A971E19D",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_BrewBeer.DA_Recipe_BrewBeer"
+		},
+		{
+			"stableId": "Recipe.CatchFish",
+			"hash": "51FAAC0826A95131",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_CatchFish.DA_Recipe_CatchFish"
+		},
+		{
+			"stableId": "Recipe.FellTimber",
+			"hash": "AD03F90E9D225BBA",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_FellTimber.DA_Recipe_FellTimber"
+		},
+		{
+			"stableId": "Recipe.GrowGrain",
+			"hash": "45C86D3137F1A16B",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_GrowGrain.DA_Recipe_GrowGrain"
+		},
+		{
+			"stableId": "Recipe.GrowHops",
+			"hash": "5E127AF4A0FC1E04",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_GrowHops.DA_Recipe_GrowHops"
+		},
+		{
+			"stableId": "Recipe.MakeBarrels",
+			"hash": "501332D439E974BC",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_MakeBarrels.DA_Recipe_MakeBarrels"
+		},
+		{
+			"stableId": "Recipe.MaltGrain",
+			"hash": "6B6E5EC18779D29A",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_MaltGrain.DA_Recipe_MaltGrain"
+		},
+		{
+			"stableId": "Recipe.MillFlour",
+			"hash": "92EF1436BFE02AF4",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_MillFlour.DA_Recipe_MillFlour"
+		},
+		{
+			"stableId": "Recipe.SaltedCatch",
+			"hash": "023334955475FA96",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_SaltedCatch.DA_Recipe_SaltedCatch"
+		},
+		{
+			"stableId": "Recipe.SawPlanks",
+			"hash": "97EC4D2E57C45E4B",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_SawPlanks.DA_Recipe_SawPlanks"
+		},
+		{
+			"stableId": "Recipe.SmithTools",
+			"hash": "B50103A1804C6F97",
+			"change": "modified",
+			"propertyChanges": [
+				{
+					"property": "Inputs",
+					"before": "((GoodId=\"Good.Iron\",QuantityMilliUnits=3000))",
+					"after": "((GoodId=\"Good.Iron\",QuantityMilliUnits=1500),(GoodId=\"Good.Charcoal\",QuantityMilliUnits=500))"
+				},
+				{
+					"property": "LaborerWorkforce",
+					"before": "4",
+					"after": "0"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "1",
+					"after": "2"
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_SmithTools.DA_Recipe_SmithTools"
+		},
+		{
+			"stableId": "Recipe.SplitFirewood",
+			"hash": "C0CD30D44A068D78",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_SplitFirewood.DA_Recipe_SplitFirewood"
+		},
+		{
+			"stableId": "Route.BalticSea",
+			"hash": "07108D84E75E6F87",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Route_BalticSea.DA_Route_BalticSea"
+		},
+		{
+			"stableId": "Route.SaltRoad",
+			"hash": "A9BC1234E34AA54E",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Route_SaltRoad.DA_Route_SaltRoad"
+		},
+		{
+			"stableId": "Scenario.LubeckGrainShortageV1",
+			"hash": "7B1414BDBB15C6FA",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Scenario_LubeckGrainShortageV1.DA_Scenario_LubeckGrainShortageV1"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveLandRoute",
+			"hash": "1E52FCBEF0935246",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_ActiveLandRoute.DA_ScenarioObjective_ActiveLandRoute"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveProductionEconomy",
+			"hash": "C505209D20697D9B",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_ActiveProductionEconomy.DA_ScenarioObjective_ActiveProductionEconomy"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveSeaRoute",
+			"hash": "B0F4479A8A784F42",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_ActiveSeaRoute.DA_ScenarioObjective_ActiveSeaRoute"
+		},
+		{
+			"stableId": "ScenarioObjective.AffordableBread",
+			"hash": "862635CF1DCD119C",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_AffordableBread.DA_ScenarioObjective_AffordableBread"
+		},
+		{
+			"stableId": "ScenarioObjective.CivicSatisfaction",
+			"hash": "204B3B6DC6A9B259",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_CivicSatisfaction.DA_ScenarioObjective_CivicSatisfaction"
+		},
+		{
+			"stableId": "ScenarioObjective.CompletedResearch",
+			"hash": "D841CB81CFEF9256",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_CompletedResearch.DA_ScenarioObjective_CompletedResearch"
+		},
+		{
+			"stableId": "ScenarioObjective.CompletedTradeLegs",
+			"hash": "26571207A4E45780",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_CompletedTradeLegs.DA_ScenarioObjective_CompletedTradeLegs"
+		},
+		{
+			"stableId": "ScenarioObjective.SafeBreadReserve",
+			"hash": "7BA38F95AB9B5864",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_SafeBreadReserve.DA_ScenarioObjective_SafeBreadReserve"
+		},
+		{
+			"stableId": "ScenarioObjective.SafeGrainReserve",
+			"hash": "0CC2C92A699EBE55",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_SafeGrainReserve.DA_ScenarioObjective_SafeGrainReserve"
+		},
+		{
+			"stableId": "ScenarioObjective.SolventHouse",
+			"hash": "26767D09E92E24D3",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_SolventHouse.DA_ScenarioObjective_SolventHouse"
+		},
+		{
+			"stableId": "ScenarioObjective.StablePopulation",
+			"hash": "A6493808DB007B94",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_ScenarioObjective_StablePopulation.DA_ScenarioObjective_StablePopulation"
+		},
+		{
+			"stableId": "Victory.ProsperityEconomic",
+			"hash": "22F7B7557A9C72EA",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Victory_ProsperityEconomic.DA_Victory_ProsperityEconomic"
+		},
+		{
+			"stableId": "Victory.ResearchCivic",
+			"hash": "E02C5A4034030B46",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Victory_ResearchCivic.DA_Victory_ResearchCivic"
+		},
+		{
+			"stableId": "Victory.TradeNetwork",
+			"hash": "972B848DD37EA304",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Victory_TradeNetwork.DA_Victory_TradeNetwork"
+		},
+		{
+			"stableId": "Technology.Commerce.MarketReports",
+			"hash": "B7ADB33E5434797E",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Technology_Commerce_MarketReports.DA_Technology_Commerce_MarketReports"
+		},
+		{
+			"stableId": "Technology.Commerce.ReserveAutomation",
+			"hash": "63BEEF03B6D5642E",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Technology_Commerce_ReserveAutomation.DA_Technology_Commerce_ReserveAutomation"
+		},
+		{
+			"stableId": "Technology.Commerce.TransactionFriction",
+			"hash": "15C731216683A1D8",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Technology_Commerce_TransactionFriction.DA_Technology_Commerce_TransactionFriction"
+		},
+		{
+			"stableId": "Technology.Logistics.CartCapacity",
+			"hash": "9B207DF9B5B905DE",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Technology_Logistics_CartCapacity.DA_Technology_Logistics_CartCapacity"
+		},
+		{
+			"stableId": "Technology.Logistics.RouteScheduling",
+			"hash": "ABD1FBDDA7C4C7C6",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Technology_Logistics_RouteScheduling.DA_Technology_Logistics_RouteScheduling"
+		},
+		{
+			"stableId": "Technology.Logistics.WarehouseHandling",
+			"hash": "0DB457D256A80CC6",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Technology_Logistics_WarehouseHandling.DA_Technology_Logistics_WarehouseHandling"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedMilling",
+			"hash": "59D4572FB4A779CB",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Technology_Production_ImprovedMilling.DA_Technology_Production_ImprovedMilling"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedSawmilling",
+			"hash": "7D08F2E536623283",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Technology_Production_ImprovedSawmilling.DA_Technology_Production_ImprovedSawmilling"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedSmithing",
+			"hash": "1AA384B311EDA522",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Technology_Production_ImprovedSmithing.DA_Technology_Production_ImprovedSmithing"
+		},
+		{
+			"stableId": "Vehicle.Cog",
+			"hash": "DCD93805FB2F658F",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Vehicle_Cog.DA_Vehicle_Cog"
+		},
+		{
+			"stableId": "Vehicle.Wagon",
+			"hash": "6950B7FF81C608BE",
+			"change": "unchanged",
+			"propertyChanges": [],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Vehicle_Wagon.DA_Vehicle_Wagon"
+		},
+		{
+			"stableId": "Good.Charcoal",
+			"hash": "A8D47D1654905708",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "QuantityUnit",
+					"before": "",
+					"after": "Kilogram"
+				},
+				{
+					"property": "BaseValueMilliMarks",
+					"before": "",
+					"after": "1200"
+				},
+				{
+					"property": "PriceElasticityBasisPoints",
+					"before": "",
+					"after": "8000"
+				},
+				{
+					"property": "SpoilageBasisPointsPerDay",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "bSpoilageEnabled",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "Icon",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Good.Charcoal"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Good.Charcoal\", \"Charcoal\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Good.Charcoal.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Goods"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Charcoal.DA_Good_Charcoal"
+		},
+		{
+			"stableId": "Good.RawHides",
+			"hash": "A726A49D6160F203",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "QuantityUnit",
+					"before": "",
+					"after": "Kilogram"
+				},
+				{
+					"property": "BaseValueMilliMarks",
+					"before": "",
+					"after": "2000"
+				},
+				{
+					"property": "PriceElasticityBasisPoints",
+					"before": "",
+					"after": "8000"
+				},
+				{
+					"property": "SpoilageBasisPointsPerDay",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "bSpoilageEnabled",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "Icon",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Good.RawHides"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Good.RawHides\", \"Raw hides\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Good.RawHides.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Goods"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_RawHides.DA_Good_RawHides"
+		},
+		{
+			"stableId": "Good.TanningBark",
+			"hash": "C08E6B69F19763E9",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "QuantityUnit",
+					"before": "",
+					"after": "Kilogram"
+				},
+				{
+					"property": "BaseValueMilliMarks",
+					"before": "",
+					"after": "600"
+				},
+				{
+					"property": "PriceElasticityBasisPoints",
+					"before": "",
+					"after": "8000"
+				},
+				{
+					"property": "SpoilageBasisPointsPerDay",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "bSpoilageEnabled",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "Icon",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Good.TanningBark"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Good.TanningBark\", \"Tanning bark\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Good.TanningBark.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Goods"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_TanningBark.DA_Good_TanningBark"
+		},
+		{
+			"stableId": "Good.Leather",
+			"hash": "B5393F9AB7443612",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "QuantityUnit",
+					"before": "",
+					"after": "Kilogram"
+				},
+				{
+					"property": "BaseValueMilliMarks",
+					"before": "",
+					"after": "4500"
+				},
+				{
+					"property": "PriceElasticityBasisPoints",
+					"before": "",
+					"after": "8000"
+				},
+				{
+					"property": "SpoilageBasisPointsPerDay",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "bSpoilageEnabled",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "Icon",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Good.Leather"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Good.Leather\", \"Leather\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Good.Leather.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Goods"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Leather.DA_Good_Leather"
+		},
+		{
+			"stableId": "Good.Shoes",
+			"hash": "A3556C8ED9D12EFB",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "QuantityUnit",
+					"before": "",
+					"after": "Item"
+				},
+				{
+					"property": "BaseValueMilliMarks",
+					"before": "",
+					"after": "8000"
+				},
+				{
+					"property": "PriceElasticityBasisPoints",
+					"before": "",
+					"after": "10000"
+				},
+				{
+					"property": "SpoilageBasisPointsPerDay",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "bSpoilageEnabled",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "Icon",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Good.Shoes"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Good.Shoes\", \"Shoes\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Good.Shoes.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Goods"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Good_Shoes.DA_Good_Shoes"
+		},
+		{
+			"stableId": "Recipe.BurnCharcoal",
+			"hash": "44DA954EEEB0FF18",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "InternalCatchRecipeId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "Inputs",
+					"before": "",
+					"after": "((GoodId=\"Good.Timber\",QuantityMilliUnits=6000))"
+				},
+				{
+					"property": "Outputs",
+					"before": "",
+					"after": "((GoodId=\"Good.Charcoal\",QuantityMilliUnits=1500))"
+				},
+				{
+					"property": "CycleTicks",
+					"before": "",
+					"after": "120"
+				},
+				{
+					"property": "LaborerWorkforce",
+					"before": "",
+					"after": "2"
+				},
+				{
+					"property": "ArtisanWorkforce",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "bDeclaredSource",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "bDeclaredSink",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Recipe.BurnCharcoal"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Recipe.BurnCharcoal\", \"Burn charcoal\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Recipe.BurnCharcoal.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Recipes"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_BurnCharcoal.DA_Recipe_BurnCharcoal"
+		},
+		{
+			"stableId": "Recipe.TanLeather",
+			"hash": "34BDB1F69D4A955C",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "InternalCatchRecipeId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "Inputs",
+					"before": "",
+					"after": "((GoodId=\"Good.RawHides\",QuantityMilliUnits=3000),(GoodId=\"Good.TanningBark\"))"
+				},
+				{
+					"property": "Outputs",
+					"before": "",
+					"after": "((GoodId=\"Good.Leather\",QuantityMilliUnits=2000))"
+				},
+				{
+					"property": "CycleTicks",
+					"before": "",
+					"after": "160"
+				},
+				{
+					"property": "LaborerWorkforce",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "ArtisanWorkforce",
+					"before": "",
+					"after": "3"
+				},
+				{
+					"property": "bDeclaredSource",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "bDeclaredSink",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Recipe.TanLeather"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Recipe.TanLeather\", \"Tan leather\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Recipe.TanLeather.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Recipes"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_TanLeather.DA_Recipe_TanLeather"
+		},
+		{
+			"stableId": "Recipe.MakeShoes",
+			"hash": "20E480D6F9F615BE",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "InternalCatchRecipeId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "Inputs",
+					"before": "",
+					"after": "((GoodId=\"Good.Leather\"))"
+				},
+				{
+					"property": "Outputs",
+					"before": "",
+					"after": "((GoodId=\"Good.Shoes\"))"
+				},
+				{
+					"property": "CycleTicks",
+					"before": "",
+					"after": "80"
+				},
+				{
+					"property": "LaborerWorkforce",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "ArtisanWorkforce",
+					"before": "",
+					"after": "2"
+				},
+				{
+					"property": "bDeclaredSource",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "bDeclaredSink",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Recipe.MakeShoes"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Recipe.MakeShoes\", \"Make shoes\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Recipe.MakeShoes.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Recipes"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Recipe_MakeShoes.DA_Recipe_MakeShoes"
+		},
+		{
+			"stableId": "Building.CharcoalBurner",
+			"hash": "BBAF858F45F18CE8",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "ConstructionTier",
+					"before": "",
+					"after": "DayLaborers"
+				},
+				{
+					"property": "ResidentialCompound",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "CompoundStage",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "CompoundDistrictId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "PresentationActorClass",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "bShowInConstructionMenu",
+					"before": "",
+					"after": "True"
+				},
+				{
+					"property": "ConstructionMenuCategory",
+					"before": "",
+					"after": "Production"
+				},
+				{
+					"property": "ConstructionMenuOrder",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "ConstructionChainOutputGoodId",
+					"before": "",
+					"after": "Good.Charcoal"
+				},
+				{
+					"property": "ConstructionChainStage",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "ConstructionChainStageCount",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "RequiredConstructionTechnologyId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "bUpgradeOnly",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ConstructionPresentationPurpose",
+					"before": "",
+					"after": "Convert delivered timber into charcoal for smithies."
+				},
+				{
+					"property": "ConstructionCosts",
+					"before": "",
+					"after": "((GoodId=\"Good.Planks\",QuantityMilliUnits=6000),(GoodId=\"Good.Timber\",QuantityMilliUnits=4000),(GoodId=\"Good.Tools\",QuantityMilliUnits=500))"
+				},
+				{
+					"property": "ConstructionCostPfennig",
+					"before": "",
+					"after": "1800"
+				},
+				{
+					"property": "CancellationRefundBasisPoints",
+					"before": "",
+					"after": "5000"
+				},
+				{
+					"property": "RecipeIds",
+					"before": "",
+					"after": "(\"Recipe.BurnCharcoal\")"
+				},
+				{
+					"property": "UpgradeTargetBuildingId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "FootprintWidthCells",
+					"before": "",
+					"after": "3"
+				},
+				{
+					"property": "FootprintHeightCells",
+					"before": "",
+					"after": "3"
+				},
+				{
+					"property": "BuildTicks",
+					"before": "",
+					"after": "120"
+				},
+				{
+					"property": "StorageCapacityMilliUnits",
+					"before": "",
+					"after": "80000"
+				},
+				{
+					"property": "ResidenceCapacity",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "ResidentPopulationTierId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "LaborerWorkforce",
+					"before": "",
+					"after": "2"
+				},
+				{
+					"property": "ArtisanWorkforce",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "bRequiresRoad",
+					"before": "",
+					"after": "True"
+				},
+				{
+					"property": "bProvidesMarketAccess",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "MaximumMarketRoadDistanceCells",
+					"before": "",
+					"after": "40"
+				},
+				{
+					"property": "bRequiresShoreline",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "/Game/Hansa/Generated/Staging/ArtisanProductionModelsV1/SM_CharcoalBurner.SM_CharcoalBurner"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Building.CharcoalBurner"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "5"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Building.CharcoalBurner\", \"Charcoal burner\\'s hut\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Building.CharcoalBurner.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Buildings"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_CharcoalBurner.DA_Building_CharcoalBurner"
+		},
+		{
+			"stableId": "Building.Tannery",
+			"hash": "27B1ED87E3801425",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "ConstructionTier",
+					"before": "",
+					"after": "Craftsmen"
+				},
+				{
+					"property": "ResidentialCompound",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "CompoundStage",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "CompoundDistrictId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "PresentationActorClass",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "bShowInConstructionMenu",
+					"before": "",
+					"after": "True"
+				},
+				{
+					"property": "ConstructionMenuCategory",
+					"before": "",
+					"after": "Production"
+				},
+				{
+					"property": "ConstructionMenuOrder",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "ConstructionChainOutputGoodId",
+					"before": "",
+					"after": "Good.Shoes"
+				},
+				{
+					"property": "ConstructionChainStage",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "ConstructionChainStageCount",
+					"before": "",
+					"after": "2"
+				},
+				{
+					"property": "RequiredConstructionTechnologyId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "bUpgradeOnly",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ConstructionPresentationPurpose",
+					"before": "",
+					"after": "Process imported raw hides and tanning bark into leather for shoemakers."
+				},
+				{
+					"property": "ConstructionCosts",
+					"before": "",
+					"after": "((GoodId=\"Good.Planks\",QuantityMilliUnits=6000),(GoodId=\"Good.Timber\",QuantityMilliUnits=4000),(GoodId=\"Good.Tools\",QuantityMilliUnits=500))"
+				},
+				{
+					"property": "ConstructionCostPfennig",
+					"before": "",
+					"after": "2400"
+				},
+				{
+					"property": "CancellationRefundBasisPoints",
+					"before": "",
+					"after": "5000"
+				},
+				{
+					"property": "RecipeIds",
+					"before": "",
+					"after": "(\"Recipe.TanLeather\")"
+				},
+				{
+					"property": "UpgradeTargetBuildingId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "FootprintWidthCells",
+					"before": "",
+					"after": "4"
+				},
+				{
+					"property": "FootprintHeightCells",
+					"before": "",
+					"after": "3"
+				},
+				{
+					"property": "BuildTicks",
+					"before": "",
+					"after": "120"
+				},
+				{
+					"property": "StorageCapacityMilliUnits",
+					"before": "",
+					"after": "80000"
+				},
+				{
+					"property": "ResidenceCapacity",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "ResidentPopulationTierId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "LaborerWorkforce",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "ArtisanWorkforce",
+					"before": "",
+					"after": "3"
+				},
+				{
+					"property": "bRequiresRoad",
+					"before": "",
+					"after": "True"
+				},
+				{
+					"property": "bProvidesMarketAccess",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "MaximumMarketRoadDistanceCells",
+					"before": "",
+					"after": "40"
+				},
+				{
+					"property": "bRequiresShoreline",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "/Game/Hansa/Generated/Staging/ArtisanProductionModelsV1/SM_Tannery.SM_Tannery"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Building.Tannery"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "5"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Building.Tannery\", \"Tannery\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Building.Tannery.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Buildings"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Tannery.DA_Building_Tannery"
+		},
+		{
+			"stableId": "Building.Shoemaker",
+			"hash": "BCBAE15C07F60163",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "ConstructionTier",
+					"before": "",
+					"after": "Craftsmen"
+				},
+				{
+					"property": "ResidentialCompound",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "CompoundStage",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "CompoundDistrictId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "PresentationActorClass",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "bShowInConstructionMenu",
+					"before": "",
+					"after": "True"
+				},
+				{
+					"property": "ConstructionMenuCategory",
+					"before": "",
+					"after": "Production"
+				},
+				{
+					"property": "ConstructionMenuOrder",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "ConstructionChainOutputGoodId",
+					"before": "",
+					"after": "Good.Shoes"
+				},
+				{
+					"property": "ConstructionChainStage",
+					"before": "",
+					"after": "2"
+				},
+				{
+					"property": "ConstructionChainStageCount",
+					"before": "",
+					"after": "2"
+				},
+				{
+					"property": "RequiredConstructionTechnologyId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "bUpgradeOnly",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ConstructionPresentationPurpose",
+					"before": "",
+					"after": "Make shoes from delivered leather for artisan households."
+				},
+				{
+					"property": "ConstructionCosts",
+					"before": "",
+					"after": "((GoodId=\"Good.Planks\",QuantityMilliUnits=6000),(GoodId=\"Good.Timber\",QuantityMilliUnits=4000),(GoodId=\"Good.Tools\",QuantityMilliUnits=500))"
+				},
+				{
+					"property": "ConstructionCostPfennig",
+					"before": "",
+					"after": "2000"
+				},
+				{
+					"property": "CancellationRefundBasisPoints",
+					"before": "",
+					"after": "5000"
+				},
+				{
+					"property": "RecipeIds",
+					"before": "",
+					"after": "(\"Recipe.MakeShoes\")"
+				},
+				{
+					"property": "UpgradeTargetBuildingId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "FootprintWidthCells",
+					"before": "",
+					"after": "2"
+				},
+				{
+					"property": "FootprintHeightCells",
+					"before": "",
+					"after": "3"
+				},
+				{
+					"property": "BuildTicks",
+					"before": "",
+					"after": "120"
+				},
+				{
+					"property": "StorageCapacityMilliUnits",
+					"before": "",
+					"after": "80000"
+				},
+				{
+					"property": "ResidenceCapacity",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "ResidentPopulationTierId",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "LaborerWorkforce",
+					"before": "",
+					"after": "0"
+				},
+				{
+					"property": "ArtisanWorkforce",
+					"before": "",
+					"after": "2"
+				},
+				{
+					"property": "bRequiresRoad",
+					"before": "",
+					"after": "True"
+				},
+				{
+					"property": "bProvidesMarketAccess",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "MaximumMarketRoadDistanceCells",
+					"before": "",
+					"after": "40"
+				},
+				{
+					"property": "bRequiresShoreline",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "/Game/Hansa/Generated/Staging/ArtisanProductionModelsV1/SM_Shoemaker.SM_Shoemaker"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Building.Shoemaker"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "5"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Building.Shoemaker\", \"Shoemaker\\'s workshop\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Building.Shoemaker.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Buildings"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Building_Shoemaker.DA_Building_Shoemaker"
+		},
+		{
+			"stableId": "Need.Shoes",
+			"hash": "B86DF1632DE1258B",
+			"change": "added",
+			"propertyChanges": [
+				{
+					"property": "Kind",
+					"before": "",
+					"after": "Good"
+				},
+				{
+					"property": "GoodId",
+					"before": "",
+					"after": "Good.Shoes"
+				},
+				{
+					"property": "bSeasonal",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "SeasonDays",
+					"before": "",
+					"after": "90"
+				},
+				{
+					"property": "FixedSeason",
+					"before": "",
+					"after": "-1"
+				},
+				{
+					"property": "DefaultReserveDays",
+					"before": "",
+					"after": "3"
+				},
+				{
+					"property": "SeasonMultipliers",
+					"before": "",
+					"after": "(0,4000,10000,4000)"
+				},
+				{
+					"property": "Alternatives",
+					"before": "",
+					"after": ""
+				},
+				{
+					"property": "PresentationMesh",
+					"before": "",
+					"after": "None"
+				},
+				{
+					"property": "StableDefinitionId",
+					"before": "",
+					"after": "Need.Shoes"
+				},
+				{
+					"property": "SchemaVersion",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "AuthoredRevision",
+					"before": "",
+					"after": "1"
+				},
+				{
+					"property": "DisplayName",
+					"before": "",
+					"after": "NSLOCTEXT(\"Hansa.ArtisanProduction\", \"Need.Shoes\", \"Shoes\")"
+				},
+				{
+					"property": "LocalizationKey",
+					"before": "",
+					"after": "Game.Need.Shoes.Name"
+				},
+				{
+					"property": "DefinitionCategory",
+					"before": "",
+					"after": "Population Needs"
+				},
+				{
+					"property": "Tags",
+					"before": "",
+					"after": "(\"MVP\",\"EconomicVerticalSlice\")"
+				},
+				{
+					"property": "ContentSet",
+					"before": "",
+					"after": "MVP"
+				},
+				{
+					"property": "bDeprecated",
+					"before": "",
+					"after": "False"
+				},
+				{
+					"property": "ReplacementDefinitionId",
+					"before": "",
+					"after": ""
+				}
+			],
+			"asset": "/Game/Hansa/Generated/Staging/ArtisanProductionV1/DA_Need_Shoes.DA_Need_Shoes"
+		}
+	]
+}

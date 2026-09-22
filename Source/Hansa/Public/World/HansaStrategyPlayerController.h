@@ -47,8 +47,13 @@ public:
 	void SetServerAuthorityIdentity(uint64 PrincipalId, int64 HouseId);
 	void PublishServerProjection(const FHansaClientProjectionSnapshot& Projection);
 	void PublishCommandFeedback(const FHansaClientCommandFeedback& Feedback);
+	/** Normal local/UI/semantic entry point. Assigns monotonic sequence/nonce and publishes pending feedback. */
+	bool SubmitLocalHansaIntent(FHansaClientCommandIntent Intent);
 
-	[[nodiscard]] const FHansaClientProjectionSnapshot& GetClientProjection() const { return ClientProjection; }
+	[[nodiscard]] const FHansaClientProjectionSnapshot& GetClientProjection() const
+	{
+		return ClientProjectionCache.Revision > 0 ? ClientProjectionCache : ClientProjection;
+	}
 	[[nodiscard]] const FHansaClientCommandFeedback& GetLastCommandFeedback() const { return LastCommandFeedback; }
 	[[nodiscard]] uint64 GetAuthorityPrincipalId() const { return AuthorityPrincipalId; }
 
@@ -101,6 +106,7 @@ public:
 private:
 	UFUNCTION()
 	void OnRep_HansaClientProjection();
+	void ApplyClientProjectionUpdate(const FHansaClientProjectionSnapshot& Update);
 
 	void EnsureStrategyInputObjects();
 	void AddDefaultMappings();
@@ -119,6 +125,8 @@ private:
 	void HandleSelectReleased(const FInputActionValue& Value);
     void HandleCameraDragPressed();
     void HandleCameraDragReleased();
+    void HandleRightMouseReleased();
+    void HandleShipMoveIntent();
     void UpdateCameraDrag();
     void HandleSessionMenu();
     void HandleContextHelp();
@@ -131,16 +139,23 @@ private:
 	FHansaClientProjectionSnapshot ClientProjection;
 
 	UPROPERTY(Transient)
+	FHansaClientProjectionSnapshot ClientProjectionCache;
+
+	UPROPERTY(Transient)
 	FHansaClientCommandFeedback LastCommandFeedback;
 
 	uint64 AuthorityPrincipalId = 0;
 	int64 AuthorityHouseId = 0;
+	int64 NextClientCommandSequence = 1;
+	int64 NextClientCommandNonce = 1;
 	TWeakObjectPtr<AActor> SelectedWorldActor;
 	TWeakObjectPtr<AHansaBuildingPlacementGhost> PlacementGhost;
 	bool bOwnsRuntimeMappingContext = false;
 	bool bPlacementRotateHeld = false;
 	bool bRoadPointerHeld = false;
     bool bCameraDragHeld = false;
+    bool bShipClickCandidate = false;
+    FVector2D CameraPressPointer = FVector2D::ZeroVector;
     double LastCameraDragDiagnosticTime = -1.0;
     FVector2D PreviousCameraDragPointer = FVector2D::ZeroVector;
 	bool IsPointerOverWorldViewport() const;

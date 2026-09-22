@@ -99,6 +99,8 @@ namespace Hansa::Simulation
             const FHansaSimulationDefinitionContext& Definitions);
 		static FHansaStateHashReport ComputeLegacyV19(const FHansaSimulationState& State,
 			const FHansaSimulationDefinitionContext& Definitions);
+        static FHansaStateHashReport ComputeSavedVersion(const FHansaSimulationState& State,
+            const FHansaSimulationDefinitionContext& Definitions, uint32 Version);
     private:
         static FHansaStateHashReport ComputeVersion(const FHansaSimulationState& State,
             const FHansaSimulationDefinitionContext& Definitions, uint32 FingerprintVersion);

@@ -61,7 +61,8 @@ namespace Hansa::Simulation
 		const FHansaEconomicRegistry& Definitions,
 		const FHansaHouseId HouseId,
 		const FHansaCityDefinitionId CityId,
-		const FHansaBuildingTypeId BuildingDefinitionId)
+		const FHansaBuildingTypeId BuildingDefinitionId,
+		const FHansaInventoryId FundingInventoryId)
 	{
 		FHansaConstructionCostProjection Result;
 		Result.HouseId = HouseId;
@@ -83,7 +84,7 @@ namespace Hansa::Simulation
 		Result.MissingCurrency = FHansaMoney::FromRaw(SafeMissing(
 			Result.RequiredCurrency.GetRawValue(), Result.AvailableCurrency.GetRawValue()));
 
-		const TOptional<FHansaInventoryProjection> CityInventory = FindCityInventory(Inventories, CityId);
+		const TOptional<FHansaInventoryProjection> CityInventory = FundingInventoryId.IsValid() ? Inventories.CreateReadOnlyAccess().QueryInventory(FundingInventoryId) : FindCityInventory(Inventories, CityId);
 		for (const FHansaCompiledGoodAmount& Cost : Definition->ConstructionCosts)
 		{
 			const THansaValueResult<FHansaGoodId> GoodId = FHansaGoodId::TryParse(Cost.GoodId);
@@ -116,17 +117,18 @@ namespace Hansa::Simulation
 		const FHansaHouseId HouseId,
 		const FHansaCityDefinitionId CityId,
 		const FHansaBuildingTypeId BuildingDefinitionId,
-		const FHansaSimulationTick Tick)
+		const FHansaSimulationTick Tick,
+		const FHansaInventoryId FundingInventoryId)
 	{
 		const FHansaConstructionCostProjection Projection = BuildCostProjection(
-			Houses, Inventories, Definitions, HouseId, CityId, BuildingDefinitionId);
+			Houses, Inventories, Definitions, HouseId, CityId, BuildingDefinitionId, FundingInventoryId);
 		if (!Projection.IsAffordable())
 		{
 			return false;
 		}
 		const FHansaCompiledBuildingDefinition* Definition = Definitions.FindBuilding(BuildingDefinitionId.ToString());
 		FHansaHouseState* House = FindHouse(Houses, HouseId);
-		const TOptional<FHansaInventoryProjection> CityInventory = FindCityInventory(Inventories, CityId);
+		const TOptional<FHansaInventoryProjection> CityInventory = FundingInventoryId.IsValid() ? Inventories.CreateReadOnlyAccess().QueryInventory(FundingInventoryId) : FindCityInventory(Inventories, CityId);
 		if (Definition == nullptr || House == nullptr || Definition->ConstructionCostPfennig < 0 ||
 			Definition->CancellationRefundBasisPoints < 0 || Definition->CancellationRefundBasisPoints > 10'000 ||
 			(!Definition->ConstructionCosts.IsEmpty() && !CityInventory.IsSet()))

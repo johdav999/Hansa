@@ -6,9 +6,9 @@ These instructions apply to the entire repository.
 
 ### Required references
 
-- Before planning, generating, reviewing, or implementing any GUI, UI, icon, illustration, texture, portrait, map treatment, or other game image, read `Docs/UIDesignBrief.md` and `Docs/UIAssetWorkflow.md` completely.
-- Treat `Docs/UIDesignBrief.md` as the visual source of truth for palette, typography, materials, spacing, layout, accessibility, and interaction behavior.
-- If a requested design direction conflicts with the brief, follow the user's explicit request and update the brief so future work uses the new direction.
+- Before planning, generating, reviewing, or implementing any GUI, UI, icon, illustration, texture, portrait, map treatment, or other game image, read the root [design.md](design.md), `Docs/UIDesignBrief.md`, and `Docs/UIAssetWorkflow.md` completely.
+- Use the root [design.md](design.md) for overall design instructions and [Docs/UIDesignBrief.md](Docs/UIDesignBrief.md) for the detailed GUI visual source of truth. Its **Current GUI style specification — 2026-09-17** section defines the unified top bar, alert tablets, minimap, illustrated construction tray, details panel, brass frames and colored icons, and supersedes conflicting older GUI layout directions in that brief. Use `Docs/UIAssetWorkflow.md` for production workflow.
+- If a requested design direction conflicts with these documents, follow the user's explicit request and update `design.md` and the relevant brief sections together so future work uses the new direction.
 - Do not invent a second palette, typography system, spacing scale, or component style inside an individual screen.
 
 ### Image generation

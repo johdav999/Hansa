@@ -2,6 +2,23 @@
 
 namespace Hansa::Simulation
 {
+
+ TArray<FHansaSpoilageRecord> FHansaInventoryReadOnlyAccess::QuerySpoilage() const { return Ledger ? Ledger->Spoilage : TArray<FHansaSpoilageRecord>(); }
+bool FHansaInventoryLedger::SetHouseholdAvailable(FHansaInventoryId InventoryId, FHansaGoodId GoodId, bool bAvailable)
+ {
+  auto* Inventory = Inventories.FindByPredicate([&](const auto& I) { return I.Id == InventoryId; });
+  if (!Inventory || Inventory->OwnerKind != EHansaInventoryOwnerKind::City || !Inventory->AcceptedGoods.Contains(GoodId)) return false;
+  if (bAvailable) Inventory->HouseholdExcludedGoods.Remove(GoodId);
+  else Inventory->HouseholdExcludedGoods.AddUnique(GoodId);
+  Inventory->HouseholdExcludedGoods.Sort();
+  return true;
+ }
+ bool FHansaInventoryReadOnlyAccess::IsHouseholdAvailable(FHansaInventoryId InventoryId, FHansaGoodId GoodId) const
+ {
+  const auto* Inventory = Ledger->Inventories.FindByPredicate([&](const auto& I) { return I.Id == InventoryId; });
+  return Inventory && !Inventory->HouseholdExcludedGoods.Contains(GoodId);
+ }
+
 	namespace
 	{
 		int32 FindInventoryIndex(
@@ -145,12 +162,23 @@ namespace Hansa::Simulation
                 if (Inventory.OwnerKind == EHansaInventoryOwnerKind::City)
                     return Existing.CityId == Inventory.CityId && Existing.BuildingId == Inventory.BuildingId;
                 if (Inventory.OwnerKind == EHansaInventoryOwnerKind::Vehicle) return Existing.VehicleId == Inventory.VehicleId;
+				if (Inventory.OwnerKind == EHansaInventoryOwnerKind::TradeStation) return Existing.TradeStationId == Inventory.TradeStationId;
                 return Existing.BuildingId == Inventory.BuildingId;
             })) return false;
 		auto Validated = TryCreate({ MoveTemp(Inventory) }, MovementCapacity);
 		if (!Validated) return false;
 		Inventories.Add(MoveTemp(Validated.Value.Inventories[0]));
 		Inventories.Sort([](const auto& A, const auto& B) { return A.Id < B.Id; });
+		return true;
+	}
+
+	bool FHansaInventoryLedger::TrySetCapacity(const FHansaInventoryId InventoryId, const FHansaQuantity Capacity)
+	{
+		const int32 Index = FindInventoryIndex(Inventories, InventoryId);
+		if (Index == INDEX_NONE || Capacity.GetRawValue() <= 0) return false;
+		const THansaValueResult<FHansaQuantity> Used = SumStock(Inventories[Index].Stocks);
+		if (!Used || Used.Value.GetRawValue() > Capacity.GetRawValue()) return false;
+		Inventories[Index].Capacity = Capacity;
 		return true;
 	}
 
@@ -171,6 +199,7 @@ namespace Hansa::Simulation
 		case EHansaInventoryTransactionError::ReservationNotFound: return TEXT("ReservationNotFound");
 		case EHansaInventoryTransactionError::ReservationMismatch: return TEXT("ReservationMismatch");
 		case EHansaInventoryTransactionError::SequenceOutOfOrder: return TEXT("SequenceOutOfOrder");
+		case EHansaInventoryTransactionError::HouseholdReserveProtected: return TEXT("HouseholdReserveProtected");
 		case EHansaInventoryTransactionError::ArithmeticOverflow: return TEXT("ArithmeticOverflow");
 		default: return TEXT("UnknownInventoryTransactionError");
 		}
@@ -220,7 +249,7 @@ namespace Hansa::Simulation
 		{
 			FHansaInventoryInitialization& Initialization = Initializations[InventoryIndex];
 			if (!Initialization.Id.IsValid() ||
-				Initialization.OwnerKind > EHansaInventoryOwnerKind::Vehicle ||
+				Initialization.OwnerKind > EHansaInventoryOwnerKind::TradeStation ||
 				Initialization.Capacity.GetRawValue() <= 0 ||
 				(InventoryIndex > 0 && Initializations[InventoryIndex - 1].Id == Initialization.Id))
 			{
@@ -228,9 +257,12 @@ namespace Hansa::Simulation
 			}
 			const bool bCityOwner = Initialization.OwnerKind == EHansaInventoryOwnerKind::City;
 			const bool bVehicleOwner = Initialization.OwnerKind == EHansaInventoryOwnerKind::Vehicle;
+			const bool bStationOwner = Initialization.OwnerKind == EHansaInventoryOwnerKind::TradeStation;
 			if ((bCityOwner && (!Initialization.CityId.IsValid() || Initialization.VehicleId.IsValid())) ||
 				(bVehicleOwner && (!Initialization.VehicleId.IsValid() || Initialization.CityId.IsValid() || Initialization.BuildingId.IsValid())) ||
-				(!bCityOwner && !bVehicleOwner && (!Initialization.BuildingId.IsValid() || Initialization.CityId.IsValid() || Initialization.VehicleId.IsValid())))
+				(bStationOwner && (!Initialization.TradeStationId.IsValid() || !Initialization.CityId.IsValid() || Initialization.BuildingId.IsValid() || Initialization.VehicleId.IsValid())) ||
+				(!bCityOwner && !bVehicleOwner && !bStationOwner && (!Initialization.BuildingId.IsValid() || Initialization.CityId.IsValid() || Initialization.VehicleId.IsValid() || Initialization.TradeStationId.IsValid())) ||
+				(!bStationOwner && Initialization.TradeStationId.IsValid()))
 			{
 				return THansaValueResult<FHansaInventoryLedger>::Failure(EHansaValueError::InvalidFormat);
 			}
@@ -259,6 +291,7 @@ namespace Hansa::Simulation
 			Record.CityId = Initialization.CityId;
 			Record.BuildingId = Initialization.BuildingId;
 			Record.VehicleId = Initialization.VehicleId;
+			Record.TradeStationId = Initialization.TradeStationId;
 			Record.Capacity = Initialization.Capacity;
 			Record.AcceptedGoods = MoveTemp(Initialization.AcceptedGoods);
 			if (Ledger.Inventories.ContainsByPredicate([&Record](const FHansaInventoryRecord& Existing)
@@ -273,6 +306,7 @@ namespace Hansa::Simulation
 						Existing.BuildingId == Record.BuildingId;
 				}
 				if (Record.OwnerKind == EHansaInventoryOwnerKind::Vehicle) return Existing.VehicleId == Record.VehicleId;
+				if (Record.OwnerKind == EHansaInventoryOwnerKind::TradeStation) return Existing.TradeStationId == Record.TradeStationId;
 				return Existing.BuildingId == Record.BuildingId;
 			}))
 			{
@@ -316,6 +350,17 @@ namespace Hansa::Simulation
 		{
 			RecentMovements.RemoveAt(0, RecentMovements.Num() - MovementCapacity, EAllowShrinking::No);
 		}
+	}
+
+	int64 FHansaInventoryLedger::ProtectedRaw(FHansaInventoryId InventoryId, FHansaGoodId GoodId) const
+	{
+		const auto* Floor = HouseholdProtection.FindByPredicate([&](const auto& V) { return V.InventoryId == InventoryId && V.GoodId == GoodId; });
+		return Floor ? FMath::Max<int64>(0, Floor->TargetRaw) : 0;
+	}
+
+	int64 FHansaInventoryReadOnlyAccess::QueryProtectedRaw(FHansaInventoryId InventoryId, FHansaGoodId GoodId) const
+	{
+		return Ledger ? Ledger->ProtectedRaw(InventoryId, GoodId) : 0;
 	}
 
 	FHansaInventoryTransactionResult FHansaInventoryLedger::TryTransfer(
@@ -398,6 +443,11 @@ namespace Hansa::Simulation
 			else
 			{
 				const THansaValueResult<FHansaQuantity> Available = FHansaQuantity::TrySubtract(Stock.Quantity, Stock.Reserved);
+				const bool bHouseholdConsumption = Destination.Kind == EHansaInventoryEndpointKind::ExplicitSink &&
+					Destination.ExternalEndpointId == TEXT("PopulationConsumption");
+				if (Available && !bHouseholdConsumption && Available.Value.GetRawValue() >= Quantity.GetRawValue() &&
+					Available.Value.GetRawValue() - Quantity.GetRawValue() < ProtectedRaw(Source.InventoryId, GoodId))
+					return Failure(EHansaInventoryTransactionError::HouseholdReserveProtected, Sequence, Quantity);
 				if (!Available || Available.Value.GetRawValue() < Quantity.GetRawValue())
 				{
 					return Failure(EHansaInventoryTransactionError::InsufficientUnreservedStock, Sequence, Quantity);
@@ -559,6 +609,9 @@ namespace Hansa::Simulation
 		}
 		const FHansaInventoryStockRecord& Stock = Inventories[InventoryIndex].Stocks[StockIndex];
 		const THansaValueResult<FHansaQuantity> Available = FHansaQuantity::TrySubtract(Stock.Quantity, Stock.Reserved);
+		if (Available && Available.Value.GetRawValue() >= Quantity.GetRawValue() &&
+			Available.Value.GetRawValue() - Quantity.GetRawValue() < ProtectedRaw(InventoryId, GoodId))
+			return Failure(EHansaInventoryTransactionError::HouseholdReserveProtected, Sequence, Quantity);
 		if (!Available || Available.Value.GetRawValue() < Quantity.GetRawValue())
 		{
 			return Failure(EHansaInventoryTransactionError::InsufficientUnreservedStock, Sequence, Quantity);
@@ -677,11 +730,13 @@ namespace Hansa::Simulation
 		Projection.CityId = Inventory.CityId;
 		Projection.BuildingId = Inventory.BuildingId;
 		Projection.VehicleId = Inventory.VehicleId;
+		Projection.TradeStationId = Inventory.TradeStationId;
 		Projection.Capacity = Inventory.Capacity;
 		Projection.UsedCapacity = Used.Value;
 		Projection.FreeCapacity = FHansaQuantity::TrySubtract(Inventory.Capacity, Used.Value).Value;
 		Projection.Reserved = Reserved.Value;
 		Projection.AcceptedGoods = Inventory.AcceptedGoods;
+			Projection.HouseholdExcludedGoods = Inventory.HouseholdExcludedGoods;
 		Projection.Stocks.Reserve(Inventory.Stocks.Num());
 		for (const FHansaInventoryStockRecord& Stock : Inventory.Stocks)
 		{

@@ -83,7 +83,7 @@ bool FHansaRoadConnectionIndicatorTest::RunTest(const FString& Parameters)
 	Actor->ApplyProjection(Projection, *Foundation);
 	TestFalse(TEXT("A road-connected building does not show the road marker when only its market is missing"),
 		Actor->IsRoadDisconnectedIndicatorVisible());
-	TestFalse(TEXT("A missing market is kept separate from marker visibility"), Actor->IsActorTickEnabled());
+	TestTrue(TEXT("Missing market activates its separate rotating warning"), Actor->IsMarketNotInRangeIndicatorVisible() && Actor->IsActorTickEnabled());
 
 	Projection.bHasMarketAccess = true;
 	Projection.MarketAccessFailure = EHansaLogisticsRoadPathFailure::None;

@@ -1142,3 +1142,8 @@ Create short Architecture Decision Records under `Docs/Architecture/Decisions/` 
 - [Unreal Engine Modules](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-modules)
 - [Module Host Types (`EHostType`)](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/Projects/EHostType__Type)
 - [OpenAI Codex MCP](https://developers.openai.com/codex/mcp)
+
+
+## Residential compound parcels (2026-09-14)
+
+Residential compounds use one logical building with data-driven instanced children and an explicitly larger occupied footprint. The compound schema, editor validation, draft binding, save compatibility, road access and preview contract are documented in [Residential compounds — prompt 2](Development/ResidentialCompounds-Prompt2.md). Existing 8 × 8 m residences must not be expanded or visually shrunk to accommodate multiple houses.

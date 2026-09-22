@@ -1,0 +1,205 @@
+{
+  "delivered_master_reopened": true,
+  "all_file_images_packed": true,
+  "images": [
+    {
+      "name": "malt-brick.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": true
+    },
+    {
+      "name": "malt-clay.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": true
+    },
+    {
+      "name": "oak.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Brick_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Brick_NormalGL.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Brick_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Clay_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Clay_NormalGL.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Clay_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Iron_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Iron_NormalGL.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Iron_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Mortar_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Mortar_NormalGL.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Mortar_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Oak_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Oak_NormalGL.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Oak_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Recess_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Recess_NormalGL.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Recess_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Sacking_BaseColor.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Sacking_NormalGL.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Sacking_Roughness.png.001",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    }
+  ],
+  "texel_density_area_equivalent_px_m": {
+    "min": 17.128190023012127,
+    "p05": 356.12757339224373,
+    "median": 409.59992413904934,
+    "max": 12243.259337490066
+  },
+  "note": "Triangle area-equivalent UV density; projected mappings are anisotropic on sloped surfaces."
+}

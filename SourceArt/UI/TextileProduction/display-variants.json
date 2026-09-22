@@ -1,0 +1,387 @@
+[
+  {
+    "name": "Flax",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--flax--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      55,
+      159,
+      1208,
+      1110
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "9e7821e437d4cad66873b05e0f52eab8b77b26fc7ab6b25bed35b60aca916fa3"
+  },
+  {
+    "name": "Hemp",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--hemp--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      50,
+      107,
+      1228,
+      1132
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "0c904b9b5316b610bffd1289ee8380cec08adece4ee56425a97c25464b20efdf"
+  },
+  {
+    "name": "Beeswax",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--beeswax--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      47,
+      126,
+      1212,
+      1161
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "6e1b9bfdadc5d8429fdb85f77f0c8f0821c96e4e409fe707d3461b2e24eae139"
+  },
+  {
+    "name": "LinenCloth",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--linen-cloth--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      36,
+      227,
+      1241,
+      1066
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "7be50da376d4e0e52314ee60988f2dee3d3511547b313eab3ee5e6e4016456b6"
+  },
+  {
+    "name": "LinenClothing",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--linen-clothing--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      27,
+      195,
+      1230,
+      1105
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "46a491376c5946555c95012bf9a4b4d52fe548ec54b916948d2e76a928dcaa2b"
+  },
+  {
+    "name": "Candles",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--candles--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      71,
+      26,
+      1230,
+      1216
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "c8606d79f5efb0627148bc6018616c63888324f98957e8a27a169d9e5802d614"
+  },
+  {
+    "name": "Rope",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--rope--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      88,
+      224,
+      1185,
+      1091
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "1ccd4a2f6af15e418fedee66d1f7c9753c25ee071a11d173a4bd3b891b2f5ec4"
+  },
+  {
+    "name": "Weaver",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--weaver-card--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      101,
+      61,
+      1234,
+      1146
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "27337e04a170070dff50f8dbefbdfe46396c45c4a63cc20237d8db81865d70d2"
+  },
+  {
+    "name": "Tailor",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--tailor-card--default--1254x1254--v2.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      142,
+      61,
+      1123,
+      1184
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "c05d41eac2c706379759fe614128d8932a4177ef18f128fccbd8705a0e74ece4"
+  },
+  {
+    "name": "Chandler",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--chandler-card--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      109,
+      26,
+      1180,
+      1220
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "03a472f2400dd0c99c7ecba731ad9e360650262b33ba4bfb33125b81ff266149"
+  },
+  {
+    "name": "Ropewalk",
+    "master": "SourceArt\\UI\\TextileProduction\\textileproduction--ropewalk-card--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      14,
+      221,
+      1252,
+      1018
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "f0e5af765b21438498a27dfa1187aaf65bdeaabc75df8d63fc71d5d43bd44c6e"
+  }
+]

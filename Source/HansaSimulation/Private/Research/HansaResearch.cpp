@@ -51,6 +51,53 @@ namespace Hansa::Simulation
 		return static_cast<int32>(FMath::Clamp<int64>(Total, MIN_int32, MAX_int32));
 	}
 
+	const FHansaHouseResearchState* FHansaResearchEffectResolver::FindHouse(
+		const TConstArrayView<FHansaHouseResearchState> States, const FHansaHouseId HouseId)
+	{
+		return States.FindByPredicate([HouseId](const FHansaHouseResearchState& State) { return State.HouseId == HouseId; });
+	}
+
+	int32 FHansaResearchEffectResolver::GetMagnitude(
+		const TConstArrayView<FHansaHouseResearchState> States, const FHansaHouseId HouseId,
+		const EHansaResearchEffectKind Kind, const FString& TargetStableId)
+	{
+		const FHansaHouseResearchState* State = FindHouse(States, HouseId);
+		return State != nullptr ? State->GetEffectMagnitude(Kind, TargetStableId) : 0;
+	}
+
+	int32 FHansaResearchEffectResolver::GetBasisPoints(
+		const TConstArrayView<FHansaHouseResearchState> States, const FHansaHouseId HouseId,
+		const EHansaResearchEffectKind Kind, const FString& TargetStableId)
+	{
+		return FMath::Clamp(GetMagnitude(States, HouseId, Kind, TargetStableId), 0, 10000);
+	}
+
+	bool FHansaResearchEffectResolver::IsEnabled(
+		const TConstArrayView<FHansaHouseResearchState> States, const FHansaHouseId HouseId,
+		const EHansaResearchEffectKind Kind, const FString& TargetStableId)
+	{
+		return GetMagnitude(States, HouseId, Kind, TargetStableId) > 0;
+	}
+
+	bool FHansaResearchEffectResolver::IsAuthoredForTarget(
+		const TConstArrayView<FHansaCompiledTechnologyDefinition> Technologies,
+		const EHansaResearchEffectKind Kind, const FString& TargetStableId)
+	{
+		for (const FHansaCompiledTechnologyDefinition& Technology : Technologies)
+			for (const FHansaCompiledResearchEffect& Effect : Technology.Effects)
+				if (Effect.Kind == Kind && Effect.TargetStableId == TargetStableId) return true;
+		return false;
+	}
+
+	int32 FHansaResearchEffectResolver::WorkUnitsForTick(const int32 BonusBasisPoints, const FHansaSimulationTick Tick)
+	{
+		const int32 Bonus = FMath::Clamp(BonusBasisPoints, 0, 10000);
+		const int64 Current = FMath::Max<int64>(0, Tick.GetValue());
+		const int64 Previous = Current > 0 ? ((Current - 1) * Bonus) / 10000 : 0;
+		const int64 Now = (Current * Bonus) / 10000;
+		return 10000 + static_cast<int32>((Now - Previous) * 10000);
+	}
+
 	TArray<FHansaResearchGraphDiagnostic> FHansaResearchGraphValidator::Validate(
 		TConstArrayView<FHansaCompiledTechnologyDefinition> Technologies,
 		TConstArrayView<FString> DeclaredRootTechnologyIds,
@@ -83,6 +130,36 @@ namespace Hansa::Simulation
 					Add(EHansaResearchGraphIssue::InvalidEffectReference, Technology.StableId, Effect.TargetStableId,
 						TEXT("Technology effect references an unknown stable ID."),
 						TEXT("Choose a stable ID from the compiled content set or add that definition."));
+				}
+				const uint8 RawKind = static_cast<uint8>(Effect.Kind);
+				if (RawKind > static_cast<uint8>(EHansaResearchEffectKind::RouteScheduling))
+				{
+					Add(EHansaResearchGraphIssue::UnsupportedEffectKind, Technology.StableId, Effect.TargetStableId,
+						TEXT("Technology uses a research effect kind with no authoritative consumer."),
+						TEXT("Use a supported effect kind or implement its runtime consumer before authoring it."));
+					continue;
+				}
+				const bool bBasisPoints = Effect.Kind == EHansaResearchEffectKind::TransactionFrictionReductionBasisPoints ||
+					Effect.Kind == EHansaResearchEffectKind::ProductionThroughputBasisPoints ||
+					Effect.Kind == EHansaResearchEffectKind::WarehouseHandlingBasisPoints ||
+					Effect.Kind == EHansaResearchEffectKind::VehicleCapacityBasisPoints;
+				if (Effect.Magnitude <= 0 || (bBasisPoints && Effect.Magnitude > 10000))
+				{
+					Add(EHansaResearchGraphIssue::InvalidEffectMagnitude, Technology.StableId, Effect.TargetStableId,
+						TEXT("Research effect magnitude is outside its deterministic runtime range."),
+						TEXT("Use a positive magnitude and keep percentage effects at or below 10000 basis points."));
+				}
+				const TCHAR* RequiredPrefix = Effect.Kind == EHansaResearchEffectKind::MarketReportAgeReductionTicks ||
+					Effect.Kind == EHansaResearchEffectKind::TransactionFrictionReductionBasisPoints ? TEXT("City.") :
+					Effect.Kind == EHansaResearchEffectKind::ProductionThroughputBasisPoints ? TEXT("Recipe.") :
+					Effect.Kind == EHansaResearchEffectKind::WarehouseHandlingBasisPoints ? TEXT("Building.") :
+					Effect.Kind == EHansaResearchEffectKind::VehicleCapacityBasisPoints ? TEXT("Vehicle.") :
+					Effect.Kind == EHansaResearchEffectKind::ReserveAutomation || Effect.Kind == EHansaResearchEffectKind::RouteScheduling ? TEXT("Route.") : nullptr;
+				if (Effect.TargetStableId.IsEmpty() || (RequiredPrefix != nullptr && !Effect.TargetStableId.StartsWith(RequiredPrefix)))
+				{
+					Add(EHansaResearchGraphIssue::IncompatibleEffectTarget, Technology.StableId, Effect.TargetStableId,
+						TEXT("Research effect target is incompatible with its authoritative gameplay consumer."),
+						TEXT("Select a stable ID from the effect kind's supported target domain."));
 				}
 			}
 		}

@@ -1,0 +1,16 @@
+{
+  "master": "referencehud--season--default--1254x1254--v1.png",
+  "native": [
+    1254,
+    1254
+  ],
+  "crop": [
+    0,
+    21,
+    1200,
+    1230
+  ],
+  "mode": "built-in ImageGen",
+  "resampling": "Lanczos proportional; GUI exception 2026-09-10",
+  "corner_transforms": "lossless horizontal/vertical flips for matching corners"
+}

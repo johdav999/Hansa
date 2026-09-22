@@ -1,0 +1,9 @@
+# Composed preservation reference
+
+Mode: built-in ImageGen generate. Native requested/actual dimensions: 1536x1024.
+Use: nonshipping hierarchy reference; production is native Slate.
+Inspection: original-resolution image reviewed. Mode distinction, fallback, textual shortage, household policy and shared Fish need readable; no invented costs. Background is illustrative and not an architectural reconstruction or game screenshot.
+Revision: supersedes v1 whose exact original prompt was not retained, and rejects an intermediate reference with invented costs and incorrect barrel labeling.
+
+Final prompt:
+Generate a sparse composed UI layout reference for original Hansa game, landscape1536x1024. This is a hierarchy reference for native Slate controls, never shipping rasterUI. Merchant ledger materials: Linen #F2E9D8, Parchment #DFCFAF rows, Baltic Navy #152A35 headings, Ink #202628 text, Brass #C19A52 focus borders. Source Serif4 Semibold headings, Atkinson Hyperlegible body. Background small muted Baltic waterfront game view. Right-side compact inspector titled exactly 'Salting shed'. ONLY these text contents inside inspector: buttons 'Fresh catch' and 'Salted catch' with Saltedcatch visibly selected, toggle 'Fresh fallback: On', status 'Selected: Salted catch', status 'Active: Fresh catch', warning 'Missing salt'. Below small city panel titled 'Preserved fish' with two policy buttons 'Available to households' and 'Reserved for trade', firstselected. Bottom small need panel titled 'Fish' and text 'Same food value. Lower storage loss.' No additional text anywhere. No recipe, quantities, numbers, money, other tabs, slogan, logos, statistics, editable numerical reserves, illustrations of goods, decorative flourishes, contact sheet or invented controls. Clean restrained borders, sufficient localization space, no gradients, no copied-game composition. One single coherent screen, not separate component tiles.

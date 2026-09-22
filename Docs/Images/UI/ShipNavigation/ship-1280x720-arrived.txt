@@ -1,0 +1,26 @@
+tick=8
+ship=1
+cell=-60,46
+target=-60,46
+cargo=0
+world=X=-35800.000 Y=10600.000 Z=90.000
+Inspector.Root	1	World.Cargo.Vehicle.1.0
+Inspector.DataStatus	1	EHansaInspectorDataState::Ready
+Inspector.Identity	1	At anchor
+Inspector.Result	1	Cargo 0.0 / 60.0 units
+Inspector.Flows	1	3
+Inspector.Flows.Item.Inspector_Cargo_Progress	1	value=At anchor;state=In view
+Inspector.Flows.Item.Inspector_Ship_Owner	1	value=Your merchant house;state=12 pfennig per travel tick
+Inspector.Flows.Item.Inspector_Ship_Navigation	1	value=Ready to explore;state=Speed: 4 m per tick. Right-click water to sail; right-drag pans. G also sails to the pointer.
+Inspector.Problem	1	None
+Inspector.Problem.Cause	0	cause=Cargo changes only when pickup, loading or delivery is recorded.;evidence=The Cog follows connected water and keeps clear of the shoreline.;remedy=Return to berth before assigning a trade route. Resume time to move.;related=TradeMap.Root
+Inspector.Actions	1	5
+Inspector.Action.OpenCause	1	false
+Inspector.Action.Frame	1	available
+Inspector.Action.OpenRelated	1	available
+Inspector.Action.Pin	1	available
+Inspector.Ship.Home	1	available
+Inspector.Ship.Stop	1	available
+Inspector.History	1	0
+Inspector.Close	1	
+Inspector.Tooltip.OpenCause	1	shortcut=C;cause=Cargo changes only when pickup, loading or delivery is recorded.;remedy=Return to berth before assigning a trade route. Resume time to move.

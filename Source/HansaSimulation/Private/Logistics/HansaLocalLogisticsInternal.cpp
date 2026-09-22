@@ -156,7 +156,8 @@ namespace Hansa::Simulation
 			{
 				continue;
 			}
-			const FHansaCompiledRecipeDefinition* Recipe = Registry.FindRecipe(Production.RecipeId.ToString());
+			const FHansaCompiledRecipeDefinition* Recipe = Registry.FindRecipe(
+                Production.RequestedRecipeId.IsValid() ? Production.RequestedRecipeId.ToString() : Production.RecipeId.ToString());
 			const TOptional<FHansaInventoryProjection> InputInventory =
 				InventoryView.QueryInventory(Production.InputInventoryId);
 			const TOptional<FHansaInventoryProjection> OutputInventory =
@@ -240,7 +241,13 @@ namespace Hansa::Simulation
 			{
 				continue;
 			}
-			for (const FHansaCompiledGoodAmount& Output : Recipe->Outputs)
+            TArray<FHansaCompiledGoodAmount> Outputs = Recipe->Outputs;
+            const auto* B = Buildings.FindByPredicate([&](const auto& V) { return V.Id == Production.BuildingId; });
+            const auto* BD = B ? Registry.FindBuilding(B->DefinitionId.ToString()) : nullptr;
+            if (BD) for (const auto& RecipeId : BD->RecipeIds)
+                if (const auto* Other = Registry.FindRecipe(RecipeId)) for (const auto& Output : Other->Outputs)
+                    if (!Outputs.ContainsByPredicate([&](const auto& V) { return V.GoodId == Output.GoodId; })) Outputs.Add(Output);
+            for (const FHansaCompiledGoodAmount& Output : Outputs)
 			{
 				const THansaValueResult<FHansaGoodId> GoodId = FHansaGoodId::TryParse(Output.GoodId);
 				const TOptional<FHansaInventoryStockProjection> Stock = GoodId
@@ -318,6 +325,7 @@ namespace Hansa::Simulation
 		const FHansaPlacementState& Placement,
 		const TConstArrayView<FHansaBuildingState> Buildings,
 		const FHansaEconomicRegistry* Registry,
+		const TConstArrayView<FHansaHouseResearchState> Research,
 		const FHansaSimulationTick CurrentTick)
 	{
 		// Pickup and delivery are separate ledger events; cargo lives in the job between them.
@@ -459,8 +467,17 @@ namespace Hansa::Simulation
 				}
 				if (Job.RemainingTravelTicks > 0)
 				{
-					++Job.ElapsedTravelTicks;
-					--Job.RemainingTravelTicks;
+					int32 Progress = 1;
+					if (const FHansaBuildingState* Warehouse = Buildings.FindByPredicate(
+						[&Job](const FHansaBuildingState& Building) { return Building.Id == Job.SelectedMarketBuildingId; }))
+					{
+						const int32 Bonus = FHansaResearchEffectResolver::GetBasisPoints(
+							Research, Warehouse->OwnerId, EHansaResearchEffectKind::WarehouseHandlingBasisPoints,
+							Warehouse->DefinitionId.ToString());
+						Progress = FHansaResearchEffectResolver::WorkUnitsForTick(Bonus, CurrentTick) / 10000;
+					}
+					Job.ElapsedTravelTicks += Progress;
+					Job.RemainingTravelTicks = FMath::Max(0, Job.RemainingTravelTicks - Progress);
 					Job.DeliveryTick = TickOffset(CurrentTick, Job.RemainingTravelTicks);
 				}
 				if (Job.RemainingTravelTicks > 0)
@@ -566,7 +583,7 @@ namespace Hansa::Simulation
 
 			const int64 QuantityRaw = FMath::Min(
 				FMath::Min(Unscheduled, Settings.JobCapacity.GetRawValue()),
-				FMath::Min(SourceStock->Available.GetRawValue(), DestinationFree));
+				FMath::Min(FMath::Max<int64>(0, SourceStock->Available.GetRawValue() - InventoryView.QueryProtectedRaw(Request.SourceInventoryId, Request.GoodId)), DestinationFree));
 			if (QuantityRaw <= 0)
 			{
 				Request.Bottleneck = EHansaLogisticsBottleneck::SourceStockUnavailable;

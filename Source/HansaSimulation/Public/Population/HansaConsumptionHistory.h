@@ -7,6 +7,8 @@
 
 namespace Hansa::Simulation
 {
+ struct HANSASIMULATION_API FHansaNeedSupply final
+ { FHansaGoodId GoodId; int64 QuantityMilliUnits = 0; int64 FulfillmentMilliUnits = 0; };
     struct FHansaPopulationCohortState;
 
     /** City-wide citizen consumption, in milli-units. Services and industrial demand are excluded. */
@@ -16,6 +18,7 @@ namespace Hansa::Simulation
         FHansaGoodId GoodId;
         int64 Required = 0;
         int64 Consumed = 0;
+        TArray<FHansaNeedSupply> SuppliedGoods;
     };
 
     struct FHansaConsumptionSample

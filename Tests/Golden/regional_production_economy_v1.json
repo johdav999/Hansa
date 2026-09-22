@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "saveFormatVersion": 11,
+  "determinismFingerprintVersion": 24,
+  "productionChains": {
+    "ProductionChain.Bread": ["GrowGrain", "MillFlour", "BakeBread"],
+    "ProductionChain.FreshFish": ["CatchFish"],
+    "ProductionChain.PreservedFish": ["CatchFish", "SaltedCatch"],
+    "ProductionChain.Planks": ["FellTimber", "SawPlanks"],
+    "ProductionChain.Beer": ["GrowGrain", "GrowHops", "MaltGrain", "MakeBarrels", "BrewBeer"],
+    "ProductionChain.Firewood": ["FellTimber", "SplitFirewood"],
+    "ProductionChain.Charcoal": ["FellTimber", "BurnCharcoal"],
+    "ProductionChain.Tools": ["SourceIron", "BurnCharcoal", "SmithTools"],
+    "ProductionChain.Shoes": ["SourceRawHides", "StripTanningBark", "TanLeather", "MakeShoes"],
+    "ProductionChain.Salt": ["ExtractSalt"]
+  },
+  "regions": [
+    {
+      "id": "Region.WendishLowerElbe",
+      "cities": ["City.Lubeck", "City.Hamburg", "City.Luneburg", "City.Rostock", "City.Wismar", "City.Stralsund"],
+      "signatureSources": ["Good.Salt"],
+      "automaticExchangeExclusions": ["City.Lubeck"]
+    },
+    {
+      "id": "Region.PrussianPomeranian",
+      "cities": ["City.Danzig", "City.Elbing", "City.Konigsberg", "City.Thorn", "City.Stettin", "City.Greifswald"],
+      "signatureSources": ["Good.Grain"]
+    },
+    {
+      "id": "Region.LivonianRus",
+      "cities": ["City.Riga", "City.Reval", "City.Dorpat", "City.Narva", "City.Pskov", "City.Novgorod"],
+      "signatureSources": ["Good.Timber"]
+    },
+    {
+      "id": "Region.Scandinavian",
+      "cities": ["City.Bergen", "City.Oslo", "City.Stockholm", "City.Visby", "City.Kalmar", "City.Malmo"],
+      "signatureSources": ["Good.Fish", "Good.Iron"]
+    },
+    {
+      "id": "Region.WesternNorthSea",
+      "cities": ["City.Bruges", "City.Antwerp", "City.London", "City.Boston", "City.KingsLynn", "City.Kampen"],
+      "importOnlySources": ["Good.Timber", "Good.RawHides", "Good.TanningBark", "Good.Iron"]
+    }
+  ],
+  "cityCount": 30,
+  "regionCount": 5,
+  "ordinaryCityFamilyBounds": [3, 6],
+  "maximumSignatureFamiliesPerCity": 2,
+  "legacyBackgroundProductionForRegionalCities": 0,
+  "rostockLeatherSupply": ["SourceRawHides", "StripTanningBark", "TanLeather"],
+  "newPlayerBuildings": [],
+  "newGoods": [],
+  "excludedContent": ["Good.Flax", "Good.Hemp", "Good.Beeswax", "Good.LinenCloth", "Good.LinenClothing", "Good.Candles", "Good.Rope"]
+}

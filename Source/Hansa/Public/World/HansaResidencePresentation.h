@@ -17,7 +17,7 @@ public:
 	AHansaResidencePresentation();
 	virtual void OnConstruction(const FTransform& Transform) override;
 	void ApplyParcel(int32 X, int32 Y);
-	static int32 VariantForParcel(int32 X, int32 Y);
+	static int32 VariantForParcel(int32 X, int32 Y, int32 VariantCount = 2);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Presentation")
 	TObjectPtr<UStaticMeshComponent> ResidenceMesh;
@@ -27,6 +27,12 @@ public:
 	TObjectPtr<UStaticMesh> VariantA;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hansa|Presentation")
 	TObjectPtr<UStaticMesh> VariantB;
+
+	/** Optional reviewed second pair; both must be assigned to enable four variants. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hansa|Presentation")
+	TObjectPtr<UStaticMesh> VariantC;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hansa|Presentation")
+	TObjectPtr<UStaticMesh> VariantD;
 
 private:
 	int32 SelectedVariant = 0;

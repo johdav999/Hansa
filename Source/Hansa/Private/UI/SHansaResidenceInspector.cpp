@@ -32,11 +32,7 @@ FText NeedPercent(int32 Value){FNumberFormattingOptions Format;Format.SetMaximum
 FString NeedTarget(FName Id){FString S=Id.ToString();S.RemoveFromStart(TEXT("Need."));return TEXT("Inspector.Residence.Need.")+S;}
 EUiGlyph NeedGlyph(const FHansaInspectorNeedData& N){
  if(N.bService)return EUiGlyph::Civic;
- if(N.GoodId==TEXT("Good.Bread"))return EUiGlyph::Bread;
- if(N.GoodId==TEXT("Good.Fish"))return EUiGlyph::Fish;
- if(N.GoodId==TEXT("Good.Beer"))return EUiGlyph::Beer;
- if(N.GoodId==TEXT("Good.Tools"))return EUiGlyph::Production;
- return EUiGlyph::Information;
+ return GlyphForGood(N.GoodId);
 }
 }
 TSharedRef<STextBlock> SHansaResidenceInspector::Text(FText Value,EHansaUiTypographyToken Token){return SNew(STextBlock).Text(Value).Font(GetComponentFont(Token,Preferences)).ColorAndOpacity(ResidenceColor(EHansaUiColorToken::Ink)).AutoWrapText(true);}
@@ -123,7 +119,7 @@ void SHansaResidenceInspector::Refresh(const FHansaInspectorSnapshot& S){
   const FText Explanation=N.bService
    ?FText::Format(LOCTEXT("CurrentServiceTip","{0}\nCurrent service level: {1}\nAccess: {2}\nAffordability: {3}\nReliability: {4}\nServices have no consumed/required product quantities."),N.Label,N.Percent,NeedPercent(N.Access),NeedPercent(N.Affordability),NeedPercent(N.Reliability))
    :FText::Format(LOCTEXT("ResidenceConsumptionTip","{0}\n{1}\nDemand fulfilled: {2}\nThis residence · {3}\nGoods count only when consumed. Access and affordability can limit consumption.\nCurrent access: {4} · affordability: {5}"),N.Label,N.Amount,N.Percent,D.ConsumptionPeriod,NeedPercent(N.Access),NeedPercent(N.Affordability));
-  NeedHints[N.NeedId]->SetText(Explanation);
+  NeedHints[N.NeedId]->SetText(N.SupplyDetail.IsEmpty()?Explanation:FText::Format(LOCTEXT("SupplyExplanation","{0}\n{1}"),Explanation,N.SupplyDetail));
  }
  if(S.Actions!=Presented.Actions){
   Actions->ClearChildren();for(auto It=Buttons.CreateIterator();It;++It)if(It.Key()!=TEXT("Inspector.Close")&&It.Key()!=TEXT("Inspector.Action.OpenCause")){Targets.Remove(It.Key());It.RemoveCurrent();}

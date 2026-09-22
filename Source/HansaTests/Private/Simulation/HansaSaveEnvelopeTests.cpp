@@ -5,6 +5,7 @@
 #include "Misc/SecureHash.h"
 #include "Fixtures/HansaProductionFixture.h"
 #include "Save/HansaSaveEnvelope.h"
+#include "Diagnostics/HansaStateHash.h"
 
 #if WITH_DEV_AUTOMATION_TESTS && WITH_HANSA_AUTOMATION
 namespace Hansa::Tests::Save
@@ -23,6 +24,50 @@ namespace Hansa::Tests::Save
 		uint8 Digest[20]; FSHA1::HashBuffer(Bytes.GetData(), Bytes.Num() - 20, Digest);
 		FMemory::Memcpy(Bytes.GetData() + Bytes.Num() - 20, Digest, 20);
 	}
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaSaveStationOrderMigrationTest, "Hansa.Integration.Save.StationOrdersPriorFormat14",
+ EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaSaveStationOrderMigrationTest::RunTest(const FString&)
+{
+ using namespace Hansa::Tests::Save;
+ auto F=FHansaProductionFixture::TryCreate();if(!F)return false;const auto& D=F.Value.GetDefinitions();
+ auto S=Capture(F.Value);TArray<uint8> Bytes;auto Encoded=FHansaSaveEnvelope::Encode(S,D,Bytes);if(!TestTrue(TEXT("Current empty-order archive encodes"),Encoded.IsSuccess()))return false;
+ TestTrue(TEXT("No station records in synthetic migration source"),S.State.CreateReadOnlyAccess(D).GetTradeStations().IsEmpty());
+ // With no station records or pending commands, v14 and v15 payload layouts are identical.
+ // Reconstruct the genuine previous header and checksum, not a bypass of decode validation.
+ const auto Put=[&](int32 Offset,uint64 Value,int32 Count){for(int32 I=0;I<Count;++I)Bytes[Offset+I]=static_cast<uint8>(Value>>(I*8));};
+ Put(4,14,4);Put(16,27,4);
+ int32 Offset=44;
+ const auto Read32=[&](int32 At){uint32 V=0;for(int32 I=0;I<4;++I)V|=uint32(Bytes[At+I])<<(I*8);return V;};
+ for(int32 I=0;I<4;++I){const int32 Length=Read32(Offset);Offset+=4+Length*2;}
+ const int32 Migrations=Read32(Offset);Offset+=4;
+ for(int32 I=0;I<Migrations;++I){const int32 Length=Read32(Offset);Offset+=4+Length*2;}
+ Put(Offset,FHansaStateHasher::ComputeSavedVersion(S.State,D,27).GetOverallHash(),8);Sign(Bytes);
+ FHansaSaveSnapshot Loaded;auto Result=FHansaSaveEnvelope::Decode(Bytes,D,Loaded);if(!TestTrue(*Result.Message,Result.IsSuccess()))return false;
+ TestTrue(TEXT("v14 gets explicit order migration"),Result.AppliedMigrations.Contains(TEXT("Hansa.Save.14To15.AddStationOrders")));
+ TestEqual(TEXT("Migration preserves existing gameplay"),Result.AuthoritativeHash,Encoded.AuthoritativeHash);
+ TArray<uint8> Again;TestTrue(TEXT("Migrated archive resaves"),FHansaSaveEnvelope::Encode(Loaded,D,Again).IsSuccess());
+ FHansaSaveSnapshot Twice;TestTrue(TEXT("Migration is idempotent"),FHansaSaveEnvelope::Decode(Again,D,Twice).AppliedMigrations.IsEmpty());return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaSaveEveryIntermediateMigrationTest,"Hansa.Integration.Save.EveryIntermediateVersionRecovery",
+ EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHansaSaveEveryIntermediateMigrationTest::RunTest(const FString&)
+{
+ using namespace Hansa::Tests::Save;
+ auto F=FHansaProductionFixture::TryCreate();if(!TestTrue(TEXT("Historical fixture source creates"),F.IsSuccess()))return false;const auto& D=F.Value.GetDefinitions();const auto S=Capture(F.Value);
+ struct FPair{uint32 Format;uint32 Fingerprint;};const FPair Pairs[]={{1,16},{2,16},{3,16},{4,17},{5,18},{6,19},{7,20},{8,21},{9,22},{10,23},{11,24},{12,25},{13,26},{14,27},{15,28},{16,28},{17,29},{18,30},{19,31},{20,32}};
+ for(const FPair Pair:Pairs)
+ {
+  TArray<uint8> Bytes;const auto Written=FHansaSaveEnvelope::EncodeHistoricalFixtureForTests(S,D,Pair.Format,Pair.Fingerprint,Bytes);if(!TestTrue(FString::Printf(TEXT("Format %u fixture writes genuine body"),Pair.Format),Written.IsSuccess()))return false;
+  FHansaSaveMetadata Metadata;const auto DryRun=FHansaSaveEnvelope::InspectMetadata(Bytes,Metadata);TestTrue(FString::Printf(TEXT("Format %u dry-run metadata succeeds"),Pair.Format),DryRun.IsSuccess());TestEqual(FString::Printf(TEXT("Format %u dry-run reports source"),Pair.Format),Metadata.FormatVersion,Pair.Format);
+  FHansaSaveSnapshot Loaded;Loaded.DisplayName=TEXT("unchanged-until-commit");const auto Migrated=FHansaSaveEnvelope::Decode(Bytes,D,Loaded);if(!TestTrue(FString::Printf(TEXT("Format %u applies safely: %s"),Pair.Format,*Migrated.Message),Migrated.IsSuccess()))return false;
+  TestEqual(FString::Printf(TEXT("Format %u source is retained"),Pair.Format),Migrated.SourceFormatVersion,Pair.Format);TestTrue(FString::Printf(TEXT("Format %u records migration lineage"),Pair.Format),!Migrated.AppliedMigrations.IsEmpty());
+  TArray<uint8> Current;if(!TestTrue(TEXT("Migrated state re-encodes current"),FHansaSaveEnvelope::Encode(Loaded,D,Current).IsSuccess()))return false;FHansaSaveSnapshot Again;const auto Repeated=FHansaSaveEnvelope::Decode(Current,D,Again);
+  TestTrue(FString::Printf(TEXT("Format %u repeated load is idempotent"),Pair.Format),Repeated.IsSuccess()&&Repeated.AppliedMigrations.IsEmpty());TestEqual(FString::Printf(TEXT("Format %u repeated hash is stable"),Pair.Format),Repeated.AuthoritativeHash,Migrated.AuthoritativeHash);
+ }
+ return !HasAnyErrors();
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaSaveContinuationTest, "Hansa.Integration.Save.RoundTripContinuation",
@@ -140,11 +185,25 @@ bool FHansaSaveMigrationTest::RunTest(const FString& Parameters)
 	const auto R = FHansaSaveEnvelope::Decode(Bytes, D, Loaded);
 	if (!TestTrue(*R.Message, R.IsSuccess())) return false;
 	TestEqual(TEXT("Prior format reported"), R.SourceFormatVersion, 1U);
-	TestEqual(TEXT("Six explicit migrations including immutable topology extraction"), R.AppliedMigrations.Num(), 6);
-	TestEqual(TEXT("Migration lineage captured"), Loaded.MigrationHistory.Num(), 6);
+    TestTrue(TEXT("Station order migration is explicit"),R.AppliedMigrations.Contains(TEXT("Hansa.Save.14To15.AddStationOrders")));
+	TestEqual(TEXT("Eighteen explicit migrations through recoverable station interruptions"), R.AppliedMigrations.Num(), 18);
+    TestTrue(TEXT("Merchant-office specialization migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.17To18.AddMerchantOfficeSpecializationsAndPriceLimits")));
+    TestTrue(TEXT("Bounded foreign-construction migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.18To19.AddBoundedForeignConstructionRights")));
+    TestTrue(TEXT("City privilege/project/charter migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.19To20.AddCityPrivilegesProjectsAndCharters")));
+	TestTrue(TEXT("Recoverable station interruption migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.20To21.AddRecoverableTradeStationInterruptions")));
+	TestTrue(TEXT("Presence progression migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.16To17.AddPresenceProgression")));
+    TestTrue(TEXT("Heating migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.7To8.DefaultHouseholdHeatingPolicy")));
+	TestTrue(TEXT("Foreign presence migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.11To12.SeedAuthoredForeignPresence")));
+	TestTrue(TEXT("Trade-station migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.13To14.AddTradeStationLifecycle")));
+    TestEqual(TEXT("Legacy campaign without Rostock receives no orphaned presence"), Loaded.State.CreateReadOnlyAccess(D).GetForeignPresences().Num(), 0);
+	TestEqual(TEXT("Migration lineage captured"), Loaded.MigrationHistory.Num(), 18);
 	TestEqual(TEXT("Deterministic display default"), Loaded.DisplayName, D.GetScenarioId().ToString());
-	TestEqual(TEXT("Migrated v1 state locks the reviewed fingerprint-v20 checksum"),
-		R.AuthoritativeHash, 17470896765056296923ULL);
+	TestEqual(TEXT("Navigation migration preserves the reviewed legacy gameplay checksum"),
+        FHansaStateHasher::ComputeSavedVersion(Loaded.State,D,22).GetOverallHash(),448186139431435968ULL);
+	TestEqual(TEXT("Migrated v1 state preserves the reviewed fingerprint-v23 checksum"),
+		FHansaStateHasher::ComputeSavedVersion(Loaded.State, D, 23).GetOverallHash(), 17984526814460210456ULL);
+	TestEqual(TEXT("Migration retains the reviewed fingerprint-v27 checksum"),
+		FHansaStateHasher::ComputeSavedVersion(Loaded.State, D, 27).GetOverallHash(), 17181715998215868145ULL);
 	TArray<uint8> Current;
 	TestTrue(TEXT("Migrated save writes current version"), FHansaSaveEnvelope::Encode(Loaded, D, Current).IsSuccess());
 	FHansaSaveSnapshot Again;
@@ -166,7 +225,10 @@ bool FHansaSaveV2RouteLabels::RunTest(const FString&)
     const auto Result=FHansaSaveEnvelope::Decode(Bytes,F.Value.GetDefinitions(),Loaded);
     TestTrue(*Result.Message,!!Result);if(!Result)return false;
     TestEqual(TEXT("Prior format 2 recognized"),Result.SourceFormatVersion,2U);
-	TestEqual(TEXT("Label, city, residence history, logistics, and topology migrations"),Result.AppliedMigrations.Num(),5);
+    TestTrue(TEXT("Order migration present"),Result.AppliedMigrations.Contains(TEXT("Hansa.Save.14To15.AddStationOrders")));
+    TestTrue(TEXT("Route-target migration present"),Result.AppliedMigrations.Contains(TEXT("Hansa.Save.15To16.ExplicitRouteTargets")));
+	TestEqual(TEXT("Catalog through recoverable station interruptions"),Result.AppliedMigrations.Num(),17);
+	TestTrue(TEXT("Recovery migration present"),Result.AppliedMigrations.Contains(TEXT("Hansa.Save.20To21.AddRecoverableTradeStationInterruptions")));
     TestTrue(TEXT("Prior campaigns get no invented labels"),Loaded.RouteLabels.IsEmpty());
     TArray<uint8> Current;TestTrue(TEXT("Migrated save encodes"),!!FHansaSaveEnvelope::Encode(Loaded,F.Value.GetDefinitions(),Current));
     FHansaSaveSnapshot Again;const auto R=FHansaSaveEnvelope::Decode(Current,F.Value.GetDefinitions(),Again);
@@ -221,3 +283,4 @@ bool FHansaSaveMvpBudgetTest::RunTest(const FString& Parameters)
 	return !HasAnyErrors();
 }
 #endif
+

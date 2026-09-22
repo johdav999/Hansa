@@ -138,7 +138,16 @@ bool FHansaMerchantAIInformationBoundaryTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("The rival emits no command when market reports are unknown"), Decision.Command.IsSet());
 	TestEqual(TEXT("Unknown reports leave the rival without an eligible goal"), Decision.Trace.SelectedGoal, EHansaMerchantAIGoal::None);
 	TestTrue(TEXT("The rejected opportunity explains the information boundary"),
-		!Decision.Trace.ConsideredOptions.IsEmpty() && Decision.Trace.ConsideredOptions[0].Reason.Contains(TEXT("unknown")));
+		Decision.Trace.ConsideredOptions.ContainsByPredicate([](const FHansaMerchantAIConsideredOption& Option)
+			{ return Option.Kind == EHansaMerchantAIOptionKind::ActivateRoute && Option.Reason.Contains(TEXT("unknown")); }));
+	const TArray<FHansaMerchantAIExplanationProjection> Explanation = Controller.BuildExplanationProjection();
+	TestEqual(TEXT("One allowlisted explanation is emitted"), Explanation.Num(), 1);
+	if (!Explanation.IsEmpty())
+	{
+		TestEqual(TEXT("Safe explanation exposes no chosen action"), Explanation[0].Action, FString(TEXT("None")));
+		TestFalse(TEXT("Safe explanation omits private good identity"), Explanation[0].Reason.Contains(TEXT("Good.Grain")));
+		TestFalse(TEXT("Safe explanation omits private city identity"), Explanation[0].Reason.Contains(TEXT("City.Rostock")));
+	}
 	return !HasAnyErrors();
 }
 

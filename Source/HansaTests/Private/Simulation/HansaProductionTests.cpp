@@ -13,6 +13,7 @@
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "Systems/HansaSimulationPipeline.h"
+#include "Save/HansaSaveEnvelope.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 
@@ -168,12 +169,13 @@ namespace Hansa::Tests::Production
 		return Result;
 	}
 
-	FHansaSimulationState MakeFullState(const bool bReverseDiscovery = false)
+	FHansaSimulationState MakeFullState(const bool bReverseDiscovery = false, const FHansaPlacementInitialization* Spatial = nullptr)
 	{
 		FHansaSimulationInitialization Initialization;
 		Initialization.Clock = Require(FHansaSimulationClock::TryCreate(
 			Require(FHansaSimulationVersion::TryCreate(1)), Tick(0)));
 		Initialization.CampaignSeed = 0x33445566;
+        if (Spatial) Initialization.Placement = *Spatial;
 		Initialization.Houses.Add({ ProductionTestsEntity<FHansaHouseId>(1), FHansaMoney::FromRaw(100'000) });
 		const FHansaCityDefinitionId City = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")));
 		Initialization.Cities.Add({ City, FHansaQuantity() });
@@ -642,6 +644,129 @@ bool FHansaProductionFixtureGoldenEvidenceTest::RunTest(const FString& Parameter
 	TestEqual(TEXT("Golden final state hash"), ParsedEvidence->GetStringField(TEXT("finalStateHash")), Golden->GetStringField(TEXT("finalStateHash")));
 	TestEqual(TEXT("Golden event count"), ParsedEvidence->GetArrayField(TEXT("events")).Num(), static_cast<int32>(Golden->GetNumberField(TEXT("eventCount"))));
 	return !HasAnyErrors();
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaLumberTreeRangeTest, "Hansa.Simulation.Production.LumberTreeRange",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaLumberTreeRangeTest::RunTest(const FString& Parameters)
+{
+    using namespace Hansa::Simulation;
+    using namespace Hansa::Tests::Production;
+    auto MakeSpatial = [](TArray<FHansaGridCoordinate> Trees)
+    {
+        FHansaPlacementInitialization Spatial;
+        FHansaPlacementMapInitialization Map;
+        Map.CityId = FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")).Value;
+        Map.RoadBuildingDefinitionId = BuildingType(TEXT("Building.Road"));
+        Map.BoundsMin = {-20,-20}; Map.BoundsMax = {20,20};
+        Map.TreeCells = MoveTemp(Trees);
+        for (int32 X=-20; X<=20; ++X) for (int32 Y=-20; Y<=20; ++Y)
+            Map.Cells.Add({{X,Y}, EHansaPlacementTerrain::Land, ProductionTestsEntity<FHansaHouseId>(1), false});
+        Spatial.Maps.Add(Map);
+        FHansaPlacedBuildingRecord Camp;
+        Camp.BuildingId = ProductionTestsEntity<FHansaBuildingId>(4);
+        Camp.OwnerId = ProductionTestsEntity<FHansaHouseId>(1);
+        Camp.Spec = {Map.CityId, BuildingType(TEXT("Building.LumberCamp")), {0,0}, EHansaGridRotation::North};
+        Camp.OccupiedCells = {{0,0},{0,1},{1,0},{1,1}};
+        Spatial.Placements.Add(Camp);
+        return Spatial;
+    };
+    const auto Definitions = MakeDefinitions();
+    // Radius is measured from the full footprint, with a circular inclusive boundary.
+    for (const auto Tree : TArray<FHansaGridCoordinate>{{13,1},{14,1},{13,2},{-12,0},{0,0}})
+    {
+        auto Spatial = MakeSpatial({Tree});
+        auto State = MakeFullState(false, &Spatial);
+        FHansaSimulationTransientCache Cache;
+        TestTrue(TEXT("Spatial tick succeeds"), Step(State, Definitions, Cache).IsSuccess());
+        TestTrue(TEXT("Second spatial tick succeeds"), Step(State, Definitions, Cache).IsSuccess());
+        const bool Expected = Tree == FHansaGridCoordinate{13,1} || Tree == FHansaGridCoordinate{-12,0};
+        const auto P = State.CreateReadOnlyAccess(Definitions).QueryProduction(ProductionTestsEntity<FHansaProductionId>(4));
+        if (!TestTrue(TEXT("Camp projection exists"), P.IsSet())) return false;
+        TestEqual(TEXT("Only reachable standing trees allow a batch"), P->CompletedCycles, Expected ? uint64(1) : uint64(0));
+        TestEqual(TEXT("Causal blocker is explicit"), P->Blocker,
+            Expected ? EHansaProductionBlocker::None : EHansaProductionBlocker::NoNearbyTrees);
+        if (!Expected)
+        {
+            TestEqual(TEXT("Blocked camp makes no progress"), P->ProgressTicks, 0);
+            TestEqual(TEXT("Blocked camp supplies no timber"), StockQuantity(State, Definitions, TEXT("Good.Timber")), int64(0));
+        }
+    }
+    // The uncommitted ghost must match production, including future footprint clearance.
+    FHansaCompiledBuildingDefinition CampDefinition = BuildingDefinition(TEXT("Building.LumberCamp"), TEXT("Recipe.FellTimber"), 8, 0);
+    CampDefinition.FootprintWidthCells = 2; CampDefinition.FootprintHeightCells = 2;
+    FHansaEconomicRegistry PlacementDefinitions({}, {}, {CampDefinition}, 123);
+    for (const auto Tree : TArray<FHansaGridCoordinate>{{13,1},{14,1},{13,2},{-12,0},{0,0}})
+    {
+        auto Preview = MakeSpatial({Tree});
+        const auto Spec = Preview.Placements[0].Spec;
+        const auto Owner = Preview.Placements[0].OwnerId;
+        Preview.Placements.Reset();
+        Preview.Entitlements.Add({Owner, Spec.BuildingDefinitionId});
+        const auto PreviewState = Require(FHansaPlacementState::TryCreate(Preview));
+        const auto Validation = FHansaPlacementRules::Validate(PreviewState, PlacementDefinitions, Owner, Spec);
+        const bool Expected = Tree == FHansaGridCoordinate{13,1} || Tree == FHansaGridCoordinate{-12,0};
+        TestEqual(TEXT("Ghost uses the same tree boundary as production"), Validation.CanPlace(), Expected);
+        if (!Expected)
+            TestEqual(TEXT("Construction exposes the tree-specific reason"), Validation.GetPrimaryFailure(), EHansaPlacementFailure::NoNearbyTrees);
+    }
+    auto Empty = MakeSpatial({});
+    auto Missing = MakeFullState(false, &Empty);
+    FHansaSimulationTransientCache Cache;
+    Step(Missing, Definitions, Cache);
+    TestEqual(TEXT("Empty tree survey blocks production"),
+        Missing.CreateReadOnlyAccess(Definitions).QueryProduction(ProductionTestsEntity<FHansaProductionId>(4))->Blocker,
+        EHansaProductionBlocker::NoNearbyTrees);
+    auto Spatial = MakeSpatial({{13,1}});
+    auto Road = Spatial.Placements[0];
+    Road.BuildingId = ProductionTestsEntity<FHansaBuildingId>(50);
+    Road.Spec.BuildingDefinitionId = BuildingType(TEXT("Building.Road"));
+    Road.Spec.Anchor = {13,1}; Road.OccupiedCells = {{13,1}};
+    Spatial.Placements.Add(Road);
+    const auto Covered = FHansaPlacementState::TryCreate(Spatial);
+    TestTrue(TEXT("Covered tree topology is valid"), Covered.IsSuccess());
+    TestFalse(TEXT("Road-covered tree cannot supply timber"), Covered.Value.HasNearbyTrees(ProductionTestsEntity<FHansaBuildingId>(4), LumberHarvestRadiusCells));
+    Spatial.Placements.Pop();
+    TestTrue(TEXT("Uncovered tree supplies timber again"), FHansaPlacementState::TryCreate(Spatial).Value.HasNearbyTrees(ProductionTestsEntity<FHansaBuildingId>(4), LumberHarvestRadiusCells));
+    Spatial.Maps[0].TreeCells.Add({13,1});
+    TestFalse(TEXT("Duplicate tree cells rejected"), FHansaPlacementTopology::TryCreate(Spatial.Maps).IsSuccess());
+    Spatial.Maps[0].TreeCells = {{21,1}};
+    TestFalse(TEXT("Out-of-map trees rejected"), FHansaPlacementTopology::TryCreate(Spatial.Maps).IsSuccess());
+
+    // Save migration must verify the old hash first and reject arbitrary tree/terrain changes.
+    auto LegacySpatial = MakeSpatial({});
+    auto CurrentSpatial = MakeSpatial({{13,1}});
+    const auto Scenario = Definitions.GetScenarioId();
+    const auto LegacyDefinitions = Require(FHansaSimulationDefinitionContext::TryCreate(Scenario,
+        Definitions.GetDefinitionHash(), MakeRegistry(), Require(FHansaPlacementTopology::TryCreate(LegacySpatial.Maps))));
+    const auto CurrentDefinitions = Require(FHansaSimulationDefinitionContext::TryCreate(Scenario,
+        Definitions.GetDefinitionHash(), MakeRegistry(), Require(FHansaPlacementTopology::TryCreate(CurrentSpatial.Maps))));
+    FHansaSaveSnapshot Snapshot;
+    Snapshot.State = MakeFullState(false, &LegacySpatial);
+    Snapshot.DisplayName = TEXT("Tree migration"); Snapshot.BuildVersion = TEXT("test");
+    Snapshot.SavedUtc = TEXT("2026-09-16T00:00:00Z");
+    Snapshot.Players.Add({1, ProductionTestsEntity<FHansaHouseId>(1)});
+    TArray<uint8> Bytes;
+    const auto Saved = FHansaSaveEnvelope::Encode(Snapshot, LegacyDefinitions, Bytes);
+    if (!TestTrue(*Saved.Message, Saved.IsSuccess())) return false;
+    FHansaSaveSnapshot Loaded;
+    const auto Restored = FHansaSaveEnvelope::Decode(Bytes, CurrentDefinitions, Loaded);
+    if (!TestTrue(*Restored.Message, Restored.IsSuccess())) return false;
+    TestTrue(TEXT("Tree migration is recorded"), Restored.AppliedMigrations.Contains(TEXT("Hansa.Save.7.AddStandingTreeSurvey")));
+    TestTrue(TEXT("Loaded city has standing trees"), Loaded.State.CreateReadOnlyAccess(CurrentDefinitions).GetPlacement()
+        .HasNearbyTrees(ProductionTestsEntity<FHansaBuildingId>(4), LumberHarvestRadiusCells));
+    TArray<uint8> CurrentBytes;
+    TestTrue(TEXT("Migrated save can be written"), FHansaSaveEnvelope::Encode(Loaded, CurrentDefinitions, CurrentBytes).IsSuccess());
+    FHansaSaveSnapshot RoundTrip;
+    const auto ReadBack = FHansaSaveEnvelope::Decode(CurrentBytes, CurrentDefinitions, RoundTrip);
+    TestTrue(TEXT("Tree-aware save reloads"), ReadBack.IsSuccess());
+    TestEqual(TEXT("Tree-aware round-trip checksum"), ReadBack.AuthoritativeHash, Restored.AuthoritativeHash);
+    CurrentSpatial.Maps[0].TreeCells = {{14,1}};
+    const auto ChangedTrees = Require(FHansaSimulationDefinitionContext::TryCreate(Scenario,
+        Definitions.GetDefinitionHash(), MakeRegistry(), Require(FHansaPlacementTopology::TryCreate(CurrentSpatial.Maps))));
+    TestFalse(TEXT("Changed nonempty tree survey cannot silently migrate"), FHansaSaveEnvelope::Decode(CurrentBytes, ChangedTrees, RoundTrip).IsSuccess());
+    return !HasAnyErrors();
 }
 
 #endif

@@ -3,6 +3,7 @@
 #include "Containers/Map.h"
 #include "Containers/Set.h"
 #include "Model/HansaIds.h"
+#include "Multiplayer/HansaAdmission.h"
 #include "Network/HansaMultiplayerTypes.h"
 
 class UHansaRuntimeSimulationHost;
@@ -17,10 +18,13 @@ namespace Hansa::Multiplayer
 	{
 	public:
 		bool Initialize(UHansaRuntimeSimulationHost& InHost);
-		bool RegisterClient(uint64 PrincipalId, Hansa::Simulation::FHansaHouseId HouseId,
+		bool RegisterAdmittedClient(const Hansa::Simulation::FHansaAdmissionGrant& Admission,
 			const FHansaClientInterest& Interest, FString& OutError);
 		void UnregisterClient(uint64 PrincipalId);
 		bool SetClientInterest(uint64 PrincipalId, const FHansaClientInterest& Interest, FString& OutError);
+		/** Server-policy hook for team/report visibility. Client RPCs cannot call this. */
+		bool SetAuthorizedReportHouses(uint64 PrincipalId,
+			TConstArrayView<Hansa::Simulation::FHansaHouseId> HouseIds, FString& OutError);
 		[[nodiscard]] bool IsRegistered(uint64 PrincipalId) const;
 		[[nodiscard]] bool IsHouseRegistered(Hansa::Simulation::FHansaHouseId HouseId) const;
 		[[nodiscard]] int32 GetRegisteredClientCount() const { return Clients.Num(); }
@@ -33,16 +37,21 @@ namespace Hansa::Multiplayer
 	private:
 		struct FClientState
 		{
+			Hansa::Simulation::FHansaParticipantId ParticipantId;
 			Hansa::Simulation::FHansaHouseId HouseId;
 			FHansaClientInterest Interest;
 			uint64 ExpectedClientSequence = 1;
 			TSet<uint64> SeenNonces;
 			int64 LastProjectionRevision = 0;
 			uint64 LastDeliveredEventSequence = 0;
+			TSet<Hansa::Simulation::FHansaHouseId> AuthorizedReportHouses;
+			FHansaClientProjectionSnapshot LastFullProjection;
+			bool bHasLastFullProjection = false;
 		};
 
 		bool ValidateInterest(const FHansaClientInterest& Interest, FString& OutError) const;
 		bool IsInterestedInCity(const FClientState& Client, const FString& CityId) const;
+		bool CanReadHousePrivate(const FClientState& Client, Hansa::Simulation::FHansaHouseId HouseId) const;
 
 		TWeakObjectPtr<UHansaRuntimeSimulationHost> Host;
 		TMap<uint64, FClientState> Clients;

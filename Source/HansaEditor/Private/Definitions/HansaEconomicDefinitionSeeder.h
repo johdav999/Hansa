@@ -8,6 +8,7 @@ class UObject;
 
 namespace Hansa::Editor::EconomicDefinitions
 {
+	bool ApplyApprovedFirewoodSeed(TArray<TStrongObjectPtr<UHansaDefinitionBase>>& Definitions);
 	TArray<TStrongObjectPtr<UHansaDefinitionBase>> CreateMvpDefinitionSet(UObject* Outer);
 	TArray<TStrongObjectPtr<UHansaDefinitionBase>> CreateP33EconomyCandidate(FString& OutError);
 	int32 StageP33EconomyCandidate();

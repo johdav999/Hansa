@@ -1,0 +1,15 @@
+{
+  "mesh": "/Game/Mesh/hansa-market-range-symbol/SM_HansaMarketNotInRange.SM_HansaMarketNotInRange",
+  "materialDependencies": [
+    "/Game/Mesh/hansa-market-range-symbol/M_MarketRange_Brass.M_MarketRange_Brass",
+    "/Game/Mesh/hansa-market-range-symbol/M_MarketRange_Navy.M_MarketRange_Navy",
+    "/Game/Mesh/hansa-market-range-symbol/M_MarketRange_Chalk.M_MarketRange_Chalk",
+    "/Game/Mesh/hansa-market-range-symbol/M_MarketRange_Amber.M_MarketRange_Amber"
+  ],
+  "noStagingMaterialReferences": true,
+  "sizeCm": [
+    163.4619903564453,
+    163.4619903564453,
+    39.0
+  ]
+}

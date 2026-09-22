@@ -1,0 +1,96 @@
+{
+  "feature": "Terrain-aware labour-house placement",
+  "visual_verdict": "Inspected native district views and 1080p close-up: no raised parcel slab; local dirt coverage, exposed terrain and road paths are visible.",
+  "captures": [
+    {
+      "path": "Docs/Development/CompoundTerrainPlacement/1280x720/close.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "d3e2ec751cdb6956fa11c40467611a2971ef7bcf198f12fc69105b163265cc4c",
+      "resampled": false
+    },
+    {
+      "path": "Docs/Development/CompoundTerrainPlacement/1280x720/district.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "769f28d23adafa445970d0e47821938cabb337d68be67af0f8851a9aa5edc5e9",
+      "resampled": false
+    },
+    {
+      "path": "Docs/Development/CompoundTerrainPlacement/1280x720/loaded.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "947af6000aa343ff3168fdb2878f02419a973f738f6a3c45f330d2fd78fd3826",
+      "resampled": false
+    },
+    {
+      "path": "Docs/Development/CompoundTerrainPlacement/1280x720/oriented-ghost.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "349ca989daf7ff5df70731cd3f5811a31b8862295fda025bf7c70a75e8569025",
+      "resampled": false
+    },
+    {
+      "path": "Docs/Development/CompoundTerrainPlacement/1920x1080/close.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "4c5bfad11194e956afaa25535691254769c1b8b6e0f8fc3dbe2fe4d1f444fdd4",
+      "resampled": false
+    },
+    {
+      "path": "Docs/Development/CompoundTerrainPlacement/1920x1080/district.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "15e6be705995d907bca51d47ea978fcb261e7bbd122a7336553f76b39f051cfa",
+      "resampled": false
+    },
+    {
+      "path": "Docs/Development/CompoundTerrainPlacement/1920x1080/loaded.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "ee35072e6b6bb78a711fa2c189143238d42658e53bce9cb4f57875f5554d679b",
+      "resampled": false
+    },
+    {
+      "path": "Docs/Development/CompoundTerrainPlacement/1920x1080/oriented-ghost.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "356210095d241d9af6791f095a26dfc5acf38259c894ea3191a7f900b6ae4bf6",
+      "resampled": false
+    }
+  ],
+  "tests": [
+    {
+      "filter": "Hansa.World.CompoundGround",
+      "count": 2,
+      "result": "passed"
+    },
+    {
+      "filter": "Hansa.Compound",
+      "count": 11,
+      "result": "passed"
+    },
+    {
+      "filter": "Hansa.World.Terrain",
+      "count": 1,
+      "result": "passed"
+    },
+    {
+      "filter": "Hansa.Compound.PlayerFlow",
+      "native_resolution": "1920x1080",
+      "result": "passed",
+      "log": "Saved/CompoundGround-1920x1080-final.log"
+    },
+    {
+      "filter": "Hansa.Compound.PlayerFlow",
+      "native_resolution": "1280x720",
+      "result": "passed",
+      "log": "Saved/CompoundGround-1280x720-final.log"
+    }
+  ],
+  "limitations": [
+    "Grass suppression uses Landscape Grass; independently painted foliage is unchanged.",
+    "No full Shipping package was produced in this change.",
+    "Native captures use the configured existing terrain preview map; no terrain asset was promoted."
+  ]
+}

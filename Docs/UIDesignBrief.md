@@ -899,3 +899,237 @@ local deliveries and intercity vehicles. Pending pickups remain in source stock;
 completed deliveries count at their destination. Unknown quantities say Unavailable.
 The popup refreshes with the presenter while open. Existing artwork and native
 surface/focus styles are reused; no raster or new visual family is introduced.
+
+### Building selection material preservation (2026-09-15)
+
+Selecting a building preserves its authored surface materials and colors.
+Use the existing brass footprint corner brackets and diamond cue. Do not
+render enlarged colored copies of building meshes: these intersect detailed
+or open geometry and coat roof tiles and facades with the selection color.
+Selection, deselection, and presentation refreshes must preserve this behavior.
+
+
+### Labour-house random construction (2026-09-15)
+
+The ordinary labour-house button chooses an available approved compound family in
+random order before placement. Preview the selected model and its complete
+16 × 12 m or 16 × 16 m parcel. Continuous construction chooses the next version
+after each successful placement; invalid targets and rotation keep the current
+choice. Reuse the existing building icon, tooltip, focus and selection styles.
+Only one labour-house card is shown; individual family cards are hidden from the
+tray and semantic/controller targets. Selection and return focus stay on the ordinary
+labour-house card. Placed choices persist through upgrades
+and save/load. Existing small legacy residences are not resized.
+
+### Natural labour-house ground (2026-09-15)
+
+Labour-court yards follow the existing terrain, with broken dirt edges and worn entrance paths. Foundations belong beneath individual level structures; never render a raised slab around the entire parcel. Leave original ground and vegetation visible in unused corners. Preview and construction use the same procedural fit and seed. See [terrain placement contract](Development/CompoundTerrainPlacement.md).
+
+### Artisan house icon — 2026-09-16
+
+The artisan construction card uses the dedicated generated `ArtisanHouse` glyph, with pale lime walls, oak framing and red clay roof. It retains the existing palette and native focus/selection/disabled treatments. Original 1254-square ImageGen artwork and its prompt are in `SourceArt/UI/ArtisanHouse`; documented proportional display variants follow the approved GUI resizing exception. The associated 3D house family uses photorealistic PBR materials; GUI readability remains consistent with the established icon family.
+
+
+### Artisan plot construction — 2026-09-16
+
+The artisan house button reuses the approved ArtisanHouse icon and native states. With UseArtisanPlots enabled, it selects the 16 x 8 m artisan plot definition; its persistent parcel seed chooses equally between the compact storage yard and workshop yard. Preview shows the actual selected layout, which remains stable through rotation, construction and save/load. Only one artisan construction choice appears. Disabling the setting restores the legacy artisan card without changing existing plots.
+
+
+### Market transport range warning — 2026-09-16
+
+Completed buildings without market access show the user-requested rotating 3D market warning above the roof. The missing model is authored with headless Blender as explicitly requested: navy/brass plaque, chalk market stall, amber exclamation and broken road. Use the existing world-warning scale and rotation; keep it separate from the road-disconnection warning and freeze motion under Reduced motion. Localized wording stays in the native inspector. See [Market road range](Development/MarketRoadRange.md).
+
+### Alert panel revision — 2026-09-16
+
+The alert stack uses a navy/brass shell and opaque linen grouped cards, shared
+serif headings and readable native body text. Cards show severity and its existing
+ImageGen icon, affected object, age, problem and cause. Details/Locate and Snooze/Pin
+form a two-column action grid. Up to three category representatives are expanded;
+other alerts remain individually reachable through compact Details rows. The whole
+body, including pinned and snoozed entries, collapses together. Height is bounded
+by usable viewport space. Updating age, evidence, severity or text preserves native
+widget identity and focus rather than recreating the stack. See
+[component inventory and ImageGen references](Images/UI/Alerts/README.md).
+
+### Compact labour-house parcels — 2026-09-17
+The labour-house construction choice now previews 12 x 12 m NarrowGang or 16 x 12 m other labour courts. These replace the previous larger court footprints for new games, with the same full-size houses and additional early-stage lean-tos. Existing icons and native placement feedback are reused. See [Compact labour courts](Development/CompactLabourCourts.md).
+
+
+### Bottom-menu demolition — 2026-09-17
+
+The persistent construction category row also exposes Demolition using the existing
+ImageGen Minus icon and native destructive button style. Selecting it replaces
+placement with a crosshair tool and native instruction/error feedback. One world
+click submits removal, as requested; the tool remains active for further clicks.
+Escape, right-click, selecting construction, or closing the tray cancels it.
+This tool uses the existing authoritative remove/cancel commands and their ownership,
+construction-refund and dependency constraints. There is no new undo/grace period.
+See [implementation and validation limitations](Development/Demolition.md).
+
+
+### Reference-faithful gameplay HUD direction — 2026-09-17
+
+The user's latest HUD direction supersedes the three-separate-top-panels layout,
+expanded default alert cards, and small icon-only construction presentation above.
+Use the supplied main-city HUD reference for close visual fidelity: one continuous
+nearly black navy top bar, ordered money, citizens, artisans, laborers, city name,
+season/year, time controls, influence and research; colored icons precede values.
+Place short individually framed alert tablets at left, a minimap bottom-left,
+a broader illustrated construction tray bottom-center, and the contextual details
+panel at right. Match fine brass double frames, corner ornaments, warm linen,
+and colored illustrative icon treatment. "Pixel like" means reference-faithful
+implementation, not retro pixel art. Preserve the shared palette, type system,
+accessibility, actual data semantics and existing gameplay actions.
+
+This GUI direction is implemented. The **Current GUI style specification — 2026-09-17** section below is the current GUI visual source of truth and takes precedence over conflicting older GUI layout sections in this brief. The root [design.md](../design.md) provides the overall design instructions. See the [implementation and captures](Development/ReferenceHudImplementation.md) and the original [comparison and implementation prompt](Development/ReferenceHudUpdatePrompt.md).
+
+
+
+### Ship selection and water orders — 2026-09-17
+
+The user explicitly adds a starting selectable Cog and manual sailing across connected navigable water on the complete current map, including rivers. This supersedes the earlier river-navigation exclusion for this local exploration feature. Reuse the approved cargo inspector and ship assets. Right-click sets a course; right-drag retains camera panning. See [ship navigation contract](Development/ShipNavigation.md) for authoritative commands, terrain validation, save migration, semantic controls and evidence.
+
+### Cog selection marker — 2026-09-17
+
+Selected Cogs use a generated editable 3D segmented brass oval with chalk inlay,
+navy edge and a bow diamond. The marker follows the hull and uses an
+exposure-compensated world selection overlay so water cannot hide it. It is
+non-colliding, static, hidden on deselection/pooling and never recolors the hull.
+See [generation and verification](Development/CogSelectionMarker.md).
+
+
+## Current GUI style specification — 2026-09-17
+
+This section is the current GUI visual source of truth. It supersedes conflicting older GUI layout directions in this document, including the three separate top panels, expanded default linen alert cards and icon-only construction strip. The root [design.md](../design.md) provides the overall design instructions; [UIAssetWorkflow.md](UIAssetWorkflow.md) defines asset production. Later explicit user directions take precedence and must be reflected in these documents.
+
+- Style anchor: [approved reference](Images/UI/ReferenceHud/approved-reference.png).
+- Implemented baseline: [1920 × 1080 game capture](Images/UI/ReferenceHud/referencehud--ingame--default--1920x1080--v1.png).
+- [Large text and high contrast](Images/UI/ReferenceHud/referencehud--ingame--accessible--1920x1080--v1.png).
+- [Compact layout at 140% scale](Images/UI/ReferenceHud/referencehud--ingame--scale140--1280x720--v1.png).
+- [Implementation, provenance and limitations](Development/ReferenceHudImplementation.md).
+
+The approved reference defines the visual direction; the game captures document the implemented baseline. Preserve the new style while improving fidelity. Supplementary ImageGen component experiments are reference-only and must not override the approved anchor. Reference quantities and dates are illustrative.
+
+### Visual character
+
+A restrained Hanseatic merchant-city interface: nearly black Baltic Navy surfaces, warm linen information panels, fine aged-brass double frames, small engraved corner ornaments and naturally colored illustrated icons. Keep the world visible between edge-anchored controls. “Pixel like” means close reference fidelity, crisp edges and careful spacing; it does not introduce a retro pixel-art aesthetic.
+
+Use flat, legible functional surfaces with subtle material character. Keep painted ornament separate from text, controls and panel centers. Avoid oversized flourishes, thick yellow borders, heavy texture under text, emoji substitutes or a new visual theme for individual screens.
+
+### Palette and typography
+
+Reuse the shared `HansaUiStyle` tokens. These values mirror the existing brief; do not create a second palette.
+
+| Token | Hex | Role |
+|---|---|---|
+| Baltic Navy | #152A35 | Dark panels and top bar; the shared reference frame uses a darker derivative |
+| Harbor Slate | #29424D | Secondary dark controls |
+| Ink | #202628 | Text on linen |
+| Muted Ink | #596160 | Secondary metadata |
+| Linen | #F2E9D8 | Details-panel body |
+| Parchment | #DFCFAF | Secondary light surfaces |
+| Oak | #795137 | Restrained material accents |
+| Brass | #C19A52 | Frames, selection and focus |
+| Hanseatic Brick | #A44C3F | Identity and active accents |
+| Oxblood | #762F32 | Destructive and critical states |
+| Prosperity Teal | #35766F | Positive states |
+| Baltic Blue | #397FA3 | Information and water |
+| Warning Amber | #D09132 | Warnings |
+| Frost Blue | #9CC3CF | Winter and cool states |
+| Chalk | #FAF7EF | Text on dark surfaces |
+
+Use the existing serif heading tokens for the city and panel titles, readable sans-serif UI/body tokens for controls and descriptions, and tabular numbers where available. At the 1080p reference scale: H1 24–28 px, H2 18–20 px, body 15–17 px, data 14–16 px and captions 12–14 px. Essential information must remain readable at the smallest supported scale. Do not introduce another font family in one component.
+
+### HUD layout and component inventory
+
+| Component | Required presentation |
+|---|---|
+| Top bar | One continuous nearly black navy bar spanning the viewport. Left to right: colored coin icon and money; citizens; artisans; laborers; city name; season icon and season/year; pause, play and faster-speed controls; influence and research with icons. Icons precede values. Center the city in the wide layout. Keep utility navigation in the compact menu. |
+| Alerts | Separate shallow dark tablets down the left side. Each starts with a colored severity/event icon, then a short message and affected object. Keep detailed cause/evidence/remedy in the inspector or tooltip. Expand secondary Locate/Snooze/Pin actions on demand. |
+| Minimap | Bottom-left, within an ornamented frame, with a square map image and a narrow control rail. Show the real world and camera footprint. Support click-to-move, zoom and keyboard/controller navigation. |
+| Construction | Bottom-center, with category icons and labels above larger illustrated building cards. Preserve category, chain and card scrolling. Use only real catalog entries and retain demolition and existing construction actions. |
+| Details | Right-aligned contextual panel with a dark heading, warm linen body, fine brass frame and corner ornaments. Use native rows, quantities, explanations and actions. Let long content scroll. |
+| Status and feedback | Shared native selection, progress, validation, loading, unavailable, warning and error presentations. Pair semantic color with text or a recognizable symbol. |
+| Decorative imagery | Separate corner ornaments and individual generated icon/building assets; never a full-screen raster replacement for the interactive GUI. |
+
+#### Frames and ornaments
+
+Use `SHansaReferenceFrame` consistently. Its current baseline is two fine native rules inset 1 and 4 logical pixels, with the inner brass rule subdued. Corner ornament artwork occupies approximately 28 logical pixels and uses dedicated density variants. Protect corner proportions; draw scalable edges and centers natively. Dark frames surround the top bar, alerts, minimap and construction tray; the inspector has a linen body with a dark header.
+
+#### Icons
+
+Use the existing ImageGen icon family: readable silhouettes, natural material colors, restrained highlights, warm brass details and clean transparent edges. Goods and buildings retain their own recognizable colors. Small glyphs typically occupy 24–32 logical pixels; construction illustrations use approximately 88 logical pixels within 100 × 114 logical-pixel cards. These are baseline measurements, not permission to clip labels or reduce interactive target sizes.
+
+Reuse approved imagery before generating additions. New icons must match the approved family. Preserve generated masters and alpha; do not replace this family with manually drawn icons. Native geometry remains appropriate for functional borders, rules, progress bars and focus indicators.
+
+### Responsive layout
+
+Use an 8 px spacing grid with 4 px micro-spacing, typically 16–24 px panel padding and 24–32 px major gutters. Minimum pointer targets are 40 × 40 px (44 × 44 preferred); controller targets are at least 48 × 48 px. Thin decorative frames do not reduce hit targets.
+
+Current implementation measurements are logical pixels before UI scaling:
+
+- Wide top bar: 72 px high. Below 1500 logical pixels, or with large text, use the 120 px two-row layout and preserve metric order.
+- Alert column: approximately 260–280 px wide, with bounded scrolling above the minimap.
+- Minimap image: normally 240 px square, compact variant 160 px square; keep it square even when the control rail requires a taller outer frame.
+- Construction tray: bounded at 880 px wide. Reserve the minimap space and the open inspector width, then center within the remaining area. At compact sizes, scroll the tray rather than overlap panels or squeeze text.
+- Inspector: normally 360–400 px wide, 416 px with large text; bounded height up to 720 px with internal scrolling. Keep its body usable when the construction tray is open.
+
+Support 80–140% UI scale, large text and high contrast. Verify 1280 × 720, 1920 × 1080, 2560 × 1440 and representative ultrawide; the current evidence includes 2834 × 901. Reflow native layout instead of stretching the entire GUI or baking a different screen image.
+
+### Interaction, state and data rules
+
+Define default, hover, pressed, selected, disabled, keyboard/controller focus, loading, unavailable, warning and error states where applicable. Use shared `SHansaAction` treatments. Selection and focus must remain distinguishable. Disabled actions retain an explanation; errors provide a cause and remedy. Respect reduced motion.
+
+Preserve native widget identity and focus while live values change, especially alerts and inspector rows. Keep stable semantic IDs and meaningful names for automation and controller navigation. Closing a panel restores focus to its origin where available.
+
+Render text, prices, quantities, player/city names, key prompts and changing state natively in Slate/UMG. Use authoritative simulation data. Citizens, artisans and laborers retain their actual meanings. Display unavailable influence as a dash with an explanation until a backing model exists. The current calendar shows the simulation season and campaign year; do not invent a historical epoch. Do not populate warehouse stock, capacity, reserve-day or route controls with fictional reference values.
+
+Body text must meet 4.5:1 contrast; large text and essential icons must meet 3:1. Leave localization expansion room, preserve readable focus outlines and pair status color with text or symbols.
+
+### ImageGen and assets
+
+Use the `imagegen` skill for new GUI designs or material visual changes. Existing approved assets can be reused for implementation fixes. Before generating, name the component inventory and states. Generate a composed reference and separate reusable component references/assets; use one call per distinct component or variant. Implement the functional screen with native widgets and individual assets.
+
+Follow the GUI resizing exception in `AGENTS.md`: request practical native sizes first, preserve the original master, and allow documented proportional high-quality variants when needed. Never stretch or squash art. Inspect actual display sizes on their intended backgrounds and regenerate unreadable results.
+
+- References and captures: `Docs/Images/UI/ReferenceHud/`.
+- New generated masters and sibling prompt records: `SourceArt/UI/ReferenceHud/`.
+- Runtime frame variants: `Content/Hansa/UI/ReferenceHud/Corner{0..3}--{28,40,56}.png`.
+- Shared icons and season variants: `Content/Hansa/UI/Icons/`.
+- [Runtime asset manifest](Images/UI/ReferenceHud/runtime-assets.json).
+
+Keep prompts, requested/native dimensions, generation mode, crops, variant dimensions and review notes beside the source artwork. The current runtime PNGs are individual Slate brush assets packaged through runtime dependencies; composed references are non-shipping.
+
+### Verification and current limitations
+
+Compare actual game captures against the approved anchor and implemented baseline. Check panel separation, square minimap geometry, text and icon readability, ornament integrity, visible focus, scrolling, authoritative values and working input at every supported scale. A build or geometry assertion alone is not visual approval.
+
+The current live minimap displays loaded World Partition terrain; unloaded cells appear dark. Its footprint uses the Z=0 ground plane. These are implementation limitations, not a requirement for future maps to remain incomplete. Likewise, unavailable influence and missing reference-only warehouse data are not visual design features to fabricate.
+
+See the implementation report for dated test results and known construction-test failures. Future GUI work should preserve this style and improve documented limitations without silently restoring the superseded HUD layouts.
+
+
+### Three-tier construction browsing — 2026-09-17
+
+The user approved the construction progression reference and requested implementation.
+Add a text-only Day Laborers / Craftsmen / Merchants selector beneath the existing
+construction category row, before goods/building choices. Use the existing navy,
+slate, brass, typography and native selected/focus states. Categories and tiers
+are independent; changing tier cancels placement. Keep shared infrastructure and
+complete production chains accessible. Existing population/need definitions drive
+filtering, and unavailable merchant content has an explicit empty state.
+Merchant-house founding and Ratsherr politics are separate from these tabs.
+See [implementation and evidence](Development/ConstructionProgression.md).
+
+
+### Artisan production construction ownership — 2026-09-19
+The explicit authored construction tier owns each production card. Charcoal burner's hut belongs to Day Laborers; Smithy, Tannery and Shoemaker belong to Craftsmen. Shoes selects Tannery then Shoemaker. Tools selects Smithy; charcoal is a separate Day Laborers supply chain. A lower-tier ingredient or helper workforce does not duplicate a workshop under another tier. Legacy definitions retain their existing chain classification until deliberately authored.
+Reuse the existing navy/brass construction tray, native states and generated colored icon family. Card height must grow with wrapped localized/large-text labels; do not clip labels to a fixed two-line allowance. Artisan resource and workshop art/provenance is recorded in Docs/Development/ArtisanProduction.md. The reviewed gameplay catalog is now integrated into normal New Game as catalog v28 following the user-requested Craftsmen availability fix; see Docs/Development/ArtisanProduction.md for promotion, save compatibility and evidence.
+
+### Textile production components — 2026-09-19
+
+Under Production → Craftsmen, add native end-product selectors for Linen clothing, Candles and Rope. Linen clothing expands to Weaver then Tailor; the other selectors expose Chandler and Ropewalk respectively. Cards use the established 100×114 logical-pixel construction treatment with individual generated illustrations, flexible native labels, costs, workforce, footprint and flow. Resource rows use individual Flax, Hemp, Beeswax, Linen cloth, Linen clothing, Candles and Rope icons from the established colored family.
+
+The Ropewalk inspector presents two native recipe actions: Hemp rope and Flax rope. A selected check/focus treatment, explicit “selected/active” copy during batch-boundary changes and per-recipe input text distinguish the modes. Never render hemp and flax as simultaneous requirements. Preserve semantic focus and controller navigation as actions are refreshed. All dynamic text remains Slate-rendered and must reflow at 80–140% scale and large text. Asset dimensions, prompts and inspection evidence are recorded in [Development/TextileProduction/README.md](Development/TextileProduction/README.md).
+
+Textile V2 compact verification: keep the construction tray inside its bounded frame using native vertical scrolling and focus reveal when large-text cards exceed available height. At compact widths the inspector may use vertical space beside the construction tray, whose layout already reserves inspector width. Reuse all existing colors, frames, imagery and native action states. See the textile UAT report for actual viewport evidence and remaining release gates.

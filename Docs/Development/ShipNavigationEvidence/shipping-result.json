@@ -1,0 +1,47 @@
+{
+  "Operation": "VerifyShippingExclusion",
+  "Status": "Succeeded",
+  "Scope": "Target receipt and executable; packaged/cooked/depot audit is a later gate",
+  "Platform": "Win64",
+  "ShippingBuildSkipped": false,
+  "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\ShipNavigationVerify\\Hansa.uproject",
+  "EngineRoot": "H:\\Unreal\\UE_5.8",
+  "CompletedUtc": "2026-09-17T16:58:37.6766435Z",
+  "ForbiddenTokens": [
+    "HansaAutomation",
+    "HansaEditor",
+    "HansaTests",
+    "HansaMcp",
+    "HansaGenerationWorker",
+    "HANSA_GENERATION_WORKER_TOKEN",
+    "Hansa/GenerationWorker",
+    "OpenAIResponsesProvider",
+    "OPENAI_API_KEY",
+    "HANSA_OPENAI_MODEL",
+    "api.openai.com",
+    "TripoStaticPropProvider",
+    "TRIPO_API_KEY",
+    "HANSA_TRIPO_ENABLED",
+    "openapi.tripo3d.ai",
+    "ElevenLabsAudioProvider",
+    "ELEVENLABS_API_KEY",
+    "HANSA_ELEVENLABS_ENABLED",
+    "api.elevenlabs.io",
+    "WITH_HANSA_AUTOMATION"
+  ],
+  "ScannedFiles": [
+    {
+      "Path": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\ShipNavigationVerify\\Binaries\\Win64\\Hansa-Win64-Shipping.target",
+      "Bytes": 202869,
+      "Sha256": "E49EA4E4AF4CEEFC8B833B783DB72A97A21E7150006B463B9C2C080B4AD68ACD",
+      "ForbiddenTokensFound": []
+    },
+    {
+      "Path": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\ShipNavigationVerify\\Binaries\\Win64\\Hansa-Win64-Shipping.exe",
+      "Bytes": 177327104,
+      "Sha256": "4FE929A52A225AFB200D171E4B4DC3DDF49095E81C8004CAFCB303B56832F900",
+      "ForbiddenTokensFound": []
+    }
+  ],
+  "Failures": []
+}

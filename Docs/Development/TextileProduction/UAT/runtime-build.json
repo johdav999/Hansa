@@ -1,0 +1,11 @@
+{
+  "Operation": "Build",
+  "Status": "Succeeded",
+  "Target": "Hansa",
+  "Platform": "Win64",
+  "Configuration": "Development",
+  "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+  "EngineRoot": "H:\\Unreal\\UE_5.8",
+  "CompletedUtc": "2026-09-19T16:02:14.0118828Z",
+  "Log": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260919-180201117-build-Hansa-Win64-Development\\Build.log"
+}

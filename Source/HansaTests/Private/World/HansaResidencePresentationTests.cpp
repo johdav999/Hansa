@@ -38,10 +38,61 @@ bool FHansaResidenceVariantsTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("No per-frame cosmetic work"), Residence->PrimaryActorTick.bCanEverTick);
 	TestEqual(TEXT("No art collision authority"), Residence->ResidenceMesh->GetCollisionEnabled(), ECollisionEnabled::NoCollision);
 	TestFalse(TEXT("No art navigation authority"), Residence->ResidenceMesh->CanEverAffectNavigation());
+
+	Residence->VariantC = NewObject<UStaticMesh>();
+	Residence->VariantD = NewObject<UStaticMesh>();
+	UStaticMesh* FourMeshes[] = {Residence->VariantA.Get(), Residence->VariantB.Get(), Residence->VariantC.Get(), Residence->VariantD.Get()};
+	int32 FourCounts[4] = {0,0,0,0};
+	for (int32 X = -12; X <= 12; ++X)
+		for (int32 Y = -12; Y <= 12; ++Y)
+		{
+			const int32 Variant = AHansaResidencePresentation::VariantForParcel(X,Y,4);
+			++FourCounts[Variant];
+			Residence->ApplyParcel(X,Y);
+			TestTrue(TEXT("Four-variant parcel selects authored mesh"), Residence->ResidenceMesh->GetStaticMesh() == FourMeshes[Variant]);
+			Residence->SetActorRotation(FRotator(0,90,0));
+			Residence->OnConstruction(FTransform::Identity);
+			TestTrue(TEXT("Rotation and construction preserve four-variant identity"), Residence->ResidenceMesh->GetStaticMesh() == FourMeshes[Variant]);
+		}
+	for (const int32 Count : FourCounts) TestTrue(TEXT("All four variants appear across negative and positive parcels"), Count > 100);
+	Residence->VariantD = nullptr;
+	Residence->ApplyParcel(-7,5);
+	TestTrue(TEXT("Incomplete optional pair preserves legacy two-variant selection"), Residence->ResidenceMesh->GetStaticMesh() == FourMeshes[AHansaResidencePresentation::VariantForParcel(-7,5)]);
+	Residence->VariantC = nullptr;
 	Residence->VariantA = nullptr; Residence->VariantB = nullptr; Residence->ApplyParcel(0,0);
 	TestNull(TEXT("Missing reviewed mesh does not retain stale art"), Residence->ResidenceMesh->GetStaticMesh());
 	World->DestroyWorld(false);
 	return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaArtisanProductionTest, "Hansa.World.Residence.ArtisanProduction",
+ EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaArtisanProductionTest::RunTest(const FString& Parameters)
+{
+ auto* Definition = LoadObject<UHansaBuildingDefinition>(nullptr, TEXT("/Game/Hansa/Core/Buildings/DA_Building_Residence_Artisan.DA_Building_Residence_Artisan"));
+ if (!TestNotNull(TEXT("Artisan definition loads"), Definition)) return false;
+ UClass* Class = Definition->LoadPresentationActorClass();
+ if (!TestNotNull(TEXT("Artisan class loads"), Class)) return false;
+ auto* Defaults = Cast<AHansaResidencePresentation>(Class->GetDefaultObject());
+ if (!TestNotNull(TEXT("Artisan uses parcel presentation"), Defaults)) return false;
+ TSet<UStaticMesh*> Unique;
+ for (UStaticMesh* Mesh : {Defaults->VariantA.Get(), Defaults->VariantB.Get(), Defaults->VariantC.Get(), Defaults->VariantD.Get()})
+ {
+  if (!TestNotNull(TEXT("Each production variant assigned"), Mesh)) continue;
+  Unique.Add(Mesh);
+  TestTrue(TEXT("Variant has production path"), Mesh->GetPathName().StartsWith(TEXT("/Game/Mesh/hansa-artisan-houses/Meshes/")));
+  TestEqual(TEXT("Three LODs per variant"), Mesh->GetNumLODs(), 3);
+  TestEqual(TEXT("Seven assigned material families"), Mesh->GetStaticMaterials().Num(), 7);
+  const FBox Bounds = Mesh->GetBoundingBox();
+  TestTrue(TEXT("Model fits existing parcel without scaling"), Bounds.Min.X >= -400 && Bounds.Max.X <= 400 && Bounds.Min.Y >= -400 && Bounds.Max.Y <= 400);
+  TestTrue(TEXT("Model sits on ground"), FMath::Abs(Bounds.Min.Z) <= 2);
+  TestTrue(TEXT("Simple collision retained for asset reuse"), Mesh->GetBodySetup() && Mesh->GetBodySetup()->AggGeom.GetElementCount() > 0);
+  for (const auto& Slot : Mesh->GetStaticMaterials()) TestNotNull(TEXT("Every slot assigned"), Slot.MaterialInterface.Get());
+ }
+ TestEqual(TEXT("Four distinct production meshes"), Unique.Num(), 4);
+ TestEqual(TEXT("Unchanged capacity"), Definition->ResidenceCapacity, 8);
+ TestEqual(TEXT("Unchanged parcel width"), Definition->FootprintWidthCells, 2);
+ TestEqual(TEXT("Unchanged parcel depth"), Definition->FootprintHeightCells, 2);
+ return !HasAnyErrors();
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaResidenceStagedTest, "Hansa.World.Residence.StagedFamily",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter | EAutomationTestFlags::RequiresUser)

@@ -113,6 +113,9 @@ namespace Hansa::UI
 		TSharedPtr<STextBlock> PinReasonText;
 		TSharedPtr<STextBlock> RouteReasonText;
 		TSharedPtr<STextBlock> ActionResultText;
+		TSharedPtr<SBorder> SpotTradePanel;
+		TSharedPtr<STextBlock> SpotTradeVehicleText, SpotTradeQuantityText, SpotTradeQuoteText, SpotTradeRemedyText, SpotTradeResultText;
+		TSharedPtr<SHansaAction> SpotTradeSideButton, SpotTradeMinusButton, SpotTradePlusButton, SpotTradeConfirmButton;
 		TSharedPtr<SVerticalBox> FactorList;
 		TSharedPtr<SVerticalBox> ConsumerList;
 		TSharedPtr<SVerticalBox> ProducerList;

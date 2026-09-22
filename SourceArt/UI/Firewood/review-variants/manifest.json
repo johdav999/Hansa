@@ -1,0 +1,392 @@
+[
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--16.png",
+    "dimensions": [
+      16,
+      16
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "491ec0dddb57b6ee706f09bb5dff5362645644812e30cd83ab479bc5616f9f27"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--20.png",
+    "dimensions": [
+      20,
+      20
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "ddeb54eae29e0d8597d1e024ba7afd1e03ce8fa4101a57e1495447a25446216e"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--24.png",
+    "dimensions": [
+      24,
+      24
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "b06720309e38105bc93acfd37b869384f25404a045bfd18312db56f966b9486d"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--28.png",
+    "dimensions": [
+      28,
+      28
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "c529d94b9ab0c386a2ef84c40dc44957e7aa3d129965c1f222a1447e112e136f"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--32.png",
+    "dimensions": [
+      32,
+      32
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "039632ddd7c6cd21cd0471e8ab5bbc7d833d1f24b0595ad36c7c7222f2f0218d"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--40.png",
+    "dimensions": [
+      40,
+      40
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "309d8a32b74fc93ce63186952e64898fb9aae199af90320bb8476eac85ff541a"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--48.png",
+    "dimensions": [
+      48,
+      48
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "3e4d9abb9d8f75d208228790823267a2c271ebb105ac4d5b488dc30d9ddcbd2e"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--56.png",
+    "dimensions": [
+      56,
+      56
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "9b9652429eab543ea7584978a2fb6d472c6ffcf196845d4f646484e0ff3f43ab"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--64.png",
+    "dimensions": [
+      64,
+      64
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "514fdaa9b4c50e76a3d0ba34cccb1710fa97e5aad0218f30bede491a3eb49d42"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--80.png",
+    "dimensions": [
+      80,
+      80
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "c90133bbb4dafe63734d728473b0fc3732b21fbbf0330749ec5cbad09639dcc3"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--96.png",
+    "dimensions": [
+      96,
+      96
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "90eb98be1ab1096b146ac455d421226134abd21f9da66c88da96e318aad447fc"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--112.png",
+    "dimensions": [
+      112,
+      112
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "0820f81e824cc7f6f4aface5b4e775c7649c82b8097db2b7844a875b5bb8b1d4"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--good--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/Firewood--160.png",
+    "dimensions": [
+      160,
+      160
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "42f4ef3f46473ed81ff2294e55c7939dd88d90eb42b37343264a721d0812c4fb"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--16.png",
+    "dimensions": [
+      16,
+      16
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "aaeb62c3e3bde262b9d6c848fe8638973a4c38a3f118b7709f22aca1f36bad16"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--20.png",
+    "dimensions": [
+      20,
+      20
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "2dbfe5f60cbab0d098cf91caac89f5d16a826ae0c8fca24019af0bd6f12258f1"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--24.png",
+    "dimensions": [
+      24,
+      24
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "52d435a2f83a78d2f89b02f5d1824e963ed6f47041a1851e3008ab0c65369719"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--28.png",
+    "dimensions": [
+      28,
+      28
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "4078fec73cdb766f1a75faada76c085d028fcd9cae35dc0fbdbe5f5ec4fd5211"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--32.png",
+    "dimensions": [
+      32,
+      32
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "4e1b3c3b0adbfa0a48253d07e7a920726c75c4211c6938281834b5a3e6d0219a"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--40.png",
+    "dimensions": [
+      40,
+      40
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "3175b9c3b14407b39732dd788d520c3d8dc63a77970db348724ff0bbbcc75b24"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--48.png",
+    "dimensions": [
+      48,
+      48
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "7cac4ff922c990a99c5a0271d6d6fbb6c047d4959faa1475191b7ddc28289122"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--56.png",
+    "dimensions": [
+      56,
+      56
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "7ad791c89f1037e5037350342cd7bf285e4247d1e927b3defd298fc738be9e3f"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--64.png",
+    "dimensions": [
+      64,
+      64
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "a1fe24d60858a69e36b620abcb2f7127d13d065bf57e622c3c55e969544dab7a"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--80.png",
+    "dimensions": [
+      80,
+      80
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "0f8753dc0df2b4cb9e7f679398804ae9721186f2df13498b336b5783ba715fdc"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--96.png",
+    "dimensions": [
+      96,
+      96
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "6a7d1f49ccc5bcca4b693af515a0aa2c0d751df9622541d805746ef5098681c7"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--112.png",
+    "dimensions": [
+      112,
+      112
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "d00260f2d6c9d0c6dea544b92dbb89d4366a5c380b8959115e3d9ee134e52b24"
+  },
+  {
+    "master": "SourceArt/UI/Firewood/firewood--yard--default--1254x1254--v1.png",
+    "masterDimensions": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "output": "SourceArt/UI/Firewood/review-variants/WoodcutterYard--160.png",
+    "dimensions": [
+      160,
+      160
+    ],
+    "resampling": "proportional Lanczos under approved GUI exception",
+    "sha256": "07602c2e502dd6343d3978e609e8985f95c44f28e282c680ee1c0fd5f7996bd5"
+  }
+]

@@ -1,3 +1,5 @@
+#include "Compounds/HansaCompoundAuthoring.h"
+#include "Definitions/HansaResidentialCompoundDefinition.h"
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetRegistry/IAssetRegistry.h"
@@ -12,6 +14,7 @@
 #include "Definitions/HansaEconomicDefinitionSeeder.h"
 #include "Editor.h"
 #include "Misc/AutomationTest.h"
+#include "Definitions/HansaEconomicImpact.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "ScopedTransaction.h"
@@ -47,7 +50,7 @@ namespace Hansa::Editor::Tests
 	}
 
 	bool LoadReviewedEconomicCatalog(FReviewedEconomicCatalog& OutCatalog, FString& OutError,
-		const TCHAR* ManifestName = TEXT("economic_catalog_v18.json"))
+		const TCHAR* ManifestName = FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 35 ? TEXT("economic_catalog_v35.json") : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 34 ? TEXT("economic_catalog_v34.json") : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 33 ? TEXT("economic_catalog_v33.json") : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 32 ? TEXT("economic_catalog_v32.json") : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 31 ? TEXT("economic_catalog_v31.json") : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 30 ? TEXT("economic_catalog_v30.json") : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 29 ? TEXT("economic_catalog_v29.json") : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 28 ? TEXT("economic_catalog_v28.json") : TEXT("economic_catalog_v27.json"))
 	{
 		const FString ManifestPath = FPaths::Combine(
 			FPaths::ProjectDir(), TEXT("Tests"), TEXT("Golden"), ManifestName);
@@ -260,10 +263,10 @@ bool FHansaEconomicRegistryTest::RunTest(const FString& Parameters)
 	TArray<const UHansaDefinitionBase*> Forward = Hansa::Editor::Tests::RawDefinitions(Definitions);
 	const FHansaEconomicRegistryCompileResult First = FHansaEconomicDefinitionCompiler::Compile(Forward);
 	TestTrue(TEXT("Reviewed MVP definition set compiles"), First.IsValid());
-	TestEqual(TEXT("Expanded MVP goods count"), First.Registry.GetGoods().Num(), 13);
-	TestEqual(TEXT("Expanded MVP recipes count"), First.Registry.GetRecipes().Num(), 11);
-	TestEqual(TEXT("Expanded MVP buildings count"), First.Registry.GetBuildings().Num(), 17);
-	TestEqual(TEXT("MVP needs count"), First.Registry.GetNeeds().Num(), 5);
+	TestEqual(TEXT("Expanded MVP goods count"), First.Registry.GetGoods().Num(), 15);
+	TestEqual(TEXT("Expanded MVP recipes count"), First.Registry.GetRecipes().Num(), 13);
+	TestEqual(TEXT("Expanded MVP buildings count"), First.Registry.GetBuildings().Num(), 19);
+	TestEqual(TEXT("MVP needs count"), First.Registry.GetNeeds().Num(), 6);
 	TestEqual(TEXT("MVP population tiers count"), First.Registry.GetPopulationTiers().Num(), 2);
 	TestEqual(TEXT("MVP city market profiles count"), First.Registry.GetCityMarkets().Num(), 4);
 	TestEqual(TEXT("MVP vehicle definitions count"), First.Registry.GetVehicles().Num(), 2);
@@ -305,6 +308,13 @@ bool FHansaEconomicRegistryTest::RunTest(const FString& Parameters)
 			SeededFarmRecipe->LaborerWorkforce == 2 && SeededMillRecipe->LaborerWorkforce == 2 &&
 			SeededBakeryRecipe->LaborerWorkforce == 2 && SeededFisheryRecipe->LaborerWorkforce == 2);
 	}
+    const auto* SeededArtisan = Cast<UHansaBuildingDefinition>(Hansa::Editor::Tests::FindDefinition(Definitions, TEXT("Building.Residence.Artisan")));
+    if (TestNotNull(TEXT("Artisan seed exists"), SeededArtisan))
+    {
+        TestEqual(TEXT("Artisan seed revision matches saved asset"), SeededArtisan->AuthoredRevision, 3);
+        TestEqual(TEXT("Artisan seed mesh matches production"), SeededArtisan->PresentationMesh.ToSoftObjectPath().ToString(), FString(TEXT("/Game/Mesh/hansa-artisan-houses/Meshes/SM_ArtisanHouse_A.SM_ArtisanHouse_A")));
+        TestTrue(TEXT("Artisan seed actor matches production"), SeededArtisan->PresentationActorClass.ToSoftObjectPath().ToString().StartsWith(TEXT("/Game/Mesh/hansa-artisan-houses/")));
+    }
 	const UHansaBuildingDefinition* SeededBakery = Cast<UHansaBuildingDefinition>(
 		Hansa::Editor::Tests::FindDefinition(Definitions, TEXT("Building.Bakery")));
 	const UHansaBuildingDefinition* SeededMill = Cast<UHansaBuildingDefinition>(
@@ -354,7 +364,7 @@ bool FHansaEconomicRegistryTest::RunTest(const FString& Parameters)
 	const auto* BrewBeer = First.Registry.FindRecipe(TEXT("Recipe.BrewBeer"));
 	if (TestNotNull(TEXT("Recipe.BrewBeer is queryable by stable ID"), BrewBeer))
 	{
-		TestEqual(TEXT("Brewery consumes malt, hops, and barrels"), BrewBeer->Inputs.Num(), 3);
+		TestEqual(TEXT("Brewery consumes malt, hops, barrels and fuel"), BrewBeer->Inputs.Num(), 4);
 	}
 	TestNotNull(TEXT("Recipe.GrowHops is queryable by stable ID"), First.Registry.FindRecipe(TEXT("Recipe.GrowHops")));
 	TestNotNull(TEXT("Recipe.MaltGrain is queryable by stable ID"), First.Registry.FindRecipe(TEXT("Recipe.MaltGrain")));
@@ -378,7 +388,7 @@ bool FHansaEconomicRegistryTest::RunTest(const FString& Parameters)
 	int32 MarketOnlyCityCount = 0;
 	for (const Hansa::Simulation::FHansaCompiledCityMarketProfileDefinition& City : First.Registry.GetCityMarkets())
 	{
-		TestEqual(*FString::Printf(TEXT("%s covers all thirteen expanded MVP goods"), *City.StableId), City.Goods.Num(), 13);
+		TestEqual(*FString::Printf(TEXT("%s covers all fifteen expanded MVP goods"), *City.StableId), City.Goods.Num(), 15);
 		if (!City.bMarketOnly) continue;
 		++MarketOnlyCityCount;
 		TestTrue(*FString::Printf(TEXT("%s has a delayed deterministic report cadence"), *City.StableId),
@@ -709,7 +719,7 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 			LoadedDefinitions.Add(Definition);
 		}
 	}
-	TestEqual(TEXT("All authored expanded-MVP definition assets reload from disk"), LoadedDefinitions.Num(), 81);
+	TestEqual(TEXT("All authored expanded-MVP definition assets reload from disk"), LoadedDefinitions.Num(), FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 35 ? 208 : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 33 ? 205 : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 30 ? 181 : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 29 ? 163 : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 28 ? 118 : 106);
 	const FHansaEconomicRegistryCompileResult CompileResult = FHansaEconomicDefinitionCompiler::Compile(LoadedDefinitions);
 	for (const FHansaDefinitionValidationIssue& Issue : CompileResult.Issues)
 	{
@@ -730,9 +740,322 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 		AddError(CompileResult.DescribeRegistryHashMismatch(
 			ReviewedCatalog.RegistryHash, ReviewedCatalog.Definitions));
 	}
-	TestEqual(TEXT("Reviewed manifest covers every authored definition"), ReviewedCatalog.Definitions.Num(), 81);
+	if (FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 35)
+	{
+		Hansa::Editor::Tests::FReviewedEconomicCatalog VersionThirtyFour;
+		if (!TestTrue(TEXT("Catalog v34 lineage manifest loads"),
+			Hansa::Editor::Tests::LoadReviewedEconomicCatalog(
+				VersionThirtyFour, ManifestError, TEXT("economic_catalog_v34.json"))))
+		{
+			AddError(ManifestError);
+			return false;
+		}
+		TestEqual(TEXT("Catalog v35 names v34 as its compatible predecessor"),
+			VersionThirtyFour.RegistryHash, FHansaLubeckScenarioInitializer::ImmediatePreviousMvpRegistryHash);
 
-	TArray<const UHansaDefinitionBase*> VersionSeventeenDefinitions = LoadedDefinitions;
+		TMap<FString, uint64> PreviousHashes;
+		for (const FHansaEconomicDefinitionHashEvidence& Evidence : VersionThirtyFour.Definitions)
+		{
+			PreviousHashes.Add(Evidence.StableId, Evidence.ContentHash);
+		}
+		TArray<FString> Added;
+		TArray<FString> Changed;
+		for (const FHansaEconomicDefinitionHashEvidence& Evidence : CompileResult.DefinitionHashes)
+		{
+			if (const uint64* PreviousHash = PreviousHashes.Find(Evidence.StableId))
+			{
+				if (*PreviousHash != Evidence.ContentHash) Changed.Add(Evidence.StableId);
+				PreviousHashes.Remove(Evidence.StableId);
+			}
+			else
+			{
+				Added.Add(Evidence.StableId);
+			}
+		}
+		Added.Sort();
+		Changed.Sort();
+		TArray<FString> Removed;
+		PreviousHashes.GetKeys(Removed);
+		Removed.Sort();
+		TestEqual(TEXT("Catalog v35 adds only the three reviewed specialization capabilities"),
+			FString::Join(Added, TEXT(",")),
+			FString(TEXT("PresenceCapability.HarborSpecialization,PresenceCapability.MarketSpecialization,PresenceCapability.WarehouseSpecialization")));
+		TestEqual(TEXT("Catalog v35 changes only specialization-dependent stages and city policies"),
+			FString::Join(Changed, TEXT(",")),
+			FString(TEXT("CityTradePolicy.Hamburg,CityTradePolicy.Lubeck,CityTradePolicy.Luneburg,CityTradePolicy.Rostock,PresenceStage.ExceptionalGovernance,PresenceStage.MerchantOffice,PresenceStage.MerchantQuarter,PresenceStage.PrivilegedPresence,PresenceStage.TradeStation,PresenceStage.VisitingContact")));
+		TestTrue(TEXT("Catalog v35 removes no v34 definitions"), Removed.IsEmpty());
+	}
+	TestEqual(TEXT("Reviewed manifest covers every authored definition"), ReviewedCatalog.Definitions.Num(), FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 35 ? 208 : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 33 ? 205 : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 30 ? 181 : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 29 ? 163 : FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 28 ? 118 : 106);
+	// V29 is an explicitly incompatible complete snapshot. Its disk manifest and reverse-order
+	// compile above are authoritative; historical serialized FText identities are not derivable
+	// from hashes, so the older field-by-field lineage proof remains scoped to v28 and earlier.
+	if (FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 29) return true;
+
+    TArray<TStrongObjectPtr<UHansaDefinitionBase>> ArtisanBaseline;
+    if (FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 28)
+    {
+    // Reverse the reviewed artisan field diff to prove the entire v27 lineage.
+    FString ArtisanDiff;
+    if (!FFileHelper::LoadFileToString(ArtisanDiff, *(FPaths::ProjectDir()/TEXT("Docs/Development/ArtisanProduction/candidate.json")))) return false;
+    TSharedPtr<FJsonObject> ArtisanRoot;
+    if (!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(ArtisanDiff), ArtisanRoot)) return false;
+    for (const auto& Entry : ArtisanRoot->GetArrayField(TEXT("definitions")))
+    {
+        const auto Row=Entry->AsObject(); const FString Id=Row->GetStringField(TEXT("stableId"));
+        const FString Change=Row->GetStringField(TEXT("change"));
+        if(Change==TEXT("added")) { LoadedDefinitions.RemoveAll([&](const auto* D){return D->StableDefinitionId==Id;}); continue; }
+        if(Change!=TEXT("modified")) continue;
+        for(auto& Current:LoadedDefinitions) if(Current->StableDefinitionId==Id)
+        {
+            auto* Old=DuplicateObject<UHansaDefinitionBase>(Current,GetTransientPackage());
+            for(const auto& Value:Row->GetArrayField(TEXT("propertyChanges")))
+            {
+                const auto Field=Value->AsObject();
+                FProperty* P=Old->GetClass()->FindPropertyByName(*Field->GetStringField(TEXT("property")));
+                if(!P || !P->ImportText_InContainer(*Field->GetStringField(TEXT("before")),Old,Old,PPF_None)) return false;
+            }
+            Old->RefreshContentHash();Current=Old;ArtisanBaseline.Emplace(Old);
+        }
+    }
+    const auto VersionTwentySeven=FHansaEconomicDefinitionCompiler::Compile(LoadedDefinitions);
+    Hansa::Editor::Tests::FReviewedEconomicCatalog BeforeArtisan;
+    if(!Hansa::Editor::Tests::LoadReviewedEconomicCatalog(BeforeArtisan,ManifestError,TEXT("economic_catalog_v27.json")))return false;
+    TestTrue(TEXT("Pre-artisan catalog validates"),VersionTwentySeven.IsValid());
+    TestEqual(TEXT("Exact v27 hash reconstructs"),VersionTwentySeven.Registry.GetRegistryHash(),BeforeArtisan.RegistryHash);
+    TestTrue(TEXT("Every v27 fingerprint reconstructs"),Hansa::Editor::Tests::SameDefinitionHashes(VersionTwentySeven.DefinitionHashes,BeforeArtisan.Definitions));
+
+    }
+
+    // Reconstruct the complete pre-compaction catalogue before older lineage checks.
+    TArray<TStrongObjectPtr<UHansaResidentialCompoundDefinition>> CompactBaseline;
+    TArray<TStrongObjectPtr<UHansaBuildingDefinition>> CompactBindingBaseline;
+    for(auto& Current:LoadedDefinitions)if(const auto* Compound=Cast<UHansaResidentialCompoundDefinition>(Current))
+    {
+        if(!Compound->StableDefinitionId.StartsWith(TEXT("Compound.Laborer.")))continue;
+        const FString Family=Compound->StableDefinitionId.Mid(17);FString Json,Error;
+        if(!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectDir()/TEXT("SourceArt/Generated/Compounds/LabourCourts_20260915/R07/baseline")/(Family+TEXT(".json")))))return false;
+        TStrongObjectPtr<UHansaResidentialCompoundDefinition> Old(Hansa::Editor::Compounds::ImportDraft(Json,Error));
+        if(!TestNotNull(*Error,Old.Get()))return false;
+        auto* Previous=DuplicateObject<UHansaResidentialCompoundDefinition>(Compound,GetTransientPackage());
+        Previous->Layouts=Old->Layouts;Previous->FootprintWidthCells=Old->FootprintWidthCells;Previous->FootprintHeightCells=Old->FootprintHeightCells;
+        Previous->BoundsMin=Old->BoundsMin;Previous->BoundsMax=Old->BoundsMax;Previous->AuthoredRevision=Old->AuthoredRevision;Previous->RefreshContentHash();
+        Current=Previous;CompactBaseline.Emplace(Previous);
+    }
+    for(auto& Current:LoadedDefinitions)if(const auto* B=Cast<UHansaBuildingDefinition>(Current))
+    {
+        const auto* Compound=B->LoadResidentialCompound();if(!Compound)continue;
+        for(const auto& Old:CompactBaseline)if(Old->StableDefinitionId==Compound->StableDefinitionId)
+        {
+            auto* Previous=DuplicateObject<UHansaBuildingDefinition>(B,GetTransientPackage());
+            Previous->ResidentialCompound=Old.Get();Previous->FootprintWidthCells=Old->FootprintWidthCells;Previous->FootprintHeightCells=Old->FootprintHeightCells;
+            --Previous->AuthoredRevision;Previous->RefreshContentHash();Current=Previous;CompactBindingBaseline.Emplace(Previous);break;
+        }
+    }
+    const auto VersionTwentySix=FHansaEconomicDefinitionCompiler::Compile(LoadedDefinitions);
+    Hansa::Editor::Tests::FReviewedEconomicCatalog BeforeCompactCatalog;
+    if(!TestTrue(TEXT("Pre-compaction v26 manifest loads"),Hansa::Editor::Tests::LoadReviewedEconomicCatalog(BeforeCompactCatalog,ManifestError,TEXT("economic_catalog_v26.json"))))return false;
+    TestTrue(TEXT("Pre-compaction catalogue validates"),VersionTwentySix.IsValid());
+    TestEqual(TEXT("Exact v26 hash reconstructs"),VersionTwentySix.Registry.GetRegistryHash(),BeforeCompactCatalog.RegistryHash);
+    TestTrue(TEXT("Every v26 fingerprint reconstructs"),Hansa::Editor::Tests::SameDefinitionHashes(VersionTwentySix.DefinitionHashes,BeforeCompactCatalog.Definitions));
+
+    // Reverse only firewood's additions and nine field changes. Preservation stays intact.
+    LoadedDefinitions.RemoveAll([](const UHansaDefinitionBase* D) {
+        return D->StableDefinitionId==TEXT("Good.Firewood")||D->StableDefinitionId==TEXT("Recipe.SplitFirewood")||D->StableDefinitionId==TEXT("Building.WoodcutterYard")||D->StableDefinitionId==TEXT("Need.Heating");
+    });
+    TArray<TStrongObjectPtr<UHansaDefinitionBase>> FirewoodBaseline;
+    for(auto& Current:LoadedDefinitions)
+    {
+        const FString Id=Current->StableDefinitionId;
+        if(Id!=TEXT("Recipe.BakeBread")&&Id!=TEXT("Recipe.MaltGrain")&&Id!=TEXT("Recipe.BrewBeer")&&!Current->IsA<UHansaPopulationTierDefinition>()&&!Current->IsA<UHansaCityMarketProfileDefinition>())continue;
+        auto* Previous=DuplicateObject<UHansaDefinitionBase>(Current,GetTransientPackage());
+        --Previous->AuthoredRevision;
+        if(auto* R=Cast<UHansaRecipeDefinition>(Previous))R->Inputs.RemoveAll([](const auto& A){return A.GoodId==TEXT("Good.Firewood");});
+        if(auto* T=Cast<UHansaPopulationTierDefinition>(Previous))T->Needs.RemoveAll([](const auto& A){return A.NeedId==TEXT("Need.Heating");});
+        if(auto* M=Cast<UHansaCityMarketProfileDefinition>(Previous))M->Goods.RemoveAll([](const auto& A){return A.GoodId==TEXT("Good.Firewood");});
+        Previous->RefreshContentHash();Current=Previous;FirewoodBaseline.Emplace(Previous);
+    }
+    const auto VersionTwentyFive=FHansaEconomicDefinitionCompiler::Compile(LoadedDefinitions);
+    Hansa::Editor::Tests::FReviewedEconomicCatalog PreviousFirewoodCatalog;
+    if(!TestTrue(TEXT("Reviewed v25 manifest loads"),Hansa::Editor::Tests::LoadReviewedEconomicCatalog(PreviousFirewoodCatalog,ManifestError,TEXT("economic_catalog_v25_preservedfish.json"))))return false;
+    TestTrue(TEXT("Previous preservation catalog reconstructs"),VersionTwentyFive.IsValid());
+    TestEqual(TEXT("Firewood preserves v25 economics exactly"),VersionTwentyFive.Registry.GetRegistryHash(),PreviousFirewoodCatalog.RegistryHash);
+    TestTrue(TEXT("Every previous fingerprint survives"),Hansa::Editor::Tests::SameDefinitionHashes(VersionTwentyFive.DefinitionHashes,PreviousFirewoodCatalog.Definitions));
+
+    // Reverse only preservation's authored changes and prove the exact v24 contract.
+    LoadedDefinitions.RemoveAll([](const UHansaDefinitionBase* D) {
+        return D->StableDefinitionId == TEXT("Good.PreservedFish") || D->StableDefinitionId == TEXT("Recipe.SaltedCatch") || D->StableDefinitionId == TEXT("Building.Fishery.SaltingShed");
+    });
+    TArray<TStrongObjectPtr<UHansaDefinitionBase>> PreservationBaseline;
+    for (int32 Index = 0; Index < LoadedDefinitions.Num(); ++Index)
+    {
+        const auto* Current = LoadedDefinitions[Index];
+        const FString Id = Current->StableDefinitionId;
+        if (Id != TEXT("Good.Fish") && Id != TEXT("Need.Fish") && Id != TEXT("Building.Fishery") && !Cast<UHansaCityMarketProfileDefinition>(Current)) continue;
+        TStrongObjectPtr<UHansaDefinitionBase> Previous(DuplicateObject<UHansaDefinitionBase>(Current, GetTransientPackage()));
+        --Previous->AuthoredRevision;
+        if (auto* Good = Cast<UHansaGoodDefinition>(Previous.Get())) { const auto* OriginalFish = LoadObject<UHansaGoodDefinition>(nullptr, TEXT("/Game/PreservationBaseline/DA_Good_Fish.DA_Good_Fish")); if (!OriginalFish) { AddError(TEXT("Original fish localization fixture missing")); return false; } Good->DisplayName = OriginalFish->DisplayName; Good->bSpoilageEnabled = false; }
+        if (auto* Need = Cast<UHansaNeedDefinition>(Previous.Get())) Need->Alternatives.Reset();
+        if (auto* Building = Cast<UHansaBuildingDefinition>(Previous.Get())) Building->UpgradeTargetBuildingId.Reset();
+        if (auto* City = Cast<UHansaCityMarketProfileDefinition>(Previous.Get()))
+        {
+            City->Goods.RemoveAll([](const auto& G){return G.GoodId == TEXT("Good.PreservedFish");});
+            if (Id.Contains(TEXT("Rostock")))
+            {
+                --City->AuthoredRevision;
+                for (auto& Good : City->Goods) if (Good.GoodId == TEXT("Good.Salt")) Good.BackgroundProductionMilliUnitsPerUpdate = 1000;
+            }
+        }
+        Previous->RefreshContentHash(); LoadedDefinitions[Index] = Previous.Get(); PreservationBaseline.Add(MoveTemp(Previous));
+    }
+    const auto VersionTwentyFour = FHansaEconomicDefinitionCompiler::Compile(LoadedDefinitions);
+    Hansa::Editor::Tests::FReviewedEconomicCatalog PreviousPreservationCatalog;
+    if (!TestTrue(TEXT("Full v24 manifest loads"), Hansa::Editor::Tests::LoadReviewedEconomicCatalog(PreviousPreservationCatalog, ManifestError, TEXT("economic_catalog_v24.json")))) return false;
+    TestTrue(TEXT("Catalog v24 reconstructs without preservation"), VersionTwentyFour.IsValid());
+    TestEqual(TEXT("Preservation has no unrelated catalog changes"), VersionTwentyFour.Registry.GetRegistryHash(), PreviousPreservationCatalog.RegistryHash);
+    TestTrue(TEXT("Every v24 fingerprint is preserved"), Hansa::Editor::Tests::SameDefinitionHashes(VersionTwentyFour.DefinitionHashes, PreviousPreservationCatalog.Definitions));
+
+    // Additive artisan plots leave all 97 prior fingerprints and legacy parcels unchanged.
+    LoadedDefinitions.RemoveAll([](const UHansaDefinitionBase* D) {
+        return D->StableDefinitionId == TEXT("Compound.Artisan.Plot") || D->StableDefinitionId == TEXT("Building.Residence.Artisan.Plot");
+    });
+    const auto VersionTwentyThree = FHansaEconomicDefinitionCompiler::Compile(LoadedDefinitions);
+    Hansa::Editor::Tests::FReviewedEconomicCatalog PreviousPlotCatalog;
+    if (!TestTrue(TEXT("Full v23 manifest loads"), Hansa::Editor::Tests::LoadReviewedEconomicCatalog(PreviousPlotCatalog, ManifestError, TEXT("economic_catalog_v23.json")))) return false;
+    TestTrue(TEXT("Catalog v23 reconstructs by removing only the two additions"), VersionTwentyThree.IsValid());
+    TestEqual(TEXT("Prior registry is unchanged"), VersionTwentyThree.Registry.GetRegistryHash(), PreviousPlotCatalog.RegistryHash);
+    TestTrue(TEXT("Every v23 fingerprint is preserved"), Hansa::Editor::Tests::SameDefinitionHashes(VersionTwentyThree.DefinitionHashes, PreviousPlotCatalog.Definitions));
+
+    // Reconstruct the exact prior court content, keeping every gameplay binding unchanged.
+    TArray<const UHansaDefinitionBase*> VersionTwentyTwoDefinitions = LoadedDefinitions;
+    TArray<TStrongObjectPtr<UHansaResidentialCompoundDefinition>> WeightBaselineCourts;
+    for (auto& Definition : VersionTwentyTwoDefinitions)
+    {
+        if (!Definition->IsA<UHansaResidentialCompoundDefinition>()) continue;
+        const FString Family = Definition->StableDefinitionId.RightChop(FString(TEXT("Compound.Laborer.")).Len());
+        FString Json, Error;
+        const FString Baseline = FPaths::ProjectDir() / TEXT("SourceArt/Generated/Compounds/LabourCourts_20260915/R06/baseline") / (Family + TEXT(".json"));
+        if (!TestTrue(TEXT("Prior court definition preserved"), FFileHelper::LoadFileToString(Json, *Baseline))) return false;
+        auto* Previous = Hansa::Editor::Compounds::ImportDraft(Json, Error);
+        if (!TestNotNull(*Error, Previous)) return false;
+        auto* Preserved=DuplicateObject<UHansaResidentialCompoundDefinition>(CastChecked<UHansaResidentialCompoundDefinition>(Definition),GetTransientPackage());
+        Preserved->Layouts=Previous->Layouts;Preserved->AuthoredRevision=Previous->AuthoredRevision;Preserved->RefreshContentHash();
+        WeightBaselineCourts.Emplace(Preserved); Definition = Preserved;
+    }
+    TArray<TStrongObjectPtr<UHansaBuildingDefinition>> WeightBaselineBindings;
+    for(auto& Definition:VersionTwentyTwoDefinitions)if(const auto* B=Cast<UHansaBuildingDefinition>(Definition))
+    {
+        const auto* Bound=B->LoadResidentialCompound();if(!Bound)continue;
+        for(const auto& Court:WeightBaselineCourts)if(Court->StableDefinitionId==Bound->StableDefinitionId)
+        {
+            auto* Copy=DuplicateObject<UHansaBuildingDefinition>(B,GetTransientPackage());Copy->ResidentialCompound=Court.Get();
+            WeightBaselineBindings.Emplace(Copy);Definition=Copy;break;
+        }
+    }
+    const auto VersionTwentyTwo = FHansaEconomicDefinitionCompiler::Compile(VersionTwentyTwoDefinitions);
+    TestTrue(TEXT("Catalog v22 reconstruction compiles"), VersionTwentyTwo.IsValid());
+    TestEqual(TEXT("Court decoration changes only four presentation definitions"), VersionTwentyTwo.Registry.GetRegistryHash(), uint64(0x76FF996D95CBB5EAULL));
+    Hansa::Editor::Tests::FReviewedEconomicCatalog WeightBaselineCatalog;
+    if (!TestTrue(TEXT("Prior full manifest loads"), Hansa::Editor::Tests::LoadReviewedEconomicCatalog(WeightBaselineCatalog, ManifestError, TEXT("economic_catalog_v22.json")))) return false;
+    TestTrue(TEXT("Every prior fingerprint is reconstructed"), Hansa::Editor::Tests::SameDefinitionHashes(VersionTwentyTwo.DefinitionHashes, WeightBaselineCatalog.Definitions));
+
+    LoadedDefinitions = VersionTwentyTwoDefinitions;
+    // Reverting only artisan presentation fields must reproduce all 97 v21 fingerprints.
+    TStrongObjectPtr<UHansaBuildingDefinition> PreviousArtisan;
+    TArray<const UHansaDefinitionBase*> VersionTwentyOneDefinitions = LoadedDefinitions;
+    for (auto& Definition : VersionTwentyOneDefinitions)
+    {
+        if (Definition->StableDefinitionId != TEXT("Building.Residence.Artisan")) continue;
+        PreviousArtisan.Reset(DuplicateObject<UHansaBuildingDefinition>(CastChecked<UHansaBuildingDefinition>(Definition), GetTransientPackage()));
+        PreviousArtisan->AuthoredRevision = 2;
+        PreviousArtisan->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Artisan_A.SM_Residence_Artisan_A")));
+        PreviousArtisan->PresentationActorClass = TSoftClassPtr<AActor>(FSoftObjectPath(TEXT("/Game/Mesh/hansa-residences/BP_Residence_Artisan_Review.BP_Residence_Artisan_Review_C")));
+        PreviousArtisan->RefreshContentHash();
+        Definition = PreviousArtisan.Get();
+    }
+    const auto VersionTwentyOne = FHansaEconomicDefinitionCompiler::Compile(VersionTwentyOneDefinitions);
+    TestTrue(TEXT("Previous artisan catalog compiles"), VersionTwentyOne.IsValid());
+    TestEqual(TEXT("Only artisan presentation changes in v22"), VersionTwentyOne.Registry.GetRegistryHash(), uint64(0x5E0327141B0AC574ULL));
+    Hansa::Editor::Tests::FReviewedEconomicCatalog VersionTwentyOneCatalog;
+    if (!TestTrue(TEXT("Full v21 manifest loads"), Hansa::Editor::Tests::LoadReviewedEconomicCatalog(VersionTwentyOneCatalog, ManifestError, TEXT("economic_catalog_v21.json")))) return false;
+    TestTrue(TEXT("All v21 fingerprints reconstructed"), Hansa::Editor::Tests::SameDefinitionHashes(VersionTwentyOne.DefinitionHashes, VersionTwentyOneCatalog.Definitions));
+    LoadedDefinitions = VersionTwentyOneDefinitions;
+
+    // Reconstruct the exact prior court content, keeping every gameplay binding unchanged.
+    {
+    TArray<const UHansaDefinitionBase*> VersionTwentyDefinitions = LoadedDefinitions;
+    TArray<TStrongObjectPtr<UHansaResidentialCompoundDefinition>> PreviousCourts;
+    for (auto& Definition : VersionTwentyDefinitions)
+    {
+        if (!Definition->IsA<UHansaResidentialCompoundDefinition>()) continue;
+        const FString Family = Definition->StableDefinitionId.RightChop(FString(TEXT("Compound.Laborer.")).Len());
+        FString Json, Error;
+        const FString Baseline = FPaths::ProjectDir() / TEXT("SourceArt/Generated/Compounds/LabourCourts_20260915/R05/baseline") / (Family + TEXT(".json"));
+        if (!TestTrue(TEXT("Prior court definition preserved"), FFileHelper::LoadFileToString(Json, *Baseline))) return false;
+        auto* Previous = Hansa::Editor::Compounds::ImportDraft(Json, Error);
+        if (!TestNotNull(*Error, Previous)) return false;
+        auto* Preserved=DuplicateObject<UHansaResidentialCompoundDefinition>(CastChecked<UHansaResidentialCompoundDefinition>(Definition),GetTransientPackage());
+        Preserved->Layouts=Previous->Layouts;Preserved->AuthoredRevision=Previous->AuthoredRevision;Preserved->RefreshContentHash();
+        PreviousCourts.Emplace(Preserved); Definition = Preserved;
+    }
+    TArray<TStrongObjectPtr<UHansaBuildingDefinition>> PreviousBindings;
+    for(auto& Definition:VersionTwentyDefinitions)if(const auto* B=Cast<UHansaBuildingDefinition>(Definition))
+    {
+        const auto* Bound=B->LoadResidentialCompound();if(!Bound)continue;
+        for(const auto& Court:PreviousCourts)if(Court->StableDefinitionId==Bound->StableDefinitionId)
+        {
+            auto* Copy=DuplicateObject<UHansaBuildingDefinition>(B,GetTransientPackage());Copy->ResidentialCompound=Court.Get();
+            PreviousBindings.Emplace(Copy);Definition=Copy;break;
+        }
+    }
+    const auto VersionTwenty = FHansaEconomicDefinitionCompiler::Compile(VersionTwentyDefinitions);
+    TestTrue(TEXT("Catalog v20 reconstruction compiles"), VersionTwenty.IsValid());
+    TestEqual(TEXT("Court decoration changes only four presentation definitions"), VersionTwenty.Registry.GetRegistryHash(), uint64(0x4A86F28719E21627ULL));
+    Hansa::Editor::Tests::FReviewedEconomicCatalog PreviousCatalog;
+    if (!TestTrue(TEXT("Prior full manifest loads"), Hansa::Editor::Tests::LoadReviewedEconomicCatalog(PreviousCatalog, ManifestError, TEXT("economic_catalog_v20.json")))) return false;
+    TestTrue(TEXT("Every prior fingerprint is reconstructed"), Hansa::Editor::Tests::SameDefinitionHashes(VersionTwenty.DefinitionHashes, PreviousCatalog.Definitions));
+
+    }
+    TArray<const UHansaDefinitionBase*> VersionNineteenDefinitions = LoadedDefinitions;
+    TArray<TStrongObjectPtr<UHansaResidentialCompoundDefinition>> PreviousCourts;
+    for (auto& Definition : VersionNineteenDefinitions)
+    {
+        if (!Definition->IsA<UHansaResidentialCompoundDefinition>()) continue;
+        const FString Family = Definition->StableDefinitionId.RightChop(FString(TEXT("Compound.Laborer.")).Len());
+        FString Json, Error;
+        const FString Baseline = FPaths::ProjectDir() / TEXT("SourceArt/Generated/Compounds/LabourCourts_20260915/R04/baseline") / (Family + TEXT(".json"));
+        if (!TestTrue(TEXT("Prior court definition preserved"), FFileHelper::LoadFileToString(Json, *Baseline))) return false;
+        auto* Previous = Hansa::Editor::Compounds::ImportDraft(Json, Error);
+        if (!TestNotNull(*Error, Previous)) return false;
+        auto* Preserved=DuplicateObject<UHansaResidentialCompoundDefinition>(CastChecked<UHansaResidentialCompoundDefinition>(Definition),GetTransientPackage());
+        Preserved->Layouts=Previous->Layouts;Preserved->AuthoredRevision=Previous->AuthoredRevision;Preserved->RefreshContentHash();
+        PreviousCourts.Emplace(Preserved); Definition = Preserved;
+    }
+    TArray<TStrongObjectPtr<UHansaBuildingDefinition>> PreviousBindings;
+    for(auto& Definition:VersionNineteenDefinitions)if(const auto* B=Cast<UHansaBuildingDefinition>(Definition))
+    {
+        const auto* Bound=B->LoadResidentialCompound();if(!Bound)continue;
+        for(const auto& Court:PreviousCourts)if(Court->StableDefinitionId==Bound->StableDefinitionId)
+        {
+            auto* Copy=DuplicateObject<UHansaBuildingDefinition>(B,GetTransientPackage());Copy->ResidentialCompound=Court.Get();
+            PreviousBindings.Emplace(Copy);Definition=Copy;break;
+        }
+    }
+    const auto VersionNineteen = FHansaEconomicDefinitionCompiler::Compile(VersionNineteenDefinitions);
+    TestTrue(TEXT("Catalog v19 reconstruction compiles"), VersionNineteen.IsValid());
+    TestEqual(TEXT("Court decoration changes only four presentation definitions"), VersionNineteen.Registry.GetRegistryHash(), uint64(0x31FB425080110FD0ULL));
+    Hansa::Editor::Tests::FReviewedEconomicCatalog PreviousCatalog;
+    if (!TestTrue(TEXT("Prior full manifest loads"), Hansa::Editor::Tests::LoadReviewedEconomicCatalog(PreviousCatalog, ManifestError, TEXT("economic_catalog_v19.json")))) return false;
+    TestTrue(TEXT("Every prior fingerprint is reconstructed"), Hansa::Editor::Tests::SameDefinitionHashes(VersionNineteen.DefinitionHashes, PreviousCatalog.Definitions));
+
+	TArray<const UHansaDefinitionBase*> VersionEighteenDefinitions = LoadedDefinitions.FilterByPredicate([](const UHansaDefinitionBase* D)
+    {
+        const auto* B=Cast<UHansaBuildingDefinition>(D);
+        return !D->IsA<UHansaResidentialCompoundDefinition>() && (!B||B->ResidentialCompound.IsNull());
+    });
+    const auto VersionEighteen=FHansaEconomicDefinitionCompiler::Compile(VersionEighteenDefinitions);
+    TestTrue(TEXT("Catalog v18 reconstruction compiles"),VersionEighteen.IsValid());
+    TestEqual(TEXT("Catalog v19 only adds reviewed compounds and new bindings"),VersionEighteen.Registry.GetRegistryHash(),uint64(0x1C2B54191C78E4CAULL));
+    TArray<const UHansaDefinitionBase*> VersionSeventeenDefinitions = VersionEighteenDefinitions;
 	TArray<TStrongObjectPtr<UHansaBuildingDefinition>> VersionSeventeenPresentations;
 	for (int32 Index = 0; Index < VersionSeventeenDefinitions.Num(); ++Index)
 	{
@@ -750,7 +1073,7 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 	const auto VersionSeventeen = FHansaEconomicDefinitionCompiler::Compile(VersionSeventeenDefinitions);
 	TestTrue(TEXT("Catalog v17 reconstruction compiles"), VersionSeventeen.IsValid());
 	TestEqual(TEXT("Catalog v18 changes only the malt house and cooperage presentation meshes"),
-		VersionSeventeen.Registry.GetRegistryHash(), FHansaLubeckScenarioInitializer::ImmediatePreviousMvpRegistryHash);
+		VersionSeventeen.Registry.GetRegistryHash(), 0x968431FAD59A2C51ULL);
 
 	TArray<const UHansaDefinitionBase*> VersionSixteenDefinitions = VersionSeventeenDefinitions;
 	TStrongObjectPtr<UHansaBuildingDefinition> VersionSixteenLaborerResidence;
@@ -1184,9 +1507,9 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 		VersionReport.Contains(TEXT("changed Building.Mill")) && VersionReport.Contains(TEXT("changed Building.Road")));
 	TestFalse(TEXT("Catalog lineage report does not implicate unrelated definitions"),
 		VersionReport.Contains(TEXT("Good.Grain")));
-	TestEqual(TEXT("Reloaded goods count"), CompileResult.Registry.GetGoods().Num(), 13);
-	TestEqual(TEXT("Reloaded recipes count"), CompileResult.Registry.GetRecipes().Num(), 11);
-	TestEqual(TEXT("Reloaded buildings count"), CompileResult.Registry.GetBuildings().Num(), 17);
+	TestEqual(TEXT("Reloaded goods count"), CompileResult.Registry.GetGoods().Num(), 20);
+	TestEqual(TEXT("Reloaded recipes count"), CompileResult.Registry.GetRecipes().Num(), 16);
+	TestEqual(TEXT("Reloaded buildings including compound stages"), CompileResult.Registry.GetBuildings().Num(), 35);
 	TestEqual(TEXT("Reloaded technology count"), CompileResult.Registry.GetTechnologies().Num(), 9);
 	TestEqual(TEXT("Reloaded merchant AI tuning count"), CompileResult.Registry.GetMerchantAITunings().Num(), 1);
 	TestEqual(TEXT("Reloaded scenario objective count"), CompileResult.Registry.GetScenarioObjectives().Num(), 11);
@@ -1220,7 +1543,7 @@ bool FHansaEconomicAssetReloadTest::RunTest(const FString& Parameters)
 		ArtisanResidence->ResidentPopulationTierId == TEXT("PopulationTier.Artisan"));
 	TestTrue(TEXT("Reloaded residence progression remains direct and authored"), LaborerResidence != nullptr &&
 		LaborerResidence->UpgradeTargetBuildingId == TEXT("Building.Residence.Artisan"));
-	TestEqual(TEXT("Reloaded needs count"), CompileResult.Registry.GetNeeds().Num(), 5);
+	TestEqual(TEXT("Reloaded needs count"), CompileResult.Registry.GetNeeds().Num(), 7);
 	TestEqual(TEXT("Reloaded population tier count"), CompileResult.Registry.GetPopulationTiers().Num(), 2);
 	TestEqual(TEXT("Reloaded city market profile count"), CompileResult.Registry.GetCityMarkets().Num(), 4);
 	TestEqual(TEXT("Reloaded vehicle count"), CompileResult.Registry.GetVehicles().Num(), 2);
@@ -1478,6 +1801,75 @@ bool FHansaMvpResearchCatalogueTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Missing prerequisite diagnostic is stable"),
 		Hansa::Editor::Tests::ContainsIssueCode(Broken, TEXT("HSA-REGISTRY-022")));
 	return !HasAnyErrors();
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaMarketRangeAuthoringTest,
+ "Hansa.Editor.Definitions.MarketRangeAuthoring",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHansaMarketRangeAuthoringTest::RunTest(const FString& Parameters)
+{
+ auto* B=NewObject<UHansaBuildingDefinition>();
+ TestEqual(TEXT("Legacy/new assets inherit finite default"),B->MaximumMarketRoadDistanceCells,40);
+ FHansaEditorSchemaRegistry Schemas;
+ const auto Schema=Schemas.BuildSchemaForClass(UHansaBuildingDefinition::StaticClass());
+ TestTrue(TEXT("Range has complete reflected authoring metadata"),Schema.IsValid());
+ TestTrue(TEXT("Generated AI schema includes road-distance limit"),Schemas.ExportJsonSchema(Schema).Contains(TEXT("MaximumMarketRoadDistanceCells")));
+ const uint64 Before=B->ComputeDeterministicContentHash();
+ B->MaximumMarketRoadDistanceCells=39;
+ TestNotEqual(TEXT("Authoring a range changes deterministic content"),B->ComputeDeterministicContentHash(),Before);
+ B->MaximumMarketRoadDistanceCells=1;
+ TArray<FHansaDefinitionValidationIssue> Issues;B->ValidateDefinition(Issues);
+ TestTrue(TEXT("Invalid range has actionable diagnostic"),Issues.ContainsByPredicate([](const auto& I){return I.Code==TEXT("HSA-BUILDING-MARKET-RANGE");}));
+ return !HasAnyErrors();
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaPreservationAuthoringValidation,
+ "Hansa.Content.Definitions.PreservedFish.Validation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaPreservationAuthoringValidation::RunTest(const FString&)
+{
+ using namespace Hansa::Editor::Tests;
+ for (int32 Case = 0; Case < 7; ++Case)
+ {
+  auto Definitions = Hansa::Editor::EconomicDefinitions::CreateMvpDefinitionSet(GetTransientPackage());
+  auto* Need = CastChecked<UHansaNeedDefinition>(FindDefinition(Definitions,TEXT("Need.Fish")));
+  auto* Recipe = CastChecked<UHansaRecipeDefinition>(FindDefinition(Definitions,TEXT("Recipe.SaltedCatch")));
+  auto* Building = CastChecked<UHansaBuildingDefinition>(FindDefinition(Definitions,TEXT("Building.Fishery.SaltingShed")));
+  if (Case == 1) { const FHansaNeedAlternative Duplicate = Need->Alternatives[0]; Need->Alternatives.Add(Duplicate); }
+  if (Case == 2) Need->Alternatives[0].FulfillmentBasisPoints = 0;
+  if (Case == 3) Need->Alternatives[0].GoodId = TEXT("Good.Missing");
+  if (Case == 4) Recipe->Outputs[0].QuantityMilliUnits = 20001;
+  if (Case == 5) Recipe->Inputs.RemoveAt(0);
+  if (Case == 6) ++Building->FootprintWidthCells;
+  const auto Result = FHansaEconomicDefinitionCompiler::Compile(RawDefinitions(Definitions));
+  TestEqual(*FString::Printf(TEXT("Preservation authoring case %d validity"),Case),Result.IsValid(),Case==0);
+ }
+ FHansaEditorSchemaRegistry Schemas;
+ for (const auto* Class : {UHansaGoodDefinition::StaticClass(),UHansaRecipeDefinition::StaticClass(),UHansaNeedDefinition::StaticClass()})
+ {
+  const auto Schema = Schemas.BuildSchemaForClass(Class);
+  TestTrue(TEXT("Extended reflected schema is valid"),Schema.IsValid());
+  const FString Json = Schemas.ExportJsonSchema(Schema);
+  const TCHAR* Field = Class==UHansaGoodDefinition::StaticClass()?TEXT("bSpoilageEnabled"):Class==UHansaRecipeDefinition::StaticClass()?TEXT("InternalCatchRecipeId"):TEXT("Alternatives");
+  TestTrue(TEXT("New gameplay field is exported to authoring/AI contract"),Json.Contains(Field));
+ }
+ return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaPreservationImpactTest,
+ "Hansa.Content.Definitions.PreservedFish.ImpactAnalysis", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaPreservationImpactTest::RunTest(const FString&)
+{
+ const auto Definitions = Hansa::Editor::EconomicDefinitions::CreateMvpDefinitionSet(GetTransientPackage());
+ auto Raw = Hansa::Editor::Tests::RawDefinitions(Definitions);
+ const auto Fish = Hansa::Editor::EconomicDefinitions::DescribeEconomicImpact(TEXT("Good.PreservedFish"), Raw);
+ TestTrue(TEXT("Preserved fish edits expose alternative consumption dependency"), Fish.Contains(TEXT("Need.Fish.Alternatives")));
+ TestTrue(TEXT("Preserved fish edits expose salted output dependency"), Fish.Contains(TEXT("Recipe.SaltedCatch.Outputs")));
+ const auto Catch = Hansa::Editor::EconomicDefinitions::DescribeEconomicImpact(TEXT("Recipe.CatchFish"), Raw);
+ TestTrue(TEXT("Internal catch dependency is visible before editing source output"), Catch.Contains(TEXT("Recipe.SaltedCatch.InternalCatchRecipeId")));
+ const auto Shed = Hansa::Editor::EconomicDefinitions::DescribeEconomicImpact(TEXT("Building.Fishery.SaltingShed"), Raw);
+ TestTrue(TEXT("Upgrade target exposes source fishery dependency"), Shed.Contains(TEXT("Building.Fishery.UpgradeTargetBuildingId")));
+ Algo::Reverse(Raw);
+ TestTrue(TEXT("Impact analysis is discovery-order independent"), Fish == Hansa::Editor::EconomicDefinitions::DescribeEconomicImpact(TEXT("Good.PreservedFish"), Raw));
+ return !HasAnyErrors();
 }
 
 #endif

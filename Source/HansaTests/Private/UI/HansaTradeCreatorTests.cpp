@@ -1,6 +1,7 @@
 #include "Misc/AutomationTest.h"
 #if WITH_DEV_AUTOMATION_TESTS
 #include "UI/HansaTradeMapPresentationModel.h"
+#include "HansaTradeJourneySupport.h"
 #include "UI/SHansaTradeMap.h"
 #include "World/HansaRuntimeSimulationHost.h"
 #include "Widgets/Input/SEditableTextBox.h"
@@ -11,6 +12,7 @@ bool FTradeCreatorDelivery::RunTest(const FString&)
     using namespace Hansa::Simulation;
     TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>());
     FString Error; if(!TestTrue(TEXT("Runtime ready"),Host->InitializeForLubeck(nullptr,Error)))return false;
+    if(!TestTrue(TEXT("Reserve automation research completed for delivery fixture"),Hansa::Tests::TradeJourney::UnlockReserveAutomation(Host.Get())))return false;
     TStrongObjectPtr<UHansaTradeMapPresentationModel> Model(NewObject<UHansaTradeMapPresentationModel>());
     Model->InitializeDefaults();Model->BindRuntime(Host.Get());Model->ApplyProjection(Host->BuildProjection().Value,*Host->GetEconomicRegistry());Model->Open();
     auto Screen=SNew(Hansa::UI::SHansaTradeMap).Model(Model.Get());
@@ -56,6 +58,11 @@ bool FTradeCreatorRecovery::RunTest(const FString&)
     Model->Open(TEXT("Market.Detail.Action.BeginRoute"),TEXT("Good.Bread"));
     TestEqual(TEXT("Market good seeds actual draft"),Model->GetDraftStops()[0].Actions[0].GoodId.ToString(),FString(TEXT("Good.Bread")));
     TestTrue(TEXT("Market opens creation"),Model->GetSnapshot().bCreating);
+    Model->ReviewCreateIntent();
+    TestFalse(TEXT("Minimum reserve is blocked before research"),Model->GetSnapshot().bCanCreate);
+    TestTrue(TEXT("Research gate explains the corrective action"),Model->GetSnapshot().Validation.ToString().Contains(TEXT("Reserve instructions")));
+    if(!TestTrue(TEXT("Reserve automation can be unlocked through normal research commands"),Hansa::Tests::TradeJourney::UnlockReserveAutomation(Host.Get())))return false;
+    Model->ReviewCreateIntent();TestTrue(TEXT("Same preserved draft unlocks after research"),Model->GetSnapshot().bCanCreate);
     Model->SetRouteNameIntent(TEXT(""));Model->ReviewCreateIntent();TestFalse(TEXT("Empty name invalid"),Model->GetSnapshot().bCanCreate);
     Model->SetRouteNameIntent(TEXT("Rostock supplies"));Model->CycleStopCityIntent();Model->ReviewCreateIntent();
     TestFalse(TEXT("Duplicate adjacent cities invalid"),Model->GetSnapshot().bCanCreate);

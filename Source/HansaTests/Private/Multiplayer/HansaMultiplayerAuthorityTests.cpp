@@ -8,6 +8,8 @@
 #include "Network/HansaMultiplayerAuthority.h"
 #include "World/HansaGameMode.h"
 #include "World/HansaGameState.h"
+#include "World/HansaLubeckPlacementGrid.h"
+#include "World/HansaLubeckWorldFoundation.h"
 #include "World/HansaPlayerState.h"
 #include "World/HansaRuntimeSimulationHost.h"
 #include "World/HansaStrategyPlayerController.h"
@@ -59,10 +61,16 @@ bool FHansaServerAuthorityProjectionTest::RunTest(const FString& Parameters)
 	Lubeck.CityIds.Add(TEXT("City.Lubeck"));
 	FHansaClientInterest Hamburg;
 	Hamburg.CityIds.Add(TEXT("City.Hamburg"));
+	FHansaAdmissionGrant MissingAdmission;
+	TestFalse(TEXT("Authority rejects a connection without an admitted participant capability"),
+		Authority.RegisterAdmittedClient(MissingAdmission, Lubeck, Error));
+	FHansaClientProjectionSnapshot RejectedProjection;
+	TestFalse(TEXT("Rejected connection cannot receive a private projection"),
+		Authority.BuildProjection(999, 0, true, RejectedProjection, Error));
 	TestTrue(TEXT("Player principal binds to house one"),
-		Authority.RegisterClient(101, Host->GetHouseId(), Lubeck, Error));
+		Authority.RegisterAdmittedClient({101, FHansaParticipantId::TryCreate(1001).Value, Host->GetHouseId(), EHansaAdmissionMode::LanOffline}, Lubeck, Error));
 	TestTrue(TEXT("Rival principal binds to house two"),
-		Authority.RegisterClient(202, Host->GetRivalHouseId(), Hamburg, Error));
+		Authority.RegisterAdmittedClient({202, FHansaParticipantId::TryCreate(1002).Value, Host->GetRivalHouseId(), EHansaAdmissionMode::LanOffline}, Hamburg, Error));
 	TestEqual(TEXT("Exactly two proof clients are registered"), Authority.GetRegisteredClientCount(), 2);
 
 	FHansaClientProjectionSnapshot PlayerInitial;
@@ -207,6 +215,152 @@ bool FHansaServerAuthorityProjectionTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaEightHouseAuthorityTest,
+	"Hansa.Multiplayer.Authority.EightIndependentHouses",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaEightHouseAuthorityTest::RunTest(const FString& Parameters)
+{
+	UHansaRuntimeSimulationHost* Host = NewObject<UHansaRuntimeSimulationHost>();
+	FString Error;
+	if (!TestTrue(TEXT("Eight-house scenario initializes"),
+		Host->InitializeForLubeck(nullptr, Error, EHansaRuntimeScenario::LubeckGrainShortage, 0x4d503034ULL)))
+	{
+		AddError(Error);
+		return false;
+	}
+	TestEqual(TEXT("Scenario exposes eight stable houses"), Host->GetHouseIds().Num(), 8);
+	TestEqual(TEXT("Scenario exposes eight finite buildable opportunities"), Host->GetStartingOpportunities().Num(), 8);
+	const FHansaGridCoordinate PlayableStart = Hansa::Game::LubeckPlacementGrid::WorldToGrid(
+		Hansa::Game::LubeckMap::AutomationStartTransform().GetLocation());
+	const FHansaPlacementGridCell* PlayableStartCell = Host->FindPlacementMap()->Cells.FindByPredicate(
+		[PlayableStart](const FHansaPlacementGridCell& Cell) { return Cell.Coordinate == PlayableStart; });
+	if (!TestNotNull(TEXT("Prototype opening resolves to an authoritative placement cell"), PlayableStartCell)) return false;
+	TestEqual(TEXT("Prototype opening belongs to the local player's house"),
+		PlayableStartCell->OwnerId, Host->GetHouseId());
+	TArray<FHansaGridCoordinate> OpportunityAnchors;
+	for (const FHansaHouseStartOpportunity& Opportunity : Host->GetStartingOpportunities())
+	{
+		TestTrue(TEXT("Starting opportunity belongs to a valid house"), Opportunity.HouseId.IsValid());
+		TestTrue(TEXT("Starting opportunity has finite buildable cells"), Opportunity.BuildableCellCount > 0);
+		TestFalse(TEXT("Starting opportunity anchors do not overlap"), OpportunityAnchors.Contains(Opportunity.Anchor));
+		OpportunityAnchors.AddUnique(Opportunity.Anchor);
+	}
+	const auto SimulationProjection = Host->BuildProjection();
+	TestTrue(TEXT("Eight-house projection builds"), SimulationProjection.IsSuccess());
+	if (SimulationProjection)
+	{
+		TestEqual(TEXT("Projection contains all eight independent house economies"),
+			SimulationProjection.Value.GetHouses().Num(), 8);
+		for (const FHansaHouseId HouseId : Host->GetHouseIds())
+		{
+			TestTrue(TEXT("Every house owns a starting vehicle/route asset"),
+				SimulationProjection.Value.GetRoutes().ContainsByPredicate([HouseId](const FHansaRouteProjection& Route)
+					{ return Route.OwnerId == HouseId; }));
+		}
+	}
+	UHansaRuntimeSimulationHost* ReplayHost = NewObject<UHansaRuntimeSimulationHost>();
+	FString ReplayError;
+	TestTrue(TEXT("Identical seed reinitializes a second eight-house scenario"),
+		ReplayHost->InitializeForLubeck(nullptr, ReplayError,
+			EHansaRuntimeScenario::LubeckGrainShortage, 0x4d503034ULL));
+	const auto ReplayProjection = ReplayHost->BuildProjection();
+	TestTrue(TEXT("Identical eight-house initialization has a deterministic fingerprint"),
+		SimulationProjection && ReplayProjection &&
+		SimulationProjection.Value.GetFingerprint() == ReplayProjection.Value.GetFingerprint());
+	TestEqual(TEXT("Identical eight-house initialization has the same opportunity count"),
+		ReplayHost->GetStartingOpportunities().Num(), Host->GetStartingOpportunities().Num());
+	for (int32 Index = 0; Index < Host->GetStartingOpportunities().Num() &&
+		Index < ReplayHost->GetStartingOpportunities().Num(); ++Index)
+	{
+		TestEqual(TEXT("Starting opportunity owner is deterministic"),
+			ReplayHost->GetStartingOpportunities()[Index].HouseId,
+			Host->GetStartingOpportunities()[Index].HouseId);
+		TestEqual(TEXT("Starting opportunity anchor X is deterministic"),
+			ReplayHost->GetStartingOpportunities()[Index].Anchor.X,
+			Host->GetStartingOpportunities()[Index].Anchor.X);
+		TestEqual(TEXT("Starting opportunity anchor Y is deterministic"),
+			ReplayHost->GetStartingOpportunities()[Index].Anchor.Y,
+			Host->GetStartingOpportunities()[Index].Anchor.Y);
+		TestEqual(TEXT("Starting opportunity capacity is deterministic"),
+			ReplayHost->GetStartingOpportunities()[Index].BuildableCellCount,
+			Host->GetStartingOpportunities()[Index].BuildableCellCount);
+	}
+	UHansaRuntimeSimulationHost* FourPlayerHost = NewObject<UHansaRuntimeSimulationHost>();
+	FString FourPlayerError;
+	TestTrue(TEXT("Four-player mixed session initializes"), FourPlayerHost->InitializeForLubeck(
+		nullptr, FourPlayerError, EHansaRuntimeScenario::LubeckGrainShortage, 0x4d503034ULL));
+	FHansaMultiplayerAuthority FourPlayerAuthority;
+	TestTrue(TEXT("Four-player mixed authority initializes"), FourPlayerAuthority.Initialize(*FourPlayerHost));
+	FHansaClientInterest FourPlayerInterest;
+	FourPlayerInterest.CityIds.Add(TEXT("City.Lubeck"));
+	for (int32 Index = 0; Index < 4; ++Index)
+	{
+		TestTrue(TEXT("Four-player mixed session claims a distinct house"),
+			FourPlayerAuthority.RegisterAdmittedClient(
+				{static_cast<uint64>(3001 + Index), FHansaParticipantId::TryCreate(4001 + Index).Value,
+					FourPlayerHost->GetHouseIds()[Index], EHansaAdmissionMode::LanOffline},
+				FourPlayerInterest, FourPlayerError));
+	}
+	TestEqual(TEXT("Four-player mixed session has four human controllers"),
+		FourPlayerAuthority.GetRegisteredClientCount(), 4);
+	TestEqual(TEXT("Four-player mixed session fills the other four houses with AI"),
+		FourPlayerHost->GetAIControlledHouseCount(), 4);
+
+	FHansaMultiplayerAuthority Authority;
+	TestTrue(TEXT("Authority initializes for eight-house campaign"), Authority.Initialize(*Host));
+	FHansaClientInterest Interest;
+	Interest.CityIds.Add(TEXT("City.Lubeck"));
+	TArray<uint64> Principals;
+	for (int32 Index = 0; Index < 8; ++Index)
+	{
+		const uint64 Principal = static_cast<uint64>(1001 + Index);
+		const FHansaParticipantId Participant = FHansaParticipantId::TryCreate(2001 + Index).Value;
+		TestTrue(*FString::Printf(TEXT("Client %d claims a distinct house"), Index + 1),
+			Authority.RegisterAdmittedClient(
+				{Principal, Participant, Host->GetHouseIds()[Index], EHansaAdmissionMode::LanOffline},
+				Interest, Error));
+		Principals.Add(Principal);
+		FHansaClientProjectionSnapshot Projection;
+		TestTrue(TEXT("Independent client receives its owner projection"),
+			Authority.BuildProjection(Principal, 0, true, Projection, Error));
+		TestEqual(TEXT("Owner projection binds the distinct house"),
+			Projection.OwnerHouseId, static_cast<int64>(Host->GetHouseIds()[Index].GetValue()));
+	}
+	TestEqual(TEXT("All eight clients are registered"), Authority.GetRegisteredClientCount(), 8);
+	TestEqual(TEXT("Zero AI controllers remain when all houses are human"), Host->GetAIControlledHouseCount(), 0);
+	TestFalse(TEXT("A ninth client cannot double-claim a house"),
+		Authority.RegisterAdmittedClient(
+			{9009, FHansaParticipantId::TryCreate(9009).Value, Host->GetHouseIds()[0], EHansaAdmissionMode::LanOffline},
+			Interest, Error));
+	TestEqual(TEXT("Rejected ninth client does not change capacity"), Authority.GetRegisteredClientCount(), 8);
+	const int32 StartingRouteCount = SimulationProjection ? SimulationProjection.Value.GetRoutes().Num() : 0;
+	Authority.UnregisterClient(Principals[3]);
+	TestEqual(TEXT("Disconnect releases exactly one house"), Authority.GetRegisteredClientCount(), 7);
+	TestEqual(TEXT("AI resumes for exactly the released house by policy"), Host->GetAIControlledHouseCount(), 1);
+	FHansaClientProjectionSnapshot ReleasedProjection;
+	TestFalse(TEXT("Released principal immediately loses its private projection"),
+		Authority.BuildProjection(Principals[3], 0, true, ReleasedProjection, Error));
+	const FHansaHouseId SwappedHouse = Host->GetHouseIds()[3];
+	TestTrue(TEXT("Replacement human atomically takes the released house from AI"),
+		Authority.RegisterAdmittedClient(
+			{9010, FHansaParticipantId::TryCreate(9010).Value, SwappedHouse, EHansaAdmissionMode::LanOffline},
+			Interest, Error));
+	TestEqual(TEXT("Replacement returns the session to eight human controllers"),
+		Authority.GetRegisteredClientCount(), 8);
+	TestEqual(TEXT("Replacement leaves no competing AI controller"), Host->GetAIControlledHouseCount(), 0);
+	const auto SwappedProjection = Host->BuildProjection();
+	TestTrue(TEXT("Ownership swap preserves the authoritative simulation"), SwappedProjection.IsSuccess());
+	if (SwappedProjection)
+	{
+		TestEqual(TEXT("Ownership swap does not duplicate starting assets"),
+			SwappedProjection.Value.GetRoutes().Num(), StartingRouteCount);
+		TestEqual(TEXT("Ownership swap preserves all house economies"),
+			SwappedProjection.Value.GetHouses().Num(), 8);
+	}
+	return !HasAnyErrors();
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaTwoPlayerReconnectFixtureTest,
 	"Hansa.Multiplayer.Authority.TwoPlayerReconnectFixture",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -248,10 +402,10 @@ bool FHansaTwoPlayerReconnectFixtureTest::RunTest(const FString& Parameters)
 	}
 	FHansaClientInterest Lubeck;
 	Lubeck.CityIds.Add(TEXT("City.Lubeck"));
-	TestTrue(TEXT("First owner joins"), Authority.RegisterClient(
-		101, Host->GetHouseId(), Lubeck, Error));
-	TestTrue(TEXT("Second owner joins"), Authority.RegisterClient(
-		202, Host->GetRivalHouseId(), Lubeck, Error));
+	TestTrue(TEXT("First owner joins"), Authority.RegisterAdmittedClient(
+		{101, FHansaParticipantId::TryCreate(1001).Value, Host->GetHouseId(), EHansaAdmissionMode::LanOffline}, Lubeck, Error));
+	TestTrue(TEXT("Second owner joins"), Authority.RegisterAdmittedClient(
+		{202, FHansaParticipantId::TryCreate(1002).Value, Host->GetRivalHouseId(), EHansaAdmissionMode::LanOffline}, Lubeck, Error));
 
 	FHansaClientCommandIntent Place = Intent(
 		1, 11001, EHansaClientIntentType::PlaceBuilding);
@@ -299,7 +453,7 @@ bool FHansaTwoPlayerReconnectFixtureTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Disconnect releases one authority registration"),
 		Authority.GetRegisteredClientCount(), 1);
 	TestTrue(TEXT("Reconnecting owner receives the same house"),
-		Authority.RegisterClient(303, Host->GetRivalHouseId(), Lubeck, Error));
+		Authority.RegisterAdmittedClient({303, FHansaParticipantId::TryCreate(1002).Value, Host->GetRivalHouseId(), EHansaAdmissionMode::LanOffline}, Lubeck, Error));
 
 	FHansaClientProjectionSnapshot Reconnected;
 	TestTrue(TEXT("Reconnect projection is available"),
@@ -315,8 +469,10 @@ bool FHansaTwoPlayerReconnectFixtureTest::RunTest(const FString& Parameters)
 			return Route.RouteId == 3 && Route.OwnerHouseId == 2 && Route.bCargoVisible;
 		}));
 
+	TestEqual(TEXT("TR05 fixture pins fingerprint contract"),FHansaSimulationState::DeterminismFingerprintVersion,28U);
+	TestEqual(TEXT("TR05 fixture pins command contract"),FHansaCommandHeader::CurrentSchemaVersion,uint16(11));
 	const FString ExpectedHash =
-		FixtureJson->GetStringField(TEXT("expectedFinalAuthoritativeHash"));
+		FixtureJson->GetStringField(TEXT("expectedFinalAuthoritativeHashV28Command11"));
 	AddInfo(FString::Printf(TEXT("two_player_authority_v1 final authoritative hash: %s"),
 		*FirstFinal.AuthoritativeHash));
 	if (!ExpectedHash.StartsWith(TEXT("record-after")))

@@ -1,0 +1,197 @@
+{
+  "format": "glb",
+  "bounds_min": [
+    -4.335000038146973,
+    -4.406498432159424,
+    -4.470348358154297e-08
+  ],
+  "bounds_max": [
+    5.360000133514404,
+    5.417051792144775,
+    9.194053649902344
+  ],
+  "size": [
+    9.695000171661377,
+    9.8235502243042,
+    9.194053694605827
+  ],
+  "materials": [
+    "M_MaltHouse_Brick_Portable",
+    "M_MaltHouse_Clay_Portable",
+    "M_MaltHouse_Iron_Portable",
+    "M_MaltHouse_Mortar_Portable",
+    "M_MaltHouse_Oak_Portable",
+    "M_MaltHouse_Recess_Portable",
+    "M_MaltHouse_Sacking_Portable"
+  ],
+  "images": [
+    {
+      "name": "T_MaltHouse_Brick_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Brick_NormalGL",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Brick_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Clay_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Clay_NormalGL",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Clay_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Iron_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Iron_NormalGL",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Iron_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Mortar_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Mortar_NormalGL",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Mortar_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Oak_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Oak_NormalGL",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Oak_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Recess_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Recess_NormalGL",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Recess_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Sacking_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Sacking_NormalGL",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    },
+    {
+      "name": "T_MaltHouse_Sacking_Roughness",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    }
+  ]
+}

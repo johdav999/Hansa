@@ -56,10 +56,7 @@ public:
     void Refresh(const FHansaInspectorFlowPresentation& D)
     {
         Label->SetText(D.Label); Percent->SetText(D.State); Amount->SetText(D.Value);
-        Glyph->SetGlyph(D.DemandGoodId==TEXT("Good.Bread") ? EUiGlyph::Bread :
-            D.DemandGoodId==TEXT("Good.Fish") ? EUiGlyph::Fish :
-            D.DemandGoodId==TEXT("Good.Beer") ? EUiGlyph::Beer :
-            D.DemandGoodId==TEXT("Good.Tools") ? EUiGlyph::Production : EUiGlyph::Information);
+        Glyph->SetGlyph(GlyphForGood(D.DemandGoodId));
         Bar->SetPercent(D.bDemandKnown && D.DemandRequired>0 ? FMath::Clamp(float(double(D.DemandSupplied)/D.DemandRequired),0.f,1.f) : 0.f);
         SetToolTipText(FText::Format(NSLOCTEXT("HansaMarketDemandRow","RollingTooltip","{0}\n{1}\nDemand fulfilled: {2}\nCity-wide · {3}. Supply counts goods actually consumed; access and affordability can also limit consumption."),D.Label,D.Value,D.State,D.DemandPeriod));
     }

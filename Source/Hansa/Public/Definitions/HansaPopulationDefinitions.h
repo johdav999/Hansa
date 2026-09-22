@@ -12,10 +12,22 @@ enum class EHansaNeedKind : uint8
 	Service
 };
 
+USTRUCT(BlueprintType)
+struct HANSA_API FHansaNeedAlternative
+{
+ GENERATED_BODY()
+ UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Need", meta=(DisplayName="Alternative good", ToolTip="Alternative Good.* satisfying the remaining need after earlier choices.", HansaRequired="true", HansaReference="Good", HansaBulkEditable="false", HansaAIAccess="Generate", HansaMigration="Compatible", HansaSerialization="Included", HansaValidation="StableReference"))
+ FString GoodId;
+ UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Need", meta=(DisplayName="Food value", ToolTip="Fulfillment per edible unit. 10000 equals the primary good.", ClampMin="1", ClampMax="100000", HansaRequired="true", HansaReference="None", HansaBulkEditable="true", HansaAIAccess="Suggest", HansaMigration="Compatible", HansaSerialization="Included", HansaValidation="Range", HansaUnit="BasisPoint", HansaMin="1", HansaMax="100000"))
+ int32 FulfillmentBasisPoints = 10000;
+};
+
+
+
 UCLASS(BlueprintType, meta = (
 	DisplayName = "Need definition",
 	HansaSchemaId = "Hansa.NeedDefinition",
-	HansaSchemaVersion = "1"))
+	HansaSchemaVersion = "2"))
 class HANSA_API UHansaNeedDefinition final : public UHansaDefinitionBase
 {
 	GENERATED_BODY()
@@ -34,6 +46,39 @@ public:
 		HansaRequired = "false", HansaReference = "Good", HansaBulkEditable = "false", HansaAIAccess = "Generate",
 		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "ConditionalStableReference"))
 	FString GoodId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Need|Season", meta = (
+		DisplayName = "bSeasonal", ToolTip = "Scale good consumption by the deterministic calendar; zero demand is excluded from satisfaction.", 
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Boolean"))
+	bool bSeasonal = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Need|Season", meta = (
+		DisplayName = "SeasonDays", ToolTip = "Length of each season in game days. Calendar begins in summer.", ClampMin = "1", ClampMax = "365", HansaMin = "1", HansaMax = "365", HansaUnit = "GameDay",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Range"))
+	int32 SeasonDays = 90;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Need|Season", meta = (
+		DisplayName = "FixedSeason", ToolTip = "Minus one follows the calendar; 0 summer, 1 autumn, 2 winter, 3 spring fixes the season for scenarios.", ClampMin = "-1", ClampMax = "3", HansaMin = "-1", HansaMax = "3", HansaUnit = "SeasonIndex",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Range"))
+	int32 FixedSeason = -1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Need|Heating", meta = (
+		DisplayName = "Default household reserve days", ToolTip = "Default protected household heating stock in days; excludes industrial demand.",
+		ClampMin = "0", ClampMax = "90", HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Range", HansaUnit = "GameDay", HansaMin = "0", HansaMax = "90"))
+	int32 DefaultReserveDays = 3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Need|Season", meta = (
+		DisplayName = "SeasonMultipliers", ToolTip = "Exactly four demand multipliers: summer, autumn, winter, spring. Each is 0 to 10000 basis points.", HansaUnit = "BasisPoint",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "SeasonMultipliers"))
+	TArray<int32> SeasonMultipliers = { 0, 4000, 10000, 4000 };
+
+ UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Need", meta=(DisplayName="Alternative goods", ToolTip="Ordered substitutes. Empty retains single-good behavior. Services cannot have substitutes.", HansaRequired="false", HansaReference="Good", HansaBulkEditable="false", HansaAIAccess="Generate", HansaMigration="Compatible", HansaSerialization="Included", HansaValidation="NeedAlternatives"))
+ TArray<FHansaNeedAlternative> Alternatives;
 
 	virtual void ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const override;
 

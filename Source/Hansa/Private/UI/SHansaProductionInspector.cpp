@@ -154,6 +154,12 @@ TSharedRef<SWidget> SHansaProductionInspector::Rule()
 }
 TSharedRef<SHansaAction> SHansaProductionInspector::Action(const TCHAR* Id,FText Label,bool Primary)
 {
+    if (auto* Existing = Buttons.Find(Id))
+    {
+        (*Existing)->SetLabel(Label);
+        Targets.Add(Id, *Existing);
+        return Existing->ToSharedRef();
+    }
     auto Button = SNew(SHansaAction).Preferences(Preferences).Compact(!Preferences.bLargeText)
         .Kind(Primary?EHansaUiButtonStyle::Primary:EHansaUiButtonStyle::Secondary)
         .Label(Label).OnClicked(this,&SHansaProductionInspector::Invoke,FName(Id));
@@ -214,7 +220,7 @@ void SHansaProductionInspector::Construct(const FArguments& Args)
     auto Icon=[&](const TCHAR* Name,float Size)->TSharedRef<SWidget>
     {
         if(FCString::Strcmp(Name,TEXT("worker"))!=0)
-            return SNew(SHansaGlyph).Glyph(FCString::Strcmp(Name,TEXT("cost"))==0?EUiGlyph::Coin:EUiGlyph::Laborer).Size(Size);
+            return SNew(SHansaGlyph).Glyph(FCString::Strcmp(Name,TEXT("cost"))==0?EUiGlyph::Coin:EUiGlyph::People).Size(Size);
         auto Brush=MakeShared<FSlateDynamicImageBrush>(FName(*(FPaths::ProjectContentDir()/TEXT("Hansa/UI/Production/")+Name+TEXT("--160.png"))),FVector2D(Size,Size));
         StaticArtBrushes.Add(Brush);return SNew(SScaleBox).Stretch(EStretch::ScaleToFit)[SNew(SImage).Image(&Brush.Get())];
     };
@@ -285,7 +291,7 @@ void SHansaProductionInspector::Construct(const FArguments& Args)
     };
     auto Cost=FooterCell(TEXT("Inspector.Production.Cost"),TEXT("cost"),LOCTEXT("BatchCost","Cost / batch"),CostValue);
     Cost->SetToolTipText(LOCTEXT("NoOperatingCost","No operating cost is defined for this production. The cost value is blank."));
-    auto Labor=FooterCell(TEXT("Inspector.Production.Labor"),TEXT("labor"),LOCTEXT("Labor","Labor needed"),LaborSummary);
+    auto Labor=FooterCell(TEXT("Inspector.Production.Labor"),TEXT("labor"),LOCTEXT("WorkersNeeded","Workers needed"),LaborSummary);
     LaborFooter=Labor;
     ChildSlot[SNew(SVerticalBox)
         + SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)[Portrait]
@@ -302,6 +308,7 @@ void SHansaProductionInspector::Construct(const FArguments& Args)
                         + SVerticalBox::Slot().AutoHeight().Padding(0,8)[SNew(SHorizontalBox)
                             + SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(0,0,4,0)[SAssignNew(StateGlyph,SHansaGlyph).Glyph(EUiGlyph::Check).Size(20)]
                             + SHorizontalBox::Slot().FillWidth(1)[State.ToSharedRef()]]
+                        + SVerticalBox::Slot().AutoHeight()[SAssignNew(PreservationControls,SVerticalBox)]
                         + SVerticalBox::Slot().AutoHeight().Padding(0,4)[SAssignNew(FlowHost,SBox)[Flow]]
                         + SVerticalBox::Slot().AutoHeight()[Details]]]
                 + SVerticalBox::Slot().AutoHeight().Padding(16,4)[SNew(SHorizontalBox)
@@ -361,8 +368,8 @@ void SHansaProductionInspector::Refresh(const FHansaInspectorSnapshot& S)
     DetailsContent->SetVisibility(S.bCauseExpanded?EVisibility::Visible:EVisibility::Collapsed);
     LaborSummary->SetText(FText::AsNumber(D.RequiredLaborers+D.RequiredArtisans));
     LaborFooter->SetToolTipText(FText::Format(LOCTEXT("LaborBreakdown","Laborers: {0} / {1}\nArtisans: {2} / {3}"),FText::AsNumber(D.Laborers),FText::AsNumber(D.RequiredLaborers),FText::AsNumber(D.Artisans),FText::AsNumber(D.RequiredArtisans)));
-    const bool Warning=!D.bCanProgress && D.bActive;
-    State->SetText(!D.bActive?LOCTEXT("Paused","Paused"):Warning?LOCTEXT("Blocked","Production blocked"):D.bSimulationPaused?LOCTEXT("SimulationPaused","Simulation paused"):D.Outputs.ContainsByPredicate([](const auto& P){return P.GoodId==TEXT("Good.Bread");})?LOCTEXT("Baking","Baking"):LOCTEXT("Working","Producing"));
+    const bool Warning=(!D.bCanProgress && D.bActive) || (D.bRoadRequired && !D.bHasMarketAccess);
+    State->SetText(D.bRoadRequired && !D.bHasMarketAccess ? LOCTEXT("MarketNotInRange","Market not in range") : !D.bActive?LOCTEXT("Paused","Paused"):Warning?LOCTEXT("Blocked","Production blocked"):D.bSimulationPaused?LOCTEXT("SimulationPaused","Simulation paused"):D.Outputs.ContainsByPredicate([](const auto& P){return P.GoodId==TEXT("Good.Bread");})?LOCTEXT("Baking","Baking"):LOCTEXT("Working","Producing"));
     StateGlyph->SetGlyph(Warning?EUiGlyph::Warning:D.bActive?EUiGlyph::Check:EUiGlyph::Information);
     State->SetColorAndOpacity(Color(Warning?EHansaUiColorToken::Ink:EHansaUiColorToken::ProsperityTeal));
     Percent->SetText(FText::Format(LOCTEXT("Percent","{0}%"),FText::AsNumber(FMath::FloorToInt(100.f*D.ProgressTicks/FMath::Max(1,D.CycleTicks)))));
@@ -384,7 +391,7 @@ void SHansaProductionInspector::Refresh(const FHansaInspectorSnapshot& S)
     Values[TEXT("Inspector.Production.Record.Batches")]->SetText(FText::AsNumber(D.CompletedBatches));
     for(const auto& P:D.Outputs)
     {
-        const FText Total=P.PerBatch>0 && D.CompletedBatches<=uint64(MAX_int64/P.PerBatch)?Quantity(int64(D.CompletedBatches)*P.PerBatch):LOCTEXT("TotalUnknown","Unavailable");
+        const FText Total=Quantity(P.ProducedTotal);
         Values[TEXT("Inspector.Production.Record.")+P.GoodId.ToString()]->SetText(FText::Format(LOCTEXT("TotalGood","{0} {1}"),Total,P.Label));
     }
     LaborerCount->SetText(FText::Format(LOCTEXT("StaffCount","{0} / {1}"),FText::AsNumber(D.Laborers),FText::AsNumber(D.RequiredLaborers)));
@@ -447,7 +454,40 @@ void SHansaProductionInspector::Refresh(const FHansaInspectorSnapshot& S)
     if(S.Actions!=Presented.Actions)
     {
         ExtraActions->ClearChildren();
-        for(const auto Id:{TEXT("Inspector.Action.RemoveBuilding"),TEXT("Inspector.Action.CancelConstruction")}) { Buttons.Remove(Id);Targets.Remove(Id); }
+        PreservationControls->ClearChildren();
+        for(const auto Id:{TEXT("Inspector.Action.RemoveBuilding"),TEXT("Inspector.Action.CancelConstruction"),TEXT("Inspector.Preservation.Upgrade"),TEXT("Inspector.Preservation.Fresh"),TEXT("Inspector.Preservation.Salted"),TEXT("Inspector.Preservation.Fallback")}) { Buttons.Remove(Id);Targets.Remove(Id); }
+		TArray<FString> OldRecipeButtons;
+		for (const auto& Pair : Buttons) if (Pair.Key.StartsWith(TEXT("Inspector.Recipe."))) OldRecipeButtons.Add(Pair.Key);
+		for (const FString& Id : OldRecipeButtons)
+        {
+            if (!S.Actions.ContainsByPredicate([&](const auto& A) { return A.StableId == FName(*Id); }))
+            { Buttons.Remove(Id); Targets.Remove(Id); }
+        }
+        bool HasRecipeControls = false;
+        TSharedPtr<SHorizontalBox> Modes;
+        for(const auto& A:S.Actions)
+		{
+			const FString ActionId = A.StableId.ToString();
+			if(ActionId.StartsWith(TEXT("Inspector.Preservation.")) || ActionId.StartsWith(TEXT("Inspector.Recipe.")))
+        {
+
+            HasRecipeControls = true;
+            auto Button=Action(*A.StableId.ToString(),A.Label);
+            Button->SetState(!A.bEnabled?EUiState::Disabled:A.bSelected?EUiState::Selected:EUiState::Default,A.bEnabled?A.ToolTip:A.DisabledReason);
+            if(A.StableId==TEXT("Inspector.Preservation.Fresh") || A.StableId==TEXT("Inspector.Preservation.Salted") || ActionId.StartsWith(TEXT("Inspector.Recipe.")))
+            {
+                if(!Modes) PreservationControls->AddSlot().AutoHeight().Padding(0,2)[SAssignNew(Modes,SHorizontalBox)];
+                Modes->AddSlot().FillWidth(1).Padding(2,0)[Button];
+            }
+            else PreservationControls->AddSlot().AutoHeight().Padding(0,2)[Button];
+            if(A.StableId==TEXT("Inspector.Preservation.Upgrade"))
+                PreservationControls->AddSlot().AutoHeight().Padding(0,2)[Text(A.bEnabled?A.ToolTip:A.DisabledReason)];
+        }
+		}
+        if(!S.PreservationSummary.IsEmpty()) PreservationControls->AddSlot().AutoHeight().Padding(0,2)[Text(S.PreservationSummary,EHansaUiTypographyToken::Body)];
+        if(auto Portrait=Resolve(TEXT("Inspector.Production.Portrait"))) Portrait->SetVisibility(HasRecipeControls?EVisibility::Collapsed:EVisibility::Visible);
+        ProcessHeading->SetVisibility(HasRecipeControls?EVisibility::Collapsed:EVisibility::Visible);
+        PreservationControls->SetVisibility(HasRecipeControls?EVisibility::Visible:EVisibility::Collapsed);
         for(const auto& A:S.Actions)if(A.StableId==TEXT("Inspector.Action.RemoveBuilding")||A.StableId==TEXT("Inspector.Action.CancelConstruction"))
         {
             auto Button=Action(*A.StableId.ToString(),A.Label);Button->SetState(A.bEnabled?EUiState::Default:EUiState::Disabled,A.bEnabled?A.ToolTip:A.DisabledReason);
@@ -459,7 +499,7 @@ void SHansaProductionInspector::Refresh(const FHansaInspectorSnapshot& S)
     for(bool Input:{true,false})for(const auto& P:Input?D.Inputs:D.Outputs)FocusOrder.Add(PortId(Input,P.GoodId));
     FocusOrder.Append({TEXT("Inspector.Action.ToggleProduction"),TEXT("Inspector.Action.OpenCause")});
     if(S.bCauseExpanded)FocusOrder.Append({TEXT("Inspector.Action.ViewStorage"),TEXT("Inspector.Action.OpenRelated"),TEXT("Inspector.Action.Pin"),TEXT("Inspector.Action.Frame")});
-    if(S.bCauseExpanded)for(const auto& A:S.Actions)if(A.StableId==TEXT("Inspector.Action.RemoveBuilding")||A.StableId==TEXT("Inspector.Action.CancelConstruction"))FocusOrder.Add(A.StableId.ToString());
+    for(const auto& A:S.Actions)if(A.StableId.ToString().StartsWith(TEXT("Inspector.Preservation.")) || A.StableId.ToString().StartsWith(TEXT("Inspector.Recipe.")) || (S.bCauseExpanded && (A.StableId==TEXT("Inspector.Action.RemoveBuilding")||A.StableId==TEXT("Inspector.Action.CancelConstruction"))))FocusOrder.Add(A.StableId.ToString());
     FocusOrder.RemoveAll([&](const auto& Id){const auto W=Resolve(Id);return !W.IsValid() || !W->IsEnabled() || W->GetVisibility()==EVisibility::Collapsed;});
     Presented=S;
 }
@@ -541,7 +581,7 @@ TArray<FHansaHudSemanticNode> SHansaProductionInspector::GetSemanticSnapshot()co
     Add(TEXT("Inspector.Production.Batch.Percent"),TEXT("Process completed"),TooltipPercent->GetText().ToString());
     Add(TEXT("Inspector.Production.Portrait"),TEXT("Hansa worker portrait"),TEXT("Worker"));
     Add(TEXT("Inspector.Production.Cost"),TEXT("Cost per batch"),TEXT(""));
-    Add(TEXT("Inspector.Production.Labor"),TEXT("Labor needed"),LaborSummary->GetText().ToString());
+    Add(TEXT("Inspector.Production.Labor"),TEXT("Workers needed"),LaborSummary->GetText().ToString());
     for(bool Input:{true,false})for(const auto& P:Input?Presented.Production.Inputs:Presented.Production.Outputs)
     {
         const auto Id=PortId(Input,P.GoodId);

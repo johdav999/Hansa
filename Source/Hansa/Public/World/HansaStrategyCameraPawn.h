@@ -106,6 +106,8 @@ public:
     void RestoreViewState(const Hansa::Game::FHansaStrategyCameraState& State);
     void SetViewBounds(FVector2D Min, FVector2D Max);
     void RestoreHomeBounds();
+    FVector2D GetViewBoundsMin() const { return MapBoundsMin; }
+    FVector2D GetViewBoundsMax() const { return MapBoundsMax; }
 private:
 	FVector2D GetMouseEdgePanIntent() const;
 	void ResolveMapBounds();
@@ -122,3 +124,4 @@ private:
 	FVector2D MapBoundsMin = FVector2D(-12000.0f, -8000.0f);
 	FVector2D MapBoundsMax = FVector2D(12000.0f, 8000.0f);
 };
+

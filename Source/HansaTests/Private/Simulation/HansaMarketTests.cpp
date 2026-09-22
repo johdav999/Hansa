@@ -189,7 +189,7 @@ namespace Hansa::Tests::Market
 		return Require(FHansaSimulationState::TryCreate(MoveTemp(Initialization)));
 	}
 
-	FHansaSimulationState MakeIntercityKnowledgeState(const bool bSourceHasInitialReport)
+	FHansaSimulationState MakeIntercityKnowledgeState(const bool bSourceHasInitialReport, const bool bImprovedReports = false)
 	{
 		FHansaSimulationInitialization Initialization;
 		Initialization.Clock = Require(FHansaSimulationClock::TryCreate(
@@ -201,6 +201,17 @@ namespace Hansa::Tests::Market
 		const FHansaCityDefinitionId Lubeck = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")));
 		const FHansaCityDefinitionId Rostock = Require(FHansaCityDefinitionId::TryParse(TEXT("City.Rostock")));
 		Initialization.Cities = { { Lubeck, FHansaQuantity() }, { Rostock, FHansaQuantity() } };
+		if (bImprovedReports)
+		{
+			const FHansaHouseId HouseId = FHansaHouseId::TryCreate(1, 1).Value;
+			Initialization.Houses = {{HouseId, FHansaMoney::FromRaw(0)}};
+			FHansaHouseResearchInitialization Research;
+			Research.HouseId = HouseId;
+			Research.CompletedTechnologyIds = {TEXT("Technology.Commerce.MarketReports")};
+			Research.AppliedEffects = {{TEXT("Technology.Commerce.MarketReports"),
+				EHansaResearchEffectKind::MarketReportAgeReductionTicks, TEXT("City.Rostock"), 5}};
+			Initialization.Research.Add(MoveTemp(Research));
+		}
 
 		for (const TPair<FHansaInventoryId, FHansaCityDefinitionId>& Entry : {
 			TPair<FHansaInventoryId, FHansaCityDefinitionId>(MarketEntity<FHansaInventoryId>(1), Lubeck),
@@ -556,6 +567,17 @@ bool FHansaIntercityMarketKnowledgeTest::RunTest(const FString& Parameters)
 	Price = State.CreateReadOnlyAccess(Definitions).QueryKnownMarketPrice(Rostock, Bread);
 	TestTrue(TEXT("Five-tick-old report is stale"), Price.IsSet() &&
 		Price->InformationState == EHansaMarketInformationState::Stale);
+	FHansaSimulationState ImprovedReports = MakeIntercityKnowledgeState(true, true);
+	FHansaSimulationTransientCache ImprovedCache;
+	for (int32 Index = 0; Index < 5; ++Index) TestTrue(TEXT("Improved-report comparison advances"), Step(ImprovedReports, Definitions, ImprovedCache));
+	const FHansaHouseId ViewingHouse = FHansaHouseId::TryCreate(1, 1).Value;
+	const auto ImprovedPrice = ImprovedReports.CreateReadOnlyAccess(Definitions).QueryKnownMarketPrice(Rostock, Bread, ViewingHouse);
+	const auto OtherHousePrice = ImprovedReports.CreateReadOnlyAccess(Definitions).QueryKnownMarketPrice(
+		Rostock, Bread, FHansaHouseId::TryCreate(2, 1).Value);
+	TestTrue(TEXT("Report research keeps the matching city's five-tick-old report current"), ImprovedPrice.IsSet() &&
+		ImprovedPrice->InformationState == EHansaMarketInformationState::Current);
+	TestTrue(TEXT("Report research does not leak to another house"), OtherHousePrice.IsSet() &&
+		OtherHousePrice->InformationState == EHansaMarketInformationState::Stale);
 	for (int32 Index = 5; Index < 11; ++Index)
 	{
 		TestTrue(TEXT("Remote estimate-age progression advances"), Step(State, Definitions, Cache));

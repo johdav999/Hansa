@@ -8,6 +8,7 @@
 class UStaticMesh;
 class AActor;
 class UTexture2D;
+class UHansaResidentialCompoundDefinition;
 
 UENUM(BlueprintType)
 enum class EHansaConstructionMenuCategory : uint8
@@ -136,6 +137,9 @@ public:
 		HansaMax = "10000"))
 	int32 SpoilageBasisPointsPerDay = 0;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Good|Storage", meta = (DisplayName = "Enable spoilage", ToolTip = "Apply the authored rate in physical storage and cargo. Legacy goods remain disabled until explicitly balanced.", HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest", HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Boolean"))
+    bool bSpoilageEnabled = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Good|Presentation", meta = (
 		DisplayName = "Icon",
 		ToolTip = "Optional promoted production icon; identity never depends on this asset path.",
@@ -164,6 +168,9 @@ class HANSA_API UHansaRecipeDefinition final : public UHansaDefinitionBase
 
 public:
 	UHansaRecipeDefinition();
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Recipe|Classification", meta = (DisplayName = "Internal catch recipe", ToolTip = "Optional source recipe caught internally in this batch, without buying its output. Packaging inputs remain normal inputs. The source and processing modes must share the same shoreline fishery.", HansaRequired = "false", HansaReference = "Recipe", HansaBulkEditable = "false", HansaAIAccess = "Suggest", HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "InternalCatch"))
+    FString InternalCatchRecipeId;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Recipe|Flow", meta = (
 		DisplayName = "Inputs",
@@ -239,7 +246,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Recipe|Classification", meta = (
 		DisplayName = "Declared source",
-		ToolTip = "Marks a recipe whose inputs come from an abstract natural source rather than another good.",
+		ToolTip = "Marks a recipe whose inputs come from a natural source rather than another good. Recipe.FellTimber requires uncovered standing trees within 12 four-metre cells of its building footprint in spatial scenarios.",
 		HansaRequired = "true",
 		HansaReference = "None",
 		HansaBulkEditable = "true",
@@ -267,6 +274,15 @@ protected:
 	virtual void AppendDefinitionHashData(FString& InOutCanonicalData) const override;
 };
 
+UENUM(BlueprintType)
+enum class EHansaConstructionTier : uint8
+{
+    Legacy,
+    DayLaborers,
+    Craftsmen,
+    Merchants
+};
+
 UCLASS(BlueprintType, meta = (
 	DisplayName = "Building definition",
 	HansaSchemaId = "Hansa.BuildingDefinition",
@@ -277,6 +293,22 @@ class HANSA_API UHansaBuildingDefinition final : public UHansaDefinitionBase
 
 public:
 	UHansaBuildingDefinition();
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Construction Menu", meta = (
+        DisplayName = "Construction tier", ToolTip = "Owns this construction card independently of workforce and household demand. Legacy preserves existing catalogs; new production buildings should select one explicit tier.",
+        HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true",
+        HansaAIAccess = "Suggest", HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Enum"))
+    EHansaConstructionTier ConstructionTier = EHansaConstructionTier::Legacy;
+
+
+ // Optional extension: empty preserves the schema-v5 content hash and existing save footprints.
+ UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Building|Compound", meta=(DisplayName="Residential compound", ToolTip="Optional compound definition. Footprint and population tier must match; larger parcels require an explicit migration.", HansaRequired="false", HansaReference="Compound", HansaBulkEditable="false", HansaAIAccess="Never", HansaMigration="Compatible", HansaSerialization="Included", HansaValidation="CompoundFootprint"))
+ TSoftObjectPtr<UHansaResidentialCompoundDefinition> ResidentialCompound;
+ UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Building|Compound", meta=(DisplayName="Compound stage", ToolTip="Visual development stage; child structures never add population.", HansaRequired="true", HansaReference="None", HansaBulkEditable="false", HansaAIAccess="Generate", HansaMigration="Compatible", HansaSerialization="Included", HansaValidation="Range", HansaUnit="Stage", HansaMin="1", HansaMax="3"))
+ int32 CompoundStage = 1;
+ UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Building|Compound", meta=(DisplayName="Compound district", ToolTip="Optional authored district eligibility key. Empty selects unrestricted layouts.", HansaRequired="false", HansaReference="None", HansaBulkEditable="false", HansaAIAccess="Generate", HansaMigration="Compatible", HansaSerialization="Included", HansaValidation="Optional"))
+ FString CompoundDistrictId;
+ UHansaResidentialCompoundDefinition* LoadResidentialCompound() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Presentation", meta = (
 		DisplayName = "Presentation actor",
@@ -420,7 +452,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Upgrade", meta = (
 		DisplayName = "Upgrade target",
-		ToolTip = "Optional stable Building.* identity reached by upgrading this building.",
+		ToolTip = "Optional same-footprint Building.* target: next population tier, or consecutive development stage within the same compound, district and population tier.",
 		HansaRequired = "false",
 		HansaReference = "Building",
 		HansaBulkEditable = "false",
@@ -577,6 +609,13 @@ public:
 		HansaSerialization = "Included",
 		HansaValidation = "MarketAccessProvider"))
 	bool bProvidesMarketAccess = false;
+
+ UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Logistics", meta = (
+  DisplayName = "Maximum market road distance", ToolTip = "Maximum shortest completed-road route from a building to this market, including both entrance steps. One cell is 4 metres. Inclusive limit; default 40 cells (160 metres). Only market-access providers use this value.",
+  ClampMin = "2", ClampMax = "4096", HansaUnit = "RoadCells", HansaMin = "2", HansaMax = "4096",
+  HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true",
+  HansaAIAccess = "Generate", HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Range"))
+ int32 MaximumMarketRoadDistanceCells = 40;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building|Placement", meta = (
 		DisplayName = "Requires shoreline",

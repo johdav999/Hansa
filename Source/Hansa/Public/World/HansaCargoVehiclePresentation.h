@@ -34,8 +34,14 @@ public:
     bool ApplyLocalDelivery(const Hansa::Simulation::FHansaLogisticsJobProjection& Job);
     /** Absolute distance supplied by a world projection; repeating a snapshot cannot accumulate rotation. */
     void SetWheelTravelDistance(double Centimetres);
+    /** Eased shortest-arc yaw driven by simulation tick + fraction, including pause/speed. */
+    void SampleHeading(TOptional<FRotator> Heading, double PresentationTime);
+    /** Command ticks change state without advancing displayed motion. */
+    void RebaseHeadingClock(double PresentationTime);
     void ClearProjection();
     void SetSelected(bool bSelected);
+    /** Non-colliding waterline selection cue, editable in Blueprint Details. */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Vehicle|Selection") TObjectPtr<UStaticMeshComponent> SelectionMarker;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Vehicle") TObjectPtr<UBoxComponent> Selection;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Vehicle") FName SemanticId;
     Hansa::Simulation::FHansaVehicleId GetVehicleId() const { return VehicleId; }
@@ -49,4 +55,10 @@ private:
     Hansa::Simulation::FHansaLogisticsJobId LogisticsJobId;
     Hansa::Simulation::FHansaGoodId CargoGoodId;
     int64 CargoMilliUnits = 0;
+    bool bHeadingInitialized = false;
+    double HeadingStartYaw = 0;
+    double HeadingTargetYaw = 0;
+    double HeadingStartTime = 0;
+    double HeadingLastTime = 0;
+    double HeadingDuration = 0;
 };

@@ -5,6 +5,7 @@
 #include "Containers/Set.h"
 #include "Containers/UnrealString.h"
 #include "Model/HansaIds.h"
+#include "Model/HansaSimulationTime.h"
 
 namespace Hansa::Simulation
 {
@@ -55,7 +56,10 @@ namespace Hansa::Simulation
 		Cycle,
 		Unreachable,
 		InvalidEffectReference,
-		MissingBranchRoot
+		MissingBranchRoot,
+		InvalidEffectMagnitude,
+		IncompatibleEffectTarget,
+		UnsupportedEffectKind
 	};
 
 	struct HANSASIMULATION_API FHansaResearchGraphDiagnostic final
@@ -109,6 +113,18 @@ namespace Hansa::Simulation
 		[[nodiscard]] bool IsCompleted(const FString& TechnologyId) const;
 		[[nodiscard]] bool IsUnlocked(const FString& StableId) const;
 		[[nodiscard]] int32 GetEffectMagnitude(EHansaResearchEffectKind Kind, const FString& TargetStableId = FString()) const;
+	};
+
+	/** Shared deterministic entry point for authoritative research-effect consumers. */
+	class HANSASIMULATION_API FHansaResearchEffectResolver final
+	{
+	public:
+		[[nodiscard]] static const FHansaHouseResearchState* FindHouse(TConstArrayView<FHansaHouseResearchState> States, FHansaHouseId HouseId);
+		[[nodiscard]] static int32 GetMagnitude(TConstArrayView<FHansaHouseResearchState> States, FHansaHouseId HouseId, EHansaResearchEffectKind Kind, const FString& TargetStableId);
+		[[nodiscard]] static int32 GetBasisPoints(TConstArrayView<FHansaHouseResearchState> States, FHansaHouseId HouseId, EHansaResearchEffectKind Kind, const FString& TargetStableId);
+		[[nodiscard]] static bool IsEnabled(TConstArrayView<FHansaHouseResearchState> States, FHansaHouseId HouseId, EHansaResearchEffectKind Kind, const FString& TargetStableId);
+		[[nodiscard]] static bool IsAuthoredForTarget(TConstArrayView<FHansaCompiledTechnologyDefinition> Technologies, EHansaResearchEffectKind Kind, const FString& TargetStableId);
+		[[nodiscard]] static int32 WorkUnitsForTick(int32 BonusBasisPoints, FHansaSimulationTick Tick);
 	};
 
 	enum class EHansaResearchQueueError : uint8

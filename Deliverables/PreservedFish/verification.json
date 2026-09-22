@@ -1,0 +1,258 @@
+{
+  "uniqueTestsPassed": 45,
+  "runs": {
+    "final-tests-1.log": [
+      {
+        "test": "Hansa.Architecture.Authoring.EconomicSchemaCoverage",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Content.Definitions.PreservedFish.Validation",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Authoring.EconomicAssetReload",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.PreservedFish.ModestStockTradeAndBarrels",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.BoundedGrowthAndDecline",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.CityTierPooledWorkforce",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.CompoundStageProgression",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.ConstructedResidenceAndMarketAccess",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.ConsumptionAndProjection",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.EmptyHomeRecovery",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.FairScarcityAllocation",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.ManualResidenceProgression",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.ResidenceUpgradeCostFailureIsAtomic",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.RollingConsumption",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.StableLongRun",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.SuppliedHomesPastSeventyDays",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Population.WorkforceShortageAndRecovery",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.PreservedFish.AlternativeConsumption",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.PreservedFish.BatchModesAndSave",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.PreservedFish.StorageLossAndSplitting",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.PreservedFish.UpgradeIdentityAndCosts",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.PreservedFish.VehicleCargoLoss",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Trade.CapacityReserveArrivalReplay",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Trade.PhysicalHarborHandoff",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Simulation.Trade.ValidationCancellationMissedCargo",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.UI.RuntimeScenario.PlayableShortageProjection",
+        "result": "Success"
+      }
+    ],
+    "balance-final.log": [
+      {
+        "test": "Hansa.Integration.PreservedFish.ModestStockTradeAndBarrels",
+        "result": "Success"
+      }
+    ],
+    "authoring-save-final-2.log": [
+      {
+        "test": "Hansa.Architecture.Authoring.EconomicSchemaCoverage",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Architecture.Authoring.GoldenSchema",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Architecture.Authoring.MetadataCoverage",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Architecture.Authoring.SchemaDiscovery",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Architecture.Authoring.Transactions",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Content.Definitions.PreservedFish.ImpactAnalysis",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Content.Definitions.PreservedFish.Validation",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.ConstructionCancellationRecoveryRoundTrip",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.CorruptionCompatibilityAtomicity",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.Format2RouteLabelMigration",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.FrontendNewGameAndRejectedRestore",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.HistoricalCatalogRejectionIsAtomic",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.PendingCommandVariants",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.PlayerArchive",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.RoadDrawingRoundTrip",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.RoundTripContinuation",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.RuntimeAuthorityContinuation",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.ScenarioSustainAndTerminalState",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.StarterBalanceCompatibility",
+        "result": "Success"
+      },
+      {
+        "test": "Hansa.Integration.Save.SyntheticPriorSchema",
+        "result": "Success"
+      }
+    ],
+    "ui-1280-7.log": [
+      {
+        "test": "Hansa.UI.PreservedFish.RealFlow",
+        "result": "Success"
+      }
+    ],
+    "ui-1920-final.log": [
+      {
+        "test": "Hansa.UI.PreservedFish.RealFlow",
+        "result": "Success"
+      }
+    ]
+  },
+  "editorBuild": "build-23.log",
+  "shippingBuild": "shipping-build-final.log",
+  "shippingCook": "shipping-cook-final.log",
+  "shippingAudit": {
+    "scope": "Final Win64 Shipping smoke package; Engine Entry map, not a complete default-city release playthrough.",
+    "forbiddenMatches": {
+      "/Generated/Staging/": [],
+      "/Hansa/Developer/": [],
+      "/PreservedFishPreview/": [],
+      "/PreservationBaseline/": [],
+      "HansaGenerationWorker": [],
+      "HansaAutomation": [],
+      "HansaEditor": [],
+      "HansaTests": [],
+      "ProviderSettings": [],
+      "provider-config": []
+    },
+    "preservationAssets": [
+      "1774, ebc76eeadb4000f000000001, 0xF00040DBEA6EC7EB, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/M_Fishery_Fish.uasset, Hansa-Windows, 494534656, 195698688, 7454, 2324, 0xf897355fc0a0f6f3ca1d211f21fbed07c2bea7eb, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 195698688",
+      "1777, 569c0ab591e789e500000001, 0xE589E791B50A9C56, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/M_Fishery_Rope.uasset, Hansa-Windows, 494731264, 195731456, 7454, 2332, 0x1fc2d090368a7290086e49687667926f1a70c7e2, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 195731456",
+      "1780, e8afb04a6da152a800000001, 0xA852A16D4AB0AFE8, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/oak-basecolor.uasset, Hansa-Windows, 494927872, 195766272, 6290581, 3310738, 0x115ff5f9850133ee5a4b2da690bb9420eb33d240, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 195766272",
+      "1781, 38a159302a26a19800000001, 0x98A1262A3059A138, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/M_Fishery_Iron.uasset, Hansa-Windows, 501219328, 199077888, 7454, 2327, 0x6f4b2925ba424f2be85dc5bce37ea7447ed45eb9, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 199077888",
+      "1784, b0e83a6c9abeb38900000001, 0x89B3BE9A6C3AE8B0, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/M_Preservation_Herring.uasset, Hansa-Windows, 501415936, 199110656, 7470, 2327, 0x680daa2f04b2e205cac92fd654609f8b36d70056, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 199110656",
+      "1787, f784c9aed394767d00000001, 0x7D7694D3AEC984F7, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/M_Fishery_Net.uasset, Hansa-Windows, 501612544, 199143424, 7454, 2334, 0x38cf2ae72dcd7cb5c41f158a2776c3099b96c8b0, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 199143424",
+      "1790, c9455c6024c1b87400000001, 0x74B8C124605C45C9, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/M_Fishery_WetOak.uasset, Hansa-Windows, 501809152, 199176192, 7697, 2398, 0x3875202197afb595eeabd2809be77a87ca85017a, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 199176192",
+      "1793, af684a978e0a9b4900000001, 0x499B0A8E974A68AF, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/M_Preservation_Salt.uasset, Hansa-Windows, 502005760, 199213056, 7462, 2279, 0x77adc5420fc4d8104ab8cee39558a3d1cfc3ff27, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 199213056",
+      "1796, 433ea700e9d4ab4500000001, 0x45ABD4E900A73E43, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/oak-basecolor_ncl1_1.uasset, Hansa-Windows, 502202368, 199245824, 6290597, 3310288, 0x3a1abf82ec76b35aa5eb2923a78b3b4bb409576f, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 199245824",
+      "1797, c7fc468480f1073400000001, 0x3407F1808446FCC7, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/M_Fishery_Fieldstone.uasset, Hansa-Windows, 508493824, 202557440, 7470, 2333, 0xb77cc7cb7c30c11995e0c760ae156b8f7f925686, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 202557440",
+      "1800, d722d27720dd542400000001, 0x2454DD2077D222D7, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/thatch-basecolor.uasset, Hansa-Windows, 508690432, 202592256, 6290589, 4707175, 0x9e48f103e73b38f48d52ee469eb237a8d2e005dc, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 202592256",
+      "1801, 217fee054836ddb600000001, 0xB6DD364805EE7F21, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/M_Fishery_Thatch.uasset, Hansa-Windows, 514981888, 207300608, 7700, 2403, 0x80d38b3ec7c3da3c3f101ac68967fccaa02b9641, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 207300608",
+      "1804, cc7d80d9adb5e30600000001, 0x6E3B5ADD9807DCC, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/M_Fishery_Oak.uasset, Hansa-Windows, 515178496, 207337472, 7694, 2396, 0x65944e65574fd1c69e5e8a4ae2c971cb2591dabb, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 207337472",
+      "1807, f07f2d1543911a4900000001, 0x491A9143152D7FF0, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/SM_HansaFisheryPreservation.uasset, Hansa-Windows, 515375104, 207374336, 7474112, 1774554, 0x3c25efd96a7062ac80d8a0adb7fb485773fbbc17, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 207374336",
+      "2294, 47ac9ee7fe107d2500000001, 0x257D10FEE79EAC47, , ../../../Hansa/Content/Hansa/Core/Goods/DA_Good_PreservedFish.uasset, Hansa-Windows, 892076032, 305647888, 554, 554, 0x07cf6145a8207aa68feec168fc05fbdff09325de, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 305647888",
+      "2411, b8f57d90107e013800000001, 0x38017E10907DF5B8, , ../../../Hansa/Content/Hansa/Core/Buildings/DA_Building_Fishery_SaltingShed.uasset, Hansa-Windows, 952434688, 353917904, 892, 892, 0xc7be5339c7231d319bbe9da4aac5790d0dc98647, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 353917904",
+      "2588, 9b3896be56c54f8800000001, 0x884FC556BE96389B, , ../../../Hansa/Content/Hansa/Core/Recipes/DA_Recipe_SaltedCatch.uasset, Hansa-Windows, 996540416, 366977552, 658, 658, 0x76f89ce754b24184efbdf779058ba1143cbec539, ExportBundleData, , Hansa, Windows, Base, Installed, 0, 366977552",
+      "2963, f07f2d1543911a4900000002, 0x491A9143152D7FF0, , ../../../Hansa/Content/Mesh/hansa-fish-preservation/SM_HansaFisheryPreservation.ubulk, Hansa-Windows, 1232011264, 488038400, 1827272, 283876, 0xc2864f00dcc902dd329620429ee8a153bafc651b, BulkData, , Hansa, Windows, Base, Installed, 0, 488038400"
+    ],
+    "iconVariants": 13,
+    "containerRows": 3247,
+    "passed": true
+  },
+  "catalogHash": "D73BFD73C23C2D03",
+  "catalogReapplyChanges": 0,
+  "remainingAcceptance": [
+    "Full default-city household/trade GUI campaign and spatial balance",
+    "Main-project integration is intentionally separate"
+  ]
+}

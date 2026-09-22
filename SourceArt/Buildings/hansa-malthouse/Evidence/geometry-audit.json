@@ -1,0 +1,46 @@
+{
+  "bounds_min_m": [
+    -4.335000038146973,
+    -4.406498432159424,
+    -4.470348358154297e-08
+  ],
+  "bounds_max_m": [
+    5.360000133514404,
+    5.417051792144775,
+    9.194053649902344
+  ],
+  "size_m": [
+    9.695000171661377,
+    9.8235502243042,
+    9.194053694605827
+  ],
+  "vertices": 153379,
+  "triangles": 271276,
+  "materials": [
+    "M_MaltHouse_Brick_Portable",
+    "M_MaltHouse_Mortar_Portable",
+    "M_MaltHouse_Oak_Portable",
+    "M_MaltHouse_Clay_Portable",
+    "M_MaltHouse_Recess_Portable",
+    "M_MaltHouse_Iron_Portable",
+    "M_MaltHouse_Sacking_Portable"
+  ],
+  "uv_channels": 1,
+  "pivot": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "footprint_cells": [
+    3,
+    3
+  ],
+  "grid_cell_m": 4,
+  "fits_11_6m_inset": true,
+  "generation_state": "review-draft"
+}

@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "map": "/Game/Hansa/Generated/Staging/HansaWorld_20260918/L_HansaWorld_WP",
+  "river_sha256": "a1d0bc7f5d8347f039ed27a76ce243f86351831a7af080ab4f64a361e6d19995",
+  "source_hashes": {
+    "land.geojson": "4396a9569ad198548c859f5ee73e48d3868bf1b86045144d1dc616df832cfaa2",
+    "lakes.geojson": "3bf2f81d36fdf8ccbab88a5d493d52e997bba9729dea084c61b5716b68b4d9a4",
+    "terrain-manifest.json": "e900fdeb9d46b2269dab1db2398bccae36ea6b976558ebca44e3fc6a91877a5c"
+  },
+  "policy": "Subtract only buffered spline corridors intersected with geographical land excluding lakes. Original assets retained.",
+  "removed_area_m2": 98812934.43673122,
+  "tiles": [
+    {
+      "actor": "SM_Sea_00_03",
+      "mesh": "SM_Sea_RiverCut_v1_00_03",
+      "file": "SM_Sea_RiverCut_v1_00_03.f32",
+      "vertices": 675,
+      "removed_area_m2": 61407.673693627985,
+      "sha256": "0c218a8392787acaf290dfee2e0e0d84d0ce7ba6a4173349c10f4cb8536e24e4"
+    },
+    {
+      "actor": "SM_Sea_00_04",
+      "mesh": "SM_Sea_RiverCut_v1_00_04",
+      "file": "SM_Sea_RiverCut_v1_00_04.f32",
+      "vertices": 5742,
+      "removed_area_m2": 521204.57813578186,
+      "sha256": "a9bfa46f528bc311302a5fd0b0c6cb8d1389d2b28e25693fa7e38ed2139d9089"
+    },
+    {
+      "actor": "SM_Sea_01_03",
+      "mesh": "SM_Sea_RiverCut_v1_01_03",
+      "file": "SM_Sea_RiverCut_v1_01_03.f32",
+      "vertices": 2790,
+      "removed_area_m2": 181530.5720626085,
+      "sha256": "e7c9bbd6f099a60459dc1f7716aeb32580cbad8e2ecc93c662dedb79f810f4fb"
+    },
+    {
+      "actor": "SM_Sea_01_04",
+      "mesh": "SM_Sea_RiverCut_v1_01_04",
+      "file": "SM_Sea_RiverCut_v1_01_04.f32",
+      "vertices": 24180,
+      "removed_area_m2": 2182512.309293489,
+      "sha256": "70713c30293b01034b7767d311a347746e482a114c7d518ccbafcb8b8937f188"
+    },
+    {
+      "actor": "SM_Sea_02_04",
+      "mesh": "SM_Sea_RiverCut_v1_02_04",
+      "file": "SM_Sea_RiverCut_v1_02_04.f32",
+      "vertices": 13605,
+      "removed_area_m2": 1260080.6945904964,
+      "sha256": "bf78d5121844583350d57d61fb339a8be6eb723eadff3de3688e961672df0449"
+    },
+    {
+      "actor": "SM_Sea_02_05",
+      "mesh": "SM_Sea_RiverCut_v1_02_05",
+      "file": "SM_Sea_RiverCut_v1_02_05.f32",
+      "vertices": 53799,
+      "removed_area_m2": 5855121.245280576,
+      "sha256": "a0cf5847fe0f67304eacd119f7f195bd6b03f5bc59145531a86726ba6f89ff97"
+    },
+    {
+      "actor": "SM_Sea_03_02",
+      "mesh": "SM_Sea_RiverCut_v1_03_02",
+      "file": "SM_Sea_RiverCut_v1_03_02.f32",
+      "vertices": 9954,
+      "removed_area_m2": 790470.2442637669,
+      "sha256": "ce1e5a6c55324413c6430fd2464c7494d5220394d83e8f5c7edafba4ee19becb"
+    },
+    {
+      "actor": "SM_Sea_03_04",
+      "mesh": "SM_Sea_RiverCut_v1_03_04",
+      "file": "SM_Sea_RiverCut_v1_03_04.f32",
+      "vertices": 39276,
+      "removed_area_m2": 4422870.468816941,
+      "sha256": "51be37e0519b6ca80b59d5efce8691c9ce71d14a0017ca1c81f724fb82b5f783"
+    },
+    {
+      "actor": "SM_Sea_03_05",
+      "mesh": "SM_Sea_RiverCut_v1_03_05",
+      "file": "SM_Sea_RiverCut_v1_03_05.f32",
+      "vertices": 70605,
+      "removed_area_m2": 7870905.208765397,
+      "sha256": "69aa396440611e3ea1a762ce755e972f3093567303ce7c8f4e64531888112216"
+    },
+    {
+      "actor": "SM_Sea_04_00",
+      "mesh": "SM_Sea_RiverCut_v1_04_00",
+      "file": "SM_Sea_RiverCut_v1_04_00.f32",
+      "vertices": 9075,
+      "removed_area_m2": 767155.6490136727,
+      "sha256": "716c49fb8c89286956b2b0d861463982051c2744ac9ae36aee2a77e9d26558f1"
+    },
+    {
+      "actor": "SM_Sea_04_01",
+      "mesh": "SM_Sea_RiverCut_v1_04_01",
+      "file": "SM_Sea_RiverCut_v1_04_01.f32",
+      "vertices": 30510,
+      "removed_area_m2": 2572393.737167127,
+      "sha256": "a55e83f33dfd54a63c5dc390546462b7d5949b66800e5d769fff4e6a3787f921"
+    },
+    {
+      "actor": "SM_Sea_04_02",
+      "mesh": "SM_Sea_RiverCut_v1_04_02",
+      "file": "SM_Sea_RiverCut_v1_04_02.f32",
+      "vertices": 54363,
+      "removed_area_m2": 4637787.248059047,
+      "sha256": "c2ef918237a11def2d913ac509cc32a56aeb07d010eff7bc4ba80c8367afc1a9"
+    },
+    {
+      "actor": "SM_Sea_04_03",
+      "mesh": "SM_Sea_RiverCut_v1_04_03",
+      "file": "SM_Sea_RiverCut_v1_04_03.f32",
+      "vertices": 7236,
+      "removed_area_m2": 525485.27888426,
+      "sha256": "1ebf35c719057d5c9bc52852272ef034aedb31081019a2798742be27b2ce7d0e"
+    },
+    {
+      "actor": "SM_Sea_04_04",
+      "mesh": "SM_Sea_RiverCut_v1_04_04",
+      "file": "SM_Sea_RiverCut_v1_04_04.f32",
+      "vertices": 37224,
+      "removed_area_m2": 3877410.9155581,
+      "sha256": "6e354c9b711b5e41bd7b59ccbbf4a5ae0527177e1ef6d0573ee23fa13315218f"
+    },
+    {
+      "actor": "SM_Sea_04_05",
+      "mesh": "SM_Sea_RiverCut_v1_04_05",
+      "file": "SM_Sea_RiverCut_v1_04_05.f32",
+      "vertices": 55410,
+      "removed_area_m2": 5739003.042728712,
+      "sha256": "6be834984101ac4c56d079cd125a8e3f6d5d7cbc89d061e6179c9c59641b76bf"
+    },
+    {
+      "actor": "SM_Sea_05_00",
+      "mesh": "SM_Sea_RiverCut_v1_05_00",
+      "file": "SM_Sea_RiverCut_v1_05_00.f32",
+      "vertices": 73656,
+      "removed_area_m2": 6347935.609997038,
+      "sha256": "f842849ba17d89b6668ba3cc628d05c7ddaddcc0518a0d70074de4d32de343aa"
+    },
+    {
+      "actor": "SM_Sea_05_01",
+      "mesh": "SM_Sea_RiverCut_v1_05_01",
+      "file": "SM_Sea_RiverCut_v1_05_01.f32",
+      "vertices": 11124,
+      "removed_area_m2": 931726.2072083477,
+      "sha256": "607484bd0d66fdc412129819cc5ad44aac81e360f3834e18ead84af8fe840bbb"
+    },
+    {
+      "actor": "SM_Sea_05_02",
+      "mesh": "SM_Sea_RiverCut_v1_05_02",
+      "file": "SM_Sea_RiverCut_v1_05_02.f32",
+      "vertices": 4224,
+      "removed_area_m2": 346004.6546985912,
+      "sha256": "42e6fa22dd47574a4083e6d09882fe853f4d31a8347e858a8e96afdebb16f26e"
+    },
+    {
+      "actor": "SM_Sea_05_03",
+      "mesh": "SM_Sea_RiverCut_v1_05_03",
+      "file": "SM_Sea_RiverCut_v1_05_03.f32",
+      "vertices": 3864,
+      "removed_area_m2": 306294.1754445494,
+      "sha256": "48335f6c97133efb9fd3c30e1f62fa1341dffa00668bef1455e3822963604448"
+    },
+    {
+      "actor": "SM_Sea_05_04",
+      "mesh": "SM_Sea_RiverCut_v1_05_04",
+      "file": "SM_Sea_RiverCut_v1_05_04.f32",
+      "vertices": 45636,
+      "removed_area_m2": 4534254.500194007,
+      "sha256": "8516f85ec1dec460d2ddf19bff0b2fa67fd438a18cf1c1e203e2c6831012d1ea"
+    },
+    {
+      "actor": "SM_Sea_05_05",
+      "mesh": "SM_Sea_RiverCut_v1_05_05",
+      "file": "SM_Sea_RiverCut_v1_05_05.f32",
+      "vertices": 58293,
+      "removed_area_m2": 5572289.641226411,
+      "sha256": "81abec7bbfc137ae1836a30f22314a9f9380c6730ddd68847e56e19cbcb672ca"
+    },
+    {
+      "actor": "SM_Sea_06_00",
+      "mesh": "SM_Sea_RiverCut_v1_06_00",
+      "file": "SM_Sea_RiverCut_v1_06_00.f32",
+      "vertices": 26439,
+      "removed_area_m2": 2193556.8664260358,
+      "sha256": "6cd627f6d19e93eba2088efa2cc0b1a423d0118e444de6fc86a88da59ccf4f8d"
+    },
+    {
+      "actor": "SM_Sea_06_01",
+      "mesh": "SM_Sea_RiverCut_v1_06_01",
+      "file": "SM_Sea_RiverCut_v1_06_01.f32",
+      "vertices": 13989,
+      "removed_area_m2": 1243529.395180246,
+      "sha256": "ff5feab66ab86a335025ba27f033f50c2bf3dfefcb10e6194b1560507aff2850"
+    },
+    {
+      "actor": "SM_Sea_06_02",
+      "mesh": "SM_Sea_RiverCut_v1_06_02",
+      "file": "SM_Sea_RiverCut_v1_06_02.f32",
+      "vertices": 10650,
+      "removed_area_m2": 796074.346942549,
+      "sha256": "74b5cca31dabd0149d916fcf92e5b70c4e8f47eefdecd1de52b2b6d49cbd2784"
+    },
+    {
+      "actor": "SM_Sea_06_03",
+      "mesh": "SM_Sea_RiverCut_v1_06_03",
+      "file": "SM_Sea_RiverCut_v1_06_03.f32",
+      "vertices": 41751,
+      "removed_area_m2": 4287643.386828867,
+      "sha256": "19ed85c664f8496c495eeeb6f0413e75e175244063fa0be7c040c8daea14c166"
+    },
+    {
+      "actor": "SM_Sea_06_04",
+      "mesh": "SM_Sea_RiverCut_v1_06_04",
+      "file": "SM_Sea_RiverCut_v1_06_04.f32",
+      "vertices": 28749,
+      "removed_area_m2": 2956018.2995004063,
+      "sha256": "9511318efe5d7a7d58a72ac3b585f31ebe6c0a957ffbc9474aad8259dcf9e367"
+    },
+    {
+      "actor": "SM_Sea_06_05",
+      "mesh": "SM_Sea_RiverCut_v1_06_05",
+      "file": "SM_Sea_RiverCut_v1_06_05.f32",
+      "vertices": 49503,
+      "removed_area_m2": 4907140.00392913,
+      "sha256": "25fb41ed9661f6afc3b7fc7622469dde6c9fd9be5d51275cbf3844c619e7ab67"
+    },
+    {
+      "actor": "SM_Sea_07_00",
+      "mesh": "SM_Sea_RiverCut_v1_07_00",
+      "file": "SM_Sea_RiverCut_v1_07_00.f32",
+      "vertices": 15642,
+      "removed_area_m2": 1366527.907211909,
+      "sha256": "822a0214cff5e873cba0aa56cf8aa11922732ffb2113de5f98899cb2f5844102"
+    },
+    {
+      "actor": "SM_Sea_07_01",
+      "mesh": "SM_Sea_RiverCut_v1_07_01",
+      "file": "SM_Sea_RiverCut_v1_07_01.f32",
+      "vertices": 19680,
+      "removed_area_m2": 1576529.3914744037,
+      "sha256": "e8fff176870628d48fe9c89abd1dfaebcae0d20cde468468e73a18ff4e82ca84"
+    },
+    {
+      "actor": "SM_Sea_07_02",
+      "mesh": "SM_Sea_RiverCut_v1_07_02",
+      "file": "SM_Sea_RiverCut_v1_07_02.f32",
+      "vertices": 59295,
+      "removed_area_m2": 5109584.50483978,
+      "sha256": "2eec1e4df654e69f8100dc71ec6e782bbfa8a163cb0b829dcafde867dfafe56c"
+    },
+    {
+      "actor": "SM_Sea_07_03",
+      "mesh": "SM_Sea_RiverCut_v1_07_03",
+      "file": "SM_Sea_RiverCut_v1_07_03.f32",
+      "vertices": 47904,
+      "removed_area_m2": 4965730.603303928,
+      "sha256": "b480cd544aa8a6bfb05153509042011a6f4f5b984d61bfb263d4e9ee6c68baf6"
+    },
+    {
+      "actor": "SM_Sea_07_04",
+      "mesh": "SM_Sea_RiverCut_v1_07_04",
+      "file": "SM_Sea_RiverCut_v1_07_04.f32",
+      "vertices": 36213,
+      "removed_area_m2": 4242990.364622209,
+      "sha256": "6d8275b5709266dacc0ac9325245579585ee40f042b2ab6a42f9b82991137ff4"
+    },
+    {
+      "actor": "SM_Sea_07_05",
+      "mesh": "SM_Sea_RiverCut_v1_07_05",
+      "file": "SM_Sea_RiverCut_v1_07_05.f32",
+      "vertices": 52347,
+      "removed_area_m2": 5863765.711389215,
+      "sha256": "6adbd5634f48a51c8abaca70e4c51b0688ca69e957732694951b03055b804424"
+    }
+  ]
+}

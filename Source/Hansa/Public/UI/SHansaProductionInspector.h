@@ -49,7 +49,7 @@ private:
     FHansaInspectorSnapshot Presented;
     TSharedPtr<SScrollBox> Scroll;
     TSharedPtr<SBox> FlowHost;
-    TSharedPtr<SVerticalBox> InputPorts, OutputPorts, Stocks, Records, ExtraActions, DetailsContent;
+    TSharedPtr<SVerticalBox> InputPorts, OutputPorts, Stocks, Records, ExtraActions, DetailsContent, PreservationControls;
     TSharedPtr<STextBlock> Identity, State, Percent, Remaining, RecipeText, StatusTitle, StatusDetail, ActionResult;
     TSharedPtr<STextBlock> LaborerCount, ArtisanCount, CostValue, LaborSummary, TooltipTime, TooltipPercent;
     TSharedPtr<STextBlock> ProcessLabel, ProcessHeading, TooltipHeading, TooltipDurationLabel, RecordHeading;

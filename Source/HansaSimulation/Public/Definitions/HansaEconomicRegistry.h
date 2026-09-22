@@ -24,6 +24,7 @@ namespace Hansa::Simulation
 		int32 SpoilageBasisPointsPerDay = 0;
 		uint64 ContentHash = 0;
 		FString DisplayName;
+        bool bSpoilageEnabled = false;
 	};
 
 	struct HANSASIMULATION_API FHansaCompiledRecipeDefinition final
@@ -37,10 +38,16 @@ namespace Hansa::Simulation
 		bool bDeclaredSource = false;
 		bool bDeclaredSink = false;
 		uint64 ContentHash = 0;
+        FString InternalCatchRecipeId;
 	};
 
 	struct HANSASIMULATION_API FHansaCompiledBuildingDefinition final
 	{
+        FString ResidentialCompoundId;
+        int32 CompoundStage = 0;
+        FString CompoundDistrictId;
+        uint8 CompoundRoadFrontMask = 0;
+        uint8 CompoundLayoutContextMask = 0; // Straight, left corner, right corner, map edge.
 		FString StableId;
 		int32 SchemaVersion = 0;
 		TArray<FHansaCompiledGoodAmount> ConstructionCosts;
@@ -58,11 +65,13 @@ namespace Hansa::Simulation
 		int32 ArtisanWorkforce = 0;
 		bool bRequiresRoad = false;
 		bool bProvidesMarketAccess = false;
+		int32 MaximumMarketRoadDistanceCells = 40;
 		bool bRequiresShoreline = false;
 		uint64 ContentHash = 0;
 		FString DisplayName;
 		bool bShowInConstructionMenu = false;
 		FString ConstructionMenuCategory;
+        FString ConstructionTier;
 		int32 ConstructionMenuOrder = 0;
 		FString ConstructionChainOutputGoodId;
 		int32 ConstructionChainStage = 0;
@@ -78,12 +87,21 @@ namespace Hansa::Simulation
 		Service
 	};
 
+	struct HANSASIMULATION_API FHansaCompiledNeedAlternative final
+ { FString GoodId; int32 FulfillmentBasisPoints = 10000; };
+
 	struct HANSASIMULATION_API FHansaCompiledNeedDefinition final
 	{
 		FString StableId;
 		EHansaCompiledNeedKind Kind = EHansaCompiledNeedKind::Good;
 		FString GoodId;
 		uint64 ContentHash = 0;
+		bool bSeasonal = false;
+		int32 SeasonDays = 90;
+		int32 FixedSeason = -1;
+		int32 DefaultReserveDays = 3;
+		TArray<int32> SeasonMultipliers = { 0, 4000, 10000, 4000 };
+		TArray<FHansaCompiledNeedAlternative> Alternatives;
 	};
 
 	struct HANSASIMULATION_API FHansaCompiledPopulationTierNeed final
@@ -123,6 +141,60 @@ namespace Hansa::Simulation
 		int64 InitialPriceMilliMarks = 0;
 	};
 
+	struct HANSASIMULATION_API FHansaCompiledProductionChainStage final
+	{
+		FString StageKey;
+		FString RecipeId;
+		TArray<FString> PrerequisiteStageKeys;
+		uint8 Role = 0;
+		FString IntendedConstructionTier;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledProductionChainDefinition final
+	{
+		FString StableId;
+		TArray<FHansaCompiledProductionChainStage> Stages;
+		uint64 ContentHash = 0;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledRegionResourceEndowment final
+	{
+		FString GoodId;
+		uint8 Endowment = 0;
+		int64 SourceCapacityMilliUnitsPerUpdate = 0;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledRegionPermittedStage final
+	{
+		FString ProductionChainId;
+		TArray<FString> StageKeys;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledRegionEconomicProfileDefinition final
+	{
+		FString StableId;
+		TArray<FString> MemberCityIds;
+		TArray<FHansaCompiledRegionPermittedStage> PermittedStages;
+		TArray<FHansaCompiledRegionResourceEndowment> ResourceEndowments;
+		int64 ExchangeCapacityMilliUnitsPerUpdate = 0;
+		int32 ExchangeDelayUpdates = 1;
+		int32 TransportLossBasisPoints = 0;
+		int64 TransportCostMilliMarksPerUnit = 0;
+		uint64 ContentHash = 0;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledCityIndustryBinding final
+	{
+		FString ProductionChainId;
+		TArray<FString> EnabledStageKeys;
+		int32 CyclesPerMarketUpdate = 1;
+		int32 EfficiencyBasisPoints = 10000;
+		int64 InputReserveMilliUnits = 0;
+		int64 OutputReserveMilliUnits = 0;
+		bool bEnabled = true;
+		int32 SignatureRank = 0;
+	};
+
 	struct HANSASIMULATION_API FHansaCompiledCityMarketProfileDefinition final
 	{
 		FString StableId;
@@ -132,6 +204,11 @@ namespace Hansa::Simulation
 		int32 MaximumMovementBasisPointsPerUpdate = 0;
 		int32 StaleAfterTicks = 0;
 		bool bMarketOnly = false;
+		uint8 PresentationClass = 0;
+		int32 MapLongitudeMilliDegrees = 0;
+		int32 MapLatitudeMilliDegrees = 0;
+		FString RegionId;
+		TArray<FHansaCompiledCityIndustryBinding> IndustryBindings;
 		int32 ReportCadenceTicks = 0;
 		int32 CurrentReportMaxAgeTicks = 0;
 		int32 RecentReportMaxAgeTicks = 0;
@@ -166,6 +243,98 @@ namespace Hansa::Simulation
 		uint64 ContentHash = 0;
 	};
 
+	struct HANSASIMULATION_API FHansaCompiledPresenceCapabilityDefinition final
+	{
+		FString StableId;
+		FString DisplayName;
+		FString Semantics;
+		int32 SchemaVersion = 1;
+		uint64 ContentHash = 0;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledPresenceUpgradeGoodCost final
+	{
+		FString GoodId;
+		int64 QuantityMilliUnits = 0;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledForeignPresenceStageDefinition final
+	{
+		FString StableId;
+		FString DisplayName;
+		int32 Ordinal = 0;
+		TArray<FString> PrerequisiteStageIds;
+		TArray<FString> GrantedCapabilityIds;
+		TArray<FString> PermittedPlotCategories;
+		TArray<FString> PermittedBuildingCategories;
+		int64 UpgradeCostPfennig = 0;
+		TArray<FHansaCompiledPresenceUpgradeGoodCost> UpgradeGoods;
+		int64 RequiredLawfulTradeVolumeMilliUnits = 0;
+		int64 RequiredCompletedDeliveries = 0;
+		int64 RequiredInvestedPfennig = 0;
+		int64 RequiredTransactionValuePfennig = 0;
+		int64 RequiredFulfilledShortageMilliUnits = 0;
+		int64 RequiredReliableOperatingTicks = 0;
+		int64 RequiredSolventOperatingTicks = 0;
+		int32 UpgradeConstructionTicks = 3;
+		uint64 ContentHash = 0;
+	};
+
+	struct HANSASIMULATION_API FHansaCompiledCityTradePolicyDefinition final
+	{
+		struct FPrivilege final { FString PrivilegeId; FString DisplayName; FString RequiredStageId; int64 CostPfennig=0; TArray<FHansaCompiledPresenceUpgradeGoodCost> CostGoods; int64 DurationTicks=0; bool bReversible=false; FHansaGridCoordinate LeaseBoundsMin; FHansaGridCoordinate LeaseBoundsMax; TArray<FString> PermittedBuildingCategories; };
+		struct FCityProject final { FString ProjectId; FString DisplayName; FString RequiredStageId; int64 CostPfennig=0; TArray<FHansaCompiledPresenceUpgradeGoodCost> CostGoods; int32 ConstructionTicks=3; FString SharedReserveGoodId; int64 SharedReserveBonusMilliUnits=0; };
+		struct FSpecialization final
+		{
+			FString SpecializationId;
+			FString DisplayName;
+			FString RequiredStageId;
+			FString ExclusiveGroupId;
+			TArray<FString> GrantedCapabilityIds;
+			int64 InvestmentCostPfennig = 0;
+			TArray<FHansaCompiledPresenceUpgradeGoodCost> InvestmentGoods;
+			bool bAllowRespec = true;
+			int32 RespecRefundBasisPoints = 2500;
+			int64 StorageCapacityBonusMilliUnits = 0;
+			int32 AdditionalOrderSlots = 0;
+			int64 StationTransferCapBonusMilliUnits = 0;
+		};
+
+		struct FStationSite final
+		{
+			FString SiteId;
+			FString PlotCategory;
+			int64 StorageCapacityMilliUnits = 0;
+			int32 ConstructionTicks = 0;
+			int64 UpkeepPfennigPerTick = 0;
+			int32 CancellationRefundBasisPoints = 0;
+			FString PresentationClassPath;
+			FHansaGridCoordinate LeaseBoundsMin;
+			FHansaGridCoordinate LeaseBoundsMax;
+			TArray<FString> PermittedBuildingCategories;
+		};
+		FString StableId;
+		FString CityId;
+		FString InitialStageId;
+		TArray<FString> AllowedStageIds;
+		TArray<FString> DeniedCapabilityIds;
+		TArray<FString> AllowedPlotCategories;
+		TArray<FString> AllowedBuildingCategories;
+		bool bPublicMarketAccess = true;
+		bool bExceptionalGovernanceAllowed = false;
+		TArray<FStationSite> TradeStationSites;
+		TArray<FSpecialization> Specializations;
+		TArray<FPrivilege> Privileges;
+		TArray<FCityProject> CityProjects;
+		TArray<FString> GovernanceScenarioIds;
+		FString GovernanceCharterId;
+		int64 MerchantOfficeStorageBonusMilliUnits = 0;
+		int32 MerchantOfficeAdditionalOrderSlots = 0;
+        int32 MaximumStationOrders = 8;
+        int64 MaximumOrderCapMilliUnits = 50000;
+        int64 MaximumOrderBudgetPfennig = 1000000;
+		uint64 ContentHash = 0;
+	};
 	struct HANSASIMULATION_API FHansaCompiledMerchantAITradePlan final
 	{
 		FString StablePlanId;
@@ -191,6 +360,13 @@ namespace Hansa::Simulation
 		int64 MarginUtilityPerMilliMark = 1;
 		int64 ResearchUtility = 0;
 		int64 ProductionUtility = 0;
+		int64 ProtectedCashReservePfennig = 0;
+		int32 ActionCooldownTicks = 0;
+		int64 DirectTradeQuantityMilliUnits = 1;
+		int64 StationOrderTargetMilliUnits = 1;
+		int64 StationOrderCapMilliUnits = 1;
+		int64 StationOrderBudgetPfennig = 1;
+		int64 PresenceUtility = 0;
 		int64 TargetCompletedTradeLegs = 1;
 		TArray<FString> PreferredResearchTechnologyIds;
 		TArray<FHansaCompiledMerchantAITradePlan> TradePlans;
@@ -217,6 +393,11 @@ namespace Hansa::Simulation
 			TArray<FHansaCompiledScenarioObjective> InScenarioObjectives = {},
 			TArray<FHansaCompiledVictoryDefinition> InVictories = {},
 			TArray<FHansaCompiledScenarioDefinition> InScenarios = {});
+		void SetPresenceDefinitions(TArray<FHansaCompiledPresenceCapabilityDefinition> InCapabilities,
+			TArray<FHansaCompiledForeignPresenceStageDefinition> InStages,
+			TArray<FHansaCompiledCityTradePolicyDefinition> InPolicies);
+		void SetRegionalEconomy(TArray<FHansaCompiledProductionChainDefinition> InProductionChains,
+			TArray<FHansaCompiledRegionEconomicProfileDefinition> InRegions);
 
 		[[nodiscard]] const TArray<FHansaCompiledGoodDefinition>& GetGoods() const { return Goods; }
 		[[nodiscard]] const TArray<FHansaCompiledRecipeDefinition>& GetRecipes() const { return Recipes; }
@@ -231,6 +412,11 @@ namespace Hansa::Simulation
 		[[nodiscard]] const TArray<FHansaCompiledScenarioObjective>& GetScenarioObjectives() const { return ScenarioObjectives; }
 		[[nodiscard]] const TArray<FHansaCompiledVictoryDefinition>& GetVictories() const { return Victories; }
 		[[nodiscard]] const TArray<FHansaCompiledScenarioDefinition>& GetScenarios() const { return Scenarios; }
+		[[nodiscard]] const TArray<FHansaCompiledPresenceCapabilityDefinition>& GetPresenceCapabilities() const { return PresenceCapabilities; }
+		[[nodiscard]] const TArray<FHansaCompiledForeignPresenceStageDefinition>& GetPresenceStages() const { return PresenceStages; }
+		[[nodiscard]] const TArray<FHansaCompiledCityTradePolicyDefinition>& GetCityTradePolicies() const { return CityTradePolicies; }
+		[[nodiscard]] const TArray<FHansaCompiledProductionChainDefinition>& GetProductionChains() const { return ProductionChains; }
+		[[nodiscard]] const TArray<FHansaCompiledRegionEconomicProfileDefinition>& GetRegions() const { return Regions; }
 		[[nodiscard]] uint64 GetRegistryHash() const { return RegistryHash; }
 
 		[[nodiscard]] const FHansaCompiledGoodDefinition* FindGood(const FString& StableId) const;
@@ -246,6 +432,13 @@ namespace Hansa::Simulation
 		[[nodiscard]] const FHansaCompiledScenarioObjective* FindScenarioObjective(const FString& StableId) const;
 		[[nodiscard]] const FHansaCompiledVictoryDefinition* FindVictory(const FString& StableId) const;
 		[[nodiscard]] const FHansaCompiledScenarioDefinition* FindScenario(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledPresenceCapabilityDefinition* FindPresenceCapability(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledForeignPresenceStageDefinition* FindPresenceStage(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledCityTradePolicyDefinition* FindCityTradePolicy(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledCityTradePolicyDefinition* FindCityTradePolicyForCity(const FString& CityId) const;
+		[[nodiscard]] bool IsValidPresenceTransition(const FString& CityId, const FString& CurrentStageId, const FString& NextStageId) const;
+		[[nodiscard]] const FHansaCompiledProductionChainDefinition* FindProductionChain(const FString& StableId) const;
+		[[nodiscard]] const FHansaCompiledRegionEconomicProfileDefinition* FindRegion(const FString& StableId) const;
 
 	private:
 		TArray<FHansaCompiledGoodDefinition> Goods;
@@ -261,6 +454,11 @@ namespace Hansa::Simulation
 		TArray<FHansaCompiledScenarioObjective> ScenarioObjectives;
 		TArray<FHansaCompiledVictoryDefinition> Victories;
 		TArray<FHansaCompiledScenarioDefinition> Scenarios;
+		TArray<FHansaCompiledPresenceCapabilityDefinition> PresenceCapabilities;
+		TArray<FHansaCompiledForeignPresenceStageDefinition> PresenceStages;
+		TArray<FHansaCompiledCityTradePolicyDefinition> CityTradePolicies;
+		TArray<FHansaCompiledProductionChainDefinition> ProductionChains;
+		TArray<FHansaCompiledRegionEconomicProfileDefinition> Regions;
 		TMap<FString, int32> GoodIndexes;
 		TMap<FString, int32> RecipeIndexes;
 		TMap<FString, int32> BuildingIndexes;
@@ -274,6 +472,12 @@ namespace Hansa::Simulation
 		TMap<FString, int32> ScenarioObjectiveIndexes;
 		TMap<FString, int32> VictoryIndexes;
 		TMap<FString, int32> ScenarioIndexes;
+		TMap<FString, int32> PresenceCapabilityIndexes;
+		TMap<FString, int32> PresenceStageIndexes;
+		TMap<FString, int32> CityTradePolicyIndexes;
+		TMap<FString, int32> CityTradePolicyByCityIndexes;
+		TMap<FString, int32> ProductionChainIndexes;
+		TMap<FString, int32> RegionIndexes;
 		uint64 RegistryHash = 0;
 	};
 }

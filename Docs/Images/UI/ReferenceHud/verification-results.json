@@ -1,0 +1,146 @@
+{
+  "viewport_results": [
+    {
+      "resolution": "1280x720",
+      "stages": 6,
+      "native_bounds": "pass",
+      "minimap_square": "pass",
+      "tray_inspector_no_overlap": "pass",
+      "actual_camera_keyboard_navigation": "pass"
+    },
+    {
+      "resolution": "1920x1080",
+      "stages": 6,
+      "native_bounds": "pass",
+      "minimap_square": "pass",
+      "tray_inspector_no_overlap": "pass",
+      "actual_camera_keyboard_navigation": "pass"
+    },
+    {
+      "resolution": "2560x1440",
+      "stages": 6,
+      "native_bounds": "pass",
+      "minimap_square": "pass",
+      "tray_inspector_no_overlap": "pass",
+      "actual_camera_keyboard_navigation": "pass"
+    },
+    {
+      "resolution": "2834x901",
+      "stages": 6,
+      "native_bounds": "pass",
+      "minimap_square": "pass",
+      "tray_inspector_no_overlap": "pass",
+      "actual_camera_keyboard_navigation": "pass"
+    }
+  ],
+  "regression_tests": [
+    {
+      "path": "Hansa.UI.BuildMenu.ArtisanConstructionPlaytest",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.ArtisanConstructionToggle",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.BakeryFitsBesideRoad",
+      "result": "Fail"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.CatalogAndLockedReasons",
+      "result": "Fail"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.ClickStrokeValidation",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.CompactTrayAndControllerNavigation",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.DirectRoadDrawing",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.LumberGhostTreeFeedback",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.PlayerIntentCommandGatewayFlow",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.PointerFeedbackKeepsTrayGeometry",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.SemanticsShortcutsAndFocus",
+      "result": "Fail"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.ShorelineBuildingsUseAuthoritativeTarget",
+      "result": "Fail"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.StableCardFocusAndChainEdges",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.BuildMenu.ViewportDragJourney",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.HUD.Layout.NativeSafeAreas",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.HUD.PresentationModel.EventUpdates",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.HUD.Semantics.OpenCloseFocus",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.HUD.TopMenu.AuthoritativeCityAndMonth",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.HUD.TopMenu.BreadBalance",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.HUD.P23StableAlertFocus",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.HUD.SemanticContract",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.Inspector.AlertNavigationAndFocus",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.Inspector.FramePreservesWidgetStructure",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.Inspector.LocalizationAndScreenshotContract",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.Inspector.P23ActionIdentityAndUnavailableStates",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.Inspector.PostPlacementResidenceAndProductionActions",
+      "result": "Success"
+    },
+    {
+      "path": "Hansa.UI.Inspector.SharedCausalModel",
+      "result": "Success"
+    }
+  ]
+}

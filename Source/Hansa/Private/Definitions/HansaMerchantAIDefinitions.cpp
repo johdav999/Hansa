@@ -14,7 +14,9 @@ void UHansaMerchantAITuningDefinition::ValidateDefinition(TArray<FHansaDefinitio
 	};
 	if (DecisionCadenceTicks <= 0 || DecisionHistoryCapacity <= 0 || DecisionHistoryCapacity > 256 ||
 		MinimumDestinationDemandGapMilliUnits < 0 || ShortageUtilityPerUnit < 0 || MarginUtilityPerMilliMark < 0 ||
-		TargetCompletedTradeLegs <= 0)
+		TargetCompletedTradeLegs <= 0 || ProtectedCashReservePfennig < 0 || ActionCooldownTicks < 0 ||
+		DirectTradeQuantityMilliUnits <= 0 || StationOrderTargetMilliUnits <= 0 || StationOrderCapMilliUnits <= 0 ||
+		StationOrderBudgetPfennig <= 0)
 	{
 		Add(TEXT("HSA-AI-001"), TEXT("DecisionCadenceTicks"),
 			NSLOCTEXT("HansaMerchantAI", "InvalidBounds", "Merchant AI cadence, history, thresholds or utility weights are outside deterministic bounds."),
@@ -48,6 +50,21 @@ void UHansaMerchantAITuningDefinition::AppendDefinitionHashData(FString& InOutCa
 	InOutCanonicalData += FString::Printf(TEXT("|cadence=%d|history=%d|gap=%lld|margin=%lld|shortageWeight=%lld|marginWeight=%lld|research=%lld|production=%lld|legs=%lld"),
 		DecisionCadenceTicks, DecisionHistoryCapacity, MinimumDestinationDemandGapMilliUnits, MinimumGrossMarginMilliMarks,
 		ShortageUtilityPerUnit, MarginUtilityPerMilliMark, ResearchUtility, ProductionUtility, TargetCompletedTradeLegs);
+
+	// TR-11 added compatible tuning knobs. Preserve the established catalog identity
+	// for assets that inherit the defaults, while still hashing authored overrides.
+	if (ProtectedCashReservePfennig != 5000
+		|| ActionCooldownTicks != 1
+		|| DirectTradeQuantityMilliUnits != 5000
+		|| StationOrderTargetMilliUnits != 10000
+		|| StationOrderCapMilliUnits != 2000
+		|| StationOrderBudgetPfennig != 20000
+		|| PresenceUtility != 75)
+	{
+		InOutCanonicalData += FString::Printf(TEXT("|tr11CashReserve=%lld|tr11Cooldown=%d|tr11DirectQty=%lld|tr11OrderTarget=%lld|tr11OrderCap=%lld|tr11OrderBudget=%lld|tr11Presence=%lld"),
+			ProtectedCashReservePfennig, ActionCooldownTicks, DirectTradeQuantityMilliUnits,
+			StationOrderTargetMilliUnits, StationOrderCapMilliUnits, StationOrderBudgetPfennig, PresenceUtility);
+	}
 	for (const FString& TechnologyId : PreferredResearchTechnologyIds) InOutCanonicalData += TEXT("|research=") + TechnologyId;
 	TArray<FString> Rows;
 	for (const FHansaMerchantAITradePlanDefinition& Plan : TradePlans)

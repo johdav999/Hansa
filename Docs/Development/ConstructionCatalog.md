@@ -1,5 +1,8 @@
 # Data-driven construction catalog — EMVP-P03
 
+Current firewood amendment (2026-09-16): the target has five production chains. The new firewood output card is `Building.WoodcutterYard`, processing timber delivered from the shared `Building.LumberCamp`. It requires two laborers and no artisans or forestry proximity. The expanded beer chain retains malt, hops and cooperage. The thirteen-card/v3 counts and simplified beer row below are historical P03 evidence, not the current accepted v24 catalog count. Firewood is currently a development review candidate and is not yet production-promoted.
+
+
 ## Runtime contract
 
 The player build menu is materialized from the compiled economic registry. `UHansaBuildingDefinition`

@@ -1,0 +1,46 @@
+{
+  "feature": "TextileProductionV1",
+  "status": "promoted-user-approved-2026-09-19",
+  "createdUtc": "2026-09-19",
+  "ui": {
+    "generationMode": "built-in ImageGen, one call per individual asset",
+    "masters": "SourceArt/UI/TextileProduction/",
+    "promptRecords": "sibling .prompt.md files",
+    "runtimeVariants": "Content/Hansa/UI/TextileProduction/",
+    "variantManifest": "SourceArt/UI/TextileProduction/display-variants.json",
+    "review": "Docs/Images/UI/TextileProduction/display-size-review.png",
+    "productionReady": "individual runtime PNG variants; Unreal brush loading remains native",
+    "referencesOnly": []
+  },
+  "models": {
+    "authoring": "procedural Blender Python following the accepted Hansa artisan building family",
+    "editableMaster": "SourceArt/Generated/Buildings/TextileProductionV1/exports/HansaTextileWorkshops.blend",
+    "script": "SourceArt/Generated/Buildings/TextileProductionV1/scripts/build_workshops.py",
+    "exports": "SourceArt/Generated/Buildings/TextileProductionV1/exports/",
+    "stagingRoot": "/Game/Hansa/Generated/Staging/TextileProductionModelsV1",
+    "verification": [
+      "SourceArt/Generated/Buildings/TextileProductionV1/evidence/reimport-fbx.json",
+      "SourceArt/Generated/Buildings/TextileProductionV1/evidence/reimport-glb.json",
+      "SourceArt/Generated/Buildings/TextileProductionV1/evidence/unreal-assets.json"
+    ],
+    "generatedHistoricalPhotoReferences": "not created; user explicitly asked to skip this branch after seeing the actual Blender models",
+    "historicalSources": "Docs/Development/TextileProduction/reference_manifest.csv"
+  },
+  "continuation": {
+    "candidate": "TextileProductionV2",
+    "definitionCount": 136,
+    "registryHash": "386F8F6145FE5135",
+    "generation": "Existing UI and model masters reused without new generation",
+    "uat": "Docs/Development/TextileProduction/UAT/SESSION.md",
+    "approval": "Not promoted"
+  },
+  "promotion": {
+    "approval": "User: promote these",
+    "date": "2026-09-19",
+    "catalogVersion": 30,
+    "registryHash": "3472D1CD822731FA",
+    "definitionCount": 181,
+    "modelRoot": "/Game/Mesh/hansa-textile-production",
+    "report": "Docs/Development/TextileProduction/PROMOTION.md"
+  }
+}

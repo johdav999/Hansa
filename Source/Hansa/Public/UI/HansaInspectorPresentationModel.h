@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Network/HansaMultiplayerTypes.h"
 #include "UObject/Object.h"
 
 #include "HansaInspectorPresentationModel.generated.h"
@@ -12,6 +13,8 @@ namespace Hansa::Simulation
 	struct FHansaPopulationCohortProjection;
 	struct FHansaConsumptionProjection;
 	struct FHansaProductionProjection;
+	struct FHansaForeignPresenceProjection;
+	struct FHansaTradeStationProjection;
 }
 class UHansaRuntimeSimulationHost;
 struct FHansaCargoWorldObservation;
@@ -21,13 +24,13 @@ struct HANSA_API FHansaInspectorProductionPort
 {
     FName GoodId;
     FText Label;
-    int64 PerBatch = 0, Stock = 0, Available = 0, Reserved = 0;
+    int64 PerBatch = 0, Stock = 0, Available = 0, Reserved = 0, ProducedTotal = 0;
     bool bStockKnown = false;
     int64 BuildingStock = 0, MarketStock = 0;
     bool bBuildingStockKnown = false, bMarketStockKnown = false;
     bool operator==(const FHansaInspectorProductionPort& R) const
     {
-        return GoodId == R.GoodId && Label.EqualTo(R.Label) && PerBatch == R.PerBatch &&
+        return GoodId == R.GoodId && Label.EqualTo(R.Label) && PerBatch == R.PerBatch && ProducedTotal == R.ProducedTotal &&
             Stock == R.Stock && Available == R.Available && Reserved == R.Reserved && bStockKnown == R.bStockKnown &&
             BuildingStock == R.BuildingStock && MarketStock == R.MarketStock &&
             bBuildingStockKnown == R.bBuildingStockKnown && bMarketStockKnown == R.bMarketStockKnown;
@@ -62,11 +65,11 @@ struct HANSA_API FHansaInspectorProductionData
 /** Read-only residence presentation, derived from the existing population projection. */
 struct HANSA_API FHansaInspectorNeedData
 {
- FName NeedId,GoodId; FText Label,Percent,Amount;
+ FName NeedId,GoodId; FText Label,Percent,Amount,SupplyDetail;
  int64 Required=0,Consumed=0;
  int32 Fulfillment=0,Access=0,Affordability=0,Reliability=0;
  bool bKnown=false,bService=false;
- bool operator==(const FHansaInspectorNeedData& R) const {return Required==R.Required && Consumed==R.Consumed && Percent.EqualTo(R.Percent) && Amount.EqualTo(R.Amount) && NeedId==R.NeedId && GoodId==R.GoodId && Label.EqualTo(R.Label) && Fulfillment==R.Fulfillment && Access==R.Access && Affordability==R.Affordability && Reliability==R.Reliability && bKnown==R.bKnown && bService==R.bService;}
+ bool operator==(const FHansaInspectorNeedData& R) const {return SupplyDetail.EqualTo(R.SupplyDetail) && Required==R.Required && Consumed==R.Consumed && Percent.EqualTo(R.Percent) && Amount.EqualTo(R.Amount) && NeedId==R.NeedId && GoodId==R.GoodId && Label.EqualTo(R.Label) && Fulfillment==R.Fulfillment && Access==R.Access && Affordability==R.Affordability && Reliability==R.Reliability && bKnown==R.bKnown && bService==R.bService;}
 };
 struct HANSA_API FHansaInspectorResidenceData
 {
@@ -83,7 +86,8 @@ enum class EHansaInspectorObjectKind : uint8
 	ProductionBuilding,
 	Residence,
     Cargo,
-    Market
+    Market,
+	TradeStation
 };
 
 UENUM(BlueprintType)
@@ -173,6 +177,7 @@ struct HANSA_API FHansaInspectorSnapshot final
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Inspector") FName ObjectStableId;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Inspector") EHansaInspectorDataState DataState = EHansaInspectorDataState::Ready;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Inspector") FText Identity;
+    FText PreservationSummary;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Inspector") FText State;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Inspector") FText PrimaryResult;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Inspector") TArray<FHansaInspectorFlowPresentation> Flows;
@@ -204,6 +209,7 @@ class HANSA_API UHansaInspectorPresentationModel final : public UObject
 
 public:
 	void BindRuntime(UHansaRuntimeSimulationHost* InRuntimeHost);
+	void SetNetworkCommandIntent(TFunction<bool(const FHansaClientCommandIntent&)> InIntent) { NetworkCommandIntent = MoveTemp(InIntent); }
 	void InitializeDefaults();
 	void ShowStatus(EHansaInspectorDataState State, FText Detail, FText Remedy, FName FocusOrigin);
 	bool ShowProduction(
@@ -232,12 +238,18 @@ public:
 		FName FocusOriginSemanticId);
 
     void ShowCargo(const FHansaCargoWorldObservation& Cargo, FName FocusOrigin);
+	void ShowTradeStation(
+		const Hansa::Simulation::FHansaTradeStationProjection& Station,
+		const Hansa::Simulation::FHansaForeignPresenceProjection& Presence,
+		FName FocusOrigin);
 	bool CloseIntent();
 	bool TogglePinIntent();
 	bool FrameIntent();
 	bool OpenCauseIntent();
 	bool OpenRelatedIntent();
 	bool ToggleProductionIntent();
+    bool PreservationIntent(FName SemanticId);
+	bool RecipeIntent(FName SemanticId);
 	bool UpgradeResidenceIntent();
 	bool CancelConstructionIntent();
 	bool RemoveBuildingIntent();
@@ -264,6 +276,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|UI|Inspector") FHansaInspectorSnapshot Snapshot;
 	UPROPERTY(Transient) TWeakObjectPtr<UHansaRuntimeSimulationHost> RuntimeHost;
+	TFunction<bool(const FHansaClientCommandIntent&)> NetworkCommandIntent;
 	FString SelectedBuildingDefinitionId;
 	uint64 Revision = 0;
 	FHansaInspectorChanged Changed;

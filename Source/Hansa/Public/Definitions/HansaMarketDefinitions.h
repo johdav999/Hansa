@@ -5,6 +5,15 @@
 
 #include "HansaMarketDefinitions.generated.h"
 
+UENUM(BlueprintType)
+enum class EHansaCityPresentationClass : uint8
+{
+	Unspecified UMETA(DisplayName = "Unspecified (legacy inference)"),
+	MarketOnly UMETA(DisplayName = "Market only"),
+	RenderedVisitable UMETA(DisplayName = "Rendered and visitable"),
+	RenderedBuildable UMETA(DisplayName = "Rendered, visitable and buildable")
+};
+
 USTRUCT(BlueprintType)
 struct HANSA_API FHansaMarketGoodProfile
 {
@@ -94,6 +103,84 @@ struct HANSA_API FHansaMarketGoodProfile
 	int64 InitialPriceMilliMarks = 1000;
 };
 
+UENUM(BlueprintType)
+enum class EHansaProductionStageRole : uint8 { Source, PrimaryProcessing, IntermediateProcessing, FinishedGoods };
+
+UENUM(BlueprintType)
+enum class EHansaResourceEndowment : uint8 { Absent, ImportOnly, Available, Abundant, Signature };
+
+USTRUCT(BlueprintType)
+struct HANSA_API FHansaProductionChainStageDefinition
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Production Chain", meta=(HansaValidation="StableKey")) FString StageKey;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Production Chain", meta=(HansaReference="Recipe")) FString RecipeId;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Production Chain", meta=(HansaValidation="AcyclicStageReferences")) TArray<FString> PrerequisiteStageKeys;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Production Chain") EHansaProductionStageRole Role = EHansaProductionStageRole::Source;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Production Chain") FString IntendedConstructionTier;
+};
+
+UCLASS(BlueprintType, meta=(DisplayName="Production chain definition", HansaSchemaId="Hansa.ProductionChainDefinition", HansaSchemaVersion="1"))
+class HANSA_API UHansaProductionChainDefinition final : public UHansaDefinitionBase
+{
+	GENERATED_BODY()
+public:
+	UHansaProductionChainDefinition();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Production Chain", meta=(HansaReference="Recipe", HansaValidation="ProductionChain")) TArray<FHansaProductionChainStageDefinition> Stages;
+	virtual void ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const override;
+protected:
+	virtual void AppendDefinitionHashData(FString& InOutCanonicalData) const override;
+};
+
+USTRUCT(BlueprintType)
+struct HANSA_API FHansaRegionResourceEndowmentDefinition
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(HansaReference="Good")) FString GoodId;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy") EHansaResourceEndowment Endowment = EHansaResourceEndowment::Absent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(ClampMin="0")) int64 SourceCapacityMilliUnitsPerUpdate = 0;
+};
+
+USTRUCT(BlueprintType)
+struct HANSA_API FHansaRegionPermittedStageDefinition
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(HansaReference="ProductionChain")) FString ProductionChainId;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy") TArray<FString> StageKeys;
+};
+
+UCLASS(BlueprintType, meta=(DisplayName="Regional economic profile definition", HansaSchemaId="Hansa.RegionEconomicProfileDefinition", HansaSchemaVersion="1"))
+class HANSA_API UHansaRegionEconomicProfileDefinition final : public UHansaDefinitionBase
+{
+	GENERATED_BODY()
+public:
+	UHansaRegionEconomicProfileDefinition();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(HansaReference="City")) TArray<FString> MemberCityIds;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy") TArray<FHansaRegionPermittedStageDefinition> PermittedStages;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(HansaReference="Good")) TArray<FHansaRegionResourceEndowmentDefinition> ResourceEndowments;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(ClampMin="0")) int64 ExchangeCapacityMilliUnitsPerUpdate = 12000;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(ClampMin="1")) int32 ExchangeDelayUpdates = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(ClampMin="0", ClampMax="10000")) int32 TransportLossBasisPoints = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(ClampMin="0")) int64 TransportCostMilliMarksPerUnit = 0;
+	virtual void ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const override;
+protected:
+	virtual void AppendDefinitionHashData(FString& InOutCanonicalData) const override;
+};
+
+USTRUCT(BlueprintType)
+struct HANSA_API FHansaCityIndustryBindingDefinition
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(HansaReference="ProductionChain")) FString ProductionChainId;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy") TArray<FString> EnabledStageKeys;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(ClampMin="1")) int32 CyclesPerMarketUpdate = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(ClampMin="1", ClampMax="50000")) int32 EfficiencyBasisPoints = 10000;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(ClampMin="0")) int64 InputReserveMilliUnits = 4000;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(ClampMin="0")) int64 OutputReserveMilliUnits = 12000;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy") bool bEnabled = true;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Regional Economy", meta=(ClampMin="0", ClampMax="2")) int32 SignatureRank = 0;
+};
+
 UCLASS(BlueprintType, meta = (
 	DisplayName = "City market profile definition",
 	HansaSchemaId = "Hansa.CityMarketProfileDefinition",
@@ -145,6 +232,32 @@ public:
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "false", HansaAIAccess = "Read",
 		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "MarketMode"))
 	bool bMarketOnly = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Presentation", meta = (
+		DisplayName = "Presentation class", ToolTip = "Truthful player-facing availability. Market-only cities have no fabricated world scene or construction plots; rendered cities may be visitable, and only explicitly buildable cities expose construction.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Read",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "CityPresentation"))
+	EHansaCityPresentationClass PresentationClass = EHansaCityPresentationClass::Unspecified;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Presentation", meta = (
+		DisplayName = "Map longitude", ToolTip = "Reviewed approximate longitude in milli-degrees, used only for bounded trade-map placement.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Read",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "GeoCoordinate",
+		HansaUnit = "MilliDegree", HansaMin = "-180000", HansaMax = "180000"))
+	int32 MapLongitudeMilliDegrees = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Presentation", meta = (
+		DisplayName = "Map latitude", ToolTip = "Reviewed approximate latitude in milli-degrees, used only for bounded trade-map placement.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Read",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "GeoCoordinate",
+		HansaUnit = "MilliDegree", HansaMin = "-90000", HansaMax = "90000"))
+	int32 MapLatitudeMilliDegrees = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Market|Regional Economy", meta=(HansaReference="Region", HansaValidation="StableReference"))
+	FString RegionId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Market|Regional Economy", meta=(HansaReference="ProductionChain", HansaValidation="CityIndustryBindings"))
+	TArray<FHansaCityIndustryBindingDefinition> IndustryBindings;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Market|Reporting", meta = (
 		DisplayName = "Report cadence", ToolTip = "Ticks between published reports; reports publish only on market update ticks.", ClampMin = "1",

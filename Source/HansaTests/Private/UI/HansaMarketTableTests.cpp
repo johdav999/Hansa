@@ -9,6 +9,7 @@
 #include "UI/HansaMarketTablePresentationModel.h"
 #include "UI/SHansaCityOverview.h"
 #include "UI/SHansaMarketTable.h"
+#include "UI/HansaUiComponents.h"
 #include "UObject/StrongObjectPtr.h"
 
 namespace
@@ -30,7 +31,7 @@ bool FHansaMarketTableProjectionStateTest::RunTest(const FString& Parameters)
 	(void)Parameters;
 	TStrongObjectPtr<UHansaMarketTablePresentationModel> Model(NewObject<UHansaMarketTablePresentationModel>());
 	Model->InitializeDefaults();
-	TestEqual(TEXT("The empty runtime still exposes exactly the ten canonical MVP goods"), Model->GetSnapshot().AllRows.Num(), 10);
+	TestEqual(TEXT("Unknown catalog retains fourteen baseline goods without speculative artisan rows"), Model->GetSnapshot().AllRows.Num(), 14);
 	TestTrue(TEXT("Unavailable market data is explicit instead of fabricated zeroes"), Model->GetSnapshot().AllRows.ContainsByPredicate([](const auto& Row)
 	{
 		return Row.GoodStableId == TEXT("Good.Grain") && Row.bUnknown && Row.Stock.ToString() == TEXT("—") && Row.Status.ToString().Contains(TEXT("No recent report"));
@@ -53,9 +54,9 @@ bool FHansaMarketTableProjectionStateTest::RunTest(const FString& Parameters)
 	const auto CurrentProjection = Fixture.BuildProjection();
 	if (!CurrentProjection) return false;
 	TestTrue(TEXT("The current market projection is accepted"), Model->ApplyProjection(CurrentProjection.Value, *Registry, CityId.Value));
-	TestEqual(TEXT("Projection refresh preserves exactly ten rows"), Model->GetSnapshot().AllRows.Num(), 10);
+	TestEqual(TEXT("Projection exposes every good in the actual fixture catalog"), Model->GetSnapshot().AllRows.Num(), Registry->GetGoods().Num());
 	const auto* Grain = Model->FindRow(TEXT("Good.Grain"));
-	TestTrue(TEXT("The grain row is typed and fully labelled"), Grain != nullptr && !Grain->bUnknown && !Grain->GoodGlyph.IsEmpty() &&
+	TestTrue(TEXT("The grain row is typed and fully labelled"), Grain != nullptr && !Grain->bUnknown && Hansa::UI::GlyphForGood(Grain->GoodStableId)==Hansa::UI::EUiGlyph::Grain &&
 		!Grain->Stock.IsEmpty() && !Grain->Reserve.IsEmpty() && !Grain->Demand.IsEmpty() && !Grain->Price.IsEmpty() &&
 		!Grain->Trend.IsEmpty() && !Grain->Incoming.IsEmpty() && Grain->AccessibleLabel.ToString().Contains(TEXT("Reserve target")));
 	return !HasAnyErrors();
@@ -82,7 +83,7 @@ bool FHansaMarketTableIntentTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Search leaves one matching result"), Model->GetSnapshot().VisibleRows.Num(), 1);
 	TestEqual(TEXT("Search preserves the selected stable ID"), Model->GetSnapshot().SelectedGoodStableId, FName(TEXT("Good.Grain")));
 	TestTrue(TEXT("Clear filters restores all canonical rows"), Model->ClearFiltersIntent());
-	TestEqual(TEXT("All ten goods return after clearing"), Model->GetSnapshot().VisibleRows.Num(), 10);
+	TestEqual(TEXT("All authored goods return after clearing"), Model->GetSnapshot().VisibleRows.Num(), Registry->GetGoods().Num());
 
 	TestTrue(TEXT("Category filtering advances through a typed intent"), Model->CycleCategoryFilterIntent());
 	TestTrue(TEXT("Food category returns only food goods"), !Model->GetSnapshot().VisibleRows.IsEmpty() && Model->GetSnapshot().VisibleRows.ContainsByPredicate([](const auto& Row)

@@ -86,15 +86,16 @@ namespace Hansa::Game::LubeckWorldArt
 
         FHansaLightingState State;
         State.SolarHour = SolarHour;
-        State.SolarElevationDegrees = float(ElevationDegrees);
+        // Raise the daytime presentation sun; retain continuous dawn, dusk and night.
+        State.SolarElevationDegrees = float(FMath::Lerp(ElevationDegrees,
+            FMath::Max(ElevationDegrees, 60.0), SmoothStep(8.0, 12.0, ElevationDegrees)));
         State.SunYawDegrees = float(-35.0 + HourAngleDegrees);
         State.SunIntensityLux = float(BalticDaylightLux * DirectDaylight * ElevationEnergy);
         State.SunTemperatureKelvin = float(FMath::Lerp(3900.0, 5700.0, SunWarmth));
         State.SunSourceAngleDegrees = 4.0f;
-        // Keep the daylight fill generous and cool enough to open shaded walls without
-        // lifting sun-facing roofs. Do not let the exposure-compensated night
-        // cubemap hold the terrain at a chalky daytime value after the sun has set.
-        State.SkyLightIntensity = float(FMath::Lerp(0.65, 1.8, SkyDaylight));
+        // GrayLightTextureCube needs daylight-scale luminance alongside the 15 klux sun.
+        // Calibrated on shaded brick facades at fixed exposure; preserve the night floor.
+        State.SkyLightIntensity = float(FMath::Lerp(0.65, 2000.0, SkyDaylight));
         State.SkyTemperatureKelvin = float(FMath::Lerp(9000.0, 7500.0, SkyDaylight));
         State.ExposureEV100 = float(FMath::Lerp(3.5, 14.0, SmoothStep(-6.0, 15.0, ElevationDegrees)));
         return State;

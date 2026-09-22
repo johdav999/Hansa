@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "purpose": "Readable Baltic-blue river and lake optics, including shallow surveyed channels",
+  "materials": [
+    "/Game/Hansa/Generated/Staging/LubeckTerrain_20260907/Materials/MI_Water_Lubeck_River",
+    "/Game/Hansa/Generated/Staging/LubeckTerrain_20260907/Materials/MI_Water_Lubeck_Lake"
+  ],
+  "vectors": {
+    "Absorption": [10.0, 50.0, 120.0, 1.0],
+    "Scattering": [0.08, 0.3, 0.8, 16.0],
+    "Water Albedo": [0.08, 0.3, 0.55, 0.5]
+  },
+  "notes": "Material art direction, not measured water chemistry. Preserve native Water mesh, normals, reflections, channel geometry and surface elevations. This supersedes the olive optics in the transient 20260907 tuning scripts. Existing terrain remains staged."
+}

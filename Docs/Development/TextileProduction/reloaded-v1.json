@@ -1,0 +1,551 @@
+{
+	"valid": true,
+	"definitionCount": 136,
+	"registryHash": "60AA916BDE3790D5",
+	"definitions": [
+		{
+			"stableId": "AITuning.MerchantRival",
+			"hash": "08792B7922ADAB1A"
+		},
+		{
+			"stableId": "Building.Bakery",
+			"hash": "57CC16AFDDA84A30"
+		},
+		{
+			"stableId": "Building.Brewery",
+			"hash": "B7B0E24B4E3CFF1B"
+		},
+		{
+			"stableId": "Building.Chandler",
+			"hash": "5F802407049502B1"
+		},
+		{
+			"stableId": "Building.CharcoalBurner",
+			"hash": "96E3BAC9525C982C"
+		},
+		{
+			"stableId": "Building.Cooperage",
+			"hash": "C06FABB7394C4792"
+		},
+		{
+			"stableId": "Building.Dock",
+			"hash": "56A02685E5715533"
+		},
+		{
+			"stableId": "Building.Fishery",
+			"hash": "196BDF458D5656E6"
+		},
+		{
+			"stableId": "Building.Fishery.SaltingShed",
+			"hash": "92F4F851636E8ECA"
+		},
+		{
+			"stableId": "Building.GrainFarm",
+			"hash": "CDF9144C14BCBC90"
+		},
+		{
+			"stableId": "Building.HopFarm",
+			"hash": "4FD343B232CACAFA"
+		},
+		{
+			"stableId": "Building.LumberCamp",
+			"hash": "7A7630E823E76028"
+		},
+		{
+			"stableId": "Building.MaltHouse",
+			"hash": "5BCA000BB1AB045D"
+		},
+		{
+			"stableId": "Building.Market",
+			"hash": "2327B192D7DDD874"
+		},
+		{
+			"stableId": "Building.Mill",
+			"hash": "B134F4034AC1E700"
+		},
+		{
+			"stableId": "Building.Residence.Artisan",
+			"hash": "2A880C7F45698CF8"
+		},
+		{
+			"stableId": "Building.Residence.Artisan.Plot",
+			"hash": "2520041BE4C722D0"
+		},
+		{
+			"stableId": "Building.Residence.Laborer",
+			"hash": "9B8788F64D10F941"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CornerCourt.Stage1",
+			"hash": "BB798C770E51DC1E"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CornerCourt.Stage2",
+			"hash": "ED31D834A070D993"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CornerCourt.Stage3",
+			"hash": "80E9BE6830CBAB53"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CraftCourt.Stage1",
+			"hash": "961898EC004C7482"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CraftCourt.Stage2",
+			"hash": "C719818A4E8373B7"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.CraftCourt.Stage3",
+			"hash": "48A59949B8EEA24E"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.NarrowGang.Stage1",
+			"hash": "6D699E24D053EEFF"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.NarrowGang.Stage2",
+			"hash": "4E4C77773D0FF07A"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.NarrowGang.Stage3",
+			"hash": "7C70713CFF28C138"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.SharedCourt.Stage1",
+			"hash": "58C544C87770843A"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.SharedCourt.Stage2",
+			"hash": "3974FF6BD91628C3"
+		},
+		{
+			"stableId": "Building.Residence.Laborer.SharedCourt.Stage3",
+			"hash": "6D6068C0AF64CA5B"
+		},
+		{
+			"stableId": "Building.Road",
+			"hash": "FB79F1BE67547054"
+		},
+		{
+			"stableId": "Building.Ropewalk",
+			"hash": "AD1CC727B6A6CCDB"
+		},
+		{
+			"stableId": "Building.Sawmill",
+			"hash": "B75E527EFD78CC4F"
+		},
+		{
+			"stableId": "Building.Shoemaker",
+			"hash": "E1C3A46A828205AB"
+		},
+		{
+			"stableId": "Building.Smithy",
+			"hash": "ECFB20C12DFE2FEC"
+		},
+		{
+			"stableId": "Building.Tailor",
+			"hash": "99343A30E732BA41"
+		},
+		{
+			"stableId": "Building.Tannery",
+			"hash": "ED1EC967CA5E3B15"
+		},
+		{
+			"stableId": "Building.Warehouse",
+			"hash": "B7AC51DE335F5E73"
+		},
+		{
+			"stableId": "Building.Weaver",
+			"hash": "CCE4B6746D8F7B5A"
+		},
+		{
+			"stableId": "Building.WoodcutterYard",
+			"hash": "916DD655C9ADFEE3"
+		},
+		{
+			"stableId": "City.Hamburg",
+			"hash": "1163619B08D96929"
+		},
+		{
+			"stableId": "City.Lubeck",
+			"hash": "A6AAD15600768B5D"
+		},
+		{
+			"stableId": "City.Luneburg",
+			"hash": "19D0C58B5BAA332A"
+		},
+		{
+			"stableId": "City.Rostock",
+			"hash": "F24EB7CEBFC0D728"
+		},
+		{
+			"stableId": "Compound.Artisan.Plot",
+			"hash": "5729EB0235BB60A5"
+		},
+		{
+			"stableId": "Compound.Laborer.CornerCourt",
+			"hash": "76221E80D22F325B"
+		},
+		{
+			"stableId": "Compound.Laborer.CraftCourt",
+			"hash": "CCBB481345C75792"
+		},
+		{
+			"stableId": "Compound.Laborer.NarrowGang",
+			"hash": "6966477B41B2EC8F"
+		},
+		{
+			"stableId": "Compound.Laborer.SharedCourt",
+			"hash": "3DE859F4122D521D"
+		},
+		{
+			"stableId": "Good.Barrels",
+			"hash": "2E74196AA61E1083"
+		},
+		{
+			"stableId": "Good.Beer",
+			"hash": "1F4AE1B6F6627F8D"
+		},
+		{
+			"stableId": "Good.Beeswax",
+			"hash": "1CA63044F024D5BB"
+		},
+		{
+			"stableId": "Good.Bread",
+			"hash": "D43E72E128D930AB"
+		},
+		{
+			"stableId": "Good.Candles",
+			"hash": "E2F69B4045F79E0F"
+		},
+		{
+			"stableId": "Good.Charcoal",
+			"hash": "A8D47D1654905708"
+		},
+		{
+			"stableId": "Good.Firewood",
+			"hash": "E142E3725C2FCED6"
+		},
+		{
+			"stableId": "Good.Fish",
+			"hash": "5CAC80DD0360463C"
+		},
+		{
+			"stableId": "Good.Flax",
+			"hash": "C4B4D2C096CC215F"
+		},
+		{
+			"stableId": "Good.Flour",
+			"hash": "F98A986B598AECEC"
+		},
+		{
+			"stableId": "Good.Grain",
+			"hash": "574858DAAB2D4423"
+		},
+		{
+			"stableId": "Good.Hemp",
+			"hash": "67CBC11AA15CE4E6"
+		},
+		{
+			"stableId": "Good.Hops",
+			"hash": "E19D50E813F3A389"
+		},
+		{
+			"stableId": "Good.Iron",
+			"hash": "27146CC91F1DF41A"
+		},
+		{
+			"stableId": "Good.Leather",
+			"hash": "B5393F9AB7443612"
+		},
+		{
+			"stableId": "Good.LinenCloth",
+			"hash": "9B3D84F6B6DE841E"
+		},
+		{
+			"stableId": "Good.LinenClothing",
+			"hash": "08E0437265F90865"
+		},
+		{
+			"stableId": "Good.Malt",
+			"hash": "D577052D06285983"
+		},
+		{
+			"stableId": "Good.Planks",
+			"hash": "83611B41406C8F85"
+		},
+		{
+			"stableId": "Good.PreservedFish",
+			"hash": "1E5AF546EB206519"
+		},
+		{
+			"stableId": "Good.RawHides",
+			"hash": "A726A49D6160F203"
+		},
+		{
+			"stableId": "Good.Rope",
+			"hash": "D68B88F63D81326E"
+		},
+		{
+			"stableId": "Good.Salt",
+			"hash": "96B12CF763C04EFE"
+		},
+		{
+			"stableId": "Good.Shoes",
+			"hash": "A3556C8ED9D12EFB"
+		},
+		{
+			"stableId": "Good.TanningBark",
+			"hash": "C08E6B69F19763E9"
+		},
+		{
+			"stableId": "Good.Timber",
+			"hash": "67CE9584ABEF16C8"
+		},
+		{
+			"stableId": "Good.Tools",
+			"hash": "3EAFB51F74C1149F"
+		},
+		{
+			"stableId": "Need.BasicServices",
+			"hash": "5217C5DF2A6AFD7A"
+		},
+		{
+			"stableId": "Need.Beer",
+			"hash": "D89506CD70CF93DB"
+		},
+		{
+			"stableId": "Need.Bread",
+			"hash": "E575CA605C077DA9"
+		},
+		{
+			"stableId": "Need.Candles",
+			"hash": "5F90280D3C90AF48"
+		},
+		{
+			"stableId": "Need.Fish",
+			"hash": "10F0A278DBA1E8B1"
+		},
+		{
+			"stableId": "Need.Heating",
+			"hash": "AC0B8AC452A1457F"
+		},
+		{
+			"stableId": "Need.LinenClothing",
+			"hash": "650A1004D8ABA5B4"
+		},
+		{
+			"stableId": "Need.Shoes",
+			"hash": "B86DF1632DE1258B"
+		},
+		{
+			"stableId": "Need.Tools",
+			"hash": "AF96662DB853DDD4"
+		},
+		{
+			"stableId": "PopulationTier.Artisan",
+			"hash": "6EFAF80E0E3C9DFD"
+		},
+		{
+			"stableId": "PopulationTier.Laborer",
+			"hash": "A0CC09EFF1D3D381"
+		},
+		{
+			"stableId": "Recipe.BakeBread",
+			"hash": "3C8A11BACBC22C49"
+		},
+		{
+			"stableId": "Recipe.BrewBeer",
+			"hash": "DCA22DB5A971E19D"
+		},
+		{
+			"stableId": "Recipe.BurnCharcoal",
+			"hash": "44DA954EEEB0FF18"
+		},
+		{
+			"stableId": "Recipe.CatchFish",
+			"hash": "51FAAC0826A95131"
+		},
+		{
+			"stableId": "Recipe.DipCandles",
+			"hash": "DDA2F2560822E701"
+		},
+		{
+			"stableId": "Recipe.FellTimber",
+			"hash": "AD03F90E9D225BBA"
+		},
+		{
+			"stableId": "Recipe.GrowGrain",
+			"hash": "45C86D3137F1A16B"
+		},
+		{
+			"stableId": "Recipe.GrowHops",
+			"hash": "5E127AF4A0FC1E04"
+		},
+		{
+			"stableId": "Recipe.LayFlaxRope",
+			"hash": "9AB01F65679BDE39"
+		},
+		{
+			"stableId": "Recipe.LayHempRope",
+			"hash": "8B8837C9AD0B54BF"
+		},
+		{
+			"stableId": "Recipe.MakeBarrels",
+			"hash": "501332D439E974BC"
+		},
+		{
+			"stableId": "Recipe.MakeShoes",
+			"hash": "20E480D6F9F615BE"
+		},
+		{
+			"stableId": "Recipe.MaltGrain",
+			"hash": "6B6E5EC18779D29A"
+		},
+		{
+			"stableId": "Recipe.MillFlour",
+			"hash": "92EF1436BFE02AF4"
+		},
+		{
+			"stableId": "Recipe.SaltedCatch",
+			"hash": "023334955475FA96"
+		},
+		{
+			"stableId": "Recipe.SawPlanks",
+			"hash": "97EC4D2E57C45E4B"
+		},
+		{
+			"stableId": "Recipe.SewLinenClothing",
+			"hash": "611EC0207C3BC6D2"
+		},
+		{
+			"stableId": "Recipe.SmithTools",
+			"hash": "B50103A1804C6F97"
+		},
+		{
+			"stableId": "Recipe.SplitFirewood",
+			"hash": "C0CD30D44A068D78"
+		},
+		{
+			"stableId": "Recipe.TanLeather",
+			"hash": "34BDB1F69D4A955C"
+		},
+		{
+			"stableId": "Recipe.WeaveLinen",
+			"hash": "66821A216D65AB54"
+		},
+		{
+			"stableId": "Route.BalticSea",
+			"hash": "07108D84E75E6F87"
+		},
+		{
+			"stableId": "Route.SaltRoad",
+			"hash": "A9BC1234E34AA54E"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveLandRoute",
+			"hash": "1E52FCBEF0935246"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveProductionEconomy",
+			"hash": "C505209D20697D9B"
+		},
+		{
+			"stableId": "ScenarioObjective.ActiveSeaRoute",
+			"hash": "B0F4479A8A784F42"
+		},
+		{
+			"stableId": "ScenarioObjective.AffordableBread",
+			"hash": "862635CF1DCD119C"
+		},
+		{
+			"stableId": "ScenarioObjective.CivicSatisfaction",
+			"hash": "204B3B6DC6A9B259"
+		},
+		{
+			"stableId": "ScenarioObjective.CompletedResearch",
+			"hash": "D841CB81CFEF9256"
+		},
+		{
+			"stableId": "ScenarioObjective.CompletedTradeLegs",
+			"hash": "26571207A4E45780"
+		},
+		{
+			"stableId": "ScenarioObjective.SafeBreadReserve",
+			"hash": "7BA38F95AB9B5864"
+		},
+		{
+			"stableId": "ScenarioObjective.SafeGrainReserve",
+			"hash": "0CC2C92A699EBE55"
+		},
+		{
+			"stableId": "ScenarioObjective.SolventHouse",
+			"hash": "26767D09E92E24D3"
+		},
+		{
+			"stableId": "ScenarioObjective.StablePopulation",
+			"hash": "A6493808DB007B94"
+		},
+		{
+			"stableId": "Scenario.LubeckGrainShortageV1",
+			"hash": "7B1414BDBB15C6FA"
+		},
+		{
+			"stableId": "Technology.Commerce.MarketReports",
+			"hash": "B7ADB33E5434797E"
+		},
+		{
+			"stableId": "Technology.Commerce.ReserveAutomation",
+			"hash": "63BEEF03B6D5642E"
+		},
+		{
+			"stableId": "Technology.Commerce.TransactionFriction",
+			"hash": "15C731216683A1D8"
+		},
+		{
+			"stableId": "Technology.Logistics.CartCapacity",
+			"hash": "9B207DF9B5B905DE"
+		},
+		{
+			"stableId": "Technology.Logistics.RouteScheduling",
+			"hash": "ABD1FBDDA7C4C7C6"
+		},
+		{
+			"stableId": "Technology.Logistics.WarehouseHandling",
+			"hash": "0DB457D256A80CC6"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedMilling",
+			"hash": "59D4572FB4A779CB"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedSawmilling",
+			"hash": "7D08F2E536623283"
+		},
+		{
+			"stableId": "Technology.Production.ImprovedSmithing",
+			"hash": "1AA384B311EDA522"
+		},
+		{
+			"stableId": "Vehicle.Cog",
+			"hash": "DCD93805FB2F658F"
+		},
+		{
+			"stableId": "Vehicle.Wagon",
+			"hash": "6950B7FF81C608BE"
+		},
+		{
+			"stableId": "Victory.ProsperityEconomic",
+			"hash": "22F7B7557A9C72EA"
+		},
+		{
+			"stableId": "Victory.ResearchCivic",
+			"hash": "E02C5A4034030B46"
+		},
+		{
+			"stableId": "Victory.TradeNetwork",
+			"hash": "972B848DD37EA304"
+		}
+	]
+}

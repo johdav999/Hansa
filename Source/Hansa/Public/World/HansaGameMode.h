@@ -9,7 +9,7 @@
 
 class AHansaStrategyPlayerController;
 
-/** Server-owned MVP game mode and two-client authority composition root. */
+/** Server-owned game mode and bounded eight-house authority composition root. */
 UCLASS()
 class HANSA_API AHansaGameMode : public AGameModeBase
 {

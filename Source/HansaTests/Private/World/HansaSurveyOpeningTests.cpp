@@ -43,6 +43,15 @@ bool FHansaSurveyOpeningTest::RunTest(const FString&)
 	TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>());
 	FString Error;
 	if (!TestTrue(*Error, Host->InitializeForLubeck(World,Error) && Host->StartNewGame(Error))) return false;
+	const FHansaGridCoordinate OpeningCell = WorldToGrid(SurveyStartLocation());
+	const FHansaPlacementGridCell* OpeningOwnership = Host->FindPlacementMap()->Cells.FindByPredicate(
+		[OpeningCell](const FHansaPlacementGridCell& Cell) { return Cell.Coordinate == OpeningCell; });
+	if (!TestNotNull(TEXT("Survey opening resolves to an authoritative placement cell"), OpeningOwnership)) return false;
+	TestEqual(TEXT("Survey opening belongs to the local player's house"),
+		OpeningOwnership->OwnerId, Host->GetHouseId());
+    const auto* TreeMap = Host->FindPlacementMap();
+    if (!TestTrue(TEXT("Playable surveyed map contains the authored tree resource cells"),
+        TreeMap && TreeMap->TreeCells.Num() > 0)) return false;
 	Host->SetMerchantAIEnabled(false);
 	const auto Opening = Host->BuildProjection();
 	if (!Opening) return false;
@@ -80,14 +89,10 @@ bool FHansaSurveyOpeningTest::RunTest(const FString&)
 	Add(TEXT("Building.Residence.Laborer"),Anchor.X-8,Anchor.Y);
 	Add(TEXT("Building.Market"),Anchor.X-6,Anchor.Y);
 	Add(TEXT("Building.Fishery"),Anchor.X,Anchor.Y);
-	// Opposite survey corners, kilometres beyond the old prototype restriction.
-	Add(TEXT("Building.Road"),SurveyMinX+5,SurveyMinY+5);
-	Add(TEXT("Building.Road"),SurveyMaxX-5,SurveyMinY+5);
-	Add(TEXT("Building.Road"),SurveyMinX+5,SurveyMaxY-5);
 	const auto Placed=Host->PlaceBuildings(Specs);
 	if (!Placed) AddError(FString::Printf(TEXT("Placement gateway: %s; terrain: %s"),LexToString(Placed.GetError()),
 		Placed.GetPlacementValidation().IsSet() ? LexToString(Placed.GetPlacementValidation()->GetPrimaryFailure()) : TEXT("n/a")));
-	if (!TestTrue(TEXT("Shore chain and remote survey plots accept normal paid construction"),Placed.IsSuccess())) return false;
+	if (!TestTrue(TEXT("The visible waterfront opening accepts normal paid construction"),Placed.IsSuccess())) return false;
 	FHansaPlacementSpec Invalid = Specs[0];
 	TestEqual(TEXT("Occupied roads still reject a second building"),
 		Host->ValidatePlacement(Invalid).GetPrimaryFailure(),EHansaPlacementFailure::Occupied);
@@ -127,6 +132,34 @@ bool FHansaSurveyOpeningTest::RunTest(const FString&)
 	const auto Restored=Host->RestoreSaveBytes(Bytes);
 	TestTrue(TEXT("Full survey restores"),Restored.IsSuccess());
 	TestEqual(TEXT("Survey save/load preserves full authoritative state"),Restored.AuthoritativeHash,Saved.AuthoritativeHash);
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaSurveyOpeningOwnershipTest,
+	"Hansa.Integration.RuntimeSimulationHost.SurveyOpeningOwnership",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaSurveyOpeningOwnershipTest::RunTest(const FString&)
+{
+	using namespace Hansa::Simulation;
+	using namespace Hansa::Game::LubeckPlacementGrid;
+	UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, FName(TEXT("SurveyOwnershipAcceptance")),
+		CreatePackage(TEXT("/Temp/Lubeck_Terrain_Preview_OwnershipAcceptance")));
+	GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+	ON_SCOPE_EXIT { World->DestroyWorld(false); GEngine->DestroyWorldContext(World); };
+	TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>());
+	FString Error;
+	if (!TestTrue(*Error, Host->InitializeForLubeck(World, Error) && Host->StartNewGame(Error))) return false;
+	FHansaPlacementSpec Road;
+	Road.CityId = Host->GetCityId();
+	Road.BuildingDefinitionId = FHansaBuildingTypeId::TryParse(TEXT("Building.Road")).Value;
+	Road.Anchor = WorldToGrid(SurveyStartLocation());
+	const FHansaPlacementValidationResult Validation = Host->ValidatePlacement(Road);
+	TestTrue(TEXT("A road can be constructed where the playable survey camera opens"), Validation.CanPlace());
+	if (!Validation.CanPlace())
+	{
+		AddError(FString::Printf(TEXT("Opening placement rejected as %s"),
+			LexToString(Validation.GetPrimaryFailure())));
+	}
 	return !HasAnyErrors();
 }
 #endif

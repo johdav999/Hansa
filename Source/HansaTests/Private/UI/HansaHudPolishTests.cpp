@@ -15,6 +15,18 @@ bool FHansaHudPolishFocus::RunTest(const FString&){
  auto Before=Hud->ResolveSemanticWidget(Id);TestTrue(TEXT("Alert action focuses"),Hud->FocusSemanticId(Id));
  auto Changed=Model->GetSnapshot();Changed.Money=FText::FromString(TEXT("2,451 mk"));Model->ApplySnapshot(Changed);
  TestTrue(TEXT("Unrelated resource updates preserve the actual alert button"),Before==Hud->ResolveSemanticWidget(Id));
+
+ for(int32 Tick=1;Tick<=120;++Tick){
+  auto Live=Model->GetSnapshot();
+  for(auto& Alert:Live.Alerts){Alert.Age=FText::AsNumber(Tick);Alert.Causal.Evidence=FText::Format(FText::FromString(TEXT("Stock {0}")),FText::AsNumber(Tick));}
+  Model->ApplySnapshot(Live);
+  TestTrue(TEXT("Age and evidence updates retain the native alert action"),Before==Hud->ResolveSemanticWidget(Id));
+ }
+ auto Live=Model->GetSnapshot();
+ for(auto& Alert:Live.Alerts){Alert.Label=FText::FromString(TEXT("Updated shortage"));Alert.Causal.Cause=FText::FromString(TEXT("Updated cause"));Alert.bWarning=true;Alert.Causal.Severity=EHansaCausalSeverity::Critical;}
+ Model->ApplySnapshot(Live);
+ TestTrue(TEXT("Severity and text changes retain the native action"),Before==Hud->ResolveSemanticWidget(Id));
+ TestTrue(TEXT("Causal tooltip updates without replacement"),Before->GetToolTip().IsValid());
  Model->ToggleAlertStack();TestFalse(TEXT("Hidden alert cannot receive focus"),Hud->FocusSemanticId(Id));
  return !HasAnyErrors();
 }

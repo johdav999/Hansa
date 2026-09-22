@@ -16,6 +16,7 @@ try {
     [Environment]::SetEnvironmentVariable('UE_SKIP_UBT_SDK_SETUP', '1', 'Process')
     Invoke-HansaNativeCommand -FilePath $context.UnrealEditorCommand -Arguments @(
         $context.ProjectFile, '-run=HansaMediaAudit', '-unattended', '-nop4', '-NullRHI',
+        '-ini:EditorPerProjectUserSettings:[/Script/ModelContextProtocolEngine.ModelContextProtocolSettings]:bAutoStartServer=False',
         '-ini:Game:[/Script/Engine.AssetManagerSettings]:+PrimaryAssetTypesToScan=(PrimaryAssetType="GameFeatureData",AssetBaseClass="/Script/GameFeatures.GameFeatureData",bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=,SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=NeverCook))',
         '-DisablePlugins=GameFeatures',
         "-Report=$referenceReport"

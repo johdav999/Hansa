@@ -1,0 +1,20 @@
+Build: HansaEditor Win64 Development succeeded
+Regression results:
+[2026.09.16-11.22.34:692][601]LogAutomationController: Display: Test Completed. Result={Success} Name={NativeSafeAreas} Path={Hansa.UI.HUD.Layout.NativeSafeAreas}
+[2026.09.16-11.22.34:717][604]LogAutomationController: Display: Test Completed. Result={Success} Name={EventUpdates} Path={Hansa.UI.HUD.PresentationModel.EventUpdates}
+[2026.09.16-11.22.34:747][607]LogAutomationController: Display: Test Completed. Result={Success} Name={OpenCloseFocus} Path={Hansa.UI.HUD.Semantics.OpenCloseFocus}
+[2026.09.16-11.22.35:379][610]LogAutomationController: Display: Test Completed. Result={Success} Name={AuthoritativeCityAndMonth} Path={Hansa.UI.HUD.TopMenu.AuthoritativeCityAndMonth}
+[2026.09.16-11.22.35:403][613]LogAutomationController: Display: Test Completed. Result={Success} Name={BreadBalance} Path={Hansa.UI.HUD.TopMenu.BreadBalance}
+[2026.09.16-11.22.35:432][616]LogAutomationController: Display: Test Completed. Result={Success} Name={P23StableAlertFocus} Path={Hansa.UI.HUD.P23StableAlertFocus}
+[2026.09.16-11.22.35:450][618]LogAutomationController: Display: Test Completed. Result={Success} Name={SemanticContract} Path={Hansa.UI.HUD.SemanticContract}
+[2026.09.16-11.22.35:475][621]LogAutomationController: Display: Test Completed. Result={Success} Name={AlertNavigationAndFocus} Path={Hansa.UI.Inspector.AlertNavigationAndFocus}
+[2026.09.16-11.22.35:501][624]LogAutomationController: Display: Test Completed. Result={Success} Name={FramePreservesWidgetStructure} Path={Hansa.UI.Inspector.FramePreservesWidgetStructure}
+[2026.09.16-11.22.35:567][627]LogAutomationController: Display: Test Completed. Result={Success} Name={LocalizationAndScreenshotContract} Path={Hansa.UI.Inspector.LocalizationAndScreenshotContract}
+[2026.09.16-11.22.35:592][630]LogAutomationController: Display: Test Completed. Result={Success} Name={P23ActionIdentityAndUnavailableStates} Path={Hansa.UI.Inspector.P23ActionIdentityAndUnavailableStates}
+[2026.09.16-11.22.36:325][632]LogAutomationController: Display: Test Completed. Result={Success} Name={PostPlacementResidenceAndProductionActions} Path={Hansa.UI.Inspector.PostPlacementResidenceAndProductionActions}
+[2026.09.16-11.22.36:337][634]LogAutomationController: Display: Test Completed. Result={Success} Name={SharedCausalModel} Path={Hansa.UI.Inspector.SharedCausalModel}
+Viewport results:
+[2026.09.16-11.23.01:256][227]LogAutomationController: Display: Test Completed. Result={Success} Name={RealViewport} Path={Hansa.UI.AlertPanel.RealViewport}
+[2026.09.16-11.23.26:795][707]LogAutomationController: Display: Test Completed. Result={Success} Name={RealViewport} Path={Hansa.UI.AlertPanel.RealViewport}
+[2026.09.16-11.23.53:309][209]LogAutomationController: Display: Test Completed. Result={Success} Name={RealViewport} Path={Hansa.UI.AlertPanel.RealViewport}
+[2026.09.16-11.24.20:648][969]LogAutomationController: Display: Test Completed. Result={Success} Name={RealViewport} Path={Hansa.UI.AlertPanel.RealViewport}

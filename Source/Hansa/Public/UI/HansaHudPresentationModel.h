@@ -10,6 +10,7 @@
 namespace Hansa::Simulation
 {
 	class FHansaSimulationProjection;
+    class FHansaEconomicRegistry;
     struct FHansaCityMarketProjection;
 }
 
@@ -120,6 +121,7 @@ struct HANSA_API FHansaHudPresentationSnapshot final
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|HUD")
 	FText Research;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|HUD") FText ResearchPoints;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|HUD")
 	FText Connection;
@@ -188,7 +190,7 @@ public:
 	void SetFocusedSemanticId(FName SemanticId);
 	void SetSelection(FText SelectionSummary, FText InspectorTitle, FText InspectorSummary, bool bOpenInspector);
 	void ApplyRuntimeStatus(const Hansa::Simulation::FHansaSimulationProjection& Projection,
-        Hansa::Simulation::FHansaCityDefinitionId CityId,Hansa::Simulation::FHansaHouseId HouseId);
+        Hansa::Simulation::FHansaCityDefinitionId CityId,Hansa::Simulation::FHansaHouseId HouseId, const Hansa::Simulation::FHansaEconomicRegistry* Registry = nullptr);
 	bool ApplyMarketAlerts(
 		const Hansa::Simulation::FHansaSimulationProjection& Projection,
 		Hansa::Simulation::FHansaCityDefinitionId CityId,

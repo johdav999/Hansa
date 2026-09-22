@@ -1,0 +1,9 @@
+map=L_Lubeck_Terrain_Preview_WP;stage=6;viewport=1920x1080;building=5
+SaveLoad.Root	true
+SaveLoad.Close	close
+SaveLoad.Slot.manual	exists=true;compatibility=Compatible;savedUtc=2026-09-15T16:43:55.498Z;scenario=Scenario.LubeckGrainShortageV1;format=7;build=Hansa-S11-P04;tick=187;hash=8B760B65E429DA1F;remedy=
+SaveLoad.Slot.autosave	exists=false;compatibility=Empty slot;savedUtc=;scenario=;format=0;build=;tick=0;hash=;remedy=
+SaveLoad.Name	Compound UAT isolated slot
+SaveLoad.Action.Save	save
+SaveLoad.Action.Load	load
+SaveLoad.Status	

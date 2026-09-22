@@ -1,6 +1,9 @@
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "Misc/AutomationTest.h"
+#include "World/HansaLubeckScenarioInitializer.h"
+#include "Definitions/HansaEconomicRegistry.h"
+#include "UI/HansaConstructionTestSettings.h"
 #include "UI/HansaBuildMenuPresentationModel.h"
 #include "UI/SHansaBuildMenu.h"
 #include "UObject/StrongObjectPtr.h"
@@ -27,12 +30,13 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 
 bool FHansaBuildMenuCatalogTest::RunTest(const FString& Parameters)
 {
+ FScopedHansaArtisanConstructionOverride Override(false);
 	(void)Parameters;
 	TStrongObjectPtr<UHansaBuildMenuPresentationModel> Model(NewObject<UHansaBuildMenuPresentationModel>());
 	FString Error;
 	if (!TestTrue(TEXT("The runtime Lübeck build session initializes"), Model->InitializeForLubeck(nullptr, Error))) return false;
 	const FHansaBuildMenuSnapshot& Snapshot = Model->GetSnapshot();
-	TestEqual(TEXT("The catalogue contains the sixteen authored construction cards"), Snapshot.Cards.Num(), 16);
+	TestEqual(TEXT("The catalogue includes artisan workshops and compound starting choices"), Snapshot.Cards.Num(), 25);
 	TSet<EHansaBuildCategory> Categories;
 	bool bHasLockedReason = false;
 	for (const FHansaBuildCardPresentation& Card : Snapshot.Cards)
@@ -47,14 +51,13 @@ bool FHansaBuildMenuCatalogTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Only the five authored MVP categories are represented"), Categories.Num(), 5);
 	TestEqual(TEXT("Slate category presentation is derived from those five authored categories"), Snapshot.Categories.Num(), 5);
 	TestTrue(TEXT("Locked authored cards explain the causal prerequisite"), bHasLockedReason);
-	TestNull(TEXT("Hidden post-MVP Smithy is not materialized as a Slate card"), FindCard(Snapshot, TEXT("Building.Smithy")));
+	TestNotNull(TEXT("Approved Smithy is materialized as a Slate card"), FindCard(Snapshot, TEXT("Building.Smithy")));
 	TestNotNull(TEXT("The player-buildable Brewery is materialized as a Slate card"), FindCard(Snapshot, TEXT("Building.Brewery")));
-	TestEqual(TEXT("The production selector exposes beer, bread, fish, and planks"), Snapshot.ProductionChains.Num(), 4);
-	TestEqual(TEXT("Bread is the deterministic initial chain"), Snapshot.SelectedProductionChainOutputGoodId, FName(TEXT("Good.Bread")));
-	TestEqual(TEXT("Beer is first in stable output-good order"), Snapshot.ProductionChains[0].OutputGoodId, FName(TEXT("Good.Beer")));
-	TestEqual(TEXT("Bread is second in stable output-good order"), Snapshot.ProductionChains[1].OutputGoodId, FName(TEXT("Good.Bread")));
-	TestEqual(TEXT("Fish is third in stable output-good order"), Snapshot.ProductionChains[2].OutputGoodId, FName(TEXT("Good.Fish")));
-	TestEqual(TEXT("Planks is fourth in stable output-good order"), Snapshot.ProductionChains[3].OutputGoodId, FName(TEXT("Good.Planks")));
+
+ TestEqual(TEXT("Eight authored production selectors"), Snapshot.ProductionChains.Num(), 8);
+ for(const TCHAR* Good:{TEXT("Good.Beer"),TEXT("Good.Bread"),TEXT("Good.Charcoal"),TEXT("Good.Firewood"),TEXT("Good.Fish"),TEXT("Good.Planks"),TEXT("Good.Shoes"),TEXT("Good.Tools")})
+  TestTrue(Good,Snapshot.ProductionChains.ContainsByPredicate([&](const auto& C){return C.OutputGoodId==Good;}));
+ TestEqual(TEXT("Bread is the deterministic initial chain"),Snapshot.SelectedProductionChainOutputGoodId,FName(TEXT("Good.Bread")));
 
 	const FHansaBuildCardPresentation* GrainFarm = FindCard(Snapshot, TEXT("Building.GrainFarm"));
 	const FHansaBuildCardPresentation* Mill = FindCard(Snapshot, TEXT("Building.Mill"));
@@ -80,14 +83,87 @@ bool FHansaBuildMenuCatalogTest::RunTest(const FString& Parameters)
 		Brewery->InputOutput.ToString().Contains(TEXT("1 hops")) &&
 		Brewery->InputOutput.ToString().Contains(TEXT("1 barrels")) &&
 		Brewery->InputOutput.ToString().Contains(TEXT("5 beer")));
-	TestTrue(TEXT("Grain Farm cost is derived from its current definition"), GrainFarm != nullptr &&
-		GrainFarm->Cost.ToString().Contains(TEXT("1200 pf")) && GrainFarm->Cost.ToString().Contains(TEXT("3 timber")) &&
-		GrainFarm->Cost.ToString().Contains(TEXT("0.5 tools")));
+
+ Hansa::Simulation::FHansaEconomicRegistry Authored;
+ if (!TestTrue(TEXT("Accepted catalog loads for cost comparison"),FHansaLubeckScenarioInitializer::TryLoadMvpRegistry(Authored,Error))) return false;
+ const auto* FarmDefinition=Authored.FindBuilding(TEXT("Building.GrainFarm"));
+ TestTrue(TEXT("Grain Farm displays its authored currency cost"),GrainFarm && FarmDefinition &&
+  GrainFarm->Cost.ToString().Contains(FString::Printf(TEXT("%lld pf"),static_cast<long long>(FarmDefinition->ConstructionCostPfennig))));
+
 	const FHansaBuildCardPresentation* ArtisanResidence = FindCard(Snapshot, TEXT("Building.Residence.Artisan"));
 	TestTrue(TEXT("Upgrade-only residence is locked with a causal reason"), ArtisanResidence != nullptr &&
 		ArtisanResidence->bLocked && ArtisanResidence->LockedReason.ToString().Contains(TEXT("Upgrade")));
 	TestFalse(TEXT("Locked content cannot begin a direct placement intent"), Model->SelectBuilding(TEXT("Building.Residence.Artisan")));
 	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaArtisanConstructionToggle,
+ "Hansa.UI.BuildMenu.ArtisanConstructionToggle",
+ EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaArtisanConstructionToggle::RunTest(const FString&)
+{
+ using namespace Hansa::Simulation;
+ FHansaCompiledBuildingDefinition Artisan;
+ Artisan.StableId = TEXT("Building.Residence.Artisan");
+ Artisan.bShowInConstructionMenu = true;
+ Artisan.bUpgradeOnly = true;
+ auto Other = Artisan; Other.StableId = TEXT("Building.OtherUpgrade");
+ auto ResearchLocked = Artisan;
+ ResearchLocked.RequiredConstructionTechnologyId = TEXT("Technology.Test");
+ auto Check = [&](bool Enabled, const FHansaCompiledBuildingDefinition& Definition, bool ExpectedLocked)
+ {
+  FScopedHansaArtisanConstructionOverride Override(Enabled);
+  FHansaEconomicRegistry Registry({}, {}, {Definition}, 123);
+  TArray<FHansaBuildCardPresentation> Cards;
+  TArray<FHansaBuildChainPresentation> Chains;
+  FString Error;
+  if (!TestTrue(TEXT("Catalog builds"), UHansaBuildMenuPresentationModel::BuildCatalogFromDefinitions(Registry, {}, Cards, Chains, Error))) return;
+  TestEqual(TEXT("Requested lock policy"), Cards[0].bLocked, ExpectedLocked);
+  TestTrue(TEXT("Authored upgrade metadata stays intact"), Registry.GetBuildings()[0].bUpgradeOnly);
+  TestEqual(TEXT("Catalog identity stays intact"), Registry.GetRegistryHash(), uint64(123));
+ };
+ Check(false, Artisan, true);
+ Check(true, Artisan, false);
+ Check(false, Artisan, true);
+ Check(true, Other, true);
+ Check(true, ResearchLocked, true);
+ return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaArtisanConstructionPlaytest,
+ "Hansa.UI.BuildMenu.ArtisanConstructionPlaytest",
+ EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaArtisanConstructionPlaytest::RunTest(const FString&)
+{
+ FScopedHansaArtisanConstructionOverride Override(true);
+ TStrongObjectPtr<UHansaBuildMenuPresentationModel> Model(NewObject<UHansaBuildMenuPresentationModel>());
+ FString Error;
+ if (!TestTrue(*Error, Model->InitializeForLubeck(nullptr, Error))) return false;
+ Model->SetOpen(true);
+ auto Menu = SNew(Hansa::UI::SHansaBuildMenu).Model(Model.Get());
+ Menu->ActivateSemanticId(TEXT("BuildMenu.Category.Residences"));
+ auto Card = Menu->ResolveSemanticWidget(TEXT("BuildMenu.Card.Building_Residence_Artisan"));
+ TestTrue(TEXT("Playtest artisan card is enabled"), Card.IsValid() && Card->IsEnabled());
+ TestTrue(TEXT("Artisan activates through the ordinary card"), Menu->ActivateSemanticId(TEXT("BuildMenu.Card.Building_Residence_Artisan")));
+ Model->TargetGridCell(10, 10);
+ TestFalse(TEXT("Override still requires road access"), Model->GetSnapshot().bCanConfirm);
+ TestFalse(TEXT("Invalid artisan placement cannot commit"), Model->ConfirmIntent());
+ Model->SelectBuilding(TEXT("Building.Road"));
+ Model->TargetGridCell(18, 16);
+ if (!TestTrue(TEXT("Road constructs normally"), Model->ConfirmIntent())) return false;
+ TestTrue(TEXT("Artisan selection starts placement"), Model->SelectBuilding(TEXT("Building.Residence.Artisan")));
+ TestTrue(TEXT("Artisan finds a road-adjacent site"), Model->TargetRoadAdjacentIntent());
+ TestTrue(TEXT("Artisan commits through the authoritative gateway"), Model->ConfirmIntent());
+ TestEqual(TEXT("Road and artisan exist in simulation"), Model->GetPlacedBuildingCount(), 2);
+ {
+  FScopedHansaArtisanConstructionOverride Disabled(false);
+  TestTrue(TEXT("Catalog can restore authored progression"), Model->ReloadCatalog(Error));
+  const auto* Locked = FindCard(Model->GetSnapshot(), TEXT("Building.Residence.Artisan"));
+  TestTrue(TEXT("Switch off restores upgrade-only reason"), Locked && Locked->bLocked && Locked->LockedReason.ToString().Contains(TEXT("Upgrade")));
+  TestFalse(TEXT("Switch off rejects direct artisan selection"), Model->SelectBuilding(TEXT("Building.Residence.Artisan")));
+  TestEqual(TEXT("Switch off preserves houses already placed"), Model->GetPlacedBuildingCount(), 2);
+ }
+ return !HasAnyErrors();
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -384,6 +460,30 @@ bool FHansaBuildMenuShorelineTargetTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Fishery construction reaches the command gateway"), Model->ConfirmIntent());
 	TestEqual(TEXT("The Dock and Fishery are both placed without a road"), Model->GetPlacedBuildingCount(), 2);
 	return !HasAnyErrors();
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaLumberGhostTreeFeedbackTest,
+    "Hansa.UI.BuildMenu.LumberGhostTreeFeedback",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaLumberGhostTreeFeedbackTest::RunTest(const FString& Parameters)
+{
+    TStrongObjectPtr<UHansaBuildMenuPresentationModel> Model(NewObject<UHansaBuildMenuPresentationModel>());
+    FString Error;
+    if (!TestTrue(TEXT("Construction presenter initializes"), Model->InitializeForLubeck(nullptr, Error))) return false;
+    Model->SetOpen(true);
+    if (!TestTrue(TEXT("Lumber camp starts ordinary card drag"), Model->BeginCardDrag(TEXT("Building.LumberCamp")))) return false;
+    Model->UpdateCardDragTarget(10, 10);
+    const auto& Preview = Model->GetSnapshot();
+    TestTrue(TEXT("Drag has a terrain target"), Preview.bHasTarget);
+    TestEqual(TEXT("Tree-less ghost uses red invalid feedback"), Preview.Feedback, EHansaPlacementFeedback::Invalid);
+    TestEqual(TEXT("Ghost shows exact requested message"), Preview.ValidationCause.ToString(), FString(TEXT("No nearby trees")));
+    TestFalse(TEXT("Tree-less ghost cannot confirm"), Preview.bCanConfirm);
+    TestFalse(TEXT("Dropping tree-less ghost cannot construct"), Model->EndCardDrag(true));
+    Model->SelectBuilding(TEXT("Building.LumberCamp"));
+    Model->TargetGridCell(10, 10);
+    TestFalse(TEXT("Click confirmation cannot bypass tree range"), Model->ConfirmIntent());
+    return !HasAnyErrors();
 }
 
 #endif

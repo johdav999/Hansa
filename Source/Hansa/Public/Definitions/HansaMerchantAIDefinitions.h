@@ -132,6 +132,55 @@ public:
 	int64 ProductionUtility = 25;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Merchant AI", meta = (
+		DisplayName = "Protected cash reserve", ToolTip = "Cash the merchant will not commit to discretionary trade, stations, orders or progression.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "NonNegative",
+		HansaUnit = "Pfennig", HansaMin = "0", HansaMax = "1000000000"))
+	int64 ProtectedCashReservePfennig = 5000;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Merchant AI", meta = (
+		DisplayName = "Action cooldown", ToolTip = "Minimum ticks after an accepted command before another command may be submitted.", ClampMin = "0",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "NonNegative",
+		HansaUnit = "SimulationTick", HansaMin = "0", HansaMax = "10000"))
+	int32 ActionCooldownTicks = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Merchant AI", meta = (
+		DisplayName = "Direct trade quantity", ToolTip = "Maximum milli-units submitted by one public spot-trade decision.", ClampMin = "1",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Positive",
+		HansaUnit = "MilliUnit", HansaMin = "1", HansaMax = "1000000000"))
+	int64 DirectTradeQuantityMilliUnits = 5000;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Merchant AI", meta = (
+		DisplayName = "Station order target", ToolTip = "Default stock target for a lawful acquire order.", ClampMin = "1",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Positive",
+		HansaUnit = "MilliUnit", HansaMin = "1", HansaMax = "1000000000"))
+	int64 StationOrderTargetMilliUnits = 10000;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Merchant AI", meta = (
+		DisplayName = "Station order cap", ToolTip = "Maximum quantity acquired by the AI order at one market update.", ClampMin = "1",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Positive",
+		HansaUnit = "MilliUnit", HansaMin = "1", HansaMax = "1000000000"))
+	int64 StationOrderCapMilliUnits = 2000;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Merchant AI", meta = (
+		DisplayName = "Station order budget", ToolTip = "Lifetime purchase budget for one AI-created station order.", ClampMin = "1",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Positive",
+		HansaUnit = "Pfennig", HansaMin = "1", HansaMax = "1000000000"))
+	int64 StationOrderBudgetPfennig = 20000;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Merchant AI", meta = (
+		DisplayName = "Presence utility", ToolTip = "Base utility for station, order, upgrade and specialization actions.",
+		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
+		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Integer",
+		HansaUnit = "Utility", HansaMin = "-1000000", HansaMax = "1000000"))
+	int64 PresenceUtility = 75;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Merchant AI", meta = (
 		DisplayName = "Trade objective legs", ToolTip = "Completed route legs required for the bounded MVP trade objective.", ClampMin = "1",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
 		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Positive",

@@ -1,0 +1,14 @@
+{
+  "Operation": "RunAutomationTests",
+  "Status": "Succeeded",
+  "Filter": "Hansa.Integration.Authoring.EconomicAssetReload",
+  "Configuration": "Development",
+  "TestsFound": 1,
+  "EditorBuildSkipped": true,
+  "RenderingEnabled": false,
+  "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+  "EngineRoot": "H:\\Unreal\\UE_5.8",
+  "CompletedUtc": "2026-09-15T16:30:46.4408876Z",
+  "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundIntegration\\Tests\\20260915-183029546-automation-Hansa.Integration.Authoring.EconomicAssetReload\\UnrealEditor.log",
+  "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundIntegration\\Tests\\20260915-183029546-automation-Hansa.Integration.Authoring.EconomicAssetReload\\AutomationCommand.log"
+}

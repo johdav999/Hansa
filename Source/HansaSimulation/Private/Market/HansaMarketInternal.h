@@ -14,6 +14,8 @@ namespace Hansa::Simulation
 			FHansaInventoryLedger& InventoryLedger, const TArray<FHansaProductionState>& Productions,
 			const TArray<FHansaPopulationCohortState>& PopulationCohorts,
 			const FHansaEconomicRegistry& Registry, FHansaSimulationTick Tick,
-			const TArray<FHansaRouteState>& Routes, const TArray<FHansaVehicleState>& Vehicles);
+			const TArray<FHansaRouteState>& Routes, const TArray<FHansaVehicleState>& Vehicles,
+			TArray<FHansaRemoteIndustryState>& RemoteIndustries,
+			TArray<FHansaRegionalShipmentState>& RegionalShipments, uint64& NextRegionalShipmentSequence);
 	};
 }

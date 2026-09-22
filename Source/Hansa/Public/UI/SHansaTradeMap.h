@@ -42,6 +42,11 @@ namespace Hansa::UI
 		void RebuildRoutes(const FHansaTradeMapSnapshot& Snapshot);
 		void RebuildStops(const FHansaTradeMapSnapshot& Snapshot);
 		void MapWidget(const FString& Id, const TSharedPtr<SWidget>& Widget);
+		void ApplySectionVisibility();
+		FString ActiveSection=TEXT("Route");
+		FName PresentedCity;
+		TSharedPtr<SVerticalBox> PresencePanel,SpecializationPanel,RouteDetailsPanel;
+		TSharedPtr<STextBlock> SelectedCityText,ScheduleText;
 		FReply Invoke(const FString Id);
 		TWeakObjectPtr<UHansaTradeMapPresentationModel> Model;
 		FDelegateHandle ChangedHandle;
@@ -50,7 +55,7 @@ namespace Hansa::UI
 		FString PresentedStopKey;
 		FIntPoint PresentationSize{1280,720};
         FEditableTextBoxStyle RouteNameStyle;
-        TSharedPtr<SEditableTextBox> RouteNameInput;
+        TSharedPtr<SEditableTextBox> RouteNameInput,CitySearchInput;
         TSharedPtr<STextBlock> CogLabel, ReviewText, ValidationText;
         TSharedPtr<SVerticalBox> SetupPanel, EditPanel, ReviewPanel, ExistingPanel;
 		TSharedPtr<SBox> PresentationBox;
@@ -60,6 +65,7 @@ namespace Hansa::UI
 		TSharedPtr<SBox> CanvasHost;
 		TSharedPtr<STradeRouteCanvas> RouteCanvas;
 		TSharedPtr<STextBlock> ModeText;
+		TSharedPtr<STextBlock> CityModeText,GoodModeText;
 		TSharedPtr<STextBlock> RouteTitle;
 		TSharedPtr<STextBlock> RouteMetrics;
 		TSharedPtr<STextBlock> ReserveRisk;
@@ -70,6 +76,14 @@ namespace Hansa::UI
 		TSharedPtr<STextBlock> ToggleActiveText;
 		TSharedPtr<STextBlock> ToggleActiveHint;
 		TSharedPtr<STextBlock> EditorStatus;
+		TSharedPtr<STextBlock> TradeStationText;
+		TSharedPtr<STextBlock> PresenceProgressText;
+		TSharedPtr<STextBlock> PresenceSpecializationText,PresenceSpecializationFeedback;
+        TSharedPtr<STextBlock> StationOrderText, StationOrderFeedback;
+        TSharedPtr<SVerticalBox> StationOrdersPanel;
+		TSharedPtr<SHansaAction> TradeStationButton;
+		TSharedPtr<SHansaAction> PresenceUpgradeButton;
+		TSharedPtr<SHansaAction> WarehouseSpecializationButton,MarketSpecializationButton,HarborSpecializationButton,ApplySpecializationButton;
 		TSharedPtr<SBorder> BottomPanel;
 		TMap<FString,TWeakPtr<SWidget>> SemanticWidgets;
 		TArray<FString> FocusOrder;

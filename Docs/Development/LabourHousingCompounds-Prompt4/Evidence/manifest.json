@@ -1,0 +1,381 @@
+{
+  "files": {
+    "baseline-legacy-residence-1920x1080.png": {
+      "sha256": "df04d635962423d49b50a4a2d29219179bb2d08f4c0b6285745d961eda93a894",
+      "bytes": 3207338,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "catalog-result.json": {
+      "sha256": "436d6cf729b76d988eb5b9b760938a5bfd8ceedd17da46c054e39866f9b41fe7",
+      "bytes": 846
+    },
+    "compound-result.json": {
+      "sha256": "044ce7022770024c022bd87a5c943ca92478c405f5a7b87ff50c9f721a6c30a7",
+      "bytes": 748
+    },
+    "district-after-material-fix-1920x1080.png": {
+      "sha256": "be063f2e7a6d7e11ce86b28f91b389e97f6a02c3f915d8396c3408729d4a667c",
+      "bytes": 3604247,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "district-before-material-fix-1920x1080.png": {
+      "sha256": "c25d828c6bf931f20dfaadc6188bf38d6571cf13e22a370e42632282b788b6f9",
+      "bytes": 3322979,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "performance-method.txt": {
+      "sha256": "c6bcda4d678277564a26e25abfeaadeaabe82d0b24c76da05aba0ab6e12d4f1c",
+      "bytes": 476
+    },
+    "performance-samples.csv": {
+      "sha256": "b2708385fcaaa9b95a5eb4f52245a99752c3fc1efc65cd83e57dba2fd7875b02",
+      "bytes": 26111
+    },
+    "performance-summary.json": {
+      "sha256": "24889f1291a6708ebf0bd8ba41b205e8f45af002aeaf6fb73808e4b4ae23675a",
+      "bytes": 1607
+    },
+    "population-result.json": {
+      "sha256": "926386c54cfcc86437b3a7d874538d9c0a2ede6cabf6c0c8d6519cff056c1c79",
+      "bytes": 787
+    },
+    "schema-result.json": {
+      "sha256": "54675880abde805cc9a2310560d94c9edd0e163a13f7b8abfc1a6fe2aafbd854",
+      "bytes": 858
+    },
+    "shipping-result.json": {
+      "sha256": "773734fb48f0f8d0cc36603fa3a539b59865451be12b378eae6961fd45a5c450",
+      "bytes": 1570
+    },
+    "PlayerFlow-1280x720/catalogue.png": {
+      "sha256": "1b272e0d216909255e553533863758d8020a7d542b23e09472d402e69ad40c55",
+      "bytes": 1388179,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/catalogue.txt": {
+      "sha256": "6d203bb844757f6bcc5dc1d11e23d5af9b01b71533d5aceb03b9f28b5df0986d",
+      "bytes": 6350
+    },
+    "PlayerFlow-1280x720/close.png": {
+      "sha256": "076a6b7d2cab155100fa6a36939e4319d658071fba7deaae250dce00256cfd4c",
+      "bytes": 1206708,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/close.txt": {
+      "sha256": "e74ab99ffbef87da220f750647fad1891d39ef1701ad9e4c72cf09ff4add161f",
+      "bytes": 8594
+    },
+    "PlayerFlow-1280x720/construction.png": {
+      "sha256": "305e3a4e5182480554b9d4e39c40d366affbbbc42dc742159bb963b501012afc",
+      "bytes": 1356774,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/construction.txt": {
+      "sha256": "e08b9db896f39baa2e447127a54bb6cea0c17cf507f68a5b1eb6f69c3de6818c",
+      "bytes": 4166
+    },
+    "PlayerFlow-1280x720/district-performance.csv": {
+      "sha256": "6d0312c8373dc498e9cb9ef6f3060108fc210e2ae8af80278b33af367f2e86bc",
+      "bytes": 18787
+    },
+    "PlayerFlow-1280x720/district.png": {
+      "sha256": "b380a687c7efa56f15a2bf75e10d6f3f7def7ff01fd8205f4e29e3f604415c48",
+      "bytes": 1337362,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/district.txt": {
+      "sha256": "585069d5cbb7f0d1cecfad306b1513295197b702d096f4e14ca66f457841e9c8",
+      "bytes": 4184
+    },
+    "PlayerFlow-1280x720/loaded.png": {
+      "sha256": "7a0853839da83eb24a0eb7c08bef5653a0de885cdddc430d01ca3ba486e722af",
+      "bytes": 487345,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/loaded.txt": {
+      "sha256": "65dd6d9645e6a9ea2ca31217b6d6b89b261d18cfca7f26a0bc2960278556843d",
+      "bytes": 315
+    },
+    "PlayerFlow-1280x720/oriented-ghost.png": {
+      "sha256": "f6faa449787b4e8ac466140f5ffb4ee2c8d69914ac7f0d14c1234686a4e6a8b5",
+      "bytes": 1324628,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/oriented-ghost.txt": {
+      "sha256": "5ff10c53dc0bb595d45d254638c850c0fee5164314805b05989603274946e50f",
+      "bytes": 7580
+    },
+    "PlayerFlow-1280x720/replacement.png": {
+      "sha256": "979de77f9e50f425d363976a84c3f409e4e46cbdffc43c200b08dcead1273eeb",
+      "bytes": 1315188,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/replacement.txt": {
+      "sha256": "ff741f4fa5d6c6df5885de5e3021eef663889919c67c68b04a830443a81ec73a",
+      "bytes": 4172
+    },
+    "PlayerFlow-1280x720/save.png": {
+      "sha256": "b70e69321ad51c5febb16a2f9420d2c848723643cfef290d74e785d9bc2e7ded",
+      "bytes": 278902,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/save.txt": {
+      "sha256": "416eddd501447085161bb2f7ca890e7190bed44932a841cbd457e280573a97a2",
+      "bytes": 537
+    },
+    "PlayerFlow-1280x720/stage1-needs.png": {
+      "sha256": "9103957e74ac12cda140a2d1c24ff3c1a8895d0ab0140052e54fb18f94894c60",
+      "bytes": 1171520,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/stage1-needs.txt": {
+      "sha256": "65335187123db6103c07d948db181ce7a391a5ca964c7de518ab57811e373c9d",
+      "bytes": 8530
+    },
+    "PlayerFlow-1280x720/stage2.png": {
+      "sha256": "92f3a68b257353f8dcf33b28d2262484d85a509429db6817f781d8296d462b04",
+      "bytes": 1186174,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/stage2.txt": {
+      "sha256": "295f29c6bba52affd0ca320ba061e972c966be04a0c4bad561c4639cf3554f23",
+      "bytes": 8538
+    },
+    "PlayerFlow-1280x720/stage3.png": {
+      "sha256": "4f49bf897a51d395d1508f647388d96b4567bc9c7bef5d69a71fdf9c73b93cbd",
+      "bytes": 1188805,
+      "nativeDimensions": [
+        1280,
+        720
+      ]
+    },
+    "PlayerFlow-1280x720/stage3.txt": {
+      "sha256": "501737fd38ef8b3de01c1bffb02ab96dd5f7aab5d0479aa3f8ea09bc31bd4840",
+      "bytes": 8538
+    },
+    "PlayerFlow-1280x720/test-result.json": {
+      "sha256": "0da8afa11391b2515074e937c5e5c089610207bd6ff33c441ae7291c65679404",
+      "bytes": 378
+    },
+    "PlayerFlow-1920x1080/catalogue.png": {
+      "sha256": "5c4853dff8aa3e7cce2f735401ce485c375e919c6c9c29beb7aa55dbc7e7e273",
+      "bytes": 3550779,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/catalogue.txt": {
+      "sha256": "003722502e5a24e8fa1a15a5aaf740481e386b6a6f0b5227b833b747f1783f49",
+      "bytes": 6352
+    },
+    "PlayerFlow-1920x1080/close.png": {
+      "sha256": "d6336f6436d9ffd0d967733e37518d96e449a55e688779816caf3b8665659896",
+      "bytes": 3363259,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/close.txt": {
+      "sha256": "a0d19cb193e30aed7dbd5eed4b3ae6ebd73003c7ebc1e92cc438079917aa660d",
+      "bytes": 8596
+    },
+    "PlayerFlow-1920x1080/construction.png": {
+      "sha256": "0bcf55071c3c2081766e469068cc2255d06fba7ccb2564357fa8d9c789c64316",
+      "bytes": 3458783,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/construction.txt": {
+      "sha256": "648d0ab6a0e7ff8d10a009e2b8966a63031c8293877dd97a5060c677a509d45d",
+      "bytes": 4168
+    },
+    "PlayerFlow-1920x1080/district-performance.csv": {
+      "sha256": "7b7dc7bff1b010d7dccb5b95daa83f7f9267fa39eacaec0b1f432a60b440fddd",
+      "bytes": 18787
+    },
+    "PlayerFlow-1920x1080/district.png": {
+      "sha256": "e00a547832de40aca975525aa0e643c77a34172ef73ccaf69002d265d61e1817",
+      "bytes": 3416383,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/district.txt": {
+      "sha256": "f213b72e6e19e0457072f28cccbefb43a76a3745644fd3c542c1981f5216c834",
+      "bytes": 4186
+    },
+    "PlayerFlow-1920x1080/loaded.png": {
+      "sha256": "a95402ded2eac6f5419f6206ddb1e713843fe8565cec062e8887ff44c4b772f7",
+      "bytes": 2198318,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/loaded.txt": {
+      "sha256": "4beeee032a911c9918304a4084a13fd9728ad634990e00990d75a0ac48b1f853",
+      "bytes": 316
+    },
+    "PlayerFlow-1920x1080/oriented-ghost.png": {
+      "sha256": "838446d16f79c05f153fbfe266fb4851e18e59a228e17697898818db51676ec5",
+      "bytes": 3457565,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/oriented-ghost.txt": {
+      "sha256": "9a82c342c511511801e05d703fdc043f59d4e5606ceeed037fbf01fdea81a69a",
+      "bytes": 7582
+    },
+    "PlayerFlow-1920x1080/performance-summary.json": {
+      "sha256": "b1dc8e3401062df8977c5bfb13815fcf60ee9ae2a0cefba43fce24e6a43ea3b8",
+      "bytes": 508
+    },
+    "PlayerFlow-1920x1080/replacement.png": {
+      "sha256": "f60ce9e90f31d651436f65a6541ff5e283f3b798e734dc6e63a9ccc83c26e5d7",
+      "bytes": 3363843,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/replacement.txt": {
+      "sha256": "1ca3ac09836890eb76610691b162b97ed2d3cd052575bb738f987505214a7f3b",
+      "bytes": 4174
+    },
+    "PlayerFlow-1920x1080/save.png": {
+      "sha256": "0200a21e4283da8a1f91e912ab964ee4ea910b4af52a95d8bac4f1f17f97aa27",
+      "bytes": 1973617,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/save.txt": {
+      "sha256": "115efd5b94e7409829e5363fb61caffed01083137dbd21c7bc4d2375d2cfadb4",
+      "bytes": 538
+    },
+    "PlayerFlow-1920x1080/stage1-needs.png": {
+      "sha256": "6f21a6056582eb1c6ef701c0601d61edae7fb52581d2f8262ffea44769174f39",
+      "bytes": 3295702,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/stage1-needs.txt": {
+      "sha256": "ee6ddfbb6b4a3be136c38f2541ef18b4b7793ff01318cb6993ced10fd92b3339",
+      "bytes": 8532
+    },
+    "PlayerFlow-1920x1080/stage2.png": {
+      "sha256": "10f70751a5b94ed5c83133d775947ab361d1e1551abcdadde420ddf129edfbdf",
+      "bytes": 3308616,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/stage2.txt": {
+      "sha256": "b76027dd4c47e8cd86f4fccfff5f5d12750cb6f59218c33a8d8bff25b49a0012",
+      "bytes": 8540
+    },
+    "PlayerFlow-1920x1080/stage3.png": {
+      "sha256": "95b24753e028b09d5a8e1a0b208bc491c9c02594bfd710ec4450f7ee937e6bd2",
+      "bytes": 3372408,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "PlayerFlow-1920x1080/stage3.txt": {
+      "sha256": "818633957452a31577e5dc2531621b920b987d3c758e6d9e8173514008c498e9",
+      "bytes": 8540
+    },
+    "PlayerFlow-1920x1080/test-result.json": {
+      "sha256": "b51ded3bfa5e4f0b292faaebe43c7055d96d3145c44f4e0bb58f6ff67bfea3c9",
+      "bytes": 379
+    },
+    "RandomLabour-1920x1080/close.png": {
+      "sha256": "c575d639102b5d726bdd2846c1e7c9387fd107589deac916be6c20a9c90a0798",
+      "bytes": 3365007,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "RandomLabour-1920x1080/close.txt": {
+      "sha256": "cff1918f9942865acf97706305a9afd9f2cebf77171f2c7f05193b05c3c66fbc",
+      "bytes": 8596
+    },
+    "RandomLabour-1920x1080/compound-tests.json": {
+      "sha256": "4399b84967f9052174f9910226b489d47314190eed394420e5293fe4994d2564",
+      "bytes": 748
+    },
+    "RandomLabour-1920x1080/district.png": {
+      "sha256": "eece508f09534d014053062636fec76ca87b1cb1b82f36b2daeb20528dde26bf",
+      "bytes": 3416356,
+      "nativeDimensions": [
+        1920,
+        1080
+      ]
+    },
+    "RandomLabour-1920x1080/district.txt": {
+      "sha256": "47815f5bf32fa9e4ee1814b2131d3b0a7fd351c19122478ae10bba3a8788aa7f",
+      "bytes": 4186
+    },
+    "RandomLabour-1920x1080/player-flow-result.json": {
+      "sha256": "709311a7b5cccf4ab9c9fd00289a7255fe33f52a400cade2d6a69b1462b1cbd2",
+      "bytes": 727
+    },
+    "RandomLabour-1920x1080/shipping-result.json": {
+      "sha256": "3125c58564c9fa8d5563b8b226ce206e5e16b4aaad757be0883bb639b932d47d",
+      "bytes": 1570
+    }
+  },
+  "note": "Original native PNG evidence; no raster resampling. 1080p performance samples retained from final selected run; close camera corrected in full subsequent replay."
+}

@@ -1,14 +1,23 @@
 #include "World/HansaLubeckScenarioInitializer.h"
+#include "World/HansaLubeckPlacementGrid.h"
+#include "World/HansaLubeckWorldFoundation.h"
+#include "Trade/HansaWaterNavigation.h"
+#include "Definitions/HansaEconomicDefinitions.h"
+#include "Definitions/HansaResidentialCompoundDefinition.h"
 
 #include "Definitions/HansaDefinitionBase.h"
 #include "Definitions/HansaEconomicDefinitionCompiler.h"
 #include "Engine/AssetManager.h"
+#if !UE_BUILD_SHIPPING
+#include "AssetRegistry/AssetRegistryModule.h"
+#endif
 #include "HansaLog.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
 #include "Inventory/HansaInventory.h"
 #include "Market/HansaMarket.h"
 #include "Population/HansaPopulation.h"
+#include "Presence/HansaForeignPresenceInitialization.h"
 #include "Queries/HansaSimulationReadOnly.h"
 #include "Production/HansaProduction.h"
 
@@ -128,6 +137,7 @@ namespace
 		FHansaSimulationInitialization& Initialization,
 		FHansaHouseId& OutHouseId,
 		FHansaHouseId& OutRivalHouseId,
+		TArray<FHansaHouseId>& OutHouseIds,
 		FHansaCityDefinitionId& OutCityId,
 		const int64 StartingMoney)
 	{
@@ -141,11 +151,123 @@ namespace
 		{
 			return false;
 		}
-		Initialization.Houses.Add({ OutHouseId, FHansaMoney::FromRaw(StartingMoney) });
-		Initialization.Houses.Add({ OutRivalHouseId, FHansaMoney::FromRaw(50'000) });
-		Initialization.Research.Add({ OutHouseId, 1'000 });
-		Initialization.Research.Add({ OutRivalHouseId, 400 });
+		OutHouseIds.Reset();
+		for (uint64 Value = 1; Value <= 8; ++Value)
+		{
+			FHansaHouseId HouseId;
+			if (!Entity(Value, HouseId)) return false;
+			OutHouseIds.Add(HouseId);
+			Initialization.Houses.Add({HouseId,
+				FHansaMoney::FromRaw(Value == 1 ? StartingMoney : 50'000)});
+			Initialization.Research.Add({HouseId, Value == 1 ? 1'000 : 400});
+		}
 		Initialization.Cities.Add({ OutCityId, FHansaQuantity() });
+		return true;
+	}
+
+	bool ConfigureEightHouseBuildableOpportunities(
+		FHansaPlacementInitialization& Placement,
+		TConstArrayView<FHansaHouseId> Houses,
+		const FHansaCityDefinitionId CityId,
+		TArray<FHansaHouseStartOpportunity>& OutOpportunities)
+	{
+		if (Houses.Num() != 8) return false;
+		FHansaPlacementMapInitialization* Map = Placement.Maps.FindByPredicate(
+			[CityId](const FHansaPlacementMapInitialization& Candidate) { return Candidate.CityId == CityId; });
+		if (Map == nullptr) return false;
+		TArray<FHansaGridCoordinate> Occupied;
+		for (const FHansaPlacedBuildingRecord& Record : Placement.Placements)
+		{
+			for (const FHansaGridCoordinate Cell : Record.OccupiedCells) Occupied.AddUnique(Cell);
+		}
+		int32 Counts[8] = {};
+		TArray<int32> BuildableCellIndices;
+		for (int32 CellIndex = 0; CellIndex < Map->Cells.Num(); ++CellIndex)
+		{
+			const FHansaPlacementGridCell& Cell = Map->Cells[CellIndex];
+			if (Cell.Terrain == EHansaPlacementTerrain::Water || Cell.bBlocked) continue;
+			BuildableCellIndices.Add(CellIndex);
+		}
+		if (BuildableCellIndices.Num() < Houses.Num()) return false;
+		const FHansaGridCoordinate PlayerStart = Map->BoundsMin.X < 0
+			? Hansa::Game::LubeckPlacementGrid::WorldToGrid(
+				Hansa::Game::LubeckPlacementGrid::SurveyStartLocation())
+			: Hansa::Game::LubeckPlacementGrid::WorldToGrid(
+				Hansa::Game::LubeckMap::AutomationStartTransform().GetLocation());
+		int32 PlayerStartOrdinal = 0;
+		int64 BestPlayerStartDistance = MAX_int64;
+		for (int32 Ordinal = 0; Ordinal < BuildableCellIndices.Num(); ++Ordinal)
+		{
+			const FHansaGridCoordinate Coordinate = Map->Cells[BuildableCellIndices[Ordinal]].Coordinate;
+			const int64 Distance = FMath::Abs(static_cast<int64>(Coordinate.X) - PlayerStart.X) +
+				FMath::Abs(static_cast<int64>(Coordinate.Y) - PlayerStart.Y);
+			if (Distance < BestPlayerStartDistance)
+			{
+				BestPlayerStartDistance = Distance;
+				PlayerStartOrdinal = Ordinal;
+			}
+		}
+		const int32 PlayerBand = FMath::Min(7,
+			PlayerStartOrdinal * Houses.Num() / BuildableCellIndices.Num());
+		int32 HouseByBand[8] = {};
+		int32 NextOtherHouse = 1;
+		for (int32 Band = 0; Band < Houses.Num(); ++Band)
+		{
+			HouseByBand[Band] = Band == PlayerBand ? 0 : NextOtherHouse++;
+		}
+		for (int32 Ordinal = 0; Ordinal < BuildableCellIndices.Num(); ++Ordinal)
+		{
+			const int32 Band = FMath::Min(7, Ordinal * Houses.Num() / BuildableCellIndices.Num());
+			const int32 HouseIndex = HouseByBand[Band];
+			Map->Cells[BuildableCellIndices[Ordinal]].OwnerId = Houses[HouseIndex];
+			++Counts[HouseIndex];
+		}
+		for (const FHansaPlacedBuildingRecord& Record : Placement.Placements)
+		{
+			for (const FHansaGridCoordinate Coordinate : Record.OccupiedCells)
+			{
+				if (FHansaPlacementGridCell* Cell = Map->Cells.FindByPredicate(
+					[Coordinate](const FHansaPlacementGridCell& Candidate) { return Candidate.Coordinate == Coordinate; }))
+				{
+					Cell->OwnerId = Record.OwnerId;
+				}
+			}
+		}
+		FMemory::Memzero(Counts, sizeof(Counts));
+		for (const FHansaPlacementGridCell& Cell : Map->Cells)
+		{
+			if (Cell.Terrain == EHansaPlacementTerrain::Water || Cell.bBlocked) continue;
+			const int32 HouseIndex = Houses.IndexOfByKey(Cell.OwnerId);
+			if (HouseIndex != INDEX_NONE) ++Counts[HouseIndex];
+		}
+		TArray<FHansaPlacementEntitlement> TemplateEntitlements;
+		for (const FHansaPlacementEntitlement& Entitlement : Placement.Entitlements)
+		{
+			if (Entitlement.HouseId == Houses[0]) TemplateEntitlements.Add(Entitlement);
+		}
+		for (int32 Index = 1; Index < Houses.Num(); ++Index)
+		{
+			for (const FHansaPlacementEntitlement& Template : TemplateEntitlements)
+			{
+				if (!Placement.Entitlements.ContainsByPredicate([&, Index](const FHansaPlacementEntitlement& Candidate)
+					{ return Candidate.HouseId == Houses[Index] && Candidate.BuildingDefinitionId == Template.BuildingDefinitionId; }))
+				{
+					Placement.Entitlements.Add({Houses[Index], Template.BuildingDefinitionId});
+				}
+			}
+		}
+		OutOpportunities.Reset();
+		for (int32 Index = 0; Index < Houses.Num(); ++Index)
+		{
+			const FHansaPlacementGridCell* Start = Map->Cells.FindByPredicate(
+				[&, Index](const FHansaPlacementGridCell& Cell)
+				{
+					return Cell.OwnerId == Houses[Index] && Cell.Terrain != EHansaPlacementTerrain::Water &&
+						!Cell.bBlocked && !Occupied.Contains(Cell.Coordinate);
+				});
+			if (Start == nullptr || Counts[Index] <= 0) return false;
+			OutOpportunities.Add({Houses[Index], CityId, Start->Coordinate, Counts[Index]});
+		}
 		return true;
 	}
 
@@ -225,9 +347,10 @@ namespace
 	}
 
 	bool AddCanonicalTrade(FHansaSimulationInitialization& Initialization,
-		const FHansaEconomicRegistry& Registry, const FHansaHouseId HouseId, const FHansaHouseId RivalHouseId,
+		const FHansaEconomicRegistry& Registry, TConstArrayView<FHansaHouseId> HouseIds,
 		const FHansaCityDefinitionId Lubeck)
 	{
+		if (HouseIds.Num() != 8) return false;
 		struct FSpec
 		{
 			uint64 VehicleValue;
@@ -238,12 +361,18 @@ namespace
 			const TCHAR* Destination;
 			const TCHAR* Good;
 			EHansaRouteMode Mode;
-			bool bRival = false;
+			int32 OwnerIndex = 0;
 		};
 		const FSpec Specs[] = {
 			{ 1, 1001, 1, TEXT("Vehicle.Cog"), TEXT("Route.BalticSea"), TEXT("City.Rostock"), TEXT("Good.Grain"), EHansaRouteMode::Sea },
 			{ 2, 1002, 2, TEXT("Vehicle.Wagon"), TEXT("Route.SaltRoad"), TEXT("City.Luneburg"), TEXT("Good.Salt"), EHansaRouteMode::Land },
-			{ 3, 1003, 3, TEXT("Vehicle.Cog"), TEXT("Route.BalticSea"), TEXT("City.Rostock"), TEXT("Good.Grain"), EHansaRouteMode::Sea, true }
+			{ 3, 1003, 3, TEXT("Vehicle.Cog"), TEXT("Route.BalticSea"), TEXT("City.Rostock"), TEXT("Good.Grain"), EHansaRouteMode::Sea, 1 },
+			{ 4, 1004, 4, TEXT("Vehicle.Cog"), TEXT("Route.BalticSea"), TEXT("City.Rostock"), TEXT("Good.Grain"), EHansaRouteMode::Sea, 2 },
+			{ 5, 1005, 5, TEXT("Vehicle.Cog"), TEXT("Route.BalticSea"), TEXT("City.Rostock"), TEXT("Good.Grain"), EHansaRouteMode::Sea, 3 },
+			{ 6, 1006, 6, TEXT("Vehicle.Cog"), TEXT("Route.BalticSea"), TEXT("City.Rostock"), TEXT("Good.Grain"), EHansaRouteMode::Sea, 4 },
+			{ 7, 1007, 7, TEXT("Vehicle.Cog"), TEXT("Route.BalticSea"), TEXT("City.Rostock"), TEXT("Good.Grain"), EHansaRouteMode::Sea, 5 },
+			{ 8, 1008, 8, TEXT("Vehicle.Cog"), TEXT("Route.BalticSea"), TEXT("City.Rostock"), TEXT("Good.Grain"), EHansaRouteMode::Sea, 6 },
+			{ 9, 1009, 9, TEXT("Vehicle.Cog"), TEXT("Route.BalticSea"), TEXT("City.Rostock"), TEXT("Good.Grain"), EHansaRouteMode::Sea, 7 }
 		};
 		for (const FSpec& Spec : Specs)
 		{
@@ -259,7 +388,7 @@ namespace
 				!Assign(FHansaRouteDefinitionId::TryParse(Spec.RouteDefinition), Route.RouteDefinitionId) ||
 				!Assign(FHansaCityDefinitionId::TryParse(Spec.Destination), Destination) ||
 				!Assign(FHansaGoodId::TryParse(Spec.Good), GoodId)) return false;
-			const FHansaHouseId OwnerId = Spec.bRival ? RivalHouseId : HouseId;
+			const FHansaHouseId OwnerId = HouseIds[Spec.OwnerIndex];
 			Vehicle.OwnerId = OwnerId;
 			Vehicle.Mode = Spec.Mode;
 			Vehicle.Capacity = FHansaQuantity::FromRaw(Definition->CargoCapacityMilliUnits);
@@ -452,9 +581,13 @@ namespace
 			if (!ConfigureMarket(Market, *CityMarket, Profile, CityId, CityInventoryId.Value)) return false;
 			Initialization.Markets.Add(MoveTemp(Market));
 		}
-		return AddMarketOnlyCity(Initialization, Registry, TEXT("City.Hamburg"), 2) &&
-			AddMarketOnlyCity(Initialization, Registry, TEXT("City.Luneburg"), 3) &&
-			AddMarketOnlyCity(Initialization, Registry, TEXT("City.Rostock"), 4);
+		uint64 RemoteInventoryValue=2;
+		for(const auto& RemoteCity:Registry.GetCityMarkets())
+		{
+			if(!RemoteCity.bMarketOnly||RemoteCity.StableId==TEXT("City.Lubeck"))continue;
+			if(!AddMarketOnlyCity(Initialization,Registry,*RemoteCity.StableId,RemoteInventoryValue++))return false;
+		}
+		return true;
 	}
 
 	bool BuildEmptyPlacementInitialization(
@@ -466,7 +599,8 @@ namespace
 		if (!Entity(1, Inventory.Id)) return false;
 		Inventory.OwnerKind = EHansaInventoryOwnerKind::City;
 		Inventory.CityId = CityId;
-		Inventory.Capacity = FHansaQuantity::FromRaw(20'000'000);
+		Inventory.Capacity = FHansaQuantity::FromRaw(FMath::Max<int64>(20'000'000,
+			static_cast<int64>(Registry.GetGoods().Num()) * 1'000'000));
 		for (const FHansaCompiledGoodDefinition& GoodDefinition : Registry.GetGoods())
 		{
 			FHansaGoodId GoodId;
@@ -493,17 +627,47 @@ bool FHansaLubeckScenarioInitializer::TryLoadMvpRegistry(
 	const FPrimaryAssetType Types[] = {
 		TEXT("HansaGoodDefinition"), TEXT("HansaRecipeDefinition"), TEXT("HansaBuildingDefinition"),
 		TEXT("HansaNeedDefinition"), TEXT("HansaPopulationTierDefinition"), TEXT("HansaCityMarketProfileDefinition"),
+		TEXT("HansaProductionChainDefinition"), TEXT("HansaRegionEconomicProfileDefinition"),
 		TEXT("HansaVehicleDefinition"), TEXT("HansaRouteDefinition"), TEXT("HansaTechnologyDefinition"),
 		TEXT("HansaMerchantAITuningDefinition"), TEXT("HansaScenarioObjectiveDefinition"),
-		TEXT("HansaVictoryDefinition"), TEXT("HansaScenarioDefinition")
+		TEXT("HansaVictoryDefinition"), TEXT("HansaScenarioDefinition"), TEXT("HansaResidentialCompoundDefinition"),
+		TEXT("HansaPresenceCapabilityDefinition"), TEXT("HansaForeignPresenceStageDefinition"),
+		TEXT("HansaCityTradePolicyDefinition")
 	};
 	bool bP33Candidate = false;
+    bool bFirewoodCandidate = false;
+    bool bArtisanCandidate = false;
+	bool bTextileCandidate = false;
 #if !UE_BUILD_SHIPPING
 	bP33Candidate = FParse::Param(FCommandLine::Get(), TEXT("P33Candidate"));
+    bFirewoodCandidate = FParse::Param(FCommandLine::Get(), TEXT("FirewoodCandidate"));
+    bArtisanCandidate = FParse::Param(FCommandLine::Get(), TEXT("ArtisanProductionCandidate"));
+	bTextileCandidate = FParse::Param(FCommandLine::Get(), TEXT("TextileProductionCandidate"));
+    if (int32(bP33Candidate) + int32(bFirewoodCandidate) + int32(bArtisanCandidate) + int32(bTextileCandidate) > 1) { OutError = TEXT("Choose one candidate catalog."); return false; }
 #endif
 	TArray<const UHansaDefinitionBase*> Definitions;
+#if !UE_BUILD_SHIPPING
+	if (bTextileCandidate)
+	{
+		// A pinned snapshot owns its inventory. New Core definitions must not change it.
+		const FName Root(TEXT("/Game/Hansa/Generated/Staging/TextileProductionV2"));
+		auto& CandidateAssets = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry")).Get();
+		CandidateAssets.ScanPathsSynchronous({Root.ToString()}, true);
+		TArray<FAssetData> Rows;
+		CandidateAssets.GetAssetsByPath(Root, Rows, true);
+		for (const FAssetData& Row : Rows)
+		{
+			if (const auto* Definition = Cast<UHansaDefinitionBase>(Row.GetAsset())) Definitions.Add(Definition);
+		}
+	}
+#endif
 	for (const FPrimaryAssetType& Type : Types)
 	{
+		if (bTextileCandidate) break;
+		if ((bP33Candidate || bFirewoodCandidate || bArtisanCandidate) &&
+			(Type == FPrimaryAssetType(TEXT("HansaPresenceCapabilityDefinition")) ||
+			 Type == FPrimaryAssetType(TEXT("HansaForeignPresenceStageDefinition")) ||
+			 Type == FPrimaryAssetType(TEXT("HansaCityTradePolicyDefinition")))) continue;
 		TArray<FPrimaryAssetId> AssetIds;
 		AssetManager->GetPrimaryAssetIdList(Type, AssetIds);
 		AssetIds.Sort([](const FPrimaryAssetId& Left, const FPrimaryAssetId& Right)
@@ -515,10 +679,30 @@ bool FHansaLubeckScenarioInitializer::TryLoadMvpRegistry(
 			const FSoftObjectPath AssetPath = AssetManager->GetPrimaryAssetPath(AssetId);
 			const UHansaDefinitionBase* Definition = Cast<UHansaDefinitionBase>(AssetPath.TryLoad());
 #if !UE_BUILD_SHIPPING
-			if (bP33Candidate && Definition)
+            if ((bP33Candidate || bFirewoodCandidate) && Definition &&
+                (Definition->StableDefinitionId == TEXT("Good.Charcoal") || Definition->StableDefinitionId == TEXT("Good.RawHides") ||
+                 Definition->StableDefinitionId == TEXT("Good.TanningBark") || Definition->StableDefinitionId == TEXT("Good.Leather") ||
+                 Definition->StableDefinitionId == TEXT("Good.Shoes") || Definition->StableDefinitionId == TEXT("Recipe.BurnCharcoal") ||
+                 Definition->StableDefinitionId == TEXT("Recipe.TanLeather") || Definition->StableDefinitionId == TEXT("Recipe.MakeShoes") ||
+                 Definition->StableDefinitionId == TEXT("Building.CharcoalBurner") || Definition->StableDefinitionId == TEXT("Building.Tannery") ||
+                 Definition->StableDefinitionId == TEXT("Building.Shoemaker") || Definition->StableDefinitionId == TEXT("Need.Shoes"))) continue;
+            if (bArtisanCandidate && Definition)
+            {
+                const FString Name = TEXT("DA_") + Definition->StableDefinitionId.Replace(TEXT("."), TEXT("_"));
+                Definition = Cast<UHansaDefinitionBase>(FSoftObjectPath(TEXT("/Game/Hansa/Generated/Staging/ArtisanProductionV1/") + Name + TEXT(".") + Name).TryLoad());
+            }
+			if (bTextileCandidate && Definition)
 			{
 				const FString Name = TEXT("DA_") + Definition->StableDefinitionId.Replace(TEXT("."), TEXT("_"));
-				const FString CandidatePath = TEXT("/Game/Hansa/Generated/Staging/EconomyP33/") + Name + TEXT(".") + Name;
+				Definition = Cast<UHansaDefinitionBase>(FSoftObjectPath(TEXT("/Game/Hansa/Generated/Staging/TextileProductionV2/") + Name + TEXT(".") + Name).TryLoad());
+			}
+			if ((bP33Candidate || bFirewoodCandidate) && Definition)
+			{
+                // Existing staged catalogs predate preservation; keep their exact reviewed identities.
+                if (bP33Candidate && (Definition->StableDefinitionId == TEXT("Good.Firewood") || Definition->StableDefinitionId == TEXT("Recipe.SplitFirewood") || Definition->StableDefinitionId == TEXT("Building.WoodcutterYard") || Definition->StableDefinitionId == TEXT("Need.Heating"))) continue;
+                if (Definition->StableDefinitionId == TEXT("Good.PreservedFish") || Definition->StableDefinitionId == TEXT("Recipe.SaltedCatch") || Definition->StableDefinitionId == TEXT("Building.Fishery.SaltingShed")) continue;
+				const FString Name = TEXT("DA_") + Definition->StableDefinitionId.Replace(TEXT("."), TEXT("_"));
+				const FString CandidatePath = FString(bFirewoodCandidate ? TEXT("/Game/Hansa/Generated/Staging/Firewood/") : TEXT("/Game/Hansa/Generated/Staging/EconomyP33/")) + Name + TEXT(".") + Name;
 				Definition = Cast<UHansaDefinitionBase>(FSoftObjectPath(CandidatePath).TryLoad());
 			}
 #endif
@@ -530,9 +714,52 @@ bool FHansaLubeckScenarioInitializer::TryLoadMvpRegistry(
 			Definitions.Add(Definition);
 		}
 	}
-	if (Definitions.Num() != 81)
+#if !UE_BUILD_SHIPPING
+    if (bArtisanCandidate)
+    {
+        for (const TCHAR* Id : {TEXT("Good.Charcoal"),TEXT("Good.RawHides"),TEXT("Good.TanningBark"),TEXT("Good.Leather"),TEXT("Good.Shoes"),
+            TEXT("Recipe.BurnCharcoal"),TEXT("Recipe.TanLeather"),TEXT("Recipe.MakeShoes"),
+            TEXT("Building.CharcoalBurner"),TEXT("Building.Tannery"),TEXT("Building.Shoemaker"),TEXT("Need.Shoes")})
+        {
+            const FString Name=TEXT("DA_")+FString(Id).Replace(TEXT("."),TEXT("_"));
+            auto* D=Cast<UHansaDefinitionBase>(FSoftObjectPath(TEXT("/Game/Hansa/Generated/Staging/ArtisanProductionV1/")+Name+TEXT(".")+Name).TryLoad());
+            if (!D) { OutError=TEXT("Missing staged artisan definition: ")+FString(Id); return false; }
+            Definitions.AddUnique(D);
+        }
+    }
+	if (bTextileCandidate)
 	{
-		OutError = FString::Printf(TEXT("Expected 81 cooked MVP definitions, including the expanded Beer chain, authored scenario, objectives, victories, technologies and merchant AI tuning, but found %d."), Definitions.Num());
+		for (const TCHAR* Id : {TEXT("Good.Flax"),TEXT("Good.Hemp"),TEXT("Good.Beeswax"),TEXT("Good.LinenCloth"),TEXT("Good.LinenClothing"),TEXT("Good.Candles"),TEXT("Good.Rope"),
+			TEXT("Recipe.WeaveLinen"),TEXT("Recipe.SewLinenClothing"),TEXT("Recipe.DipCandles"),TEXT("Recipe.LayHempRope"),TEXT("Recipe.LayFlaxRope"),
+			TEXT("Building.Weaver"),TEXT("Building.Tailor"),TEXT("Building.Chandler"),TEXT("Building.Ropewalk"),TEXT("Need.LinenClothing"),TEXT("Need.Candles")})
+		{
+			const FString Name = TEXT("DA_") + FString(Id).Replace(TEXT("."), TEXT("_"));
+			auto* Definition = Cast<UHansaDefinitionBase>(FSoftObjectPath(TEXT("/Game/Hansa/Generated/Staging/TextileProductionV2/") + Name + TEXT(".") + Name).TryLoad());
+			if (!Definition) { OutError = TEXT("Missing staged textile production definition: ") + FString(Id); return false; }
+			Definitions.AddUnique(Definition);
+		}
+	}
+    if (bFirewoodCandidate)
+    {
+        for (const TCHAR* Id : {TEXT("Good.Firewood"),TEXT("Recipe.SplitFirewood"),TEXT("Building.WoodcutterYard"),TEXT("Need.Heating")})
+        {
+            const FString Name = TEXT("DA_") + FString(Id).Replace(TEXT("."), TEXT("_"));
+            auto* D = Cast<UHansaDefinitionBase>(FSoftObjectPath(TEXT("/Game/Hansa/Generated/Staging/Firewood/") + Name + TEXT(".") + Name).TryLoad());
+            if (!D) { OutError = TEXT("Missing staged firewood definition: ") + FString(Id); return false; }
+            Definitions.AddUnique(D);
+        }
+    }
+#endif
+	// Keep the baseline completeness guard while allowing explicitly bound compound additions.
+    int32 BaselineDefinitionCount = 0;
+    for (const UHansaDefinitionBase* D : Definitions)
+    {
+        const auto* B = Cast<UHansaBuildingDefinition>(D);
+        if (!D->IsA<UHansaResidentialCompoundDefinition>() && (!B || B->ResidentialCompound.IsNull())) ++BaselineDefinitionCount;
+    }
+    if (BaselineDefinitionCount != (bTextileCandidate ? 118 : bArtisanCandidate ? 100 : bFirewoodCandidate ? 85 : bP33Candidate ? 81 : 190))
+	{
+		OutError = FString::Printf(TEXT("The selected catalog has an unexpected number of definitions: %d (compound additions excluded)."), BaselineDefinitionCount);
 		return false;
 	}
 	FHansaEconomicRegistryCompileResult Compiled = FHansaEconomicDefinitionCompiler::Compile(Definitions);
@@ -550,13 +777,13 @@ bool FHansaLubeckScenarioInitializer::TryLoadMvpRegistry(
 		UE_LOG(LogHansa, Error, TEXT("%s"), *OutError);
 		return false;
 	}
-	if (Compiled.Registry.GetRegistryHash() != (bP33Candidate ? P33CandidateRegistryHash : MvpRegistryHash))
+	if (Compiled.Registry.GetRegistryHash() != (bTextileCandidate ? TextileProductionCandidateRegistryHash : bArtisanCandidate ? ArtisanProductionCandidateRegistryHash : bFirewoodCandidate ? FirewoodCandidateRegistryHash : bP33Candidate ? P33CandidateRegistryHash : MvpRegistryHash))
 	{
 		OutError = FString::Printf(
-			TEXT("The cooked MVP registry hash %016llX does not match reviewed catalog v%d hash %016llX. Run Hansa.Integration.Authoring.EconomicAssetReload for per-definition evidence."),
+			TEXT("The loaded registry hash %016llX does not match %s expected hash %016llX (%d definitions). Run Hansa.Integration.Authoring.EconomicAssetReload for per-definition evidence."),
 			static_cast<unsigned long long>(Compiled.Registry.GetRegistryHash()),
-			MvpCatalogVersion,
-			static_cast<unsigned long long>(MvpRegistryHash));
+			bTextileCandidate ? TEXT("Textile production review candidate") : bArtisanCandidate ? TEXT("Artisan production review candidate") : bFirewoodCandidate ? TEXT("Firewood review candidate") : bP33Candidate ? TEXT("P33 review candidate") : TEXT("accepted MVP catalog"),
+			static_cast<unsigned long long>(bTextileCandidate ? TextileProductionCandidateRegistryHash : bArtisanCandidate ? ArtisanProductionCandidateRegistryHash : bFirewoodCandidate ? FirewoodCandidateRegistryHash : bP33Candidate ? P33CandidateRegistryHash : MvpRegistryHash),Definitions.Num());
 		return false;
 	}
 	OutRegistry = MoveTemp(Compiled.Registry);
@@ -574,7 +801,7 @@ bool FHansaLubeckScenarioInitializer::TryCreate(
 {
 	FHansaSimulationInitialization Initialization;
 	Initialization.Placement = MoveTemp(Placement);
-	if (!InitializeCommon(Initialization, OutState.HouseId, OutState.RivalHouseId, OutState.CityId,
+	if (!InitializeCommon(Initialization, OutState.HouseId, OutState.RivalHouseId, OutState.HouseIds, OutState.CityId,
 		Scenario == EHansaRuntimeScenario::LubeckGrainShortage ? 100'000 : 1'000'000))
 	{
 		OutError = TEXT("Unable to create the Lübeck scenario identities.");
@@ -596,13 +823,13 @@ bool FHansaLubeckScenarioInitializer::TryCreate(
 		return false;
 	}
 	if (Scenario == EHansaRuntimeScenario::LubeckGrainShortage &&
-		!AddCanonicalTrade(Initialization, Registry, OutState.HouseId, OutState.RivalHouseId, OutState.CityId))
+		!AddCanonicalTrade(Initialization, Registry, OutState.HouseIds, OutState.CityId))
 	{
 		OutError = TEXT("Unable to create the canonical cog and wagon routes.");
 		return false;
 	}
 
-    if (bEmptyPlayerCity && Scenario == EHansaRuntimeScenario::LubeckGrainShortage)
+	if (bEmptyPlayerCity && Scenario == EHansaRuntimeScenario::LubeckGrainShortage)
     {
         // New Game starts with land and supplies. The historical shortage setup remains
         // available to explicit scenario fixtures; existing saves retain their own state.
@@ -635,12 +862,25 @@ bool FHansaLubeckScenarioInitializer::TryCreate(
                 }
             }
         Initialization.LocalLogisticsRequests.Reset();
-    }
+	}
+
+	if (!ConfigureEightHouseBuildableOpportunities(Initialization.Placement, OutState.HouseIds,
+		OutState.CityId, OutState.StartingOpportunities))
+	{
+		OutError = TEXT("Unable to partition finite non-overlapping buildable opportunities for all eight houses.");
+		return false;
+	}
 
 	FHansaScenarioId ScenarioId;
 	const TCHAR* ScenarioStableId = Scenario == EHansaRuntimeScenario::LubeckGrainShortage
 		? TEXT("Scenario.LubeckGrainShortageV1") : TEXT("Scenario.EmptyLubeckBuildV1");
 	TMap<uint64, FString> DefinitionMigrations;
+	DefinitionMigrations.Add(ImmediatePreviousMvpRegistryHash,
+		TEXT("Hansa.Content.34To35.AddPresenceSpecializations"));
+	DefinitionMigrations.Add(PreviousTradeStationSitesMvpRegistryHash,
+		TEXT("Hansa.Content.33To34.AddTradeStationSites"));
+	DefinitionMigrations.Add(PreviousTradePresenceMvpRegistryHash,
+		TEXT("Hansa.Content.32To33.AddInertTradePresence"));
 	// Catalogs 11 and 16 change consumption/staffing and staple batch economics. Do not silently
 	// reinterpret in-flight production or old consumption history; preserve old saves on disk.
 	auto CreatedTopology = FHansaPlacementTopology::TryCreate(MoveTemp(Initialization.Placement.Maps));
@@ -653,7 +893,23 @@ bool FHansaLubeckScenarioInitializer::TryCreate(
 		OutError = TEXT("Unable to validate the authoritative Lübeck scenario definitions.");
 		return false;
 	}
-	auto CreatedState = FHansaSimulationState::TryCreate(
+	if (bEmptyPlayerCity)
+    {
+        const auto* Map=OutState.Definitions.GetPlacementTopology()->FindMap(OutState.CityId);
+        const bool Survey=Map && Map->BoundsMin.X<0;
+        const auto Near=Survey?Hansa::Game::LubeckPlacementGrid::WorldToGrid(Hansa::Game::LubeckPlacementGrid::SurveyStartLocation()):
+            Hansa::Game::LubeckPlacementGrid::WorldToGrid(FVector(2650,850,0));
+        FHansaGridCoordinate Start;
+        if (!Map || !FHansaWaterNavigation::FindStart(*Map,Near,Start))
+        { OutError=TEXT("No navigable water near the starting waterfront.");return false; }
+        for (auto& V:Initialization.Vehicles) if (V.OwnerId==OutState.HouseId && V.Mode==EHansaRouteMode::Sea)
+        { V.Navigation.CityId=OutState.CityId;V.Navigation.Home=Start;V.Navigation.Cell=Start; }
+    }
+    const FHansaEconomicRegistry* EconomicRegistry = OutState.Definitions.GetEconomicRegistry();
+    if (EconomicRegistry == nullptr ||
+        !FHansaForeignPresenceInitialization::SeedAuthoredInitialPresence(Initialization, *EconomicRegistry))
+    { OutError=TEXT("Unable to seed authored foreign presence."); return false; }
+    auto CreatedState = FHansaSimulationState::TryCreate(
 		MoveTemp(Initialization), OutState.Definitions.GetPlacementTopologyShared());
 	if (!CreatedState)
 	{

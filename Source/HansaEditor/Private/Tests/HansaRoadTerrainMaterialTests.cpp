@@ -65,6 +65,10 @@ bool FHansaRoadTerrainMaterialTest::RunTest(const FString&)
     if(AlbedoScale)TestEqual(TEXT("Road albedo scale prevents near-white Base Color"),AlbedoScale->DefaultValue,.58f);
     TestTrue(TEXT("Road Base Color ends at albedo control"),Albedo&&Road->GetExpressionInputForProperty(MP_BaseColor)->Expression==Albedo);
     TestEqual(TEXT("One road RVT writer"),Writers,1);
+    auto* Shoulder=Cast<UMaterialExpressionCustom>(Road->GetExpressionInputForProperty(MP_OpacityMask)->Expression);
+    TestNotNull(TEXT("Road shoulders have world-space breakup"),Shoulder);
+    if(Shoulder)TestTrue(TEXT("Shoulder shader inputs are named and connected"),Shoulder->Inputs.Num()==3&&!Shoulder->Inputs.ContainsByPredicate([](const FCustomInput& I){return I.InputName.IsNone()||!I.Input.Expression;}));
+    TestTrue(TEXT("RVT and visible shoulders share their coverage, avoiding opaque fringes"),Shoulder&&Writer&&Writer->Opacity.Expression==Shoulder);
     TestTrue(TEXT("RVT writes corrected road albedo"),Writer&&Writer->BaseColor.Expression==Albedo);
 
     auto* RoadBase=Texture(TEXT("/Game/Mesh/hansa-dirt-road/Textures/T_Road_BaseColor.T_Road_BaseColor"));
@@ -109,6 +113,29 @@ bool FHansaRoadTerrainMaterialTest::RunTest(const FString&)
             auto* Switch=Cast<UMaterialExpressionVirtualTextureFeatureSwitch>(Land->GetExpressionInputForProperty(Property)->Expression);
             auto* Blend=Switch?Cast<UMaterialExpressionLinearInterpolate>(Switch->Yes.Expression):nullptr;
             TestNotNull(TEXT("RVT receiver feature switch"),Switch);TestNotNull(TEXT("RVT receiver blend"),Blend);
+            if(Property==MP_BaseColor&&Switch&&Blend)
+            {
+                auto* Macro=Cast<UMaterialExpressionCustom>(Switch->No.Expression);
+                TestTrue(TEXT("Terrain variation survives the non-RVT fallback"),Macro&&Macro->Desc==TEXT("Hansa ground macro variation v3"));
+                if(Macro)TestTrue(TEXT("Ground shader inputs are named and connected"),Macro->Inputs.Num()==6&&!Macro->Inputs.ContainsByPredicate([](const FCustomInput& I){return I.InputName.IsNone()||!I.Input.Expression;}));
+                TestTrue(TEXT("Both rendering paths share the same varied ground"),Blend->A.Expression==Switch->No.Expression);
+                if(Macro&&Macro->Inputs.Num()==6)
+                {
+                    auto* ShoreWeights=Cast<UMaterialExpressionCustom>(Macro->Inputs[5].Input.Expression);
+                    TestTrue(TEXT("Shoreline weights use survey data and world height"),ShoreWeights&&ShoreWeights->Desc==TEXT("Hansa shoreline weights v1")&&ShoreWeights->Inputs.Num()==2);
+                    if(ShoreWeights&&ShoreWeights->Inputs.Num()==2)
+                    {
+                        auto* Data=Cast<UMaterialExpressionTextureSample>(ShoreWeights->Inputs[0].Input.Expression);
+                        auto* Tex=Data?Cast<UTexture2D>(Data->Texture):nullptr;
+                        TestTrue(TEXT("Shore data is linear, clamped and retains its surveyed resolution"),Tex&&!Tex->SRGB&&Tex->AddressX==TA_Clamp&&Tex->AddressY==TA_Clamp&&Tex->Source.GetSizeX()==2017&&Tex->Source.GetSizeY()==2017);
+                    }
+                }
+            }
+            if(Property==MP_Roughness&&Switch&&Blend)
+            {
+                auto* Moisture=Cast<UMaterialExpressionCustom>(Switch->No.Expression);
+                TestTrue(TEXT("Wet-bank roughness survives RVT fallback"),Moisture&&Moisture->Desc==TEXT("Hansa shoreline roughness v1")&&Blend->A.Expression==Moisture);
+            }
             if(Blend&&Receiver)
             {
                 TestTrue(TEXT("RVT blend is gated by the RVT mask"),Blend->Alpha.Expression==Receiver&&OutputName(Blend->Alpha)==TEXT("Mask"));

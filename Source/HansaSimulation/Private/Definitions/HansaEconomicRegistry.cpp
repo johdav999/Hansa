@@ -163,4 +163,25 @@ namespace Hansa::Simulation
 		const int32* Index = ScenarioIndexes.Find(StableId);
 		return Index != nullptr ? &Scenarios[*Index] : nullptr;
 	}
+
+	void FHansaEconomicRegistry::SetRegionalEconomy(
+		TArray<FHansaCompiledProductionChainDefinition> InProductionChains,
+		TArray<FHansaCompiledRegionEconomicProfileDefinition> InRegions)
+	{
+		ProductionChains = MoveTemp(InProductionChains);
+		Regions = MoveTemp(InRegions);
+		ProductionChainIndexes.Reset(); RegionIndexes.Reset();
+		for(int32 Index=0;Index<ProductionChains.Num();++Index) ProductionChainIndexes.Add(ProductionChains[Index].StableId,Index);
+		for(int32 Index=0;Index<Regions.Num();++Index) RegionIndexes.Add(Regions[Index].StableId,Index);
+	}
+
+	const FHansaCompiledProductionChainDefinition* FHansaEconomicRegistry::FindProductionChain(const FString& StableId) const
+	{
+		const int32* Index=ProductionChainIndexes.Find(StableId); return Index?&ProductionChains[*Index]:nullptr;
+	}
+
+	const FHansaCompiledRegionEconomicProfileDefinition* FHansaEconomicRegistry::FindRegion(const FString& StableId) const
+	{
+		const int32* Index=RegionIndexes.Find(StableId); return Index?&Regions[*Index]:nullptr;
+	}
 }

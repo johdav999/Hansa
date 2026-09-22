@@ -104,7 +104,14 @@ bool FHansaMvpUiNativeGoldenFlowUatTest::RunTest(const FString& Parameters)
 	};
 	FHansaEconomicRegistry ResearchRegistry({}, {}, {}, 99, {}, {}, {}, {}, {}, Technologies);
 	Research->Initialize(ResearchRegistry, ResearchState);
+	FHansaScenarioProgress ScenarioProgress;
+	ScenarioProgress.ScenarioId = TEXT("Scenario.LubeckGrainShortageV1");
+	ScenarioProgress.DisplayName = TEXT("Lübeck grain shortage");
+	ScenarioProgress.Briefing = TEXT("Restore a durable grain supply.");
+	ScenarioProgress.Outcome = EHansaScenarioOutcome::Active;
+	TestTrue(TEXT("Scenario UAT fixture applies before acknowledging the briefing"), Scenario->ApplyProgress(ScenarioProgress));
 	Scenario->Close();
+	TestFalse(TEXT("Acknowledging the UAT briefing exposes the production HUD"), Scenario->GetSnapshot().bOpen);
 
 	TSharedPtr<SWindow> Window;
 	TSharedPtr<SHansaRootHud> Root;
@@ -163,6 +170,9 @@ bool FHansaMvpUiNativeGoldenFlowUatTest::RunTest(const FString& Parameters)
 	}
 	Root->ActivateSemanticId(TEXT("HUD.TopStatus.TradeMap")); Capture(TEXT("route-editor"), TEXT("TradeMap.Root")); Root->ActivateSemanticId(TEXT("TradeMap.Close"));
 	Root->ActivateSemanticId(TEXT("HUD.TopStatus.Research.Open")); Capture(TEXT("research"), TEXT("Research.Root")); Root->ActivateSemanticId(TEXT("Research.Close"));
+	ScenarioProgress.Outcome = EHansaScenarioOutcome::Victory;
+	ScenarioProgress.WinningVictoryId = TEXT("Victory.TradeNetwork");
+	TestTrue(TEXT("Scenario victory state applies before its named capture"), Scenario->ApplyProgress(ScenarioProgress));
 	Scenario->Open(); Capture(TEXT("scenario-victory"), TEXT("Scenario.Root")); Root->ActivateSemanticId(TEXT("Scenario.Close"));
 	Root->ActivateSemanticId(TEXT("HUD.TopStatus.SaveLoad")); Capture(TEXT("save-load"), TEXT("SaveLoad.Root")); Root->ActivateSemanticId(TEXT("SaveLoad.Close"));
 

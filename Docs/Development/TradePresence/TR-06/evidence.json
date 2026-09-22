@@ -1,0 +1,314 @@
+{
+  "prompt": "TR-06",
+  "date": "2026-09-20",
+  "fullAcceptance": "Blocked",
+  "versions": {
+    "save": 16,
+    "fingerprint": 28,
+    "command": 11,
+    "clientIntent": 5,
+    "simulation": 1,
+    "pipeline": 1,
+    "catalog": 34,
+    "catalogHash": "D18AC831ED9C7710"
+  },
+  "checks": [
+    {
+      "artifactDirectory": ".codex-build/trade-presence-verify-project/Saved/BuildArtifacts/20260920-204227562-automation-Hansa.Integration.TradePresence",
+      "files": [
+        {
+          "path": "AutomationCommand.log",
+          "sha256": "ba482d2591aad46b0233a65651876cf4107ac6cd894d6f0453a6d935e9b39019"
+        },
+        {
+          "path": "BuildEditor.log",
+          "sha256": "38c108472c192291f18ac2faa4ce0c0082498474d683ad05211d444d8bc37efc"
+        },
+        {
+          "path": "result.json",
+          "sha256": "09ebcd883ae7c7a22c051f4cbfb6cdec1ca4fe8c5908bcbbd1b426ef03ff5eb0"
+        },
+        {
+          "path": "UnrealEditor.log",
+          "sha256": "d1ea57678b24e4997c42ed8cb7887fcb0b306f73f9d4f4ebf1806b569929a094"
+        }
+      ],
+      "result": {
+        "Operation": "RunAutomationTests",
+        "Status": "Succeeded",
+        "Filter": "Hansa.Integration.TradePresence",
+        "Configuration": "Development",
+        "TestsFound": 4,
+        "EditorBuildSkipped": false,
+        "RenderingEnabled": false,
+        "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Hansa.uproject",
+        "EngineRoot": "H:\\Unreal\\UE_5.8",
+        "CompletedUtc": "2026-09-20T18:42:47.6697036Z",
+        "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-204227562-automation-Hansa.Integration.TradePresence\\UnrealEditor.log",
+        "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-204227562-automation-Hansa.Integration.TradePresence\\AutomationCommand.log"
+      }
+    },
+    {
+      "artifactDirectory": ".codex-build/trade-presence-verify-project/Saved/BuildArtifacts/20260920-204247699-automation-Hansa.Editor.TradePresence",
+      "files": [
+        {
+          "path": "AutomationCommand.log",
+          "sha256": "2b015e5437b17e75d4223d5fb8d10143a8ceb3565b7d307e49556ba02359ccf9"
+        },
+        {
+          "path": "result.json",
+          "sha256": "bae60f6a0999943b6b67d08436140ea165d9c25e88b4d722bdabff29b1d89d99"
+        },
+        {
+          "path": "UnrealEditor.log",
+          "sha256": "9636dbf2e2e0e66a27a6bcede8344efe8b699dc2c863acaee96433dfc0922ba8"
+        }
+      ],
+      "result": {
+        "Operation": "RunAutomationTests",
+        "Status": "Succeeded",
+        "Filter": "Hansa.Editor.TradePresence",
+        "Configuration": "Development",
+        "TestsFound": 1,
+        "EditorBuildSkipped": true,
+        "RenderingEnabled": false,
+        "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Hansa.uproject",
+        "EngineRoot": "H:\\Unreal\\UE_5.8",
+        "CompletedUtc": "2026-09-20T18:43:00.3932729Z",
+        "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-204247699-automation-Hansa.Editor.TradePresence\\UnrealEditor.log",
+        "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-204247699-automation-Hansa.Editor.TradePresence\\AutomationCommand.log"
+      }
+    },
+    {
+      "artifactDirectory": ".codex-build/trade-presence-verify-project/Saved/BuildArtifacts/20260920-204300413-automation-Hansa.UI.TradeMap",
+      "files": [
+        {
+          "path": "AutomationCommand.log",
+          "sha256": "69163b9aa554d2c964ac423342d6a64744e0ac56ecc7a77aa57d8e38a93d96a6"
+        },
+        {
+          "path": "result.json",
+          "sha256": "46a9338eafee37d7bd3819de0679c78ecdc7722bbff68f97331582bdf4b5b38a"
+        },
+        {
+          "path": "UnrealEditor.log",
+          "sha256": "8f47e443907d3502c6305814e04ff98464c54d05f239bcabea941ca901f017da"
+        }
+      ],
+      "result": {
+        "Operation": "RunAutomationTests",
+        "Status": "Succeeded",
+        "Filter": "Hansa.UI.TradeMap",
+        "Configuration": "Development",
+        "TestsFound": 3,
+        "EditorBuildSkipped": true,
+        "RenderingEnabled": false,
+        "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Hansa.uproject",
+        "EngineRoot": "H:\\Unreal\\UE_5.8",
+        "CompletedUtc": "2026-09-20T18:43:15.0886553Z",
+        "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-204300413-automation-Hansa.UI.TradeMap\\UnrealEditor.log",
+        "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-204300413-automation-Hansa.UI.TradeMap\\AutomationCommand.log"
+      }
+    },
+    {
+      "artifactDirectory": ".codex-build/trade-presence-verify-project/Saved/BuildArtifacts/20260920-204315110-shipping-exclusion-Win64",
+      "files": [
+        {
+          "path": "BuildShipping.log",
+          "sha256": "d52f24427ea0de1229b120640274e6b9371d83e0e05cd2343098faa93761d658"
+        },
+        {
+          "path": "result.json",
+          "sha256": "5bc5e147f73934323ceda6376a204c0b1d0f2d5fee4245a6ce6dc78d92d953b1"
+        }
+      ],
+      "result": {
+        "Operation": "VerifyShippingExclusion",
+        "Status": "Succeeded",
+        "Scope": "Target receipt and executable; packaged/cooked/depot audit is a later gate",
+        "Platform": "Win64",
+        "ShippingBuildSkipped": false,
+        "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Hansa.uproject",
+        "EngineRoot": "H:\\Unreal\\UE_5.8",
+        "CompletedUtc": "2026-09-20T18:43:35.6966461Z",
+        "ForbiddenTokens": [
+          "HansaAutomation",
+          "HansaEditor",
+          "HansaTests",
+          "HansaMcp",
+          "HansaGenerationWorker",
+          "HANSA_GENERATION_WORKER_TOKEN",
+          "Hansa/GenerationWorker",
+          "OpenAIResponsesProvider",
+          "OPENAI_API_KEY",
+          "HANSA_OPENAI_MODEL",
+          "api.openai.com",
+          "TripoStaticPropProvider",
+          "TRIPO_API_KEY",
+          "HANSA_TRIPO_ENABLED",
+          "openapi.tripo3d.ai",
+          "ElevenLabsAudioProvider",
+          "ELEVENLABS_API_KEY",
+          "HANSA_ELEVENLABS_ENABLED",
+          "api.elevenlabs.io",
+          "WITH_HANSA_AUTOMATION"
+        ],
+        "ScannedFiles": [
+          {
+            "Path": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Binaries\\Win64\\Hansa-Win64-Shipping.target",
+            "Bytes": 231405,
+            "Sha256": "1DEC10F2B70CD57B52A588C6EBF444A2D05753CF7814F0D719E56C68FD051547",
+            "ForbiddenTokensFound": []
+          },
+          {
+            "Path": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Binaries\\Win64\\Hansa-Win64-Shipping.exe",
+            "Bytes": 177806848,
+            "Sha256": "C9F053EEB055A0CBAAD6304C322EC4B94E0004AD82C8826A50C22EF9BD3660A2",
+            "ForbiddenTokensFound": []
+          }
+        ],
+        "Failures": []
+      }
+    },
+    {
+      "artifactDirectory": ".codex-build/trade-presence-verify-project/Saved/BuildArtifacts/20260920-203505866-automation-Hansa.Simulation.Trade",
+      "files": [
+        {
+          "path": "AutomationCommand.log",
+          "sha256": "edd42c3d7e8648ea50c3f7f65ec559cd4116dcaf4312a3bd442d0489764eddba"
+        },
+        {
+          "path": "result.json",
+          "sha256": "0c9a36e7594e52b87270deaa540928ca63deb8b44f1c17696675352d9af6ee8c"
+        },
+        {
+          "path": "UnrealEditor.log",
+          "sha256": "bf13429c6bfde98719aab284d8f4def713a51957e164b51c610e30bc8c0eb589"
+        }
+      ],
+      "result": {
+        "Operation": "RunAutomationTests",
+        "Status": "Succeeded",
+        "Filter": "Hansa.Simulation.Trade",
+        "Configuration": "Development",
+        "TestsFound": 4,
+        "EditorBuildSkipped": true,
+        "RenderingEnabled": false,
+        "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Hansa.uproject",
+        "EngineRoot": "H:\\Unreal\\UE_5.8",
+        "CompletedUtc": "2026-09-20T18:35:18.5640539Z",
+        "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-203505866-automation-Hansa.Simulation.Trade\\UnrealEditor.log",
+        "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-203505866-automation-Hansa.Simulation.Trade\\AutomationCommand.log"
+      }
+    },
+    {
+      "artifactDirectory": ".codex-build/trade-presence-verify-project/Saved/BuildArtifacts/20260920-204010968-automation-Hansa.Integration.Save.SyntheticPriorSchema",
+      "files": [
+        {
+          "path": "AutomationCommand.log",
+          "sha256": "a51130f148e7ccdb0d46bba17a6c8ebcab327b78405bf24eae68297926e717dd"
+        },
+        {
+          "path": "result.json",
+          "sha256": "a022c4e1fb9590672e9d5f603ea7ceec2baf9b905a8f78ec6edd6177ea8b4cf4"
+        },
+        {
+          "path": "UnrealEditor.log",
+          "sha256": "9404d2473df2a7926abed098f7722aa43beb6d2cdb7e0eb97f84e65ba3624072"
+        }
+      ],
+      "result": {
+        "Operation": "RunAutomationTests",
+        "Status": "Succeeded",
+        "Filter": "Hansa.Integration.Save.SyntheticPriorSchema",
+        "Configuration": "Development",
+        "TestsFound": 1,
+        "EditorBuildSkipped": true,
+        "RenderingEnabled": false,
+        "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Hansa.uproject",
+        "EngineRoot": "H:\\Unreal\\UE_5.8",
+        "CompletedUtc": "2026-09-20T18:40:32.4048987Z",
+        "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-204010968-automation-Hansa.Integration.Save.SyntheticPriorSchema\\UnrealEditor.log",
+        "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-204010968-automation-Hansa.Integration.Save.SyntheticPriorSchema\\AutomationCommand.log"
+      }
+    },
+    {
+      "artifactDirectory": ".codex-build/trade-presence-verify-project/Saved/BuildArtifacts/20260920-204032533-automation-Hansa.Integration.Save.Format2RouteLabelMigration",
+      "files": [
+        {
+          "path": "AutomationCommand.log",
+          "sha256": "6de3550be8f31aeed4a620ff9eeab8d0e208e67abe98f2911cb64cb23fb5143f"
+        },
+        {
+          "path": "result.json",
+          "sha256": "f74c6ded33f93ff945ce8a68f7154075d873db3f912f37d79bb92030577a7374"
+        },
+        {
+          "path": "UnrealEditor.log",
+          "sha256": "72ffe7098d6139940cd9da28ffcf3597d9b8d9e32ba3af8415ce17e8597c328c"
+        }
+      ],
+      "result": {
+        "Operation": "RunAutomationTests",
+        "Status": "Succeeded",
+        "Filter": "Hansa.Integration.Save.Format2RouteLabelMigration",
+        "Configuration": "Development",
+        "TestsFound": 1,
+        "EditorBuildSkipped": true,
+        "RenderingEnabled": false,
+        "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Hansa.uproject",
+        "EngineRoot": "H:\\Unreal\\UE_5.8",
+        "CompletedUtc": "2026-09-20T18:40:50.0200500Z",
+        "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-204032533-automation-Hansa.Integration.Save.Format2RouteLabelMigration\\UnrealEditor.log",
+        "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\.codex-build\\trade-presence-verify-project\\Saved\\BuildArtifacts\\20260920-204032533-automation-Hansa.Integration.Save.Format2RouteLabelMigration\\AutomationCommand.log"
+      }
+    },
+    {
+      "artifactDirectory": ".codex-build/trade-presence-verify-project/Saved/BuildArtifacts/20260920-203518592-automation-Hansa.Integration.Save",
+      "files": [
+        {
+          "path": "AutomationCommand.log",
+          "sha256": "e5aea0d0b7ab9f207f0ca206f978a82dc528240304ad125805087fe3884429bf"
+        },
+        {
+          "path": "UnrealEditor.log",
+          "sha256": "ca22423be9ccef04bd32f9c11ea576ca1aaf2f2405d295bf9b936acd45bc8c41"
+        }
+      ],
+      "result": {
+        "Status": "Failed",
+        "notes": "Broad save run: road/construction baseline failures and subsequently corrected migration-count expectations. See log."
+      }
+    }
+  ],
+  "sourceSha256": {
+    "Source/HansaSimulation/Public/Trade/HansaTrade.h": "61ad5eef64c68388035e52efa86c408001baabbdf6f05122d84d9749a7d0b921",
+    "Source/HansaSimulation/Private/Trade/HansaTradeInternal.cpp": "1379f7e0f599f309f1becb74ae9d3f755f49ead8fb5b01dd2c190bfb650fb161",
+    "Source/HansaSimulation/Private/Trade/HansaTradeInternal.h": "a8bc979de689bbf5c329bfa661d2fcee1fa0c40178c4c368408554c95bb5f5ca",
+    "Source/HansaSimulation/Private/Trade/HansaTrade.cpp": "5f25f138e101e6b28feb818b75f0b99fd953938b15920b1c48249aae9e98262e",
+    "Source/HansaSimulation/Private/Systems/HansaSimulationPipeline.cpp": "5649506d4779b17af8a9a34a1b949e7f7e12d9f5082c272d830e61e2e84777a5",
+    "Source/HansaSimulation/Private/Save/HansaSaveEnvelope.cpp": "0b06a388cfe538715406e23ca16a4612dc910c47372e53264a3230edbcfe031c",
+    "Source/HansaSimulation/Public/Save/HansaSaveEnvelope.h": "982d667678dfd315648d4ffdd3c3b9921387b15f6d4b62a97bce717e15a8c413",
+    "Source/HansaSimulation/Private/Save/HansaSaveValidation.inl": "3dbd8b4c5ffb9e169729b0782f092ea1484501fc3e7d919430e5aa9c5a0af16e",
+    "Source/HansaSimulation/Private/Model/HansaSimulationState.cpp": "fbb2e13afdee48c57cb0354f0d1fa328283c80ed3ae1e53384831966d3dd3e73",
+    "Source/HansaSimulation/Private/Market/HansaMarket.cpp": "a864a925d58426714f1ea86898a33ee8656431aad1da094195a98e1b253c0653",
+    "Source/Hansa/Private/UI/HansaTradeRouteCreator.cpp": "e9a878c5c6095921941d4708803d483692c8299a244041036f2735adba6b7c68",
+    "Source/Hansa/Private/UI/HansaTradeMapPresentationModel.cpp": "017374e0c74753b9f3717766c23668ab4bf68cf367e485afbd141b9dc458ad59",
+    "Source/Hansa/Private/UI/HansaRootHudCityVisit.cpp": "e41002256c1c610f8243a104374e76010056b192f3f2ffa718727965a4d71d9a",
+    "Source/Hansa/Private/UI/HansaInspectorPresentationModel.cpp": "d9784ebdce2c10499c30138555301c8172d4647c442241123a88df581e5ab8ca",
+    "Source/Hansa/Private/World/HansaCargoProjectionManager.cpp": "7d2dc784f553e16ad87bf0bc9e3e44c9a41c0624a3d57887d61f5b2f8a8d9785",
+    "Source/Hansa/Private/Network/HansaMultiplayerAuthority.cpp": "5159b6d1809cda019df6b0d1b4b9cb82e777a9010cfdf524178f41dc15c69bfa",
+    "Source/Hansa/Public/Definitions/HansaTradeDefinitions.h": "0540ca1f02094e98c23b600374c3a0b5c8afb5491943ca28564af1bdb821affe",
+    "Source/HansaEditor/Private/Definitions/HansaEconomicImpact.h": "baa9b9dd996cf462436a0849cc1c27ab5e527a5a0fdb9c816b8482bd59522836",
+    "Source/HansaEditor/Private/Tests/HansaStationOrderTests.cpp": "1c852031c5f350ac00eed5c9151a6414c297473eeb8b4e76d7821e809457d207",
+    "Source/HansaEditor/Private/Tests/HansaTradePresenceTests.cpp": "acfae0f3fe758084287367056540c0e25fe74ec4e5404e2b71cb146e17a74805",
+    "Source/HansaTests/Private/Simulation/HansaSaveEnvelopeTests.cpp": "29ee315fe17b068a883a761d8c4ec03efbb2e087992fa2f5ef215849b2235e97"
+  },
+  "renderedEvidence": [],
+  "limitations": [
+    "TR06-UAT-01",
+    "TR05-NET-01",
+    "Unrelated road/construction save fixtures",
+    "Executable/receipt Shipping scope only"
+  ]
+}

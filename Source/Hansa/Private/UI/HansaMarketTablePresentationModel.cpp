@@ -3,6 +3,7 @@
 #include "Definitions/HansaEconomicRegistry.h"
 #include "Market/HansaMarket.h"
 #include "Queries/HansaSimulationReadOnly.h"
+#include "World/HansaRuntimeSimulationHost.h"
 
 #define LOCTEXT_NAMESPACE "HansaMarketTablePresentationModel"
 
@@ -22,19 +23,26 @@ namespace
 		{ TEXT("Good.Hops"), TEXT("Hops"), TEXT(""), EHansaMarketGoodCategory::Food },
 		{ TEXT("Good.Malt"), TEXT("Malt"), TEXT(""), EHansaMarketGoodCategory::Manufactured },
 		{ TEXT("Good.Bread"), TEXT("Bread"), TEXT(""), EHansaMarketGoodCategory::Food },
-		{ TEXT("Good.Fish"), TEXT("Fish"), TEXT(""), EHansaMarketGoodCategory::Food },
+		{ TEXT("Good.PreservedFish"), TEXT("Preserved fish"), TEXT(""), EHansaMarketGoodCategory::Food },
+        { TEXT("Good.Fish"), TEXT("Fresh fish"), TEXT(""), EHansaMarketGoodCategory::Food },
 		{ TEXT("Good.Salt"), TEXT("Salt"), TEXT(""), EHansaMarketGoodCategory::Food },
 		{ TEXT("Good.Timber"), TEXT("Timber"), TEXT(""), EHansaMarketGoodCategory::Material },
+        { TEXT("Good.Firewood"), TEXT("Firewood"), TEXT(""), EHansaMarketGoodCategory::Material },
 		{ TEXT("Good.Planks"), TEXT("Planks"), TEXT(""), EHansaMarketGoodCategory::Material },
-		{ TEXT("Good.Iron"), TEXT("Iron"), TEXT(""), EHansaMarketGoodCategory::Material },
+		{ TEXT("Good.Iron"), TEXT("Iron bars"), TEXT(""), EHansaMarketGoodCategory::Material },
+		{ TEXT("Good.Charcoal"), TEXT("Charcoal"), TEXT(""), EHansaMarketGoodCategory::Material },
+		{ TEXT("Good.RawHides"), TEXT("Raw hides"), TEXT(""), EHansaMarketGoodCategory::Material },
+		{ TEXT("Good.TanningBark"), TEXT("Tanning bark"), TEXT(""), EHansaMarketGoodCategory::Material },
+		{ TEXT("Good.Leather"), TEXT("Leather"), TEXT(""), EHansaMarketGoodCategory::Manufactured },
+		{ TEXT("Good.Shoes"), TEXT("Shoes"), TEXT(""), EHansaMarketGoodCategory::Manufactured },
 		{ TEXT("Good.Tools"), TEXT("Tools"), TEXT(""), EHansaMarketGoodCategory::Manufactured },
 		{ TEXT("Good.Barrels"), TEXT("Barrels"), TEXT(""), EHansaMarketGoodCategory::Manufactured },
 		{ TEXT("Good.Beer"), TEXT("Beer"), TEXT(""), EHansaMarketGoodCategory::Manufactured }
 	};
 
-	bool TextEqual(const FText& Left, const FText& Right) { return Left.EqualTo(Right); }
+	bool MarketTableTextEqual(const FText& Left, const FText& Right) { return Left.EqualTo(Right); }
 
-	FText Quantity(const int64 MilliUnits)
+	FText MarketTableQuantity(const int64 MilliUnits)
 	{
 		return FText::FromString(FString::Printf(TEXT("%.1f"), static_cast<double>(MilliUnits) / 1000.0));
 	}
@@ -138,12 +146,12 @@ namespace
 
 bool operator==(const FHansaMarketTableRowPresentation& Left, const FHansaMarketTableRowPresentation& Right)
 {
-	return Left.GoodStableId == Right.GoodStableId && TextEqual(Left.GoodLabel, Right.GoodLabel) &&
-		TextEqual(Left.GoodGlyph, Right.GoodGlyph) && TextEqual(Left.CategoryLabel, Right.CategoryLabel) &&
-		TextEqual(Left.Stock, Right.Stock) && TextEqual(Left.Reserve, Right.Reserve) && TextEqual(Left.Demand, Right.Demand) &&
-		TextEqual(Left.Price, Right.Price) && TextEqual(Left.Trend, Right.Trend) && TextEqual(Left.Sparkline, Right.Sparkline) &&
-		TextEqual(Left.Incoming, Right.Incoming) && TextEqual(Left.Status, Right.Status) && TextEqual(Left.ReportAge, Right.ReportAge) &&
-		TextEqual(Left.AccessibleLabel, Right.AccessibleLabel) && Left.Category == Right.Category && Left.TrendKind == Right.TrendKind &&
+	return Left.GoodStableId == Right.GoodStableId && MarketTableTextEqual(Left.GoodLabel, Right.GoodLabel) &&
+		MarketTableTextEqual(Left.GoodGlyph, Right.GoodGlyph) && MarketTableTextEqual(Left.CategoryLabel, Right.CategoryLabel) &&
+		MarketTableTextEqual(Left.Stock, Right.Stock) && MarketTableTextEqual(Left.Reserve, Right.Reserve) && MarketTableTextEqual(Left.Demand, Right.Demand) &&
+		MarketTableTextEqual(Left.Price, Right.Price) && MarketTableTextEqual(Left.Trend, Right.Trend) && MarketTableTextEqual(Left.Sparkline, Right.Sparkline) &&
+		MarketTableTextEqual(Left.Incoming, Right.Incoming) && MarketTableTextEqual(Left.Status, Right.Status) && MarketTableTextEqual(Left.ReportAge, Right.ReportAge) &&
+		MarketTableTextEqual(Left.AccessibleLabel, Right.AccessibleLabel) && Left.Category == Right.Category && Left.TrendKind == Right.TrendKind &&
 		Left.StockRaw == Right.StockRaw && Left.ReserveRaw == Right.ReserveRaw && Left.DemandRaw == Right.DemandRaw &&
 		Left.PriceRaw == Right.PriceRaw && Left.PriceDifferenceRaw == Right.PriceDifferenceRaw &&
 		Left.PriceDifferenceBasisPoints == Right.PriceDifferenceBasisPoints && Left.IncomingRaw == Right.IncomingRaw &&
@@ -154,32 +162,39 @@ bool operator==(const FHansaMarketTableRowPresentation& Left, const FHansaMarket
 bool operator==(const FHansaMarketChartPointPresentation& Left, const FHansaMarketChartPointPresentation& Right)
 {
 	return Left.Tick == Right.Tick && Left.PriceMilliMarks == Right.PriceMilliMarks &&
-		FMath::IsNearlyEqual(Left.NormalizedPrice, Right.NormalizedPrice) && TextEqual(Left.AccessibleLabel, Right.AccessibleLabel);
+		FMath::IsNearlyEqual(Left.NormalizedPrice, Right.NormalizedPrice) && MarketTableTextEqual(Left.AccessibleLabel, Right.AccessibleLabel);
 }
 
 bool operator==(const FHansaMarketFactorPresentation& Left, const FHansaMarketFactorPresentation& Right)
 {
-	return Left.StableId == Right.StableId && TextEqual(Left.Label, Right.Label) && TextEqual(Left.Contribution, Right.Contribution) &&
-		TextEqual(Left.AccessibleLabel, Right.AccessibleLabel) && Left.ContributionBasisPoints == Right.ContributionBasisPoints;
+	return Left.StableId == Right.StableId && MarketTableTextEqual(Left.Label, Right.Label) && MarketTableTextEqual(Left.Contribution, Right.Contribution) &&
+		MarketTableTextEqual(Left.AccessibleLabel, Right.AccessibleLabel) && Left.ContributionBasisPoints == Right.ContributionBasisPoints;
 }
 
 bool operator==(const FHansaMarketRelationshipPresentation& Left, const FHansaMarketRelationshipPresentation& Right)
 {
-	return Left.StableId == Right.StableId && TextEqual(Left.Label, Right.Label) && TextEqual(Left.Detail, Right.Detail) &&
-		TextEqual(Left.Status, Right.Status) && TextEqual(Left.AccessibleLabel, Right.AccessibleLabel) && Left.bWarning == Right.bWarning && Left.BuildingValue == Right.BuildingValue;
+	return Left.StableId == Right.StableId && MarketTableTextEqual(Left.Label, Right.Label) && MarketTableTextEqual(Left.Detail, Right.Detail) &&
+		MarketTableTextEqual(Left.Status, Right.Status) && MarketTableTextEqual(Left.AccessibleLabel, Right.AccessibleLabel) && Left.bWarning == Right.bWarning && Left.BuildingValue == Right.BuildingValue;
 }
 
 bool operator==(const FHansaSelectedGoodPresentation& Left, const FHansaSelectedGoodPresentation& Right)
 {
-	return Left.GoodStableId == Right.GoodStableId && TextEqual(Left.GoodLabel, Right.GoodLabel) && TextEqual(Left.GoodGlyph, Right.GoodGlyph) &&
-		TextEqual(Left.Confidence, Right.Confidence) && TextEqual(Left.BaseValue, Right.BaseValue) && TextEqual(Left.LocalPrice, Right.LocalPrice) &&
-		TextEqual(Left.RecentAverageDifference, Right.RecentAverageDifference) && TextEqual(Left.StockVersusReserve, Right.StockVersusReserve) &&
-		TextEqual(Left.ReserveDays, Right.ReserveDays) && TextEqual(Left.CitizenDemand, Right.CitizenDemand) &&
-		TextEqual(Left.IndustrialDemand, Right.IndustrialDemand) && TextEqual(Left.IncomingSupply, Right.IncomingSupply) &&
-		TextEqual(Left.Production, Right.Production) && TextEqual(Left.Consumption, Right.Consumption) && TextEqual(Left.SupplyBalance, Right.SupplyBalance) && TextEqual(Left.Explanation, Right.Explanation) && TextEqual(Left.ChartSummary, Right.ChartSummary) &&
-		TextEqual(Left.PinActionLabel, Right.PinActionLabel) && TextEqual(Left.PinDisabledReason, Right.PinDisabledReason) &&
-		TextEqual(Left.RouteActionLabel, Right.RouteActionLabel) && TextEqual(Left.RouteDisabledReason, Right.RouteDisabledReason) &&
-		TextEqual(Left.LastActionResult, Right.LastActionResult) && Left.History == Right.History && Left.Factors == Right.Factors &&
+	return Left.GoodStableId == Right.GoodStableId && MarketTableTextEqual(Left.GoodLabel, Right.GoodLabel) && MarketTableTextEqual(Left.GoodGlyph, Right.GoodGlyph) &&
+		MarketTableTextEqual(Left.Confidence, Right.Confidence) && MarketTableTextEqual(Left.BaseValue, Right.BaseValue) && MarketTableTextEqual(Left.LocalPrice, Right.LocalPrice) &&
+		MarketTableTextEqual(Left.RecentAverageDifference, Right.RecentAverageDifference) && MarketTableTextEqual(Left.StockVersusReserve, Right.StockVersusReserve) &&
+		MarketTableTextEqual(Left.ReserveDays, Right.ReserveDays) && MarketTableTextEqual(Left.CitizenDemand, Right.CitizenDemand) &&
+		MarketTableTextEqual(Left.IndustrialDemand, Right.IndustrialDemand) && MarketTableTextEqual(Left.IncomingSupply, Right.IncomingSupply) &&
+		MarketTableTextEqual(Left.Production, Right.Production) && MarketTableTextEqual(Left.Consumption, Right.Consumption) && MarketTableTextEqual(Left.SupplyBalance, Right.SupplyBalance) && MarketTableTextEqual(Left.Explanation, Right.Explanation) && MarketTableTextEqual(Left.ChartSummary, Right.ChartSummary) &&
+		MarketTableTextEqual(Left.PinActionLabel, Right.PinActionLabel) && MarketTableTextEqual(Left.PinDisabledReason, Right.PinDisabledReason) &&
+		MarketTableTextEqual(Left.RouteActionLabel, Right.RouteActionLabel) && MarketTableTextEqual(Left.RouteDisabledReason, Right.RouteDisabledReason) &&
+		MarketTableTextEqual(Left.LastActionResult, Right.LastActionResult) && MarketTableTextEqual(Left.SpotTradeHeading, Right.SpotTradeHeading) &&
+		MarketTableTextEqual(Left.SpotTradeVehicle, Right.SpotTradeVehicle) && MarketTableTextEqual(Left.SpotTradeQuantity, Right.SpotTradeQuantity) &&
+		MarketTableTextEqual(Left.SpotTradeQuote, Right.SpotTradeQuote) && MarketTableTextEqual(Left.SpotTradeRemedy, Right.SpotTradeRemedy) &&
+		MarketTableTextEqual(Left.SpotTradeResult, Right.SpotTradeResult) && MarketTableTextEqual(Left.SpotTradeConfirmLabel, Right.SpotTradeConfirmLabel) &&
+		Left.SpotTradeVehicleValue == Right.SpotTradeVehicleValue && Left.SpotTradeQuantityRaw == Right.SpotTradeQuantityRaw &&
+		Left.SpotTradeReviewedMarketUpdateTick == Right.SpotTradeReviewedMarketUpdateTick && Left.SpotTradeReviewedUnitPrice == Right.SpotTradeReviewedUnitPrice &&
+		Left.bSpotTradeVisible == Right.bSpotTradeVisible && Left.bSpotTradeBuy == Right.bSpotTradeBuy && Left.bSpotTradeCanSubmit == Right.bSpotTradeCanSubmit &&
+		Left.History == Right.History && Left.Factors == Right.Factors &&
 		Left.Consumers == Right.Consumers && Left.Producers == Right.Producers && Left.CurrentPriceMilliMarks == Right.CurrentPriceMilliMarks &&
 		Left.RecentAveragePriceMilliMarks == Right.RecentAveragePriceMilliMarks && Left.MinimumHistoryPriceMilliMarks == Right.MinimumHistoryPriceMilliMarks &&
 		Left.MaximumHistoryPriceMilliMarks == Right.MaximumHistoryPriceMilliMarks && Left.bHasSelection == Right.bHasSelection &&
@@ -189,12 +204,18 @@ bool operator==(const FHansaSelectedGoodPresentation& Left, const FHansaSelected
 
 bool operator==(const FHansaMarketTableSnapshot& Left, const FHansaMarketTableSnapshot& Right)
 {
-	return Left.AllRows == Right.AllRows && Left.VisibleRows == Right.VisibleRows && TextEqual(Left.SearchText, Right.SearchText) &&
-		TextEqual(Left.ResultSummary, Right.ResultSummary) && TextEqual(Left.EmptyTitle, Right.EmptyTitle) && TextEqual(Left.EmptyDetail, Right.EmptyDetail) &&
+	return Left.AllRows == Right.AllRows && Left.VisibleRows == Right.VisibleRows && MarketTableTextEqual(Left.SearchText, Right.SearchText) &&
+		MarketTableTextEqual(Left.ResultSummary, Right.ResultSummary) && MarketTableTextEqual(Left.EmptyTitle, Right.EmptyTitle) && MarketTableTextEqual(Left.EmptyDetail, Right.EmptyDetail) &&
 		Left.SelectedGoodStableId == Right.SelectedGoodStableId && Left.FocusedSemanticId == Right.FocusedSemanticId &&
 		Left.CategoryFilter == Right.CategoryFilter && Left.TrendFilter == Right.TrendFilter && Left.QuickFilter == Right.QuickFilter &&
 		Left.SortColumn == Right.SortColumn && Left.bSortAscending == Right.bSortAscending && Left.SelectedGood == Right.SelectedGood;
 }
+
+void UHansaMarketTablePresentationModel::BindRuntime(UHansaRuntimeSimulationHost* RuntimeHost) { Runtime = RuntimeHost; }
+#if WITH_DEV_AUTOMATION_TESTS
+void UHansaMarketTablePresentationModel::SetSpotTradeTestContext(const Hansa::Simulation::FHansaCityDefinitionId CityId,const Hansa::Simulation::FHansaVehicleId VehicleId,TFunction<Hansa::Simulation::FHansaSpotTradeQuoteProjection(Hansa::Simulation::EHansaSpotTradeSide,Hansa::Simulation::FHansaQuantity)> QuoteProvider)
+{ const FHansaMarketTableSnapshot Previous=Snapshot;CurrentCityId=CityId;SpotTradeVehicleId=VehicleId;SpotTradeQuoteForTesting=MoveTemp(QuoteProvider);RebuildSpotTrade();PublishIfChanged(Previous); }
+#endif
 
 void UHansaMarketTablePresentationModel::InitializeDefaults()
 {
@@ -206,6 +227,7 @@ void UHansaMarketTablePresentationModel::InitializeDefaults()
 	Snapshot.EmptyDetail = LOCTEXT("EmptyDetail", "Change the search or filters to show market reports.");
 	for (const FGoodDescriptor& Descriptor : CanonicalGoods)
 	{
+        if (FString(Descriptor.StableId) == TEXT("Good.Firewood") || FString(Descriptor.StableId) == TEXT("Good.Charcoal") || FString(Descriptor.StableId) == TEXT("Good.RawHides") || FString(Descriptor.StableId) == TEXT("Good.TanningBark") || FString(Descriptor.StableId) == TEXT("Good.Leather") || FString(Descriptor.StableId) == TEXT("Good.Shoes")) continue; // Unknown catalog retains the reviewed baseline.
 		FHansaMarketTableRowPresentation Row;
 		Row.GoodStableId = FName(Descriptor.StableId);
 		Row.GoodLabel = FText::FromString(Descriptor.Label);
@@ -231,6 +253,13 @@ bool UHansaMarketTablePresentationModel::ApplyProjection(
 {
 	if (!CityId.IsValid()) return false;
 	const FHansaMarketTableSnapshot Previous = Snapshot;
+	CurrentCityId = CityId;
+	SpotTradeVehicleId = {};
+	if (Runtime.IsValid()) for (const auto& Vehicle : Projection.GetVehicles())
+	{
+		if (Vehicle.OwnerId == Runtime->GetHouseId() && Vehicle.CurrentCityId == CityId && Vehicle.Mode == Hansa::Simulation::EHansaRouteMode::Sea && Vehicle.Navigation.IsAtHome())
+		{ SpotTradeVehicleId = Vehicle.Id; break; }
+	}
 	const FText Search = Snapshot.SearchText;
 	const FName Selected = Snapshot.SelectedGoodStableId;
 	const FName Focused = Snapshot.FocusedSemanticId;
@@ -254,6 +283,7 @@ bool UHansaMarketTablePresentationModel::ApplyProjection(
 
 	for (const FGoodDescriptor& Descriptor : CanonicalGoods)
 	{
+        if (!Registry.FindGood(Descriptor.StableId)) continue;
 		FHansaMarketTableRowPresentation Row;
 		Row.GoodStableId = FName(Descriptor.StableId);
 		Row.GoodLabel = FText::FromString(Descriptor.Label);
@@ -312,16 +342,16 @@ bool UHansaMarketTablePresentationModel::ApplyProjection(
 		Row.TrendKind = Row.PriceDifferenceBasisPoints > 50 ? EHansaMarketTrendFilter::Rising :
 			(Row.PriceDifferenceBasisPoints < -50 ? EHansaMarketTrendFilter::Falling : EHansaMarketTrendFilter::Stable);
 		Row.bOpportunity = Row.bShortage && Row.TrendKind == EHansaMarketTrendFilter::Rising;
-		Row.Stock = Quantity(Row.StockRaw);
-		Row.Reserve = Quantity(Row.ReserveRaw);
-		Row.Demand = Quantity(Row.DemandRaw);
+		Row.Stock = MarketTableQuantity(Row.StockRaw);
+		Row.Reserve = MarketTableQuantity(Row.ReserveRaw);
+		Row.Demand = MarketTableQuantity(Row.DemandRaw);
 		Row.Price = Money(Row.PriceRaw, Row.bEstimated);
 		const TCHAR* TrendGlyph = Row.TrendKind == EHansaMarketTrendFilter::Rising ? TEXT("Rising") :
 			(Row.TrendKind == EHansaMarketTrendFilter::Falling ? TEXT("Falling") : TEXT("Stable"));
 		Row.Trend = FText::FromString(FString::Printf(TEXT("%s %+.1f%% · %+.3f mk"), TrendGlyph,
 			static_cast<double>(Row.PriceDifferenceBasisPoints) / 100.0, static_cast<double>(Row.PriceDifferenceRaw) / 1000.0));
 		Row.Sparkline = Sparkline(Market->PriceHistory);
-		Row.Incoming = Quantity(Row.IncomingRaw);
+		Row.Incoming = MarketTableQuantity(Row.IncomingRaw);
 		Row.ReportAge = FText::Format(LOCTEXT("ReportAge", "{0} ticks old"), FText::AsNumber(Row.ReportAgeTicks));
 		if (Row.bStale)
 		{
@@ -348,18 +378,18 @@ bool UHansaMarketTablePresentationModel::ApplyProjection(
 		Detail.LocalPrice = Money(Market->CurrentPriceMilliMarks, Market->bIsStale);
 		Detail.RecentAverageDifference = Row.Trend;
 		Detail.StockVersusReserve = FText::Format(LOCTEXT("StockReserve", "{0} / {1}"), Row.Stock, Row.Reserve);
-		Detail.CitizenDemand = Quantity(Market->CitizenDemand.GetRawValue());
-		Detail.IndustrialDemand = Quantity(Market->IndustrialDemand.GetRawValue());
-		Detail.IncomingSupply = Quantity(Market->ExpectedIncomingSupply.GetRawValue());
-        Detail.Production = Quantity(Market->RecentLocalProduction.GetRawValue());
+		Detail.CitizenDemand = MarketTableQuantity(Market->CitizenDemand.GetRawValue());
+		Detail.IndustrialDemand = MarketTableQuantity(Market->IndustrialDemand.GetRawValue());
+		Detail.IncomingSupply = MarketTableQuantity(Market->ExpectedIncomingSupply.GetRawValue());
+        Detail.Production = MarketTableQuantity(Market->RecentLocalProduction.GetRawValue());
         int64 ConsumedRaw = 0;
         for (const auto& Consumer : Projection.GetMarketConsumers())
             if (Consumer.CityId == CityId && Consumer.GoodId == ParsedGood.Value) ConsumedRaw += Consumer.FulfilledLastTick.GetRawValue();
-        Detail.Consumption = Quantity(ConsumedRaw);
+        Detail.Consumption = MarketTableQuantity(ConsumedRaw);
         Detail.SupplyBalance = Row.bShortage
-            ? FText::Format(LOCTEXT("ShortageBalance", "Shortage: {0} below reserve; unmet demand {1}. {2}"), Quantity(FMath::Max<int64>(0, Row.ReserveRaw-Row.StockRaw)), Quantity(Market->UnmetDemand.GetRawValue()),
+            ? FText::Format(LOCTEXT("ShortageBalance", "Shortage: {0} below reserve; unmet demand {1}. {2}"), MarketTableQuantity(FMath::Max<int64>(0, Row.ReserveRaw-Row.StockRaw)), MarketTableQuantity(Market->UnmetDemand.GetRawValue()),
                 Row.bOpportunity ? LOCTEXT("ImportOpportunity", "Rising price suggests reviewing an import route; profit and destination stock are not yet known.") : LOCTEXT("ReviewSupply", "Review producers, consumers and incoming supply."))
-            : FText::Format(LOCTEXT("SurplusBalance", "Surplus above reserve: {0}. Compare destination reports before planning an export route."), Quantity(FMath::Max<int64>(0, Row.StockRaw-Row.ReserveRaw)));
+            : FText::Format(LOCTEXT("SurplusBalance", "Surplus above reserve: {0}. Compare destination reports before planning an export route."), MarketTableQuantity(FMath::Max<int64>(0, Row.StockRaw-Row.ReserveRaw)));
 
 		const Hansa::Simulation::FHansaMarketReserveProjection* Reserve = nullptr;
 		for (const auto& Candidate : Projection.GetMarketReserves())
@@ -410,7 +440,7 @@ bool UHansaMarketTablePresentationModel::ApplyProjection(
 			Consumer.Label = bCitizen ? FText::Format(LOCTEXT("ResidentConsumer", "Residents · {0}"), RelationshipBuildingLabel(Projection,Source.BuildingId)) : RelationshipBuildingLabel(Projection,Source.BuildingId);
 			const int64 DemandRaw = Source.DemandPerTick.GetRawValue();
 			const int32 FulfilledBasisPoints = DemandRaw > 0 ? static_cast<int32>(Source.FulfilledLastTick.GetRawValue() * 10000 / DemandRaw) : 10000;
-			Consumer.Detail = FText::Format(LOCTEXT("ConsumerDetail", "{0} demand · {1}% fulfilled"), Quantity(DemandRaw), FText::AsNumber(FulfilledBasisPoints / 100));
+			Consumer.Detail = FText::Format(LOCTEXT("ConsumerDetail", "{0} demand · {1}% fulfilled"), MarketTableQuantity(DemandRaw), FText::AsNumber(FulfilledBasisPoints / 100));
 			Consumer.bWarning = Source.ProductionBlocker != Hansa::Simulation::EHansaProductionBlocker::None || FulfilledBasisPoints < 10000;
 			Consumer.Status = Consumer.bWarning
 				? FText::FromString(FString::Printf(TEXT("%s"), Source.ProductionBlocker == Hansa::Simulation::EHansaProductionBlocker::None ? TEXT("Unmet demand") : Hansa::Simulation::LexToString(Source.ProductionBlocker)))
@@ -427,7 +457,7 @@ bool UHansaMarketTablePresentationModel::ApplyProjection(
 			Producer.BuildingValue = static_cast<int64>(Source.BuildingId.GetValue());
 			Producer.StableId = FName(*Source.ProductionId.ToDebugString());
 			Producer.Label = bBackground ? LOCTEXT("BackgroundSupply", "Background supply") : RelationshipBuildingLabel(Projection,Source.BuildingId);
-			Producer.Detail = FText::Format(LOCTEXT("ProducerDetail", "{0} last tick; capacity {1} per cycle"), Quantity(Source.ActualQuantityLastTick.GetRawValue()), Quantity(Source.NominalQuantityPerCycle.GetRawValue()));
+			Producer.Detail = FText::Format(LOCTEXT("ProducerDetail", "{0} last tick; capacity {1} per cycle"), MarketTableQuantity(Source.ActualQuantityLastTick.GetRawValue()), MarketTableQuantity(Source.NominalQuantityPerCycle.GetRawValue()));
 			Producer.bWarning = !Source.bActive || Source.Blocker != Hansa::Simulation::EHansaProductionBlocker::None;
 			Producer.Status = Producer.bWarning
 				? FText::FromString(FString::Printf(TEXT("%s"), Source.Blocker == Hansa::Simulation::EHansaProductionBlocker::None ? TEXT("Paused") : Hansa::Simulation::LexToString(Source.Blocker)))
@@ -471,6 +501,7 @@ bool UHansaMarketTablePresentationModel::ApplyProjection(
 	}
 	RebuildVisibleRows();
 	RebuildSelectedGood();
+	RebuildSpotTrade();
 	PublishIfChanged(Previous);
 	return true;
 }
@@ -529,6 +560,7 @@ bool UHansaMarketTablePresentationModel::SelectGoodIntent(const FName GoodStable
 	Snapshot.SelectedGoodStableId = GoodStableId;
 	Snapshot.FocusedSemanticId = FName(*FString::Printf(TEXT("Market.Row.%s"), *GoodStableId.ToString().Replace(TEXT("."), TEXT("_"))));
 	RebuildSelectedGood();
+	RebuildSpotTrade();
 	PublishIfChanged(Previous); return true;
 }
 
@@ -554,6 +586,49 @@ bool UHansaMarketTablePresentationModel::BeginRouteIntent()
 	return true;
 }
 
+bool UHansaMarketTablePresentationModel::CycleSpotTradeSideIntent()
+{
+	if (!Snapshot.SelectedGood.bSpotTradeVisible) return false;
+	const FHansaMarketTableSnapshot Previous = Snapshot;
+	bSpotTradeBuy = !bSpotTradeBuy; SpotTradeResult = FText::GetEmpty(); RebuildSpotTrade();
+	Snapshot.FocusedSemanticId = TEXT("Market.Detail.SpotTrade.Side"); PublishIfChanged(Previous); return true;
+}
+
+bool UHansaMarketTablePresentationModel::AdjustSpotTradeQuantityIntent(const int64 DeltaMilliUnits)
+{
+	if (!Snapshot.SelectedGood.bSpotTradeVisible) return false;
+	const FHansaMarketTableSnapshot Previous = Snapshot;
+	SpotTradeQuantityRaw = FMath::Clamp<int64>(SpotTradeQuantityRaw + DeltaMilliUnits, 1000, 1'000'000'000);
+	SpotTradeResult = FText::GetEmpty(); RebuildSpotTrade(); PublishIfChanged(Previous); return true;
+}
+
+bool UHansaMarketTablePresentationModel::ConfirmSpotTradeIntent()
+{
+	const auto& Detail = Snapshot.SelectedGood;
+	if (!Detail.bSpotTradeCanSubmit || (!Runtime.IsValid() && !NetworkCommandIntent)) return false;
+	const auto Good = Hansa::Simulation::FHansaGoodId::TryParse(Detail.GoodStableId.ToString());
+	if (!Good) return false;
+	bool bAccepted = false;
+	if (NetworkCommandIntent)
+	{
+		FHansaClientCommandIntent Intent; Intent.Type = EHansaClientIntentType::SpotTrade; Intent.VehicleId = Detail.SpotTradeVehicleValue;
+		Intent.CityId = CurrentCityId.ToString(); Intent.GoodId = Good.Value.ToString(); Intent.bSpotTradeBuy = bSpotTradeBuy;
+		Intent.QuantityMilliUnits = Detail.SpotTradeQuantityRaw; Intent.ReviewedMarketUpdateTick = Detail.SpotTradeReviewedMarketUpdateTick;
+		Intent.ReviewedUnitPriceMilliMarks = Detail.SpotTradeReviewedUnitPrice; bAccepted = NetworkCommandIntent(Intent);
+	}
+	else
+	{
+		Hansa::Simulation::FHansaSpotTradeCommand Payload; Payload.VehicleId = SpotTradeVehicleId; Payload.CityId = CurrentCityId; Payload.GoodId = Good.Value;
+		Payload.Side = bSpotTradeBuy ? Hansa::Simulation::EHansaSpotTradeSide::BuyFromCity : Hansa::Simulation::EHansaSpotTradeSide::SellToCity;
+		Payload.Quantity = Hansa::Simulation::FHansaQuantity::FromRaw(Detail.SpotTradeQuantityRaw);
+		Payload.ReviewedMarketUpdateTick = Detail.SpotTradeReviewedMarketUpdateTick; Payload.ReviewedUnitPriceMilliMarks = Detail.SpotTradeReviewedUnitPrice;
+		bAccepted = Runtime->ExecuteSpotTrade(Payload).IsSuccess();
+	}
+	SpotTradeResult = bAccepted ? LOCTEXT("SpotTradeSubmitted", "Trade recorded. The authoritative receipt shows the final fill and settlement.")
+		: LOCTEXT("SpotTradeRejected", "Trade rejected. Review the current berth, market report, cargo space, stock and funds, then try again.");
+	const FHansaMarketTableSnapshot Previous = Snapshot; RebuildSpotTrade(); Snapshot.FocusedSemanticId = TEXT("Market.Detail.SpotTrade.Confirm"); PublishIfChanged(Previous);
+	return bAccepted;
+}
 bool UHansaMarketTablePresentationModel::RevealRelationshipIntent(const bool bProducer, const FName StableId)
 {
     const auto& Relationships = bProducer ? Snapshot.SelectedGood.Producers : Snapshot.SelectedGood.Consumers;
@@ -627,6 +702,7 @@ void UHansaMarketTablePresentationModel::RebuildSelectedGood()
 		Snapshot.SelectedGood = *Found;
 		Snapshot.SelectedGood.bHasSelection = true;
 		Snapshot.SelectedGood.bPinned = PinnedGoods.Contains(Snapshot.SelectedGood.GoodStableId);
+		RebuildSpotTrade();
 		return;
 	}
 	Snapshot.SelectedGood = {};
@@ -636,6 +712,37 @@ void UHansaMarketTablePresentationModel::RebuildSelectedGood()
 	Snapshot.SelectedGood.ChartSummary = LOCTEXT("SelectGoodChart", "Select a good to inspect its price history.");
 	Snapshot.SelectedGood.PinDisabledReason = LOCTEXT("PinSelectGood", "Select a good with a current market report first.");
 	Snapshot.SelectedGood.RouteDisabledReason = LOCTEXT("RouteSelectGood", "Select a reported good before planning a route.");
+}
+void UHansaMarketTablePresentationModel::RebuildSpotTrade()
+{
+	auto& Detail = Snapshot.SelectedGood;
+	bool bQuoteSource=Runtime.IsValid();
+#if WITH_DEV_AUTOMATION_TESTS
+	bQuoteSource=bQuoteSource||static_cast<bool>(SpotTradeQuoteForTesting);
+#endif
+	Detail.bSpotTradeVisible = Detail.bHasSelection && bQuoteSource && CurrentCityId.IsValid() && (!Runtime.IsValid() || CurrentCityId != Runtime->GetCityId());
+	Detail.bSpotTradeBuy = bSpotTradeBuy; Detail.SpotTradeQuantityRaw = SpotTradeQuantityRaw; Detail.SpotTradeResult = SpotTradeResult;
+	Detail.SpotTradeHeading = LOCTEXT("VisitingMerchant", "Visiting merchant");
+	Detail.SpotTradeConfirmLabel = bSpotTradeBuy ? LOCTEXT("ConfirmPurchase", "Confirm purchase") : LOCTEXT("ConfirmSale", "Confirm sale");
+	Detail.SpotTradeQuantity = FText::Format(LOCTEXT("SpotQuantity", "{0} cargo"), FText::AsNumber(double(SpotTradeQuantityRaw) / 1000.0));
+	Detail.bSpotTradeCanSubmit = false; Detail.SpotTradeVehicleValue = SpotTradeVehicleId.GetValue();
+	if (!Detail.bSpotTradeVisible) return;
+	if (!SpotTradeVehicleId.IsValid()) { Detail.SpotTradeVehicle = LOCTEXT("NoBerthedCog", "No eligible cog at this quay"); Detail.SpotTradeRemedy = LOCTEXT("BerthCogRemedy", "Berth one of your cogs in this city to trade."); return; }
+	Detail.SpotTradeVehicle = FText::Format(LOCTEXT("BerthedCog", "Cog {0} · berthed here"), FText::AsNumber(SpotTradeVehicleId.GetValue()));
+	const auto Good = Hansa::Simulation::FHansaGoodId::TryParse(Detail.GoodStableId.ToString()); if (!Good) return;
+	const auto Side=bSpotTradeBuy ? Hansa::Simulation::EHansaSpotTradeSide::BuyFromCity : Hansa::Simulation::EHansaSpotTradeSide::SellToCity;
+	const auto Quantity=Hansa::Simulation::FHansaQuantity::FromRaw(SpotTradeQuantityRaw);
+	Hansa::Simulation::FHansaSpotTradeQuoteProjection Quote;
+#if WITH_DEV_AUTOMATION_TESTS
+	if(SpotTradeQuoteForTesting) Quote=SpotTradeQuoteForTesting(Side,Quantity); else
+#endif
+	Quote=Runtime->QuerySpotTradeQuote(SpotTradeVehicleId,CurrentCityId,Good.Value,Side,Quantity);
+	Detail.bSpotTradeCanSubmit = Quote.bCanSubmit; Detail.SpotTradeReviewedMarketUpdateTick = Quote.ReviewedMarketUpdateTick;
+	Detail.SpotTradeReviewedUnitPrice = Quote.ReviewedUnitPriceMilliMarks;
+	Detail.SpotTradeQuote = FText::Format(LOCTEXT("SpotQuote", "Estimated fill {0} cargo · unit {1} milli-marks · settlement {2} pfennig · report tick {3}"),
+		FText::AsNumber(double(Quote.EstimatedQuantity.GetRawValue()) / 1000.0), FText::AsNumber(Quote.ReviewedUnitPriceMilliMarks), FText::AsNumber(FMath::Abs(Quote.EstimatedSettlementMoneyRaw)), FText::AsNumber(Quote.ReviewedMarketUpdateTick));
+	Detail.SpotTradeRemedy = Quote.bCanSubmit ? LOCTEXT("FinalRevalidated", "Estimate only; stock, funds, cargo and price are revalidated atomically on confirmation.")
+		: FText::FromString(Quote.Cause + (Quote.Remedy.IsEmpty() ? FString() : TEXT(" ") + Quote.Remedy));
 }
 
 void UHansaMarketTablePresentationModel::PublishIfChanged(const FHansaMarketTableSnapshot& Previous)

@@ -27,7 +27,7 @@ namespace Hansa::Tests::Population
 	FHansaBuildingTypeId BuildingType(const TCHAR* Value) { return Require(FHansaBuildingTypeId::TryParse(Value)); }
 
 	FHansaEconomicRegistry MakeRegistry(const int32 EvaluationTicks = 2,
-		const int64 UpgradeCurrencyCost = 1000, const int64 UpgradeBreadCost = 1000)
+		const int64 UpgradeCurrencyCost = 1000, const int64 UpgradeBreadCost = 1000, const int32 CompoundMode = 0)
 	{
 		FHansaCompiledGoodDefinition Bread;
 		Bread.StableId = TEXT("Good.Bread");
@@ -86,8 +86,26 @@ namespace Hansa::Tests::Population
 		FHansaCompiledBuildingDefinition RoadBuilding;
 		RoadBuilding.StableId = TEXT("Building.Road");
 
-		return FHansaEconomicRegistry(MoveTemp(Goods), { WorkshopRecipe },
-			{ LaborerResidence, ArtisanResidence, MarketBuilding, RoadBuilding, Workshop }, 0xA401000000000001ULL,
+        TArray<FHansaCompiledBuildingDefinition> Buildings;
+        if (CompoundMode > 0)
+        {
+            LaborerResidence.ResidentialCompoundId = TEXT("Compound.Test.Court");
+            LaborerResidence.CompoundStage = 1;
+            LaborerResidence.CompoundDistrictId = TEXT("District.Test");
+            ArtisanResidence.ResidentialCompoundId = CompoundMode == 3 ? TEXT("Compound.Other") : LaborerResidence.ResidentialCompoundId;
+            ArtisanResidence.CompoundDistrictId = CompoundMode == 5 ? TEXT("District.Other") : LaborerResidence.CompoundDistrictId;
+            ArtisanResidence.CompoundStage = CompoundMode == 2 ? 3 : 2;
+            ArtisanResidence.FootprintWidthCells = CompoundMode == 4 ? 4 : LaborerResidence.FootprintWidthCells;
+            ArtisanResidence.ResidentPopulationTierId = Laborer.StableId;
+            ArtisanResidence.ResidenceCapacity = 12;
+            FHansaCompiledBuildingDefinition Third = ArtisanResidence;
+            Third.StableId = TEXT("Building.Residence.CourtDense");Third.CompoundStage = 3;
+            ArtisanResidence.UpgradeTargetBuildingId = Third.StableId;
+            Buildings.Add(Third);
+        }
+        Buildings.Append({ LaborerResidence, ArtisanResidence, MarketBuilding, RoadBuilding, Workshop });
+        return FHansaEconomicRegistry(MoveTemp(Goods), { WorkshopRecipe },
+            MoveTemp(Buildings), 0xA401000000000001ULL,
 			MoveTemp(Needs), MoveTemp(Tiers));
 	}
 
@@ -114,7 +132,7 @@ namespace Hansa::Tests::Population
 		const int32 ServiceReliability = 10000, const int32 Residents = 10, const int32 Capacity = 12,
 		const bool bHasMarket = true, const bool bConstructionComplete = true,
 		const bool bCityWorkforceProduction = false, const bool bIncludeCohort = true,
-		const bool bIncludeSecondResidence = false, const TCHAR* SecondTierId = nullptr)
+		const bool bIncludeSecondResidence = false, const TCHAR* SecondTierId = nullptr, const int64 AlternativeStock = -1)
 	{
 		FHansaSimulationInitialization Initialization;
 		Initialization.Clock = Require(FHansaSimulationClock::TryCreate(
@@ -204,6 +222,11 @@ namespace Hansa::Tests::Population
 		Inventory.Capacity = FHansaQuantity::FromRaw(100000000);
 		Inventory.AcceptedGoods.Add(Good(TEXT("Good.Bread")));
 		Inventory.InitialStock.Add({ Good(TEXT("Good.Bread")), FHansaQuantity::FromRaw(BreadStock) });
+        if (AlternativeStock >= 0)
+        {
+            Inventory.AcceptedGoods.Add(Good(TEXT("Good.PreservedFish")));
+            Inventory.InitialStock.Add({Good(TEXT("Good.PreservedFish")),FHansaQuantity::FromRaw(AlternativeStock)});
+        }
 		Initialization.Inventories.Add(MoveTemp(Inventory));
 
 		FHansaPopulationCohortInitialization Cohort;
@@ -769,6 +792,82 @@ bool FHansaPopulationEmptyHomeRecoveryTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Home without basic services remains observable"), Unseeded.IsSet());
 	if (Unseeded) TestEqual(TEXT("Basic services are required for the initial household"), Unseeded->Residents, 0);
 	return true;
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaCompoundStageProgressionTest,
+ "Hansa.Simulation.Population.CompoundStageProgression",
+ EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaCompoundStageProgressionTest::RunTest(const FString&)
+{
+ using namespace Hansa::Simulation;
+ using namespace Hansa::Tests::Population;
+ for(int32 Mode=1;Mode<=5;++Mode)
+ {
+  auto State=MakeState(TEXT("PopulationTier.Laborer"),100000,10000,10000,10000,8,12);
+  const auto Bootstrap=MakeDefinitions();const auto* Topology=State.CreateReadOnlyAccess(Bootstrap).GetPlacement().GetTopology();
+  if(!TestNotNull(TEXT("Fixture topology"),Topology))return false;
+  const auto D=Require(FHansaSimulationDefinitionContext::TryCreate(
+   Require(FHansaScenarioId::TryParse(TEXT("Scenario.PopulationTest"))),0xA401000000000001ULL,MakeRegistry(2,1000,1000,Mode),*Topology));
+  FHansaSimulationTransientCache Cache;
+  TestTrue(TEXT("Needs qualify through normal population evaluation"),Step(State,D,Cache));
+  const auto Before=State.CreateReadOnlyAccess(D);const auto Fingerprint=Before.GetFingerprint();
+  const auto Command=FHansaGameplayCommand::Create(Header(Before,1),FHansaUpgradeResidenceCommand{PopulationTestsEntity<FHansaBuildingId>(1)});
+  const auto Result=FHansaGameplayCommandGateway::ExecuteTick(State,D,MakeArrayView(&Command,1),Cache);
+  if(Mode!=1){TestFalse(TEXT("Reject skipped stage, changed compound, footprint or district"),Result.IsSuccess());TestTrue(TEXT("Rejected development is atomic"),Fingerprint==State.CreateReadOnlyAccess(D).GetFingerprint());continue;}
+  if(!TestTrue(TEXT("Stage two succeeds without changing laborer tier"),Result.IsSuccess()))continue;
+  auto Cohort=State.CreateReadOnlyAccess(D).QueryPopulationCohort(PopulationTestsEntity<FHansaPopulationCohortId>(1));
+  TestTrue(TEXT("Same cohort, residence identity and laborer tier"),Cohort&&Cohort->TierId.ToString()==TEXT("PopulationTier.Laborer")&&Cohort->ResidenceBuildingId==PopulationTestsEntity<FHansaBuildingId>(1));
+  const auto Second=FHansaGameplayCommand::Create(Header(State.CreateReadOnlyAccess(D),2),FHansaUpgradeResidenceCommand{PopulationTestsEntity<FHansaBuildingId>(1)});
+  TestTrue(TEXT("Stage three succeeds"),FHansaGameplayCommandGateway::ExecuteTick(State,D,MakeArrayView(&Second,1),Cache).IsSuccess());
+  FHansaSaveSnapshot Saved;Saved.State=State;Saved.BuildVersion=TEXT("CompoundStages");Saved.SavedUtc=TEXT("2026-09-15T00:00:00Z");Saved.DisplayName=TEXT("Compound development");Saved.Players.Add({1,PopulationTestsEntity<FHansaHouseId>(1)});
+  TArray<uint8> Bytes;TestTrue(TEXT("Save developed parcel"),FHansaSaveEnvelope::Encode(Saved,D,Bytes).IsSuccess());FHansaSaveSnapshot Loaded;
+  TestTrue(TEXT("Load developed parcel"),FHansaSaveEnvelope::Decode(Bytes,D,Loaded).IsSuccess());
+  TestTrue(TEXT("Save preserves authoritative identity and stage"),State.CreateReadOnlyAccess(D).GetFingerprint()==Loaded.State.CreateReadOnlyAccess(D).GetFingerprint());
+  const auto Remove=FHansaGameplayCommand::Create(Header(State.CreateReadOnlyAccess(D),3),FHansaRemoveBuildingCommand{PopulationTestsEntity<FHansaBuildingId>(1)});
+  TestTrue(TEXT("Compound demolition removes its own cohort"),FHansaGameplayCommandGateway::ExecuteTick(State,D,MakeArrayView(&Remove,1),Cache).IsSuccess());
+  TestFalse(TEXT("No orphan population cohort after demolition"),State.CreateReadOnlyAccess(D).QueryPopulationCohort(PopulationTestsEntity<FHansaPopulationCohortId>(1)).IsSet());
+  Saved.State=State;Bytes.Reset();TestTrue(TEXT("Demolition state saves"),FHansaSaveEnvelope::Encode(Saved,D,Bytes).IsSuccess());
+  TestTrue(TEXT("Demolition state loads with a correct population checksum"),FHansaSaveEnvelope::Decode(Bytes,D,Loaded).IsSuccess());
+ }
+ return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaAlternativeFishConsumptionTest,
+ "Hansa.Simulation.PreservedFish.AlternativeConsumption", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaAlternativeFishConsumptionTest::RunTest(const FString&)
+{
+ using namespace Hansa::Simulation; using namespace Hansa::Tests::Population;
+ auto Base=MakeRegistry(10000); auto Goods=Base.GetGoods(); auto Needs=Base.GetNeeds(); auto Buildings=Base.GetBuildings();
+ FHansaCompiledGoodDefinition Preserved; Preserved.StableId=TEXT("Good.PreservedFish"); Preserved.BaseValueMilliMarks=3000; Goods.Add(Preserved);
+ for (auto& Need:Needs) if (Need.GoodId==TEXT("Good.Bread")) Need.Alternatives.Add({TEXT("Good.PreservedFish"),10000});
+ for (auto& B:Buildings) if (B.StableId==TEXT("Building.Market")) B.bProvidesMarketAccess=true;
+ const FHansaEconomicRegistry Registry(Goods,Base.GetRecipes(),Buildings,0xF150001,Needs,Base.GetPopulationTiers());
+ struct FCase { int64 Fresh,Preserved,Expected; int32 Power; bool Market,Reserved; };
+ for (const FCase Case:TArray<FCase>{{1000,0,1000,10000,true,false},{0,1000,1000,10000,true,false},
+   {400,1000,1000,10000,true,false},{100,200,300,10000,true,false},{0,1000,500,5000,true,false},
+   {0,1000,0,10000,false,false},{0,1000,0,10000,true,true}})
+ {
+  auto State=MakeState(TEXT("PopulationTier.Laborer"),Case.Fresh,Case.Power,10000,10000,10,12,Case.Market,true,false,true,false,nullptr,Case.Preserved);
+  auto Definitions=Require(FHansaSimulationDefinitionContext::TryCreate(Require(FHansaScenarioId::TryParse(TEXT("Scenario.PopulationTest"))),0xF150001,Registry,*State.CreateReadOnlyAccess(MakeDefinitions()).GetPlacement().GetTopology()));
+  FHansaSimulationTransientCache Cache;
+  if (Case.Reserved)
+  {
+   const auto Command=FHansaGameplayCommand::Create(Header(State.CreateReadOnlyAccess(Definitions),1),FHansaSetHouseholdAvailabilityCommand{PopulationTestsEntity<FHansaBuildingId>(3),Good(TEXT("Good.PreservedFish")),false});
+   TestTrue(TEXT("Household policy command"),FHansaGameplayCommandGateway::ExecuteTick(State,Definitions,MakeArrayView(&Command,1),Cache).IsSuccess());
+  }
+  else TestTrue(TEXT("Alternative tick"),Step(State,Definitions,Cache));
+  auto Cohort=State.CreateReadOnlyAccess(Definitions).QueryPopulationCohort(PopulationTestsEntity<FHansaPopulationCohortId>(1));
+  if (!TestTrue(TEXT("Cohort exists"),Cohort.IsSet())) continue;
+  const auto* Need=Cohort->Needs.FindByPredicate([](const auto& N){return N.NeedId.ToString()==TEXT("Need.Bread");});
+  if (!TestNotNull(TEXT("One shared need"),Need)) continue;
+  TestEqual(TEXT("Only remaining affordable food is consumed"),Need->ConsumedLastTick.GetRawValue(),Case.Expected);
+  int64 Food=0; for (const auto& Mix:Need->SuppliedGoods) Food+=Mix.FulfillmentMilliUnits;
+  TestEqual(TEXT("Supply mix equals fulfilled food"),Food,Case.Expected);
+  const auto FishStock=State.CreateReadOnlyAccess(Definitions).GetInventories().QueryStock(PopulationTestsEntity<FHansaInventoryId>(1),Good(TEXT("Good.PreservedFish")));
+  TestEqual(TEXT("Fresh preferred; preservation supplies remainder"),FishStock->Stock.GetRawValue(),Case.Preserved-FMath::Max<int64>(0,Case.Expected-Case.Fresh));
+ }
+ return !HasAnyErrors();
 }
 
 #endif

@@ -26,6 +26,15 @@ enum class EHansaBuildCategory : uint8
 	Decoration
 };
 
+/** Construction browsing only; never changes a household's authoritative tier. */
+UENUM(BlueprintType)
+enum class EHansaBuildTier : uint8
+{
+ DayLaborers,
+ Craftsmen,
+ Merchants
+};
+
 UENUM(BlueprintType)
 enum class EHansaPlacementFeedback : uint8
 {
@@ -67,6 +76,7 @@ struct HANSA_API FHansaBuildCardPresentation final
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|Build") FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|Build") EHansaBuildCategory Category = EHansaBuildCategory::Roads;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|Build") FText Tier;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") int32 BrowsingTierMask = 7;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|Build") FText Cost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|Build") FText WorkforceAndUpkeep;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|Build") FText Footprint;
@@ -90,10 +100,11 @@ struct HANSA_API FHansaBuildChainPresentation final
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|Build") FName OutputGoodId;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|Build") FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|UI|Build") int32 StageCount = 0;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") int32 BrowsingTierMask = 7;
 
 	friend bool operator==(const FHansaBuildChainPresentation& Left, const FHansaBuildChainPresentation& Right)
 	{
-		return Left.OutputGoodId == Right.OutputGoodId && Left.Name.EqualTo(Right.Name) && Left.StageCount == Right.StageCount;
+		return Left.OutputGoodId == Right.OutputGoodId && Left.Name.EqualTo(Right.Name) && Left.StageCount == Right.StageCount && Left.BrowsingTierMask == Right.BrowsingTierMask;
 	}
 };
 
@@ -106,6 +117,7 @@ struct HANSA_API FHansaBuildMenuSnapshot final
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") TArray<EHansaBuildCategory> Categories;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") TArray<FHansaBuildChainPresentation> ProductionChains;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") EHansaBuildCategory SelectedCategory = EHansaBuildCategory::Roads;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") EHansaBuildTier SelectedTier = EHansaBuildTier::DayLaborers;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") FName SelectedBuildingId;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") FName SelectedProductionChainOutputGoodId;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") FName FocusedSemanticId;
@@ -125,6 +137,7 @@ struct HANSA_API FHansaBuildMenuSnapshot final
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") int32 RoadExistingCellCount = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") int32 RoadInvalidCellCount = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") bool bOpen = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") bool bDemolitionMode = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") bool bHasTarget = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") bool bCanConfirm = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Build") bool bDraggingCard = false;
@@ -152,8 +165,12 @@ public:
 	bool InitializeForLubeck(UWorld* World, UHansaRuntimeSimulationHost* SimulationHost, FString& OutError);
 	void SetOpen(bool bOpen);
 	bool SelectCategory(EHansaBuildCategory Category);
+ bool SelectTier(EHansaBuildTier Tier);
+ bool IsChainVisible(FName OutputGoodId) const;
 	bool SelectProductionChain(FName OutputGoodId);
 	bool SelectBuilding(FName BuildingId);
+	bool IsCardVisible(FName BuildingId) const;
+	FName GetSelectedCardId() const;
 	bool BeginCardDrag(FName BuildingId);
 	bool UpdateCardDragTarget(int32 X, int32 Y);
 	bool ClearCardDragTarget();
@@ -177,6 +194,12 @@ public:
 	bool IsBuildingStrokeActive() const { return bBuildingStroke; }
 	bool ClearPointerTarget();
 	bool CancelIntent();
+	bool ToggleDemolitionIntent();
+	bool DemolishBuildingIntent(int64 BuildingValue);
+	void SetNetworkPlaceIntent(TFunction<bool(TConstArrayView<Hansa::Simulation::FHansaPlacementSpec>)> Intent)
+	{ NetworkPlaceIntent = MoveTemp(Intent); }
+	void SetNetworkDemolishIntent(TFunction<bool(int64)> Intent)
+	{ NetworkDemolishIntent = MoveTemp(Intent); }
 	void SetFocusedSemanticId(FName SemanticId);
 
 	[[nodiscard]] const FHansaBuildMenuSnapshot& GetSnapshot() const { return Snapshot; }
@@ -184,6 +207,8 @@ public:
 	[[nodiscard]] FIntPoint GetRoadAdjacentTarget() const;
 	[[nodiscard]] TOptional<FIntPoint> FindValidShorelineTarget() const;
 	[[nodiscard]] uint64 GetRevision() const { return Revision; }
+	[[nodiscard]] uint8 GetAdjacentRoadMaskForPreview() const;
+ [[nodiscard]] uint64 GetParcelSeedForPreview() const;
 	[[nodiscard]] int32 GetPlacedBuildingCount() const;
 	[[nodiscard]] int64 GetSimulationTick() const;
 	[[nodiscard]] FString GetBuildingWorldStatus(int64 BuildingValue) const;
@@ -201,6 +226,9 @@ public:
     bool IsConstructionAllowed() const { return bConstructionAllowed; }
 private:
     bool bConstructionAllowed=true;
+	bool bRandomLabourSelection = false;
+	TArray<FName> RemainingLabourCompounds;
+	FName PickRandomLabourCompound();
 	bool bBuildingStroke=false;
 	TOptional<FIntPoint> StrokePrevious;
 	TSet<FIntPoint> StrokeVisited;
@@ -218,6 +246,9 @@ private:
 	TSharedPtr<FHansaBuildRuntimeState> Runtime;
 	uint64 Revision = 0;
 	FHansaBuildMenuChanged Changed;
+	TFunction<bool(TConstArrayView<Hansa::Simulation::FHansaPlacementSpec>)> NetworkPlaceIntent;
+	TFunction<bool(int64)> NetworkDemolishIntent;
 };
 
 HANSA_API const TCHAR* LexToString(EHansaBuildCategory Category);
+HANSA_API const TCHAR* LexToString(EHansaBuildTier Tier);

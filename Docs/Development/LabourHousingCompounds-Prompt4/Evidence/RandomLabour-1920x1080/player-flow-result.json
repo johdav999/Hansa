@@ -1,0 +1,19 @@
+{
+  "log": "Saved\\CompoundIntegration\\random-labour-player-flow-final.log",
+  "sha256": "a19fbdc6cea27e49e3ad0581db23173defeffb7c405a1b3cbc5744e2b9357d04",
+  "completion": [
+    "[2026.09.15-17.08.44:862][487]LogAutomationController: Display: Test Completed. Result={Success} Name={PlayerFlow} Path={Hansa.Compound.PlayerFlow}"
+  ],
+  "nativeResolution": [
+    1920,
+    1080
+  ],
+  "checks": [
+    "Ordinary labour-house button builds all four random families",
+    "Road-facing full parcel footprints",
+    "Consecutive stage upgrades",
+    "Exact upgraded mesh transforms survive load",
+    "Demolition and replacement",
+    "All randomly selected family IDs and layouts survive normal save/load"
+  ]
+}

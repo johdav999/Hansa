@@ -1,0 +1,14 @@
+{
+  "Operation": "RunAutomationTests",
+  "Status": "Succeeded",
+  "Filter": "Hansa.Simulation.Population",
+  "Configuration": "Development",
+  "TestsFound": 13,
+  "EditorBuildSkipped": true,
+  "RenderingEnabled": false,
+  "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+  "EngineRoot": "H:\\Unreal\\UE_5.8",
+  "CompletedUtc": "2026-09-15T16:47:15.2262619Z",
+  "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundIntegration\\Tests\\20260915-184644592-automation-Hansa.Simulation.Population\\UnrealEditor.log",
+  "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundIntegration\\Tests\\20260915-184644592-automation-Hansa.Simulation.Population\\AutomationCommand.log"
+}

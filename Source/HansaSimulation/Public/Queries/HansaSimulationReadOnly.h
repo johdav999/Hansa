@@ -1,4 +1,5 @@
 #pragma once
+#include "Population/HansaHeating.h"
 
 #include "Containers/Array.h"
 #include "Containers/ArrayView.h"
@@ -42,6 +43,9 @@ namespace Hansa::Simulation
 		[[nodiscard]] TConstArrayView<FHansaBuildingState> GetBuildings() const { return Buildings; }
 		[[nodiscard]] TConstArrayView<FHansaVehicleState> GetVehicles() const { return Vehicles; }
 		[[nodiscard]] TConstArrayView<FHansaRouteState> GetRoutes() const { return Routes; }
+		[[nodiscard]] TConstArrayView<FHansaForeignPresenceState> GetForeignPresences() const { return ForeignPresences; }
+		[[nodiscard]] TConstArrayView<FHansaTradeStationState> GetTradeStations() const { return TradeStations; }
+		[[nodiscard]] TConstArrayView<FHansaLeasedPlotState> GetLeasedPlots() const { return LeasedPlots; }
 		[[nodiscard]] TConstArrayView<FHansaHouseResearchState> GetResearch() const { return Research; }
 		[[nodiscard]] TConstArrayView<FHansaTestEntityState> GetTestEntities() const { return TestEntities; }
 		[[nodiscard]] const FHansaInventorySnapshot& GetInventories() const { return Inventories; }
@@ -68,6 +72,9 @@ namespace Hansa::Simulation
 		TArray<FHansaBuildingState> Buildings;
 		TArray<FHansaVehicleState> Vehicles;
 		TArray<FHansaRouteState> Routes;
+		TArray<FHansaForeignPresenceState> ForeignPresences;
+		TArray<FHansaTradeStationState> TradeStations;
+		TArray<FHansaLeasedPlotState> LeasedPlots;
 		TArray<FHansaHouseResearchState> Research;
 		TArray<FHansaTestEntityState> TestEntities;
 		FHansaInventorySnapshot Inventories;
@@ -94,6 +101,8 @@ namespace Hansa::Simulation
 	/** Immutable, presentation-specific join of building, placement and production state. */
 	struct HANSASIMULATION_API FHansaBuildingWorldProjection final
 	{
+        uint8 AdjacentRoadMask = 0;
+        bool bMapEdge = false;
 		FHansaBuildingId BuildingId;
 		FHansaHouseId OwnerId;
 		FHansaPlacementSpec Placement;
@@ -118,7 +127,8 @@ namespace Hansa::Simulation
 
 		friend bool operator==(const FHansaBuildingWorldProjection& Left, const FHansaBuildingWorldProjection& Right)
 		{
-			return Left.BuildingId == Right.BuildingId &&
+			return Left.AdjacentRoadMask == Right.AdjacentRoadMask && Left.bMapEdge == Right.bMapEdge &&
+                Left.BuildingId == Right.BuildingId &&
 				Left.OwnerId == Right.OwnerId &&
 				Left.Placement.CityId == Right.Placement.CityId &&
 				Left.Placement.BuildingDefinitionId == Right.Placement.BuildingDefinitionId &&
@@ -170,8 +180,11 @@ namespace Hansa::Simulation
 		[[nodiscard]] TConstArrayView<FHansaHouseProjection> GetHouses() const { return Houses; }
 		[[nodiscard]] TConstArrayView<FHansaVehicleProjection> GetVehicles() const { return Vehicles; }
 		[[nodiscard]] TConstArrayView<FHansaRouteProjection> GetRoutes() const { return Routes; }
+		[[nodiscard]] TConstArrayView<FHansaForeignPresenceProjection> GetForeignPresences() const { return ForeignPresences; }
+		[[nodiscard]] TConstArrayView<FHansaTradeStationProjection> GetTradeStations() const { return TradeStations; }
 		[[nodiscard]] TConstArrayView<FHansaHouseResearchState> GetResearch() const { return Research; }
 		[[nodiscard]] TConstArrayView<FHansaInventoryProjection> GetInventories() const { return Inventories; }
+        [[nodiscard]] TConstArrayView<FHansaSpoilageRecord> GetSpoilage() const { return Spoilage; }
 		[[nodiscard]] TConstArrayView<FHansaProductionProjection> GetProductions() const { return Productions; }
 		[[nodiscard]] TConstArrayView<FHansaPopulationCohortProjection> GetPopulationCohorts() const { return PopulationCohorts; }
 		[[nodiscard]] TConstArrayView<FHansaCityPopulationProjection> GetCityPopulations() const { return CityPopulations; }
@@ -179,6 +192,8 @@ namespace Hansa::Simulation
 		[[nodiscard]] int32 GetTotalResidents() const { return TotalResidents; }
 		[[nodiscard]] int32 GetTotalWorkforceSupply() const { return TotalWorkforceSupply; }
 		[[nodiscard]] TConstArrayView<FHansaCityMarketProjection> GetMarkets() const { return Markets; }
+		[[nodiscard]] TConstArrayView<FHansaRemoteIndustryProjection> GetRemoteIndustries() const { return RemoteIndustries; }
+		[[nodiscard]] TConstArrayView<FHansaRegionalShipmentState> GetRegionalShipments() const { return RegionalShipments; }
 		[[nodiscard]] TConstArrayView<FHansaMarketReserveProjection> GetMarketReserves() const { return MarketReserves; }
 		[[nodiscard]] TConstArrayView<FHansaMarketExplanationProjection> GetMarketExplanations() const { return MarketExplanations; }
 		[[nodiscard]] TConstArrayView<FHansaMarketConsumerProjection> GetMarketConsumers() const { return MarketConsumers; }
@@ -209,8 +224,11 @@ namespace Hansa::Simulation
 		TArray<FHansaHouseProjection> Houses;
 		TArray<FHansaVehicleProjection> Vehicles;
 		TArray<FHansaRouteProjection> Routes;
+		TArray<FHansaForeignPresenceProjection> ForeignPresences;
+		TArray<FHansaTradeStationProjection> TradeStations;
 		TArray<FHansaHouseResearchState> Research;
 		TArray<FHansaInventoryProjection> Inventories;
+        TArray<FHansaSpoilageRecord> Spoilage;
 		TArray<FHansaProductionProjection> Productions;
 		TArray<FHansaPopulationCohortProjection> PopulationCohorts;
 		FHansaConsumptionProjection CitizenConsumption;
@@ -218,6 +236,8 @@ namespace Hansa::Simulation
 		int32 TotalResidents = 0;
 		int32 TotalWorkforceSupply = 0;
 		TArray<FHansaCityMarketProjection> Markets;
+		TArray<FHansaRemoteIndustryProjection> RemoteIndustries;
+		TArray<FHansaRegionalShipmentState> RegionalShipments;
 		TArray<FHansaMarketReserveProjection> MarketReserves;
 		TArray<FHansaMarketExplanationProjection> MarketExplanations;
 		TArray<FHansaMarketConsumerProjection> MarketConsumers;
@@ -247,11 +267,22 @@ namespace Hansa::Simulation
 		[[nodiscard]] TConstArrayView<FHansaBuildingState> GetBuildings() const;
 		[[nodiscard]] TConstArrayView<FHansaVehicleState> GetVehicles() const;
 		[[nodiscard]] TConstArrayView<FHansaRouteState> GetRoutes() const;
+		[[nodiscard]] TConstArrayView<FHansaForeignPresenceState> GetForeignPresences() const;
+		[[nodiscard]] TOptional<FHansaForeignPresenceProjection> QueryForeignPresence(FHansaHouseId HouseId, FHansaCityDefinitionId CityId) const;
+		[[nodiscard]] TArray<FHansaForeignPresenceProjection> BuildForeignPresenceProjection(FHansaHouseId HouseId = FHansaHouseId()) const;
+		[[nodiscard]] TConstArrayView<FHansaTradeStationState> GetTradeStations() const;
+		[[nodiscard]] TConstArrayView<FHansaLeasedPlotState> GetLeasedPlots() const;
+		[[nodiscard]] TOptional<FHansaTradeStationProjection> QueryTradeStation(FHansaTradeStationId StationId) const;
+		[[nodiscard]] TArray<FHansaTradeStationProjection> BuildTradeStationProjection(FHansaHouseId HouseId = FHansaHouseId()) const;
+		[[nodiscard]] TArray<FHansaLeasedPlotOverlayProjection> BuildLeasedPlotOverlayProjection(FHansaHouseId HouseId = FHansaHouseId(), FHansaCityDefinitionId CityId = FHansaCityDefinitionId()) const;
+		[[nodiscard]] TArray<FHansaForeignConstructionOptionProjection> BuildForeignConstructionBrowser(FHansaHouseId HouseId, FHansaCityDefinitionId CityId) const;
 		[[nodiscard]] TConstArrayView<FHansaHouseResearchState> GetResearch() const;
 		[[nodiscard]] TOptional<FHansaVehicleProjection> QueryVehicle(FHansaVehicleId VehicleId) const;
 		[[nodiscard]] TArray<FHansaVehicleProjection> BuildVehicleProjection() const;
 		[[nodiscard]] TOptional<FHansaRouteProjection> QueryRoute(FHansaRouteId RouteId) const;
 		[[nodiscard]] TArray<FHansaRouteProjection> BuildRouteProjection() const;
+		[[nodiscard]] FHansaSpotTradeQuoteProjection QuerySpotTradeQuote(FHansaHouseId HouseId, FHansaVehicleId VehicleId,
+			FHansaCityDefinitionId CityId, FHansaGoodId GoodId, EHansaSpotTradeSide Side, FHansaQuantity Quantity) const;
 		[[nodiscard]] TConstArrayView<FHansaTestEntityState> GetTestEntities() const;
 		[[nodiscard]] const FHansaPlacementState& GetPlacement() const;
 		[[nodiscard]] FHansaPlacementValidationResult ValidatePlacement(
@@ -277,18 +308,24 @@ namespace Hansa::Simulation
 		[[nodiscard]] TArray<FHansaProductionProjection> BuildProductionProjection() const;
 		[[nodiscard]] TOptional<FHansaPopulationCohortProjection> QueryPopulationCohort(FHansaPopulationCohortId CohortId) const;
 		[[nodiscard]] TArray<FHansaPopulationCohortProjection> BuildPopulationProjection() const;
+		[[nodiscard]] FHansaHeatingProjection QueryHeating(FHansaCityDefinitionId CityId) const;
 		[[nodiscard]] TOptional<FHansaCityPopulationProjection> QueryCityPopulation(FHansaCityDefinitionId CityId) const;
 		[[nodiscard]] TArray<FHansaCityPopulationProjection> BuildCityPopulationProjection() const;
 		[[nodiscard]] TOptional<FHansaCityMarketProjection> QueryMarket(FHansaCityDefinitionId CityId, FHansaGoodId GoodId) const;
 		[[nodiscard]] TArray<FHansaCityMarketProjection> BuildMarketProjection() const;
+		[[nodiscard]] TOptional<FString> QueryRegionForCity(FHansaCityDefinitionId CityId) const;
+		[[nodiscard]] TArray<FHansaRemoteIndustryProjection> QueryCityIndustries(FHansaCityDefinitionId CityId) const;
+		[[nodiscard]] TOptional<FHansaCompiledProductionChainDefinition> QueryProductionChain(const FString& ProductionChainId) const;
+		[[nodiscard]] TArray<FHansaRegionalShipmentState> QueryIncomingRegionalShipments(FHansaCityDefinitionId CityId) const;
 		[[nodiscard]] TOptional<FHansaMarketPriceProjection> QueryMarketPrice(FHansaCityDefinitionId CityId, FHansaGoodId GoodId) const;
-		[[nodiscard]] TOptional<FHansaMarketReportAgeProjection> QueryMarketReportAge(FHansaCityDefinitionId CityId, FHansaGoodId GoodId) const;
-		[[nodiscard]] TOptional<FHansaKnownMarketPriceProjection> QueryKnownMarketPrice(FHansaCityDefinitionId CityId, FHansaGoodId GoodId) const;
-		[[nodiscard]] TOptional<FHansaKnownMarketSupplyDemandProjection> QueryKnownMarketSupplyDemand(FHansaCityDefinitionId CityId, FHansaGoodId GoodId) const;
+		[[nodiscard]] TOptional<FHansaMarketReportAgeProjection> QueryMarketReportAge(FHansaCityDefinitionId CityId, FHansaGoodId GoodId, FHansaHouseId ViewingHouseId = FHansaHouseId()) const;
+		[[nodiscard]] TOptional<FHansaKnownMarketPriceProjection> QueryKnownMarketPrice(FHansaCityDefinitionId CityId, FHansaGoodId GoodId, FHansaHouseId ViewingHouseId = FHansaHouseId()) const;
+		[[nodiscard]] TOptional<FHansaKnownMarketSupplyDemandProjection> QueryKnownMarketSupplyDemand(FHansaCityDefinitionId CityId, FHansaGoodId GoodId, FHansaHouseId ViewingHouseId = FHansaHouseId()) const;
 		[[nodiscard]] TOptional<FHansaMarketOpportunityComparisonProjection> CompareMarketOpportunity(
 			FHansaCityDefinitionId SourceCityId,
 			FHansaCityDefinitionId DestinationCityId,
-			FHansaGoodId GoodId) const;
+			FHansaGoodId GoodId,
+			FHansaHouseId ViewingHouseId = FHansaHouseId()) const;
 		[[nodiscard]] TArray<FHansaMarketPriceHistoryEntry> QueryMarketPriceHistory(FHansaCityDefinitionId CityId, FHansaGoodId GoodId) const;
 		[[nodiscard]] TOptional<FHansaMarketSupplyDemandProjection> QueryMarketSupplyDemand(FHansaCityDefinitionId CityId, FHansaGoodId GoodId) const;
 		[[nodiscard]] TOptional<FHansaMarketReserveProjection> QueryMarketReserveDays(FHansaCityDefinitionId CityId, FHansaGoodId GoodId) const;

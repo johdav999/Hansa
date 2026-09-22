@@ -43,7 +43,33 @@ namespace Hansa::Simulation
 		RouteStateInvalid,
 		VehicleAlreadyAssigned,
 		ResearchRejected,
-		TargetHasCargoObligations
+		TargetHasCargoObligations,
+		ResearchEffectRequired,
+		SpotTradeAccessUnavailable,
+		SpotTradeNotBerthed,
+		SpotTradeStaleReview,
+		StationOrderStaleReview,
+		SpotTradeRejected,
+		TradeStationAccessUnavailable,
+		TradeStationSiteUnavailable,
+		TradeStationCostUnavailable,
+		TradeStationStateInvalid,
+		TradeStationHasCargo,
+		PresenceUpgradeUnavailable,
+		PresenceUpgradeRequirementsUnmet,
+		PresenceUpgradeCostUnavailable,
+		PresenceUpgradeStateInvalid,
+		PresenceSpecializationUnavailable,
+		PresenceSpecializationStaleReview,
+		PresenceSpecializationCostUnavailable,
+		PresenceSpecializationStateInvalid,
+		CityPrivilegeUnavailable,
+		CityPrivilegeCostUnavailable,
+		CityPrivilegeStateInvalid,
+		CityProjectUnavailable,
+		CityProjectCostUnavailable,
+		GovernanceTransitionUnavailable,
+		GovernanceScenarioGateRejected
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaCommandGatewayError Error);
@@ -52,6 +78,16 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaCommandGatewayResult final
 	{
 	public:
+        /** Rejection at the world authority boundary, before IDs, resources or time are consumed. */
+        static FHansaCommandGatewayResult RejectTerrain(const FHansaPlacementValidationResult& Validation,
+            int32 Index, FHansaCommandId Id, FHansaSimulationTick Tick, FHansaDeterminismFingerprint Fingerprint)
+        {
+            FHansaCommandGatewayResult Result;
+            Result.Error=EHansaCommandGatewayError::PlacementRejected;
+            Result.FailedCommandIndex=Index;Result.FailedCommandId=Id;
+            Result.TickBefore=Result.TickAfter=Tick;Result.FingerprintAfter=Fingerprint;
+            Result.PlacementValidation=Validation;return Result;
+        }
 		[[nodiscard]] bool IsSuccess() const { return Error == EHansaCommandGatewayError::None; }
 		explicit operator bool() const { return IsSuccess(); }
 		[[nodiscard]] EHansaCommandGatewayError GetError() const { return Error; }

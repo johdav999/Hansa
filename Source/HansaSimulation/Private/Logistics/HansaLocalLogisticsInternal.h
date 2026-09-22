@@ -10,6 +10,7 @@ namespace Hansa::Simulation
 	struct FHansaBuildingState;
 	struct FHansaProductionState;
 	struct FHansaCityMarketState;
+	struct FHansaHouseResearchState;
 
 	class FHansaLocalLogisticsExecutor final
 	{
@@ -34,6 +35,7 @@ namespace Hansa::Simulation
 			const FHansaPlacementState& Placement,
 			TConstArrayView<FHansaBuildingState> Buildings,
 			const FHansaEconomicRegistry* Registry,
+			TConstArrayView<FHansaHouseResearchState> Research,
 			FHansaSimulationTick CurrentTick);
 	};
 }

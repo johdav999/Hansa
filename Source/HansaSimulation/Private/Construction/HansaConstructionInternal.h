@@ -20,7 +20,8 @@ namespace Hansa::Simulation
 			const FHansaEconomicRegistry& Definitions,
 			FHansaHouseId HouseId,
 			FHansaCityDefinitionId CityId,
-			FHansaBuildingTypeId BuildingDefinitionId);
+			FHansaBuildingTypeId BuildingDefinitionId,
+			FHansaInventoryId FundingInventoryId = FHansaInventoryId());
 
 		[[nodiscard]] static bool TryPayCost(
 			TArray<FHansaHouseState>& Houses,
@@ -29,7 +30,8 @@ namespace Hansa::Simulation
 			FHansaHouseId HouseId,
 			FHansaCityDefinitionId CityId,
 			FHansaBuildingTypeId BuildingDefinitionId,
-			FHansaSimulationTick Tick);
+			FHansaSimulationTick Tick,
+			FHansaInventoryId FundingInventoryId = FHansaInventoryId());
 
 		[[nodiscard]] static bool TryRefundCancellation(
 			TArray<FHansaHouseState>& Houses,

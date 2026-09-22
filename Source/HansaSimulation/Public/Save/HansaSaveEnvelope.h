@@ -89,7 +89,7 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaSaveEnvelope final
 	{
 	public:
-		static constexpr uint32 CurrentFormatVersion = 7;
+		static constexpr uint32 CurrentFormatVersion = 21;
 		static constexpr int32 MaximumBytes = 64 * 1024 * 1024;
 		static FHansaSaveResult Encode(const FHansaSaveSnapshot& Snapshot,
 			const FHansaSimulationDefinitionContext& Definitions, TArray<uint8>& OutBytes);
@@ -98,6 +98,11 @@ namespace Hansa::Simulation
 		static FHansaSaveResult InspectMetadata(TConstArrayView<uint8> Bytes, FHansaSaveMetadata& OutMetadata);
 		static FHansaSaveResult Decode(TConstArrayView<uint8> Bytes,
 			const FHansaSimulationDefinitionContext& Definitions, FHansaSaveSnapshot& OutSnapshot);
+#if WITH_DEV_AUTOMATION_TESTS
+		/** Writes the genuine historical field layout for migration fixtures; never used by runtime save slots. */
+		static FHansaSaveResult EncodeHistoricalFixtureForTests(const FHansaSaveSnapshot& Snapshot,
+			const FHansaSimulationDefinitionContext& Definitions, uint32 FormatVersion, uint32 FingerprintVersion, TArray<uint8>& OutBytes);
+#endif
 		static FHansaSaveScenarioState CaptureScenario(const FHansaScenarioEvaluator& Evaluator);
 		/** Rebuilds labels/targets from definitions without advancing the saved victory streak. */
 		static bool RestoreScenario(const FHansaSaveScenarioState& Saved,

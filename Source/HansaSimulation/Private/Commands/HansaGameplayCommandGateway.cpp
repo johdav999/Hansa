@@ -14,6 +14,13 @@ namespace Hansa::Simulation
 		case EHansaCommandGatewayError::UnsupportedSchemaVersion: return TEXT("UnsupportedSchemaVersion");
 		case EHansaCommandGatewayError::InvalidCommandIdentity: return TEXT("InvalidCommandIdentity");
 		case EHansaCommandGatewayError::InvalidAuthorityContext: return TEXT("InvalidAuthorityContext");
+		case EHansaCommandGatewayError::CityPrivilegeUnavailable: return TEXT("CityPrivilegeUnavailable");
+		case EHansaCommandGatewayError::CityPrivilegeCostUnavailable: return TEXT("CityPrivilegeCostUnavailable");
+		case EHansaCommandGatewayError::CityPrivilegeStateInvalid: return TEXT("CityPrivilegeStateInvalid");
+		case EHansaCommandGatewayError::CityProjectUnavailable: return TEXT("CityProjectUnavailable");
+		case EHansaCommandGatewayError::CityProjectCostUnavailable: return TEXT("CityProjectCostUnavailable");
+		case EHansaCommandGatewayError::GovernanceTransitionUnavailable: return TEXT("GovernanceTransitionUnavailable");
+		case EHansaCommandGatewayError::GovernanceScenarioGateRejected: return TEXT("GovernanceScenarioGateRejected");
 		case EHansaCommandGatewayError::UnknownIssuingHouse: return TEXT("UnknownIssuingHouse");
 		case EHansaCommandGatewayError::ExecutionTickMismatch: return TEXT("ExecutionTickMismatch");
 		case EHansaCommandGatewayError::CommandOrderInvalid: return TEXT("CommandOrderInvalid");
@@ -36,6 +43,25 @@ namespace Hansa::Simulation
 		case EHansaCommandGatewayError::VehicleAlreadyAssigned: return TEXT("VehicleAlreadyAssigned");
 		case EHansaCommandGatewayError::ResearchRejected: return TEXT("ResearchRejected");
 		case EHansaCommandGatewayError::TargetHasCargoObligations: return TEXT("TargetHasCargoObligations");
+		case EHansaCommandGatewayError::ResearchEffectRequired: return TEXT("ResearchEffectRequired");
+		case EHansaCommandGatewayError::SpotTradeAccessUnavailable: return TEXT("SpotTradeAccessUnavailable");
+		case EHansaCommandGatewayError::SpotTradeNotBerthed: return TEXT("SpotTradeNotBerthed");
+		case EHansaCommandGatewayError::SpotTradeStaleReview: return TEXT("SpotTradeStaleReview");
+		case EHansaCommandGatewayError::SpotTradeRejected: return TEXT("SpotTradeRejected");
+		case EHansaCommandGatewayError::TradeStationAccessUnavailable: return TEXT("TradeStationAccessUnavailable");
+		case EHansaCommandGatewayError::TradeStationSiteUnavailable: return TEXT("TradeStationSiteUnavailable");
+		case EHansaCommandGatewayError::TradeStationCostUnavailable: return TEXT("TradeStationCostUnavailable");
+		case EHansaCommandGatewayError::TradeStationStateInvalid: return TEXT("TradeStationStateInvalid");
+		case EHansaCommandGatewayError::TradeStationHasCargo: return TEXT("TradeStationHasCargo");
+		case EHansaCommandGatewayError::StationOrderStaleReview: return TEXT("StationOrderStaleReview");
+		case EHansaCommandGatewayError::PresenceUpgradeUnavailable: return TEXT("PresenceUpgradeUnavailable");
+		case EHansaCommandGatewayError::PresenceUpgradeRequirementsUnmet: return TEXT("PresenceUpgradeRequirementsUnmet");
+		case EHansaCommandGatewayError::PresenceUpgradeCostUnavailable: return TEXT("PresenceUpgradeCostUnavailable");
+		case EHansaCommandGatewayError::PresenceUpgradeStateInvalid: return TEXT("PresenceUpgradeStateInvalid");
+		case EHansaCommandGatewayError::PresenceSpecializationUnavailable: return TEXT("PresenceSpecializationUnavailable");
+		case EHansaCommandGatewayError::PresenceSpecializationStaleReview: return TEXT("PresenceSpecializationStaleReview");
+		case EHansaCommandGatewayError::PresenceSpecializationCostUnavailable: return TEXT("PresenceSpecializationCostUnavailable");
+		case EHansaCommandGatewayError::PresenceSpecializationStateInvalid: return TEXT("PresenceSpecializationStateInvalid");
 		default: return TEXT("UnknownCommandGatewayError");
 		}
 	}

@@ -1,5 +1,9 @@
 #include "Definitions/HansaEconomicDefinitionSeedCommandlet.h"
+#include "World/HansaLubeckScenarioInitializer.h"
+#include "Definitions/HansaArtisanProductionDraft.h"
+#include "Definitions/HansaRegionalProductionDraft.h"
 #include "GameFramework/Actor.h"
+#include "Engine/Engine.h"
 
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Definitions/HansaEconomicDefinitionSeeder.h"
@@ -11,6 +15,8 @@
 #include "Definitions/HansaMarketDefinitions.h"
 #include "Definitions/HansaMerchantAIDefinitions.h"
 #include "Definitions/HansaPopulationDefinitions.h"
+#include "Definitions/HansaPresenceDefinitions.h"
+#include "Definitions/HansaPresenceDefinitionSeed.h"
 #include "Definitions/HansaResearchDefinitions.h"
 #include "Definitions/HansaScenarioDefinitions.h"
 #include "Definitions/HansaTradeDefinitions.h"
@@ -312,6 +318,13 @@ namespace Hansa::Editor::EconomicDefinitions
 		Tuning->MarginUtilityPerMilliMark = 1;
 		Tuning->ResearchUtility = 50;
 		Tuning->ProductionUtility = 25;
+		Tuning->ProtectedCashReservePfennig = 5'000;
+		Tuning->ActionCooldownTicks = 1;
+		Tuning->DirectTradeQuantityMilliUnits = 5'000;
+		Tuning->StationOrderTargetMilliUnits = 10'000;
+		Tuning->StationOrderCapMilliUnits = 2'000;
+		Tuning->StationOrderBudgetPfennig = 20'000;
+		Tuning->PresenceUtility = 75;
 		Tuning->TargetCompletedTradeLegs = 2;
 		Tuning->PreferredResearchTechnologyIds = {
 			TEXT("Technology.Commerce.MarketReports"),
@@ -509,14 +522,20 @@ namespace Hansa::Editor::EconomicDefinitions
 	{
 		UObject* EffectiveOuter = Outer != nullptr ? Outer : GetTransientPackage();
 		TArray<TStrongObjectPtr<UHansaDefinitionBase>> Definitions;
-		Definitions.Reserve(81);
+		Definitions.Reserve(105);
 
 		AddGood(Definitions, EffectiveOuter, TEXT("Grain"), TEXT("Grain"), EHansaGoodUnit::Kilogram, 1000, 12000, 25);
 		AddGood(Definitions, EffectiveOuter, TEXT("Flour"), TEXT("Flour"), EHansaGoodUnit::Kilogram, 1700, 10500, 75);
 		AddGood(Definitions, EffectiveOuter, TEXT("Hops"), TEXT("Hops"), EHansaGoodUnit::Kilogram, 1800, 11000, 100);
 		AddGood(Definitions, EffectiveOuter, TEXT("Malt"), TEXT("Malt"), EHansaGoodUnit::Kilogram, 1400, 10000, 50);
 		AddGood(Definitions, EffectiveOuter, TEXT("Bread"), TEXT("Bread"), EHansaGoodUnit::Item, 800, 13500, 250);
-		AddGood(Definitions, EffectiveOuter, TEXT("Fish"), TEXT("Fish"), EHansaGoodUnit::Kilogram, 1800, 14000, 500);
+		auto* FreshFish = AddGood(Definitions, EffectiveOuter, TEXT("Fish"), TEXT("Fresh fish"), EHansaGoodUnit::Kilogram, 1800, 14000, 500);
+        FreshFish->bSpoilageEnabled = true; FreshFish->AuthoredRevision = 2; FreshFish->RefreshContentHash();
+        auto* PreservedFish = AddGood(Definitions, EffectiveOuter, TEXT("PreservedFish"), TEXT("Preserved fish"), EHansaGoodUnit::Kilogram, 3000, 12000, 10);
+        PreservedFish->bSpoilageEnabled = true; PreservedFish->RefreshContentHash();
+        auto* SaltedCatch = AddRecipe(Definitions, EffectiveOuter, TEXT("SaltedCatch"), TEXT("Salt own catch"),
+            {Amount(TEXT("Good.Salt"), 4000), Amount(TEXT("Good.Barrels"), 200)}, {Amount(TEXT("Good.PreservedFish"), 20000)}, 90, 4, 0);
+        SaltedCatch->InternalCatchRecipeId = TEXT("Recipe.CatchFish"); SaltedCatch->RefreshContentHash();
 		AddGood(Definitions, EffectiveOuter, TEXT("Salt"), TEXT("Salt"), EHansaGoodUnit::Kilogram, 2200, 9000, 0);
 		AddGood(Definitions, EffectiveOuter, TEXT("Timber"), TEXT("Timber"), EHansaGoodUnit::Kilogram, 700, 8000, 0);
 		AddGood(Definitions, EffectiveOuter, TEXT("Planks"), TEXT("Planks"), EHansaGoodUnit::Kilogram, 1300, 8500, 0);
@@ -582,7 +601,14 @@ namespace Hansa::Editor::EconomicDefinitions
 		Fishery->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(
 			TEXT("/Game/Mesh/hansa-fishery/SM_HansaFishery.SM_HansaFishery")));
 		Fishery->AuthoredRevision = 4;
-		Fishery->RefreshContentHash();
+        Fishery->UpgradeTargetBuildingId = TEXT("Building.Fishery.SaltingShed");
+        Fishery->RefreshContentHash();
+        auto* SaltingShed = AddBuilding(Definitions, EffectiveOuter, TEXT("Building.Fishery.SaltingShed"), TEXT("FisherySaltingShed"), TEXT("Fishery with salting shed"),
+            {Amount(TEXT("Good.Planks"),8000), Amount(TEXT("Good.Timber"),4000), Amount(TEXT("Good.Tools"),2000)},
+            {TEXT("Recipe.CatchFish"),TEXT("Recipe.SaltedCatch")}, 2500, 3, 2, 72, 60000, 0, 2, 0, true, true);
+        SaltingShed->bUpgradeOnly = true; SaltingShed->bShowInConstructionMenu = false;
+        SaltingShed->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Game/Mesh/hansa-fish-preservation/SM_HansaFisheryPreservation.SM_HansaFisheryPreservation")));
+        SaltingShed->RefreshContentHash();
 		ConfigureConstructionCard(AddBuilding(Definitions, EffectiveOuter, TEXT("Building.LumberCamp"), TEXT("LumberCamp"), TEXT("Lumber camp"), { Amount(TEXT("Good.Timber"), 2000), Amount(TEXT("Good.Tools"), 500) }, { TEXT("Recipe.FellTimber") }, 900, 3, 3, 120, 30000, 0, 8, 0, true, false), EHansaConstructionMenuCategory::Production, 0, TEXT(""), TEXT("Good.Planks"), 1, 2);
 		ConfigureConstructionCard(AddBuilding(Definitions, EffectiveOuter, TEXT("Building.Sawmill"), TEXT("Sawmill"), TEXT("Sawmill"), { Amount(TEXT("Good.Timber"), 5000), Amount(TEXT("Good.Tools"), 1000) }, { TEXT("Recipe.SawPlanks") }, 1700, 4, 3, 180, 40000, 0, 6, 1, true, false), EHansaConstructionMenuCategory::Production, 1, TEXT(""), TEXT("Good.Planks"), 2, 2);
 		AddBuilding(Definitions, EffectiveOuter, TEXT("Building.Smithy"), TEXT("Smithy"), TEXT("Smithy and tool workshop"), { Amount(TEXT("Good.Planks"), 5000), Amount(TEXT("Good.Iron"), 3000) }, { TEXT("Recipe.SmithTools") }, 2400, 3, 3, 220, 25000, 0, 4, 4, true, false);
@@ -608,7 +634,9 @@ namespace Hansa::Editor::EconomicDefinitions
 		Brewery->RefreshContentHash();
 
 		AddNeed(Definitions, EffectiveOuter, TEXT("Bread"), TEXT("Bread"), EHansaNeedKind::Good, TEXT("Good.Bread"));
-		AddNeed(Definitions, EffectiveOuter, TEXT("Fish"), TEXT("Fish"), EHansaNeedKind::Good, TEXT("Good.Fish"));
+		auto* FishNeed = AddNeed(Definitions, EffectiveOuter, TEXT("Fish"), TEXT("Fish"), EHansaNeedKind::Good, TEXT("Good.Fish"));
+        FHansaNeedAlternative FishAlternative; FishAlternative.GoodId = TEXT("Good.PreservedFish"); FishAlternative.FulfillmentBasisPoints = 10000;
+        FishNeed->Alternatives.Add(FishAlternative); FishNeed->AuthoredRevision = 2; FishNeed->RefreshContentHash();
 		AddNeed(Definitions, EffectiveOuter, TEXT("Beer"), TEXT("Beer"), EHansaNeedKind::Good, TEXT("Good.Beer"));
 		AddNeed(Definitions, EffectiveOuter, TEXT("Tools"), TEXT("Tools"), EHansaNeedKind::Good, TEXT("Good.Tools"));
 		AddNeed(Definitions, EffectiveOuter, TEXT("BasicServices"), TEXT("Basic services"), EHansaNeedKind::Service);
@@ -636,7 +664,8 @@ namespace Hansa::Editor::EconomicDefinitions
 				MarketGood(TEXT("Good.Malt"), 1400, 12000),
 				MarketGood(TEXT("Good.Bread"), 800, 24000, bHamburg ? 2000 : 0),
 				MarketGood(TEXT("Good.Fish"), 1800, 18000, (bHamburg || bRostock) ? 3000 : 0),
-				MarketGood(TEXT("Good.Salt"), 2200, 12000, bLuneburg ? 5000 : 0, bLuneburg ? -500 : 0),
+                MarketGood(TEXT("Good.PreservedFish"), 3000, 18000, 0),
+				MarketGood(TEXT("Good.Salt"), 2200, 12000, bLuneburg ? 5000 : bRostock ? 1000 : 0, bLuneburg ? -500 : 0),
 				MarketGood(TEXT("Good.Timber"), 700, 24000),
 				MarketGood(TEXT("Good.Planks"), 1300, 18000),
 				MarketGood(TEXT("Good.Iron"), 2600, 10000),
@@ -649,6 +678,7 @@ namespace Hansa::Editor::EconomicDefinitions
 				for (FHansaMarketGoodProfile& Good : Result)
 				{
 					Good.InitialStockMilliUnits = Good.DesiredReserveMilliUnits;
+                    if(Good.GoodId==TEXT("Good.PreservedFish")) continue;
 					Good.BackgroundCitizenDemandMilliUnitsPerUpdate = 700;
 					Good.BackgroundIndustrialDemandMilliUnitsPerUpdate = 300;
 					Good.BackgroundProductionMilliUnitsPerUpdate = 1000;
@@ -672,6 +702,7 @@ namespace Hansa::Editor::EconomicDefinitions
 				if (bLuneburg) AddExportStrength(TEXT("Good.Salt"), 12000, 2000);
 				if (bRostock)
 				{
+                    for (auto& Good : Result) if (Good.GoodId == TEXT("Good.Salt")) Good.BackgroundProductionMilliUnitsPerUpdate = 2000;
 					AddExportStrength(TEXT("Good.Grain"), 10000, 2000);
 					AddExportStrength(TEXT("Good.Fish"), 6000, 1000);
 				}
@@ -742,7 +773,7 @@ namespace Hansa::Editor::EconomicDefinitions
 			{TEXT("Building.LumberCamp"), TEXT("/Game/Mesh/hansa-lumber-camp/MeshesCM/SM_HansaLumberCamp.SM_HansaLumberCamp"), TEXT("/Game/Mesh/hansa-lumber-camp/BP_LumberCamp_Review.BP_LumberCamp_Review_C")},
 			{TEXT("Building.Sawmill"), TEXT("/Game/Mesh/hansa-sawmill/Meshes/SM_HansaSawmill.SM_HansaSawmill"), TEXT("/Game/Mesh/hansa-sawmill/BP_Sawmill_Review.BP_Sawmill_Review_C")},
 			{TEXT("Building.Residence.Laborer"), TEXT("/Game/Mesh/hansa-residences/Meshes_R07/SM_Residence_Laborer_A.SM_Residence_Laborer_A"), TEXT("/Game/Mesh/hansa-residences/BP_Residence_Laborer_Review.BP_Residence_Laborer_Review_C")},
-			{TEXT("Building.Residence.Artisan"), TEXT("/Game/Mesh/hansa-residences/Meshes_R06/SM_Residence_Artisan_A.SM_Residence_Artisan_A"), TEXT("/Game/Mesh/hansa-residences/BP_Residence_Artisan_Review.BP_Residence_Artisan_Review_C")},
+			{TEXT("Building.Residence.Artisan"), TEXT("/Game/Mesh/hansa-artisan-houses/Meshes/SM_ArtisanHouse_A.SM_ArtisanHouse_A"), TEXT("/Game/Mesh/hansa-artisan-houses/BP_Residence_Artisan_Review.BP_Residence_Artisan_Review_C")},
 			{TEXT("Building.Market"), TEXT("/Game/Mesh/hansa-market/Meshes/SM_HansaMarket.SM_HansaMarket"), TEXT("/Game/Mesh/hansa-market/BP_Market_Review.BP_Market_Review_C")},
 			{TEXT("Building.Dock"), TEXT("/Game/Mesh/hansa-harbor/Meshes/SM_HansaDock_Deck4m.SM_HansaDock_Deck4m"), TEXT("/Game/Mesh/hansa-harbor/BP_Harbor_Review.BP_Harbor_Review_C")},
 			{TEXT("Building.Road"), TEXT("/Game/Mesh/hansa-dirt-road/Meshes/SM_HansaRoad_Straight.SM_HansaRoad_Straight"), TEXT("/Game/Mesh/hansa-dirt-road/BP_Road_Review.BP_Road_Review_C")}
@@ -754,7 +785,7 @@ namespace Hansa::Editor::EconomicDefinitions
 			for (const auto& Presentation : Presentations)
 			{
 				if (Building->StableDefinitionId != Presentation.Get<0>()) continue;
-				Building->AuthoredRevision = 2;
+				Building->AuthoredRevision = Building->StableDefinitionId == TEXT("Building.Residence.Artisan") ? 3 : 2;
 				Building->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(Presentation.Get<1>()));
 				Building->PresentationActorClass = TSoftClassPtr<AActor>(FSoftObjectPath(Presentation.Get<2>()));
 				Building->RefreshContentHash();
@@ -783,6 +814,8 @@ namespace Hansa::Editor::EconomicDefinitions
 				Definition->AuthoredRevision = StarterEconomyAuthoredRevision(Definition->StableDefinitionId);
 				Definition->RefreshContentHash();
 			}
+		AppendTradePresenceDefinitions(Definitions, EffectiveOuter);
+		check(ApplyApprovedFirewoodSeed(Definitions));
 		return Definitions;
 	}
 
@@ -815,6 +848,11 @@ namespace Hansa::Editor::EconomicDefinitions
 		{
 			return TEXT("/Game/Hansa/Core/CityMarkets");
 		}
+		if (Definition.IsA<UHansaPresenceCapabilityDefinition>()) return TEXT("/Game/Hansa/Core/TradePresence/Capabilities");
+		if (Definition.IsA<UHansaForeignPresenceStageDefinition>()) return TEXT("/Game/Hansa/Core/TradePresence/Stages");
+		if (Definition.IsA<UHansaCityTradePolicyDefinition>()) return TEXT("/Game/Hansa/Core/TradePresence/Policies");
+		if (Definition.IsA<UHansaProductionChainDefinition>()) return TEXT("/Game/Hansa/Core/ProductionChains");
+		if (Definition.IsA<UHansaRegionEconomicProfileDefinition>()) return TEXT("/Game/Hansa/Core/Regions");
 		if (Definition.IsA<UHansaVehicleDefinition>())
 		{
 			return TEXT("/Game/Hansa/Core/Vehicles");
@@ -851,6 +889,21 @@ namespace Hansa::Editor::EconomicDefinitions
 		OutSavedFiles.Reset();
 		OutError.Reset();
 		TArray<TStrongObjectPtr<UHansaDefinitionBase>> Definitions = CreateMvpDefinitionSet(GetTransientPackage());
+        if (FHansaLubeckScenarioInitializer::MvpCatalogVersion >= 28)
+        {
+        if (!Hansa::Editor::ArtisanProduction::ApplyDraft(Definitions, OutError)) return false;
+		if (!Hansa::Editor::RegionalProduction::ApplyDraft(Definitions, OutError)) return false;
+        for (const auto& D : Definitions)
+            for (const TCHAR* Kind : {TEXT("CharcoalBurner"),TEXT("Smithy"),TEXT("Tannery"),TEXT("Shoemaker")})
+                if (D->StableDefinitionId == TEXT("Building.") + FString(Kind))
+                {
+                    const FString Name = TEXT("SM_") + FString(Kind);
+                    D->PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Game/Mesh/hansa-artisan-production/") + Name + TEXT(".") + Name));
+                    D->RefreshContentHash();
+                }
+        }
+
+
 		FAssetRegistryModule& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
 
 		for (const TStrongObjectPtr<UHansaDefinitionBase>& Source : Definitions)
@@ -858,21 +911,37 @@ namespace Hansa::Editor::EconomicDefinitions
 			const FString AssetName = AssetNameForDefinition(*Source);
 			const FString PackageName = PackageDirectoryForDefinition(*Source) + TEXT("/") + AssetName;
 			const FString Filename = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-			if (IFileManager::Get().FileExists(*Filename))
+			const bool bPackageExists = IFileManager::Get().FileExists(*Filename);
+			if (bPackageExists)
 			{
 				if (!bReplaceExisting)
 				{
 					continue;
 				}
-				OutError = FString::Printf(TEXT("-Replace is not supported while an existing asset package may be loaded: %s"), *Filename);
-				return false;
 			}
 
-			UPackage* Package = CreatePackage(*PackageName);
-			UHansaDefinitionBase* Asset = DuplicateObject<UHansaDefinitionBase>(Source.Get(), Package, *AssetName);
-			Asset->SetFlags(RF_Public | RF_Standalone | RF_Transactional);
+			UPackage* Package = nullptr;
+			UHansaDefinitionBase* Asset = nullptr;
+			if (bPackageExists)
+			{
+				const FString ObjectPath = PackageName + TEXT(".") + AssetName;
+				Asset = LoadObject<UHansaDefinitionBase>(nullptr, *ObjectPath);
+				if (Asset == nullptr || Asset->GetClass() != Source->GetClass())
+				{
+					OutError = FString::Printf(TEXT("Could not load matching generated definition asset for replacement: %s"), *ObjectPath);
+					return false;
+				}
+				Package = Asset->GetOutermost();
+				UEngine::CopyPropertiesForUnrelatedObjects(Source.Get(), Asset);
+			}
+			else
+			{
+				Package = CreatePackage(*PackageName);
+				Asset = DuplicateObject<UHansaDefinitionBase>(Source.Get(), Package, *AssetName);
+				Asset->SetFlags(RF_Public | RF_Standalone | RF_Transactional);
+				AssetRegistry.AssetCreated(Asset);
+			}
 			Asset->RefreshContentHash();
-			AssetRegistry.AssetCreated(Asset);
 			Package->MarkPackageDirty();
 			IFileManager::Get().MakeDirectory(*FPaths::GetPath(Filename), true);
 
@@ -1044,6 +1113,7 @@ namespace Hansa::Editor::EconomicDefinitions
 			}
 			Target->SchemaVersion = Source->SchemaVersion;
 			Target->bProvidesMarketAccess = Source->bProvidesMarketAccess;
+			Target->MaximumMarketRoadDistanceCells = Source->MaximumMarketRoadDistanceCells;
 			Target->RefreshContentHash();
 			UPackage* Package = Target->GetOutermost();
 			Package->MarkPackageDirty();
@@ -1243,6 +1313,7 @@ namespace Hansa::Editor::EconomicDefinitions
 				const UHansaScenarioDefinition* SourceScenario = CastChecked<UHansaScenarioDefinition>(Source);
 				UHansaScenarioDefinition* TargetScenario = CastChecked<UHansaScenarioDefinition>(Target);
 				TargetScenario->HomeCityId = SourceScenario->HomeCityId; TargetScenario->VictoryIds = SourceScenario->VictoryIds;
+				TargetScenario->MultiplayerSlots = SourceScenario->MultiplayerSlots;
 				TargetScenario->InsolvencyThresholdPfennig = SourceScenario->InsolvencyThresholdPfennig;
 				TargetScenario->FailureSustainTicks = SourceScenario->FailureSustainTicks; TargetScenario->Briefing = SourceScenario->Briefing;
 			}
@@ -1272,6 +1343,74 @@ UHansaEconomicDefinitionSeedCommandlet::UHansaEconomicDefinitionSeedCommandlet()
 
 int32 UHansaEconomicDefinitionSeedCommandlet::Main(const FString& Params)
 {
+	if (FParse::Param(*Params, TEXT("MigrateTradeStationSitesTR04")))
+	{
+		using namespace Hansa::Editor::EconomicDefinitions;
+		const bool bApply = FParse::Param(*Params, TEXT("Apply"));
+		TArray<TStrongObjectPtr<UHansaDefinitionBase>> Seeds = CreateMvpDefinitionSet(GetTransientPackage());
+		int32 MigratedDefinitions = 0;
+		for (const auto& Seed : Seeds)
+		{
+			const bool bPresence = Seed->IsA<UHansaPresenceCapabilityDefinition>() ||
+				Seed->IsA<UHansaForeignPresenceStageDefinition>() || Seed->IsA<UHansaCityTradePolicyDefinition>();
+			if (!bPresence) continue;
+			const FString AssetName = AssetNameForDefinition(*Seed);
+			const FString PackageName = PackageDirectoryForDefinition(*Seed) + TEXT("/") + AssetName;
+			auto* Target = LoadObject<UHansaDefinitionBase>(nullptr, *(PackageName + TEXT(".") + AssetName));
+			if (Target == nullptr || Target->GetClass() != Seed->GetClass() ||
+				Target->StableDefinitionId != Seed->StableDefinitionId) return 1;
+			UEngine::CopyPropertiesForUnrelatedObjects(Seed.Get(), Target);
+			Target->RefreshContentHash();
+			TArray<FHansaDefinitionValidationIssue> Issues;
+			Target->ValidateDefinition(Issues);
+			if (Issues.ContainsByPredicate([](const FHansaDefinitionValidationIssue& Issue)
+				{ return Issue.Severity == EHansaDefinitionValidationSeverity::Error; })) return 1;
+			++MigratedDefinitions;
+			if (!bApply) continue;
+			UPackage* Package = Target->GetOutermost();
+			Package->MarkPackageDirty();
+			FSavePackageArgs Args;
+			Args.TopLevelFlags = RF_Public | RF_Standalone;
+			Args.SaveFlags = SAVE_NoError;
+			if (!UPackage::SavePackage(Package, Target,
+				*FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension()), Args)) return 1;
+		}
+		UE_LOG(LogTemp, Display, TEXT("TR-04 trade-presence migration: apply=%s definitions=%d"),
+			bApply ? TEXT("true") : TEXT("false"), MigratedDefinitions);
+		return MigratedDefinitions == 27 ? 0 : 1;
+	}
+	if (FParse::Param(*Params, TEXT("DryRunTradePresenceTR02")))
+	{
+		using namespace Hansa::Editor::EconomicDefinitions;
+		TArray<TStrongObjectPtr<UHansaDefinitionBase>> Seeds = CreateMvpDefinitionSet(GetTransientPackage());
+		TArray<const UHansaDefinitionBase*> Definitions;
+		int32 PresenceDefinitions = 0;
+		int32 ExistingAssets = 0;
+		for (const auto& Seed : Seeds)
+		{
+			Definitions.Add(Seed.Get());
+			const bool bPresence = Seed->IsA<UHansaPresenceCapabilityDefinition>() ||
+				Seed->IsA<UHansaForeignPresenceStageDefinition>() || Seed->IsA<UHansaCityTradePolicyDefinition>();
+			if (!bPresence) continue;
+			++PresenceDefinitions;
+			const FString PackageName = PackageDirectoryForDefinition(*Seed) + TEXT("/") + AssetNameForDefinition(*Seed);
+			const FString Filename = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+			ExistingAssets += IFileManager::Get().FileExists(*Filename) ? 1 : 0;
+		}
+		const auto Forward = FHansaEconomicDefinitionCompiler::Compile(Definitions);
+		Algo::Reverse(Definitions);
+		const auto Reverse = FHansaEconomicDefinitionCompiler::Compile(Definitions);
+		if (PresenceDefinitions != 24 || !Forward.IsValid() || !Reverse.IsValid() ||
+			Forward.Registry.GetRegistryHash() != Reverse.Registry.GetRegistryHash())
+		{
+			UE_LOG(LogTemp, Error, TEXT("TR-02 dry-run migration validation failed."));
+			return 1;
+		}
+		UE_LOG(LogTemp, Display,
+			TEXT("Trade-presence seed dry run: %d presence definitions, %d existing assets, deterministic transient registry %016llX; no files changed."),
+			PresenceDefinitions, ExistingAssets, static_cast<unsigned long long>(Forward.Registry.GetRegistryHash()));
+		return 0;
+	}
 	if (FParse::Param(*Params, TEXT("ExpandBeerProductionChain")) ||
 		FParse::Param(*Params, TEXT("EnableBeerProductionChain")))
 	{
@@ -1437,6 +1576,47 @@ int32 UHansaEconomicDefinitionSeedCommandlet::Main(const FString& Params)
 		return 0;
 	}
 	if (FParse::Param(*Params, TEXT("StageEconomyP33"))) return Hansa::Editor::EconomicDefinitions::StageP33EconomyCandidate();
+	if (FParse::Param(*Params, TEXT("MigrateMultiplayerMP04")))
+	{
+		using namespace Hansa::Editor::EconomicDefinitions;
+		const bool bApply = FParse::Param(*Params, TEXT("Apply"));
+		TArray<TStrongObjectPtr<UHansaDefinitionBase>> Seeds = CreateMvpDefinitionSet(GetTransientPackage());
+		UHansaScenarioDefinition* Source = nullptr;
+		for (const auto& Seed : Seeds)
+		{
+			if (Seed->StableDefinitionId == TEXT("Scenario.LubeckGrainShortageV1"))
+			{
+				Source = Cast<UHansaScenarioDefinition>(Seed.Get());
+				break;
+			}
+		}
+		if (Source == nullptr || Source->MultiplayerSlots.Num() != 8 || Source->SchemaVersion != 3) return 1;
+		const FString AssetName = AssetNameForDefinition(*Source);
+		const FString PackageName = PackageDirectoryForDefinition(*Source) + TEXT("/") + AssetName;
+		auto* Target = LoadObject<UHansaScenarioDefinition>(nullptr, *(PackageName + TEXT(".") + AssetName));
+		if (Target == nullptr || Target->StableDefinitionId != Source->StableDefinitionId) return 1;
+		Target->SchemaVersion = Source->SchemaVersion;
+		Target->MultiplayerSlots = Source->MultiplayerSlots;
+		Target->RefreshContentHash();
+		TArray<FHansaDefinitionValidationIssue> Issues;
+		Target->ValidateDefinition(Issues);
+		if (Issues.ContainsByPredicate([](const FHansaDefinitionValidationIssue& Issue)
+			{ return Issue.Severity == EHansaDefinitionValidationSeverity::Error; })) return 1;
+		if (!bApply)
+		{
+			UE_LOG(LogTemp, Display, TEXT("MP-04 scenario migration preview: schema=%d slots=%d hash=%016llX"),
+				Target->SchemaVersion, Target->MultiplayerSlots.Num(),
+				static_cast<unsigned long long>(Target->ContentHash));
+			return 0;
+		}
+		UPackage* Package = Target->GetOutermost();
+		Package->MarkPackageDirty();
+		FSavePackageArgs Args;
+		Args.TopLevelFlags = RF_Public | RF_Standalone;
+		Args.SaveFlags = SAVE_NoError;
+		return UPackage::SavePackage(Package, Target,
+			*FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension()), Args) ? 0 : 1;
+	}
 	if (FParse::Param(*Params, TEXT("ReportCurrentCatalog")))
 	{
 		// Read-only acceptance evidence: never reseed or repair production definitions.
@@ -1452,6 +1632,7 @@ int32 UHansaEconomicDefinitionSeedCommandlet::Main(const FString& Params)
 		const auto Reversed = FHansaEconomicDefinitionCompiler::Compile(Definitions);
 		if (!Compiled.IsValid() || !Reversed.IsValid() || Compiled.Registry.GetRegistryHash() != Reversed.Registry.GetRegistryHash()) return 1;
 		auto Root = MakeShared<FJsonObject>();
+		Root->SetNumberField(TEXT("catalogVersion"), FHansaLubeckScenarioInitializer::MvpCatalogVersion);
 		Root->SetBoolField(TEXT("reverseOrderVerified"), true);
 		Root->SetStringField(TEXT("registryHash"), FString::Printf(TEXT("%016llX"), Compiled.Registry.GetRegistryHash()));
 		TArray<TSharedPtr<FJsonValue>> Rows;

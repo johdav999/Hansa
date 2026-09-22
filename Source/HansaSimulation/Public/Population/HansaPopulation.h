@@ -31,6 +31,8 @@ namespace Hansa::Simulation
 		int32 ServiceReliabilityBasisPoints = 10000;
 	};
 
+
+
 	struct HANSASIMULATION_API FHansaPopulationNeedState final
 	{
 		FHansaNeedId NeedId;
@@ -42,6 +44,7 @@ namespace Hansa::Simulation
 		int32 ReliabilityBasisPoints = 0;
 		int32 SatisfactionBasisPoints = 0;
 		int64 ReserveMilliDays = 0;
+  TArray<FHansaNeedSupply> SuppliedGoods;
 	};
 
 	struct HANSASIMULATION_API FHansaPopulationCohortState final

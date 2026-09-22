@@ -1,0 +1,8 @@
+{
+  "nativeResolution": "1920x1080",
+  "log": "Saved\\CompoundIntegration\\player-flow-final-close-1920.log",
+  "logSha256": "fa63362866f0e18a2e5b72b9dad9923b38feac623277e4888ead7117821bb733",
+  "completion": [
+    "[2026.09.15-16.50.37:087][504]LogAutomationController: Display: Test Completed. Result={Success} Name={PlayerFlow} Path={Hansa.Compound.PlayerFlow}"
+  ]
+}

@@ -1,5 +1,8 @@
 #include "World/HansaStrategyPlayerController.h"
 #include "World/HansaTerrainPlacement.h"
+#include "World/HansaCargoProjectionManager.h"
+#include "World/HansaCargoVehiclePresentation.h"
+#include "World/HansaLubeckPlacementGrid.h"
 
 #include "HansaLog.h"
 #include "HAL/PlatformProcess.h"
@@ -30,6 +33,16 @@
 
 namespace
 {
+	template <typename TItem, typename TKey>
+	void UpsertProjectionItems(TArray<TItem>& Target, const TArray<TItem>& Updates, TKey KeyOf)
+	{
+		for (const TItem& Update : Updates)
+		{
+			if (TItem* Existing = Target.FindByPredicate([&Update, &KeyOf](const TItem& Item)
+				{ return KeyOf(Item) == KeyOf(Update); })) *Existing = Update;
+			else Target.Add(Update);
+		}
+	}
 	UInputModifierNegate* AddNegateModifier(UInputMappingContext& Context, FEnhancedActionKeyMapping& Mapping,
 		const bool bX, const bool bY, const bool bZ = false)
 	{
@@ -161,6 +174,7 @@ void AHansaStrategyPlayerController::PublishServerProjection(
 	const FHansaClientProjectionSnapshot& Projection)
 {
 	if (!HasAuthority()) return;
+	ApplyClientProjectionUpdate(Projection);
 	ClientProjection = Projection;
 	ForceNetUpdate();
 }
@@ -172,8 +186,26 @@ void AHansaStrategyPlayerController::PublishCommandFeedback(
 	ClientReceiveHansaCommandFeedback(Feedback);
 }
 
+bool AHansaStrategyPlayerController::SubmitLocalHansaIntent(FHansaClientCommandIntent Intent)
+{
+	if (!IsLocalController()) return false;
+	Intent.SchemaVersion = FHansaClientCommandIntent::CurrentSchemaVersion;
+	Intent.ClientSequence = NextClientCommandSequence++;
+	Intent.ClientNonce = NextClientCommandNonce++;
+	Intent.ExpectedServerTick = ClientProjection.ServerTick;
+	LastCommandFeedback = {};
+	LastCommandFeedback.State = EHansaClientCommandState::Pending;
+	LastCommandFeedback.ClientSequence = Intent.ClientSequence;
+	LastCommandFeedback.ClientNonce = Intent.ClientNonce;
+	LastCommandFeedback.Message = TEXT("Waiting for the authoritative server.");
+	LastCommandFeedback.Remedy = TEXT("Keep the selected object open until the server responds.");
+	ServerSubmitHansaIntent(Intent);
+	return true;
+}
+
 void AHansaStrategyPlayerController::OnRep_HansaClientProjection()
 {
+	ApplyClientProjectionUpdate(ClientProjection);
 	UE_LOG(LogHansa, Display,
 		TEXT("S11-P04 client projection revision=%lld full=%s tick=%lld authoritativeHash=%s projectionDigest=%s"),
 		static_cast<long long>(ClientProjection.Revision),
@@ -181,6 +213,55 @@ void AHansaStrategyPlayerController::OnRep_HansaClientProjection()
 		static_cast<long long>(ClientProjection.ServerTick),
 		*ClientProjection.AuthoritativeHash,
 		*ClientProjection.ProjectionDigest);
+}
+
+void AHansaStrategyPlayerController::ApplyClientProjectionUpdate(
+	const FHansaClientProjectionSnapshot& Update)
+{
+	if (Update.bFullRefresh || ClientProjectionCache.Revision <= 0)
+	{
+		ClientProjectionCache = Update;
+		return;
+	}
+	FHansaClientProjectionSnapshot Next = Update;
+	Next.Placements = ClientProjectionCache.Placements;
+	Next.Markets = ClientProjectionCache.Markets;
+	Next.Routes = ClientProjectionCache.Routes;
+	Next.Inventories = ClientProjectionCache.Inventories;
+	Next.Productions = ClientProjectionCache.Productions;
+	Next.PopulationCohorts = ClientProjectionCache.PopulationCohorts;
+	Next.CitySummaries = ClientProjectionCache.CitySummaries;
+	Next.Vehicles = ClientProjectionCache.Vehicles;
+	Next.LogisticsJobs = ClientProjectionCache.LogisticsJobs;
+	Next.AuthorizedResearchReports = ClientProjectionCache.AuthorizedResearchReports;
+	Next.Events = ClientProjectionCache.Events;
+	for (const FHansaProjectionRemoval& Removal : Update.Removed)
+	{
+		const int64 Id = FCString::Atoi64(*Removal.StableId);
+		if (Removal.Collection == TEXT("placements")) Next.Placements.RemoveAll([Id](const auto& V) { return V.BuildingId == Id; });
+		else if (Removal.Collection == TEXT("markets")) Next.Markets.RemoveAll([&Removal](const auto& V) { return V.CityId + TEXT("|") + V.GoodId == Removal.StableId; });
+		else if (Removal.Collection == TEXT("routes")) Next.Routes.RemoveAll([Id](const auto& V) { return V.RouteId == Id; });
+		else if (Removal.Collection == TEXT("inventories")) Next.Inventories.RemoveAll([Id](const auto& V) { return V.InventoryId == Id; });
+		else if (Removal.Collection == TEXT("productions")) Next.Productions.RemoveAll([Id](const auto& V) { return V.ProductionId == Id; });
+		else if (Removal.Collection == TEXT("population")) Next.PopulationCohorts.RemoveAll([Id](const auto& V) { return V.CohortId == Id; });
+		else if (Removal.Collection == TEXT("cities")) Next.CitySummaries.RemoveAll([&Removal](const auto& V) { return V.CityId == Removal.StableId; });
+		else if (Removal.Collection == TEXT("vehicles")) Next.Vehicles.RemoveAll([Id](const auto& V) { return V.VehicleId == Id; });
+		else if (Removal.Collection == TEXT("logistics")) Next.LogisticsJobs.RemoveAll([Id](const auto& V) { return V.JobId == Id; });
+		else if (Removal.Collection == TEXT("reports")) Next.AuthorizedResearchReports.RemoveAll([Id](const auto& V) { return V.HouseId == Id; });
+	}
+	UpsertProjectionItems(Next.Placements, Update.Placements, [](const auto& V) { return V.BuildingId; });
+	UpsertProjectionItems(Next.Markets, Update.Markets, [](const auto& V) { return V.CityId + TEXT("|") + V.GoodId; });
+	UpsertProjectionItems(Next.Routes, Update.Routes, [](const auto& V) { return V.RouteId; });
+	UpsertProjectionItems(Next.Inventories, Update.Inventories, [](const auto& V) { return V.InventoryId; });
+	UpsertProjectionItems(Next.Productions, Update.Productions, [](const auto& V) { return V.ProductionId; });
+	UpsertProjectionItems(Next.PopulationCohorts, Update.PopulationCohorts, [](const auto& V) { return V.CohortId; });
+	UpsertProjectionItems(Next.CitySummaries, Update.CitySummaries, [](const auto& V) { return V.CityId; });
+	UpsertProjectionItems(Next.Vehicles, Update.Vehicles, [](const auto& V) { return V.VehicleId; });
+	UpsertProjectionItems(Next.LogisticsJobs, Update.LogisticsJobs, [](const auto& V) { return V.JobId; });
+	UpsertProjectionItems(Next.AuthorizedResearchReports, Update.AuthorizedResearchReports, [](const auto& V) { return V.HouseId; });
+	Next.Events.Append(Update.Events);
+	if (Next.Events.Num() > 256) Next.Events.RemoveAt(0, Next.Events.Num() - 256);
+	ClientProjectionCache = MoveTemp(Next);
 }
 void AHansaStrategyPlayerController::SetupInputComponent()
 {
@@ -209,7 +290,8 @@ void AHansaStrategyPlayerController::SetupInputComponent()
 	Enhanced->BindAction(SelectAction, ETriggerEvent::Completed, this, &AHansaStrategyPlayerController::HandleSelectReleased);
 	Enhanced->BindAction(SelectAction, ETriggerEvent::Canceled, this, &AHansaStrategyPlayerController::HandleSelectReleased);
 	InputComponent->BindKey(EKeys::RightMouseButton, IE_Pressed, this, &AHansaStrategyPlayerController::HandleCameraDragPressed);
-    InputComponent->BindKey(EKeys::RightMouseButton, IE_Released, this, &AHansaStrategyPlayerController::HandleCameraDragReleased);
+    InputComponent->BindKey(EKeys::RightMouseButton, IE_Released, this, &AHansaStrategyPlayerController::HandleRightMouseReleased);
+    InputComponent->BindKey(EKeys::G, IE_Pressed, this, &AHansaStrategyPlayerController::HandleShipMoveIntent);
 	InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &AHansaStrategyPlayerController::HandleEscapeIntent);
     InputComponent->BindKey(EKeys::Gamepad_Special_Right,IE_Pressed,this,&AHansaStrategyPlayerController::HandleSessionMenu);
     InputComponent->BindKey(EKeys::F1,IE_Pressed,this,&AHansaStrategyPlayerController::HandleContextHelp);
@@ -250,6 +332,21 @@ bool AHansaStrategyPlayerController::TraceWorldSelection(FHitResult& OutHit) con
 
 void AHansaStrategyPlayerController::PerformWorldSelection()
 {
+    if (!IsPointerOverWorldViewport()) return;
+	if (auto* Build = GetBuildMenuModel(); Build && Build->GetSnapshot().bDemolitionMode)
+	{
+		if (!IsPointerOverWorldViewport()) return;
+		FHitResult DemolitionHit;
+		TraceWorldSelection(DemolitionHit);
+		const auto* Building = Cast<AHansaBuildingWorldProjectionActor>(DemolitionHit.GetActor());
+		if (Build->DemolishBuildingIntent(Building ? static_cast<int64>(Building->GetBuildingId().GetValue()) : 0))
+		{
+			SelectedWorldActor.Reset();
+			UpdateProjectionSelection(nullptr);
+			OnWorldSelectionChanged.Broadcast(nullptr, FHitResult());
+		}
+		return;
+	}
 	FHitResult Hit;
 	if (TraceWorldSelection(Hit))
 	{
@@ -513,10 +610,11 @@ void AHansaStrategyPlayerController::HandleCameraDragPressed()
     UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Press controller=%s cachedCtrl=%d cachedRMB=%d"),
         *GetName(), IsInputKeyDown(EKeys::LeftControl) || IsInputKeyDown(EKeys::RightControl), IsInputKeyDown(EKeys::RightMouseButton));
     HandleCameraDragReleased();
+    bool CancelledBuild=false;
     // Preserve construction cancellation without opening the session menu.
-    if (const auto* Build = GetBuildMenuModel(); Build && !Build->GetSnapshot().SelectedBuildingId.IsNone())
+    if (const auto* Build = GetBuildMenuModel(); Build && (Build->GetSnapshot().bDemolitionMode || !Build->GetSnapshot().SelectedBuildingId.IsNone()))
     {
-        CancelBuildingPlacement();
+        CancelBuildingPlacement();CancelledBuild=true;
     }
     const bool bLocal = IsLocalController();
     const bool bOverWorld = IsPointerOverWorldViewport();
@@ -529,6 +627,8 @@ void AHansaStrategyPlayerController::HandleCameraDragPressed()
     if (auto* CameraPawn = GetStrategyCameraPawn())
     {
         bCameraDragHeld = true;
+        CameraPressPointer=PreviousCameraDragPointer;
+        bShipClickCandidate=!CancelledBuild && !IsInputKeyDown(EKeys::LeftControl) && !IsInputKeyDown(EKeys::RightControl);
         CameraPawn->SetDragPanIntent(FVector2D::ZeroVector, true);
         UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Started pointer=%s pawn=%s viewTarget=%s yaw=%.3f"),
             *PreviousCameraDragPointer.ToString(), *CameraPawn->GetName(), *GetNameSafe(GetViewTarget()), CameraPawn->GetCameraYawDegrees());
@@ -547,10 +647,53 @@ void AHansaStrategyPlayerController::HandleCameraDragReleased()
         UE_LOG(LogHansa, Log, TEXT("[CameraDrag] Released/reset controller=%s"), *GetName());
     }
     bCameraDragHeld = false;
+    bShipClickCandidate = false;
     if (auto* CameraPawn = GetStrategyCameraPawn())
     {
         CameraPawn->SetDragPanIntent(FVector2D::ZeroVector, false);
         CameraPawn->SetDragOrbitIntent(FVector2D::ZeroVector, false);
+    }
+}
+
+void AHansaStrategyPlayerController::HandleRightMouseReleased()
+{
+    const bool Click=bCameraDragHeld && bShipClickCandidate && IsPointerOverWorldViewport();
+    HandleCameraDragReleased();
+    if (!Click) return;
+    FVector2D Pointer;
+    if (!TryGetPlacementPointer(Pointer) || FVector2D::Distance(Pointer,CameraPressPointer)>6.0) return;
+    HandleShipMoveIntent();
+}
+
+void AHansaStrategyPlayerController::HandleShipMoveIntent()
+{
+    if (!IsPointerOverWorldViewport()) return;
+    FVector2D Pointer;
+    if (!TryGetPlacementPointer(Pointer)) return;
+    FVector Origin,Direction;
+    if (!DeprojectScreenPositionToWorld(Pointer.X,Pointer.Y,Origin,Direction) || Direction.Z>=-UE_SMALL_NUMBER) return;
+    for (TActorIterator<AHansaCargoProjectionManager> It(GetWorld());It;++It)
+    {
+        auto* Ship=It->FindActor(It->GetSelectedCargo());
+        if (!Ship || !Ship->bSeaVehicle) continue;
+        const double T=(Ship->GetActorLocation().Z-Origin.Z)/Direction.Z;
+        if (T<=0) return;
+        const auto Cell=Hansa::Game::LubeckPlacementGrid::WorldToGrid(Origin+Direction*T);
+		if (GetNetMode() != NM_Standalone)
+		{
+			FHansaClientCommandIntent Intent;
+			Intent.Type = EHansaClientIntentType::MoveShip;
+			Intent.VehicleId = static_cast<int64>(Ship->GetVehicleId().GetValue());
+			Intent.TargetX = Cell.X;
+			Intent.TargetY = Cell.Y;
+			SubmitLocalHansaIntent(Intent);
+		}
+		else
+		{
+			It->MoveSelectedShip(Cell);
+		}
+        if (auto* Hud=Cast<AHansaRootHud>(GetHUD())) Hud->InspectCargo(It->GetSelectedCargo());
+        return;
     }
 }
 
@@ -591,6 +734,7 @@ void AHansaStrategyPlayerController::UpdateCameraDrag()
         // Slate owns the cursor and modifier state, including Ctrl held before viewport focus.
         const bool bRotate = FSlateApplication::Get().GetModifierKeys().IsControlDown();
         const FVector2D Delta = Pointer - PreviousCameraDragPointer;
+        if (bRotate || FVector2D::Distance(Pointer,CameraPressPointer)>6.0) bShipClickCandidate=false;
         CameraPawn->SetDragPanIntent(bRotate ? FVector2D::ZeroVector : Delta, !bRotate);
         // Camera yaw is driven only by horizontal pointer travel. Including Y here
         // made ordinary diagonal drags cancel or reverse their horizontal yaw.
@@ -613,7 +757,7 @@ void AHansaStrategyPlayerController::UpdateCameraDrag()
 }
 void AHansaStrategyPlayerController::HandleEscapeIntent()
 {
-    if(const auto* Build=GetBuildMenuModel();Build&&!Build->GetSnapshot().SelectedBuildingId.IsNone()){bRoadPointerHeld=false;CancelBuildingPlacement();return;}
+    if(const auto* Build=GetBuildMenuModel();Build&&(Build->GetSnapshot().bDemolitionMode || !Build->GetSnapshot().SelectedBuildingId.IsNone())){bRoadPointerHeld=false;CancelBuildingPlacement();return;}
     if(auto* Hud=Cast<AHansaRootHud>(GetHUD());Hud&&Hud->GetRootWidget())Hud->GetRootWidget()->OnKeyDown(FGeometry(),FKeyEvent(EKeys::Escape,FModifierKeysState(),0,false,0,0));
 }
 void AHansaStrategyPlayerController::HandleSessionMenu(){if(auto* Hud=Cast<AHansaRootHud>(GetHUD());Hud&&Hud->GetRootWidget())Hud->GetRootWidget()->ActivateSemanticId(TEXT("HUD.TopStatus.Session"));}
@@ -791,9 +935,11 @@ void AHansaStrategyPlayerController::SyncPlacementGhostAndCursor()
 			}
 			else
 			{
-				Ghost->ApplyPreview(Snapshot.SelectedBuildingId, Snapshot.AnchorCell,
-					Snapshot.RotationQuarterTurns, Snapshot.FootprintCells, Snapshot.Feedback,
-					Snapshot.ValidationCause, *Foundation);
+                const uint8 AdjacentRoadMask=BuildModel->GetAdjacentRoadMaskForPreview();
+                Ghost->ApplyPreview(Snapshot.SelectedBuildingId, Snapshot.AnchorCell,
+                    Snapshot.RotationQuarterTurns, Snapshot.FootprintCells, Snapshot.Feedback,
+                    Snapshot.ValidationCause, *Foundation, false, AdjacentRoadMask,
+                    BuildModel->GetParcelSeedForPreview());
 			}
 		}
 	}
@@ -801,7 +947,7 @@ void AHansaStrategyPlayerController::SyncPlacementGhostAndCursor()
 	{
 		Ghost->HidePreview();
 	}
-	CurrentMouseCursor = Snapshot.SelectedBuildingId.IsNone() ? EMouseCursor::Default
+	CurrentMouseCursor = Snapshot.bDemolitionMode ? EMouseCursor::Crosshairs : Snapshot.SelectedBuildingId.IsNone() ? EMouseCursor::Default
 		: Snapshot.Feedback == EHansaPlacementFeedback::Invalid ? EMouseCursor::SlashedCircle
 		: Snapshot.Feedback == EHansaPlacementFeedback::Warning ? EMouseCursor::CardinalCross
 		: EMouseCursor::Crosshairs;
@@ -844,6 +990,7 @@ void AHansaStrategyPlayerController::PlayerTick(float DeltaTime)
  UpdateCameraDrag();
  auto* Model=GetBuildMenuModel();
  if(!Model || Model->GetSnapshot().SelectedBuildingId.IsNone()) {
+  CurrentMouseCursor = Model && Model->GetSnapshot().bDemolitionMode ? EMouseCursor::Crosshairs : EMouseCursor::Default;
   if(auto* Ghost=PlacementGhost.Get();Ghost && Ghost->IsPreviewVisible())Ghost->HidePreview();
   return;
  }

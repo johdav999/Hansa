@@ -12,6 +12,7 @@ try {
     [Environment]::SetEnvironmentVariable('UE_SKIP_UBT_SDK_SETUP', '1', 'Process')
     Invoke-HansaNativeCommand -FilePath $context.UnrealEditorCommand -Arguments @(
         $context.ProjectFile, '-run=Cook', '-TargetPlatform=Windows',
+        '-ini:EditorPerProjectUserSettings:[/Script/ModelContextProtocolEngine.ModelContextProtocolSettings]:bAutoStartServer=False',
         '-ini:Game:[/Script/Engine.AssetManagerSettings]:+PrimaryAssetTypesToScan=(PrimaryAssetType="GameFeatureData",AssetBaseClass="/Script/GameFeatures.GameFeatureData",bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=,SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=NeverCook))',
         '-Map=/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP', '-ClientConfig=Shipping',
         '-unattended', '-nop4', '-NullRHI', '-SkipEditorContent', '-SkipZenStore',

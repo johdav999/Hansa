@@ -26,12 +26,32 @@ UHansaNeedDefinition::UHansaNeedDefinition()
 void UHansaNeedDefinition::ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const
 {
 	Super::ValidateDefinition(OutIssues);
+	if (DefaultReserveDays < 0 || DefaultReserveDays > 90 || SeasonDays < 1 || SeasonDays > 365 || FixedSeason < -1 || FixedSeason > 3 ||
+		SeasonMultipliers.Num() != 4 || SeasonMultipliers.ContainsByPredicate([](int32 V) { return V < 0 || V > 10000; }) ||
+		(bSeasonal && Kind != EHansaNeedKind::Good))
+	{
+		AddPopulationIssue(OutIssues, TEXT("HSA-NEED-SEASON"), TEXT("SeasonMultipliers"),
+			NSLOCTEXT("HansaPopulationDefinition", "SeasonInvalid", "Seasonal need settings are invalid."),
+			NSLOCTEXT("HansaPopulationDefinition", "SeasonRemedy", "Use a good need, 1-365 days, fixed season -1 to 3, and four multipliers from 0 to 10000."));
+	}
 	if (!HasPopulationDomain(StableDefinitionId, TEXT("Need")))
 	{
 		AddPopulationIssue(OutIssues, TEXT("HSA-NEED-001"), TEXT("StableDefinitionId"),
 			NSLOCTEXT("HansaPopulationDefinition", "NeedDomain", "A need requires a canonical Need.* stable ID."),
 			NSLOCTEXT("HansaPopulationDefinition", "NeedDomainRemedy", "Assign a unique Need.* stable identity."));
 	}
+ TSet<FString> Seen;
+ Seen.Add(GoodId);
+ for (int32 Index = 0; Index < Alternatives.Num(); ++Index)
+ {
+  const auto& Alternative = Alternatives[Index];
+  if (Kind != EHansaNeedKind::Good || !HasPopulationDomain(Alternative.GoodId, TEXT("Good")) ||
+      Seen.Contains(Alternative.GoodId) || Alternative.FulfillmentBasisPoints < 1 || Alternative.FulfillmentBasisPoints > 100000)
+   AddPopulationIssue(OutIssues, TEXT("HSA-NEED-003"), FString::Printf(TEXT("Alternatives[%d]"), Index),
+    NSLOCTEXT("HansaPopulationDefinition", "AlternativeInvalid", "Need alternatives must be unique goods with positive bounded food value."),
+    NSLOCTEXT("HansaPopulationDefinition", "AlternativeRemedy", "Use unique Good.* IDs and food values from 1 to 100000; remove alternatives from services."));
+  Seen.Add(Alternative.GoodId);
+ }
 	if ((Kind == EHansaNeedKind::Good && !HasPopulationDomain(GoodId, TEXT("Good"))) ||
 		(Kind == EHansaNeedKind::Service && !GoodId.IsEmpty()))
 	{
@@ -45,6 +65,17 @@ void UHansaNeedDefinition::AppendDefinitionHashData(FString& InOutCanonicalData)
 {
 	Super::AppendDefinitionHashData(InOutCanonicalData);
 	InOutCanonicalData += FString::Printf(TEXT("kind=%d\ngood=%s\n"), static_cast<int32>(Kind), *GoodId);
+	// Default nonseasonal definitions retain their historical fingerprints.
+	if (DefaultReserveDays != 3 || bSeasonal || SeasonDays != 90 || FixedSeason != -1 || SeasonMultipliers != TArray<int32>({0,4000,10000,4000}))
+	{
+		InOutCanonicalData += FString::Printf(TEXT("seasonal=%d;days=%d;fixed=%d;"), bSeasonal, SeasonDays, FixedSeason);
+		InOutCanonicalData += FString::Printf(TEXT("reserveDays=%d;"), DefaultReserveDays);
+		for (int32 Factor : SeasonMultipliers) InOutCanonicalData += FString::Printf(TEXT("%d,"), Factor);
+	}
+
+ // Preserve legacy hashes for empty alternatives. Order is consumption preference.
+ for (const auto& Alternative : Alternatives)
+  InOutCanonicalData += FString::Printf(TEXT("alternative=%s:%d\n"), *Alternative.GoodId, Alternative.FulfillmentBasisPoints);
 }
 
 UHansaPopulationTierDefinition::UHansaPopulationTierDefinition()

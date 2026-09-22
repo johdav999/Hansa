@@ -18,6 +18,10 @@ namespace Hansa::Simulation
 		{
 		case EHansaRouteCargoActionKind::Load: return TEXT("Load");
 		case EHansaRouteCargoActionKind::Unload: return TEXT("Unload");
+		case EHansaRouteCargoActionKind::StationLoad: return TEXT("Station load (transfer)");
+		case EHansaRouteCargoActionKind::StationUnload: return TEXT("Station unload (transfer)");
+		case EHansaRouteCargoActionKind::OwnedCityLoad: return TEXT("Home load (transfer)");
+		case EHansaRouteCargoActionKind::OwnedCityUnload: return TEXT("Home unload (transfer)");
 		default: return TEXT("UnknownCargoAction");
 		}
 	}
@@ -46,6 +50,18 @@ namespace Hansa::Simulation
 		}
 	}
 
+	const TCHAR* LexToString(const EHansaSpotTradeSide Side)
+	{
+		switch (Side) { case EHansaSpotTradeSide::BuyFromCity: return TEXT("BuyFromCity"); case EHansaSpotTradeSide::SellToCity: return TEXT("SellToCity"); default: return TEXT("UnknownSpotTradeSide"); }
+	}
+	const TCHAR* LexToString(const EHansaSpotTradeOutcome Outcome)
+	{
+		switch (Outcome) { case EHansaSpotTradeOutcome::None: return TEXT("None"); case EHansaSpotTradeOutcome::Completed: return TEXT("Completed"); case EHansaSpotTradeOutcome::Partial: return TEXT("Partial"); case EHansaSpotTradeOutcome::Missed: return TEXT("Missed"); default: return TEXT("UnknownSpotTradeOutcome"); }
+	}
+	const TCHAR* LexToString(const EHansaSpotTradeBlocker Blocker)
+	{
+		switch (Blocker) { case EHansaSpotTradeBlocker::None: return TEXT("None"); case EHansaSpotTradeBlocker::InsufficientFunds: return TEXT("InsufficientFunds"); case EHansaSpotTradeBlocker::InsufficientMarketStock: return TEXT("InsufficientMarketStock"); case EHansaSpotTradeBlocker::InsufficientShipCapacity: return TEXT("InsufficientShipCapacity"); case EHansaSpotTradeBlocker::InsufficientShipStock: return TEXT("InsufficientShipStock"); case EHansaSpotTradeBlocker::InsufficientMarketCapacity: return TEXT("InsufficientMarketCapacity"); default: return TEXT("UnknownSpotTradeBlocker"); }
+	}
 	const TCHAR* LexToString(const EHansaRoutePlanError Error)
 	{
 		switch (Error)

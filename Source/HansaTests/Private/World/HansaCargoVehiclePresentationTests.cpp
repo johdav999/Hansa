@@ -75,4 +75,51 @@ bool FHansaCargoVehiclePresentationTest::RunTest(const FString& Parameters)
     TestNull(TEXT("Staging class rejected before loading"), Definition->LoadPresentationActorClass());
     return !HasAnyErrors();
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaCogSmoothHeadingTest, "Hansa.World.Vehicles.SmoothCogHeading",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaCogSmoothHeadingTest::RunTest(const FString& Parameters)
+{
+    UWorld* World = UWorld::CreateWorld(EWorldType::Game, false);
+    if (!TestNotNull(TEXT("Transient world"), World)) return false;
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    ON_SCOPE_EXIT { World->DestroyWorld(false); GEngine->DestroyWorldContext(World); };
+    auto* Cog = World->SpawnActor<AHansaCargoVehiclePresentation>();
+    auto* Other = World->SpawnActor<AHansaCargoVehiclePresentation>();
+    if (!Cog || !Other) return false;
+    auto Heading = [](double Yaw) { return TOptional<FRotator>(FRotator(0, Yaw, 0)); };
+    Cog->SampleHeading(Heading(0), 10);
+    Cog->SampleHeading(Heading(90), 10);
+    TestTrue(TEXT("New course does not snap"), FMath::IsNearlyZero(Cog->GetActorRotation().Yaw));
+    Cog->SampleHeading(Heading(90), 10.25);
+    const double EarlyYaw = Cog->GetActorRotation().Yaw;
+    TestTrue(TEXT("Turn begins gradually"), EarlyYaw > 0 && EarlyYaw < 15);
+    Cog->SampleHeading(Heading(90), 10.25);
+    TestTrue(TEXT("Pause and repeated samples preserve heading"), FMath::IsNearlyEqual(Cog->GetActorRotation().Yaw, EarlyYaw));
+    Cog->SampleHeading(Heading(90), 10.75);
+    TestTrue(TEXT("Turn passes through intermediate angle"), FMath::IsNearlyEqual(Cog->GetActorRotation().Yaw, 45., 0.001));
+    Other->SampleHeading(Heading(0), 10);
+    Other->SampleHeading(Heading(90), 10);
+    for (int32 Frame=1; Frame<=90; ++Frame) Other->SampleHeading(Heading(90), 10.+Frame/120.);
+    TestTrue(TEXT("Heading independent of render frame rate"), Other->GetActorRotation().Equals(Cog->GetActorRotation(), 0.001));
+    const FRotator BeforeCommand=Other->GetActorRotation();
+    Other->RebaseHeadingClock(11.75);
+    Other->SampleHeading(Heading(-90), 11.75);
+    TestTrue(TEXT("Command tick cannot jump an in-progress turn"), BeforeCommand.Equals(Other->GetActorRotation(), 0.001));
+    Cog->SampleHeading({}, 11.5);
+    TestTrue(TEXT("Arrival finishes pending turn without overshoot"), FMath::IsNearlyEqual(Cog->GetActorRotation().Yaw, 90., 0.001));
+    Cog->SampleHeading(Heading(-90), 11.5);
+    TestTrue(TEXT("Reverse course starts without a jump"), FMath::IsNearlyEqual(Cog->GetActorRotation().Yaw, 90., 0.001));
+    Cog->SampleHeading(Heading(-90), 12);
+    const FRotator BeforeRetarget=Cog->GetActorRotation();
+    Cog->SampleHeading(Heading(0), 12);
+    TestTrue(TEXT("Mid-turn order keeps current orientation"), BeforeRetarget.Equals(Cog->GetActorRotation(), 0.001));
+    Cog->ClearProjection();
+    Cog->SampleHeading(Heading(179), 20);
+    Cog->SampleHeading(Heading(-179), 20);
+    Cog->SampleHeading(Heading(-179), 20.125);
+    TestTrue(TEXT("Wraparound takes short two-degree arc"), FMath::Abs(FMath::Abs(Cog->GetActorRotation().Yaw)-180.) < 0.001);
+    Cog->SampleHeading(Heading(30), 1);
+    TestTrue(TEXT("Save rollback resets obsolete turn"), FMath::IsNearlyEqual(Cog->GetActorRotation().Yaw, 30., 0.001));
+    return !HasAnyErrors();
+}
 #endif

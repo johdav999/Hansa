@@ -1,5 +1,8 @@
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "Misc/SecureHash.h"
 #include "UObject/StrongObjectPtr.h"
 #include "World/HansaRuntimeSimulationHost.h"
 
@@ -35,6 +38,18 @@ bool FHansaRuntimeSaveTest::RunTest(const FString& Parameters)
 		if (!TestTrue(TEXT("Both runtime hosts continue"), Original->AdvanceTicks(1) && Loaded->AdvanceTicks(1))) return false;
 		const auto A = Original->BuildProjection(), B = Loaded->BuildProjection();
 		TestTrue(TEXT("Runtime continuation fingerprint"), A.IsSuccess() && B.IsSuccess() && A.Value.GetFingerprint() == B.Value.GetFingerprint());
+		// Saving after every research transition compares the live cached hash with
+		// a newly decoded state, including the tick that clears the research queue.
+		TArray<uint8> CheckpointBytes;
+		const auto CheckpointSaved = Original->CaptureSaveBytes(CheckpointBytes,
+			TEXT("Research checkpoint"), TEXT("2026-09-14T00:00:00Z"));
+		if (!TestTrue(*CheckpointSaved.Message, CheckpointSaved.IsSuccess())) return false;
+		TestEqual(TEXT("Live cached fingerprint matches freshly encoded records"), A.Value.GetFingerprint().Value, CheckpointSaved.AuthoritativeHash);
+		FHansaSaveSnapshot Checkpoint;
+		int64 CheckpointTick = 0;
+		const auto CheckpointRead = Original->InspectSaveBytes(CheckpointBytes, Checkpoint, CheckpointTick);
+		if (!TestTrue(*FString::Printf(TEXT("Research checkpoint %lld: %s"),
+			Original->GetSimulationTick(), *CheckpointRead.Message), CheckpointRead.IsSuccess())) return false;
 		const auto* PA = Original->GetScenarioProgress(); const auto* PB = Loaded->GetScenarioProgress();
 		TestEqual(TEXT("Scenario outcome"), PA->Outcome, PB->Outcome);
 		TestEqual(TEXT("Failure streak"), PA->ConsecutiveFailureTicks, PB->ConsecutiveFailureTicks);
@@ -148,5 +163,32 @@ bool FHansaConstructionRecoverySaveTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Restored cancellation releases the placement"), Loaded->GetPlacedBuildingCount(), 0);
 	return !HasAnyErrors();
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaHistoricalCatalogRejectionTest,
+    "Hansa.Integration.Save.HistoricalCatalogRejectionIsAtomic",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaHistoricalCatalogRejectionTest::RunTest(const FString& Parameters)
+{
+    using namespace Hansa::Simulation;
+    TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>());
+    FString Error;
+    if (!TestTrue(TEXT("Initialize preservation runtime"), Host->InitializeForLubeck(nullptr, Error))) return false;
+    TArray<uint8> Historical, Before, After;
+    if (!TestTrue(TEXT("Read untouched pre-preservation research fixture"), FFileHelper::LoadFileToArray(Historical,
+        *(FPaths::ProjectDir() / TEXT("Tests/Fixtures/research_completion_stale_v7.hansa"))))) return false;
+    FHansaSaveMetadata Metadata;
+    if (!TestTrue(TEXT("Original historical archive remains intact"), FHansaSaveEnvelope::InspectMetadata(Historical, Metadata).IsSuccess())) return false;
+    if (!TestTrue(TEXT("Capture current state before rejected restore"), Host->CaptureSaveBytes(Before, TEXT("Atomic rejection"), TEXT("2026-09-16T00:00:00Z")).IsSuccess())) return false;
+    const auto Rejected = Host->RestoreSaveBytes(Historical);
+    TestFalse(TEXT("Old catalog is not silently reinterpreted as preservation"), Rejected.IsSuccess());
+    TestTrue(TEXT("Rejection explains catalog mismatch and explicit migration requirement"), Rejected.Message.Contains(TEXT("registry hash differs")) && Rejected.Message.Contains(TEXT("migration")));
+    TestTrue(TEXT("Failed restore leaves current runtime capturable"), Host->CaptureSaveBytes(After, TEXT("Atomic rejection"), TEXT("2026-09-16T00:00:00Z")).IsSuccess());
+    TestTrue(TEXT("Catalog rejection leaves authoritative state and pending commands untouched"), Before == After);
+    TArray<uint8> HistoricalAgain;
+    FFileHelper::LoadFileToArray(HistoricalAgain, *(FPaths::ProjectDir() / TEXT("Tests/Fixtures/research_completion_stale_v7.hansa")));
+    TestTrue(TEXT("Historical file is preserved byte-for-byte"), HistoricalAgain == Historical);
+    return !HasAnyErrors();
+}
+
 #endif
 

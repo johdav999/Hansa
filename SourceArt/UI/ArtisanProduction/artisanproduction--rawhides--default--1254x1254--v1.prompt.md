@@ -1,0 +1,5 @@
+# rawhides
+
+Mode: built-in ImageGen generate. Requested 1024 square. Generated 1254x1254. Native master retained. Intended UI variants 32/48/64/96px. Inspection: identifiable subject and clean silhouette, small-size alpha review pending.
+
+Generate one transparent-background game resource icon for Hansa, a historically grounded Hanseatic city-builder. Subject: a single irregular raw cattle hide, folded loosely with a clearly visible patch of coarse brown fur on the upper side and pale fleshy underside along the edge. Distinct from smooth folded finished leather. Centered isolated object, three-quarter elevated view, realistically painted miniature, warm natural brown, pale tan, muted earthy materials; soft upper-left light, readable bold silhouette, no decorative border, no lettering, no symbols, no floor, no backdrop, no modern equipment, no gore, no blood. Match detailed warm leather shoes and folded chestnut leather resource icons. Intended to sit on dark navy #102733 with brass-framed native UI. Request 1024x1024 native image with generous transparent margin; object occupies 75 percent width. Deliver clean alpha, no matte fringe. One raw-hide icon only.

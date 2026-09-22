@@ -2,6 +2,22 @@
 
 namespace
 {
+	TArray<FHansaAuthoredScenarioSlotRule> MakeEightHouseSlots()
+	{
+		const TArray<EHansaAuthoredSessionSlotState> AllStates = {
+			EHansaAuthoredSessionSlotState::Human, EHansaAuthoredSessionSlotState::AI,
+			EHansaAuthoredSessionSlotState::Open, EHansaAuthoredSessionSlotState::Closed,
+			EHansaAuthoredSessionSlotState::Reserved};
+		TArray<FHansaAuthoredScenarioSlotRule> Slots;
+		Slots.Add({TEXT("HouseSlot.Primary"), 1, EHansaAuthoredSessionSlotState::Human, AllStates, 0, false, true});
+		for (int32 Index = 2; Index <= 8; ++Index)
+		{
+			Slots.Add({FString::Printf(TEXT("HouseSlot.Rival%02d"), Index), Index,
+				EHansaAuthoredSessionSlotState::AI, AllStates, 0, false, true});
+		}
+		return Slots;
+	}
+
 	void AddIssue(const UHansaDefinitionBase& Definition, TArray<FHansaDefinitionValidationIssue>& OutIssues,
 		const FName Code, const TCHAR* Property, const TCHAR* Cause, const TCHAR* Remedy)
 	{
@@ -97,6 +113,20 @@ void UHansaVictoryDefinition::AppendDefinitionHashData(FString& InOutCanonicalDa
 UHansaScenarioDefinition::UHansaScenarioDefinition()
 {
 	DefinitionCategory = TEXT("Scenario");
+	SchemaVersion = 3;
+	MultiplayerSlots = MakeEightHouseSlots();
+}
+
+void UHansaScenarioDefinition::PostLoad()
+{
+	Super::PostLoad();
+	if (SchemaVersion < 3)
+	{
+		SchemaVersion = 3;
+		// Schema 3 expands the original two-house fixture while preserving houses 1 and 2.
+		MultiplayerSlots = MakeEightHouseSlots();
+		RefreshContentHash();
+	}
 }
 
 void UHansaScenarioDefinition::ValidateDefinition(TArray<FHansaDefinitionValidationIssue>& OutIssues) const
@@ -118,6 +148,26 @@ void UHansaScenarioDefinition::ValidateDefinition(TArray<FHansaDefinitionValidat
 		}
 		Seen.Add(VictoryId);
 	}
+	if (MultiplayerSlots.Num() < 2 || MultiplayerSlots.Num() > 8)
+	{
+		AddIssue(*this, OutIssues, TEXT("HSA-SCENARIO-003"), TEXT("MultiplayerSlots"),
+			TEXT("A multiplayer scenario requires two through eight authored slots."), TEXT("Author a bounded slot for every supported house."));
+	}
+	TSet<FString> SlotIds; TSet<int64> HouseIds;
+	for (const FHansaAuthoredScenarioSlotRule& Slot : MultiplayerSlots)
+	{
+		TSet<EHansaAuthoredSessionSlotState> Allowed;
+		for (const EHansaAuthoredSessionSlotState State : Slot.AllowedStates) Allowed.Add(State);
+		if (Slot.SlotId.IsEmpty() || SlotIds.Contains(Slot.SlotId) || Slot.HouseId <= 0 || HouseIds.Contains(Slot.HouseId) ||
+			Allowed.Num() != Slot.AllowedStates.Num() || !Allowed.Contains(Slot.DefaultState) ||
+			Slot.AuthoredTeamId < 0 || (Slot.bTeamRequired && Slot.AuthoredTeamId == 0))
+		{
+			AddIssue(*this, OutIssues, TEXT("HSA-SCENARIO-004"), TEXT("MultiplayerSlots"),
+				TEXT("A scenario slot has a duplicate/invalid identity, state set, default, or team constraint."),
+				TEXT("Use unique positive house/slot IDs, unique allowed states containing the default, and a team ID when required."));
+		}
+		SlotIds.Add(Slot.SlotId); HouseIds.Add(Slot.HouseId);
+	}
 }
 
 void UHansaScenarioDefinition::AppendDefinitionHashData(FString& InOutCanonicalData) const
@@ -126,4 +176,15 @@ void UHansaScenarioDefinition::AppendDefinitionHashData(FString& InOutCanonicalD
 	InOutCanonicalData += FString::Printf(TEXT("|home=%s|insolvency=%lld|failure=%d|briefing=%s"),
 		*HomeCityId, static_cast<long long>(InsolvencyThresholdPfennig), FailureSustainTicks, *Briefing.ToString());
 	for (const FString& Id : VictoryIds) InOutCanonicalData += TEXT("|victory=") + Id;
+	TArray<FHansaAuthoredScenarioSlotRule> SortedSlots = MultiplayerSlots;
+	SortedSlots.Sort([](const auto& Left, const auto& Right) { return Left.SlotId < Right.SlotId; });
+	for (const FHansaAuthoredScenarioSlotRule& Slot : SortedSlots)
+	{
+		InOutCanonicalData += FString::Printf(TEXT("|slot=%s:%lld:%d:%lld:%d:%d"), *Slot.SlotId,
+			static_cast<long long>(Slot.HouseId), static_cast<int32>(Slot.DefaultState),
+			static_cast<long long>(Slot.AuthoredTeamId), Slot.bTeamRequired ? 1 : 0, Slot.bAllowHumanTakeover ? 1 : 0);
+		TArray<EHansaAuthoredSessionSlotState> States = Slot.AllowedStates;
+		States.Sort([](const auto Left, const auto Right) { return static_cast<uint8>(Left) < static_cast<uint8>(Right); });
+		for (const auto State : States) InOutCanonicalData += FString::Printf(TEXT(":%d"), static_cast<int32>(State));
+	}
 }

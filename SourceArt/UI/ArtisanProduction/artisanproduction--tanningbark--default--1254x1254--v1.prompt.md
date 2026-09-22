@@ -1,0 +1,5 @@
+# tanningbark
+
+Mode: built-in ImageGen generate. Requested 1024 square. Generated 1254x1254. Native master retained. Intended UI variants 32/48/64/96px. Inspection: identifiable subject and clean silhouette, small-size alpha review pending.
+
+Create one isolated transparent game resource icon: tanning bark, a small loose bundle of rough dark oak bark strips, curled edges showing cinnamon tan inner bark. Clearly bark flakes and long curved strips, no cut logs, no foliage, no finished lumber, no rope. Hansa Hanseatic city-builder resource art, realistic painted miniature, three-quarter elevated view, warm earthy browns, soft upper-left light, legible silhouette on dark navy #102733. Match warm detailed leather and raw-hide inventory icons. No text, numbers, border, background or floor. Transparent alpha, clean edges, no fringe. Request 1024x1024 native, generous transparent margins, centered 75 percent object width. One tanning-bark icon only.

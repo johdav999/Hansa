@@ -1,4 +1,6 @@
 #include "Placement/HansaPlacement.h"
+#include "Production/HansaProduction.h"
+#include "Presence/HansaForeignPresence.h"
 
 #include "Definitions/HansaEconomicRegistry.h"
 #include "Math/NumericLimits.h"
@@ -116,6 +118,13 @@ namespace Hansa::Simulation
 		case EHansaPlacementFailure::Occupied: return TEXT("Occupied");
 		case EHansaPlacementFailure::ShorelineRequired: return TEXT("ShorelineRequired");
 		case EHansaPlacementFailure::RoadRequired: return TEXT("RoadRequired");
+		case EHansaPlacementFailure::FoundationTooSteep: return TEXT("FoundationTooSteep");
+        case EHansaPlacementFailure::NoNearbyTrees: return TEXT("NoNearbyTrees");
+		case EHansaPlacementFailure::ForeignLeaseRequired: return TEXT("ForeignLeaseRequired");
+		case EHansaPlacementFailure::ForeignLeaseSuspended: return TEXT("ForeignLeaseSuspended");
+		case EHansaPlacementFailure::ForeignLeaseBoundary: return TEXT("ForeignLeaseBoundary");
+		case EHansaPlacementFailure::ForeignBuildingCategoryDenied: return TEXT("ForeignBuildingCategoryDenied");
+		case EHansaPlacementFailure::ForeignPresenceStageInsufficient: return TEXT("ForeignPresenceStageInsufficient");
 		default: return TEXT("UnknownPlacementFailure");
 		}
 	}
@@ -132,6 +141,7 @@ namespace Hansa::Simulation
 	{
 		for (FHansaPlacementMapInitialization& Map : InMaps)
 		{
+            Map.TreeCells.Sort();
 			Map.Cells.Sort([](const FHansaPlacementGridCell& Left, const FHansaPlacementGridCell& Right)
 			{
 				return Left.Coordinate < Right.Coordinate;
@@ -152,7 +162,7 @@ namespace Hansa::Simulation
 			{
 				return THansaValueResult<FHansaPlacementTopology>::Failure(EHansaValueError::InvalidFormat);
 			}
-			RecordCount += static_cast<uint64>(Map.Cells.Num());
+			RecordCount += static_cast<uint64>(Map.Cells.Num()) + static_cast<uint64>(Map.TreeCells.Num());
 			if (RecordCount > MAX_uint32)
 			{
 				return THansaValueResult<FHansaPlacementTopology>::Failure(EHansaValueError::OutOfRange);
@@ -168,6 +178,25 @@ namespace Hansa::Simulation
 			}
 		}
 
+        for (const auto& Map : InMaps)
+        {
+            for (int32 Index = 0; Index < Map.TreeCells.Num(); ++Index)
+            {
+                const auto Tree = Map.TreeCells[Index];
+                // Cells are sorted; the sparse tree survey must resolve to dry, available map cells.
+                int32 Low = 0, High = Map.Cells.Num();
+                while (Low < High)
+                {
+                    const int32 Mid = Low + (High - Low) / 2;
+                    if (Map.Cells[Mid].Coordinate < Tree) Low = Mid + 1;
+                    else High = Mid;
+                }
+                if ((Index > 0 && Map.TreeCells[Index - 1] == Tree) ||
+                    !Map.Cells.IsValidIndex(Low) || Map.Cells[Low].Coordinate != Tree ||
+                    Map.Cells[Low].Terrain == EHansaPlacementTerrain::Water || Map.Cells[Low].bBlocked)
+                    return THansaValueResult<FHansaPlacementTopology>::Failure(EHansaValueError::InvalidFormat);
+            }
+        }
 		FHansaPlacementTopology Topology;
 		Topology.Maps = MoveTemp(InMaps);
 		Topology.RecordCount = static_cast<uint32>(RecordCount);
@@ -193,8 +222,55 @@ namespace Hansa::Simulation
 				AddTopologyByte(Topology.TopologyHash, Cell.bBlocked ? 1 : 0);
 			}
 		}
+        // Empty surveys retain the original hash, allowing exact terrain-only save migration.
+        for (const auto& Map : Topology.Maps)
+        {
+            if (Map.TreeCells.IsEmpty()) continue;
+            AddTopologyString(Topology.TopologyHash, TEXT("StandingTrees.v1"));
+            AddTopologyString(Topology.TopologyHash, Map.CityId.ToString());
+            AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Map.TreeCells.Num()));
+            for (const auto Tree : Map.TreeCells)
+            {
+                AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Tree.X));
+                AddTopologyUInt32(Topology.TopologyHash, static_cast<uint32>(Tree.Y));
+            }
+        }
 		return THansaValueResult<FHansaPlacementTopology>::Success(MoveTemp(Topology));
 	}
+
+    bool FHansaPlacementState::HasNearbyTrees(const FHansaBuildingId BuildingId, const int32 RadiusCells) const
+    {
+        const auto* Building = FindPlacement(BuildingId);
+        return Building && HasNearbyTrees(Building->Spec.CityId, Building->OccupiedCells, RadiusCells);
+    }
+
+    bool FHansaPlacementState::HasNearbyTrees(const FHansaCityDefinitionId CityId,
+        const TConstArrayView<FHansaGridCoordinate> Footprint, const int32 RadiusCells) const
+    {
+        const auto* Map = FindMap(CityId);
+        if (!Map || RadiusCells < 0 || Footprint.IsEmpty()) return false;
+        const int64 RadiusSquared = int64(RadiusCells) * RadiusCells;
+        for (const auto Tree : Map->TreeCells)
+        {
+            if (Footprint.Contains(Tree)) continue;
+            bool bInRange = false;
+            for (const auto Cell : Footprint)
+            {
+                const int64 DX = int64(Tree.X) - Cell.X, DY = int64(Tree.Y) - Cell.Y;
+                // Bound first to avoid overflow even for extreme authored coordinates.
+                if (FMath::Abs(DX) <= RadiusCells && FMath::Abs(DY) <= RadiusCells &&
+                    DX * DX <= RadiusSquared - DY * DY)
+                { bInRange = true; break; }
+            }
+            if (!bInRange) continue;
+            const bool bCovered = Placements.ContainsByPredicate([&](const auto& Other)
+            {
+                return Other.Spec.CityId == CityId && Other.OccupiedCells.Contains(Tree);
+            });
+            if (!bCovered) return true;
+        }
+        return false;
+    }
 
 	const FHansaPlacementMapInitialization* FHansaPlacementTopology::FindMap(
 		const FHansaCityDefinitionId CityId) const
@@ -294,7 +370,7 @@ namespace Hansa::Simulation
 			{
 				const FHansaGridCoordinate CellCoordinate = Placement.OccupiedCells[CellIndex];
 				const FHansaPlacementGridCell* Cell = State.FindCell(Placement.Spec.CityId, CellCoordinate);
-				if (Cell == nullptr || Cell->OwnerId != Placement.OwnerId || Cell->bBlocked ||
+				if (Cell == nullptr || Cell->bBlocked ||
 					Cell->Terrain == EHansaPlacementTerrain::Water ||
 					(CellIndex > 0 && Placement.OccupiedCells[CellIndex - 1] == CellCoordinate))
 				{
@@ -337,7 +413,9 @@ namespace Hansa::Simulation
 		const FHansaPlacementState& State,
 		const FHansaEconomicRegistry& Definitions,
 		const FHansaHouseId IssuingHouseId,
-		const FHansaPlacementSpec& Spec)
+		const FHansaPlacementSpec& Spec,
+		const TConstArrayView<FHansaForeignPresenceState> ForeignPresences,
+		const TConstArrayView<FHansaLeasedPlotState> LeasedPlots)
 	{
 		FHansaPlacementValidationResult Result;
 		if (!IssuingHouseId.IsValid() || !Spec.CityId.IsValid() || !Spec.BuildingDefinitionId.IsValid() ||
@@ -372,6 +450,10 @@ namespace Hansa::Simulation
 			return Result;
 		}
 
+        if(Building->CompoundRoadFrontMask && !(Building->CompoundRoadFrontMask & (1u<<static_cast<uint8>(Spec.Rotation))))
+        {
+         AddReason(Result,EHansaPlacementFailure::RoadRequired,Spec.Anchor);return Result;
+        }
 		const bool bSwapDimensions = Spec.Rotation == EHansaGridRotation::East || Spec.Rotation == EHansaGridRotation::West;
 		const int32 Width = bSwapDimensions ? Building->FootprintHeightCells : Building->FootprintWidthCells;
 		const int32 Height = bSwapDimensions ? Building->FootprintWidthCells : Building->FootprintHeightCells;
@@ -379,6 +461,9 @@ namespace Hansa::Simulation
 		bool bTouchesShoreline = false;
 		bool bBridgesLandAndWater = false;
 		bool bTouchesRoad = false;
+		bool bTouchesForeignOwnedCell = false;
+        uint8 CompoundAdjacentSides=0;
+        bool bCompoundMapEdge=false;
 
 		for (int32 XOffset = 0; XOffset < Width; ++XOffset)
 		{
@@ -397,6 +482,7 @@ namespace Hansa::Simulation
 					static_cast<int32>(CoordinateY)
 				};
 				Result.OccupiedCells.Add(Coordinate);
+                bCompoundMapEdge |= Coordinate.X==Map->BoundsMin.X||Coordinate.X==Map->BoundsMax.X||Coordinate.Y==Map->BoundsMin.Y||Coordinate.Y==Map->BoundsMax.Y;
 				if (!IsInside(*Map, Coordinate))
 				{
 					AddReason(Result, EHansaPlacementFailure::OutsideBounds, Coordinate);
@@ -410,7 +496,8 @@ namespace Hansa::Simulation
 				}
 				if (Cell->OwnerId != IssuingHouseId)
 				{
-					AddReason(Result, EHansaPlacementFailure::WrongOwner, Coordinate);
+					if (ForeignPresences.IsEmpty() && LeasedPlots.IsEmpty()) AddReason(Result, EHansaPlacementFailure::WrongOwner, Coordinate);
+					else bTouchesForeignOwnedCell = true;
 				}
 				if (Cell->Terrain == EHansaPlacementTerrain::Water)
 				{
@@ -431,7 +518,58 @@ namespace Hansa::Simulation
 				}
 			}
 		}
-		Result.OccupiedCells.Sort();
+		if (bTouchesForeignOwnedCell)
+		{
+			const FHansaForeignPresenceState* Presence = ForeignPresences.FindByPredicate([&](const FHansaForeignPresenceState& Value)
+			{
+				return Value.HouseId == IssuingHouseId && Value.CityId == Spec.CityId;
+			});
+			if (Presence == nullptr || Presence->Status != EHansaForeignPresenceStatus::Active ||
+				!Presence->GrantedCapabilityIds.Contains(TEXT("PresenceCapability.MerchantQuarter")))
+			{
+				AddReason(Result, EHansaPlacementFailure::ForeignPresenceStageInsufficient, Spec.Anchor);
+			}
+			else
+			{
+				FString RequiredCategory = Building->ConstructionMenuCategory;
+				if (RequiredCategory == TEXT("Harbor")) RequiredCategory = TEXT("Commercial");
+				const FHansaCompiledForeignPresenceStageDefinition* Stage = Definitions.FindPresenceStage(Presence->CurrentStageId);
+				const bool bStageAllowsCategory = Stage != nullptr && Stage->PermittedBuildingCategories.Contains(RequiredCategory);
+				const FHansaLeasedPlotState* CoveringLease = nullptr;
+				bool bAnyOwnedLease = false;
+				bool bAnyActiveLease = false;
+				bool bAnyOverlap = false;
+				bool bCoveringCategoryDenied = false;
+				for (const FHansaLeasedPlotState& Lease : LeasedPlots)
+				{
+					if (Lease.OwnerId != IssuingHouseId || Lease.CityId != Spec.CityId) continue;
+					bAnyOwnedLease = true;
+					bAnyActiveLease |= Lease.bActive;
+					const bool bOverlaps = Spec.Anchor.X <= Lease.BoundsMax.X && Spec.Anchor.Y <= Lease.BoundsMax.Y &&
+						Spec.Anchor.X + Width - 1 >= Lease.BoundsMin.X && Spec.Anchor.Y + Height - 1 >= Lease.BoundsMin.Y;
+					bAnyOverlap |= bOverlaps;
+					const bool bCovers = Spec.Anchor.X >= Lease.BoundsMin.X && Spec.Anchor.Y >= Lease.BoundsMin.Y &&
+						Spec.Anchor.X + Width - 1 <= Lease.BoundsMax.X && Spec.Anchor.Y + Height - 1 <= Lease.BoundsMax.Y;
+					if (Lease.bActive && bCovers)
+					{
+						if (Lease.PermittedBuildingCategories.Contains(RequiredCategory) && bStageAllowsCategory) { CoveringLease = &Lease; break; }
+						bCoveringCategoryDenied = true;
+					}
+				}
+				if (CoveringLease == nullptr)
+				{
+					if (bCoveringCategoryDenied || !bStageAllowsCategory) AddReason(Result, EHansaPlacementFailure::ForeignBuildingCategoryDenied, Spec.Anchor);
+					else if (bAnyOwnedLease && !bAnyActiveLease) AddReason(Result, EHansaPlacementFailure::ForeignLeaseSuspended, Spec.Anchor);
+					else if (bAnyOverlap) AddReason(Result, EHansaPlacementFailure::ForeignLeaseBoundary, Spec.Anchor);
+					else AddReason(Result, EHansaPlacementFailure::ForeignLeaseRequired, Spec.Anchor);
+				}
+			}
+		}
+		Result.OccupiedCells.Sort();        if (Building->RecipeIds.Contains(TEXT("Recipe.FellTimber")) &&
+            !State.HasNearbyTrees(Spec.CityId, Result.OccupiedCells, LumberHarvestRadiusCells))
+        {
+            AddReason(Result, EHansaPlacementFailure::NoNearbyTrees, Spec.Anchor);
+        }
 
 		if (Building->bRequiresShoreline && bTouchesShoreline)
 		{
@@ -492,10 +630,18 @@ namespace Hansa::Simulation
 				{
 					for (const FHansaGridCoordinate RoadCell : Existing.OccupiedCells)
 					{
-						bTouchesRoad |= IsAdjacent(Candidate, RoadCell);
+						bTouchesRoad |= IsAdjacent(Candidate, RoadCell) && (Building->CompoundRoadFrontMask==0 || IsCompoundFrontAdjacent(Spec,Candidate,RoadCell));
+                        if(Building->CompoundRoadFrontMask&&IsAdjacent(Candidate,RoadCell))
+                         for(int32 Turn=0;Turn<4;++Turn){auto SideSpec=Spec;SideSpec.Rotation=static_cast<EHansaGridRotation>(Turn);if(IsCompoundFrontAdjacent(SideSpec,Candidate,RoadCell))CompoundAdjacentSides|=1u<<Turn;}
 					}
 				}
 			}
+            if(Building->CompoundRoadFrontMask)
+            {
+             const uint8 Turn=static_cast<uint8>(Spec.Rotation),Contexts=Building->CompoundLayoutContextMask;
+             const bool Fits=(Contexts&1)||((Contexts&2)&&(CompoundAdjacentSides&(1u<<((Turn+3)%4))))||((Contexts&4)&&(CompoundAdjacentSides&(1u<<((Turn+1)%4))))||((Contexts&8)&&bCompoundMapEdge);
+             bTouchesRoad &= Fits;
+            }
 			if (!bTouchesRoad)
 			{
 				AddReason(Result, EHansaPlacementFailure::RoadRequired, Spec.Anchor);
@@ -503,6 +649,13 @@ namespace Hansa::Simulation
 		}
 		return Result;
 	}
+
+ bool IsCompoundFrontAdjacent(const FHansaPlacementSpec& Spec,FHansaGridCoordinate Cell,FHansaGridCoordinate Road)
+ {
+  static constexpr int32 DX[4]={1,0,-1,0},DY[4]={0,1,0,-1};
+  const uint8 R=static_cast<uint8>(Spec.Rotation);
+  return R<4 && static_cast<int64>(Road.X)-Cell.X==DX[R] && static_cast<int64>(Road.Y)-Cell.Y==DY[R];
+ }
 
 	void FHansaPlacementRules::AddReason(
 		FHansaPlacementValidationResult& Result,

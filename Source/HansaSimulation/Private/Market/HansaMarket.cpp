@@ -1,6 +1,7 @@
 #include "Market/HansaMarket.h"
 
 #include "Market/HansaMarketInternal.h"
+#include "Market/HansaRegionalEconomyInternal.h"
 
 #include "Math/NumericLimits.h"
 
@@ -137,9 +138,11 @@ namespace Hansa::Simulation
 				}
 				for (const FHansaPopulationNeedState& Need : Cohort.Needs)
 				{
+                    for (const auto& Supply : Need.SuppliedGoods)
+                        if (Supply.GoodId == Market.GoodId) Total = SafeAdd(Total, Supply.QuantityMilliUnits);
 					if (Need.GoodId == Market.GoodId)
 					{
-						Total = SafeAdd(Total, FMath::Max<int64>(0, Need.RequiredLastTick.GetRawValue()));
+						Total = SafeAdd(Total, FMath::Max<int64>(0, Need.RequiredLastTick.GetRawValue() - Need.ConsumedLastTick.GetRawValue()));
 					}
 				}
 			}
@@ -319,7 +322,7 @@ namespace Hansa::Simulation
 				int64 Remaining = Stock.IsSet() ? Stock->Available.GetRawValue() : 0;
 				for (const auto& Action : Route.Stops[StopIndex].Actions)
 				{
-					if (Action.Kind != EHansaRouteCargoActionKind::Unload || Action.GoodId != Market.GoodId) continue;
+					if ((Action.Kind != EHansaRouteCargoActionKind::Unload && Action.Kind != EHansaRouteCargoActionKind::OwnedCityUnload) || Action.GoodId != Market.GoodId) continue;
 					const int64 Quantity = FMath::Min(Action.QuantityLimit.GetRawValue(),
 						Remaining);
 					Total = SafeAdd(Total, Quantity);
@@ -465,7 +468,9 @@ namespace Hansa::Simulation
 		FHansaInventoryLedger& InventoryLedger, const TArray<FHansaProductionState>& Productions,
 		const TArray<FHansaPopulationCohortState>& PopulationCohorts,
 		const FHansaEconomicRegistry& Registry, const FHansaSimulationTick Tick,
-		const TArray<FHansaRouteState>& Routes, const TArray<FHansaVehicleState>& Vehicles)
+		const TArray<FHansaRouteState>& Routes, const TArray<FHansaVehicleState>& Vehicles,
+		TArray<FHansaRemoteIndustryState>& RemoteIndustries,
+		TArray<FHansaRegionalShipmentState>& RegionalShipments, uint64& NextRegionalShipmentSequence)
 	{
 		if (Settings.UpdateCadenceTicks <= 0)
 		{
@@ -484,6 +489,8 @@ namespace Hansa::Simulation
 		{
 			return;
 		}
+		FHansaRegionalEconomyExecutor::AdvanceMarketUpdate(RemoteIndustries,RegionalShipments,
+			NextRegionalShipmentSequence,Markets,InventoryLedger,Registry,Tick);
 		for (FHansaCityMarketState& Market : Markets)
 		{
 			const FHansaCompiledGoodDefinition* Good = Registry.FindGood(Market.GoodId.ToString());
@@ -493,7 +500,9 @@ namespace Hansa::Simulation
 			}
 			if (Market.bMarketOnly)
 			{
-				const int64 Produced = DepositBackgroundProduction(Market, InventoryLedger, Tick);
+				const auto* CityProfile=Registry.FindCityMarket(Market.CityId.ToString());
+				const int64 Produced = CityProfile && !CityProfile->IndustryBindings.IsEmpty()
+					? 0 : DepositBackgroundProduction(Market, InventoryLedger, Tick);
 				const int64 CitizenConsumed = WithdrawBackgroundDemand(Market, InventoryLedger,
 					Market.BackgroundCitizenDemandPerUpdate, TEXT("CitizenDemand"), Tick);
 				const int64 IndustrialConsumed = WithdrawBackgroundDemand(Market, InventoryLedger,
@@ -518,7 +527,11 @@ namespace Hansa::Simulation
 						SumUnmetIndustrialDemand(Market, Productions, Registry).GetRawValue()));
 			}
 			Market.AccumulatedLocalProductionSinceUpdate = FHansaQuantity();
-			Market.ExpectedIncomingSupply = IncomingCargo(Market, Routes, Vehicles, InventoryLedger.CreateReadOnlyAccess());
+			int64 RegionalIncoming=0;
+			for(const auto& Shipment:RegionalShipments) if(Shipment.DestinationCityId==Market.CityId&&Shipment.GoodId==Market.GoodId)
+				RegionalIncoming=SafeAdd(RegionalIncoming,Shipment.DeliverableQuantity.GetRawValue());
+			Market.ExpectedIncomingSupply = FHansaQuantity::FromRaw(SafeAdd(
+				IncomingCargo(Market, Routes, Vehicles, InventoryLedger.CreateReadOnlyAccess()).GetRawValue(),RegionalIncoming));
 			Market.MinimumConsumerAffordabilityBasisPoints = Market.bMarketOnly
 				? 10000 : MinimumConsumerAffordability(Market, PopulationCohorts);
 			UpdatePrice(Market, Settings, *Good);

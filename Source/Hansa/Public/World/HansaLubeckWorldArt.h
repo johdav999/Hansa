@@ -9,12 +9,12 @@ namespace Hansa::Game::LubeckWorldArt
     struct HANSA_API FHansaLightingState
     {
         double SolarHour = 13.0;
-        float SolarElevationDegrees = 36.0f;
+        float SolarElevationDegrees = 60.0f;
         float SunYawDegrees = -35.0f;
         float SunIntensityLux = 15000.0f;
         float SunTemperatureKelvin = 5700.0f;
         float SunSourceAngleDegrees = 4.0f;
-        float SkyLightIntensity = 1.8f;
+        float SkyLightIntensity = 2000.0f;
         float SkyTemperatureKelvin = 7500.0f;
         float ExposureEV100 = 14.0f;
     };

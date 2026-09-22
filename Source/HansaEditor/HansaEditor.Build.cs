@@ -21,6 +21,7 @@ public class HansaEditor : ModuleRules
 			"Core",
 			"CoreUObject",
 			"DesktopPlatform",
+			"DataLayerEditor",
 			"EditorFramework",
 			"Engine",
 			"Hansa",

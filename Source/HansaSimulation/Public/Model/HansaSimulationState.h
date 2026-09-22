@@ -7,6 +7,7 @@
 #include "Math/HansaDeterministicRandom.h"
 #include "Math/HansaFixedPoint.h"
 #include "Market/HansaMarket.h"
+#include "Market/HansaRegionalEconomy.h"
 #include "Model/HansaIds.h"
 #include "Model/HansaSimulationTime.h"
 #include "Production/HansaProduction.h"
@@ -14,6 +15,7 @@
 #include "Population/HansaPopulation.h"
 #include "Population/HansaConsumptionHistory.h"
 #include "Placement/HansaPlacement.h"
+#include "Presence/HansaForeignPresence.h"
 #include "Trade/HansaTrade.h"
 #include "Diagnostics/HansaStateHash.h"
 
@@ -34,6 +36,10 @@ namespace Hansa::Simulation
 	{
 		FHansaCityDefinitionId DefinitionId;
 		FHansaQuantity AggregateStock;
+		// -1 takes the authored city default. An explicit override persists until changed.
+		int32 HeatingReserveDays = -1;
+		bool bReleaseHeatingReserve = false;
+        bool bPreservedFishHouseholdAvailable = true;
 	};
 
 	struct FHansaBuildingState
@@ -73,6 +79,9 @@ namespace Hansa::Simulation
 		TArray<FHansaBuildingState> Buildings;
 		TArray<FHansaVehicleState> Vehicles;
 		TArray<FHansaRouteState> Routes;
+		TArray<FHansaForeignPresenceState> ForeignPresences;
+		TArray<FHansaTradeStationState> TradeStations;
+		TArray<FHansaLeasedPlotState> LeasedPlots;
 		TArray<FHansaHouseResearchInitialization> Research;
 		TArray<FHansaTestEntityState> TestEntities;
 		FHansaPlacementInitialization Placement;
@@ -93,7 +102,7 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaSimulationState final
 	{
 	public:
-		static constexpr uint32 DeterminismFingerprintVersion = 20;
+		static constexpr uint32 DeterminismFingerprintVersion = 33;
 		static constexpr uint32 CurrentSystemPipelineVersion = 1;
 		static constexpr uint64 EmptyCommandHistoryFingerprint = 14695981039346656037ULL;
 
@@ -133,6 +142,9 @@ namespace Hansa::Simulation
 		TArray<FHansaBuildingState> Buildings;
 		TArray<FHansaVehicleState> Vehicles;
 		TArray<FHansaRouteState> Routes;
+		TArray<FHansaForeignPresenceState> ForeignPresences;
+		TArray<FHansaTradeStationState> TradeStations;
+		TArray<FHansaLeasedPlotState> LeasedPlots;
 		TArray<FHansaHouseResearchState> Research;
 		TArray<FHansaTestEntityState> TestEntities;
 		FHansaPlacementState Placement;
@@ -143,6 +155,9 @@ namespace Hansa::Simulation
 		FHansaConsumptionHistory ConsumptionHistory;
 		FHansaMarketSettings MarketSettings;
 		TArray<FHansaCityMarketState> Markets;
+		uint64 NextRegionalShipmentSequence = 1;
+		TArray<FHansaRemoteIndustryState> RemoteIndustries;
+		TArray<FHansaRegionalShipmentState> RegionalShipments;
 		FHansaLocalLogisticsSettings LocalLogisticsSettings;
 		uint64 NextLogisticsJobValue = 1;
 		uint64 NextLogisticsReservationValue = 0x8000000000000000ULL;

@@ -7,10 +7,29 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "EngineUtils.h"
+#include "World/HansaLubeckPlacementGrid.h"
+#include "WaterBodyActor.h"
+#include "WaterBodyComponent.h"
+#include "WaterSplineComponent.h"
 
 using namespace Hansa::Simulation;
 namespace
 {
+    double WaterHeight(UWorld* World, const FVector& Position)
+    {
+        double Best=MAX_dbl, Height=0.;
+        for (TActorIterator<AWaterBody> It(World);It;++It)
+        {
+            auto* Body=It->GetWaterBodyComponent();auto* Spline=It->GetWaterSpline();
+            if (!Body || !Spline || !Body->Bounds.GetBox().IsInsideXY(Position)) continue;
+            const auto Nearest=Spline->FindLocationClosestToWorldLocation(Position,ESplineCoordinateSpace::World);
+            const double Distance=FVector::DistSquaredXY(Position,Nearest);
+            if (Distance>=Best) continue;
+            auto Query=Body->TryQueryWaterInfoClosestToWorldLocation(Position,EWaterBodyQueryFlags::ComputeLocation);
+            if (Query.HasValue()) { Best=Distance;Height=Query.GetValue().GetWaterSurfaceLocation().Z; }
+        }
+        return Height;
+    }
     template<typename T> FString Identity(T Id)
     {
         return Id.IsValid() ? FString::Printf(TEXT("%llu.%u"), static_cast<unsigned long long>(Id.GetValue()), Id.GetGeneration()) : FString();
@@ -109,12 +128,16 @@ FVector AHansaCargoProjectionManager::SamplePath(TConstArrayView<FVector> Path, 
     return Location;
 }
 void AHansaCargoProjectionManager::Synchronize(const FHansaSimulationProjection& P,
-    UHansaRuntimeSimulationHost& Host, AHansaLubeckWorldFoundation& Foundation)
+    UHansaRuntimeSimulationHost& Host, AHansaLubeckWorldFoundation& Foundation, bool bPreserveNavigationPosition)
 {
-    RuntimeHost=&Host; Entries.Reset();
+    RuntimeHost=&Host;
+    TArray<FEntry> PreviousEntries=MoveTemp(Entries);
+    Entries.Reset();
     // These local actors must never expose the server's unfiltered state to a network client.
     if (GetNetMode()!=NM_Standalone) {ResetActors(); return;}
     const int64 Tick=P.GetClock().GetTick().GetValue();
+    const bool bSameTick=!PreviousEntries.IsEmpty() && PreviousEntries[0].Observation.SimulationTick==Tick;
+    const double TickFraction=(bSameTick || bPreserveNavigationPosition)?Host.GetPresentationTickFraction():0.;
     auto Berth = [&](FName CityId, FVector& Location, FVector& Outward)
     {
         if (CityId==TEXT("City.Rostock")) {Location=AHansaRostockQuarter::VisitOffset()+FVector(-700,3900,-125); Outward=FVector(1,0,0); return true;}
@@ -168,6 +191,7 @@ void AHansaCargoProjectionManager::Synchronize(const FHansaSimulationProjection&
         O.SemanticId=FName(*(TEXT("World.Cargo.Vehicle.")+Identity(V.Id))); O.VehicleId=Identity(V.Id);
         O.CargoInventoryId=Identity(V.CargoInventoryId); O.CargoMilliUnits=V.Cargo.GetRawValue(); O.SimulationTick=Tick;
         O.CityId=City(V.CurrentCityId);
+        O.CapacityMilliUnits=V.Capacity.GetRawValue();O.UpkeepPfennigPerTick=V.UpkeepPfennigPerTravelTick;
         const FHansaRouteProjection* R=nullptr;
         for(const auto& Route:P.GetRoutes()) if(Route.VehicleId==V.Id && Route.OwnerId==V.OwnerId)
             if(!R || R->Lifecycle==EHansaRouteLifecycleState::Cancelled) R=&Route;
@@ -190,11 +214,11 @@ void AHansaCargoProjectionManager::Synchronize(const FHansaSimulationProjection&
                 E.LaneScale=Arriving?1.-E.LaneStart:0.75;
             }
             else if(O.TransferTick==Tick && O.TransferMilliUnits>0)
-                O.Phase=R->LastTransfer.Kind==EHansaRouteCargoActionKind::Load?EHansaCargoWorldPhase::Loading:EHansaCargoWorldPhase::Unloading;
+                O.Phase=IsRouteLoad(R->LastTransfer.Kind)?EHansaCargoWorldPhase::Loading:EHansaCargoWorldPhase::Unloading;
         }
         if(R && O.Phase!=EHansaCargoWorldPhase::Cancelled && O.TransferTick==Tick && O.TransferMilliUnits>0)
         {
-            O.Phase=R->LastTransfer.Kind==EHansaRouteCargoActionKind::Load?EHansaCargoWorldPhase::Loading:EHansaCargoWorldPhase::Unloading;
+            O.Phase=IsRouteLoad(R->LastTransfer.Kind)?EHansaCargoWorldPhase::Loading:EHansaCargoWorldPhase::Unloading;
             E.ProgressPerTick=0; // A recorded atomic transfer is held at the port for this displayed tick.
         }
         const auto* Inventory=P.GetInventories().FindByPredicate([&](const auto& I){return I.Id==V.CargoInventoryId && I.VehicleId==V.Id;});
@@ -202,12 +226,66 @@ void AHansaCargoProjectionManager::Synchronize(const FHansaSimulationProjection&
         if(!Inventory || StockTotal!=O.CargoMilliUnits) O.PresentationFailure=TEXT("Cargo inventory projection mismatch");
         FVector Dock, Outward;
         if(!Berth(O.CityId,Dock,Outward)) O.PresentationFailure=TEXT("City berth presentation unavailable");
-        else E.Path=Traveling?(Arriving?TArray<FVector>{Dock+Outward*6500,Dock}:TArray<FVector>{Dock,Dock+Outward*6500}):TArray<FVector>{Dock};
+        else if (V.Navigation.CityId.IsValid() && O.CityId==City(V.Navigation.CityId))
+        {
+            Dock=Hansa::Game::LubeckPlacementGrid::GridToWorld(V.Navigation.Home,Dock.Z);
+            if(Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld()))Dock.Z=WaterHeight(GetWorld(),Dock);
+        }
+        if(O.PresentationFailure.IsEmpty()) E.Path=Traveling?(Arriving?TArray<FVector>{Dock+Outward*6500,Dock}:TArray<FVector>{Dock,Dock+Outward*6500}):TArray<FVector>{Dock};
+        const auto& N=V.Navigation;
+        const bool Free=N.CityId.IsValid() && V.CurrentCityId==N.CityId &&
+            (!R || R->Lifecycle==EHansaRouteLifecycleState::Inactive || R->Lifecycle==EHansaRouteLifecycleState::Cancelled);
+        if (Free)
+        {
+            O.bFreeNavigation=true;O.bNavigationMoving=N.IsMoving();
+            O.HomeWaterCell={N.Home.X,N.Home.Y};
+            const auto Target=N.IsMoving()?N.Path.Last():N.Cell;
+            O.NavigationTarget={Target.X,Target.Y};
+            O.Phase=N.IsMoving()?EHansaCargoWorldPhase::Traveling:EHansaCargoWorldPhase::Berthed;
+            if (O.SemanticId==Selected)
+            {
+                if(bSelectedShipWasMoving&&!N.IsMoving())NavigationFeedback=NSLOCTEXT("HansaShip","AnchoredFeedback","At anchor. Right-click connected water to sail again.");
+                bSelectedShipWasMoving=N.IsMoving();O.NavigationFeedback=NavigationFeedback;
+            }
+            // Preserve any cargo-ledger validation failure while overriding the route display.
+            E.StartProgress=0;E.ProgressPerTick=N.IsMoving()?1.:0.;E.LaneStart=0;E.LaneScale=1;
+            E.Path.Reset();
+            auto Position=Hansa::Game::LubeckPlacementGrid::GridToWorld(N.Cell,0);
+            const double Height=Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld())?WaterHeight(GetWorld(),Position):Dock.Z;
+            Position.Z=Height;E.Path.Add(Position);
+            if (N.IsMoving()) E.Path.Add(Hansa::Game::LubeckPlacementGrid::GridToWorld(N.Path[N.NextIndex],Height));
+            E.NavigationCell=N.Cell;
+            E.NavigationNextCell=N.IsMoving()?N.Path[N.NextIndex]:N.Cell;
+            const FEntry* Previous=PreviousEntries.FindByPredicate([&](const FEntry& Value)
+            {return Value.Observation.SemanticId==O.SemanticId;});
+            if((bSameTick || bPreserveNavigationPosition) && Previous && Previous->Observation.bFreeNavigation)
+            {
+                if(Previous->NavigationCell==E.NavigationCell && Previous->NavigationNextCell==E.NavigationNextCell)
+                {
+                    // Unrelated commands and repeated destinations must not restart interpolation.
+                    E.Path=Previous->Path;
+                    E.NavigationStartFraction=Previous->NavigationStartFraction;
+                    E.ProgressPerTick=Previous->ProgressPerTick;
+                }
+                else
+                {
+                    // Orders themselves advance simulation ticks. Continue from the displayed position,
+                    // then meet the new authoritative endpoint at the next tick (also for Stop).
+                    E.Path={Previous->Observation.Location,E.Path.Last()};
+                    E.NavigationStartFraction=TickFraction;
+                    E.ProgressPerTick=1.;
+                }
+            }
+            Outward=FVector(1,0,0);
+        }
         if(O.Phase!=EHansaCargoWorldPhase::Cancelled && O.PresentationFailure.IsEmpty())
             if(auto* Actor=Acquire(E,TEXT("Vehicle.Cog"),true))
             {FHansaRouteProjection SkinRoute; const FHansaRouteProjection* Applied=R;
-                if(R && (O.Phase==EHansaCargoWorldPhase::Loading || O.Phase==EHansaCargoWorldPhase::Unloading)) {SkinRoute=*R; SkinRoute.Lifecycle=EHansaRouteLifecycleState::AtStop; Applied=&SkinRoute;}
-                if(!Actor->ApplyVehicle(V,Applied))O.PresentationFailure=TEXT("Vehicle projection rejected"); else Actor->SetActorRotation((-Outward).Rotation());}
+                if(bPreserveNavigationPosition) Actor->RebaseHeadingClock(double(Tick)+TickFraction);
+                if (Free) { SkinRoute.VehicleId=V.Id;SkinRoute.OwnerId=V.OwnerId;SkinRoute.Mode=V.Mode;
+                    SkinRoute.Lifecycle=N.IsMoving()?EHansaRouteLifecycleState::Traveling:EHansaRouteLifecycleState::Inactive;Applied=&SkinRoute; }
+                if(!Free && R && (O.Phase==EHansaCargoWorldPhase::Loading || O.Phase==EHansaCargoWorldPhase::Unloading)) {SkinRoute=*R; SkinRoute.Lifecycle=EHansaRouteLifecycleState::AtStop; Applied=&SkinRoute;}
+                if(!Actor->ApplyVehicle(V,Applied))O.PresentationFailure=TEXT("Vehicle projection rejected"); else if(!Free) E.BerthHeading=(-Outward).Rotation();}
         Entries.Add(MoveTemp(E));
     }
     for(const auto& J:P.GetLogisticsJobs())
@@ -268,7 +346,7 @@ void AHansaCargoProjectionManager::Synchronize(const FHansaSimulationProjection&
     for(const FName Id:Stale)ReleaseActor(Id);
     PeakLocalWagons=FMath::Max(PeakLocalWagons,GetActiveLocalWagonCount());
     if(!Retained.Contains(Selected))Selected=NAME_None;
-    Sample(0);
+    Sample(TickFraction);
 }
 int32 AHansaCargoProjectionManager::GetActiveLocalWagonCount() const
 {
@@ -288,7 +366,10 @@ void AHansaCargoProjectionManager::Sample(double Fraction)
     for(auto& E:Entries)
     {
         auto& O=E.Observation;
-        O.Progress=FMath::Clamp(E.StartProgress+Fraction*E.ProgressPerTick,0.,1.);
+        const double EntryFraction=O.bFreeNavigation
+            ? FMath::Clamp((Fraction-E.NavigationStartFraction)/FMath::Max(1.-E.NavigationStartFraction,UE_SMALL_NUMBER),0.,1.)
+            : Fraction;
+        O.Progress=FMath::Clamp(E.StartProgress+EntryFraction*E.ProgressPerTick,0.,1.);
         const double LaneProgress=FMath::Clamp((O.Progress-E.LaneStart)/E.LaneScale,0.,1.);
         double Distance; FRotator Heading;
         O.Location=SamplePath(E.Path,LaneProgress,Distance,Heading);
@@ -302,7 +383,8 @@ void AHansaCargoProjectionManager::Sample(double Fraction)
             Actor->Tags.Remove(TEXT("City.Lubeck")); Actor->Tags.Remove(TEXT("City.Rostock")); Actor->Tags.AddUnique(O.CityId);
             Actor->SetActorHiddenInGame(!O.bVisible); Actor->SetActorEnableCollision(O.bVisible);
             Actor->SetActorLocation(O.Location);
-            if(E.Path.Num()>1)Actor->SetActorRotation(Heading);
+            Actor->SampleHeading(E.Path.Num()>1 ? TOptional<FRotator>(Heading) : E.BerthHeading,
+                double(O.SimulationTick)+Fraction);
             Actor->SetWheelTravelDistance(Distance);
             Actor->SetSelected(O.SemanticId==Selected);
         }
@@ -327,6 +409,7 @@ AHansaCargoVehiclePresentation* AHansaCargoProjectionManager::FindActor(FName Id
 bool AHansaCargoProjectionManager::SelectCargo(FName Id)
 {
     const auto* O=FindObservation(Id); if(!O || !O->bVisible)return false;
+    if (Selected!=Id) {NavigationFeedback=FText();bSelectedShipWasMoving=false;}
     Selected=Id; Sample(RuntimeHost.IsValid()?RuntimeHost->GetPresentationTickFraction():0.); return true;
 }
 
@@ -334,4 +417,18 @@ void AHansaCargoProjectionManager::ClearSelection()
 {
     Selected=NAME_None;
     for(const auto& Pair:Actors)if(IsValid(Pair.Value))Pair.Value->SetSelected(false);
+}
+
+
+bool AHansaCargoProjectionManager::MoveSelectedShip(FHansaGridCoordinate Target)
+{
+    const auto* Actor=FindActor(Selected);
+    if (!Actor || !Actor->GetVehicleId().IsValid() || !RuntimeHost.IsValid()) return false;
+    const auto Result=RuntimeHost->MoveShip(Actor->GetVehicleId(),Target);
+    NavigationFeedback=Result?NSLOCTEXT("HansaShip","SailingOrder","Course set. Resume time to sail; right-click another water destination to change course."):
+        Result.GetError()==EHansaCommandGatewayError::RouteStateInvalid?
+        NSLOCTEXT("HansaShip","BusyOrder","Pause the trade route at Lübeck before exploring. Return to the starting berth before activating a trade route."):
+        NSLOCTEXT("HansaShip","InvalidOrder","Cannot sail there. Choose connected open water with enough room for the hull.");
+    for (auto& E:Entries) if(E.Observation.SemanticId==Selected)E.Observation.NavigationFeedback=NavigationFeedback;
+    return Result.IsSuccess();
 }

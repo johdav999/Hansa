@@ -48,8 +48,10 @@ namespace Hansa::UI
 		void RebuildCategories(const FHansaBuildMenuSnapshot& Snapshot);
 		void RebuildChains(const FHansaBuildMenuSnapshot& Snapshot);
 		void RebuildCards(const FHansaBuildMenuSnapshot& Snapshot);
+		FReply ToggleDemolition();
 		FReply SelectCategory(EHansaBuildCategory Category);
 		FReply SelectChain(FName OutputGoodId);
+  FReply SelectTier(EHansaBuildTier Tier);
 		FReply SelectCard(FName BuildingId);
 		FReply Invoke(TFunction<bool()> Intent);
 		void MapWidget(const FString& Id, const TSharedPtr<SWidget>& Widget);
@@ -62,6 +64,7 @@ namespace Hansa::UI
 		FUiPreferences Preferences;
 		TArray<EHansaBuildCategory> CachedCategories;
 		TArray<FHansaBuildChainPresentation> CachedChains;
+  TOptional<EHansaBuildTier> LaidOutChainTier;
 		TArray<FName> CachedCardIds;
 		TArray<FString> ConnectorIds;
 		TSharedPtr<SWidget> ExpansionWidget;
@@ -81,6 +84,11 @@ namespace Hansa::UI
 		TSharedPtr<SWidget> RootWidget;
 		TSharedPtr<SWidget> CategoriesWidget;
 		TSharedPtr<SHorizontalBox> CategoryRow;
+  TSharedPtr<SScrollBox> TierScroll;
+  TSharedPtr<SHorizontalBox> TierRow;
+  TSharedPtr<STextBlock> EmptyTierText;
+  TMap<EHansaBuildTier, TSharedPtr<SHansaAction>> TierButtons;
+		TSharedPtr<SHansaAction> DemolitionButton;
 		TSharedPtr<SGridPanel> CardsGrid;
 		TSharedPtr<SUniformGridPanel> ChainsGrid;
 		TSharedPtr<SWidget> CardsWidget;

@@ -3,6 +3,7 @@
 #include "Commands/HansaGameplayCommandGateway.h"
 #include "Construction/HansaConstruction.h"
 #include "Definitions/HansaEconomicRegistry.h"
+#include "Misc/ConfigCacheIni.h"
 #include "Placement/HansaPlacement.h"
 #include "World/HansaRuntimeSimulationHost.h"
 
@@ -61,24 +62,91 @@ namespace
 
 	FString FormatFlow(const FHansaEconomicRegistry& Registry, const FHansaCompiledBuildingDefinition& Building)
 	{
-		TArray<FHansaCompiledGoodAmount> Inputs;
-		TArray<FHansaCompiledGoodAmount> Outputs;
+		TArray<FString> InputAlternatives;
+		FString CommonOutput;
+		bool bOutputsDiffer = false;
 		for (const FString& RecipeId : Building.RecipeIds)
 		{
 			if (const FHansaCompiledRecipeDefinition* Recipe = Registry.FindRecipe(RecipeId))
 			{
-				Inputs.Append(Recipe->Inputs);
-				Outputs.Append(Recipe->Outputs);
+				InputAlternatives.Add(Recipe->Inputs.IsEmpty() ? TEXT("Natural source") : FormatAmounts(Registry, Recipe->Inputs));
+				const FString Output = FormatAmounts(Registry, Recipe->Outputs);
+				if (CommonOutput.IsEmpty()) CommonOutput = Output;
+				else if (CommonOutput != Output) bOutputsDiffer = true;
 			}
 		}
-		if (Outputs.IsEmpty()) return Building.ConstructionPresentationPurpose;
-		const FString InputText = Inputs.IsEmpty() ? TEXT("Natural source") : FormatAmounts(Registry, Inputs);
-		return InputText + TEXT(" → ") + FormatAmounts(Registry, Outputs);
+		if (InputAlternatives.IsEmpty() || CommonOutput.IsEmpty()) return Building.ConstructionPresentationPurpose;
+		if (!bOutputsDiffer)
+		{
+			return FString::Join(InputAlternatives, TEXT(" or ")) + TEXT(" → ") + CommonOutput;
+		}
+		TArray<FString> FullFlows;
+		for (const FString& RecipeId : Building.RecipeIds)
+		{
+			if (const FHansaCompiledRecipeDefinition* Recipe = Registry.FindRecipe(RecipeId))
+			{
+				FullFlows.Add((Recipe->Inputs.IsEmpty() ? TEXT("Natural source") : FormatAmounts(Registry, Recipe->Inputs))
+					+ TEXT(" → ") + FormatAmounts(Registry, Recipe->Outputs));
+			}
+		}
+		return FString::Join(FullFlows, TEXT(" or "));
 	}
 
-	FString FormatTier(const FHansaCompiledBuildingDefinition& Building)
+	int32 BrowsingMaskForPopulation(const FString& Id)
 	{
-		if (!Building.ResidentPopulationTierId.IsEmpty()) return StableIdLeaf(Building.ResidentPopulationTierId);
+		if (Id == TEXT("PopulationTier.Laborer")) return 1;
+		if (Id == TEXT("PopulationTier.Artisan")) return 2;
+		if (Id == TEXT("PopulationTier.Merchant")) return 4;
+		return 0;
+	}
+
+    int32 AuthoredConstructionMask(const FString& Tier)
+    {
+        if (Tier == TEXT("DayLaborers")) return 1;
+        if (Tier == TEXT("Craftsmen")) return 2;
+        if (Tier == TEXT("Merchants")) return 4;
+        return 0;
+    }
+
+	int32 BrowsingMaskForWorkforce(const FHansaCompiledBuildingDefinition& Building)
+	{
+		// A chain belongs to the lowest workforce tier needed to operate it.
+		// Later stages may also require skilled workers; that staffing requirement
+		// must not duplicate the entire chain into the Craftsmen tab.
+		if (Building.LaborerWorkforce > 0) return 1;
+		if (Building.ArtisanWorkforce > 0) return 2;
+		return 7;
+	}
+
+	TMap<FString, int32> DeriveProductionChainTierMasks(const FHansaEconomicRegistry& Registry)
+	{
+		TMap<FString, int32> Masks;
+		for (const FHansaCompiledBuildingDefinition& Building : Registry.GetBuildings())
+		{
+			if (!Building.bShowInConstructionMenu || Building.ConstructionChainOutputGoodId.IsEmpty() || !Building.ConstructionTier.IsEmpty()) continue;
+			const int32 Candidate = BrowsingMaskForWorkforce(Building);
+			int32& Mask = Masks.FindOrAdd(Building.ConstructionChainOutputGoodId, Candidate);
+			if (Mask == 7 || Candidate < Mask) Mask = Candidate;
+		}
+        // A chain selector appears wherever one of its own cards belongs.
+        // Explicit cards never inherit the legacy chain workforce classification.
+        TMap<FString, int32> VisibleMasks;
+        for (const auto& Building : Registry.GetBuildings())
+        {
+            if (!Building.bShowInConstructionMenu || Building.ConstructionChainOutputGoodId.IsEmpty()) continue;
+            const int32 Authored = AuthoredConstructionMask(Building.ConstructionTier);
+            VisibleMasks.FindOrAdd(Building.ConstructionChainOutputGoodId) |=
+                Authored ? Authored : Masks.FindRef(Building.ConstructionChainOutputGoodId);
+        }
+        return VisibleMasks;
+    }
+
+ FString FormatTier(const FHansaCompiledBuildingDefinition& Building)
+	{
+		if (Building.ConstructionTier == TEXT("DayLaborers")) return TEXT("Day Laborers");
+        if (Building.ConstructionTier == TEXT("Craftsmen")) return TEXT("Craftsmen");
+        if (Building.ConstructionTier == TEXT("Merchants")) return TEXT("Merchants");
+        if (!Building.ResidentPopulationTierId.IsEmpty()) return StableIdLeaf(Building.ResidentPopulationTierId);
 		if (Building.ArtisanWorkforce > 0) return TEXT("Artisan");
 		if (Building.LaborerWorkforce > 0) return TEXT("Laborer");
 		return Building.ConstructionMenuCategory == TEXT("Harbor") ? TEXT("Harbor") : TEXT("Civic");
@@ -106,10 +174,12 @@ namespace
 	{
 		switch (Failure)
 		{
+		case EHansaPlacementFailure::NoNearbyTrees: return LOCTEXT("NoNearbyTrees", "No nearby trees");
 		case EHansaPlacementFailure::RoadRequired: return LOCTEXT("RoadRequired", "Road required");
 		case EHansaPlacementFailure::ShorelineRequired: return LOCTEXT("ShoreRequired", "Land and water access required");
 		case EHansaPlacementFailure::Occupied: return LOCTEXT("Occupied", "Footprint occupied");
 		case EHansaPlacementFailure::OutsideBounds: return LOCTEXT("Outside", "Outside buildable area");
+		case EHansaPlacementFailure::FoundationTooSteep: return LOCTEXT("FoundationSlope", "Ground too steep or uneven for this house");
 		case EHansaPlacementFailure::TerrainNotBuildable: return LOCTEXT("Terrain", "Terrain not buildable");
 		case EHansaPlacementFailure::None: return LOCTEXT("Valid", "Valid placement");
 		default: return FText::FromString(FString::Printf(TEXT("%s"), LexToString(Failure)));
@@ -120,10 +190,12 @@ namespace
 	{
 		switch (Failure)
 		{
+		case EHansaPlacementFailure::NoNearbyTrees: return LOCTEXT("TreeRangeRemedy", "Move within 48 m of standing trees, clear of the camp footprint, buildings and roads.");
 		case EHansaPlacementFailure::RoadRequired: return LOCTEXT("RoadRemedy", "Build next to a road.");
 		case EHansaPlacementFailure::ShorelineRequired: return LOCTEXT("ShoreRemedy", "Place across the shoreline with land on one side and water on the other.");
 		case EHansaPlacementFailure::Occupied: return LOCTEXT("OccupiedRemedy", "Choose an empty footprint.");
 		case EHansaPlacementFailure::OutsideBounds: return LOCTEXT("BoundsRemedy", "Move inside the Lübeck boundary.");
+		case EHansaPlacementFailure::FoundationTooSteep: return LOCTEXT("FoundationSlopeRemedy", "Choose fully loaded, gentler ground: at most 15 degrees and 1.2 m foundation height.");
 		case EHansaPlacementFailure::TerrainNotBuildable: return LOCTEXT("TerrainRemedy", "Choose buildable land.");
 		case EHansaPlacementFailure::None: return LOCTEXT("ConfirmRemedy", "Confirm to begin construction.");
 		default: return LOCTEXT("OtherRemedy", "Choose another target.");
@@ -173,7 +245,7 @@ const TCHAR* LexToString(const EHansaBuildCategory Category)
 
 bool operator==(const FHansaBuildCardPresentation& Left, const FHansaBuildCardPresentation& Right)
 {
-	return Left.StableId == Right.StableId && Left.Name.EqualTo(Right.Name) && Left.Category == Right.Category &&
+	return Left.BrowsingTierMask == Right.BrowsingTierMask && Left.StableId == Right.StableId && Left.Name.EqualTo(Right.Name) && Left.Category == Right.Category &&
 		Left.Tier.EqualTo(Right.Tier) && Left.Cost.EqualTo(Right.Cost) &&
 		Left.WorkforceAndUpkeep.EqualTo(Right.WorkforceAndUpkeep) && Left.Footprint.EqualTo(Right.Footprint) &&
 		Left.InputOutput.EqualTo(Right.InputOutput) && Left.LockedReason.EqualTo(Right.LockedReason) &&
@@ -184,7 +256,7 @@ bool operator==(const FHansaBuildCardPresentation& Left, const FHansaBuildCardPr
 
 bool operator==(const FHansaBuildMenuSnapshot& Left, const FHansaBuildMenuSnapshot& Right)
 {
-	return Left.Cards == Right.Cards && Left.Categories == Right.Categories && Left.ProductionChains == Right.ProductionChains &&
+	return Left.SelectedTier == Right.SelectedTier && Left.Cards == Right.Cards && Left.Categories == Right.Categories && Left.ProductionChains == Right.ProductionChains &&
 		Left.SelectedCategory == Right.SelectedCategory && Left.SelectedBuildingId == Right.SelectedBuildingId &&
 		Left.SelectedProductionChainOutputGoodId == Right.SelectedProductionChainOutputGoodId &&
 		Left.FocusedSemanticId == Right.FocusedSemanticId &&
@@ -197,10 +269,21 @@ bool operator==(const FHansaBuildMenuSnapshot& Left, const FHansaBuildMenuSnapsh
 		Left.RoadNewCellCount == Right.RoadNewCellCount &&
 		Left.RoadExistingCellCount == Right.RoadExistingCellCount &&
 		Left.RoadInvalidCellCount == Right.RoadInvalidCellCount &&
-		Left.bOpen == Right.bOpen && Left.bHasTarget == Right.bHasTarget && Left.bCanConfirm == Right.bCanConfirm &&
+		Left.bDemolitionMode == Right.bDemolitionMode && Left.bOpen == Right.bOpen && Left.bHasTarget == Right.bHasTarget && Left.bCanConfirm == Right.bCanConfirm &&
 		Left.bDraggingCard == Right.bDraggingCard && Left.bRoadDrawing == Right.bRoadDrawing &&
 		Left.bPointerOverWorld == Right.bPointerOverWorld &&
 		Left.bRepeat == Right.bRepeat && Left.bGridOverlay == Right.bGridOverlay && Left.bRoadOverlay == Right.bRoadOverlay;
+}
+
+const TCHAR* LexToString(const EHansaBuildTier Tier)
+{
+ switch (Tier)
+ {
+ case EHansaBuildTier::DayLaborers: return TEXT("DayLaborers");
+ case EHansaBuildTier::Craftsmen: return TEXT("Craftsmen");
+ case EHansaBuildTier::Merchants: return TEXT("Merchants");
+ default: return TEXT("Unknown");
+ }
 }
 
 UHansaBuildMenuPresentationModel::~UHansaBuildMenuPresentationModel() = default;
@@ -216,9 +299,22 @@ bool UHansaBuildMenuPresentationModel::BuildCatalogFromDefinitions(
 	OutChains.Reset();
 	OutError.Reset();
 	TSet<FString> SeenChainIds;
+	const TMap<FString, int32> ProductionChainTierMasks = DeriveProductionChainTierMasks(Registry);
+	bool bAllowDirectArtisanResidence = false;
+#if !UE_BUILD_SHIPPING
+	// Temporary playtest override; preserve authored progression and catalog hashes.
+	GConfig->GetBool(TEXT("Hansa.ConstructionTesting"), TEXT("AllowDirectArtisanResidence"),
+		bAllowDirectArtisanResidence, GEngineIni);
+#endif
+	bool bUseArtisanPlots = true;
+	GConfig->GetBool(TEXT("Hansa.Housing"), TEXT("UseArtisanPlots"), bUseArtisanPlots, GEngineIni);
+	const bool bHasArtisanPlot = Registry.FindBuilding(TEXT("Building.Residence.Artisan.Plot")) != nullptr;
 	for (const FHansaCompiledBuildingDefinition& Building : Registry.GetBuildings())
 	{
-		if (!Building.bShowInConstructionMenu) continue;
+        if (bHasArtisanPlot && Building.StableId == TEXT("Building.Residence.Artisan") && bUseArtisanPlots) continue;
+        if (Building.StableId == TEXT("Building.Residence.Artisan.Plot") && !bUseArtisanPlots) continue;
+		// Compound development stages are reached through their parcel inspector.
+        if (!Building.bShowInConstructionMenu || (Building.bUpgradeOnly && !Building.ResidentialCompoundId.IsEmpty())) continue;
 		FHansaBuildCardPresentation Card;
 		Card.StableId = FName(*Building.StableId);
 		Card.Name = FText::FromString(Building.DisplayName);
@@ -226,6 +322,22 @@ bool UHansaBuildMenuPresentationModel::BuildCatalogFromDefinitions(
 		Card.MenuOrder = Building.ConstructionMenuOrder;
 		Card.ProductionChainOutputGoodId = FName(*Building.ConstructionChainOutputGoodId);
 		Card.Tier = FText::FromString(FormatTier(Building));
+  if (!Building.ResidentPopulationTierId.IsEmpty())
+   Card.BrowsingTierMask = BrowsingMaskForPopulation(Building.ResidentPopulationTierId);
+		else if (Card.Category == EHansaBuildCategory::Production && !Building.ConstructionChainOutputGoodId.IsEmpty())
+			{
+            const int32 Authored = AuthoredConstructionMask(Building.ConstructionTier);
+            if (Authored) Card.BrowsingTierMask = Authored;
+            else
+            {
+                int32 LegacyMask = 7;
+                for (const auto& Peer : Registry.GetBuildings())
+                    if (Peer.bShowInConstructionMenu && Peer.ConstructionTier.IsEmpty() &&
+                        Peer.ConstructionChainOutputGoodId == Building.ConstructionChainOutputGoodId)
+                        LegacyMask = FMath::Min(LegacyMask, BrowsingMaskForWorkforce(Peer));
+                Card.BrowsingTierMask = LegacyMask;
+            }
+        }
 		TArray<FString> CostParts;
 		CostParts.Add(FString::Printf(TEXT("%lld pf"), static_cast<long long>(Building.ConstructionCostPfennig)));
 		const FString ResourceCosts = FormatAmounts(Registry, Building.ConstructionCosts);
@@ -234,9 +346,16 @@ bool UHansaBuildMenuPresentationModel::BuildCatalogFromDefinitions(
 		Card.WorkforceAndUpkeep = FText::FromString(FormatWorkforce(Building));
 		Card.Footprint = FText::FromString(FString::Printf(TEXT("%d × %d"), Building.FootprintWidthCells, Building.FootprintHeightCells));
 		Card.InputOutput = FText::FromString(FormatFlow(Registry, Building));
-		Card.bLocked = Building.bUpgradeOnly || (!Building.RequiredConstructionTechnologyId.IsEmpty() &&
+		if (Building.StableId == TEXT("Building.Residence.Laborer"))
+		{
+			Card.InputOutput = LOCTEXT("RandomLabourCourts", "Random labour court; cycles through the available versions in random order.");
+			Card.Footprint = LOCTEXT("RandomLabourFootprint", "12 × 12 m or 16 × 12 m; see placement preview");
+		}
+		const bool bUpgradeOnly = Building.bUpgradeOnly && !(bAllowDirectArtisanResidence &&
+			Building.StableId == TEXT("Building.Residence.Artisan"));
+		Card.bLocked = bUpgradeOnly || (!Building.RequiredConstructionTechnologyId.IsEmpty() &&
 			!CompletedTechnologyIds.Contains(Building.RequiredConstructionTechnologyId));
-		if (Building.bUpgradeOnly)
+		if (bUpgradeOnly)
 		{
 			Card.LockedReason = LOCTEXT("UpgradeOnlyCard", "Upgrade an eligible lower-tier building");
 		}
@@ -255,6 +374,7 @@ bool UHansaBuildMenuPresentationModel::BuildCatalogFromDefinitions(
 			Chain.OutputGoodId = FName(*Building.ConstructionChainOutputGoodId);
 			Chain.Name = FText::FromString(GoodName(Registry, Building.ConstructionChainOutputGoodId));
 			Chain.StageCount = Building.ConstructionChainStageCount;
+			Chain.BrowsingTierMask = ProductionChainTierMasks.FindRef(Building.ConstructionChainOutputGoodId);
 			OutChains.Add(MoveTemp(Chain));
 		}
 	}
@@ -334,6 +454,7 @@ void UHansaBuildMenuPresentationModel::SetOpen(const bool bOpen)
     if (bOpen && !bConstructionAllowed) return;
 	const FHansaBuildMenuSnapshot Previous = Snapshot;
 	Snapshot.bOpen = bOpen;
+	if (!bOpen) Snapshot.bDemolitionMode = false;
 	if (!bOpen && GetSimulationHost() != nullptr)
 	{
 		EndBuildingStroke();
@@ -359,6 +480,7 @@ bool UHansaBuildMenuPresentationModel::SelectCategory(const EHansaBuildCategory 
 	const FHansaBuildMenuSnapshot Previous = Snapshot;
 	EndBuildingStroke();
 	Snapshot.SelectedProductionChainOutputGoodId = NAME_None;
+	Snapshot.bDemolitionMode = false;
 	Snapshot.bOpen = true; Snapshot.SelectedCategory = Category; Snapshot.SelectedBuildingId = NAME_None;
 	Snapshot.bHasTarget = false; Snapshot.bCanConfirm = false; Snapshot.Feedback = EHansaPlacementFeedback::None;
 	Snapshot.bDraggingCard = false; Snapshot.bPointerOverWorld = false; Snapshot.FootprintCells.Reset();
@@ -366,12 +488,46 @@ bool UHansaBuildMenuPresentationModel::SelectCategory(const EHansaBuildCategory 
 	Runtime->Placement.Cancel(); PublishIfChanged(Previous); return true;
 }
 
+bool UHansaBuildMenuPresentationModel::SelectTier(const EHansaBuildTier Tier)
+{
+ if (!bConstructionAllowed || !GetSimulationHost() || static_cast<uint8>(Tier) > static_cast<uint8>(EHansaBuildTier::Merchants)) return false;
+ const FHansaBuildMenuSnapshot Previous = Snapshot;
+ EndBuildingStroke();
+ Runtime->Placement.Cancel();
+ Snapshot.SelectedTier = Tier;
+ Snapshot.bOpen = true;
+ Snapshot.bDemolitionMode = false;
+ Snapshot.SelectedBuildingId = NAME_None;
+ if (!IsChainVisible(Snapshot.SelectedProductionChainOutputGoodId))
+  Snapshot.SelectedProductionChainOutputGoodId = NAME_None;
+ Snapshot.bHasTarget = false;
+ Snapshot.bCanConfirm = false;
+ Snapshot.bDraggingCard = false;
+ Snapshot.bPointerOverWorld = false;
+ Snapshot.FootprintCells.Reset();
+ ResetRoadPreview(Snapshot);
+ Snapshot.Feedback = EHansaPlacementFeedback::None;
+ Snapshot.ValidationCause = FText::GetEmpty();
+ Snapshot.ValidationRemedy = FText::GetEmpty();
+ Snapshot.FocusedSemanticId = FName(*FString::Printf(TEXT("BuildMenu.Tier.%s"), LexToString(Tier)));
+ PublishIfChanged(Previous);
+ return true;
+}
+
+bool UHansaBuildMenuPresentationModel::IsChainVisible(const FName OutputGoodId) const
+{
+ const auto* Chain = Snapshot.ProductionChains.FindByPredicate(
+  [OutputGoodId](const auto& Value) { return Value.OutputGoodId == OutputGoodId; });
+ return Chain && (Chain->BrowsingTierMask & (1 << static_cast<uint8>(Snapshot.SelectedTier))) != 0;
+}
+
 bool UHansaBuildMenuPresentationModel::SelectProductionChain(const FName OutputGoodId)
 {
     if (!bConstructionAllowed) return false;
-	if (GetSimulationHost() == nullptr || !Snapshot.ProductionChains.ContainsByPredicate(
+	if (GetSimulationHost() == nullptr || !IsChainVisible(OutputGoodId) || !Snapshot.ProductionChains.ContainsByPredicate(
 		[OutputGoodId](const FHansaBuildChainPresentation& Chain) { return Chain.OutputGoodId == OutputGoodId; })) return false;
 	const FHansaBuildMenuSnapshot Previous = Snapshot;
+	Snapshot.bDemolitionMode = false;
 	Snapshot.bOpen = true; Snapshot.SelectedCategory = EHansaBuildCategory::Production;
 	EndBuildingStroke();
 	Snapshot.SelectedProductionChainOutputGoodId = OutputGoodId;
@@ -393,18 +549,76 @@ const FHansaBuildCardPresentation* UHansaBuildMenuPresentationModel::FindCard(co
 	return Snapshot.Cards.FindByPredicate([BuildingId](const FHansaBuildCardPresentation& Card) { return Card.StableId == BuildingId; });
 }
 
-bool UHansaBuildMenuPresentationModel::SelectBuilding(const FName BuildingId)
+bool UHansaBuildMenuPresentationModel::IsCardVisible(const FName BuildingId) const
+{
+	const auto* Card = FindCard(BuildingId);
+ if (!Card || !(Card->BrowsingTierMask & (1 << static_cast<uint8>(Snapshot.SelectedTier)))) return false;
+ // Families remain in the internal catalog for random placement and previews.
+	const auto* Host = GetSimulationHost();
+	const auto* Definition = Host ? Host->FindBuildingDefinition(BuildingId.ToString()) : nullptr;
+	return !(Definition && !Definition->ResidentialCompoundId.IsEmpty() &&
+		Definition->StableId.StartsWith(TEXT("Building.Residence.Laborer.")));
+}
+
+FName UHansaBuildMenuPresentationModel::GetSelectedCardId() const
+{
+	return bRandomLabourSelection && !Snapshot.SelectedBuildingId.IsNone()
+		? FName(TEXT("Building.Residence.Laborer")) : Snapshot.SelectedBuildingId;
+}
+
+FName UHansaBuildMenuPresentationModel::PickRandomLabourCompound()
+{
+	TArray<FName> Eligible;
+	const auto* Host = GetSimulationHost();
+	const auto* Registry = Host ? Host->GetEconomicRegistry() : nullptr;
+	if (!Registry) return NAME_None;
+	for (const auto& Card : Snapshot.Cards)
+	{
+		const auto* Definition = Registry->FindBuilding(Card.StableId.ToString());
+		if (Card.bAvailable && !Card.bLocked && Definition && Definition->CompoundStage == 1 &&
+			!Definition->ResidentialCompoundId.IsEmpty() &&
+			Definition->StableId.StartsWith(TEXT("Building.Residence.Laborer.")))
+		{
+			Eligible.Add(Card.StableId);
+		}
+	}
+	RemainingLabourCompounds.RemoveAll([&](FName Id) { return !Eligible.Contains(Id); });
+	if (RemainingLabourCompounds.IsEmpty()) RemainingLabourCompounds = MoveTemp(Eligible);
+	if (RemainingLabourCompounds.IsEmpty()) return NAME_None;
+	// Random without replacement within each pool, avoiding runs of identical courts.
+	// The selected stable definition is committed by the ordinary authoritative command.
+	const int32 Index = FMath::RandHelper(RemainingLabourCompounds.Num());
+	const FName Result = RemainingLabourCompounds[Index];
+	RemainingLabourCompounds.RemoveAtSwap(Index);
+	return Result;
+}
+
+bool UHansaBuildMenuPresentationModel::SelectBuilding(FName BuildingId)
 {
 	EndBuildingStroke();
     if (!bConstructionAllowed) return false;
 	UHansaRuntimeSimulationHost* Host = GetSimulationHost();
 	if (Host == nullptr) return false;
+	const bool bChooseRandomLabour = BuildingId == TEXT("Building.Residence.Laborer");
+	if (bChooseRandomLabour)
+	{
+		RefreshAvailability();
+		BuildingId = PickRandomLabourCompound();
+	}
 	const FHansaBuildCardPresentation* Selected = FindCard(BuildingId);
-	if (Selected == nullptr || Selected->bLocked || !Selected->bAvailable) return false;
+	if (Selected == nullptr || Selected->BrowsingTierMask == 0 || Selected->bLocked || !Selected->bAvailable) return false;
 	const auto DefinitionId = FHansaBuildingTypeId::TryParse(BuildingId.ToString());
 	if (!DefinitionId) return false;
 	const FHansaBuildMenuSnapshot Previous = Snapshot;
-	Snapshot.bOpen = true; Snapshot.SelectedCategory = Selected->Category; Snapshot.SelectedBuildingId = BuildingId;
+	Snapshot.bDemolitionMode = false;
+	bRandomLabourSelection = bChooseRandomLabour;
+	Snapshot.RotationQuarterTurns = 0;
+ // External inspect/favorite intents may select a building from another tier.
+ // Reveal its tab instead of leaving an active placement absent from the tray.
+ if (!(Selected->BrowsingTierMask & (1 << static_cast<uint8>(Snapshot.SelectedTier))))
+  for (uint8 Tier = 0; Tier < 3; ++Tier)
+   if (Selected->BrowsingTierMask & (1 << Tier)) { Snapshot.SelectedTier = static_cast<EHansaBuildTier>(Tier); break; }
+ Snapshot.bOpen = true; Snapshot.SelectedCategory = Selected->Category; Snapshot.SelectedBuildingId = BuildingId;
 	if (Selected->Category == EHansaBuildCategory::Production && !Selected->ProductionChainOutputGoodId.IsNone())
 	{
 		Snapshot.SelectedProductionChainOutputGoodId = Selected->ProductionChainOutputGoodId;
@@ -454,7 +668,7 @@ bool UHansaBuildMenuPresentationModel::EndCardDrag(const bool bReleasedOverWorld
 {
 	if (!Snapshot.bDraggingCard || GetSimulationHost() == nullptr) return false;
 	const FName BuildingId = Snapshot.SelectedBuildingId;
-	const FName ReturnFocus = CardSemanticId(BuildingId);
+	const FName ReturnFocus = CardSemanticId(GetSelectedCardId());
 	if (bReleasedOverWorld && Snapshot.bCanConfirm)
 	{
 		Snapshot.bDraggingCard = false;
@@ -660,6 +874,7 @@ bool UHansaBuildMenuPresentationModel::ToggleRepeatIntent()
 	const FName Selected = Snapshot.SelectedBuildingId; Runtime->Placement.Cancel();
 	const auto DefinitionId = FHansaBuildingTypeId::TryParse(Selected.ToString());
 	Runtime->Placement.SelectBuilding(Host->GetCityId(), DefinitionId.Value, Selected == TEXT("Building.Road"), Snapshot.bRepeat);
+	for (int32 Turn = 0; Turn < Snapshot.RotationQuarterTurns; ++Turn) Runtime->Placement.RotateClockwise();
 	Snapshot.bHasTarget = false; Snapshot.bCanConfirm = false; Snapshot.Feedback = EHansaPlacementFeedback::None;
 	ResetRoadPreview(Snapshot);
 	PublishIfChanged(Previous); return true;
@@ -754,8 +969,12 @@ bool UHansaBuildMenuPresentationModel::ConfirmIntent(const bool bKeepSelection)
 		? BuildRoadConstructionSpecs() : Runtime->Placement.BuildConfirmationSpecs();
 	if (!Snapshot.bCanConfirm || Specs.IsEmpty()) return false;
 	const FHansaBuildMenuSnapshot Previous = Snapshot;
-	const FHansaCommandGatewayResult Result = Host->PlaceBuildings(Specs);
-	if (!Result)
+	const bool bSubmittedToServer = static_cast<bool>(NetworkPlaceIntent);
+	const FHansaCommandGatewayResult Result = bSubmittedToServer
+		? FHansaCommandGatewayResult()
+		: Host->PlaceBuildings(Specs);
+	const bool bAccepted = bSubmittedToServer ? NetworkPlaceIntent(Specs) : Result.IsSuccess();
+	if (!bAccepted)
 	{
 		Snapshot.Feedback = EHansaPlacementFeedback::Invalid; Snapshot.bCanConfirm = false;
 		if (Result.GetPlacementValidation().IsSet())
@@ -765,16 +984,89 @@ bool UHansaBuildMenuPresentationModel::ConfirmIntent(const bool bKeepSelection)
 		}
 		PublishIfChanged(Previous); return false;
 	}
-	Snapshot.LastResult = bRoadDrawing
-		? FText::Format(LOCTEXT("RoadPlacedResult", "Road committed · {0} new cells"), FText::AsNumber(RoadCellCount))
-		: FText::Format(LOCTEXT("PlacedResult", "Construction committed · {0}"), FText::FromName(Snapshot.SelectedBuildingId));
+	Snapshot.LastResult = bSubmittedToServer
+		? LOCTEXT("ConstructionPending", "Waiting for the authoritative server.")
+		: bRoadDrawing
+			? FText::Format(LOCTEXT("RoadPlacedResult", "Road committed · {0} new cells"), FText::AsNumber(RoadCellCount))
+			: FText::Format(LOCTEXT("PlacedResult", "Construction committed · {0}"), FText::FromName(Snapshot.SelectedBuildingId));
 	if (!bKeepSelection) Runtime->Placement.OnConfirmationSucceeded(); Snapshot.bHasTarget = false; Snapshot.bCanConfirm = false;
 	Snapshot.Feedback = EHansaPlacementFeedback::None; Snapshot.ValidationCause = FText::GetEmpty(); Snapshot.ValidationRemedy = FText::GetEmpty();
 	Snapshot.FootprintCells.Reset(); Snapshot.bPointerOverWorld = false;
 	ResetRoadPreview(Snapshot);
 	if (!Snapshot.bRepeat && !bKeepSelection) Snapshot.SelectedBuildingId = NAME_None;
 	RefreshAvailability();
+	if (bRandomLabourSelection && (Snapshot.bRepeat || bKeepSelection))
+	{
+		Snapshot.SelectedBuildingId = PickRandomLabourCompound();
+		Runtime->Placement.Cancel();
+		if (!Snapshot.SelectedBuildingId.IsNone())
+		{
+			Runtime->Placement.SelectBuilding(Host->GetCityId(),
+				FHansaBuildingTypeId::TryParse(Snapshot.SelectedBuildingId.ToString()).Value, false, Snapshot.bRepeat);
+			for (int32 Turn = 0; Turn < Snapshot.RotationQuarterTurns; ++Turn) Runtime->Placement.RotateClockwise();
+		}
+	}
 	PublishIfChanged(Previous); return true;
+}
+
+bool UHansaBuildMenuPresentationModel::ToggleDemolitionIntent()
+{
+	if (!bConstructionAllowed || !GetSimulationHost()) return false;
+	const bool bEnable = !Snapshot.bDemolitionMode;
+	CancelIntent();
+	const FHansaBuildMenuSnapshot Previous = Snapshot;
+	Snapshot.bDemolitionMode = bEnable;
+	Snapshot.bOpen = bEnable;
+	Snapshot.FocusedSemanticId = TEXT("BuildMenu.Demolition");
+	Snapshot.ValidationCause = bEnable ? LOCTEXT("DemolitionReady", "Demolition active: click a building to remove it.") : FText::GetEmpty();
+	Snapshot.ValidationRemedy = bEnable ? LOCTEXT("DemolitionCancel", "No refund for completed buildings. Right-click or Escape to cancel.") : FText::GetEmpty();
+	Snapshot.LastResult = FText::GetEmpty();
+	PublishIfChanged(Previous);
+	return true;
+}
+
+bool UHansaBuildMenuPresentationModel::DemolishBuildingIntent(const int64 BuildingValue)
+{
+	UHansaRuntimeSimulationHost* Host = GetSimulationHost();
+	if (!Snapshot.bDemolitionMode || !bConstructionAllowed || !Host) return false;
+	const FHansaBuildMenuSnapshot Previous = Snapshot;
+	bool bSuccess = false;
+	if (BuildingValue <= 0)
+	{
+		Snapshot.ValidationCause = LOCTEXT("DemolitionNoBuilding", "No building here. Click a building to demolish it.");
+	}
+	else
+	{
+		if (NetworkDemolishIntent)
+		{
+			bSuccess = NetworkDemolishIntent(BuildingValue);
+			Snapshot.ValidationCause = bSuccess
+				? LOCTEXT("DemolitionPending", "Removal requested. Waiting for the authoritative server.")
+				: LOCTEXT("DemolitionSubmitFailed", "The removal request could not be sent. Reconnect and try again.");
+			PublishIfChanged(Previous);
+			return bSuccess;
+		}
+		const auto Id = FHansaBuildingId::TryCreate(static_cast<uint64>(BuildingValue));
+		auto Result = Host->RemoveBuilding(Id.Value);
+		// Unfinished construction uses its existing cancellation/refund contract.
+		if (Result.GetError() == EHansaCommandGatewayError::ConstructionStateInvalid)
+			Result = Host->CancelConstruction(Id.Value);
+		bSuccess = Result.IsSuccess();
+		if (bSuccess) Snapshot.ValidationCause = LOCTEXT("DemolitionDone", "Building removed. Click another building to demolish it.");
+		else if (Result.GetError() == EHansaCommandGatewayError::NotAuthorized)
+			Snapshot.ValidationCause = LOCTEXT("DemolitionOwnership", "Only buildings owned by your house can be demolished.");
+		else if (Result.GetError() == EHansaCommandGatewayError::TargetHasCargoObligations)
+			Snapshot.ValidationCause = LOCTEXT("DemolitionCargo", "Cannot demolish while deliveries are active. Wait for them to finish, then try again.");
+		else if (Result.GetError() == EHansaCommandGatewayError::TargetHasDependents)
+			Snapshot.ValidationCause = LOCTEXT("DemolitionDependents", "This building has attached production, storage or residents that the simulation cannot remove yet. Choose another building.");
+		else if (Result.GetError() == EHansaCommandGatewayError::TargetNotFound)
+			Snapshot.ValidationCause = LOCTEXT("DemolitionMissing", "This building no longer exists. Choose another building.");
+		else Snapshot.ValidationCause = FText::Format(LOCTEXT("DemolitionRejected", "Cannot demolish this building: {0}."), FText::FromString(LexToString(Result.GetError())));
+	}
+	Snapshot.Feedback = bSuccess ? EHansaPlacementFeedback::None : EHansaPlacementFeedback::Invalid;
+	Snapshot.LastResult = Snapshot.ValidationCause;
+	PublishIfChanged(Previous);
+	return bSuccess;
 }
 
 bool UHansaBuildMenuPresentationModel::CancelIntent()
@@ -782,7 +1074,8 @@ bool UHansaBuildMenuPresentationModel::CancelIntent()
 	EndBuildingStroke();
 	if (GetSimulationHost() == nullptr) return false;
 	const FHansaBuildMenuSnapshot Previous = Snapshot;
-	const FName ReturnFocus = Snapshot.SelectedBuildingId.IsNone() ? Snapshot.FocusedSemanticId : CardSemanticId(Snapshot.SelectedBuildingId);
+	const FName ReturnFocus = Snapshot.SelectedBuildingId.IsNone() ? Snapshot.FocusedSemanticId : CardSemanticId(GetSelectedCardId());
+	Snapshot.bDemolitionMode = false;
 	Runtime->Placement.Cancel(); Snapshot.SelectedBuildingId = NAME_None; Snapshot.bHasTarget = false;
 	Snapshot.bCanConfirm = false; Snapshot.Feedback = EHansaPlacementFeedback::None;
 	Snapshot.bDraggingCard = false; Snapshot.bPointerOverWorld = false; Snapshot.FootprintCells.Reset();
@@ -807,9 +1100,21 @@ void UHansaBuildMenuPresentationModel::RefreshValidation()
 		RefreshRoadValidation();
 		return;
 	}
-	const TArray<FHansaPlacementSpec> Specs = Runtime->Placement.BuildConfirmationSpecs();
-	if (Specs.IsEmpty()) return;
-	const FHansaPlacementValidationResult Validation = Host->ValidatePlacement(Specs[0]);
+ auto Specs = Runtime->Placement.BuildConfirmationSpecs();
+ if(Specs.IsEmpty())return;
+ const auto* CompoundBuilding=Host->FindBuildingDefinition(Snapshot.SelectedBuildingId.ToString());
+ if(CompoundBuilding && CompoundBuilding->CompoundRoadFrontMask)
+ {
+  // Try explicit quarter turns, keeping the current choice when already valid.
+  // The server validates exactly this orientation and the rotated enlarged footprint again.
+  for(int32 Attempt=0;Attempt<4;++Attempt)
+  {
+   if(Host->ValidatePlacement(Specs[0]).CanPlace())break;
+   Runtime->Placement.RotateClockwise();Specs=Runtime->Placement.BuildConfirmationSpecs();
+  }
+  Snapshot.RotationQuarterTurns=static_cast<int32>(Runtime->Placement.GetRotation());
+ }
+ const FHansaPlacementValidationResult Validation=Host->ValidatePlacement(Specs[0]);
 	const EHansaPlacementFailure Failure = Validation.GetPrimaryFailure();
 	Snapshot.FootprintCells.Reset();
 	for (const FHansaGridCoordinate Cell : Validation.GetOccupiedCells()) Snapshot.FootprintCells.Add(FIntPoint(Cell.X, Cell.Y));
@@ -1062,4 +1367,20 @@ void UHansaBuildMenuPresentationModel::SetConstructionAllowed(bool Allowed)
     if(bConstructionAllowed==Allowed)return;
     if(!Allowed){CancelIntent();SetOpen(false);}
     bConstructionAllowed=Allowed;
+}
+
+uint8 UHansaBuildMenuPresentationModel::GetAdjacentRoadMaskForPreview() const
+{
+ const auto* Host=GetSimulationHost();if(!Host)return 0;
+ const auto* Definition=Host->FindBuildingDefinition(Snapshot.SelectedBuildingId.ToString());
+ if(!Definition||Definition->ResidentialCompoundId.IsEmpty())return 0;
+ uint8 Mask=0;const FIntPoint Offsets[]={{1,0},{0,1},{-1,0},{0,-1}};
+ for(const FIntPoint Cell:Snapshot.FootprintCells)for(int32 Side=0;Side<4;++Side)
+  if(Host->IsOwnedRoadCell({Cell.X+Offsets[Side].X,Cell.Y+Offsets[Side].Y}))Mask|=1u<<Side;
+ return Mask;
+}
+
+uint64 UHansaBuildMenuPresentationModel::GetParcelSeedForPreview() const
+{
+ const auto* Host=GetSimulationHost();return Host?Host->GetNextParcelSeed():0;
 }

@@ -74,6 +74,8 @@ void SetTextureEncoding(UTexture2D* Texture, bool bSRGB, TextureCompressionSetti
 }
 }
 
+#include "HansaGroundSurfaceAuthoring.inl"
+
 UHansaRoadMaterialCommandlet::UHansaRoadMaterialCommandlet()
 {
     IsClient=false; IsServer=false; IsEditor=true; LogToConsole=true;
@@ -199,6 +201,7 @@ int32 UHansaRoadMaterialCommandlet::Main(const FString& Params)
     *Road->GetExpressionInputForProperty(MP_EmissiveColor)=FExpressionInput();
     for(UMaterialExpression* E:Road->GetExpressions())
         if(auto* Out=Cast<UMaterialExpressionRuntimeVirtualTextureOutput>(E)) Out->BaseColor.Connect(0,Albedo);
+    ConfigureBrokenRoadShoulders(Road);
     Road->PostEditChange(); if(!SaveRoadAsset(Road))return 4;
     // These existing Landscape masters keep their original inputs and parameter instances.
     // Only the road writes into this RVT; Landscapes only read it, avoiding feedback.
@@ -267,6 +270,7 @@ int32 UHansaRoadMaterialCommandlet::Main(const FString& Params)
             RoughSwitch->No.Connect(0,TerrainRoughness);RoughBlend->A.Connect(0,TerrainRoughness);
             *Land->GetExpressionInputForProperty(MP_Normal)=FExpressionInput();
         }
+        if(!ConfigureGroundVariation(Land))return 10;
         Land->PostEditChange();if(!SaveRoadAsset(Land))return 8;
     }
     return 0;

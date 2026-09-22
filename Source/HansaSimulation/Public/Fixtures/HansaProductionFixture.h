@@ -41,6 +41,9 @@ namespace Hansa::Simulation
 		[[nodiscard]] FHansaCommandGatewayResult SetProductionActive(FHansaProductionId ProductionId, bool bActive);
 		/** Exercises the same explicit residence-progression command available to every command origin. */
 		[[nodiscard]] FHansaCommandGatewayResult UpgradeResidence(FHansaBuildingId BuildingId);
+        [[nodiscard]] FHansaCommandGatewayResult SetProductionMode(FHansaProductionId ProductionId, FHansaRecipeId RecipeId, bool bFallbackToFresh);
+        [[nodiscard]] FHansaCommandGatewayResult UpgradeProduction(FHansaProductionId ProductionId);
+        [[nodiscard]] FHansaCommandGatewayResult SetHouseholdAvailability(FHansaBuildingId MarketBuildingId, bool bAvailable);
 		/** Ordinary typed route commands used by controlled automation and the native route editor. */
 		[[nodiscard]] FHansaCommandGatewayResult EditRoute(FHansaRouteId RouteId, TArray<FHansaRouteStop> Stops);
 		[[nodiscard]] FHansaCommandGatewayResult SetRouteActive(FHansaRouteId RouteId, bool bActive);

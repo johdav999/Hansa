@@ -17,7 +17,9 @@ namespace Hansa::Simulation
 			TConstArrayView<FHansaRouteStop> Stops,
 			TConstArrayView<FHansaCityState> Cities,
 			const FHansaInventoryLedger& Inventories,
-			const FHansaEconomicRegistry& Registry);
+			const FHansaEconomicRegistry& Registry,
+			TConstArrayView<FHansaForeignPresenceState> Presences = {},
+			TConstArrayView<FHansaTradeStationState> Stations = {});
 
 		[[nodiscard]] static int32 FindTravelTicks(
 			const FHansaCompiledRouteDefinition& Definition,
@@ -31,10 +33,14 @@ namespace Hansa::Simulation
 			FHansaInventoryLedger& Inventories,
 			const FHansaPlacementState& Placement,
 			TConstArrayView<FHansaBuildingState> Buildings,
+			TConstArrayView<FHansaCityMarketState> Markets,
+			TConstArrayView<FHansaHouseResearchState> Research,
 			const FHansaEconomicRegistry& Registry,
 			FHansaSimulationTick Tick,
 			uint64& InOutPublishedEventCount,
-			TArray<FHansaDomainEvent>& OutEvents);
+			TArray<FHansaDomainEvent>& OutEvents,
+			TConstArrayView<FHansaForeignPresenceState> Presences = {},
+			TConstArrayView<FHansaTradeStationState> Stations = {});
 
 	private:
 		static void PublishRouteEvent(

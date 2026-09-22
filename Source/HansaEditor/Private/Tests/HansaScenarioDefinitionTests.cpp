@@ -47,6 +47,21 @@ bool FHansaScenarioDefinitionValidationTest::RunTest(const FString& Parameters)
 		const FHansaEconomicRegistryCompileResult Result = FHansaEconomicDefinitionCompiler::Compile(ScenarioDefinitionTestsRaw(Definitions));
 		TestTrue(TEXT("The authored single scenario and its three endings compile"), Result.IsValid());
 		TestEqual(TEXT("The scenario exposes exactly three bounded victory paths"), Result.Registry.GetVictories().Num(), 3);
+		const Hansa::Simulation::FHansaCompiledScenarioDefinition* Scenario = Result.Registry.FindScenario(TEXT("Scenario.LubeckGrainShortageV1"));
+		TestNotNull(TEXT("Compiled scenario is available"), Scenario);
+		if (Scenario != nullptr)
+		{
+			TestEqual(TEXT("Supported old content gains the complete eight-slot roster"), Scenario->MultiplayerSlots.Num(), 8);
+			TestEqual(TEXT("Primary slot has a stable authored identity"), Scenario->MultiplayerSlots[0].SlotId, FString(TEXT("HouseSlot.Primary")));
+		}
+	}
+	{
+		auto Definitions = Hansa::Editor::EconomicDefinitions::CreateMvpDefinitionSet(GetTransientPackage());
+		UHansaScenarioDefinition* Scenario = Find<UHansaScenarioDefinition>(Definitions, TEXT("Scenario.LubeckGrainShortageV1"));
+		if (Scenario != nullptr) Scenario->MultiplayerSlots[1].HouseId = Scenario->MultiplayerSlots[0].HouseId;
+		const auto Result = FHansaEconomicDefinitionCompiler::Compile(ScenarioDefinitionTestsRaw(Definitions));
+		TestFalse(TEXT("Duplicate authored house slots fail closed"), Result.IsValid());
+		TestTrue(TEXT("Invalid slot diagnostic is stable"), HasCode(Result, TEXT("HSA-SCENARIO-004")));
 	}
 	{
 		auto Definitions = Hansa::Editor::EconomicDefinitions::CreateMvpDefinitionSet(GetTransientPackage());

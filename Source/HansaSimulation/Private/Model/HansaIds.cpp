@@ -8,18 +8,23 @@ namespace Hansa::Simulation
 			TEXT("Good"),
 			TEXT("Recipe"),
 			TEXT("Building"),
+            TEXT("Compound"),
 			TEXT("Need"),
 			TEXT("PopulationTier"),
 			TEXT("Vehicle"),
 			TEXT("City"),
 			TEXT("Region"),
+			TEXT("ProductionChain"),
 			TEXT("Technology"),
 			TEXT("Event"),
 			TEXT("Victory"),
 			TEXT("Scenario"),
 			TEXT("ScenarioObjective"),
 			TEXT("Route"),
-			TEXT("AITuning")
+			TEXT("AITuning"),
+			TEXT("PresenceCapability"),
+			TEXT("PresenceStage"),
+			TEXT("CityTradePolicy")
 		};
 
 		bool IdsIsAsciiLetter(const TCHAR Character)

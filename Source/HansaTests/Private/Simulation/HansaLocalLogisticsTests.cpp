@@ -624,8 +624,8 @@ bool FHansaLocalLogisticsPhysicalMarketAccessTest::RunTest(const FString& Parame
 	MultipleMarkets.Placement.Placements.Add(Placement(6, TEXT("Building.Market"), 1, 1));
 	const FHansaLogisticsRoadPathProjection ClosestMarketPath = Query(MultipleMarkets, 2, 3);
 	TestTrue(TEXT("A city inventory selects an eligible physical market"), ClosestMarketPath.bMarketEligible);
-	TestEqual(TEXT("A legacy city inventory stays bound to the lowest stable market"),
-		ClosestMarketPath.SelectedMarketBuildingId, LocalLogisticsTestsEntity<FHansaBuildingId>(5));
+	TestEqual(TEXT("Shared city inventory uses the closest completed market"),
+		ClosestMarketPath.SelectedMarketBuildingId, LocalLogisticsTestsEntity<FHansaBuildingId>(6));
 	const FHansaLogisticsRoadPathProjection StableTiePath = Query(MoveTemp(MultipleMarkets), 1, 2);
 	TestEqual(TEXT("Equal delivery routes use stable market building id as the tie-breaker"),
 		StableTiePath.SelectedMarketBuildingId, LocalLogisticsTestsEntity<FHansaBuildingId>(5));
@@ -937,6 +937,94 @@ bool FHansaLocalLogisticsHashDeterminismTest::RunTest(const FString& Parameters)
 		Forward.CreateReadOnlyAccess(Definitions).BuildStateHashReport().Find(EHansaStateHashSubsystem::Logistics);
 	TestNotNull(TEXT("Logistics has an independently diagnosable state-hash subsystem"), LogisticsHash);
 	return true;
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaMarketRoadRangeTest,
+ "Hansa.Simulation.Logistics.MarketRoadRange", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaMarketRoadRangeTest::RunTest(const FString& Parameters)
+{
+ using namespace Hansa::Simulation;
+ using namespace Hansa::Tests::LocalLogistics;
+ auto Base = MakeEconomicRegistry();
+ auto Buildings = Base.GetBuildings();
+ FHansaCompiledBuildingDefinition Market;
+ Market.StableId = TEXT("Building.Market"); Market.SchemaVersion = 5; Market.bProvidesMarketAccess = true;
+ Market.MaximumMarketRoadDistanceCells = 6;
+ Buildings.Add(Market);
+ FHansaEconomicRegistry Registry(Base.GetGoods(), Base.GetRecipes(), Buildings, Base.GetRegistryHash());
+ auto Init = MakeInitialization();
+ auto Query = [&](const FHansaSimulationInitialization& I, uint64 Source, uint64 Destination)
+ {
+  auto State = Require(FHansaSimulationState::TryCreate(I));
+  auto Definitions = Require(FHansaSimulationDefinitionContext::TryCreate(
+   Definition<FHansaScenarioId>(TEXT("Scenario.RangeTest")), Registry.GetRegistryHash(), Registry));
+  return State.CreateReadOnlyAccess(Definitions).QueryLogisticsRoadPath(
+   LocalLogisticsTestsEntity<FHansaInventoryId>(Source), LocalLogisticsTestsEntity<FHansaInventoryId>(Destination));
+ };
+ auto Boundary = Query(Init,2,3);
+ TestTrue(TEXT("Exactly six road steps including entrances is in range"),Boundary.bMarketEligible);
+ TestEqual(TEXT("Boundary route length"),Boundary.RoadDistanceCells,6);
+ TestEqual(TEXT("Warehouse beyond range cannot deliver"),Query(Init,1,3).Failure,EHansaLogisticsRoadPathFailure::MarketNotInRange);
+ TestEqual(TEXT("Market cannot send to out-of-range warehouse"),Query(Init,3,1).Failure,EHansaLogisticsRoadPathFailure::MarketNotInRange);
+ Buildings.Last().MaximumMarketRoadDistanceCells=5;
+ Registry=FHansaEconomicRegistry(Base.GetGoods(),Base.GetRecipes(),Buildings,Base.GetRegistryHash());
+ TestEqual(TEXT("One road step over limit is rejected"),Query(Init,2,3).Failure,EHansaLogisticsRoadPathFailure::MarketNotInRange);
+ Init.Buildings.Add(CompletedBuilding(6,TEXT("Building.Market")));
+ Init.Placement.Placements.Add(Placement(6,TEXT("Building.Market"),1,1));
+ TestTrue(TEXT("New market immediately serves existing shared city inventory"),Query(Init,2,3).bMarketEligible);
+ TestEqual(TEXT("Shared stock routes through new nearby market"),Query(Init,2,3).SelectedMarketBuildingId,LocalLogisticsTestsEntity<FHansaBuildingId>(6));
+ TestTrue(TEXT("Shared stock delivers in reverse through new market"),Query(Init,3,2).bMarketEligible);
+ Init.Inventories[2]=CityMarketInventory(0,3,5);
+ Init.Inventories.Add(CityMarketInventory(0,5,6));
+ TestTrue(TEXT("Building a closer market restores delivery"),Query(Init,2,5).bMarketEligible);
+ TestEqual(TEXT("Closer market cannot confer access to distant market stock"),Query(Init,2,3).Failure,EHansaLogisticsRoadPathFailure::MarketNotInRange);
+ Algo::Reverse(Init.Buildings);Algo::Reverse(Init.Placement.Placements);Algo::Reverse(Init.Inventories);
+ TestEqual(TEXT("Discovery order preserves selected physical market"),Query(Init,2,5).SelectedMarketBuildingId,LocalLogisticsTestsEntity<FHansaBuildingId>(6));
+ // A long winding road must not use straight-line proximity.
+ Init=MakeInitialization();
+ auto& Map=Init.Placement.Maps[0];Map.BoundsMin.Y=-2;
+ for(int32 X=0;X<=7;++X)for(int32 Y=-2;Y<0;++Y)
+  Map.Cells.Add({{X,Y},EHansaPlacementTerrain::Land,LocalLogisticsTestsEntity<FHansaHouseId>(1),false});
+ Init.Buildings.RemoveAll([](const auto& B){return B.Id==LocalLogisticsTestsEntity<FHansaBuildingId>(14);});
+ Init.Placement.Placements.RemoveAll([](const auto& B){return B.BuildingId==LocalLogisticsTestsEntity<FHansaBuildingId>(14);});
+ uint64 Id=30;
+ for(const FHansaGridCoordinate Cell:TArray<FHansaGridCoordinate>{{3,-1},{3,-2},{4,-2},{5,-2},{5,-1}})
+ {Init.Buildings.Add(CompletedBuilding(Id,TEXT("Building.Road")));Init.Placement.Placements.Add(Placement(Id++,TEXT("Building.Road"),Cell.X,Cell.Y));}
+ Buildings.Last().MaximumMarketRoadDistanceCells=6;
+ Registry=FHansaEconomicRegistry(Base.GetGoods(),Base.GetRecipes(),Buildings,Base.GetRegistryHash());
+ TestEqual(TEXT("Nearby market with a long detour is out of range"),Query(Init,2,3).Failure,EHansaLogisticsRoadPathFailure::MarketNotInRange);
+ Init.Buildings.Add(CompletedBuilding(14,TEXT("Building.Road")));
+ Init.Placement.Placements.Add(Placement(14,TEXT("Building.Road"),4,0));
+ Init.Inventories[2]=CityMarketInventory(300);
+ Init.LocalLogisticsRequests={Request(1,3,2,100)};
+ auto Definitions=Require(FHansaSimulationDefinitionContext::TryCreate(
+  Definition<FHansaScenarioId>(TEXT("Scenario.RangePause")),Registry.GetRegistryHash(),Registry,
+  Require(FHansaPlacementTopology::TryCreate(Init.Placement.Maps))));
+ auto State=Require(FHansaSimulationState::TryCreate(Init,Definitions.GetPlacementTopologyShared()));FHansaSimulationTransientCache Cache;
+ TestTrue(TEXT("In-range delivery dispatches"),Step(State,Definitions,Cache));
+ TestTrue(TEXT("In-range cargo is picked up"),Step(State,Definitions,Cache));
+ TestTrue(TEXT("Remove shortcut through gameplay command"),RemoveBuilding(State,Definitions,Cache,14).IsSuccess());
+ auto Jobs=State.CreateReadOnlyAccess(Definitions).BuildLogisticsJobProjection();
+ if(TestTrue(TEXT("Delivery retained"),!Jobs.IsEmpty()))
+ {
+  TestEqual(TEXT("Over-range detour pauses loaded cargo"),Jobs[0].Status,EHansaLogisticsJobStatus::PausedInTransit);
+  TestEqual(TEXT("Range is the pause cause"),Jobs[0].PauseReason,EHansaLogisticsRoadPathFailure::MarketNotInRange);
+  TestEqual(TEXT("Cargo remains conserved in job"),Jobs[0].CargoQuantity.GetRawValue(),int64(100));
+  FHansaSaveSnapshot Snapshot;Snapshot.State=State;Snapshot.BuildVersion=TEXT("MarketRange");
+  Snapshot.SavedUtc=TEXT("2026-09-16T00:00:00Z");Snapshot.DisplayName=TEXT("Range pause");
+  Snapshot.Players={{7,LocalLogisticsTestsEntity<FHansaHouseId>(1)}};
+  TArray<uint8> Bytes;const auto Encoded=FHansaSaveEnvelope::Encode(Snapshot,Definitions,Bytes);
+  if(TestTrue(*Encoded.Message,Encoded.IsSuccess()))
+  {FHansaSaveSnapshot Loaded;const auto Decoded=FHansaSaveEnvelope::Decode(Bytes,Definitions,Loaded);
+   TestTrue(*Decoded.Message,Decoded.IsSuccess());}
+  TestTrue(TEXT("Restore short route"),PlaceRoad(State,Definitions,Cache,80,4,0).IsSuccess());
+  for(int32 Tick=0;Tick<12;++Tick)TestTrue(TEXT("Recovery tick"),Step(State,Definitions,Cache));
+  Jobs=State.CreateReadOnlyAccess(Definitions).BuildLogisticsJobProjection();
+  TestEqual(TEXT("Restored range completes same delivery"),Jobs[0].Status,EHansaLogisticsJobStatus::Completed);
+ }
+
+ return !HasAnyErrors();
 }
 
 #endif

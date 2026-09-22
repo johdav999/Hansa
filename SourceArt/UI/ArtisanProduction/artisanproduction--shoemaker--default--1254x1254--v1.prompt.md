@@ -1,0 +1,5 @@
+# shoemaker
+
+Mode: built-in ImageGen generate. Requested 1024 square. Generated 1254x1254. Master retained. Inspection: native subject and silhouette accepted; display variant QA pending.
+
+One transparent construction icon for Hansa: a compact medieval Hanseatic shoemaker live-work house, cream lime plaster with dark oak framing, steep orange-red clay tiled gable roof, two storeys, small shuttered windows. A clearly visible open ground-floor counter near the doorway displays three pairs of simple brown leather turnshoes and wooden lasts; small hanging timber sign with a shoe silhouette and absolutely no letters. Original plausible northern German medieval workshop, no modern footwear or machinery, no fantasy, no people, no street or terrain slab. Realistically painted miniature, three-quarter elevated front-right view, soft upper-left light, muted warm materials, match Smithy/Tannery Hansa construction icon family. Compact legible shape on dark navy, transparent clean alpha no fringe. Request native1024x1024, 15 percent transparent margins. Single shoemaker building only.

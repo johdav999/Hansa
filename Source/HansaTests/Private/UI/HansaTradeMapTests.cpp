@@ -11,6 +11,9 @@
 #include "UI/SHansaRootHud.h"
 #include "UI/SHansaTradeMap.h"
 #include "World/HansaRuntimeSimulationHost.h"
+#include "HansaTradeJourneySupport.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Widgets/SWindow.h"
 
 namespace
 {
@@ -83,6 +86,9 @@ bool FHansaTradeMapSemanticsResponsiveEvidenceTest::RunTest(const FString& Param
 	TestTrue(TEXT("Map geometry is native"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Canvas")) != nullptr && TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Canvas"))->State.Value == TEXT("native"));
 	TestNotNull(TEXT("Lübeck has a stable semantic city ID"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.City.City_Lubeck")));
 	TestNotNull(TEXT("Sea route has a stable semantic route ID"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Route.1")));
+	TestNotNull(TEXT("City capability mode is an ordinary semantic control"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.City.Filter")));
+	TestNotNull(TEXT("Selected-good mode is an ordinary semantic control"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Good.Filter")));
+	TestNotNull(TEXT("City search is an ordinary semantic control"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.City.Search")));
 	const auto* RouteStateNode = TradeMapTestsFindNode(Nodes, TEXT("TradeMap.Editor.RouteState"));
 	const auto* RouteActionNode = TradeMapTestsFindNode(Nodes, TEXT("TradeMap.Editor.ToggleActive"));
 	TestTrue(TEXT("Selected stopped route exposes an explicit state"),
@@ -96,7 +102,17 @@ bool FHansaTradeMapSemanticsResponsiveEvidenceTest::RunTest(const FString& Param
 		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Editor.Quantity.Increase")) &&
 		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Editor.Reserve.Increase")) &&
 		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Editor.Save")) &&
-		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Editor.ToggleActive")));
+		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Editor.ToggleActive")) &&
+		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.City.Filter")) &&
+		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Good.Filter")) &&
+		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.City.Search")) &&
+		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Route.Page.Previous")) &&
+		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Route.Page.Next")));
+	TestTrue(TEXT("City search accepts a non-drag deterministic intent"),Model->SetCitySearchIntent(TEXT("Rostock")));
+	TestEqual(TEXT("City search narrows the visible marker projection"),Model->GetSnapshot().Cities.Num(),1);
+	TestEqual(TEXT("City search reports the complete matching count"),Model->GetSnapshot().MatchingCityCount,1);
+	TestTrue(TEXT("City search can be cleared"),Model->SetCitySearchIntent(TEXT("")));
+	TestEqual(TEXT("Clearing city search restores the four-city fixture"),Model->GetSnapshot().Cities.Num(),4);
 	TestEqual(TEXT("720p uses compact composition"), Model->GetSnapshot().bCompact, true);
 	Screen->SetPresentationSize(FIntPoint(1920,1080));
 	TestEqual(TEXT("1080p restores wide schedule/legend composition"), Model->GetSnapshot().bCompact, false);
@@ -125,6 +141,7 @@ bool FHansaTradeMapRuntimeCommandCommitTest::RunTest(const FString& Parameters)
 	{
 		AddError(Error); return false;
 	}
+	if (!TestTrue(TEXT("Reserve automation research completed for command fixture"), Hansa::Tests::TradeJourney::UnlockReserveAutomation(Host.Get()))) return false;
 	const FHansaEconomicRegistry* Registry = Host->GetEconomicRegistry();
 	const auto BeforeProjection = Host->BuildProjection();
 	if (Registry == nullptr || !BeforeProjection) return false;
@@ -172,6 +189,72 @@ bool FHansaTradeMapRuntimeCommandCommitTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Unavailable action publishes a plain-language remedy"),
 		Model->GetSnapshot().EditorStatus.ToString().Contains(TEXT("Wait until")));
 	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaTradeMapSectionNavigationTest,
+    "Hansa.UI.TradeMap.SectionNavigation.NativeScreens",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter | EAutomationTestFlags::NonNullRHI)
+
+bool FHansaTradeMapSectionNavigationTest::RunTest(const FString& Parameters)
+{
+    using namespace Hansa::UI;
+    using namespace Hansa::Automation;
+    (void)Parameters;
+    TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>());
+    FString Error;
+    if(!TestTrue(TEXT("Runtime catalog loads"),Host->InitializeForLubeck(nullptr,Error))){AddError(Error);return false;}
+    const auto Projection=Host->BuildProjection();
+    if(!Projection||!Host->GetEconomicRegistry()||!FSlateApplication::IsInitialized())return false;
+    TStrongObjectPtr<UHansaTradeMapPresentationModel> Model(NewObject<UHansaTradeMapPresentationModel>());
+    Model->InitializeDefaults();Model->BindRuntime(Host.Get());Model->ApplyProjection(Projection.Value,*Host->GetEconomicRegistry());Model->Open();
+    TestFalse(TEXT("Office review is not offered before establishing a station"),Model->GetSnapshot().bCanPresenceUpgradeAction);
+    TestTrue(TEXT("Office lock explains the required station"),Model->GetSnapshot().PresenceUpgradeAction.ToString().Contains(TEXT("active trade station")));
+    auto Screen=SNew(SHansaTradeMap).Model(Model.Get());
+    auto Window=SNew(SWindow).Title(FText::FromString(TEXT("Trade section regression"))).ClientSize(FVector2D(1280,720)).SizingRule(ESizingRule::FixedSize).SupportsMaximize(false).SupportsMinimize(false);
+    Window->SetContent(Screen);FSlateApplication::Get().AddWindow(Window,true);
+    auto Draw=[&]{FSlateApplication::Get().Tick();FSlateApplication::Get().ForceRedrawWindow(Window);};
+    FHansaNativeScreenshotService Screenshots;
+    for(const FIntPoint Size:{FIntPoint(1280,720),FIntPoint(1920,1080),FIntPoint(2730,888)})
+    {
+        Screen->SetPresentationSize(Size);Window->Resize(FVector2D(Size.X,Size.Y));Draw();Draw();
+        for(const TCHAR* Section:{TEXT("Route"),TEXT("Presence"),TEXT("Specialization"),TEXT("Orders")})
+        {
+            const FString Id=TEXT("TradeMap.Navigate.")+FString(Section);
+            TestTrue(TEXT("Section shortcut is controller reachable"),Screen->GetControllerFocusOrder().Contains(Id));
+            TestTrue(TEXT("Section shortcut opens even when progression is locked"),Screen->ActivateSemanticId(Id));Draw();Draw();
+            auto Nodes=Screen->GetSemanticSnapshot();
+            for(const TCHAR* Other:{TEXT("Route"),TEXT("Presence"),TEXT("Specialization"),TEXT("Orders")})
+            {
+                const auto* Node=TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Navigate.")+FString(Other));
+                TestTrue(TEXT("All shortcuts stay visible after scrolling"),Node&&Node->State.bVisible&&Node->State.bEnabled);
+            }
+            if(FString(Section)==TEXT("Orders"))
+            {
+                const auto* Node=TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Orders.Status"));
+                TestTrue(TEXT("Unavailable orders reveal their prerequisite instead of disappearing"),Node&&Node->State.bVisible&&Node->State.Value.Contains(TEXT("Establish and fund")));
+            }
+            // The evidence service intentionally supports only the two MVP sizes.
+            // Ultrawide still runs the same native layout, navigation and clipping assertions.
+            if(!FHansaNativeScreenshotService::IsSupportedSize(Size))continue;
+            FHansaScreenshotContext Context;
+            Context.BundleId=FString::Printf(TEXT("trade-sections-%s-%dx%d"),Section,Size.X,Size.Y);
+            Context.EvidenceSuiteId=TEXT("TradeSectionNavigation");Context.ScreenId=TEXT("TradeMap.Root");
+            Context.CaptureMethod=TEXT("IsolatedSlate.TakeScreenshot.NativeSize");Context.bRequireVisualVariation=true;
+            Context.StructuralAssertions={TEXT("persistentSectionNavigation=true")};Context.bStructuralAssertionsPassed=!HasAnyErrors();
+            const auto Capture=Screenshots.Capture(Size,Context,[&](const FIntPoint& Requested,TArray<FColor>& Pixels){FIntVector CapturedSize;return FSlateApplication::Get().TakeScreenshot(Screen,FIntRect(0,0,Requested.X,Requested.Y),Pixels,CapturedSize)&&CapturedSize.X==Requested.X&&CapturedSize.Y==Requested.Y;});
+            TestTrue(TEXT("Native section screenshot captured"),Capture.IsSuccess());
+        }
+        if(Model->CanPresenceSpecializationIntent(TEXT("Warehouse")))
+        {
+            TestTrue(TEXT("Specialization is keyboard focusable"),Screen->FocusSemanticId(TEXT("TradeMap.Presence.Specialization.Warehouse")));Draw();Draw();
+            const auto Nodes=Screen->GetSemanticSnapshot();const auto* Node=TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Presence.Specialization.Warehouse"));
+            TestTrue(TEXT("Keyboard focus reveals a previously buried presence control"),Node&&Node->State.bVisible&&Node->State.bFocused);
+        }
+    }
+    TestTrue(TEXT("Route creation begins normally"),Model->BeginCreateIntent());
+    TestFalse(TEXT("Section navigation cannot abandon an unsaved route draft"),Screen->ActivateSemanticId(TEXT("TradeMap.Navigate.Presence")));
+    FSlateApplication::Get().RequestDestroyWindow(Window);
+    return !HasAnyErrors();
 }
 
 #endif

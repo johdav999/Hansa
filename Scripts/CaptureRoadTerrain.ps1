@@ -14,7 +14,7 @@ try {
     ) -LogPath (Join-Path $artifacts 'Command.log') -FailureMessage 'Road terrain capture process failed.' | Out-Null
 } finally { [Environment]::SetEnvironmentVariable('UE_SKIP_UBT_SDK_SETUP',$previousSdk,'Process') }
 $log=Get-Content -Raw -LiteralPath $unrealLog
-if($log -notmatch 'Test Completed. Result=\{Success\} Name=\{RealViewport\}' -or $log -match 'Result=\{Fail') {
+if($log -notmatch 'Test Completed. Result=\{Success\} Name=\{RealViewport\}' -or $log -match 'Result=\{Fail|Failed to compile Material|Expression is part of a cycle') {
     throw "Road terrain capture failed: $unrealLog"
 }
 Write-Output "Road terrain capture passed: $artifacts"

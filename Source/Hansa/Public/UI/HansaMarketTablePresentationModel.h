@@ -2,9 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Model/HansaIds.h"
+#include "Network/HansaMultiplayerTypes.h"
+#include "Trade/HansaTrade.h"
 #include "UObject/Object.h"
 
 #include "HansaMarketTablePresentationModel.generated.h"
+
+class UHansaRuntimeSimulationHost;
 
 namespace Hansa::Simulation
 {
@@ -162,6 +166,20 @@ struct HANSA_API FHansaSelectedGoodPresentation final
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText RouteActionLabel;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText RouteDisabledReason;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText LastActionResult;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText SpotTradeHeading;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText SpotTradeVehicle;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText SpotTradeQuantity;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText SpotTradeQuote;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText SpotTradeRemedy;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText SpotTradeResult;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") FText SpotTradeConfirmLabel;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") int64 SpotTradeVehicleValue = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") int64 SpotTradeQuantityRaw = 5000;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") int64 SpotTradeReviewedMarketUpdateTick = -1;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") int64 SpotTradeReviewedUnitPrice = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") bool bSpotTradeVisible = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") bool bSpotTradeBuy = true;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") bool bSpotTradeCanSubmit = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") TArray<FHansaMarketChartPointPresentation> History;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") TArray<FHansaMarketFactorPresentation> Factors;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") TArray<FHansaMarketRelationshipPresentation> Consumers;
@@ -215,6 +233,11 @@ class HANSA_API UHansaMarketTablePresentationModel final : public UObject
 
 public:
 	void InitializeDefaults();
+	void BindRuntime(UHansaRuntimeSimulationHost* RuntimeHost);
+	void SetNetworkCommandIntent(TFunction<bool(const FHansaClientCommandIntent&)> InIntent) { NetworkCommandIntent = MoveTemp(InIntent); }
+#if WITH_DEV_AUTOMATION_TESTS
+	void SetSpotTradeTestContext(Hansa::Simulation::FHansaCityDefinitionId CityId, Hansa::Simulation::FHansaVehicleId VehicleId, TFunction<Hansa::Simulation::FHansaSpotTradeQuoteProjection(Hansa::Simulation::EHansaSpotTradeSide,Hansa::Simulation::FHansaQuantity)> QuoteProvider);
+#endif
 	bool ApplyProjection(
 		const Hansa::Simulation::FHansaSimulationProjection& Projection,
 		const Hansa::Simulation::FHansaEconomicRegistry& Registry,
@@ -228,6 +251,9 @@ public:
 	bool SelectGoodIntent(FName GoodStableId);
 	bool TogglePinIntent();
 	bool BeginRouteIntent();
+	bool CycleSpotTradeSideIntent();
+	bool AdjustSpotTradeQuantityIntent(int64 DeltaMilliUnits);
+	bool ConfirmSpotTradeIntent();
 	void SetFocusedSemanticId(FName SemanticId);
 	bool RevealRelationshipIntent(bool bProducer, FName StableId);
 	FHansaMarketBuildingRequested& OnBuildingRequested() { return BuildingRequested; }
@@ -241,6 +267,7 @@ public:
 private:
 	void RebuildVisibleRows();
 	void RebuildSelectedGood();
+	void RebuildSpotTrade();
 	void PublishIfChanged(const FHansaMarketTableSnapshot& Previous);
 
 	UPROPERTY(VisibleAnywhere, Category = "Hansa|UI|Market")
@@ -248,6 +275,16 @@ private:
 
 	TMap<FName, FHansaSelectedGoodPresentation> DetailByGood;
 	TSet<FName> PinnedGoods;
+	TWeakObjectPtr<UHansaRuntimeSimulationHost> Runtime;
+	TFunction<bool(const FHansaClientCommandIntent&)> NetworkCommandIntent;
+	Hansa::Simulation::FHansaCityDefinitionId CurrentCityId;
+	Hansa::Simulation::FHansaVehicleId SpotTradeVehicleId;
+	int64 SpotTradeQuantityRaw = 5000;
+	bool bSpotTradeBuy = true;
+	FText SpotTradeResult;
+#if WITH_DEV_AUTOMATION_TESTS
+	TFunction<Hansa::Simulation::FHansaSpotTradeQuoteProjection(Hansa::Simulation::EHansaSpotTradeSide,Hansa::Simulation::FHansaQuantity)> SpotTradeQuoteForTesting;
+#endif
 
 	uint64 Revision = 0;
 	FHansaMarketTableChanged Changed;

@@ -1,9 +1,12 @@
 #include "Studio/SHansaAuthoringStudio.h"
+#include "Definitions/HansaResidentialCompoundDefinition.h"
+#include "Compounds/HansaCompoundAuthoring.h"
 
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Definitions/HansaDefinitionBase.h"
 #include "Definitions/HansaEconomicDefinitionCompiler.h"
+#include "Definitions/HansaEconomicImpact.h"
 #include "Definitions/HansaEconomicDefinitions.h"
 #include "Definitions/HansaPopulationDefinitions.h"
 #include "Definitions/HansaResearchDefinitions.h"
@@ -509,6 +512,45 @@ FReply SHansaAuthoringStudio::ValidateSelectedDefinition()
 {
 	SchemaRegistry.Refresh();
 	RebuildValidationResults();
+ if (SelectedDefinition.IsValid()) if (const auto* B = Cast<UHansaBuildingDefinition>(SelectedDefinition->Definition.Get()))
+ {
+  if (B->ConstructionTier != EHansaConstructionTier::Legacy)
+  {
+   ValidationItems.Add(MakeShared<FHansaStudioValidationItem>(FHansaStudioValidationItem{
+    EHansaSchemaDiagnosticSeverity::Information, TEXT("Info"), TEXT("HSA-CONSTRUCTION-TIER-IMPACT"), TEXT("ConstructionTier"),
+    FString::Printf(TEXT("This card belongs only to %s. Workforce and consumer needs do not move it to another tab."), *StaticEnum<EHansaConstructionTier>()->GetNameStringByValue(static_cast<int64>(B->ConstructionTier))),
+    TEXT("Changing tier changes catalog identity and card availability. Recheck chain navigation, saved catalog compatibility and controller focus.")}));
+   ValidationListView->RequestListRefresh();
+  }
+  if (B->bProvidesMarketAccess)
+  {
+   ValidationItems.Add(MakeShared<FHansaStudioValidationItem>(FHansaStudioValidationItem{
+    EHansaSchemaDiagnosticSeverity::Information, TEXT("Info"), TEXT("HSA-MARKET-RANGE-IMPACT"), TEXT("MaximumMarketRoadDistanceCells"),
+    FString::Printf(TEXT("This market serves buildings within %d completed-road cells, including entrance steps. Changing reach affects deliveries, household consumption, migration and world warnings."), B->MaximumMarketRoadDistanceCells),
+    TEXT("Check long/detoured routes and alternate markets. Shorter range can pause loaded cargo; authored non-default values change the catalogue hash and save compatibility.")}));
+   ValidationListView->RequestListRefresh();
+  }
+ }
+ if(SelectedDefinition.IsValid())if(const auto* C=Cast<UHansaResidentialCompoundDefinition>(SelectedDefinition->Definition.Get()))
+ {
+  TArray<UHansaDefinitionBase*> Definitions;
+  for(const auto& Item:AllDefinitions)Definitions.Add(Item->Definition.Get());
+  for(const FString& Impact:Hansa::Editor::Compounds::DescribeImpact(*C,Definitions))
+   ValidationItems.Add(MakeShared<FHansaStudioValidationItem>(FHansaStudioValidationItem{EHansaSchemaDiagnosticSeverity::Information,TEXT("Info"),TEXT("HSA-COMPOUND-IMPACT"),TEXT("ResidentialCompound"),Impact,TEXT("Use HansaCompoundPresentation in an isolated editor preview; validate before promotion.")}));
+  ValidationListView->RequestListRefresh();
+ }
+ if (SelectedDefinition.IsValid() && SelectedDefinition->Definition.IsValid())
+ {
+  TArray<const UHansaDefinitionBase*> Definitions;
+  for (const auto& Item : AllDefinitions) if (Item->Definition.IsValid()) Definitions.Add(Item->Definition.Get());
+  for (const auto& Impact : Hansa::Editor::EconomicDefinitions::DescribeEconomicImpact(SelectedDefinition->Definition->StableDefinitionId, Definitions))
+   ValidationItems.Add(MakeShared<FHansaStudioValidationItem>(FHansaStudioValidationItem{
+    EHansaSchemaDiagnosticSeverity::Information, TEXT("Info"), TEXT("HSA-ECONOMIC-IMPACT"), Impact,
+    TEXT("This authored definition directly depends on the selected definition."),
+    TEXT("Recompile and validate the full catalog; recheck consumption, production and trade. Content changes require explicit save compatibility.")}));
+  ValidationListView->RequestListRefresh();
+ }
+
 	return FReply::Handled();
 }
 
@@ -700,7 +742,7 @@ void SHansaAuthoringStudio::RebuildValidationResults()
 			AddDefinitionIssue(Issue);
 		}
 
-		if (SelectedDefinition->Definition->IsA<UHansaGoodDefinition>() ||
+		if (SelectedDefinition->Definition->IsA<UHansaResidentialCompoundDefinition>() || SelectedDefinition->Definition->IsA<UHansaGoodDefinition>() ||
 			SelectedDefinition->Definition->IsA<UHansaRecipeDefinition>() ||
 			SelectedDefinition->Definition->IsA<UHansaBuildingDefinition>() ||
 			SelectedDefinition->Definition->IsA<UHansaNeedDefinition>() ||
@@ -712,7 +754,7 @@ void SHansaAuthoringStudio::RebuildValidationResults()
 			TArray<const UHansaDefinitionBase*> EconomicDefinitions;
 			for (const TSharedPtr<FHansaDefinitionListItem>& Item : AllDefinitions)
 			{
-				if (Item->Definition->IsA<UHansaGoodDefinition>() ||
+				if (Item->Definition->IsA<UHansaResidentialCompoundDefinition>() || Item->Definition->IsA<UHansaGoodDefinition>() ||
 					Item->Definition->IsA<UHansaRecipeDefinition>() ||
 					Item->Definition->IsA<UHansaBuildingDefinition>() ||
 					Item->Definition->IsA<UHansaNeedDefinition>() ||

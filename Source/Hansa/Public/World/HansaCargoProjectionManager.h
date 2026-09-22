@@ -46,6 +46,13 @@ struct HANSA_API FHansaCargoWorldObservation
     UPROPERTY(BlueprintReadOnly) FVector Location = FVector::ZeroVector;
     UPROPERTY(BlueprintReadOnly) bool bVisible = false;
     UPROPERTY(BlueprintReadOnly) FString PresentationFailure;
+    UPROPERTY(BlueprintReadOnly) bool bFreeNavigation = false;
+    UPROPERTY(BlueprintReadOnly) bool bNavigationMoving = false;
+    UPROPERTY(BlueprintReadOnly) int64 CapacityMilliUnits = 0;
+    UPROPERTY(BlueprintReadOnly) int64 UpkeepPfennigPerTick = 0;
+    UPROPERTY(BlueprintReadOnly) FIntPoint NavigationTarget = FIntPoint::ZeroValue;
+    UPROPERTY(BlueprintReadOnly) FIntPoint HomeWaterCell = FIntPoint::ZeroValue;
+    UPROPERTY(BlueprintReadOnly) FText NavigationFeedback;
 };
 
 /** Non-replicated projection owner. Its expandable pool never feeds actor state back into simulation. */
@@ -57,7 +64,7 @@ public:
     AHansaCargoProjectionManager();
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     void Synchronize(const Hansa::Simulation::FHansaSimulationProjection& Projection,
-        UHansaRuntimeSimulationHost& Host, AHansaLubeckWorldFoundation& Foundation);
+        UHansaRuntimeSimulationHost& Host, AHansaLubeckWorldFoundation& Foundation, bool bPreserveNavigationPosition = false);
     void Sample(double TickFraction);
     void SetRostockVisible(bool bVisible);
     UFUNCTION(BlueprintPure, Category="Hansa|World|Cargo") TArray<FHansaCargoWorldObservation> QueryCargo() const;
@@ -66,6 +73,7 @@ public:
     UFUNCTION(BlueprintPure, Category="Hansa|World|Cargo") int32 GetActiveLocalWagonCount() const;
     UFUNCTION(BlueprintPure, Category="Hansa|World|Cargo") int32 GetPooledLocalWagonCount() const;
     UFUNCTION(BlueprintPure, Category="Hansa|World|Cargo") int32 GetPeakLocalWagonCount() const { return PeakLocalWagons; }
+    bool MoveSelectedShip(Hansa::Simulation::FHansaGridCoordinate Target);
     void ClearSelection();
     const FHansaCargoWorldObservation* FindObservation(FName Id) const;
     AHansaCargoVehiclePresentation* FindActor(FName Id) const;
@@ -77,12 +85,16 @@ private:
     {
         FHansaCargoWorldObservation Observation;
         TArray<FVector> Path;
+        TOptional<FRotator> BerthHeading;
         double StartProgress = 0;
         double ProgressPerTick = 0;
         double LaneStart = 0;
         double LaneScale = 1;
         double LateralOffsetCentimetres = 0;
         double LongitudinalOffsetCentimetres = 0;
+        double NavigationStartFraction = 0;
+        Hansa::Simulation::FHansaGridCoordinate NavigationCell;
+        Hansa::Simulation::FHansaGridCoordinate NavigationNextCell;
     };
     void ResetActors();
     void ReleaseActor(FName SemanticId);
@@ -96,5 +108,7 @@ private:
     UPROPERTY(EditDefaultsOnly, Category="Hansa|World|Cargo", meta=(ClampMin="1")) int32 MaximumLocalWagonActors = 128;
     int32 PeakLocalWagons = 0;
     FName Selected;
+    FText NavigationFeedback;
+    bool bSelectedShipWasMoving = false;
     bool bRostockVisible = false;
 };

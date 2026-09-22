@@ -1,4 +1,6 @@
 #include "World/HansaRuntimeSimulationHost.h"
+#include "World/HansaCompoundGround.h"
+#include "Definitions/HansaEconomicDefinitions.h"
 #include "World/HansaPresentationClock.h"
 #include "World/HansaCargoProjectionManager.h"
 
@@ -18,12 +20,22 @@ using namespace Hansa::Simulation;
 
 struct FHansaRuntimeSimulationState final
 {
+	struct FAIHouse final
+	{
+		FHansaHouseId HouseId;
+		uint64 PrincipalId = 0;
+		FHansaMerchantAIController Controller;
+	};
+
 	FHansaSimulationDefinitionContext Definitions;
 	FHansaSimulationState State;
 	FHansaSimulationTransientCache Cache;
 	FHansaHouseId HouseId;
 	FHansaHouseId RivalHouseId;
-	FHansaMerchantAIController MerchantAI;
+	TArray<FHansaHouseId> HouseIds;
+	TArray<FHansaHouseStartOpportunity> StartingOpportunities;
+	FHansaHouseControlRoster HouseControl;
+	TArray<FAIHouse> AIHouses;
 	FHansaScenarioEvaluator ScenarioEvaluator;
 	FHansaCityDefinitionId CityId;
 	TArray<FString> SaveMigrationHistory;
@@ -47,17 +59,23 @@ namespace
 		TEXT("Seconds between economy diagnostic snapshots; 0 disables logging."));
 
 	template <typename TPayload>
-	FHansaGameplayCommand MakeRuntimeCommand(const FHansaRuntimeSimulationState& Runtime, const TPayload& Payload)
+	FHansaGameplayCommand MakeRuntimeCommand(const FHansaRuntimeSimulationState& Runtime,
+		const TPayload& Payload, const FHansaCommandAuthorityContext& Authority)
 	{
 		const FHansaSimulationReadOnlyAccess ReadOnly = Runtime.State.CreateReadOnlyAccess(Runtime.Definitions);
 		FHansaCommandHeader Header;
 		Header.CommandId = FHansaCommandId::TryCreate(Runtime.NextCommandId).Value;
-		Header.Authority.IssuingHouseId = Runtime.HouseId;
-		Header.Authority.PrincipalId = 1;
-		Header.Authority.Origin = EHansaCommandOrigin::PlayerInput;
+		Header.Authority = Authority;
 		Header.RequestedExecutionTick = ReadOnly.GetClock().GetTick();
 		Header.GlobalSequence = ReadOnly.GetLastProcessedCommandSequence() + 1;
 		return FHansaGameplayCommand::Create(Header, Payload);
+	}
+
+	template <typename TPayload>
+	FHansaGameplayCommand MakeRuntimeCommand(const FHansaRuntimeSimulationState& Runtime, const TPayload& Payload)
+	{
+		return MakeRuntimeCommand(Runtime, Payload,
+			{ Runtime.HouseId, 1, EHansaCommandOrigin::PlayerInput });
 	}
 
 	template <typename TPayload>
@@ -74,6 +92,15 @@ namespace
 	FHansaCommandGatewayResult ExecuteRuntimeCommand(FHansaRuntimeSimulationState& Runtime, const TPayload& Payload)
 	{
 		const FHansaGameplayCommand Command = MakeRuntimeCommand(Runtime, Payload);
+		return FHansaGameplayCommandGateway::ExecuteTick(
+			Runtime.State, Runtime.Definitions, MakeArrayView(&Command, 1), Runtime.Cache);
+	}
+
+	template <typename TPayload>
+	FHansaCommandGatewayResult ExecuteRuntimeCommand(FHansaRuntimeSimulationState& Runtime,
+		const FHansaCommandAuthorityContext& Authority, const TPayload& Payload)
+	{
+		const FHansaGameplayCommand Command = MakeRuntimeCommand(Runtime, Payload, Authority);
 		return FHansaGameplayCommandGateway::ExecuteTick(
 			Runtime.State, Runtime.Definitions, MakeArrayView(&Command, 1), Runtime.Cache);
 	}
@@ -138,6 +165,21 @@ bool UHansaRuntimeSimulationHost::InitializeForLubeck(
 	Runtime->State = MoveTemp(ScenarioState.State);
 	Runtime->HouseId = ScenarioState.HouseId;
 	Runtime->RivalHouseId = ScenarioState.RivalHouseId;
+	Runtime->HouseIds = MoveTemp(ScenarioState.HouseIds);
+	Runtime->StartingOpportunities = MoveTemp(ScenarioState.StartingOpportunities);
+	TArray<FHansaHouseControlState> Controls;
+	for (int32 Index = 0; Index < Runtime->HouseIds.Num(); ++Index)
+	{
+		const FHansaHouseId RosterHouseId = Runtime->HouseIds[Index];
+		Controls.Add({RosterHouseId, Index == 0 ? EHansaHouseController::Dormant : EHansaHouseController::AI,
+			FHansaParticipantId(), {true, true}, 1});
+		if (Index > 0) Runtime->AIHouses.Add({RosterHouseId, static_cast<uint64>(100 + Index), {}});
+	}
+	if (!Runtime->HouseControl.Initialize(Controls, OutError))
+	{
+		Runtime.Reset();
+		return false;
+	}
 	Runtime->CityId = ScenarioState.CityId;
 	Runtime->NextBuildingId = ScenarioState.NextBuildingId;
 	Runtime->CampaignSeed = CampaignSeedOverride != 0 ? CampaignSeedOverride :
@@ -313,19 +355,30 @@ bool UHansaRuntimeSimulationHost::AdvanceTicks(const int32 TickCount)
 	{
 		const FHansaSimulationReadOnlyAccess Before = Runtime->State.CreateReadOnlyAccess(Runtime->Definitions);
 		TOptional<FHansaGameplayCommand> AICommand;
+		FHansaRuntimeSimulationState::FAIHouse* SelectedAI = nullptr;
 		if (Runtime->Scenario == EHansaRuntimeScenario::LubeckGrainShortage &&
 			Runtime->bMerchantAIEnabled)
 		{
 			const FHansaEconomicRegistry* Registry = Runtime->Definitions.GetEconomicRegistry();
 			const FHansaCompiledMerchantAITuning* Tuning = Registry != nullptr
 				? Registry->FindMerchantAITuning(TEXT("AITuning.MerchantRival")) : nullptr;
-			if (Tuning != nullptr && Runtime->MerchantAI.IsDue(Before, *Tuning))
+			if (Tuning != nullptr && !Runtime->AIHouses.IsEmpty())
 			{
-				const auto CommandId = FHansaCommandId::TryCreate(Runtime->NextCommandId);
-				if (!CommandId) return false;
-				FHansaMerchantAIDecision Decision = Runtime->MerchantAI.Evaluate(
-					Before, *Registry, *Tuning, Runtime->RivalHouseId, 2, CommandId.Value);
-				AICommand = MoveTemp(Decision.Command);
+				const int32 StartIndex = static_cast<int32>(Before.GetClock().GetTick().GetValue() %
+					Runtime->AIHouses.Num());
+				for (int32 Offset = 0; Offset < Runtime->AIHouses.Num(); ++Offset)
+				{
+					auto& Candidate = Runtime->AIHouses[(StartIndex + Offset) % Runtime->AIHouses.Num()];
+					if (!Runtime->HouseControl.IsAIControlled(Candidate.HouseId) ||
+						!Candidate.Controller.IsDue(Before, *Tuning)) continue;
+					const auto CommandId = FHansaCommandId::TryCreate(Runtime->NextCommandId);
+					if (!CommandId) return false;
+					FHansaMerchantAIDecision Decision = Candidate.Controller.Evaluate(
+						Before, *Registry, *Tuning, Candidate.HouseId, Candidate.PrincipalId, CommandId.Value);
+					AICommand = MoveTemp(Decision.Command);
+					SelectedAI = &Candidate;
+					break;
+				}
 			}
 		}
 		const FHansaCommandGatewayResult Result = FHansaGameplayCommandGateway::ExecuteTick(
@@ -334,7 +387,7 @@ bool UHansaRuntimeSimulationHost::AdvanceTicks(const int32 TickCount)
 			Runtime->Cache);
 		if (AICommand.IsSet())
 		{
-			Runtime->MerchantAI.RecordGatewayOutcome(Result);
+			if (SelectedAI != nullptr) SelectedAI->Controller.RecordGatewayOutcome(Result);
 			if (Result) ++Runtime->NextCommandId;
 		}
 		if (!Result)
@@ -378,8 +431,10 @@ const FHansaPlacementMapInitialization* UHansaRuntimeSimulationHost::FindPlaceme
 
 FHansaPlacementValidationResult UHansaRuntimeSimulationHost::ValidatePlacement(const FHansaPlacementSpec& Spec) const
 {
-	return IsReady() ? Runtime->State.CreateReadOnlyAccess(Runtime->Definitions).ValidatePlacement(Runtime->HouseId, Spec)
-		: FHansaPlacementValidationResult();
+ auto Result=IsReady() ? Runtime->State.CreateReadOnlyAccess(Runtime->Definitions).ValidatePlacement(Runtime->HouseId, Spec)
+  : FHansaPlacementValidationResult();
+ if(IsReady()&&!IsCompoundTerrainBuildable(Spec))Result=Result.WithTerrainFailure(Spec.Anchor);
+ return Result;
 }
 
 bool UHansaRuntimeSimulationHost::IsOwnedRoadCell(const FHansaGridCoordinate Cell) const
@@ -430,6 +485,15 @@ FHansaCommandGatewayResult UHansaRuntimeSimulationHost::PlaceBuildingsForAuthori
 {
 	if (!IsReady()) return FHansaCommandGatewayResult();
 	const FHansaSimulationReadOnlyAccess ReadOnly = Runtime->State.CreateReadOnlyAccess(Runtime->Definitions);
+ // Preflight the entire batch, including automation/authority callers, before any mutation.
+ for(int32 Index=0;Index<Specs.Num();++Index)
+ {
+  if(IsCompoundTerrainBuildable(Specs[Index],Index))continue;
+  const auto Validation=ReadOnly.ValidatePlacement(Authority.IssuingHouseId,Specs[Index]).WithTerrainFailure(Specs[Index].Anchor);
+  const FHansaDeterminismFingerprint Fingerprint=ReadOnly.GetFingerprint();
+  return FHansaCommandGatewayResult::RejectTerrain(Validation,Index,
+   FHansaCommandId::TryCreate(Runtime->NextCommandId+Index).Value,ReadOnly.GetClock().GetTick(),Fingerprint);
+ }
 	TArray<FHansaGameplayCommand> Commands;
 	for (int32 Index = 0; Index < Specs.Num(); ++Index)
 	{
@@ -449,6 +513,24 @@ FHansaCommandGatewayResult UHansaRuntimeSimulationHost::PlaceBuildingsForAuthori
 		Runtime->NextBuildingId += Specs.Num();
 		PublishStateChange(Result.GetEvents());
 	}
+	return Result;
+}
+
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::MoveShip(FHansaVehicleId VehicleId, FHansaGridCoordinate Target)
+{
+    if (!IsReady()) return {};
+    auto Result=ExecuteRuntimeCommand(*Runtime,FHansaMoveShipCommand{VehicleId,Target});
+    if (Result) { ++Runtime->NextCommandId;PublishStateChange(Result.GetEvents(),true); }
+    return Result;
+}
+
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::MoveShipForAuthority(
+	const FHansaCommandAuthorityContext& Authority, const FHansaVehicleId VehicleId,
+	const FHansaGridCoordinate Target)
+{
+	if (!IsReady()) return {};
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority, FHansaMoveShipCommand { VehicleId, Target });
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents(), true); }
 	return Result;
 }
 
@@ -512,6 +594,61 @@ FHansaCommandGatewayResult UHansaRuntimeSimulationHost::CreateTradeRoute(
     return Result;
 }
 
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::CreateTradeRouteForAuthority(
+	const FHansaCommandAuthorityContext& Authority, const FHansaVehicleId VehicleId,
+	const TConstArrayView<FHansaRouteStop> Stops, const FString& Name,
+	const bool bReassignStopped, uint64& OutRouteValue)
+{
+	OutRouteValue = 0;
+	if (!IsReady() || Name.IsEmpty() || Name.Len() > 48 || Name.TrimStartAndEnd() != Name) return {};
+	for (const TCHAR Character : Name) if (Character < 32 || Character == 127) return {};
+	const auto Projection = BuildProjection();
+	if (!Projection) return {};
+	const auto* Vehicle = Projection.Value.GetVehicles().FindByPredicate(
+		[VehicleId](const auto& Item) { return Item.Id == VehicleId; });
+	if (!Vehicle || Vehicle->OwnerId != Authority.IssuingHouseId ||
+		Vehicle->DefinitionId.ToString() != TEXT("Vehicle.Cog") ||
+		Vehicle->Cargo.GetRawValue() != 0) return {};
+	const auto View = Runtime->State.CreateReadOnlyAccess(Runtime->Definitions);
+	TArray<FHansaGameplayCommand> Commands;
+	auto Header = [&]()
+	{
+		FHansaCommandHeader Result;
+		Result.CommandId = FHansaCommandId::TryCreate(Runtime->NextCommandId + Commands.Num()).Value;
+		Result.Authority = Authority;
+		Result.RequestedExecutionTick = View.GetClock().GetTick();
+		Result.GlobalSequence = View.GetLastProcessedCommandSequence() + Commands.Num() + 1;
+		return Result;
+	};
+	uint64 NewId = 1;
+	for (const auto& Route : Projection.Value.GetRoutes())
+	{
+		NewId = FMath::Max(NewId, Route.Id.GetValue() + 1);
+		if (Route.VehicleId != VehicleId || Route.Lifecycle == EHansaRouteLifecycleState::Cancelled) continue;
+		if (!bReassignStopped || Route.OwnerId != Authority.IssuingHouseId ||
+			Route.Lifecycle != EHansaRouteLifecycleState::Inactive ||
+			Route.CurrentStopIndex != 0) return {};
+		Commands.Add(FHansaGameplayCommand::Create(Header(), FHansaCancelRouteCommand { Route.Id }));
+	}
+	FHansaCreateRouteCommand Payload;
+	Payload.RouteId = FHansaRouteId::TryCreate(NewId).Value;
+	Payload.VehicleId = VehicleId;
+	Payload.RouteDefinitionId = FHansaRouteDefinitionId::TryParse(TEXT("Route.BalticSea")).Value;
+	Payload.Stops.Append(Stops);
+	Payload.bActivate = true;
+	Commands.Add(FHansaGameplayCommand::Create(Header(), Payload));
+	auto Result = FHansaGameplayCommandGateway::ExecuteTick(
+		Runtime->State, Runtime->Definitions, Commands, Runtime->Cache);
+	if (Result)
+	{
+		Runtime->NextCommandId += Commands.Num();
+		Runtime->RouteLabels.Add({ NewId, Name });
+		OutRouteValue = NewId;
+		PublishStateChange(Result.GetEvents());
+	}
+	return Result;
+}
+
 FHansaCommandGatewayResult UHansaRuntimeSimulationHost::EditRoute(
 	const FHansaRouteId RouteId,
 	const TConstArrayView<FHansaRouteStop> Stops)
@@ -539,6 +676,79 @@ FHansaCommandGatewayResult UHansaRuntimeSimulationHost::EditRoute(
 	return Result;
 }
 
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::EditRouteForAuthority(
+	const FHansaCommandAuthorityContext& Authority, const FHansaRouteId RouteId,
+	const TConstArrayView<FHansaRouteStop> Stops)
+{
+	if (!IsReady()) return {};
+	FHansaEditRouteCommand Payload;
+	Payload.RouteId = RouteId;
+	Payload.Stops.Append(Stops);
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority, Payload);
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::ExecuteSpotTrade(const FHansaSpotTradeCommand& Payload)
+{
+	return ExecuteSpotTradeForAuthority({GetHouseId(),1,EHansaCommandOrigin::PlayerInput},Payload);
+}
+
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::ExecuteSpotTradeForAuthority(
+	const FHansaCommandAuthorityContext& Authority, const FHansaSpotTradeCommand& Payload)
+{
+	if (!IsReady()) return {};
+	auto Result=ExecuteRuntimeCommand(*Runtime,Authority,Payload);
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::ProposeTradeStation(FHansaCityDefinitionId CityId, const FString& SiteId, FHansaTradeStationId& OutStationId)
+{
+	return ProposeTradeStationForAuthority({GetHouseId(),1,EHansaCommandOrigin::PlayerInput},CityId,SiteId,OutStationId);
+}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::ProposeTradeStationForAuthority(const FHansaCommandAuthorityContext& Authority, FHansaCityDefinitionId CityId, const FString& SiteId, FHansaTradeStationId& OutStationId)
+{
+	if(!IsReady())return {}; const uint64 Value=0x4000000000000000ULL+Runtime->NextCommandId;
+	const auto Station=FHansaTradeStationId::TryCreate(Value);
+	const auto Factor=FHansaFactorId::TryCreate(Value);
+	const auto Lease=FHansaLeasedPlotId::TryCreate(Value);
+	const auto Inventory=FHansaInventoryId::TryCreate(Value);
+	if(!Station||!Factor||!Lease||!Inventory)return {};
+	FHansaProposeTradeStationCommand Payload{Station.Value,Factor.Value,Lease.Value,Inventory.Value,CityId,SiteId};
+	auto Result=ExecuteRuntimeCommand(*Runtime,Authority,Payload);if(Result){++Runtime->NextCommandId;OutStationId=Station.Value;PublishStateChange(Result.GetEvents(),true);}return Result;
+}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::FundTradeStation(FHansaTradeStationId StationId,FHansaInventoryId FundingInventoryId)
+{return FundTradeStationForAuthority({GetHouseId(),1,EHansaCommandOrigin::PlayerInput},StationId,FundingInventoryId);}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::FundTradeStationForAuthority(const FHansaCommandAuthorityContext& Authority,FHansaTradeStationId StationId,FHansaInventoryId FundingInventoryId)
+{if(!IsReady())return {};auto Result=ExecuteRuntimeCommand(*Runtime,Authority,FHansaFundTradeStationCommand{StationId,FundingInventoryId});if(Result){++Runtime->NextCommandId;PublishStateChange(Result.GetEvents(),true);}return Result;}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::ManageStationOrder(const FHansaManageStationOrderCommand& Payload)
+{return ManageStationOrderForAuthority({GetHouseId(),1,EHansaCommandOrigin::PlayerInput},Payload);}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::ManageStationOrderForAuthority(const FHansaCommandAuthorityContext& Authority,const FHansaManageStationOrderCommand& Payload)
+{if(!IsReady())return {};auto Result=ExecuteRuntimeCommand(*Runtime,Authority,Payload);if(Result){++Runtime->NextCommandId;PublishStateChange(Result.GetEvents(),true);}return Result;}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::RequestPresenceUpgrade(const FHansaRequestPresenceUpgradeCommand& Payload)
+{return RequestPresenceUpgradeForAuthority({GetHouseId(),1,EHansaCommandOrigin::PlayerInput},Payload);}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::RequestPresenceUpgradeForAuthority(const FHansaCommandAuthorityContext& Authority,const FHansaRequestPresenceUpgradeCommand& Payload)
+{if(!IsReady())return {};auto Result=ExecuteRuntimeCommand(*Runtime,Authority,Payload);if(Result){++Runtime->NextCommandId;PublishStateChange(Result.GetEvents(),true);}return Result;}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::FundPresenceUpgrade(const FHansaFundPresenceUpgradeCommand& Payload)
+{return FundPresenceUpgradeForAuthority({GetHouseId(),1,EHansaCommandOrigin::PlayerInput},Payload);}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::FundPresenceUpgradeForAuthority(const FHansaCommandAuthorityContext& Authority,const FHansaFundPresenceUpgradeCommand& Payload)
+{if(!IsReady())return {};auto Result=ExecuteRuntimeCommand(*Runtime,Authority,Payload);if(Result){++Runtime->NextCommandId;PublishStateChange(Result.GetEvents(),true);}return Result;}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::ApplyPresenceSpecialization(const FHansaApplyPresenceSpecializationCommand& Payload)
+{return ApplyPresenceSpecializationForAuthority({GetHouseId(),1,EHansaCommandOrigin::PlayerInput},Payload);}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::ApplyPresenceSpecializationForAuthority(const FHansaCommandAuthorityContext& Authority,const FHansaApplyPresenceSpecializationCommand& Payload)
+{if(!IsReady())return {};auto Result=ExecuteRuntimeCommand(*Runtime,Authority,Payload);if(Result){++Runtime->NextCommandId;PublishStateChange(Result.GetEvents(),true);}return Result;}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::CloseTradeStation(FHansaTradeStationId StationId)
+{return CloseTradeStationForAuthority({GetHouseId(),1,EHansaCommandOrigin::PlayerInput},StationId);}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::CloseTradeStationForAuthority(const FHansaCommandAuthorityContext& Authority,FHansaTradeStationId StationId)
+{if(!IsReady())return {};auto Result=ExecuteRuntimeCommand(*Runtime,Authority,FHansaCloseTradeStationCommand{StationId});if(Result){++Runtime->NextCommandId;PublishStateChange(Result.GetEvents(),true);}return Result;}
+
+FHansaSpotTradeQuoteProjection UHansaRuntimeSimulationHost::QuerySpotTradeQuote(FHansaVehicleId Vehicle,
+	FHansaCityDefinitionId City,FHansaGoodId Good,EHansaSpotTradeSide Side,FHansaQuantity Quantity) const
+{
+	if (!IsReady()) return {};
+	return Runtime->State.CreateReadOnlyAccess(Runtime->Definitions).QuerySpotTradeQuote(Runtime->HouseId,Vehicle,City,Good,Side,Quantity);
+}
 FHansaCommandGatewayResult UHansaRuntimeSimulationHost::SetRouteActive(
 	const FHansaRouteId RouteId,
 	const bool bActive)
@@ -591,6 +801,17 @@ FHansaCommandGatewayResult UHansaRuntimeSimulationHost::SetProductionActive(
 	return Result;
 }
 
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::SetProductionActiveForAuthority(
+	const FHansaCommandAuthorityContext& Authority, const FHansaProductionId ProductionId,
+	const bool bActive)
+{
+	if (!IsReady()) return {};
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority,
+		FHansaSetProductionActiveCommand { ProductionId, bActive });
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+
 FHansaCommandGatewayResult UHansaRuntimeSimulationHost::PreviewCancelConstruction(
 	const FHansaBuildingId BuildingId) const
 {
@@ -620,6 +841,15 @@ FHansaCommandGatewayResult UHansaRuntimeSimulationHost::CancelConstruction(const
 	return Result;
 }
 
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::CancelConstructionForAuthority(
+	const FHansaCommandAuthorityContext& Authority, const FHansaBuildingId BuildingId)
+{
+	if (!IsReady()) return {};
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority, FHansaCancelConstructionCommand { BuildingId });
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+
 FHansaCommandGatewayResult UHansaRuntimeSimulationHost::RemoveBuilding(const FHansaBuildingId BuildingId)
 {
 	if (!IsReady()) return FHansaCommandGatewayResult();
@@ -628,10 +858,100 @@ FHansaCommandGatewayResult UHansaRuntimeSimulationHost::RemoveBuilding(const FHa
 	return Result;
 }
 
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::RemoveBuildingForAuthority(
+	const FHansaCommandAuthorityContext& Authority, const FHansaBuildingId BuildingId)
+{
+	if (!IsReady()) return {};
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority, FHansaRemoveBuildingCommand { BuildingId });
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::SetProductionMode(FHansaProductionId Id, FHansaRecipeId Recipe, bool Fallback)
+{
+ if (!IsReady()) return FHansaCommandGatewayResult();
+ auto Result=ExecuteRuntimeCommand(*Runtime,FHansaSetProductionModeCommand{Id,Recipe,Fallback});
+ if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); } return Result;
+}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::SetProductionModeForAuthority(
+	const FHansaCommandAuthorityContext& Authority, FHansaProductionId Id,
+	FHansaRecipeId Recipe, const bool Fallback)
+{
+	if (!IsReady()) return {};
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority,
+		FHansaSetProductionModeCommand { Id, Recipe, Fallback });
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::UpgradeProduction(FHansaProductionId Id)
+{
+ if (!IsReady()) return FHansaCommandGatewayResult();
+ auto Result=ExecuteRuntimeCommand(*Runtime,FHansaUpgradeProductionCommand{Id});
+ if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); } return Result;
+}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::UpgradeProductionForAuthority(
+	const FHansaCommandAuthorityContext& Authority, FHansaProductionId Id)
+{
+	if (!IsReady()) return {};
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority, FHansaUpgradeProductionCommand { Id });
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::PreviewUpgradeProduction(FHansaProductionId Id) const
+{ return IsReady() ? PreviewRuntimeCommand(*Runtime,FHansaUpgradeProductionCommand{Id}) : FHansaCommandGatewayResult(); }
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::SetHouseholdAvailability(FHansaBuildingId Market, bool Available)
+{
+ if (!IsReady()) return FHansaCommandGatewayResult();
+ auto Result=ExecuteRuntimeCommand(*Runtime,FHansaSetHouseholdAvailabilityCommand{Market,FHansaGoodId::TryParse(TEXT("Good.PreservedFish")).Value,Available});
+ if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); } return Result;
+}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::SetHouseholdAvailabilityForAuthority(
+	const FHansaCommandAuthorityContext& Authority, FHansaBuildingId Market,
+	FHansaGoodId Good, const bool Available)
+{
+	if (!IsReady()) return {};
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority,
+		FHansaSetHouseholdAvailabilityCommand { Market, Good, Available });
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+
 FHansaCommandGatewayResult UHansaRuntimeSimulationHost::UpgradeResidence(const FHansaBuildingId BuildingId)
 {
 	if (!IsReady()) return FHansaCommandGatewayResult();
 	FHansaCommandGatewayResult Result = ExecuteRuntimeCommand(*Runtime, FHansaUpgradeResidenceCommand { BuildingId });
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::UpgradeResidenceForAuthority(
+	const FHansaCommandAuthorityContext& Authority, const FHansaBuildingId BuildingId)
+{
+	if (!IsReady()) return {};
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority, FHansaUpgradeResidenceCommand { BuildingId });
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+
+FHansaHeatingProjection UHansaRuntimeSimulationHost::QueryHeating() const
+{
+	return IsReady() ? Runtime->State.CreateReadOnlyAccess(Runtime->Definitions).QueryHeating(Runtime->CityId) : FHansaHeatingProjection();
+}
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::SetHeatingReserve(FHansaBuildingId MarketId, int32 Days, bool bOverride)
+{
+	if (!IsReady()) return FHansaCommandGatewayResult();
+	auto Result = ExecuteRuntimeCommand(*Runtime, FHansaSetHeatingReserveCommand{MarketId, Days, bOverride});
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::SetHeatingReserveForAuthority(
+	const FHansaCommandAuthorityContext& Authority, FHansaBuildingId MarketId,
+	const int32 Days, const bool bReleaseProtection)
+{
+	if (!IsReady()) return {};
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority,
+		FHansaSetHeatingReserveCommand { MarketId, Days, bReleaseProtection });
 	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
 	return Result;
 }
@@ -669,6 +989,45 @@ FHansaCommandGatewayResult UHansaRuntimeSimulationHost::QueueResearchForAuthorit
 FHansaHouseId UHansaRuntimeSimulationHost::GetHouseId() const
 {
 	return IsReady() ? Runtime->HouseId : FHansaHouseId();
+}
+
+TConstArrayView<FHansaHouseId> UHansaRuntimeSimulationHost::GetHouseIds() const
+{
+	return IsReady() ? MakeArrayView(Runtime->HouseIds) : TConstArrayView<FHansaHouseId>();
+}
+
+TConstArrayView<FHansaHouseStartOpportunity> UHansaRuntimeSimulationHost::GetStartingOpportunities() const
+{
+	return IsReady() ? MakeArrayView(Runtime->StartingOpportunities) :
+		TConstArrayView<FHansaHouseStartOpportunity>();
+}
+
+bool UHansaRuntimeSimulationHost::ClaimHouseForHuman(
+	const FHansaHouseId HouseId, const FHansaParticipantId ParticipantId, FString& OutError)
+{
+	return IsReady() && Runtime->HouseControl.ClaimForHuman(HouseId, ParticipantId, OutError);
+}
+
+bool UHansaRuntimeSimulationHost::ReleaseHumanHouse(
+	const FHansaParticipantId ParticipantId, FString& OutError)
+{
+	return IsReady() && Runtime->HouseControl.ReleaseHuman(ParticipantId, OutError);
+}
+
+bool UHansaRuntimeSimulationHost::IsHouseAIControlled(const FHansaHouseId HouseId) const
+{
+	return IsReady() && Runtime->HouseControl.IsAIControlled(HouseId);
+}
+
+int32 UHansaRuntimeSimulationHost::GetAIControlledHouseCount() const
+{
+	if (!IsReady()) return 0;
+	int32 Count = 0;
+	for (const FHansaHouseControlState& State : Runtime->HouseControl.GetStates())
+	{
+		if (State.Controller == EHansaHouseController::AI) ++Count;
+	}
+	return Count;
 }
 
 FHansaCityDefinitionId UHansaRuntimeSimulationHost::GetCityId() const
@@ -736,12 +1095,26 @@ bool UHansaRuntimeSimulationHost::IsMerchantAIEnabled() const
 
 const FHansaMerchantAIDecisionTrace* UHansaRuntimeSimulationHost::GetLastMerchantAIDecision() const
 {
-	return IsReady() ? Runtime->MerchantAI.GetLastDecision() : nullptr;
+	if (!IsReady()) return nullptr;
+	const auto* Rival = Runtime->AIHouses.FindByPredicate([this](const auto& Item)
+		{ return Item.HouseId == Runtime->RivalHouseId; });
+	return Rival != nullptr ? Rival->Controller.GetLastDecision() : nullptr;
 }
 
 TConstArrayView<FHansaMerchantAIDecisionTrace> UHansaRuntimeSimulationHost::GetMerchantAIDecisionHistory() const
 {
-	return IsReady() ? Runtime->MerchantAI.GetDecisionHistory() : TConstArrayView<FHansaMerchantAIDecisionTrace>();
+	if (!IsReady()) return {};
+	const auto* Rival = Runtime->AIHouses.FindByPredicate([this](const auto& Item)
+		{ return Item.HouseId == Runtime->RivalHouseId; });
+	return Rival != nullptr ? Rival->Controller.GetDecisionHistory() : TConstArrayView<FHansaMerchantAIDecisionTrace>();
+}
+
+TArray<FHansaMerchantAIExplanationProjection> UHansaRuntimeSimulationHost::GetMerchantAIExplanationProjection() const
+{
+	if (!IsReady()) return {};
+	const auto* Rival = Runtime->AIHouses.FindByPredicate([this](const auto& Item)
+		{ return Item.HouseId == Runtime->RivalHouseId; });
+	return Rival != nullptr ? Rival->Controller.BuildExplanationProjection() : TArray<FHansaMerchantAIExplanationProjection>();
 }
 
 const FHansaScenarioProgress* UHansaRuntimeSimulationHost::GetScenarioProgress() const
@@ -775,7 +1148,7 @@ bool UHansaRuntimeSimulationHost::SynchronizeWorldProjection()
     return Success;
 }
 
-bool UHansaRuntimeSimulationHost::PublishStateChange(const TConstArrayView<FHansaDomainEvent> Events)
+bool UHansaRuntimeSimulationHost::PublishStateChange(const TConstArrayView<FHansaDomainEvent> Events, const bool bPreserveNavigationPosition)
 {
 	if (!IsReady()) return false;
 	if (UE_LOG_ACTIVE(LogHansa, Verbose))
@@ -809,7 +1182,7 @@ bool UHansaRuntimeSimulationHost::PublishStateChange(const TConstArrayView<FHans
 	}
     if (World) for (TActorIterator<AHansaLubeckWorldFoundation> F(World); F; ++F)
     {
-        for (TActorIterator<AHansaCargoProjectionManager> It(World); It; ++It) It->Synchronize(Projection.Value, *this, **F);
+        for (TActorIterator<AHansaCargoProjectionManager> It(World); It; ++It) It->Synchronize(Projection.Value, *this, **F, bPreserveNavigationPosition);
         break;
     }
 	Runtime->EventHistory.Append(Events);
@@ -832,12 +1205,14 @@ FHansaSaveResult UHansaRuntimeSimulationHost::CaptureSaveBytes(TArray<uint8>& Ou
 	}
 	FHansaSaveSnapshot Snapshot;
 	Snapshot.State = Runtime->State;
-	Snapshot.BuildVersion = TEXT("Hansa-S11-P04"); Snapshot.SavedUtc = SavedUtc; Snapshot.DisplayName = DisplayName;
+	Snapshot.BuildVersion = TEXT("Hansa-TR05-S15"); Snapshot.SavedUtc = SavedUtc; Snapshot.DisplayName = DisplayName;
 	Snapshot.NextCommandId = Runtime->NextCommandId; Snapshot.NextBuildingId = Runtime->NextBuildingId;
 	Snapshot.MigrationHistory = Runtime->SaveMigrationHistory;
 	Snapshot.RouteLabels = Runtime->RouteLabels;
-	Snapshot.Players.Add({1, Runtime->HouseId});
-	if (Runtime->RivalHouseId.IsValid()) Snapshot.Players.Add({2, Runtime->RivalHouseId});
+	for (int32 Index = 0; Index < Runtime->HouseIds.Num(); ++Index)
+	{
+		Snapshot.Players.Add({static_cast<uint64>(Index + 1), Runtime->HouseIds[Index]});
+	}
 	Snapshot.Scenario = FHansaSaveEnvelope::CaptureScenario(Runtime->ScenarioEvaluator);
 	// Commands execute synchronously at tick boundaries; there is no retained runtime queue.
 	return FHansaSaveEnvelope::Encode(Snapshot, Runtime->Definitions, OutBytes);
@@ -863,10 +1238,12 @@ FHansaSaveResult UHansaRuntimeSimulationHost::RestoreSaveBytes(TConstArrayView<u
 	if (!Result) return Result;
 	// This host has no deferred command scheduler. Never silently discard accepted future work.
 	if (!Snapshot.PendingCommands.IsEmpty() || !Snapshot.NextCommandId || !Snapshot.NextBuildingId) return Failure;
-	for (const auto& P : Snapshot.Players)
-		if ((P.PrincipalId != 1 || P.HouseId != Runtime->HouseId) &&
-			(P.PrincipalId != 2 || P.HouseId != Runtime->RivalHouseId)) return Failure;
-	if (Snapshot.Players.Num() != (Runtime->RivalHouseId.IsValid() ? 2 : 1)) return Failure;
+	if (Snapshot.Players.Num() != Runtime->HouseIds.Num()) return Failure;
+	for (int32 Index = 0; Index < Snapshot.Players.Num(); ++Index)
+	{
+		if (Snapshot.Players[Index].PrincipalId != static_cast<uint64>(Index + 1) ||
+			Snapshot.Players[Index].HouseId != Runtime->HouseIds[Index]) return Failure;
+	}
 	FHansaScenarioEvaluator Evaluator;
 	if (Runtime->ScenarioEvaluator.IsInitialized())
 	{
@@ -879,7 +1256,8 @@ FHansaSaveResult UHansaRuntimeSimulationHost::RestoreSaveBytes(TConstArrayView<u
 	Runtime->SaveMigrationHistory = MoveTemp(Snapshot.MigrationHistory);
 	Runtime->RouteLabels = MoveTemp(Snapshot.RouteLabels);
 	Runtime->CampaignSeed = Runtime->State.CreateReadOnlyAccess(Runtime->Definitions).GetCampaignSeed();
-	Runtime->Cache.Discard(); Runtime->EventHistory.Reset(); Runtime->MerchantAI = {};
+	Runtime->Cache.Discard(); Runtime->EventHistory.Reset();
+	for (auto& AI : Runtime->AIHouses) AI.Controller = {};
 	TickAccumulator = 0.0; Speed = EHansaRuntimeSimulationSpeed::Paused;
     if (!SynchronizeWorldProjection()) return Failure;
 	PublishStateChange({});
@@ -888,11 +1266,11 @@ FHansaSaveResult UHansaRuntimeSimulationHost::RestoreSaveBytes(TConstArrayView<u
 
 TOptional<FHansaKnownMarketPriceProjection> UHansaRuntimeSimulationHost::QueryKnownMarketPrice(FHansaCityDefinitionId City, FHansaGoodId Good) const
 {
-    return Runtime.IsValid() ? Runtime->State.CreateReadOnlyAccess(Runtime->Definitions).QueryKnownMarketPrice(City,Good) : TOptional<FHansaKnownMarketPriceProjection>();
+    return Runtime.IsValid() ? Runtime->State.CreateReadOnlyAccess(Runtime->Definitions).QueryKnownMarketPrice(City,Good,Runtime->HouseId) : TOptional<FHansaKnownMarketPriceProjection>();
 }
 TOptional<FHansaKnownMarketSupplyDemandProjection> UHansaRuntimeSimulationHost::QueryKnownMarketSupply(FHansaCityDefinitionId City, FHansaGoodId Good) const
 {
-    return Runtime.IsValid() ? Runtime->State.CreateReadOnlyAccess(Runtime->Definitions).QueryKnownMarketSupplyDemand(City,Good) : TOptional<FHansaKnownMarketSupplyDemandProjection>();
+    return Runtime.IsValid() ? Runtime->State.CreateReadOnlyAccess(Runtime->Definitions).QueryKnownMarketSupplyDemand(City,Good,Runtime->HouseId) : TOptional<FHansaKnownMarketSupplyDemandProjection>();
 }
 
 FHansaCommandGatewayResult UHansaRuntimeSimulationHost::CancelRoute(const FHansaRouteId RouteId)
@@ -914,4 +1292,44 @@ FHansaCommandGatewayResult UHansaRuntimeSimulationHost::CancelRoute(const FHansa
 		PublishStateChange(Result.GetEvents());
 	}
 	return Result;
+}
+
+FHansaCommandGatewayResult UHansaRuntimeSimulationHost::CancelRouteForAuthority(
+	const FHansaCommandAuthorityContext& Authority, const FHansaRouteId RouteId)
+{
+	if (!IsReady()) return {};
+	auto Result = ExecuteRuntimeCommand(*Runtime, Authority, FHansaCancelRouteCommand { RouteId });
+	if (Result) { ++Runtime->NextCommandId; PublishStateChange(Result.GetEvents()); }
+	return Result;
+}
+
+bool UHansaRuntimeSimulationHost::IsCompoundTerrainBuildable(const FHansaPlacementSpec& Spec,int32 BatchOffset) const
+{
+ UWorld* World=BoundWorld.Get();if(!World)return true;
+ const auto* Compiled=FindBuildingDefinition(Spec.BuildingDefinitionId.ToString());
+ if(!Compiled||Compiled->ResidentialCompoundId.IsEmpty())return true;
+ const auto* Building=Cast<UHansaBuildingDefinition>(UHansaDefinitionBase::ResolveByStableId(Spec.BuildingDefinitionId.ToString()));
+ auto* D=Building?Building->LoadResidentialCompound():nullptr;if(!D)return false;
+ AHansaLubeckWorldFoundation* Foundation=nullptr;
+ for(TActorIterator<AHansaLubeckWorldFoundation> It(World);It;++It){Foundation=*It;break;}
+ if(!Foundation)return true;
+ const int32 Turn=static_cast<int32>(Spec.Rotation);
+ const int32 W=Turn%2?D->FootprintHeightCells:D->FootprintWidthCells;
+ const int32 H=Turn%2?D->FootprintWidthCells:D->FootprintHeightCells;
+ const FVector First=Hansa::Game::LubeckPlacementGrid::GridToWorld(Spec.Anchor);
+ const FVector Last=Hansa::Game::LubeckPlacementGrid::GridToWorld({Spec.Anchor.X+W-1,Spec.Anchor.Y+H-1});
+ const FTransform Transform=FTransform(FRotator(0,Turn*90,0),(First+Last)*.5)*Foundation->GetActorTransform();
+ const uint64 Seed=UHansaResidentialCompoundDefinition::ParcelSeed(Spec.CityId.ToString(),Runtime->NextBuildingId+BatchOffset,0);
+ // A later adjacent road can choose a different context; all supported contexts must fit.
+ for(FName Context:{FName(TEXT("Straight")),FName(TEXT("CornerLeft")),FName(TEXT("CornerRight")),FName(TEXT("Edge"))})
+ {
+  if(!D->Layouts.ContainsByPredicate([&](const auto& L){return L.Context==Context&&L.DevelopmentStage==Building->CompoundStage&&(L.DistrictIds.IsEmpty()||L.DistrictIds.Contains(Building->CompoundDistrictId));}))continue;
+  if(!Hansa::Game::CompoundGround::CanPlace(World,Transform,D->Compose(Seed,Building->CompoundStage,Context,Building->CompoundDistrictId),FBox(D->BoundsMin,D->BoundsMax)))return false;
+ }
+ return true;
+}
+
+uint64 UHansaRuntimeSimulationHost::GetNextParcelSeed() const
+{
+ return IsReady()?UHansaResidentialCompoundDefinition::ParcelSeed(Runtime->CityId.ToString(),Runtime->NextBuildingId,0):0;
 }

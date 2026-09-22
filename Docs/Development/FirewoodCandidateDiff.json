@@ -1,0 +1,23 @@
+{
+  "baseRegistryHash": "C1BDF313543BF44A",
+  "draftRegistryHash": "8BB8ACD607E70FDB",
+  "added": [
+    "Building.WoodcutterYard",
+    "Good.Firewood",
+    "Need.Heating",
+    "Recipe.SplitFirewood"
+  ],
+  "changed": [
+    "City.Hamburg",
+    "City.Lubeck",
+    "City.Luneburg",
+    "City.Rostock",
+    "PopulationTier.Artisan",
+    "PopulationTier.Laborer",
+    "Recipe.BakeBread",
+    "Recipe.BrewBeer",
+    "Recipe.MaltGrain"
+  ],
+  "removed": [],
+  "unchangedCount": 90
+}

@@ -285,6 +285,15 @@ namespace Hansa::Automation
 		Json->SetNumberField(TEXT("capacityMilliUnits"), Vehicle.Capacity.GetRawValue());
 		Json->SetNumberField(TEXT("freeCapacityMilliUnits"), Vehicle.FreeCapacity.GetRawValue());
 		Json->SetNumberField(TEXT("accruedUpkeepPfennig"), static_cast<double>(Vehicle.AccruedUpkeepPfennig));
+        TSharedRef<FJsonObject> Navigation=MakeShared<FJsonObject>();
+        Navigation->SetStringField(TEXT("cityId"),Vehicle.Navigation.CityId.ToString());
+        Navigation->SetBoolField(TEXT("moving"),Vehicle.Navigation.IsMoving());
+        Navigation->SetNumberField(TEXT("cellX"),Vehicle.Navigation.Cell.X);
+        Navigation->SetNumberField(TEXT("cellY"),Vehicle.Navigation.Cell.Y);
+        Navigation->SetNumberField(TEXT("homeX"),Vehicle.Navigation.Home.X);
+        Navigation->SetNumberField(TEXT("homeY"),Vehicle.Navigation.Home.Y);
+        Navigation->SetNumberField(TEXT("remainingCells"),Vehicle.Navigation.Path.Num()-Vehicle.Navigation.NextIndex);
+        Json->SetObjectField(TEXT("navigation"),Navigation);
 		return Json;
 	}
 
@@ -430,6 +439,17 @@ namespace Hansa::Automation
 			OutPayload->SetArrayField(TEXT("events"), MoveTemp(Events));
 			return true;
 		}
+        if(Query==TEXT("inventory.spoilage"))
+        {
+            TArray<TSharedPtr<FJsonValue>> Rows;
+            for(const auto& Loss:Fixture->GetState().CreateReadOnlyAccess(Fixture->GetDefinitions()).GetInventories().QuerySpoilage())
+            {
+                auto Row=MakeShared<FJsonObject>();Row->SetStringField(TEXT("goodId"),Loss.GoodId.ToString());
+                Row->SetNumberField(TEXT("destroyedMilliUnits"),Loss.DestroyedMilliUnits);Row->SetNumberField(TEXT("remainderNumerator"),Loss.RemainderNumerator);
+                Rows.Add(MakeShared<FJsonValueObject>(Row));
+            }
+            OutPayload->SetArrayField(TEXT("spoilage"),Rows);return true;
+        }
 		if (Query == TEXT("inventory.stock"))
 		{
 			int64 InventoryValue = 0;
@@ -931,6 +951,33 @@ namespace Hansa::Automation
 			OutError = TEXT("gameplay_command requires an allowlisted command name.");
 			return false;
 		}
+        if (CommandName == TEXT("production.set_mode") || CommandName == TEXT("production.upgrade") || CommandName == TEXT("market.set_preserved_fish_household_availability"))
+        {
+            using namespace Hansa::Simulation;
+            FHansaCommandGatewayResult Result;
+            if(CommandName == TEXT("market.set_preserved_fish_household_availability"))
+            {
+                FHansaBuildingId Building; bool Available;
+                if(!ParseBuildingId(Request,Building) || !Request->TryGetBoolField(TEXT("available"),Available)) { OutError=TEXT("Requires buildingId and available.");return false; }
+                Result=Fixture->SetHouseholdAvailability(Building,Available);
+            }
+            else
+            {
+                FHansaProductionId Production;
+                if(!ParseProductionId(Request,Production)) { OutError=TEXT("Requires productionId.");return false; }
+                if(CommandName==TEXT("production.upgrade")) Result=Fixture->UpgradeProduction(Production);
+                else
+                {
+                    FString Recipe;bool Fallback;
+                    if(!Request->TryGetStringField(TEXT("recipeId"),Recipe) || !Request->TryGetBoolField(TEXT("fallbackToFresh"),Fallback)) { OutError=TEXT("Requires recipeId and fallbackToFresh.");return false; }
+                    const auto Id=FHansaRecipeId::TryParse(Recipe);
+                    if(!Id){OutError=TEXT("Invalid recipeId.");return false;}
+                    Result=Fixture->SetProductionMode(Production,Id.Value,Fallback);
+                }
+            }
+            if(!Result){OutError=FString::Printf(TEXT("Command rejected: %s"),LexToString(Result.GetError()));return false;}
+            OutPayload=MakeSummary(1);OutPayload->SetStringField(TEXT("command"),CommandName);return true;
+        }
 		if (CommandName == TEXT("production.set_active"))
 		{
 			Hansa::Simulation::FHansaProductionId ProductionId;

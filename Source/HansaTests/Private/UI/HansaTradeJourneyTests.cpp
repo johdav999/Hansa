@@ -15,6 +15,7 @@ bool FTradeJourneyDelivery::RunTest(const FString&)
     {
         TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>()),Control(NewObject<UHansaRuntimeSimulationHost>());
         FString Error;if(!Host->InitializeForLubeck(nullptr,Error)||!Control->InitializeForLubeck(nullptr,Error)){AddError(Error);return false;}
+        if(!TestTrue(TEXT("Reserve automation research completed for both deterministic fixtures"),UnlockReserveAutomation(Host.Get())&&UnlockReserveAutomation(Control.Get())))return false;
         TStrongObjectPtr<UHansaTradeMapPresentationModel> M(NewObject<UHansaTradeMapPresentationModel>());
         M->InitializeDefaults();M->BindRuntime(Host.Get());M->ApplyProjection(Host->BuildProjection().Value,*Host->GetEconomicRegistry());
         M->Open(TEXT("Market.Detail.Action.BeginRoute"),FName(*J->GetStringField(TEXT("good"))),FName(*J->GetStringField(TEXT("source"))));
@@ -67,6 +68,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FTradeJourneyRecovery,"Hansa.UI.TradeJourney.Re
 bool FTradeJourneyRecovery::RunTest(const FString&)
 {
     TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>());FString Error;if(!Host->InitializeForLubeck(nullptr,Error))return false;
+    if(!TestTrue(TEXT("Reserve automation research completed for recovery fixture"),UnlockReserveAutomation(Host.Get())))return false;
     TStrongObjectPtr<UHansaTradeMapPresentationModel> M(NewObject<UHansaTradeMapPresentationModel>());M->InitializeDefaults();M->BindRuntime(Host.Get());
     auto Refresh=[&]{M->ApplyProjection(Host->BuildProjection().Value,*Host->GetEconomicRegistry());};Refresh();M->Open();
     auto S=SNew(Hansa::UI::SHansaTradeMap).Model(M.Get());

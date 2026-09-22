@@ -36,7 +36,9 @@ bool FLubeckArtLighting::RunTest(const FString&)
     TestTrue(TEXT("Baltic daylight stays within the softer 14-16 klux band"),Day.SunIntensityLux>=14000&&Day.SunIntensityLux<=16000);
     TestTrue(TEXT("Daylight exposure is rebalanced within EV100 13.7-14.2"),Day.ExposureEV100>=13.7f&&Day.ExposureEV100<=14.2f);
     TestTrue(TEXT("The four-degree source angle softens the solar shadow"),Day.SunSourceAngleDegrees>=3.5f&&Day.SunSourceAngleDegrees<=4.5f);
-    TestTrue(TEXT("Day skylight supplies stronger cool fill"),Day.SkyLightIntensity>=1.7f&&Day.SkyLightIntensity<=1.9f&&Day.SkyTemperatureKelvin>Day.SunTemperatureKelvin);
+    TestTrue(TEXT("Day skylight supplies stronger cool fill"),Day.SkyLightIntensity>=1900.f&&Day.SkyLightIntensity<=2100.f&&Day.SkyTemperatureKelvin>Day.SunTemperatureKelvin);
+
+    TestEqual(TEXT("Daytime sun shortens shadows at sixty degrees"),Day.SolarElevationDegrees,60.f);
 
     Hansa::Simulation::FHansaCalendarProjection SpringNight=SpringNoon;SpringNight.HourOfDay=21;
     const FHansaLightingState Night=EvaluateLighting(SpringNight,0,60);

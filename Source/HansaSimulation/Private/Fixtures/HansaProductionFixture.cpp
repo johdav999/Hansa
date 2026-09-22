@@ -949,6 +949,30 @@ namespace Hansa::Simulation
 		}
 	}
 
+    FHansaCommandGatewayResult FHansaProductionFixture::SetProductionMode(FHansaProductionId ProductionId, FHansaRecipeId RecipeId, bool bFallbackToFresh)
+    {
+        const TArray<FHansaGameplayCommand> Commands{FHansaGameplayCommand::Create(MakeFixtureCommandHeader(State,Definitions),FHansaSetProductionModeCommand{ProductionId,RecipeId,bFallbackToFresh})};
+        auto Result=FHansaGameplayCommandGateway::ExecuteTick(State,Definitions,Commands,Cache);
+        if(Result) Events.Append(Result.GetEvents());
+        return Result;
+    }
+
+    FHansaCommandGatewayResult FHansaProductionFixture::UpgradeProduction(FHansaProductionId ProductionId)
+    {
+        const TArray<FHansaGameplayCommand> Commands{FHansaGameplayCommand::Create(MakeFixtureCommandHeader(State,Definitions),FHansaUpgradeProductionCommand{ProductionId})};
+        auto Result=FHansaGameplayCommandGateway::ExecuteTick(State,Definitions,Commands,Cache);
+        if(Result) Events.Append(Result.GetEvents());
+        return Result;
+    }
+
+    FHansaCommandGatewayResult FHansaProductionFixture::SetHouseholdAvailability(FHansaBuildingId MarketBuildingId, bool bAvailable)
+    {
+        const TArray<FHansaGameplayCommand> Commands{FHansaGameplayCommand::Create(MakeFixtureCommandHeader(State,Definitions),FHansaSetHouseholdAvailabilityCommand{MarketBuildingId,FHansaGoodId::TryParse(TEXT("Good.PreservedFish")).Value,bAvailable})};
+        auto Result=FHansaGameplayCommandGateway::ExecuteTick(State,Definitions,Commands,Cache);
+        if(Result) Events.Append(Result.GetEvents());
+        return Result;
+    }
+
 	FHansaCommandGatewayResult FHansaProductionFixture::EditRoute(
 		const FHansaRouteId RouteId, TArray<FHansaRouteStop> Stops)
 	{

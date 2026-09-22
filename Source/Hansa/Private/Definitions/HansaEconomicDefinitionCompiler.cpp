@@ -1,9 +1,11 @@
 #include "Definitions/HansaEconomicDefinitionCompiler.h"
+#include "Definitions/HansaResidentialCompoundDefinition.h"
 
 #include "Definitions/HansaEconomicDefinitions.h"
 #include "Definitions/HansaMarketDefinitions.h"
 #include "Definitions/HansaMerchantAIDefinitions.h"
 #include "Definitions/HansaPopulationDefinitions.h"
+#include "Definitions/HansaPresenceDefinitions.h"
 #include "Definitions/HansaResearchDefinitions.h"
 #include "Definitions/HansaScenarioDefinitions.h"
 #include "Definitions/HansaTradeDefinitions.h"
@@ -266,8 +268,13 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 	TSet<FString> NeedIds;
 	TSet<FString> PopulationTierIds;
 	TSet<FString> CityIds;
+	TSet<FString> ProductionChainIds;
+	TSet<FString> RegionIds;
 	TSet<FString> VehicleIds;
 	TSet<FString> RouteIds;
+	TSet<FString> PresenceCapabilityIds;
+	TSet<FString> PresenceStageIds;
+	TSet<FString> CityTradePolicyIds;
 	TSet<FString> TechnologyIds;
 	TSet<FString> ScenarioObjectiveIds;
 	TSet<FString> VictoryIds;
@@ -303,6 +310,14 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 		{
 			PopulationTierIds.Add(Definition->StableDefinitionId);
 		}
+		else if (Definition->IsA<UHansaProductionChainDefinition>())
+		{
+			ProductionChainIds.Add(Definition->StableDefinitionId);
+		}
+		else if (Definition->IsA<UHansaRegionEconomicProfileDefinition>())
+		{
+			RegionIds.Add(Definition->StableDefinitionId);
+		}
 		else if (Definition->IsA<UHansaCityMarketProfileDefinition>())
 		{
 			CityIds.Add(Definition->StableDefinitionId);
@@ -315,11 +330,26 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 		{
 			RouteIds.Add(Definition->StableDefinitionId);
 		}
+		else if (Definition->IsA<UHansaPresenceCapabilityDefinition>())
+		{
+			PresenceCapabilityIds.Add(Definition->StableDefinitionId);
+		}
+		else if (Definition->IsA<UHansaForeignPresenceStageDefinition>())
+		{
+			PresenceStageIds.Add(Definition->StableDefinitionId);
+		}
+		else if (Definition->IsA<UHansaCityTradePolicyDefinition>())
+		{
+			CityTradePolicyIds.Add(Definition->StableDefinitionId);
+		}
 		else if (Definition->IsA<UHansaTechnologyDefinition>())
 		{
 			TechnologyIds.Add(Definition->StableDefinitionId);
 		}
-		else if (Definition->IsA<UHansaMerchantAITuningDefinition>())
+		else if (Definition->IsA<UHansaResidentialCompoundDefinition>())
+        {
+        }
+        else if (Definition->IsA<UHansaMerchantAITuningDefinition>())
 		{
 		}
 		else if (Definition->IsA<UHansaScenarioObjectiveDefinition>())
@@ -441,19 +471,34 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 						}
 					}
 				}
-				if (Target == nullptr || Building->ResidenceCapacity <= 0 || Target->ResidenceCapacity <= 0 ||
+				const bool bCompoundDevelopment = Target != nullptr && !Building->ResidentialCompound.IsNull() &&
+                    Building->ResidentialCompound == Target->ResidentialCompound &&
+                    Building->CompoundDistrictId == Target->CompoundDistrictId &&
+                    Building->ResidentPopulationTierId == Target->ResidentPopulationTierId &&
+                    Target->CompoundStage == Building->CompoundStage + 1;
+                const bool bProductionUpgrade = Target && Building->ResidenceCapacity == 0 && Target->ResidenceCapacity == 0 &&
+                    !Building->RecipeIds.IsEmpty() && Target->bRequiresShoreline == Building->bRequiresShoreline &&
+                    Target->bRequiresRoad == Building->bRequiresRoad &&
+                    Building->FootprintWidthCells == Target->FootprintWidthCells && Building->FootprintHeightCells == Target->FootprintHeightCells &&
+                    !Building->RecipeIds.ContainsByPredicate([&](const FString& Id) { return !Target->RecipeIds.Contains(Id); });
+                if (!bProductionUpgrade && (Target == nullptr || Building->ResidenceCapacity <= 0 || Target->ResidenceCapacity <= 0 ||
 					Building->FootprintWidthCells != Target->FootprintWidthCells ||
 					Building->FootprintHeightCells != Target->FootprintHeightCells ||
-					TargetTier == nullptr || TargetTier->PreviousTierId != Building->ResidentPopulationTierId)
+					TargetTier == nullptr || (!bCompoundDevelopment && TargetTier->PreviousTierId != Building->ResidentPopulationTierId)))
 				{
 					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-020"), Building->StableDefinitionId + TEXT(".UpgradeTargetBuildingId"),
-						NSLOCTEXT("HansaEconomicCompiler", "InvalidResidenceProgression", "A residence upgrade must preserve its footprint and advance to the directly linked population tier."),
-						NSLOCTEXT("HansaEconomicCompiler", "InvalidResidenceProgressionRemedy", "Choose a same-footprint residence whose hosted tier names this residence tier as its previous tier."));
+						NSLOCTEXT("HansaEconomicCompiler", "InvalidResidenceProgression", "A residence upgrade must preserve its footprint and advance to the directly linked population tier or the next stage of the same compound and district."),
+						NSLOCTEXT("HansaEconomicCompiler", "InvalidResidenceProgressionRemedy", "Choose a same-footprint next-tier residence, or the next stage of the same compound, district and population tier."));
 				}
 			}
 		}
 		else if (const UHansaNeedDefinition* Need = Cast<UHansaNeedDefinition>(Definition))
 		{
+   for (const auto& Alternative : Need->Alternatives)
+    if (!GoodIds.Contains(Alternative.GoodId))
+     AddIssue(Result.Issues, TEXT("HSA-REGISTRY-NEED-ALT"), Need->StableDefinitionId + TEXT(".Alternatives"),
+      NSLOCTEXT("HansaEconomicCompiler", "MissingAlternative", "A need alternative references a missing good."),
+      NSLOCTEXT("HansaEconomicCompiler", "MissingAlternativeRemedy", "Select an existing Good.* definition."));
 			if (Need->Kind == EHansaNeedKind::Good && !GoodIds.Contains(Need->GoodId))
 			{
 				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-011"), Need->StableDefinitionId + TEXT(".GoodId"),
@@ -497,6 +542,10 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 		}
 		else if (const UHansaCityMarketProfileDefinition* CityMarket = Cast<UHansaCityMarketProfileDefinition>(Definition))
 		{
+			if(!CityMarket->RegionId.IsEmpty() && !RegionIds.Contains(CityMarket->RegionId))
+				AddIssue(Result.Issues,TEXT("HSA-REGISTRY-REGION-001"),CityMarket->StableDefinitionId+TEXT(".RegionId"),NSLOCTEXT("HansaEconomicCompiler","MissingRegion","A city references a missing regional economic profile."),NSLOCTEXT("HansaEconomicCompiler","MissingRegionFix","Add the Region.* definition or correct the city reference."));
+			for(const auto& Binding:CityMarket->IndustryBindings) if(!ProductionChainIds.Contains(Binding.ProductionChainId))
+				AddIssue(Result.Issues,TEXT("HSA-REGISTRY-REGION-002"),CityMarket->StableDefinitionId+TEXT(".IndustryBindings"),NSLOCTEXT("HansaEconomicCompiler","MissingChain","A city industry binding references a missing production chain."),NSLOCTEXT("HansaEconomicCompiler","MissingChainFix","Add the ProductionChain.* definition or correct the binding."));
 			for (const FHansaMarketGoodProfile& Profile : CityMarket->Goods)
 			{
 				if (!GoodIds.Contains(Profile.GoodId))
@@ -506,6 +555,15 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 						NSLOCTEXT("HansaEconomicCompiler", "MissingMarketGoodRemedy", "Add the referenced Good definition or correct the city market row."));
 				}
 			}
+		}
+		else if(const UHansaProductionChainDefinition* Chain=Cast<UHansaProductionChainDefinition>(Definition))
+		{
+			for(const auto& Stage:Chain->Stages) if(!RecipeIds.Contains(Stage.RecipeId)) AddIssue(Result.Issues,TEXT("HSA-REGISTRY-REGION-003"),Chain->StableDefinitionId+TEXT(".Stages"),NSLOCTEXT("HansaEconomicCompiler","MissingChainRecipe","A production-chain stage references a missing recipe."),NSLOCTEXT("HansaEconomicCompiler","MissingChainRecipeFix","Add the Recipe.* definition or correct the stage."));
+		}
+		else if(const UHansaRegionEconomicProfileDefinition* Region=Cast<UHansaRegionEconomicProfileDefinition>(Definition))
+		{
+			for(const auto& Permit:Region->PermittedStages) if(!ProductionChainIds.Contains(Permit.ProductionChainId)) AddIssue(Result.Issues,TEXT("HSA-REGISTRY-REGION-004"),Region->StableDefinitionId+TEXT(".PermittedStages"),NSLOCTEXT("HansaEconomicCompiler","MissingRegionChain","A regional portfolio references a missing production chain."),NSLOCTEXT("HansaEconomicCompiler","MissingRegionChainFix","Add the ProductionChain.* definition or correct the portfolio."));
+			for(const auto& Resource:Region->ResourceEndowments) if(!GoodIds.Contains(Resource.GoodId)) AddIssue(Result.Issues,TEXT("HSA-REGISTRY-REGION-005"),Region->StableDefinitionId+TEXT(".ResourceEndowments"),NSLOCTEXT("HansaEconomicCompiler","MissingRegionGood","A regional endowment references a missing good."),NSLOCTEXT("HansaEconomicCompiler","MissingRegionGoodFix","Add the Good.* definition or correct the endowment."));
 		}
 		else if (const UHansaRouteDefinition* Route = Cast<UHansaRouteDefinition>(Definition))
 		{
@@ -744,14 +802,124 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 		return Result;
 	}
 
+    for (const auto* Definition : SortedDefinitions)
+    {
+        const auto* Recipe = Cast<UHansaRecipeDefinition>(Definition);
+        if (!Recipe || Recipe->InternalCatchRecipeId.IsEmpty()) continue;
+        const UHansaRecipeDefinition* Source = nullptr;
+        for (const auto* Candidate : SortedDefinitions)
+            if (Candidate->StableDefinitionId == Recipe->InternalCatchRecipeId) Source = Cast<UHansaRecipeDefinition>(Candidate);
+        bool bValid = Recipe->Inputs.Num()==2 && Recipe->Inputs.ContainsByPredicate([](const auto& I){return I.GoodId==TEXT("Good.Salt");}) &&
+            Recipe->Inputs.ContainsByPredicate([](const auto& I){return I.GoodId==TEXT("Good.Barrels");}) &&
+            Source && Source->bDeclaredSource && Source->Inputs.IsEmpty() && Source->InternalCatchRecipeId.IsEmpty() &&
+            Recipe->CycleTicks >= Source->CycleTicks && !Recipe->bDeclaredSource && !Recipe->Inputs.IsEmpty() &&
+            Source->Outputs.Num() == 1 && Recipe->Outputs.Num() == 1 &&
+            Source->Outputs[0].GoodId == TEXT("Good.Fish") && Recipe->Outputs[0].GoodId == TEXT("Good.PreservedFish") &&
+            Recipe->Outputs[0].QuantityMilliUnits <= Source->Outputs[0].QuantityMilliUnits &&
+            !Recipe->Inputs.ContainsByPredicate([](const auto& Input){return Input.GoodId==TEXT("Good.Fish");});
+        for (const auto* Candidate : SortedDefinitions)
+            if (const auto* Building = Cast<UHansaBuildingDefinition>(Candidate))
+                if (Building->RecipeIds.Contains(Recipe->StableDefinitionId))
+                    bValid &= Building->bRequiresShoreline && Building->RecipeIds.Contains(Recipe->InternalCatchRecipeId);
+        if (!bValid) AddIssue(Result.Issues, TEXT("HSA-RECIPE-INTERNAL-CATCH"), Recipe->StableDefinitionId,
+            NSLOCTEXT("HansaEconomicCompiler","InternalCatchInvalid","Internal catch must preserve the fresh source's edible output and timing in a shoreline fishery."),
+            NSLOCTEXT("HansaEconomicCompiler","InternalCatchFix","Use a valid fresh-catch source, salt and barrel inputs, and no purchased fresh fish."));
+    }
+	// Cross-definition presence validation: typed references, one policy per city, unique order, and acyclic prerequisites.
+	TMap<FString, const UHansaForeignPresenceStageDefinition*> PresenceStagesById;
+	TSet<int32> PresenceOrdinals;
+	TSet<FString> PresencePolicyCities;
+	for (const UHansaDefinitionBase* Definition : SortedDefinitions)
+	{
+		if (const auto* Stage = Cast<UHansaForeignPresenceStageDefinition>(Definition))
+		{
+			if (PresenceOrdinals.Contains(Stage->Ordinal))
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-PRESENCE-001"), Stage->StableDefinitionId + TEXT(".Ordinal"), NSLOCTEXT("HansaEconomicCompiler", "DuplicatePresenceOrdinal", "Presence-stage ordinals must be unique."), NSLOCTEXT("HansaEconomicCompiler", "DuplicatePresenceOrdinalFix", "Assign one deterministic ordinal to each stage."));
+			PresenceOrdinals.Add(Stage->Ordinal); PresenceStagesById.Add(Stage->StableDefinitionId, Stage);
+			for (const FString& CapabilityId : Stage->GrantedCapabilityIds) if (!PresenceCapabilityIds.Contains(CapabilityId))
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-PRESENCE-002"), Stage->StableDefinitionId + TEXT(".GrantedCapabilityIds"), NSLOCTEXT("HansaEconomicCompiler", "MissingPresenceCapability", "A stage references an unknown capability."), NSLOCTEXT("HansaEconomicCompiler", "MissingPresenceCapabilityFix", "Add the PresenceCapability.* definition or correct the reference."));
+			for (const auto& Cost : Stage->UpgradeGoods) if (!GoodIds.Contains(Cost.GoodId))
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-PRESENCE-003"), Stage->StableDefinitionId + TEXT(".UpgradeGoods"), NSLOCTEXT("HansaEconomicCompiler", "MissingPresenceCostGood", "A stage cost references an unknown good."), NSLOCTEXT("HansaEconomicCompiler", "MissingPresenceCostGoodFix", "Add the Good.* definition or correct the material cost."));
+		}
+		else if (const auto* Policy = Cast<UHansaCityTradePolicyDefinition>(Definition))
+		{
+			if (!CityIds.Contains(Policy->CityId) || PresencePolicyCities.Contains(Policy->CityId))
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-PRESENCE-004"), Policy->StableDefinitionId + TEXT(".CityId"), NSLOCTEXT("HansaEconomicCompiler", "InvalidPresencePolicyCity", "A city policy targets a missing city or duplicates another policy."), NSLOCTEXT("HansaEconomicCompiler", "InvalidPresencePolicyCityFix", "Target one compiled City.* exactly once."));
+			PresencePolicyCities.Add(Policy->CityId);
+			for (const FString& StageId : Policy->AllowedStageIds) if (!PresenceStageIds.Contains(StageId))
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-PRESENCE-005"), Policy->StableDefinitionId + TEXT(".AllowedStageIds"), NSLOCTEXT("HansaEconomicCompiler", "MissingPolicyStage", "A city policy references an unknown stage."), NSLOCTEXT("HansaEconomicCompiler", "MissingPolicyStageFix", "Add the PresenceStage.* definition or correct the policy."));
+			for (const FString& CapabilityId : Policy->DeniedCapabilityIds) if (!PresenceCapabilityIds.Contains(CapabilityId))
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-PRESENCE-006"), Policy->StableDefinitionId + TEXT(".DeniedCapabilityIds"), NSLOCTEXT("HansaEconomicCompiler", "MissingPolicyCapability", "A city policy denies an unknown capability."), NSLOCTEXT("HansaEconomicCompiler", "MissingPolicyCapabilityFix", "Add the PresenceCapability.* definition or correct the policy."));
+			if (!Policy->bExceptionalGovernanceAllowed && Policy->AllowedStageIds.Contains(TEXT("PresenceStage.ExceptionalGovernance")))
+				AddIssue(Result.Issues, TEXT("HSA-REGISTRY-PRESENCE-007"), Policy->StableDefinitionId, NSLOCTEXT("HansaEconomicCompiler", "GovernanceContradiction", "Policy disallows exceptional governance but includes its stage."), NSLOCTEXT("HansaEconomicCompiler", "GovernanceContradictionFix", "Remove the stage or explicitly allow scenario-gated governance."));
+			if (!Policy->TradeStationSites.IsEmpty())
+			{
+				const auto* City = SortedDefinitions.FindByPredicate([&](const UHansaDefinitionBase* Candidate)
+				{
+					const auto* Market = Cast<UHansaCityMarketProfileDefinition>(Candidate);
+					return Market != nullptr && Market->StableDefinitionId == Policy->CityId;
+				});
+				const auto* Market = City != nullptr ? Cast<UHansaCityMarketProfileDefinition>(*City) : nullptr;
+				const EHansaCityPresentationClass Presentation = Market == nullptr ? EHansaCityPresentationClass::Unspecified
+					: Market->PresentationClass != EHansaCityPresentationClass::Unspecified ? Market->PresentationClass
+					: Market->StableDefinitionId == TEXT("City.Lubeck") ? EHansaCityPresentationClass::RenderedBuildable
+					: Market->StableDefinitionId == TEXT("City.Rostock") ? EHansaCityPresentationClass::RenderedVisitable
+					: EHansaCityPresentationClass::MarketOnly;
+				const bool bHasRoute = SortedDefinitions.ContainsByPredicate([&](const UHansaDefinitionBase* Candidate)
+				{
+					const auto* Route = Cast<UHansaRouteDefinition>(Candidate);
+					return Route != nullptr && Route->Connections.ContainsByPredicate([&](const FHansaRouteConnectionDefinition& Connection)
+					{
+						return Connection.SourceCityId == Policy->CityId || Connection.DestinationCityId == Policy->CityId;
+					});
+				});
+				const bool bAllowsStation = Policy->AllowedStageIds.ContainsByPredicate([&](const FString& StageId)
+				{
+					return SortedDefinitions.ContainsByPredicate([&](const UHansaDefinitionBase* Candidate)
+					{
+						const auto* Stage = Cast<UHansaForeignPresenceStageDefinition>(Candidate);
+						return Stage != nullptr && Stage->StableDefinitionId == StageId &&
+							Stage->GrantedCapabilityIds.Contains(TEXT("PresenceCapability.TradeStation"));
+					});
+				});
+				if (Market == nullptr || Market->Goods.IsEmpty() || !Policy->bPublicMarketAccess || !bHasRoute || !bAllowsStation ||
+					Presentation == EHansaCityPresentationClass::MarketOnly)
+				{
+					AddIssue(Result.Issues, TEXT("HSA-REGISTRY-PRESENCE-012"), Policy->StableDefinitionId + TEXT(".TradeStationSites"),
+						NSLOCTEXT("HansaEconomicCompiler", "StationCityContract", "A station-capable city requires a market, public access, route access, a station stage, and a rendered presentation classification."),
+						NSLOCTEXT("HansaEconomicCompiler", "StationCityContractFix", "Add the missing market/route/stage contract or remove the station site from an abstract market-only city."));
+				}
+			}
+		}
+	}
+	for (const auto& Pair : PresenceStagesById)
+		for (const FString& PrerequisiteId : Pair.Value->PrerequisiteStageIds) if (!PresenceStagesById.Contains(PrerequisiteId))
+			AddIssue(Result.Issues, TEXT("HSA-REGISTRY-PRESENCE-008"), Pair.Key + TEXT(".PrerequisiteStageIds"), NSLOCTEXT("HansaEconomicCompiler", "MissingPresencePrerequisite", "A presence prerequisite is missing."), NSLOCTEXT("HansaEconomicCompiler", "MissingPresencePrerequisiteFix", "Add the stage or correct the prerequisite."));
+	for (const auto& Start : PresenceStagesById)
+	{
+		TSet<FString> Visiting; TSet<FString> Visited;
+		TFunction<bool(const FString&)> Visit = [&](const FString& Id)
+		{
+			if (Visiting.Contains(Id)) return false; if (Visited.Contains(Id)) return true;
+			Visiting.Add(Id); const auto* const* Stage = PresenceStagesById.Find(Id);
+			if (Stage) for (const FString& Parent : (*Stage)->PrerequisiteStageIds) if (!Visit(Parent)) return false;
+			Visiting.Remove(Id); Visited.Add(Id); return true;
+		};
+		if (!Visit(Start.Key)) AddIssue(Result.Issues, TEXT("HSA-REGISTRY-PRESENCE-009"), Start.Key + TEXT(".PrerequisiteStageIds"), NSLOCTEXT("HansaEconomicCompiler", "PresenceCycle", "Presence-stage prerequisites contain a cycle."), NSLOCTEXT("HansaEconomicCompiler", "PresenceCycleFix", "Make the authored stage ladder acyclic."));
+	}
 	TArray<Hansa::Simulation::FHansaCompiledGoodDefinition> CompiledGoods;
 	TArray<Hansa::Simulation::FHansaCompiledRecipeDefinition> CompiledRecipes;
 	TArray<Hansa::Simulation::FHansaCompiledBuildingDefinition> CompiledBuildings;
 	TArray<Hansa::Simulation::FHansaCompiledNeedDefinition> CompiledNeeds;
 	TArray<Hansa::Simulation::FHansaCompiledPopulationTierDefinition> CompiledPopulationTiers;
 	TArray<Hansa::Simulation::FHansaCompiledCityMarketProfileDefinition> CompiledCityMarkets;
+	TArray<Hansa::Simulation::FHansaCompiledProductionChainDefinition> CompiledProductionChains;
+	TArray<Hansa::Simulation::FHansaCompiledRegionEconomicProfileDefinition> CompiledRegions;
 	TArray<Hansa::Simulation::FHansaCompiledVehicleDefinition> CompiledVehicles;
 	TArray<Hansa::Simulation::FHansaCompiledRouteDefinition> CompiledRoutes;
+	TArray<Hansa::Simulation::FHansaCompiledPresenceCapabilityDefinition> CompiledPresenceCapabilities;
+	TArray<Hansa::Simulation::FHansaCompiledForeignPresenceStageDefinition> CompiledPresenceStages;
+	TArray<Hansa::Simulation::FHansaCompiledCityTradePolicyDefinition> CompiledCityTradePolicies;
 	TArray<Hansa::Simulation::FHansaCompiledTechnologyDefinition> CompiledTechnologies;
 	TArray<Hansa::Simulation::FHansaCompiledMerchantAITuning> CompiledMerchantAITunings;
 	TArray<Hansa::Simulation::FHansaCompiledScenarioObjective> CompiledScenarioObjectives;
@@ -783,6 +951,7 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			Compiled.ContentHash = ContentHash;
 			Compiled.DisplayName = Good->DisplayName.ToString();
 			CompiledGoods.Add(MoveTemp(Compiled));
+            CompiledGoods.Last().bSpoilageEnabled = Good->bSpoilageEnabled;
 		}
 		else if (const UHansaRecipeDefinition* Recipe = Cast<UHansaRecipeDefinition>(Definition))
 		{
@@ -797,12 +966,14 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			Compiled.bDeclaredSink = Recipe->bDeclaredSink;
 			Compiled.ContentHash = ContentHash;
 			CompiledRecipes.Add(MoveTemp(Compiled));
+            CompiledRecipes.Last().InternalCatchRecipeId = Recipe->InternalCatchRecipeId;
 		}
 		else if (const UHansaBuildingDefinition* Building = Cast<UHansaBuildingDefinition>(Definition))
 		{
 			Hansa::Simulation::FHansaCompiledBuildingDefinition Compiled;
 			Compiled.StableId = Building->StableDefinitionId;
 			Compiled.SchemaVersion = Building->SchemaVersion;
+			Compiled.MaximumMarketRoadDistanceCells = Building->MaximumMarketRoadDistanceCells;
 			Compiled.DisplayName = Building->DisplayName.ToString();
 			Compiled.ConstructionCosts = CompileAmounts(Building->ConstructionCosts);
 			Compiled.ConstructionCostPfennig = Building->ConstructionCostPfennig;
@@ -811,6 +982,15 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			Compiled.RecipeIds.Sort();
 			Compiled.UpgradeTargetBuildingId = Building->UpgradeTargetBuildingId;
 			Compiled.FootprintWidthCells = Building->FootprintWidthCells;
+            if(const auto* Compound=Building->LoadResidentialCompound())
+            {
+             Compiled.ResidentialCompoundId=Compound->StableDefinitionId;
+             Compiled.CompoundStage=Building->CompoundStage;
+             Compiled.CompoundDistrictId=Building->CompoundDistrictId;
+             Compiled.CompoundRoadFrontMask=static_cast<uint8>(Compound->AllowedRoadFrontMask);
+             for(const auto& L:Compound->Layouts)if(L.DevelopmentStage==Building->CompoundStage&&(L.DistrictIds.IsEmpty()||L.DistrictIds.Contains(Building->CompoundDistrictId)))
+              Compiled.CompoundLayoutContextMask|=L.Context==TEXT("Straight")?1:L.Context==TEXT("CornerLeft")?2:L.Context==TEXT("CornerRight")?4:L.Context==TEXT("Edge")?8:0;
+            }
 			Compiled.FootprintHeightCells = Building->FootprintHeightCells;
 			Compiled.BuildTicks = Building->BuildTicks;
 			Compiled.StorageCapacityMilliUnits = Building->StorageCapacityMilliUnits;
@@ -827,7 +1007,9 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			Compiled.bShowInConstructionMenu = Building->bShowInConstructionMenu;
 			Compiled.ConstructionMenuCategory = StaticEnum<EHansaConstructionMenuCategory>()->GetNameStringByValue(
 				static_cast<int64>(Building->ConstructionMenuCategory));
-			Compiled.ConstructionMenuOrder = Building->ConstructionMenuOrder;
+			Compiled.ConstructionTier = Building->ConstructionTier == EHansaConstructionTier::Legacy ? FString() :
+                StaticEnum<EHansaConstructionTier>()->GetNameStringByValue(static_cast<int64>(Building->ConstructionTier));
+            Compiled.ConstructionMenuOrder = Building->ConstructionMenuOrder;
 			Compiled.ConstructionChainOutputGoodId = Building->ConstructionChainOutputGoodId;
 			Compiled.ConstructionChainStage = Building->ConstructionChainStage;
 			Compiled.ConstructionChainStageCount = Building->ConstructionChainStageCount;
@@ -843,7 +1025,9 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 				Need->Kind == EHansaNeedKind::Good
 					? Hansa::Simulation::EHansaCompiledNeedKind::Good
 					: Hansa::Simulation::EHansaCompiledNeedKind::Service,
-				Need->GoodId, ContentHash });
+				Need->GoodId, ContentHash, Need->bSeasonal, Need->SeasonDays, Need->FixedSeason, Need->DefaultReserveDays, Need->SeasonMultipliers });
+   for (const auto& Alternative : Need->Alternatives)
+    CompiledNeeds.Last().Alternatives.Add({Alternative.GoodId, Alternative.FulfillmentBasisPoints});
 		}
 		else if (const UHansaPopulationTierDefinition* Tier = Cast<UHansaPopulationTierDefinition>(Definition))
 		{
@@ -865,6 +1049,31 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			Compiled.ContentHash = ContentHash;
 			CompiledPopulationTiers.Add(MoveTemp(Compiled));
 		}
+		else if (const UHansaProductionChainDefinition* Chain = Cast<UHansaProductionChainDefinition>(Definition))
+		{
+			Hansa::Simulation::FHansaCompiledProductionChainDefinition Compiled;
+			Compiled.StableId=Chain->StableDefinitionId; Compiled.ContentHash=ContentHash;
+			for(const auto& Stage:Chain->Stages)
+			{
+				Hansa::Simulation::FHansaCompiledProductionChainStage Out;
+				Out.StageKey=Stage.StageKey; Out.RecipeId=Stage.RecipeId; Out.PrerequisiteStageKeys=Stage.PrerequisiteStageKeys;
+				Out.PrerequisiteStageKeys.Sort(); Out.Role=static_cast<uint8>(Stage.Role); Out.IntendedConstructionTier=Stage.IntendedConstructionTier;
+				Compiled.Stages.Add(MoveTemp(Out));
+			}
+			CompiledProductionChains.Add(MoveTemp(Compiled));
+		}
+		else if (const UHansaRegionEconomicProfileDefinition* Region = Cast<UHansaRegionEconomicProfileDefinition>(Definition))
+		{
+			Hansa::Simulation::FHansaCompiledRegionEconomicProfileDefinition Compiled;
+			Compiled.StableId=Region->StableDefinitionId; Compiled.MemberCityIds=Region->MemberCityIds; Compiled.MemberCityIds.Sort();
+			for(const auto& Permit:Region->PermittedStages){Hansa::Simulation::FHansaCompiledRegionPermittedStage Out;Out.ProductionChainId=Permit.ProductionChainId;Out.StageKeys=Permit.StageKeys;Out.StageKeys.Sort();Compiled.PermittedStages.Add(MoveTemp(Out));}
+			Compiled.PermittedStages.Sort([](const auto& L,const auto& R){return L.ProductionChainId<R.ProductionChainId;});
+			for(const auto& Resource:Region->ResourceEndowments)Compiled.ResourceEndowments.Add({Resource.GoodId,static_cast<uint8>(Resource.Endowment),Resource.SourceCapacityMilliUnitsPerUpdate});
+			Compiled.ResourceEndowments.Sort([](const auto& L,const auto& R){return L.GoodId<R.GoodId;});
+			Compiled.ExchangeCapacityMilliUnitsPerUpdate=Region->ExchangeCapacityMilliUnitsPerUpdate; Compiled.ExchangeDelayUpdates=Region->ExchangeDelayUpdates;
+			Compiled.TransportLossBasisPoints=Region->TransportLossBasisPoints; Compiled.TransportCostMilliMarksPerUnit=Region->TransportCostMilliMarksPerUnit; Compiled.ContentHash=ContentHash;
+			CompiledRegions.Add(MoveTemp(Compiled));
+		}
 		else if (const UHansaCityMarketProfileDefinition* CityMarket = Cast<UHansaCityMarketProfileDefinition>(Definition))
 		{
 			Hansa::Simulation::FHansaCompiledCityMarketProfileDefinition Compiled;
@@ -875,6 +1084,27 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			Compiled.MaximumMovementBasisPointsPerUpdate = CityMarket->MaximumMovementBasisPointsPerUpdate;
 			Compiled.StaleAfterTicks = CityMarket->StaleAfterTicks;
 			Compiled.bMarketOnly = CityMarket->bMarketOnly;
+			Compiled.PresentationClass = static_cast<uint8>(CityMarket->PresentationClass);
+			Compiled.MapLongitudeMilliDegrees = CityMarket->MapLongitudeMilliDegrees;
+			Compiled.MapLatitudeMilliDegrees = CityMarket->MapLatitudeMilliDegrees;
+			// Old accepted assets predate explicit presentation metadata. Keep them truthful without
+			// changing save identity: only the historical MVP cities receive their documented roles.
+			if (CityMarket->PresentationClass == EHansaCityPresentationClass::Unspecified)
+			{
+				Compiled.PresentationClass = static_cast<uint8>(CityMarket->StableDefinitionId == TEXT("City.Lubeck")
+					? EHansaCityPresentationClass::RenderedBuildable
+					: CityMarket->StableDefinitionId == TEXT("City.Rostock")
+						? EHansaCityPresentationClass::RenderedVisitable
+						: EHansaCityPresentationClass::MarketOnly);
+			}
+			Compiled.RegionId = CityMarket->RegionId;
+			for(const auto& Binding:CityMarket->IndustryBindings)
+			{
+				Hansa::Simulation::FHansaCompiledCityIndustryBinding Out;
+				Out.ProductionChainId=Binding.ProductionChainId;Out.EnabledStageKeys=Binding.EnabledStageKeys;Out.EnabledStageKeys.Sort();Out.CyclesPerMarketUpdate=Binding.CyclesPerMarketUpdate;Out.EfficiencyBasisPoints=Binding.EfficiencyBasisPoints;Out.InputReserveMilliUnits=Binding.InputReserveMilliUnits;Out.OutputReserveMilliUnits=Binding.OutputReserveMilliUnits;Out.bEnabled=Binding.bEnabled;Out.SignatureRank=Binding.SignatureRank;
+				Compiled.IndustryBindings.Add(MoveTemp(Out));
+			}
+			Compiled.IndustryBindings.Sort([](const auto& L,const auto& R){return L.ProductionChainId<R.ProductionChainId;});
 			Compiled.ReportCadenceTicks = CityMarket->ReportCadenceTicks;
 			Compiled.CurrentReportMaxAgeTicks = CityMarket->CurrentReportMaxAgeTicks;
 			Compiled.RecentReportMaxAgeTicks = CityMarket->RecentReportMaxAgeTicks;
@@ -894,7 +1124,46 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			Compiled.ContentHash = ContentHash;
 			CompiledCityMarkets.Add(MoveTemp(Compiled));
 		}
-		else if (const UHansaVehicleDefinition* Vehicle = Cast<UHansaVehicleDefinition>(Definition))
+		else if (const UHansaPresenceCapabilityDefinition* Capability = Cast<UHansaPresenceCapabilityDefinition>(Definition))
+		{
+			CompiledPresenceCapabilities.Add({Capability->StableDefinitionId, Capability->DisplayName.ToString(), Capability->Semantics.ToString(), Capability->CapabilitySchemaVersion, ContentHash});
+		}
+		else if (const UHansaForeignPresenceStageDefinition* Stage = Cast<UHansaForeignPresenceStageDefinition>(Definition))
+		{
+			Hansa::Simulation::FHansaCompiledForeignPresenceStageDefinition Compiled;
+			Compiled.StableId=Stage->StableDefinitionId; Compiled.DisplayName=Stage->DisplayName.ToString(); Compiled.Ordinal=Stage->Ordinal;
+			Compiled.PrerequisiteStageIds=Stage->PrerequisiteStageIds; Compiled.PrerequisiteStageIds.Sort(); Compiled.GrantedCapabilityIds=Stage->GrantedCapabilityIds; Compiled.GrantedCapabilityIds.Sort();
+			for(FName Value:Stage->PermittedPlotCategories)Compiled.PermittedPlotCategories.Add(Value.ToString()); for(FName Value:Stage->PermittedBuildingCategories)Compiled.PermittedBuildingCategories.Add(Value.ToString()); Compiled.PermittedPlotCategories.Sort(); Compiled.PermittedBuildingCategories.Sort();
+			Compiled.UpgradeCostPfennig=Stage->UpgradeCostPfennig; for(const auto& Cost:Stage->UpgradeGoods)Compiled.UpgradeGoods.Add({Cost.GoodId,Cost.QuantityMilliUnits}); Compiled.UpgradeGoods.Sort([](const auto& L,const auto& R){return L.GoodId<R.GoodId;});
+			Compiled.RequiredLawfulTradeVolumeMilliUnits=Stage->RequiredLawfulTradeVolumeMilliUnits; Compiled.RequiredCompletedDeliveries=Stage->RequiredCompletedDeliveries; Compiled.RequiredInvestedPfennig=Stage->RequiredInvestedPfennig;
+			Compiled.RequiredTransactionValuePfennig=Stage->RequiredTransactionValuePfennig; Compiled.RequiredFulfilledShortageMilliUnits=Stage->RequiredFulfilledShortageMilliUnits;
+			Compiled.RequiredReliableOperatingTicks=Stage->RequiredReliableOperatingTicks; Compiled.RequiredSolventOperatingTicks=Stage->RequiredSolventOperatingTicks; Compiled.UpgradeConstructionTicks=Stage->UpgradeConstructionTicks;
+			Compiled.ContentHash=ContentHash; CompiledPresenceStages.Add(MoveTemp(Compiled));
+		}
+		else if (const UHansaCityTradePolicyDefinition* Policy = Cast<UHansaCityTradePolicyDefinition>(Definition))
+		{
+			Hansa::Simulation::FHansaCompiledCityTradePolicyDefinition Compiled;
+			Compiled.StableId=Policy->StableDefinitionId; Compiled.CityId=Policy->CityId; Compiled.InitialStageId=Policy->InitialStageId; Compiled.AllowedStageIds=Policy->AllowedStageIds; Compiled.AllowedStageIds.Sort(); Compiled.DeniedCapabilityIds=Policy->DeniedCapabilityIds; Compiled.DeniedCapabilityIds.Sort();
+			for(FName Value:Policy->AllowedPlotCategories)Compiled.AllowedPlotCategories.Add(Value.ToString()); for(FName Value:Policy->AllowedBuildingCategories)Compiled.AllowedBuildingCategories.Add(Value.ToString()); Compiled.AllowedPlotCategories.Sort(); Compiled.AllowedBuildingCategories.Sort(); Compiled.bPublicMarketAccess=Policy->bPublicMarketAccess; Compiled.bExceptionalGovernanceAllowed=Policy->bExceptionalGovernanceAllowed; Compiled.ContentHash=ContentHash;
+			Compiled.MaximumStationOrders=Policy->MaximumStationOrders; Compiled.MaximumOrderCapMilliUnits=Policy->MaximumOrderCapMilliUnits; Compiled.MaximumOrderBudgetPfennig=Policy->MaximumOrderBudgetPfennig;
+			Compiled.MerchantOfficeStorageBonusMilliUnits=Policy->MerchantOfficeStorageBonusMilliUnits; Compiled.MerchantOfficeAdditionalOrderSlots=Policy->MerchantOfficeAdditionalOrderSlots;
+			for(const auto& Branch:Policy->Specializations)
+			{
+				Hansa::Simulation::FHansaCompiledCityTradePolicyDefinition::FSpecialization Out;
+				Out.SpecializationId=Branch.SpecializationId.ToString();Out.DisplayName=Branch.DisplayName.ToString();Out.RequiredStageId=Branch.RequiredStageId;Out.ExclusiveGroupId=Branch.ExclusiveGroupId.ToString();
+				Out.GrantedCapabilityIds=Branch.GrantedCapabilityIds;Out.GrantedCapabilityIds.Sort();Out.InvestmentCostPfennig=Branch.InvestmentCostPfennig;
+				for(const auto& Cost:Branch.InvestmentGoods)Out.InvestmentGoods.Add({Cost.GoodId,Cost.QuantityMilliUnits});Out.InvestmentGoods.Sort([](const auto& L,const auto& R){return L.GoodId<R.GoodId;});
+				Out.bAllowRespec=Branch.bAllowRespec;Out.RespecRefundBasisPoints=Branch.RespecRefundBasisPoints;Out.StorageCapacityBonusMilliUnits=Branch.StorageCapacityBonusMilliUnits;Out.AdditionalOrderSlots=Branch.AdditionalOrderSlots;Out.StationTransferCapBonusMilliUnits=Branch.StationTransferCapBonusMilliUnits;
+				Compiled.Specializations.Add(MoveTemp(Out));
+			}
+			Compiled.Specializations.Sort([](const auto& L,const auto& R){return L.SpecializationId<R.SpecializationId;});
+ for(const auto& Privilege:Policy->Privileges){Hansa::Simulation::FHansaCompiledCityTradePolicyDefinition::FPrivilege Out;Out.PrivilegeId=Privilege.PrivilegeId.ToString();Out.DisplayName=Privilege.DisplayName.ToString();Out.RequiredStageId=Privilege.RequiredStageId;Out.CostPfennig=Privilege.CostPfennig;for(const auto& Cost:Privilege.CostGoods)Out.CostGoods.Add({Cost.GoodId,Cost.QuantityMilliUnits});Out.DurationTicks=Privilege.DurationTicks;Out.bReversible=Privilege.bReversible;Out.LeaseBoundsMin={Privilege.LeaseBoundsMin.X,Privilege.LeaseBoundsMin.Y};Out.LeaseBoundsMax={Privilege.LeaseBoundsMax.X,Privilege.LeaseBoundsMax.Y};for(FName C:Privilege.PermittedBuildingCategories)Out.PermittedBuildingCategories.Add(C.ToString());Out.PermittedBuildingCategories.Sort();Compiled.Privileges.Add(MoveTemp(Out));}Compiled.Privileges.Sort([](const auto& L,const auto& R){return L.PrivilegeId<R.PrivilegeId;});
+ for(const auto& Project:Policy->CityProjects){Hansa::Simulation::FHansaCompiledCityTradePolicyDefinition::FCityProject Out;Out.ProjectId=Project.ProjectId.ToString();Out.DisplayName=Project.DisplayName.ToString();Out.RequiredStageId=Project.RequiredStageId;Out.CostPfennig=Project.CostPfennig;for(const auto& Cost:Project.CostGoods)Out.CostGoods.Add({Cost.GoodId,Cost.QuantityMilliUnits});Out.ConstructionTicks=Project.ConstructionTicks;Out.SharedReserveGoodId=Project.SharedReserveGoodId;Out.SharedReserveBonusMilliUnits=Project.SharedReserveBonusMilliUnits;Compiled.CityProjects.Add(MoveTemp(Out));}Compiled.CityProjects.Sort([](const auto& L,const auto& R){return L.ProjectId<R.ProjectId;});
+ Compiled.GovernanceScenarioIds=Policy->GovernanceScenarioIds;Compiled.GovernanceScenarioIds.Sort();Compiled.GovernanceCharterId=Policy->GovernanceCharterId.ToString();
+			for(const auto& Site:Policy->TradeStationSites) { TArray<FString> Categories; for (FName Category : Site.PermittedBuildingCategories) Categories.Add(Category.ToString()); Categories.Sort(); Compiled.TradeStationSites.Add({Site.SiteId.ToString(),Site.PlotCategory.ToString(),Site.StorageCapacityMilliUnits,Site.ConstructionTicks,Site.UpkeepPfennigPerTick,Site.CancellationRefundBasisPoints,Site.PresentationClass.ToString(),{Site.LeaseBoundsMin.X,Site.LeaseBoundsMin.Y},{Site.LeaseBoundsMax.X,Site.LeaseBoundsMax.Y},MoveTemp(Categories)}); }
+			Compiled.TradeStationSites.Sort([](const auto& L,const auto& R){return L.SiteId<R.SiteId;});
+			CompiledCityTradePolicies.Add(MoveTemp(Compiled));
+		}		else if (const UHansaVehicleDefinition* Vehicle = Cast<UHansaVehicleDefinition>(Definition))
 		{
 			CompiledVehicles.Add({ Vehicle->StableDefinitionId,
 				Vehicle->Mode == EHansaAuthoredRouteMode::Sea
@@ -958,6 +1227,13 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 			Compiled.MarginUtilityPerMilliMark = Tuning->MarginUtilityPerMilliMark;
 			Compiled.ResearchUtility = Tuning->ResearchUtility;
 			Compiled.ProductionUtility = Tuning->ProductionUtility;
+			Compiled.ProtectedCashReservePfennig = Tuning->ProtectedCashReservePfennig;
+			Compiled.ActionCooldownTicks = Tuning->ActionCooldownTicks;
+			Compiled.DirectTradeQuantityMilliUnits = Tuning->DirectTradeQuantityMilliUnits;
+			Compiled.StationOrderTargetMilliUnits = Tuning->StationOrderTargetMilliUnits;
+			Compiled.StationOrderCapMilliUnits = Tuning->StationOrderCapMilliUnits;
+			Compiled.StationOrderBudgetPfennig = Tuning->StationOrderBudgetPfennig;
+			Compiled.PresenceUtility = Tuning->PresenceUtility;
 			Compiled.TargetCompletedTradeLegs = Tuning->TargetCompletedTradeLegs;
 			Compiled.PreferredResearchTechnologyIds = Tuning->PreferredResearchTechnologyIds;
 			for (const FHansaMerchantAITradePlanDefinition& Plan : Tuning->TradePlans)
@@ -991,9 +1267,31 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 		}
 		else if (const UHansaScenarioDefinition* Scenario = Cast<UHansaScenarioDefinition>(Definition))
 		{
-			CompiledScenarios.Add({Scenario->StableDefinitionId, Scenario->DisplayName.ToString(), Scenario->HomeCityId,
-				Scenario->VictoryIds, Scenario->InsolvencyThresholdPfennig, Scenario->FailureSustainTicks,
-				Scenario->Briefing.ToString(), ContentHash});
+			Hansa::Simulation::FHansaCompiledScenarioDefinition Compiled;
+			Compiled.StableId = Scenario->StableDefinitionId;
+			Compiled.DisplayName = Scenario->DisplayName.ToString();
+			Compiled.HomeCityId = Scenario->HomeCityId;
+			Compiled.VictoryIds = Scenario->VictoryIds;
+			Compiled.InsolvencyThresholdPfennig = Scenario->InsolvencyThresholdPfennig;
+			Compiled.FailureSustainTicks = Scenario->FailureSustainTicks;
+			Compiled.Briefing = Scenario->Briefing.ToString();
+			for (const FHansaAuthoredScenarioSlotRule& Authored : Scenario->MultiplayerSlots)
+			{
+				Hansa::Simulation::FHansaScenarioSlotRule Rule;
+				Rule.SlotId = Authored.SlotId;
+				Rule.HouseId = Hansa::Simulation::FHansaHouseId::TryCreate(static_cast<uint64>(Authored.HouseId)).Value;
+				Rule.DefaultState = static_cast<Hansa::Simulation::EHansaSessionSlotState>(Authored.DefaultState);
+				for (const EHansaAuthoredSessionSlotState State : Authored.AllowedStates)
+					Rule.AllowedStateMask |= 1u << static_cast<uint8>(State);
+				if (Authored.AuthoredTeamId > 0)
+					Rule.AuthoredTeamId = Hansa::Simulation::FHansaTeamId::TryCreate(static_cast<uint64>(Authored.AuthoredTeamId)).Value;
+				Rule.bTeamRequired = Authored.bTeamRequired;
+				Rule.bAllowHumanTakeover = Authored.bAllowHumanTakeover;
+				Compiled.MultiplayerSlots.Add(MoveTemp(Rule));
+			}
+			Compiled.MultiplayerSlots.Sort([](const auto& Left, const auto& Right) { return Left.SlotId < Right.SlotId; });
+			Compiled.ContentHash = ContentHash;
+			CompiledScenarios.Add(MoveTemp(Compiled));
 		}
 	}
 
@@ -1012,5 +1310,7 @@ FHansaEconomicRegistryCompileResult FHansaEconomicDefinitionCompiler::Compile(
 		MoveTemp(CompiledScenarioObjectives),
 		MoveTemp(CompiledVictories),
 		MoveTemp(CompiledScenarios));
+	Result.Registry.SetRegionalEconomy(MoveTemp(CompiledProductionChains),MoveTemp(CompiledRegions));
+	Result.Registry.SetPresenceDefinitions(MoveTemp(CompiledPresenceCapabilities), MoveTemp(CompiledPresenceStages), MoveTemp(CompiledCityTradePolicies));
 	return Result;
 }

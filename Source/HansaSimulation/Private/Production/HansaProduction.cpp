@@ -232,6 +232,7 @@ namespace Hansa::Simulation
 		}
 
 		bool TryReserveInputs(
+			const FHansaPlacementState& Placement,
 			FHansaProductionState& Production,
 			const FHansaCompiledRecipeDefinition& Recipe,
 			FHansaInventoryLedger& InventoryLedger,
@@ -256,10 +257,28 @@ namespace Hansa::Simulation
 				const FHansaQuantity Available = Stock.IsSet() ? Stock->Available : FHansaQuantity();
 				if (!Stock.IsSet() || Available.GetRawValue() < Required.GetRawValue())
 				{
-					SetBlocker(Production, EHansaProductionBlocker::MissingInput,
-						GoodId.GetValue(), Required, Available);
+                    bool bProtectedSupply = false;
+                    if (Input.GoodId == TEXT("Good.Firewood"))
+                    {
+                        for (const auto& Pool : CandidateLedger.CreateReadOnlyAccess().BuildProjection())
+                        {
+                            const auto* Placed = Placement.FindPlacement(Production.BuildingId);
+                            if (!Placed || Pool.CityId != Placed->Spec.CityId || Pool.OwnerKind != EHansaInventoryOwnerKind::City) continue;
+                            const auto Source = CandidateLedger.CreateReadOnlyAccess().QueryStock(Pool.Id, GoodId.GetValue());
+                            const int64 Floor = CandidateLedger.CreateReadOnlyAccess().QueryProtectedRaw(Pool.Id, GoodId.GetValue());
+                            if (Source && Floor > 0 && Source->Available.GetRawValue() >= Required.GetRawValue() &&
+                                Source->Available.GetRawValue() - Floor < Required.GetRawValue()) bProtectedSupply = true;
+                        }
+                    }
+                    SetBlocker(Production, bProtectedSupply ? EHansaProductionBlocker::HouseholdFuelProtected : EHansaProductionBlocker::MissingInput,
+                        GoodId.GetValue(), Required, Available);
 					return false;
 				}
+                if (Available.GetRawValue() - CandidateLedger.CreateReadOnlyAccess().QueryProtectedRaw(Production.InputInventoryId, GoodId.GetValue()) < Required.GetRawValue())
+                {
+                    SetBlocker(Production, EHansaProductionBlocker::HouseholdFuelProtected, GoodId.GetValue(), Required, Available);
+                    return false;
+                }
 				FHansaReservationId ReservationId;
 				if (!TryAllocateReservationId(CandidateLedger, CandidateNextReservationValue, ReservationId))
 				{
@@ -395,6 +414,8 @@ namespace Hansa::Simulation
 		case EHansaProductionBlocker::MissingInput: return TEXT("MissingInput");
 		case EHansaProductionBlocker::StorageBlocked: return TEXT("StorageBlocked");
 		case EHansaProductionBlocker::InventoryTransactionFailed: return TEXT("InventoryTransactionFailed");
+		case EHansaProductionBlocker::HouseholdFuelProtected: return TEXT("HouseholdFuelProtected");
+		case EHansaProductionBlocker::NoNearbyTrees: return TEXT("NoNearbyTrees");
 		default: return TEXT("UnknownProductionBlocker");
 		}
 	}
@@ -423,8 +444,10 @@ namespace Hansa::Simulation
 		TArray<FHansaProductionState>& Productions,
 		uint64& NextReservationValue,
 		const TArray<FHansaBuildingState>& Buildings,
+		const FHansaPlacementState& Placement,
 		FHansaInventoryLedger& InventoryLedger,
 		const FHansaEconomicRegistry* EconomicRegistry,
+		const TConstArrayView<FHansaHouseResearchState> Research,
 		const FHansaSimulationTick Tick,
 		TArray<FHansaProductionStepEvent>& OutEvents)
 	{
@@ -454,6 +477,31 @@ namespace Hansa::Simulation
 					AddBlockerEventIfChanged(PreviousBlocker, Production, OutEvents);
 					continue;
 				}
+                if(Production.OutputTotals.IsEmpty() && Production.CompletedCycles>0 && EconomicRegistry)
+                    if(const auto* Previous=EconomicRegistry->FindRecipe(Production.RecipeId.ToString()))
+                    {
+                        for(const auto& Output:Previous->Outputs) Production.OutputTotals.Add({FHansaGoodId::TryParse(Output.GoodId).Value,
+                            Production.CompletedCycles>uint64(MAX_int64/FMath::Max(int64(1),Output.QuantityMilliUnits))?MAX_int64:int64(Production.CompletedCycles)*Output.QuantityMilliUnits});
+                        Production.OutputTotals.Sort([](const auto& A,const auto& B){return A.GoodId<B.GoodId;});
+                    }
+                if (Production.ProgressTicks == 0 && Production.InputReservations.IsEmpty() && Production.RequestedRecipeId.IsValid() && EconomicRegistry)
+                {
+                    const auto* Definition = EconomicRegistry->FindBuilding(Building->DefinitionId.ToString());
+                    const auto* Selected = EconomicRegistry->FindRecipe(Production.RequestedRecipeId.ToString());
+                    if (Definition && Selected && Definition->RecipeIds.Contains(Selected->StableId))
+                    {
+                        Production.RecipeId = Production.RequestedRecipeId;
+                        bool bInputsAvailable = true;
+                        for (const auto& Input : Selected->Inputs)
+                        {
+                            const auto Good = FHansaGoodId::TryParse(Input.GoodId);
+                            const auto Stock = Good ? InventoryLedger.CreateReadOnlyAccess().QueryStock(Production.InputInventoryId, Good.Value) : TOptional<FHansaInventoryStockProjection>();
+                            if (!Stock || Stock->Available.GetRawValue() < Input.QuantityMilliUnits) bInputsAvailable = false;
+                        }
+                        if (!bInputsAvailable && Production.bFallbackToFresh && Definition->RecipeIds.Contains(TEXT("Recipe.CatchFish")))
+                            Production.RecipeId = FHansaRecipeId::TryParse(TEXT("Recipe.CatchFish")).Value;
+                    }
+                }
 				Recipe = EconomicRegistry != nullptr ? EconomicRegistry->FindRecipe(Production.RecipeId.ToString()) : nullptr;
 				BuildingDefinition = EconomicRegistry != nullptr
 					? EconomicRegistry->FindBuilding(Building->DefinitionId.ToString()) : nullptr;
@@ -464,6 +512,14 @@ namespace Hansa::Simulation
 					AddBlockerEventIfChanged(PreviousBlocker, Production, OutEvents);
 					continue;
 				}
+                // Pure economic fixtures have no geography. Spatial scenarios fail closed on missing trees/placement.
+                if (Recipe->StableId == TEXT("Recipe.FellTimber") && !Placement.GetMaps().IsEmpty() &&
+                    !Placement.HasNearbyTrees(Production.BuildingId, LumberHarvestRadiusCells))
+                {
+                    SetBlocker(Production, EHansaProductionBlocker::NoNearbyTrees);
+                    AddBlockerEventIfChanged(PreviousBlocker, Production, OutEvents);
+                    continue;
+                }
 				const int32 RequiredLaborers = FMath::Max(Recipe->LaborerWorkforce, BuildingDefinition->LaborerWorkforce);
 				const int32 RequiredArtisans = FMath::Max(Recipe->ArtisanWorkforce, BuildingDefinition->ArtisanWorkforce);
 				const int32 AllocatedWorkforce =
@@ -482,7 +538,7 @@ namespace Hansa::Simulation
 					Production.AllocatedLaborerWorkforce, RequiredLaborers,
 					Production.AllocatedArtisanWorkforce, RequiredArtisans);
 				if (Production.ProgressTicks == 0 && !Recipe->Inputs.IsEmpty() &&
-					!TryReserveInputs(Production, *Recipe, InventoryLedger, NextReservationValue, Tick))
+					!TryReserveInputs(Placement, Production, *Recipe, InventoryLedger, NextReservationValue, Tick))
 				{
 					AddBlockerEventIfChanged(PreviousBlocker, Production, OutEvents);
 					continue;
@@ -496,9 +552,18 @@ namespace Hansa::Simulation
 				continue;
 			}
 
+			int32 ProgressThisTick = 1;
+            const FHansaBuildingState* ResearchBuilding = FindProductionBuilding(Buildings, Production.BuildingId);
+			if (Production.Kind == EHansaProductionKind::BuildingRecipe && ResearchBuilding != nullptr)
+			{
+				const int32 Bonus = FHansaResearchEffectResolver::GetBasisPoints(
+					Research, ResearchBuilding->OwnerId, EHansaResearchEffectKind::ProductionThroughputBasisPoints,
+					Production.RecipeId.ToString());
+				ProgressThisTick = FHansaResearchEffectResolver::WorkUnitsForTick(Bonus, Tick) / 10000;
+			}
 			if (Production.ProgressTicks < CycleTicks)
 			{
-				++Production.ProgressTicks;
+				Production.ProgressTicks = FMath::Min(CycleTicks, Production.ProgressTicks + ProgressThisTick);
 			}
 			if (Production.ProgressTicks < CycleTicks)
 			{
@@ -514,6 +579,17 @@ namespace Hansa::Simulation
 				AddBlockerEventIfChanged(PreviousBlocker, Production, OutEvents);
 				continue;
 			}
+            auto RecordOutput=[&](const FString& Good,int64 Amount,uint64 Cycles=1)
+            {
+                const auto Id=FHansaGoodId::TryParse(Good).Value;
+                auto* Total=Production.OutputTotals.FindByPredicate([&](const auto& T){return T.GoodId==Id;});
+                if(!Total){Production.OutputTotals.Add({Id,0});Total=&Production.OutputTotals.Last();}
+                const int64 Added=Cycles>uint64(MAX_int64/FMath::Max(int64(1),Amount))?MAX_int64:int64(Cycles)*Amount;
+                Total->QuantityMilliUnits+=FMath::Min(MAX_int64-Total->QuantityMilliUnits,Added);
+            };
+            if(Production.Kind==EHansaProductionKind::BuildingRecipe)for(const auto& Output:Recipe->Outputs) RecordOutput(Output.GoodId,Output.QuantityMilliUnits);
+            else RecordOutput(Production.SupplyGoodId.ToString(),Production.SupplyQuantityPerCycle.GetRawValue());
+            Production.OutputTotals.Sort([](const auto& A,const auto& B){return A.GoodId<B.GoodId;});
 			Production.ProgressTicks = 0;
 			++Production.CompletedCycles;
 			Production.bCompletedCycleLastTick = true;

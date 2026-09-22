@@ -1,9 +1,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Network/HansaMultiplayerTypes.h"
 #include "Trade/HansaTrade.h"
 #include "UObject/Object.h"
 
+#include "Presence/HansaStationOrders.h"
+#include "Presence/HansaForeignPresence.h"
 #include "HansaTradeMapPresentationModel.generated.h"
 
 class UHansaRuntimeSimulationHost;
@@ -11,6 +14,9 @@ namespace Hansa::Simulation { class FHansaEconomicRegistry; class FHansaSimulati
 
 UENUM(BlueprintType)
 enum class EHansaTradeMapModeFilter : uint8 { All, Sea, Land };
+
+UENUM(BlueprintType)
+enum class EHansaTradeMapCityFilter : uint8 { All, Presence, Routes };
 
 USTRUCT(BlueprintType)
 struct HANSA_API FHansaTradeMapCityPresentation final
@@ -23,6 +29,14 @@ struct HANSA_API FHansaTradeMapCityPresentation final
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bOwned = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bStale = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bUnknown = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bRendered = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bVisitable = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bBuildable = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bMarketOnly = true;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bHasPresence = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bHasRoute = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") int64 ReportAgeTicks = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText CapabilitySummary;
 	friend bool operator==(const FHansaTradeMapCityPresentation&, const FHansaTradeMapCityPresentation&);
 };
 
@@ -94,15 +108,36 @@ struct HANSA_API FHansaTradeMapSnapshot final
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") TArray<FHansaTradeMapStopPresentation> Stops;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FName FocusedSemanticId;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FName PreferredGoodStableId;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FName SelectedCityStableId = TEXT("City.Rostock");
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText Title;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText EditorStatus;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText ReserveRisk;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") int64 SelectedRouteValue = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") int32 SelectedStopIndex = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") EHansaTradeMapModeFilter ModeFilter = EHansaTradeMapModeFilter::All;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") EHansaTradeMapCityFilter CityFilter = EHansaTradeMapCityFilter::All;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FString CitySearchText;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") int32 MatchingCityCount = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") int32 MatchingRouteCount = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") int32 RouteWindowStart = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bOpen = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bCompact = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bDirty = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") int64 TradeStationValue = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText TradeStationState;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText TradeStationDetail;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText StationOrderText;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText StationOrderFeedback;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText TradeStationAction;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bCanTradeStationAction = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText PresenceProgress;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText PresenceUpgradeAction;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bCanPresenceUpgradeAction = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText PresenceSpecializationComparison;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText PresenceSpecializationAction;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FText PresenceSpecializationFeedback;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") FString SelectedPresenceSpecializationId;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Trade") bool bCanPresenceSpecializationAction = false;
 	friend bool operator==(const FHansaTradeMapSnapshot&, const FHansaTradeMapSnapshot&);
 };
 
@@ -117,12 +152,19 @@ class HANSA_API UHansaTradeMapPresentationModel final : public UObject
 public:
 	void InitializeDefaults();
 	void BindRuntime(UHansaRuntimeSimulationHost* RuntimeHost);
+	void SetNetworkCommandIntent(TFunction<bool(const FHansaClientCommandIntent&)> InIntent) { NetworkCommandIntent = MoveTemp(InIntent); }
 	bool ApplyProjection(const Hansa::Simulation::FHansaSimulationProjection& Projection,
 		const Hansa::Simulation::FHansaEconomicRegistry& Registry);
 	bool Open(FName FocusOrigin = TEXT("HUD.TopStatus.TradeMap"), FName PreferredGood = NAME_None, FName SourceCity = TEXT("City.Lubeck"));
 	bool CloseIntent();
 	bool CycleModeFilterIntent();
+	bool CycleCityFilterIntent();
+	bool SetCitySearchIntent(const FString& SearchText);
+	bool CycleSelectedGoodIntent();
+	bool MoveRouteWindowIntent(int32 Direction);
 	bool SelectRouteIntent(int64 RouteValue);
+	bool SelectCityIntent(FName CityId);
+	bool CycleCityIntent(int32 Direction);
 	bool SelectStopIntent(int32 StopIndex);
 	bool CycleCargoActionIntent();
 	bool AdjustQuantityIntent(int32 DeltaMilliUnits);
@@ -143,6 +185,13 @@ public:
     bool CreateAndActivateIntent();
 	bool CommitIntent();
 	bool ToggleActiveIntent();
+    bool TradeStationActionIntent();
+	bool PresenceUpgradeActionIntent();
+	bool PresenceSpecializationIntent(const FString& Action);
+	bool CanPresenceSpecializationIntent(const FString& Action) const;
+    bool StationOrderIntent(const FString& Action);
+    bool CanStationOrderAction(const FString& Action) const;
+    void RefreshStationOrderText();
     bool CancelRouteIntent();
 	void SetCompact(bool bCompact);
 	void SetFocusedSemanticId(FName SemanticId);
@@ -153,13 +202,32 @@ public:
 	FHansaTradeMapFocusRestoreRequested& OnFocusRestoreRequested() { return FocusRestoreRequested; }
 private:
 	void RebuildStops();
+	void RebuildFilteredProjection();
     void UpdateCreatorReview();
 	void PublishIfChanged(const FHansaTradeMapSnapshot& Previous);
 	const FHansaTradeMapRoutePresentation* FindSelectedRoute() const;
 	UPROPERTY(VisibleAnywhere, Category="Hansa|UI|Trade") FHansaTradeMapSnapshot Snapshot;
+    Hansa::Simulation::FHansaStationOrderTerms OrderDraft;
+    TArray<Hansa::Simulation::FHansaStationOrderState> StationOrders;
+    TArray<Hansa::Simulation::FHansaGoodId> OrderGoods;
+    uint64 SelectedStationOrder = 0;
+    int64 StationOrderCapacity = 0;
+    int64 StationOrderMaxCap = 50000;
+    int64 StationOrderMaxBudget = 1000000;
+	FString PresenceUpgradeStageId;
+	FString SelectedStationSiteId;
+	TSharedPtr<Hansa::Simulation::FHansaSimulationProjection> LastProjection;
+	const Hansa::Simulation::FHansaEconomicRegistry* LastRegistry = nullptr;
+	Hansa::Simulation::FHansaInventoryId PresenceFundingInventoryId;
+	bool bPresenceUpgradeFunding = false;
+	TArray<Hansa::Simulation::FHansaPresenceSpecializationProjection> PresenceSpecializations;
+	int64 PresenceSpecializationRevision = 0;
 	TArray<Hansa::Simulation::FHansaRouteStop> DraftStops;
+	TArray<FHansaTradeMapCityPresentation> AllCities;
 	TArray<FHansaTradeMapRoutePresentation> AllRoutes;
+	TArray<FName> AvailableGoods;
 	TWeakObjectPtr<UHansaRuntimeSimulationHost> Runtime;
+	TFunction<bool(const FHansaClientCommandIntent&)> NetworkCommandIntent;
 	FName FocusOriginSemanticId;
 	uint64 Revision = 0;
 	FHansaTradeMapChanged Changed;

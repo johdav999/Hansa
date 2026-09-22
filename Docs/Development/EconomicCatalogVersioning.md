@@ -1,4 +1,26 @@
+# Main catalog v25 — preserved fish
+
+User requested main-project integration after reviewing the isolated feature. Catalog v25 is D73BFD73C23C2D03, 102 definitions, following v24 C1BDF313543BF44A. Three additions: Good.PreservedFish, Recipe.SaltedCatch, Building.Fishery.SaltingShed. Fresh fish spoilage/display, Need.Fish alternatives, the fishery upgrade target, city-market preserved-fish rows and bounded Rostock salt supply are updated. The normal game loads this catalog without a candidate flag. The separate firewood promotion must build additively on v25 rather than overwrite these assets.
+
+Save9/fingerprint22/command7; strict catalog checks remain. Reviewed manifest: Tests/Golden/economic_catalog_v25_preservedfish.json. Main integration evidence: Saved/GenerationJobs/preservedfish_main_20260917/. See PreservedFish.md for gameplay and measured balance.
+
+---
+
 # Economic catalog versioning
+
+## Catalog v19 — approved labour compounds
+
+Explicit user approval promoted four reviewed R03 compound definitions and twelve new
+building bindings (four families, three visual stages). All 81 previous definitions
+retain their fingerprints. The 97-definition manifest is
+`Tests/Golden/economic_catalog_v19.json`; forward/reverse discovery yields
+`31FB425080110FD0`. Removing the sixteen additions reproduces v18
+`1C2B54191C78E4CA`, verified by EconomicAssetReload.
+
+New parcels reserve 16 × 12 m or 16 × 16 m from stage one. Each stage retains
+the existing 12-resident capacity and explicit construction costs. Legacy 8 × 8 m
+residences are unchanged. Exact registry matching remains strict: older-catalog
+saves stay on disk but require a new game; no implicit footprint migration occurs.
 
 ## Catalog v15 — approved Fishery presentation
 
@@ -142,3 +164,27 @@ Before the fix, `Hansa.Integration.Authoring.EconomicAssetReload` failed with ac
 - `Hansa.Integration.Save.CorruptionCompatibilityAtomicity` passed, retaining explicit incompatible-content rejection.
 
 The repository's ordinary unity build route still encounters pre-existing anonymous-namespace symbol collisions in unrelated UI translation units. EMVP-P01 was verified non-unity without changing those unrelated files.
+
+### Labour court decoration / catalogue v20
+Catalogue v20 is 4A86F28719E21627. Four court layouts change, and twelve stage-building fingerprints change transitively because they include the compound content hash. Other 81 fingerprints remain unchanged. The full v19 catalogue is reconstructed from preserved court definitions and bindings to those definitions; the prior v18 lineage remains checked. The existing exact-hash save policy requires a new game for v19 saves. No save files are altered. See [court revision evidence](LabourCourtDecoration.md).
+
+## Catalogue v21 — court boundaries (2026-09-16)
+Registry `5E0327141B0AC574`, previous v20 `4A86F28719E21627`. Four court definitions and twelve dependent building fingerprints change for required three-sided fencing and occasional 25-degree turns. R05 native baseline exports preserve exact v20 reconstruction. Current manifest: `Tests/Golden/economic_catalog_v21.json`. Exact-hash saves from v20 require a new game.
+
+## Catalogue v22 — artisan house family (2026-09-16)
+
+User requested generation and game implementation of four photorealistic artisan variants and a GUI icon. Registry `76FF996D95CBB5EA`, prior v21 `5E0327141B0AC574`. Only `Building.Residence.Artisan` changes: revision 2 to 3, new production mesh and actor paths. Fingerprint `6D78AF560826A7D8` becomes `2A880C7F45698CF8`; all other 96 definitions retain their fingerprints. Full manifest: `Tests/Golden/economic_catalog_v22.json`. The seed builder carries the same presentation and revision. Reload tests compile both discovery orders and reconstruct the full v21 manifest by reverting only those three fields, then retain older lineage checks.
+
+Economic values, footprint, population capacity and stable IDs remain unchanged. The existing exact-hash policy requires a new game for v21 saves; no save is deleted or implicitly migrated. See `SourceArt/Generated/Buildings/ArtisanHouse/README.md` for asset provenance and visual limitations.
+
+## Catalogue v23 — court rotation frequency (2026-09-16)
+
+User-approved 20/40/40 original/left/right selection for eligible rear houses and CornerCourt/CraftCourt principals. Registry `A2B48E339BEE2EFA`, prior v22 `76FF996D95CBB5EA`. Four court revisions and twelve dependent building fingerprints change; the remaining 81 fingerprints are unchanged. Full manifest: `Tests/Golden/economic_catalog_v23.json`. Native R06 baselines permit full v22 reconstruction. Schema, geometry and save format are unchanged; existing exact-hash saves require a new game.
+
+## Catalogue v24 — artisan street plots (2026-09-16)
+
+Registry C1BDF313543BF44A, prior v23 A2B48E339BEE2EFA. Adds Compound.Artisan.Plot and Building.Residence.Artisan.Plot. All 97 prior definition fingerprints are unchanged. The full 99-definition manifest is Tests/Golden/economic_catalog_v24.json. The native reload test reconstructs the exact v23 catalogue by removing the two additions, then retains all earlier reconstruction checks.
+
+The new plot reserves 16 x 8 m under a new identity. Existing residences retain their old footprint, economics and upgrade chain. Equal-weight layouts are selected by persistent parcel identity; no simulation/save field is added. The exact-hash save policy requires a new game for v23 saves, and no save files are modified. UseArtisanPlots=False restores the old construction menu choice without changing catalogue identity or placed plots.
+
+A fixed HansaDefinitions localization key is authored before saving the compound. ExportInterchange now writes complex FText strings so localized namespace/key survives JSON round trips. The first draft exposed an automatically assigned key on save; that draft was replaced before final validation and retained only under Saved/ArtisanPlots/FirstDraft.

@@ -41,7 +41,7 @@
 
 namespace
 {
-    const FString Root(TEXT("/Game/Hansa/Generated/Staging/LubeckWorldArt_P30"));
+    const FString LubeckWorldArtTestRoot(TEXT("/Game/Hansa/Generated/Staging/LubeckWorldArt_P30"));
     bool Save(UObject* Asset)
     {
         FAssetRegistryModule::AssetCreated(Asset);Asset->MarkPackageDirty();
@@ -54,7 +54,7 @@ namespace
     }
     UMaterial* GroundMaterial()
     {
-        auto* M=NewObject<UMaterial>(CreatePackage(*(Root/TEXT("M_Lubeck_Ground"))),TEXT("M_Lubeck_Ground"),RF_Public|RF_Standalone);
+        auto* M=NewObject<UMaterial>(CreatePackage(*(LubeckWorldArtTestRoot/TEXT("M_Lubeck_Ground"))),TEXT("M_Lubeck_Ground"),RF_Public|RF_Standalone);
         auto* Pos=Expression<UMaterialExpressionWorldPosition>(M);
         auto* XY=Expression<UMaterialExpressionComponentMask>(M);XY->R=true;XY->G=true;XY->Input.Connect(0,Pos);
         auto* Scale=Expression<UMaterialExpressionConstant>(M);Scale->R=.0025f; // approved native 4 m P18 source scale
@@ -81,7 +81,7 @@ namespace
             auto I=D.CreateVertex();Positions[I]=P;auto VI=D.CreateVertexInstance(I);Normals[VI]=FVector3f(0,0,1);UVs.Set(VI,0,FVector2f(P.X/400,P.Y/400));V.Add(VI);
         }
         D.CreatePolygon(G,V);
-        auto* M=NewObject<UStaticMesh>(CreatePackage(*(Root/TEXT("SM_Lubeck_RiverSurface"))),TEXT("SM_Lubeck_RiverSurface"),RF_Public|RF_Standalone);
+        auto* M=NewObject<UStaticMesh>(CreatePackage(*(LubeckWorldArtTestRoot/TEXT("SM_Lubeck_RiverSurface"))),TEXT("SM_Lubeck_RiverSurface"),RF_Public|RF_Standalone);
         M->GetStaticMaterials().Add(FStaticMaterial());M->SetNumSourceModels(1);M->CreateMeshDescription(0,MoveTemp(D));M->CommitMeshDescription(0);M->Build(false);M->PostEditChange();return Save(M)?M:nullptr;
     }
 }
@@ -91,8 +91,8 @@ bool FLubeckWorldArtAuthoring::RunTest(const FString&)
     if(!FParse::Param(FCommandLine::Get(),TEXT("P30Authoring"))){AddInfo(TEXT("Read-only normal test run; -P30Authoring is required."));return true;}
     TArray<UPackage*> Dirty;UEditorLoadingAndSavingUtils::GetDirtyMapPackages(Dirty);TArray<UPackage*> Content;UEditorLoadingAndSavingUtils::GetDirtyContentPackages(Content);
     if(!Dirty.IsEmpty()||!Content.IsEmpty()||GEditor->PlayWorld){AddError(TEXT("Requires clean editor outside PIE; no user work is saved or discarded."));return false;}
-    const FString Map=Root/TEXT("L_Lubeck_WorldArt_Candidate");
-    if(FPackageName::DoesPackageExist(Map)||FPackageName::DoesPackageExist(Root/TEXT("M_Lubeck_Ground"))){AddError(TEXT("Candidate destination exists; inspect it instead of overwriting."));return false;}
+    const FString Map=LubeckWorldArtTestRoot/TEXT("L_Lubeck_WorldArt_Candidate");
+    if(FPackageName::DoesPackageExist(Map)||FPackageName::DoesPackageExist(LubeckWorldArtTestRoot/TEXT("M_Lubeck_Ground"))){AddError(TEXT("Candidate destination exists; inspect it instead of overwriting."));return false;}
     auto* Material=GroundMaterial();auto* Mesh=WaterMesh();if(!Material||!Mesh){AddError(TEXT("Candidate material/mesh creation failed"));return false;}
     UWorld* W=GEditor->NewMap(true);if(!W||!W->GetWorldPartition()){AddError(TEXT("World Partition map required"));return false;}
     W->GetWorldSettings()->DefaultGameMode=AHansaGameMode::StaticClass();
@@ -120,13 +120,13 @@ bool FLubeckArtRevision::RunTest(const FString&)
     if(!FParse::Param(FCommandLine::Get(),TEXT("P30Authoring"))){AddInfo(TEXT("Explicit -P30Authoring required."));return true;}
     TArray<UPackage*> Dirty,Content;UEditorLoadingAndSavingUtils::GetDirtyMapPackages(Dirty);UEditorLoadingAndSavingUtils::GetDirtyContentPackages(Content);
     if(!Dirty.IsEmpty()||!Content.IsEmpty()||GEditor->PlayWorld){AddError(TEXT("Refusing dirty editor/PIE"));return false;}
-    const FString Map=Root/TEXT("L_Lubeck_WorldArt_Candidate");if(!FEditorFileUtils::LoadMap(Map,false,true)){AddError(TEXT("Candidate not found"));return false;}
+    const FString Map=LubeckWorldArtTestRoot/TEXT("L_Lubeck_WorldArt_Candidate");if(!FEditorFileUtils::LoadMap(Map,false,true)){AddError(TEXT("Candidate not found"));return false;}
     UWorld* W=GEditor->GetEditorWorldContext().World();
     FWorldPartitionHelpers::FForEachActorWithLoadingParams LoadParams;LoadParams.bKeepReferences=true;
     FWorldPartitionHelpers::FForEachActorWithLoadingResult LoadedActors;
     FWorldPartitionHelpers::ForEachActorWithLoading(W->GetWorldPartition(),[](const FWorldPartitionActorDescInstance*){return true;},LoadParams,LoadedActors);
 
-    auto* M=LoadObject<UMaterial>(nullptr,*(Root/TEXT("M_Lubeck_Ground.M_Lubeck_Ground")));if(!M)return false;
+    auto* M=LoadObject<UMaterial>(nullptr,*(LubeckWorldArtTestRoot/TEXT("M_Lubeck_Ground.M_Lubeck_Ground")));if(!M)return false;
     bool bGrass=false,bBank=false;
     for(UMaterialExpression* E:M->GetExpressionCollection().Expressions)
         if(auto* S=Cast<UMaterialExpressionTextureSample>(E);S&&S->Texture)
@@ -138,8 +138,8 @@ bool FLubeckArtRevision::RunTest(const FString&)
     if(!bGrass||!bBank){AddError(TEXT("Terrain candidate requires distinct grass-loam and bank-loam sources."));return false;}
     M->PostEditChange();M->MarkPackageDirty();
     auto* Parent=LoadObject<UMaterialInterface>(nullptr,TEXT("/Water/Materials/WaterSurface/Water_Material_CustomMesh.Water_Material_CustomMesh"));if(!Parent){AddError(TEXT("Native Water custom-mesh material unavailable"));return false;}
-    auto* MI=LoadObject<UMaterialInstanceConstant>(nullptr,*(Root/TEXT("MI_Lubeck_Trave.MI_Lubeck_Trave")));
-    if(!MI){MI=NewObject<UMaterialInstanceConstant>(CreatePackage(*(Root/TEXT("MI_Lubeck_Trave"))),TEXT("MI_Lubeck_Trave"),RF_Public|RF_Standalone);FAssetRegistryModule::AssetCreated(MI);}
+    auto* MI=LoadObject<UMaterialInstanceConstant>(nullptr,*(LubeckWorldArtTestRoot/TEXT("MI_Lubeck_Trave.MI_Lubeck_Trave")));
+    if(!MI){MI=NewObject<UMaterialInstanceConstant>(CreatePackage(*(LubeckWorldArtTestRoot/TEXT("MI_Lubeck_Trave"))),TEXT("MI_Lubeck_Trave"),RF_Public|RF_Standalone);FAssetRegistryModule::AssetCreated(MI);}
     MI->SetParentEditorOnly(Parent);MI->PostEditChange();MI->MarkPackageDirty();
     for(TActorIterator<AWaterBodyCustom> I(W);I;++I){I->GetWaterBodyComponent()->SetWaterMaterial(MI);I->PostEditChange();I->MarkPackageDirty();}
     for(TActorIterator<AHansaLubeckWorldArt> I(W);I;++I){I->Exposure->Settings.AutoExposureMinBrightness=14;I->Exposure->Settings.AutoExposureMaxBrightness=14;I->Exposure->Settings.LocalExposureHighlightContrastScale=1;I->Exposure->Settings.LocalExposureShadowContrastScale=1;I->MarkPackageDirty();}
@@ -152,7 +152,7 @@ bool FLubeckArtBake::RunTest(const FString&)
     if(!FParse::Param(FCommandLine::Get(),TEXT("P30Authoring"))){AddInfo(TEXT("Explicit -P30Authoring required."));return true;}
     TArray<UPackage*> Dirty,Content;UEditorLoadingAndSavingUtils::GetDirtyMapPackages(Dirty);UEditorLoadingAndSavingUtils::GetDirtyContentPackages(Content);
     if(!Dirty.IsEmpty()||!Content.IsEmpty()||GEditor->PlayWorld){AddError(TEXT("Refusing dirty editor/PIE"));return false;}
-    if(!FEditorFileUtils::LoadMap(Root/TEXT("L_Lubeck_WorldArt_Candidate"),false,true))return false;
+    if(!FEditorFileUtils::LoadMap(LubeckWorldArtTestRoot/TEXT("L_Lubeck_WorldArt_Candidate"),false,true))return false;
     UWorld* W=GEditor->GetEditorWorldContext().World();
     FWorldPartitionHelpers::FForEachActorWithLoadingParams LoadParams;LoadParams.bKeepReferences=true;
     FWorldPartitionHelpers::FForEachActorWithLoadingResult LoadedActors;

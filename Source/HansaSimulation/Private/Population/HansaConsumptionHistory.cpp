@@ -14,12 +14,32 @@ namespace Hansa::Simulation
         {
             if (!Value.CityId.IsValid() || !Value.GoodId.IsValid() || Value.Required < 0 ||
                 Value.Consumed < 0 || Value.Consumed > Value.Required) return false;
+            int64 Supplied=0;
+            for (int32 I=0; I<Value.SuppliedGoods.Num(); ++I)
+            {
+                const auto& G=Value.SuppliedGoods[I];
+                if (!G.GoodId.IsValid() || G.QuantityMilliUnits<0 || G.FulfillmentMilliUnits<0 ||
+                    Supplied>MAX_int64-G.FulfillmentMilliUnits || (I>0 && !(Value.SuppliedGoods[I-1].GoodId<G.GoodId))) return false;
+                Supplied+=G.FulfillmentMilliUnits;
+            }
+            if (!Value.SuppliedGoods.IsEmpty() && Supplied>Value.Consumed) return false;
             auto* Total = Totals.FindByPredicate([&](const auto& T)
                 { return T.CityId == Value.CityId && T.GoodId == Value.GoodId; });
             if (!Total) { Totals.Add(Value); return true; }
             if (Total->Required > MAX_int64 - Value.Required || Total->Consumed > MAX_int64 - Value.Consumed) return false;
             Total->Required += Value.Required;
             Total->Consumed += Value.Consumed;
+            for (const auto& G:Value.SuppliedGoods)
+            {
+                auto* Existing=Total->SuppliedGoods.FindByPredicate([&](const auto& V){return V.GoodId==G.GoodId;});
+                if (!Existing) Total->SuppliedGoods.Add(G);
+                else
+                {
+                    if (Existing->QuantityMilliUnits>MAX_int64-G.QuantityMilliUnits || Existing->FulfillmentMilliUnits>MAX_int64-G.FulfillmentMilliUnits) return false;
+                    Existing->QuantityMilliUnits+=G.QuantityMilliUnits;Existing->FulfillmentMilliUnits+=G.FulfillmentMilliUnits;
+                }
+            }
+            Total->SuppliedGoods.Sort([](const auto& A,const auto& B){return A.GoodId<B.GoodId;});
             return true;
         }
     }
@@ -34,7 +54,7 @@ namespace Hansa::Simulation
         for (const auto& Cohort : Cohorts)
             for (const auto& Need : Cohort.Needs)
                 if (Need.GoodId.IsValid() && !Add(Sample.Goods,
-                    {Cohort.CityId, Need.GoodId, Need.RequiredLastTick.GetRawValue(), Need.ConsumedLastTick.GetRawValue()})) return false;
+                    {Cohort.CityId, Need.GoodId, Need.RequiredLastTick.GetRawValue(), Need.ConsumedLastTick.GetRawValue(), Need.SuppliedGoods})) return false;
         Sample.Goods.Sort(Less);
         const int32 Capacity = WindowTicks(Clock.GetMinutesPerTick());
         // Check the complete retained sum before mutating, including int64 overflow.

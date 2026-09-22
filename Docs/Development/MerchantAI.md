@@ -2,7 +2,7 @@
 
 ## Outcome
 
-The Lübeck shortage scenario now contains one server-side merchant rival. The rival owns house 2, 50,000 Pfennig, 400 research points, one cog, one cargo inventory and one inactive Baltic grain route. It never writes money, inventory, markets, routes, production or research directly.
+The Lübeck shortage scenario contains one server-side merchant rival. The rival owns its money, research, ships, cargo, stations, orders, routes and presence progression. It never writes money, inventory, markets, stations, routes, production, progression or research directly.
 
 ## Decision contract
 
@@ -13,6 +13,8 @@ The Lübeck shortage scenario now contains one server-side merchant rival. The r
 - activate an owned idle production process.
 
 Every chosen action is emitted as the same `FHansaGameplayCommand` used by player input. The header uses `EHansaCommandOrigin::ArtificialIntelligence`; ownership, timing, identity and payload rules are enforced transactionally by `FHansaGameplayCommandGateway`.
+
+TR-11 extends the bounded options with lawful spot trades, authored-site proposal/funding, station orders, presence request/funding and specialization selection. Protected cash, cooldown, trade quantity, order target/cap/budget and presence utility are authored tuning. See `Docs/Development/TradePresence/TR-11.md` for the current contract and evidence.
 
 Market opportunity evaluation calls `CompareMarketOpportunity`, which is composed from `QueryKnownMarketPrice` and `QueryKnownMarketSupplyDemand`. Unknown reports contain no values and make an option ineligible. The controller never calls unrestricted market-state queries.
 

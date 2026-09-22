@@ -6,6 +6,7 @@ namespace Hansa::Game::LubeckPlacementGrid
 	namespace
 	{
 		#include "HansaLubeckSurveyPlacement.generated.inl"
+        #include "HansaLubeckTrees.generated.inl"
 	}
 
 	bool IsSurveyWorld(const UWorld* World)
@@ -42,6 +43,12 @@ namespace Hansa::Game::LubeckPlacementGrid
 			for (int32 Y=Run.FirstY; Y<=Run.LastY; ++Y)
 				Map.Cells[(Run.X-SurveyMinX)*Height + Y-SurveyMinY].Terrain =
 					static_cast<EHansaPlacementTerrain>(Run.Terrain);
+        for (const auto Tree : SurveyTreeCells)
+        {
+            const auto& Cell = Map.Cells[(Tree.X-SurveyMinX)*Height + Tree.Y-SurveyMinY];
+            if (Cell.Terrain != EHansaPlacementTerrain::Water && !Cell.bBlocked)
+                Map.TreeCells.Add(Tree);
+        }
 		return Result;
 	}
 }

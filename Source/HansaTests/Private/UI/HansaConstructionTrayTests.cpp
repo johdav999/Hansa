@@ -1,5 +1,6 @@
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
+#include "UI/HansaConstructionTestSettings.h"
 #include "UI/SHansaBuildMenu.h"
 #include "InputCoreTypes.h"
 #include "UObject/StrongObjectPtr.h"
@@ -34,6 +35,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaConstructionTrayCompact,"Hansa.UI.BuildMe
  EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FHansaConstructionTrayCompact::RunTest(const FString&)
 {
+ FScopedHansaArtisanConstructionOverride Override(false);
  TStrongObjectPtr<UHansaBuildMenuPresentationModel> Model(NewObject<UHansaBuildMenuPresentationModel>());
  FString Error;if(!TestTrue(TEXT("Catalog initializes"),Model->InitializeForLubeck(nullptr,Error)))return false;
  Model->SetOpen(false);auto Menu=SNew(SHansaBuildMenu).Model(Model.Get());
@@ -48,6 +50,7 @@ bool FHansaConstructionTrayCompact::RunTest(const FString&)
  Menu->OnKeyDown(FGeometry(),FKeyEvent(EKeys::Gamepad_DPad_Right,FModifierKeysState(),0,false,0,0));
  TestNotEqual(TEXT("Controller D-pad moves actual semantic focus"),Model->GetSnapshot().FocusedSemanticId,Before);
  Menu->ActivateSemanticId(TEXT("BuildMenu.Category.Residences"));
+ Menu->ActivateSemanticId(TEXT("BuildMenu.Tier.Craftsmen"));
  auto Locked=Menu->ResolveSemanticWidget(TEXT("BuildMenu.Card.Building_Residence_Artisan"));
  TestTrue(TEXT("Upgrade-only card is visibly present but disabled"),Locked.IsValid() && !Locked->IsEnabled());
  TestFalse(TEXT("Locked card rejects activation"),Menu->ActivateSemanticId(TEXT("BuildMenu.Card.Building_Residence_Artisan")));

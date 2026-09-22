@@ -65,7 +65,8 @@ namespace Hansa::Simulation
 		DestinationNotAdjacentToRoad,
 		SourceNotConnectedToMarket,
 		DestinationNotConnectedToMarket,
-		EndpointsDisconnected
+		EndpointsDisconnected,
+		MarketNotInRange
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaLogisticsPriority Priority);
@@ -207,7 +208,8 @@ namespace Hansa::Simulation
 		[[nodiscard]] static FHansaLogisticsRoadPathProjection QueryBuildingRoadAccess(
 			FHansaBuildingId SourceBuildingId,
 			const FHansaPlacementState& Placement,
-			TConstArrayView<FHansaBuildingState> Buildings);
+			TConstArrayView<FHansaBuildingState> Buildings,
+            const FHansaEconomicRegistry* Registry = nullptr);
 
 		[[nodiscard]] static FHansaLogisticsRoadPathProjection QueryRoadPath(
 			FHansaInventoryId SourceInventoryId,

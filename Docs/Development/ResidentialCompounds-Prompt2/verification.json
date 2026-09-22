@@ -1,0 +1,168 @@
+[
+  {
+    "source": "Saved\\CompoundImplementation\\Build\\20260914-222048802-build-HansaEditor-Win64-Development\\result.json",
+    "result": {
+      "Operation": "Build",
+      "Status": "Succeeded",
+      "Target": "HansaEditor",
+      "Platform": "Win64",
+      "Configuration": "Development",
+      "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+      "EngineRoot": "H:\\Unreal\\UE_5.8",
+      "CompletedUtc": "2026-09-14T20:21:06.1435858Z",
+      "Log": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Build\\20260914-222048802-build-HansaEditor-Win64-Development\\Build.log"
+    }
+  },
+  {
+    "source": "Saved\\CompoundImplementation\\Shipping\\20260914-222143392-shipping-exclusion-Win64\\result.json",
+    "result": {
+      "Operation": "VerifyShippingExclusion",
+      "Status": "Succeeded",
+      "Scope": "Target receipt and executable; packaged/cooked/depot audit is a later gate",
+      "Platform": "Win64",
+      "ShippingBuildSkipped": false,
+      "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+      "EngineRoot": "H:\\Unreal\\UE_5.8",
+      "CompletedUtc": "2026-09-14T20:22:23.4148299Z",
+      "ForbiddenTokens": [
+        "HansaAutomation",
+        "HansaEditor",
+        "HansaTests",
+        "HansaMcp",
+        "HansaGenerationWorker",
+        "HANSA_GENERATION_WORKER_TOKEN",
+        "Hansa/GenerationWorker",
+        "OpenAIResponsesProvider",
+        "OPENAI_API_KEY",
+        "HANSA_OPENAI_MODEL",
+        "api.openai.com",
+        "TripoStaticPropProvider",
+        "TRIPO_API_KEY",
+        "HANSA_TRIPO_ENABLED",
+        "openapi.tripo3d.ai",
+        "ElevenLabsAudioProvider",
+        "ELEVENLABS_API_KEY",
+        "HANSA_ELEVENLABS_ENABLED",
+        "api.elevenlabs.io",
+        "WITH_HANSA_AUTOMATION"
+      ],
+      "ScannedFiles": [
+        {
+          "Path": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Binaries\\Win64\\Hansa-Win64-Shipping.target",
+          "Bytes": 195072,
+          "Sha256": "40DE6FA7FAF5650DFBD486EC4AE2125E2C84E77D3181B3A7DEE61D6C0D8FFB84",
+          "ForbiddenTokensFound": []
+        },
+        {
+          "Path": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Binaries\\Win64\\Hansa-Win64-Shipping.exe",
+          "Bytes": 177077760,
+          "Sha256": "1BEB2F352645CEB7B99D731BE2A1B0E64A495425DB6A9BE27367D20F7C3BC68D",
+          "ForbiddenTokensFound": []
+        }
+      ],
+      "Failures": []
+    }
+  },
+  {
+    "source": "Saved\\CompoundImplementation\\Tests\\20260914-222126972-automation-Hansa.Compound\\result.json",
+    "result": {
+      "Operation": "RunAutomationTests",
+      "Status": "Succeeded",
+      "Filter": "Hansa.Compound",
+      "Configuration": "Development",
+      "TestsFound": 7,
+      "EditorBuildSkipped": true,
+      "RenderingEnabled": false,
+      "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+      "EngineRoot": "H:\\Unreal\\UE_5.8",
+      "CompletedUtc": "2026-09-14T20:21:42.7691720Z",
+      "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Tests\\20260914-222126972-automation-Hansa.Compound\\UnrealEditor.log",
+      "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Tests\\20260914-222126972-automation-Hansa.Compound\\AutomationCommand.log"
+    }
+  },
+  {
+    "source": "Saved\\CompoundImplementation\\Regressions\\20260914-222229439-automation-Hansa.Simulation.Placement\\result.json",
+    "result": {
+      "Operation": "RunAutomationTests",
+      "Status": "Succeeded",
+      "Filter": "Hansa.Simulation.Placement",
+      "Configuration": "Development",
+      "TestsFound": 6,
+      "EditorBuildSkipped": true,
+      "RenderingEnabled": false,
+      "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+      "EngineRoot": "H:\\Unreal\\UE_5.8",
+      "CompletedUtc": "2026-09-14T20:22:44.7174650Z",
+      "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Regressions\\20260914-222229439-automation-Hansa.Simulation.Placement\\UnrealEditor.log",
+      "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Regressions\\20260914-222229439-automation-Hansa.Simulation.Placement\\AutomationCommand.log"
+    }
+  },
+  {
+    "source": "Saved\\CompoundImplementation\\Regressions\\20260914-222244738-automation-Hansa.Simulation.Logistics\\result.json",
+    "result": {
+      "Operation": "RunAutomationTests",
+      "Status": "Succeeded",
+      "Filter": "Hansa.Simulation.Logistics",
+      "Configuration": "Development",
+      "TestsFound": 10,
+      "EditorBuildSkipped": true,
+      "RenderingEnabled": false,
+      "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+      "EngineRoot": "H:\\Unreal\\UE_5.8",
+      "CompletedUtc": "2026-09-14T20:23:03.8781830Z",
+      "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Regressions\\20260914-222244738-automation-Hansa.Simulation.Logistics\\UnrealEditor.log",
+      "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Regressions\\20260914-222244738-automation-Hansa.Simulation.Logistics\\AutomationCommand.log"
+    }
+  },
+  {
+    "source": "Saved\\CompoundImplementation\\Regressions\\20260914-222303891-automation-Hansa.UI.World\\result.json",
+    "result": {
+      "Operation": "RunAutomationTests",
+      "Status": "Succeeded",
+      "Filter": "Hansa.UI.World",
+      "Configuration": "Development",
+      "TestsFound": 9,
+      "EditorBuildSkipped": true,
+      "RenderingEnabled": false,
+      "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+      "EngineRoot": "H:\\Unreal\\UE_5.8",
+      "CompletedUtc": "2026-09-14T20:23:19.5592768Z",
+      "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Regressions\\20260914-222303891-automation-Hansa.UI.World\\UnrealEditor.log",
+      "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Regressions\\20260914-222303891-automation-Hansa.UI.World\\AutomationCommand.log"
+    }
+  },
+  {
+    "source": "Saved\\CompoundImplementation\\Regressions\\20260914-222705386-automation-Hansa.Integration.Save\\result.json",
+    "result": {
+      "Operation": "RunAutomationTests",
+      "Status": "Succeeded",
+      "Filter": "Hansa.Integration.Save",
+      "Configuration": "Development",
+      "TestsFound": 13,
+      "EditorBuildSkipped": true,
+      "RenderingEnabled": false,
+      "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+      "EngineRoot": "H:\\Unreal\\UE_5.8",
+      "CompletedUtc": "2026-09-14T20:27:27.7310465Z",
+      "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Regressions\\20260914-222705386-automation-Hansa.Integration.Save\\UnrealEditor.log",
+      "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Regressions\\20260914-222705386-automation-Hansa.Integration.Save\\AutomationCommand.log"
+    }
+  },
+  {
+    "source": "Saved\\CompoundImplementation\\Regressions\\20260914-222742337-automation-Hansa.Architecture.Authoring.EconomicSchemaCoverage\\result.json",
+    "result": {
+      "Operation": "RunAutomationTests",
+      "Status": "Succeeded",
+      "Filter": "Hansa.Architecture.Authoring.EconomicSchemaCoverage",
+      "Configuration": "Development",
+      "TestsFound": 1,
+      "EditorBuildSkipped": true,
+      "RenderingEnabled": false,
+      "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Hansa.uproject",
+      "EngineRoot": "H:\\Unreal\\UE_5.8",
+      "CompletedUtc": "2026-09-14T20:27:56.0410888Z",
+      "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Regressions\\20260914-222742337-automation-Hansa.Architecture.Authoring.EconomicSchemaCoverage\\UnrealEditor.log",
+      "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\CompoundImplementation\\Regressions\\20260914-222742337-automation-Hansa.Architecture.Authoring.EconomicSchemaCoverage\\AutomationCommand.log"
+    }
+  }
+]

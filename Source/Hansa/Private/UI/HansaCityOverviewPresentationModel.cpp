@@ -280,6 +280,8 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
             if(!Need.GoodId.IsValid())Entry.Value=FText::Format(LOCTEXT("ServiceNeed","access {0} · affordability {1} · reliability {2} · service need"),Percent(Need.AccessBasisPoints),Percent(Need.AffordabilityBasisPoints),Percent(Need.ReliabilityBasisPoints));
             Entry.StableId=FName(*SemanticSuffix(Need.NeedId.ToString()));Row.Fields.Add(Entry);
         }
+        if (KnowledgeSource && Registry.FindNeed(TEXT("Need.Heating")) && KnowledgeSource->QueryHeating().SeasonMultiplier==0)
+            Row.Fields.Add(Field(TEXT("Need_Heating"),LOCTEXT("HeatingLabel","Heating"),LOCTEXT("SummerHeating","Not needed this season; stockpile for winter.")));
         Row.Fields.Add(Field(TEXT("GrowthCause"),LOCTEXT("GrowthCause","Growth / decline context"),
             !Cohort.bResidenceOperational?LOCTEXT("ResidenceNotReady","Residence is not operational"):
             !Cohort.bHasMarketAccess?LOCTEXT("NoGrowthAccess","Market access is missing"):
@@ -387,6 +389,18 @@ bool UHansaCityOverviewPresentationModel::ApplyProjection(
                 Info==EHansaMarketInformationState::Stale?LOCTEXT("StaleReport","Stale · historical values"):LOCTEXT("KnownReport","Known report");
             Row.bWarning=Info==EHansaMarketInformationState::Stale || Info==EHansaMarketInformationState::Estimated;
             Row.bCausalActionEnabled=false;Row.RelatedSemanticId=NAME_None;Row.CausalActionDisabledReason=LOCTEXT("RemoteNoChain","Remote production buildings are not reported");
+        }
+        if (!Remote && KnowledgeSource && Market.GoodId.ToString()==TEXT("Good.Firewood"))
+        {
+            const auto H=KnowledgeSource->QueryHeating();
+            Row.Fields.Add(Field(TEXT("HeatingDemand"),LOCTEXT("HeatingDemand","Fuel demand per day"),FText::Format(
+                LOCTEXT("HeatingDemandValue","Households {0}; workshops {1} at nominal capacity; seasonal heating {2}"),Quantity(H.HouseholdDailyRaw),Quantity(H.WorkshopDailyRaw),Percent(H.SeasonMultiplier))));
+            Row.Fields.Add(Field(TEXT("HeatingProtection"),LOCTEXT("HeatingProtection","Household fuel protection"),FText::Format(
+                LOCTEXT("HeatingProtectionValue","{0} days; target {1}; committed {2}; available surplus {3}; {4}"),FText::AsNumber(H.ReserveDays),Quantity(H.ProtectedRaw),Quantity(H.CommittedRaw),Quantity(H.SurplusRaw),
+                H.bOverride?LOCTEXT("HeatingReleased","protection released"):LOCTEXT("HeatingEnabled","protection active"))));
+            Row.Fields.Add(Field(TEXT("HeatingWinterTarget"),LOCTEXT("HeatingWinterTarget","Winter stockpile"),FText::Format(
+                LOCTEXT("HeatingWinterValue","Target {0}. {1}"),Quantity(H.WinterDailyRaw*H.ReserveDays),
+                H.StockRaw-H.CommittedRaw<H.WinterDailyRaw*H.ReserveDays?LOCTEXT("WinterRemedy","Produce or import firewood before winter."):LOCTEXT("WinterReady","Current stock covers this target."))));
         }
 		Snapshot.MarketRows.Add(MoveTemp(Row));
 	}

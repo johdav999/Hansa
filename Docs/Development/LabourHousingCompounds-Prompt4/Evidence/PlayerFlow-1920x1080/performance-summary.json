@@ -1,0 +1,24 @@
+{
+  "8": {
+    "wall_ms": 5.9841999999999995,
+    "game_ms": 1.7094,
+    "render_ms": 6.0197,
+    "draw_calls": 240.0,
+    "process_bytes": 4685742080.0,
+    "world_actors": 77.0,
+    "parcels": 1.0,
+    "instances": 3.0,
+    "batches": 3.0
+  },
+  "9": {
+    "wall_ms": 6.17045,
+    "game_ms": 1.65175,
+    "render_ms": 6.0994,
+    "draw_calls": 528.0,
+    "process_bytes": 4687118336.0,
+    "world_actors": 123.0,
+    "parcels": 6.0,
+    "instances": 21.0,
+    "batches": 19.0
+  }
+}

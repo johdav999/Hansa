@@ -1,4 +1,6 @@
 # Unreal Engine generated directories (project and plugins)
+# Local verification project copies are generated, not source.
+/.codex-build/
 **/Binaries/
 **/DerivedDataCache/
 **/Intermediate/
@@ -40,6 +42,9 @@ CMakeSettings.json
 cmake-build-*/
 
 # Local caches, logs, and crash reports
+# Blender recovery copies and regenerable NumPy terrain arrays stay local.
+*.blend1
+*.npy
 *.log
 *.tmp
 *.user

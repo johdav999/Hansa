@@ -1,5 +1,6 @@
 #include "World/HansaGameMode.h"
 #include "World/HansaCargoProjectionManager.h"
+#include "World/HansaAmbientRabbits.h"
 
 #include "EngineUtils.h"
 #include "Engine/World.h"
@@ -76,23 +77,49 @@ void AHansaGameMode::PostLogin(APlayerController* NewPlayer)
 	if (Controller == nullptr || Host == nullptr || !EnsureMultiplayerAuthority()) return;
 
 	FHansaClientCommandFeedback Failure;
-	if (MultiplayerAuthority->GetRegisteredClientCount() >= 2)
+	if (GetNetMode() != NM_Standalone && !bAuthorityFixtureMode)
+	{
+		Failure.Rejection = EHansaClientCommandRejection::ClientNotRegistered;
+		Failure.Message = TEXT("The server requires validated multiplayer admission.");
+		Failure.Remedy = TEXT("Join through the authenticated or server-credential session flow.");
+		Controller->PublishCommandFeedback(Failure);
+		return;
+	}
+	if (MultiplayerAuthority->GetRegisteredClientCount() >= 8)
 	{
 		Failure.Rejection = EHansaClientCommandRejection::NotAuthorized;
-		Failure.Message = TEXT("The MVP authority proof accepts two player connections.");
+		Failure.Message = TEXT("The scenario already has eight human-controlled houses.");
 		Failure.Remedy = TEXT("Disconnect an existing proof client before joining.");
 		Controller->PublishCommandFeedback(Failure);
 		return;
 	}
 
 	const uint64 PrincipalId = NextPrincipalId++;
-	const Hansa::Simulation::FHansaHouseId HouseId =
-		!MultiplayerAuthority->IsHouseRegistered(Host->GetHouseId())
-			? Host->GetHouseId() : Host->GetRivalHouseId();
+	Hansa::Simulation::FHansaHouseId HouseId;
+	for (const Hansa::Simulation::FHansaHouseId Candidate : Host->GetHouseIds())
+	{
+		if (!MultiplayerAuthority->IsHouseRegistered(Candidate))
+		{
+			HouseId = Candidate;
+			break;
+		}
+	}
+	if (!HouseId.IsValid())
+	{
+		Failure.Rejection = EHansaClientCommandRejection::NotAuthorized;
+		Failure.Message = TEXT("No unclaimed scenario house is available.");
+		Failure.Remedy = TEXT("Refresh the roster or disconnect an existing client.");
+		Controller->PublishCommandFeedback(Failure);
+		return;
+	}
 	FHansaClientInterest Interest;
 	Interest.CityIds.Add(Host->GetCityId().ToString());
 	FString Error;
-	if (!MultiplayerAuthority->RegisterClient(PrincipalId, HouseId, Interest, Error))
+	const auto ParticipantId = Hansa::Simulation::FHansaParticipantId::TryCreate(PrincipalId + 1000).Value;
+	const Hansa::Simulation::FHansaAdmissionGrant Admission {
+		PrincipalId, ParticipantId, HouseId,
+		bAuthorityFixtureMode ? Hansa::Simulation::EHansaAdmissionMode::LanOffline : Hansa::Simulation::EHansaAdmissionMode::OnlineAuthenticated };
+	if (!MultiplayerAuthority->RegisterAdmittedClient(Admission, Interest, Error))
 	{
 		Failure.Rejection = EHansaClientCommandRejection::AuthorityUnavailable;
 		Failure.Message = Error;
@@ -102,9 +129,8 @@ void AHansaGameMode::PostLogin(APlayerController* NewPlayer)
 	}
 
 	ClientPrincipals.Add(Controller, PrincipalId);
-	Host->SetMerchantAIEnabled(!MultiplayerAuthority->IsHouseRegistered(Host->GetRivalHouseId()));
 	UE_LOG(LogHansa, Display,
-		TEXT("S11-P04 authority client joined principal=%llu house=%llu clients=%d"),
+		TEXT("MP-04 authority client joined principal=%llu house=%llu clients=%d"),
 		static_cast<unsigned long long>(PrincipalId),
 		static_cast<unsigned long long>(HouseId.GetValue()),
 		MultiplayerAuthority->GetRegisteredClientCount());
@@ -128,11 +154,6 @@ void AHansaGameMode::Logout(AController* Exiting)
 				TEXT("S11-P04 authority client left principal=%llu clients=%d"),
 				static_cast<unsigned long long>(PrincipalId),
 				MultiplayerAuthority->GetRegisteredClientCount());
-			if (UHansaRuntimeSimulationHost* Host = GetSimulationHost())
-			{
-				Host->SetMerchantAIEnabled(
-					!MultiplayerAuthority->IsHouseRegistered(Host->GetRivalHouseId()));
-			}
 		}
 		ClientPrincipals.Remove(Controller);
 	}
@@ -328,6 +349,10 @@ void AHansaGameMode::EnsureLubeckWorldComposition()
     bool bHasCargoManager = false;
     for (TActorIterator<AHansaCargoProjectionManager> It(World); It; ++It) {bHasCargoManager=true; break;}
     if (!bHasCargoManager) World->SpawnActor<AHansaCargoProjectionManager>();
+
+    bool bHasRabbits = false;
+    for (TActorIterator<AHansaAmbientRabbits> It(World); It; ++It) { bHasRabbits = true; break; }
+    if (!bHasRabbits && World->GetNetMode() == NM_Standalone) World->SpawnActor<AHansaAmbientRabbits>();
 
 	for (TActorIterator<AHansaLubeckAutomationStart> It(World); It; ++It)
 	{

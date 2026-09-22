@@ -38,9 +38,9 @@ bool FHansaRuntimePlayableShortageScenarioTest::RunTest(const FString& Parameter
 		EHansaRuntimeScenario::LubeckGrainShortage);
 	const FHansaEconomicRegistry* Registry = Host->GetEconomicRegistry();
 	if (!TestNotNull(TEXT("The playable scenario exposes the cooked authored registry"), Registry)) return false;
-	TestEqual(TEXT("All expanded MVP goods are available"), Registry->GetGoods().Num(), 13);
-	TestEqual(TEXT("All expanded MVP recipes are available"), Registry->GetRecipes().Num(), 11);
-	TestEqual(TEXT("All expanded MVP buildings are available"), Registry->GetBuildings().Num(), 17);
+	TestEqual(TEXT("All expanded MVP goods are available"), Registry->GetGoods().Num(), 14);
+	TestEqual(TEXT("All expanded MVP recipes are available"), Registry->GetRecipes().Num(), 12);
+	TestEqual(TEXT("All expanded MVP buildings are available"), Registry->GetBuildings().Num(), 31);
 	TestEqual(TEXT("All MVP needs are available"), Registry->GetNeeds().Num(), 5);
 	TestEqual(TEXT("Both MVP population tiers are available"), Registry->GetPopulationTiers().Num(), 2);
 	TestEqual(TEXT("All MVP city-market profiles are available"), Registry->GetCityMarkets().Num(), 4);
@@ -56,8 +56,8 @@ bool FHansaRuntimePlayableShortageScenarioTest::RunTest(const FString& Parameter
 	}
 	TestTrue(TEXT("The city overview receives population rows"), !InitialProjection.Value.GetPopulationCohorts().IsEmpty());
 	TestTrue(TEXT("The city overview receives production rows"), !InitialProjection.Value.GetProductions().IsEmpty());
-	TestEqual(TEXT("The runtime contains all four city markets and ten goods each"),
-		InitialProjection.Value.GetMarkets().Num(), 40);
+	TestEqual(TEXT("The runtime contains all four city markets and fourteen goods each"),
+		InitialProjection.Value.GetMarkets().Num(), 56);
 	TestEqual(TEXT("The runtime contains Lübeck plus three simulated market-only cities"),
 		InitialProjection.Value.GetCityCount(), 4);
 	TestTrue(TEXT("The playable world starts with visible building placements"),
@@ -75,9 +75,9 @@ bool FHansaRuntimePlayableShortageScenarioTest::RunTest(const FString& Parameter
 		return Inventory.OwnerKind == EHansaInventoryOwnerKind::City && Inventory.CityId.ToString() == TEXT("City.Rostock");
 	});
 	TestTrue(TEXT("Lübeck stock is bound to the placed physical market endpoint"),
-		LubeckInventory != nullptr && LubeckInventory->BuildingId.GetValue() == 14 && LubeckInventory->Stocks.Num() == 10);
+		LubeckInventory != nullptr && LubeckInventory->BuildingId.GetValue() == 14 && LubeckInventory->Stocks.Num() == 14);
 	TestTrue(TEXT("Rostock remains a valid remote market stock endpoint"),
-		RostockInventory != nullptr && RostockInventory->Stocks.Num() == 10);
+		RostockInventory != nullptr && RostockInventory->Stocks.Num() == 14);
 	TestTrue(TEXT("The playable bootstrap can afford a road reconnection"),
 		Host->QueryConstructionCost(TEXT("Building.Road")).IsAffordable());
 
@@ -87,7 +87,7 @@ bool FHansaRuntimePlayableShortageScenarioTest::RunTest(const FString& Parameter
 	const auto GrainId = FHansaGoodId::TryParse(TEXT("Good.Grain"));
 	if (!TestTrue(TEXT("The grain stable ID parses"), GrainId.IsSuccess())) return false;
 	TestEqual(TEXT("Every authored city/good still has a market projection after the first cadence"),
-		ShortageProjection.Value.GetMarkets().Num(), 40);
+		ShortageProjection.Value.GetMarkets().Num(), 56);
 	for (const auto& Market : ShortageProjection.Value.GetMarkets())
 	{
 		TestTrue(*FString::Printf(TEXT("%s has a fresh runtime report"), *Market.GoodId.ToString()),
@@ -98,7 +98,7 @@ bool FHansaRuntimePlayableShortageScenarioTest::RunTest(const FString& Parameter
 	TStrongObjectPtr<UHansaMarketTablePresentationModel> MarketModel(NewObject<UHansaMarketTablePresentationModel>());
 	MarketModel->InitializeDefaults();
 	MarketModel->ApplyProjection(ShortageProjection.Value, *Registry, CityId.Value);
-	TestEqual(TEXT("The playable Market table presents all ten goods"), MarketModel->GetSnapshot().AllRows.Num(), 10);
+	TestEqual(TEXT("The playable Market table presents all fourteen goods"), MarketModel->GetSnapshot().AllRows.Num(), 14);
 	TestFalse(TEXT("No playable Market row falls back to the unknown/dash state"),
 		MarketModel->GetSnapshot().AllRows.ContainsByPredicate([](const auto& Row) { return Row.bUnknown; }));
 	TestTrue(TEXT("The shortage produces an active grain alert"),
@@ -454,8 +454,9 @@ bool FHansaRuntimeSimulationHostConstructionProjectionTest::RunTest(const FStrin
 	TestTrue(TEXT("The authored construction duration completes construction"),
 		Host->AdvanceTicks(BakeryDefinition->BuildTicks));
 	BakeryActor = Manager->FindProjectionActor(BakeryId);
-	TestTrue(TEXT("Completion events update the same projection Actor to its ready visual"), BakeryActor != nullptr &&
-		BakeryActor->GetWorldStatus() == EHansaBuildingWorldStatus::Ready &&
+	TestTrue(TEXT("Completion events replace construction art even when the new bakery has no market"), BakeryActor != nullptr &&
+        (BakeryActor->GetWorldStatus() == EHansaBuildingWorldStatus::Ready || BakeryActor->GetWorldStatus() == EHansaBuildingWorldStatus::Blocked) &&
+        BakeryActor->IsMarketNotInRangeIndicatorVisible() &&
 		BakeryArt == BakeryActor->BuildingPresentation->GetChildActor() && BakeryArt &&
 		BakeryArt->Bakery->IsVisible() && !BakeryArt->Construction->IsVisible() &&
 		!BakeryActor->ConstructionPlaceholder->IsVisible());
@@ -712,4 +713,49 @@ bool FHansaStarterEconomyBalanceTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Reload preserves tick"),Host->GetSimulationTick(),SavedTick);
 	return !HasAnyErrors();
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaSecondMarketRangeRefreshTest,
+ "Hansa.Integration.RuntimeSimulationHost.SecondMarketRefreshesRange",
+ EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaSecondMarketRangeRefreshTest::RunTest(const FString& Parameters)
+{
+ using namespace Hansa::Simulation;
+ TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>());
+ FString Error;
+ if (!TestTrue(TEXT("Empty city initializes"), Host->InitializeForLubeck(nullptr, Error, EHansaRuntimeScenario::EmptyLubeckBuild))) return false;
+ TArray<FHansaPlacementSpec> Specs;
+ auto Add = [&](const TCHAR* Id, int32 X, int32 Y) {
+  FHansaPlacementSpec S; S.CityId=Host->GetCityId();
+  S.BuildingDefinitionId=FHansaBuildingTypeId::TryParse(Id).Value; S.Anchor={X,Y}; Specs.Add(S);
+ };
+ for(int32 X=10;X<=28;++X) { Add(TEXT("Building.Road"),X,15); Add(TEXT("Building.Road"),X,30); }
+ for(int32 Y=16;Y<30;++Y) Add(TEXT("Building.Road"),10,Y);
+ Add(TEXT("Building.Market"),25,16);
+ Add(TEXT("Building.GrainFarm"),25,31);
+ if(!TestTrue(TEXT("Distant market and farm placed on winding road"),Host->PlaceBuildings(Specs).IsSuccess())) return false;
+ const int32 Ticks=FMath::Max(Host->FindBuildingDefinition(TEXT("Building.Market"))->BuildTicks,Host->FindBuildingDefinition(TEXT("Building.GrainFarm"))->BuildTicks);
+ TestTrue(TEXT("Initial construction completes"),Host->AdvanceTicks(Ticks+1));
+ auto ReadFarm = [&]() {
+  const auto P=Host->BuildProjection();
+  const auto* B=P.Value.GetBuildingWorldProjections().FindByPredicate([](const auto& B){return B.Placement.BuildingDefinitionId.ToString()==TEXT("Building.GrainFarm");});
+  return B ? *B : FHansaBuildingWorldProjection{};
+ };
+ TestEqual(TEXT("Farm starts beyond market road range"),ReadFarm().MarketAccessFailure,EHansaLogisticsRoadPathFailure::MarketNotInRange);
+ Specs.Reset(); Add(TEXT("Building.Market"),21,31);
+ if(!TestTrue(TEXT("Second market placed normally"),Host->PlaceBuildings(Specs).IsSuccess())) return false;
+ TestFalse(TEXT("Unfinished market cannot serve farm"),ReadFarm().bHasMarketAccess);
+ TestTrue(TEXT("Second market completes"),Host->AdvanceTicks(Host->FindBuildingDefinition(TEXT("Building.Market"))->BuildTicks));
+ const auto Farm=ReadFarm();
+ TestTrue(TEXT("Existing farm refreshes immediately after completion"),Farm.bHasMarketAccess);
+ const auto P=Host->BuildProjection();
+ const auto* Market=P.Value.GetBuildingWorldProjections().FindByPredicate([&](const auto& B){return B.BuildingId==Farm.SelectedMarketBuildingId;});
+ if(TestNotNull(TEXT("New serving market projected"),Market)) {
+  TestTrue(TEXT("New market only requires its own road"),Market->bHasRoadAccess && Market->bHasMarketAccess);
+  TestEqual(TEXT("Market has no range warning"),Market->MarketAccessFailure,EHansaLogisticsRoadPathFailure::None);
+  TestTrue(TEXT("Remove serving market"),Host->RemoveBuilding(Market->BuildingId).IsSuccess());
+  TestFalse(TEXT("Farm loses service immediately after removal"),ReadFarm().bHasMarketAccess);
+ }
+ return !HasAnyErrors();
+}
+
 #endif

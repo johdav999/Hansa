@@ -1,0 +1,5 @@
+# charcoal
+
+Mode: built-in ImageGen generate. Requested 1024 square. Generated 1254x1254. Master retained. Inspection: native subject and silhouette accepted; display variant QA pending.
+
+Generate a single game resource icon of wood charcoal: a compact irregular pile of six chunky charcoal pieces with fractured porous surfaces and recognizable burnt wood grain. Deep charcoal gray with enough warm-gray lit facets to remain legible on navy #102733. No flames, no glowing embers, no mineral coal crystals, no sack, no text. Hansa Hanseatic city-builder, realistically painted miniature in three-quarter elevated view, soft upper-left illumination, warm natural material family matching raw hides, tanning bark, leather and shoes inventory art. Isolated transparent alpha background, no floor or cast shadow outside silhouette, clean edges no fringe. Request native 1024x1024 with 15 percent transparent margin all sides. One charcoal icon only.

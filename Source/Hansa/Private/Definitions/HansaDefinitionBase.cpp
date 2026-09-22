@@ -6,6 +6,8 @@
 #include "Model/HansaIds.h"
 #include "UObject/ObjectSaveContext.h"
 #include "UObject/UnrealType.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 
 namespace Hansa::Game::Definitions
 {
@@ -46,6 +48,22 @@ UHansaDefinitionBase::UHansaDefinitionBase()
 
 UHansaDefinitionBase* UHansaDefinitionBase::ResolveByStableId(const FString& StableId)
 {
+#if !UE_BUILD_SHIPPING
+	if (FParse::Param(FCommandLine::Get(),TEXT("TextileProductionCandidate")))
+	{
+		if (!Hansa::Simulation::FHansaDefinitionId::TryParse(StableId)) return nullptr;
+		const FString Name=TEXT("DA_")+StableId.Replace(TEXT("."),TEXT("_"));
+		auto* Draft=Cast<UHansaDefinitionBase>(FSoftObjectPath(TEXT("/Game/Hansa/Generated/Staging/TextileProductionV2/")+Name+TEXT(".")+Name).TryLoad());
+		return Draft && Draft->StableDefinitionId==StableId ? Draft : nullptr;
+	}
+    if (FParse::Param(FCommandLine::Get(),TEXT("ArtisanProductionCandidate")))
+    {
+        if (!Hansa::Simulation::FHansaDefinitionId::TryParse(StableId)) return nullptr;
+        const FString Name=TEXT("DA_")+StableId.Replace(TEXT("."),TEXT("_"));
+        auto* Draft=Cast<UHansaDefinitionBase>(FSoftObjectPath(TEXT("/Game/Hansa/Generated/Staging/ArtisanProductionV1/")+Name+TEXT(".")+Name).TryLoad());
+        return Draft && Draft->StableDefinitionId==StableId ? Draft : nullptr;
+    }
+#endif
 	UAssetManager* Manager = UAssetManager::GetIfInitialized();
 	if (Manager == nullptr || StableId.IsEmpty()) return nullptr;
 	TArray<FPrimaryAssetTypeInfo> Types;
@@ -67,6 +85,15 @@ UHansaDefinitionBase* UHansaDefinitionBase::ResolveByStableId(const FString& Sta
 UStaticMesh* UHansaDefinitionBase::LoadPresentationMesh() const
 {
 	const FString Path = PresentationMesh.ToSoftObjectPath().ToString();
+#if !UE_BUILD_SHIPPING
+	if (FParse::Param(FCommandLine::Get(),TEXT("TextileProductionCandidate")) &&
+		Path.StartsWith(TEXT("/Game/Hansa/Generated/Staging/TextileProductionModelsV1/")))
+		return PresentationMesh.LoadSynchronous();
+    // A deliberate review session may inspect only this isolated asset family.
+    if (FParse::Param(FCommandLine::Get(),TEXT("ArtisanProductionCandidate")) &&
+        Path.StartsWith(TEXT("/Game/Hansa/Generated/Staging/ArtisanProductionModelsV1/")))
+        return PresentationMesh.LoadSynchronous();
+#endif
 	if (Path.Contains(TEXT("/Generated/Staging/")) || Path.Contains(TEXT("/Developer/"))) return nullptr;
 	return PresentationMesh.LoadSynchronous();
 }

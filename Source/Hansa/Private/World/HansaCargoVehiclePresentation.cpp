@@ -2,6 +2,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/BoxComponent.h"
+#include "UObject/ConstructorHelpers.h"
 
 using namespace Hansa::Simulation;
 
@@ -10,6 +11,19 @@ AHansaCargoVehiclePresentation::AHansaCargoVehiclePresentation()
     PrimaryActorTick.bCanEverTick = false;
     bReplicates = false;
     SetRootComponent(CreateDefaultSubobject<USceneComponent>(TEXT("VehicleDatum")));
+    SelectionMarker = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CogSelectionMarker"));
+    SelectionMarker->SetupAttachment(GetRootComponent());
+    SelectionMarker->SetMobility(EComponentMobility::Movable);
+    SelectionMarker->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    SelectionMarker->SetGenerateOverlapEvents(false);
+    SelectionMarker->SetCanEverAffectNavigation(false);
+    SelectionMarker->SetCastShadow(false);
+    SelectionMarker->SetRelativeLocation(FVector(0, 0, 35));
+    SelectionMarker->ComponentTags.Add(TEXT("Hansa.Selection.Cog"));
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> MarkerMesh(
+        TEXT("/Game/Mesh/cog-selection-marker/SM_CogSelectionMarker.SM_CogSelectionMarker"));
+    SelectionMarker->SetStaticMesh(MarkerMesh.Object);
+    SelectionMarker->SetVisibility(false);
     Selection = CreateDefaultSubobject<UBoxComponent>(TEXT("CargoSelection"));
     Selection->SetupAttachment(GetRootComponent());
     Selection->SetCollisionProfileName(TEXT("NoCollision"));
@@ -61,6 +75,8 @@ void AHansaCargoVehiclePresentation::OnConstruction(const FTransform& Transform)
 
 void AHansaCargoVehiclePresentation::ClearProjection()
 {
+    SetSelected(false);
+    bHeadingInitialized = false;
     VehicleId = {}; LogisticsJobId = {}; CargoGoodId = {}; CargoMilliUnits = 0;
     SetActorHiddenInGame(true);
     SetActorEnableCollision(false);
@@ -121,6 +137,45 @@ void AHansaCargoVehiclePresentation::SetWheelTravelDistance(const double Centime
 
 void AHansaCargoVehiclePresentation::SetSelected(bool bSelected)
 {
+    SelectionMarker->SetVisibility(bSelected && bSeaVehicle && !IsHidden());
     Body->SetRenderCustomDepth(bSelected);
     Body->SetCustomDepthStencilValue(1);
+}
+
+void AHansaCargoVehiclePresentation::SampleHeading(TOptional<FRotator> Heading, double PresentationTime)
+{
+    if (!FMath::IsFinite(PresentationTime) || (Heading.IsSet() && Heading->ContainsNaN())) return;
+    if (!bSeaVehicle)
+    {
+        if (Heading.IsSet()) SetActorRotation(Heading.GetValue());
+        return;
+    }
+    if (!bHeadingInitialized || PresentationTime < HeadingLastTime)
+    {
+        // New identities and restored clocks must not inherit a pooled vessel's turn.
+        HeadingStartYaw = HeadingTargetYaw = Heading.IsSet() ? Heading->Yaw : GetActorRotation().Yaw;
+        HeadingStartTime = PresentationTime;
+        HeadingDuration = 0;
+        bHeadingInitialized = true;
+    }
+    const double Alpha = HeadingDuration > 0
+        ? FMath::Clamp((PresentationTime - HeadingStartTime) / HeadingDuration, 0., 1.) : 1.;
+    const double Ease = Alpha * Alpha * (3. - 2. * Alpha);
+    const double Yaw = HeadingStartYaw + FMath::FindDeltaAngleDegrees(HeadingStartYaw, HeadingTargetYaw) * Ease;
+    SetActorRotation(FRotator(0, Yaw, 0));
+    HeadingLastTime = PresentationTime;
+    if (Heading.IsSet() && FMath::Abs(FMath::FindDeltaAngleDegrees(HeadingTargetYaw, Heading->Yaw)) > 0.01)
+    {
+        HeadingStartYaw = Yaw;
+        HeadingTargetYaw = Heading->Yaw;
+        HeadingStartTime = PresentationTime;
+        // A quarter turn takes 1.5 simulation ticks, easing into and out of the turn.
+        HeadingDuration = FMath::Max(0.25, FMath::Abs(FMath::FindDeltaAngleDegrees(Yaw, HeadingTargetYaw)) / 60.);
+    }
+}
+void AHansaCargoVehiclePresentation::RebaseHeadingClock(double PresentationTime)
+{
+    if (!bHeadingInitialized || !FMath::IsFinite(PresentationTime)) return;
+    HeadingStartTime += PresentationTime - HeadingLastTime;
+    HeadingLastTime = PresentationTime;
 }

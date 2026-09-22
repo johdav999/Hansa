@@ -23,10 +23,14 @@ namespace Hansa::Simulation
 		InsufficientArtisanWorkforce,
 		MissingInput,
 		StorageBlocked,
-		InventoryTransactionFailed
+		InventoryTransactionFailed,
+		NoNearbyTrees,
+		HouseholdFuelProtected
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaProductionBlocker Blocker);
+	/** Four-metre cells: standing trees within 48 metres of the camp footprint. */
+	inline constexpr int32 LumberHarvestRadiusCells = 12;
 
 	/**
 	 * Converts partial staffing into an effective batch duration.
@@ -66,6 +70,8 @@ namespace Hansa::Simulation
 		FHansaQuantity Quantity;
 	};
 
+    struct FHansaProductionGoodTotal final { FHansaGoodId GoodId; int64 QuantityMilliUnits = 0; };
+
 	/** Canonically ordered authoritative production state. */
 	struct HANSASIMULATION_API FHansaProductionState final
 	{
@@ -85,12 +91,18 @@ namespace Hansa::Simulation
 		bool bActive = true;
 		int32 ProgressTicks = 0;
 		uint64 CompletedCycles = 0;
+        TArray<FHansaProductionGoodTotal> OutputTotals;
 		bool bCompletedCycleLastTick = false;
 		EHansaProductionBlocker Blocker = EHansaProductionBlocker::None;
 		FHansaGoodId BlockingGoodId;
 		FHansaQuantity BlockingRequiredQuantity;
 		FHansaQuantity BlockingAvailableQuantity;
 		TArray<FHansaProductionInputReservation> InputReservations;
+        // Selected mode survives fallback. Changes apply only when no batch is in progress.
+        FHansaRecipeId RequestedRecipeId;
+        bool bFallbackToFresh = false;
+        FHansaBuildingTypeId PendingUpgradeBuildingId;
+
 	};
 
 	struct HANSASIMULATION_API FHansaProductionThroughputProjection final
@@ -114,6 +126,7 @@ namespace Hansa::Simulation
 		int32 ProgressTicks = 0;
 		int32 CycleTicks = 0;
 		uint64 CompletedCycles = 0;
+        TArray<FHansaProductionGoodTotal> OutputTotals;
 		int32 AllocatedLaborerWorkforce = 0;
 		int32 RequiredLaborerWorkforce = 0;
 		int32 AllocatedArtisanWorkforce = 0;
@@ -124,6 +137,9 @@ namespace Hansa::Simulation
 		FHansaQuantity BlockingRequiredQuantity;
 		FHansaQuantity BlockingAvailableQuantity;
 		TArray<FHansaProductionThroughputProjection> Outputs;
+        FHansaRecipeId RequestedRecipeId;
+        bool bFallbackToFresh = false;
+        FHansaBuildingTypeId PendingUpgradeBuildingId;
 	};
 
 	/** Owning immutable copy for save/network/asynchronous readers. */

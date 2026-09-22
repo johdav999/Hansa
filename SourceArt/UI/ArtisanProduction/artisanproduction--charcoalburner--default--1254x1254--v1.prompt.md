@@ -1,0 +1,5 @@
+# charcoalburner
+
+Mode: built-in ImageGen generate. Requested 1024 square. Generated 1254x1254. Master retained. Inspection: native subject and silhouette accepted; display variant QA pending.
+
+One transparent construction icon for Hansa: medieval charcoal burner's worksite with a small low open-front timber hut under a plain pitched weathered board roof, a rounded earth-covered charcoal clamp beside it, a small stack of cut logs and a few finished black charcoal chunks. Clamp is dark brown earth with small vent holes, no open bonfire and no modern metal kiln. Site compact, hut and clamp both fully visible. Original plausible northern European woodland craft site, no trees, no people, no text, no scenery, no terrain slab. Realistically painted miniature, three-quarter elevated front-right view, soft upper-left light, muted warm oak and earth, legible silhouette on navy #102733 matching Hansa illustrated construction icons. Transparent alpha, no fringes. Request native1024x1024, 15 percent transparent margins. One worksite only.

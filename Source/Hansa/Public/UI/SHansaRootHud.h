@@ -12,6 +12,7 @@
 #include "UI/HansaUiComponents.h"
 
 class SScrollBox;
+class SComboButton;
 class SBorder;
 class SBox;
 class SButton;
@@ -33,7 +34,7 @@ struct FHansaScenarioPresentationSnapshot;
 struct FHansaSaveLoadPresentationSnapshot;
 struct FHansaTradeMapSnapshot;
 struct FHansaResearchPresentationSnapshot;
-namespace Hansa::UI { class SHansaBuildMenu; }
+namespace Hansa::UI { class SHansaBuildMenu; class SHansaMinimap; }
 namespace Hansa::UI { class SHansaCityOverview; }
 namespace Hansa::UI { class SHansaContextInspector; }
 namespace Hansa::UI { class SHansaResearchScreen; }
@@ -90,6 +91,7 @@ namespace Hansa::UI
         FReply HandleSessionOpen();
         TSharedPtr<SHansaSessionCoach> SessionCoach;
         TSharedPtr<SButton> SessionButton;
+        TSharedPtr<SComboButton> UtilityMenu;
 		void QueuePreferencesChange(FUiPreferences Value);
 		FIntPoint PhysicalViewportSize{1280,720};
 		void Refresh(const FHansaHudPresentationSnapshot& Snapshot, uint64 Revision);
@@ -119,6 +121,7 @@ namespace Hansa::UI
 		FReply HandleSpeed(EHansaHudGameSpeed Speed, const TCHAR* SemanticId);
 		FSlateColor FocusColor(const TCHAR* SemanticId) const;
 		void ApplyResponsiveLayout();
+        void LayoutConstructionTray();
 		void UpdateFocusIndicator(FName SemanticId);
 
 		TWeakObjectPtr<UHansaHudPresentationModel> Model;
@@ -147,6 +150,16 @@ namespace Hansa::UI
 		FArguments RebuildArguments;
         FUiPreferences Preferences;
         TArray<FHansaHudAlertPresentation> PresentedAlerts;
+        struct FAlertCardWidgets
+        {
+            TSharedPtr<STextBlock> Identity, Age, Title, Cause;
+            TSharedPtr<SHansaGlyph> Icon;
+            TSharedPtr<SBorder> Accent;
+        };
+        TMap<FName, FAlertCardWidgets> AlertCards;
+        TMap<FString,TSharedPtr<SBox>> AlertActionHosts;
+        TMap<FName, TSharedPtr<STextBlock>> PinnedAlertTexts;
+        void RefreshAlertContent(const FHansaHudPresentationSnapshot& Snapshot);
         TArray<FHansaHudNotificationPresentation> PresentedNotifications;
         TSharedPtr<SScrollBox> AlertScroll;
         FHansaHudLayoutMetrics Layout;
@@ -202,7 +215,8 @@ namespace Hansa::UI
         TSharedPtr<SButton> ReturnCityButton;
 		TSharedPtr<SButton> SaveLoadButton;
 		TSharedPtr<STextBlock> DateText;
-		TSharedPtr<STextBlock> ResearchText;
+		TSharedPtr<STextBlock> ResearchText, InfluenceText;
+        TSharedPtr<SHansaMinimap> MinimapWidget;
 		TSharedPtr<SButton> ResearchButton;
 		TSharedPtr<STextBlock> ConnectionText;
 		TSharedPtr<STextBlock> FpsText;

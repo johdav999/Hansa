@@ -1,0 +1,193 @@
+{
+  "status": "promoted-and-fresh-reload-verified",
+  "date": "2026-09-19",
+  "authorization": "User requested root-cause fix for absent Craftsmen production in normal play, following the reviewed implementation; explicitly approved stopping the play session for activation.",
+  "reviewedDiff": "Docs/Development/ArtisanProduction/candidate.json",
+  "sourceCatalogHash": "11B70A39FD538FE7",
+  "previousAcceptedHash": "BD2FC9656111389A",
+  "acceptedHash": "FC365BE5C93F9CA0",
+  "catalogVersion": 28,
+  "sourceModels": "SourceArt/Generated/Buildings/ArtisanProductionV1",
+  "productionModels": "Content/Mesh/hansa-artisan-production",
+  "modelAssets": [
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_CharcoalEarth_BaseColor.uasset",
+      "sha256": "dcd5b0bf7d07c2e4402cdaad0a7c88b721e6342824a6efbeb1ceeb7626b2b385"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_CharcoalEarth_Normal.uasset",
+      "sha256": "dd7f56c569c9158e0815354ef225eda56b64a53575f0b5d4482b277d8b2186fa"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_CharcoalEarth_Portable.uasset",
+      "sha256": "be89526eb63182f4507cdf42305be1a1530bfbb88bcc6bd6b31cee5c8b144100"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_CharcoalEarth_Roughness.uasset",
+      "sha256": "474e63f7b2614e6f415faf910c5402ec162f2ad702b1bfd942313e036b27ffc0"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Clay_BaseColor.uasset",
+      "sha256": "bb7045a2beaed69a66268945844a178b04e869074619ab3a9cce65cc848732c5"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Clay_Normal.uasset",
+      "sha256": "4a208a6611c577e0864f2c67b1b739b9a856533c40cc18548fdd791194d4847b"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Clay_Portable.uasset",
+      "sha256": "31ef2989ff8fd0cd0dd2740f7bdb28e773efc5b409bde998c1b6119004f36957"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Clay_Roughness.uasset",
+      "sha256": "70315a1b0bf0abbb878c0e8707e38fcba1c62c7b30b602600c66d872d96d16ce"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Fieldstone_BaseColor.uasset",
+      "sha256": "e3ab86359899e32de4916d047deaf47aa9ff5d341ed80059dc7f9cc4534a98d5"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Fieldstone_Normal.uasset",
+      "sha256": "5cab892a2aae13e245d2bdc4a1152e22493a9088a7f5e870ab971d4b9e14f828"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Fieldstone_Portable.uasset",
+      "sha256": "970fa1b422509ad3db1403e2813c1ca05e677929b49c2fec775df925971c59fa"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Fieldstone_Roughness.uasset",
+      "sha256": "ec58d3ed775e8e106acf5d704745dc0c46dc0befaf64f582e2e5eebaf86bf012"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Iron_BaseColor.uasset",
+      "sha256": "9bd2286018793ace078d383f57cd786d373564370071d35d94c941fe33d0bac0"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Iron_Normal.uasset",
+      "sha256": "c3b54d1568a2f5844f01df8a4de048d1f479a2c0aed46919f21fda69d74ea3ba"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Iron_Portable.uasset",
+      "sha256": "5091e754717450469a08ffbd9df774216291c5fc81aec79edd621d27a5b2e77a"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Iron_Roughness.uasset",
+      "sha256": "039be125a094b524c8f3c538bc9ff7222c2d9eda0664efbfcfe41b5d6319b69f"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Lime_BaseColor.uasset",
+      "sha256": "ab666ce952c3d159d89ad8677a966c16b33d2139657b4e81f830d15bd4f0f3fb"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Lime_Normal.uasset",
+      "sha256": "5e286da847165d54a4f2454a75a6aa0fc7f4d6da5e15ed83b38021a7f7251922"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Lime_Portable.uasset",
+      "sha256": "f779d8b73fccf91d8eb85e6bb6c6688ad0489a21d8d95f239a488f57d2ec27af"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Lime_Roughness.uasset",
+      "sha256": "15273756ad706f2b1c35b43cc3c190b437e2d9b536491e8a5bef919dbcbb95d9"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Mortar_BaseColor.uasset",
+      "sha256": "8760011894bfe0c297ce69afe860b0d080a7257d6d760433e2c3012d7b5651cb"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Mortar_Normal.uasset",
+      "sha256": "20d3842e697fe6f350aa7767a9237b39b15e867c715cb01d81a89d18d6e26082"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Mortar_Portable.uasset",
+      "sha256": "f7b92deb88810fecb8a9be7c649db75838100fd306987369f1a506d1b8912c57"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Mortar_Roughness.uasset",
+      "sha256": "449ef22d9f80cb62251bf07c73c60f3e9010feff857bf1ac7b3d8b17cda2012f"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Oak_BaseColor.uasset",
+      "sha256": "ed55dfa7991c4f7b85f2ad8d1582ca931ed13b0bb654b95df847ab0f35a8a084"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Oak_Normal.uasset",
+      "sha256": "c373aab5dc54b04eba5470e6914c745d1083f8ff645bd3e30802b9ca24ecba40"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Oak_Portable.uasset",
+      "sha256": "4fbebc5a3b3a4d623b5bed211ec7b35a254f016696c823452fc6329f226a5a5b"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Oak_Roughness.uasset",
+      "sha256": "4e27d100bcf18f6ef34ce90281c5cc79fb29b93a99126397c0765995d9a135f6"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_TanLiquor_BaseColor.uasset",
+      "sha256": "8d171df83f8324b52303301ca094841d87130263a6317fe9027b88c9a2f935bc"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_TanLiquor_Normal.uasset",
+      "sha256": "371e0a8cd03e8f61ad93170f56e64b259928bcbb4d6998a45177909820cd11bd"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_TanLiquor_Portable.uasset",
+      "sha256": "280decd6ffe525587359b0dc8dd75a2789a869e92884d8f647c3d5bbeb272be5"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_TanLiquor_Roughness.uasset",
+      "sha256": "f4170a883db4fc407b4fcc4e3ac2f64902190406d93864400a80ad9599260d3c"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Window_BaseColor.uasset",
+      "sha256": "2e3526929277ee7b30150aa271dacc9b133df7a14b0b90664f084a21e317b9f3"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Window_Normal.uasset",
+      "sha256": "6fe259dd1da4a9af953ec717dc542afb7fb043ebcf47ae33ce0b0366275a1d71"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Window_Portable.uasset",
+      "sha256": "516e689343825f150010dc4fcbc93483c09bc420f70b0a245110bb3e7ec18844"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_Window_Roughness.uasset",
+      "sha256": "17482b242a7aa0999151bc4453d0e00442dedef4d26d1030899072b0d4560dd6"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_WorkshopHide_BaseColor.uasset",
+      "sha256": "4b3133877868d284a88a0623c391ed932b1434ce9a22fcb8d5641ae6e6d7d020"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_WorkshopHide_Normal.uasset",
+      "sha256": "97e44c3a62ff8ea2643040dc6f1edfea6bc0d364bac9b7580a6992d5dd38b0b4"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_WorkshopHide_Portable.uasset",
+      "sha256": "4e173909739e2bb874e3144ef586a5564b76e5e7c532e66edce9643470608b15"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/M_Artisan_WorkshopHide_Roughness.uasset",
+      "sha256": "c5d1cbeac7b2b9897cb4afaf013522a5bc1b36f286a42a634dd5e55ef7a20052"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/SM_CharcoalBurner.uasset",
+      "sha256": "5fbf0b4025be712a8a8fef7704f7c680fc33d25838cc47c9bf5ef595254ee173"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/SM_Shoemaker.uasset",
+      "sha256": "b7def8fde3a320a2ad4ccbb420d9f4737f50b85d51520b74d69032f99300b726"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/SM_Smithy.uasset",
+      "sha256": "252b9fabd41b289ec4c046dd902cde0dc6ea1e2f68f7fe954b5dc672bdaa7076"
+    },
+    {
+      "path": "Content/Mesh/hansa-artisan-production/SM_Tannery.uasset",
+      "sha256": "df1773e48f6eeb92e6cf0d85edcc423c0cf72fd193f57f56645d653fd0f246b8"
+    }
+  ],
+  "backup": "Saved/GenerationJobs/ArtisanProductionV1/promotion-baseline",
+  "gui": "Reuses the nine individual ImageGen masters and 117 documented GUI variants; no new artwork generated.",
+  "savePolicy": "Existing save files remain untouched; catalog v27 is incompatible with the changed economy. New Game uses v28."
+}

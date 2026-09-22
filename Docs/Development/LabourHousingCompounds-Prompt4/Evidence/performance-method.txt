@@ -1,0 +1,3 @@
+Native rendered Development game; map=L_Lubeck_Terrain_Preview_WP; viewport=1920x1080; 180 warm-up + 180 sample frames per phase.
+32 isolated staged presentation Actors on real game terrain; no production promotion, building bindings, authoritative placement or live residents.
+Baseline and compound phases share camera. Process resident memory includes newly loaded meshes/materials/shaders; draw calls include the full scene and UI. No numeric project threshold is defined.

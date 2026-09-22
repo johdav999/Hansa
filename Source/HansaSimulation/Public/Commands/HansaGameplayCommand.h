@@ -4,6 +4,7 @@
 #include "Model/HansaSimulationTime.h"
 #include "Placement/HansaPlacement.h"
 #include "Trade/HansaTrade.h"
+#include "Presence/HansaStationOrders.h"
 
 namespace Hansa::Simulation
 {
@@ -27,7 +28,7 @@ namespace Hansa::Simulation
 
 	struct FHansaCommandHeader
 	{
-		static constexpr uint16 CurrentSchemaVersion = 6;
+		static constexpr uint16 CurrentSchemaVersion = 14;
 
 		FHansaCommandId CommandId;
 		FHansaCommandAuthorityContext Authority;
@@ -109,12 +110,69 @@ namespace Hansa::Simulation
 		FHansaRouteId RouteId;
 	};
 
+	/** Explicit visiting-market commerce; reviewed values make stale confirmation detectable. */
+	struct FHansaSpotTradeCommand
+	{
+		FHansaVehicleId VehicleId;
+		FHansaCityDefinitionId CityId;
+		FHansaGoodId GoodId;
+		EHansaSpotTradeSide Side = EHansaSpotTradeSide::BuyFromCity;
+		FHansaQuantity Quantity;
+		int64 ReviewedMarketUpdateTick = -1;
+		int64 ReviewedUnitPriceMilliMarks = 0;
+	};
+	struct FHansaProposeTradeStationCommand
+	{
+		FHansaTradeStationId StationId; FHansaFactorId FactorId; FHansaLeasedPlotId LeasedPlotId; FHansaInventoryId InventoryId;
+		FHansaCityDefinitionId CityId; FString SiteId;
+	};
+	struct FHansaFundTradeStationCommand { FHansaTradeStationId StationId; FHansaInventoryId FundingInventoryId; };
+	struct FHansaCloseTradeStationCommand { FHansaTradeStationId StationId; };
+	struct FHansaRequestPresenceUpgradeCommand { FHansaCityDefinitionId CityId; FString TargetStageId; };
+	struct FHansaFundPresenceUpgradeCommand { FHansaCityDefinitionId CityId; FString TargetStageId; FHansaInventoryId FundingInventoryId; };
+	 enum class EHansaPresenceSpecializationAction : uint8 { Select = 0, Respec };
+	 struct FHansaApplyPresenceSpecializationCommand { FHansaCityDefinitionId CityId; FString SpecializationId; FHansaInventoryId FundingInventoryId; EHansaPresenceSpecializationAction Action = EHansaPresenceSpecializationAction::Select; int64 ReviewedRevision = 0; };
 	/** Enqueues one stable technology in the issuing house's authoritative MVP research slot. */
-	struct FHansaQueueResearchCommand
+	enum class EHansaCityPrivilegeAction : uint8 { Acquire = 0, Revoke };
+ struct FHansaManageCityPrivilegeCommand { FHansaCityDefinitionId CityId; FString PrivilegeId; FHansaInventoryId FundingInventoryId; FHansaLeasedPlotId GrantedLeaseId; EHansaCityPrivilegeAction Action=EHansaCityPrivilegeAction::Acquire; int64 ReviewedRevision=0; };
+ struct FHansaFundCityProjectCommand { FHansaCityDefinitionId CityId; FString ProjectId; FHansaInventoryId FundingInventoryId; int64 ReviewedRevision=0; };
+ struct FHansaTransitionCityAuthorityCommand { FHansaCityDefinitionId CityId; FString CharterId; int64 ReviewedRevision=0; };
+struct FHansaQueueResearchCommand
 	{
 		FString TechnologyId;
 	};
 
+	struct FHansaSetHeatingReserveCommand
+	{
+		FHansaBuildingId MarketBuildingId;
+		int32 ReserveDays = 3;
+		bool bReleaseProtection = false;
+	};
+
+struct FHansaSetProductionModeCommand
+{
+    FHansaProductionId ProductionId;
+    FHansaRecipeId RecipeId;
+    bool bFallbackToFresh = false;
+};
+
+struct FHansaUpgradeProductionCommand
+{
+    FHansaProductionId ProductionId;
+};
+
+struct FHansaSetHouseholdAvailabilityCommand
+{
+    FHansaBuildingId MarketBuildingId;
+    FHansaGoodId GoodId;
+    bool bAvailable = true;
+};
+
+    struct FHansaMoveShipCommand
+    {
+        FHansaVehicleId VehicleId;
+        FHansaGridCoordinate Target;
+    };
 	enum class EHansaGameplayCommandType : uint8
 	{
 		CreateTestEntity = 0,
@@ -129,7 +187,23 @@ namespace Hansa::Simulation
 		EditRoute,
 		SetRouteActive,
 		CancelRoute,
-		QueueResearch
+		QueueResearch,
+		SetHeatingReserve,
+		SetProductionMode,
+		UpgradeProduction,
+		SetHouseholdAvailability,
+        MoveShip,
+		SpotTrade,
+		ProposeTradeStation,
+		FundTradeStation,
+		CloseTradeStation,
+		ManageStationOrder,
+		RequestPresenceUpgrade,
+		FundPresenceUpgrade,
+		ApplyPresenceSpecialization,
+		ManageCityPrivilege,
+		FundCityProject,
+		TransitionCityAuthority
 	};
 
 	HANSASIMULATION_API const TCHAR* LexToString(EHansaGameplayCommandType Type);
@@ -170,6 +244,16 @@ namespace Hansa::Simulation
 		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaSetRouteActiveCommand& Payload);
 		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaCancelRouteCommand& Payload);
 		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaQueueResearchCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaSpotTradeCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaProposeTradeStationCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaFundTradeStationCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaCloseTradeStationCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaRequestPresenceUpgradeCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaFundPresenceUpgradeCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaApplyPresenceSpecializationCommand& Payload);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader&, const FHansaManageCityPrivilegeCommand&);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader&, const FHansaFundCityProjectCommand&);
+		static FHansaGameplayCommand Create(const FHansaCommandHeader&, const FHansaTransitionCityAuthorityCommand&);
 
 		[[nodiscard]] const FHansaCommandHeader& GetHeader() const { return Header; }
 		[[nodiscard]] EHansaGameplayCommandType GetType() const { return Type; }
@@ -186,10 +270,33 @@ namespace Hansa::Simulation
 		[[nodiscard]] const FHansaSetRouteActiveCommand& GetSetRouteActive() const;
 		[[nodiscard]] const FHansaCancelRouteCommand& GetCancelRoute() const;
 		[[nodiscard]] const FHansaQueueResearchCommand& GetQueueResearch() const;
+		[[nodiscard]] const FHansaSpotTradeCommand& GetSpotTrade() const;
+		[[nodiscard]] const FHansaProposeTradeStationCommand& GetProposeTradeStation() const;
+		[[nodiscard]] const FHansaFundTradeStationCommand& GetFundTradeStation() const;
+		[[nodiscard]] const FHansaCloseTradeStationCommand& GetCloseTradeStation() const;
+		[[nodiscard]] const FHansaRequestPresenceUpgradeCommand& GetRequestPresenceUpgrade() const;
+		[[nodiscard]] const FHansaFundPresenceUpgradeCommand& GetFundPresenceUpgrade() const;
+		[[nodiscard]] const FHansaApplyPresenceSpecializationCommand& GetApplyPresenceSpecialization() const;
+		const FHansaManageCityPrivilegeCommand& GetManageCityPrivilege() const;
+		const FHansaFundCityProjectCommand& GetFundCityProject() const;
+		const FHansaTransitionCityAuthorityCommand& GetTransitionCityAuthority() const;
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaManageStationOrderCommand& Payload);
+		const FHansaManageStationOrderCommand& GetManageStationOrder() const;
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaSetHeatingReserveCommand& Payload);
+		[[nodiscard]] const FHansaSetHeatingReserveCommand& GetSetHeatingReserve() const;
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaSetProductionModeCommand& Payload);
+		[[nodiscard]] const FHansaSetProductionModeCommand& GetSetProductionMode() const;
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaUpgradeProductionCommand& Payload);
+		[[nodiscard]] const FHansaUpgradeProductionCommand& GetUpgradeProduction() const;
+		static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaSetHouseholdAvailabilityCommand& Payload);
+		[[nodiscard]] const FHansaSetHouseholdAvailabilityCommand& GetSetHouseholdAvailability() const;
+        static FHansaGameplayCommand Create(const FHansaCommandHeader& Header, const FHansaMoveShipCommand& Payload);
+        const FHansaMoveShipCommand& GetMoveShip() const;
 		[[nodiscard]] uint64 ComputeStableFingerprint() const;
 
 	private:
 		friend class FHansaSaveCodec;
+		friend class FHansaSaveEnvelope;
 		FHansaCommandHeader Header;
 		EHansaGameplayCommandType Type = EHansaGameplayCommandType::NoOpTest;
 		FHansaCreateTestEntityCommand CreateTestEntity;
@@ -205,5 +312,22 @@ namespace Hansa::Simulation
 		FHansaSetRouteActiveCommand SetRouteActive;
 		FHansaCancelRouteCommand CancelRoute;
 		FHansaQueueResearchCommand QueueResearch;
+		FHansaSpotTradeCommand SpotTrade;
+		FHansaProposeTradeStationCommand ProposeTradeStation;
+		FHansaFundTradeStationCommand FundTradeStation;
+		FHansaCloseTradeStationCommand CloseTradeStation;
+		FHansaManageStationOrderCommand ManageStationOrder;
+		FHansaRequestPresenceUpgradeCommand RequestPresenceUpgrade;
+		FHansaFundPresenceUpgradeCommand FundPresenceUpgrade;
+		FHansaApplyPresenceSpecializationCommand ApplyPresenceSpecialization;
+		FHansaManageCityPrivilegeCommand ManageCityPrivilege;
+		FHansaFundCityProjectCommand FundCityProject;
+		FHansaTransitionCityAuthorityCommand TransitionCityAuthority;
+		FHansaSetHeatingReserveCommand SetHeatingReserve;
+		FHansaSetProductionModeCommand SetProductionMode;
+		FHansaUpgradeProductionCommand UpgradeProduction;
+		FHansaSetHouseholdAvailabilityCommand SetHouseholdAvailability;
+        FHansaMoveShipCommand MoveShip;
+
 	};
 }

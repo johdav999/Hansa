@@ -1,0 +1,9 @@
+{
+  "url": "https://overpass-api.de/api/interpreter",
+  "query": "[out:json][timeout:90];way[waterway=river][name~\"\u041f\u0440\u0435\u0433\u043e\u043b\u044f|Pregel|Pregolya\"](54,19,56,23);out geom;",
+  "accessed_utc": "2026-09-18T05:54:37.464080+00:00",
+  "sha256": "9e1cdf46a969facf8759114284e518cde290564c1b868e29533ca71b8e705fd6",
+  "license": "ODbL 1.0",
+  "attribution": "\u00a9 OpenStreetMap contributors",
+  "license_url": "https://www.openstreetmap.org/copyright"
+}

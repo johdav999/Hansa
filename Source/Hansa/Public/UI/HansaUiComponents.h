@@ -15,7 +15,7 @@ namespace Hansa::UI
 // Presentation-only state. Never enters the simulation or definition registry.
 enum class EUiState : uint8 { Default, Selected, Disabled, Loading, Warning, Error, Empty, Success, Stale };
 enum class EUiSurface : uint8 { TopBar, BottomTray, Panel, Card, Tooltip, Modal, Notification };
-enum class EUiGlyph : uint8 { Information, Warning, Error, Check, Loading, Arrow, Cursor, Decoration, Bread, Fish, Planks, Building, Road, Production, Storage, Harbor, Civic, Farm, Mill, Bakery, Beer, Coin, Trend, People, Laborer, Wealthy, Pause, Play, Fast, Fastest, Grain, Flour, Timber, Salt, Iron, Tools, Close, Pin, Search, Star, Plus, Minus, Back, Up, Down, Lock, Settings, Research, Save, Map, Eye, Ship, Warehouse, Dock, Market, Hops, Malt, Barrels, LumberCamp, HopFarm, MaltHouse, Cooperage, Brewery, Count };
+enum class EUiGlyph : uint8 { Information, Warning, Error, Check, Loading, Arrow, Cursor, Decoration, Bread, Fish, Planks, Building, Road, Production, Storage, Harbor, Civic, Farm, Mill, Bakery, Beer, Coin, Trend, People, Laborer, Wealthy, Pause, Play, Fast, Fastest, Grain, Flour, Timber, Salt, Iron, Tools, Close, Pin, Search, Star, Plus, Minus, Back, Up, Down, Lock, Settings, Research, Save, Map, Eye, Ship, Warehouse, Dock, Market, Hops, Malt, Barrels, LumberCamp, HopFarm, MaltHouse, Cooperage, Brewery, ArtisanHouse, Firewood, WoodcutterYard, PreservedFish, Season, Charcoal, RawHides, TanningBark, Leather, Shoes, Smithy, Tannery, Shoemaker, CharcoalBurner, Flax, Hemp, Beeswax, LinenCloth, LinenClothing, Candles, Rope, Weaver, Tailor, Chandler, Ropewalk, Count };
 enum class EUiSeries : uint8 { Price, Stock, CitizenDemand, IndustrialDemand, Incoming, Reserve };
 
 struct HANSA_API FUiPreferences

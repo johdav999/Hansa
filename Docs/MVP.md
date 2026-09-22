@@ -12,7 +12,7 @@ The MVP is not complete if only the game is playable, only the editor can author
 
 ## 2. MVP outcome
 
-A player starts through the production frontend in Lübeck and plays a non-prescriptive 30–60 minute session. Lübeck is fully buildable. Rostock is a second fully rendered coastal Hanseatic city that is prebuilt, inspectable, and tradeable, but not player-buildable. The player builds the bread, fish, planks, and beer production chains, supplies citizen needs, observes all thirteen MVP goods respond to supply and demand, and establishes a Lübeck–Rostock sea route. The route's Cog and local cargo movement are visible in the world and correspond to authoritative simulated cargo.
+A player starts through the production frontend in Lübeck and plays a non-prescriptive 30–60 minute session. Lübeck is fully buildable. Rostock is a second fully rendered coastal Hanseatic city that is prebuilt, inspectable, and tradeable, but not player-buildable. The player builds the bread, fish, planks, beer, and firewood production chains, supplies citizen needs, observes all fifteen MVP goods respond to supply and demand, and establishes a Lübeck–Rostock sea route. The route's Cog and local cargo movement are visible in the world and correspond to authoritative simulated cargo.
 
 Construction is a tactile player flow: building selection previews under the mouse and click/held-stroke input constructs in the world, placement uses the authored 3D model as its ghost, roads are drawn directly across the terrain, and every valid or invalid state explains itself without relying on color alone. Every visible golden-path building, vehicle, road piece, recurring prop, and player-facing screen uses approved production presentation rather than Engine primitives, test controls, or unverified staging content.
 
@@ -29,7 +29,7 @@ The MVP is a proof of the complete Hansa loop, not a miniature version of every 
 | Area | MVP depth |
 | --- | --- |
 | Geography | Two rendered coastal cities: buildable Lübeck and prebuilt, inspectable, tradeable Rostock |
-| Economy | Ten active market goods; bread, fish, planks, and beer are the locally buildable production chains |
+| Economy | Fifteen active market goods; bread, fish, planks, beer, and firewood are the locally buildable production chains |
 | Population | Two citizen tiers with needs, workforce, residence upgrade and demand |
 | Building | Click-select and held-stroke building placement with authored 3D ghosts, player-drawn roads, local logistics, housing, civic/logistics and three chain families |
 | Trade | One complete Lübeck–Rostock sea-route journey with a visible Cog carrying simulated cargo |
@@ -43,6 +43,8 @@ The MVP is a proof of the complete Hansa loop, not a miniature version of every 
 | AI generation | OpenAI data proposals, one Tripo static prop, one ElevenLabs SFX and one speech line |
 | Testing | Full hybrid state, semantic, input, real-viewport, playthrough and package evidence for the enhanced golden session |
 
+The separate post-MVP 2–8-player release is defined by [MultiplayerImplementationPrompts.md](MultiplayerImplementationPrompts.md) and [Development/Multiplayer/ReleaseContract.md](Development/Multiplayer/ReleaseContract.md), with independent evidence in [Development/Multiplayer/Acceptance.md](Development/Multiplayer/Acceptance.md). It does not change or retroactively satisfy the historical MVP gates below.
+
 If a proposed feature does not directly improve this loop or reduce a top architectural risk, it belongs after the MVP.
 
 The implementation state inspected when this enhanced scope was adopted is recorded in [Development/EnhancedMvpBaseline.md](Development/EnhancedMvpBaseline.md). That baseline is descriptive; the requirement-to-evidence matrix in §10.1 is normative.
@@ -52,7 +54,7 @@ The implementation state inspected when this enhanced scope was adopted is recor
 ### 4.1 World and cities
 
 - **Lübeck:** one fully buildable World Partition region with harbor, roads, building plots, resource locations, camera bounds and placement grid.
-- **Rostock:** one fully rendered, prebuilt coastal city presentation with a recognizable waterfront, market/warehouse/dock context, camera transition, selection and inspection. Rostock runs the same thirteen-good market contracts as Lübeck, supports route stops and visible cargo arrival, and exposes no construction controls.
+- **Rostock:** one fully rendered, prebuilt coastal city presentation with a recognizable waterfront, market/warehouse/dock context, camera transition, selection and inspection. Rostock runs the same fifteen-good market contracts as Lübeck, supports route stops and visible cargo arrival, and exposes no construction controls.
 - A compact Baltic map and route connection between Lübeck and Rostock, not the full European campaign map.
 - The route graph retains provider-neutral sea/land extension contracts, but only the Lübeck–Rostock sea journey is required for playable-MVP acceptance.
 - Existing Hamburg and Lüneburg market records may remain for compatibility and non-gating tests, but they are not required player-facing cities in this slice. Additional cities, a player-facing land-route journey, river navigation, and the full Europe map are post-MVP.
@@ -66,29 +68,33 @@ MVP goods:
 3. hops;
 4. malt;
 5. bread;
-6. fish;
+6. fresh fish;
 7. salt;
 8. timber/logs;
 9. planks;
 10. iron;
 11. tools;
 12. barrels;
-13. beer.
+13. beer;
+14. firewood;
+15. preserved fish.
 
 Locally buildable chains:
 
 ```text
 Grain Farm → Grain → Mill → Flour → Bakery → Bread
-Fishery → Fish
+Fishery → Fresh fish
+Fishery + Salting Shed + imported salt + cooperage barrels → Preserved fish
 Lumber Camp → Timber/Logs → Sawmill → Planks
 Grain Farm → Grain → Malt House → Malt ┐
 Hop Farm → Hops ───────────────────────┼→ Brewery → Beer
 Lumber Camp → Timber → Cooperage → Barrels ┘
+Lumber Camp → Timber → Woodcutter’s Yard → Firewood → Heating / Bakery / Malt House / Brewery
 ```
 
-All thirteen goods remain active in market stock, reserve, production/consumption history, demand, price, incoming cargo, needs, or industrial use. Salt, iron, and tools use explicit bounded starting stock, Rostock/background supply, imports, or consumption rules; they do not require player-buildable local chains in this milestone. Beer is locally produced from malt, hops, and empty barrels. Generic grain is shared by bread and malt production, while timber is shared by planks and barrel production. The existing smithy definition remains supported data but is not offered as a Lübeck construction choice in the enhanced golden session.
+All fifteen goods remain active in market stock, reserve, production/consumption history, demand, price, incoming cargo, needs, or industrial use. Salt, iron, and tools use explicit bounded starting stock, Rostock/background supply, imports, or consumption rules; they do not require player-buildable local chains in this milestone. Beer is locally produced from malt, hops, and empty barrels. Generic grain is shared by bread and malt production, while timber is shared by planks, barrel production and firewood. Firewood supplies seasonal household heating and year-round process heat in bakeries, malt houses and breweries. The accepted preservation catalog v25 contains fourteen goods; firewood adds the fifteenth when its separately approved promotion completes. This combined scope statement is not evidence of completed release gates. The existing smithy definition remains supported data but is not offered as a Lübeck construction choice in the enhanced golden session.
 
-The data model must continue to support multi-input recipes even when some MVP recipes remain simple. Additional locally buildable chains, quality tiers, detailed spoilage, packaging beyond the explicit empty-barrel good, substitutions and advanced by-products are deferred.
+The data model must continue to support multi-input recipes even when some MVP recipes remain simple. Preserved fish extends the existing fish chain through the optional Salting Shed upgrade. Need.Fish accepts fresh fish first and preserved fish second at equal edible value. Deterministic aggregate spoilage applies to these two goods; detailed ages, quality tiers, barrel returns, additional chain families and advanced by-products remain deferred.
 
 ### 4.3 Buildings and city building
 
@@ -134,7 +140,7 @@ Every golden-path building and road piece must have an approved production prese
 
 Two tiers:
 
-- **Laborers:** consume bread, fish, beer and basic services; provide basic workforce.
+- **Laborers:** consume bread, fish, beer, seasonal firewood heating and basic services; provide basic workforce.
 - **Artisans:** add tools and stronger beer/bread/service expectations; provide skilled workforce.
 
 Population is represented as cohorts/households. The UI exposes population, workforce, consumption, reserve days, access, affordability and satisfaction. Merchants, patricians, clergy/institutions, disease and detailed migration are deferred.
@@ -262,7 +268,7 @@ Implementation uses native UMG/Slate components, C++ view models and event-drive
 
 - A new tester can discover why bread price is rising within 30 seconds.
 - A first-time player can launch the packaged build, start the slice and recover from ordinary mistakes without developer instructions.
-- A tester can place and operate the bread, fish, planks, and beer chains without opening external documentation.
+- A tester can place and operate the bread, fish, planks, beer, and firewood chains without opening external documentation.
 - A tester can drag a building card into the real world, understand every warning/invalid state, rotate/cancel/repeat, and complete the same action without drag.
 - A tester can draw a road from the world viewport, understand invalid spans and cost, and connect production to storage without debug controls.
 - A tester can create a delivering Lübeck–Rostock route using the production route creator and observe the same simulated cargo on the visible Cog and in both city inventories.
@@ -415,8 +421,8 @@ Every fixture records schema version, content hash, seed, initial tick, expected
 Start explicitly automation-enabled Development game through the production frontend
   → load the enhanced lubeck_grain_shortage playable profile
   → use ordinary build-card, world-placement and road-tool intents
-  → construct representative bread, fish, planks and beer chain buildings in valid and invalid states
-  → inspect the thirteen-good market and population causes semantically
+  → construct representative bread, fish, planks, beer and firewood chain buildings in valid and invalid states
+  → inspect the fifteen-good market and population causes semantically
   → travel to and inspect rendered Rostock
   → create and activate a Lübeck–Rostock Cog route through the production route creator
   → wait for visible departure, travel, arrival and unloading synchronized to authoritative cargo events
@@ -463,8 +469,8 @@ A feature cannot be marked complete while one required column is deferred.
 
 1. Start the enhanced slice through the production frontend with no developer instructions.
 2. Drag authored building cards into Lübeck, recover from an invalid placement, and draw connecting roads directly in the world.
-3. Build and operate the bread, fish, planks, and beer chains in a player-chosen order.
-4. Observe workforce, needs, growth/decline, inputs, citizen consumption and price causes across all thirteen goods.
+3. Build and operate the bread, fish, planks, beer, and firewood chains in a player-chosen order.
+4. Observe workforce, needs, growth/decline, inputs, citizen consumption and price causes across all fifteen goods.
 5. Inspect rendered Rostock and create a Lübeck–Rostock Cog route through the normal route creator.
 6. Watch authoritative cargo depart, travel, arrive and unload; verify both markets respond.
 7. Choose a research improvement, react to AI competition/winter, recover from one poor decision, and reach prosperity.
@@ -491,7 +497,7 @@ Every row is release-blocking. `Structured` means typed gameplay projections, co
 | EMVP-WORLD-LUBECK | Lübeck is fully buildable and remains readable before and after construction | Structured placements/occupancy; ordinary input trace; representative real-viewport captures at gameplay zooms; save/load reconstruction | Placement state or Actor-count assertion without rendered inspection |
 | EMVP-WORLD-ROSTOCK | Rostock is rendered, prebuilt, inspectable and tradeable, with no construction controls | Real-viewport city/travel/selection captures; semantic inspector state; typed market/route-stop projection; negative construction-control assertion | A `City.Rostock` market record or trade-map marker alone |
 | EMVP-CHAINS | Bread, fish, planks and beer are the locally buildable production chains and all can be placed and operated | Data-driven catalog query; ordinary card/placement/road actions; production/inventory events; real-viewport chain-state captures | Recipe simulations or definition assets alone |
-| EMVP-MARKET | All thirteen goods participate through explicit stock, supply, demand, consumption, production, reserve, incoming-cargo or price rules | Registry/market validation; deterministic simulations; typed thirteen-good projections; native Market/City Overview captures with unknown/stale treatment | Thirteen definition IDs without active rules; unknown represented as zero |
+| EMVP-MARKET | All fifteen goods participate through explicit stock, supply, demand, consumption, production, reserve, incoming-cargo or price rules | Registry/market validation; deterministic simulations; typed fifteen-good projections; native Market/City Overview captures with unknown/stale treatment | Fifteen definition IDs without active rules; unknown represented as zero |
 | EMVP-PLACE | A building card drags into the world using the authored 3D model as its ghost and exposes valid, warning and invalid feedback, rotation, cancellation, repeat and accessible alternatives | Pointer and non-drag input traces; semantic state/reason; accepted/rejected commands; real-viewport captures/video of each critical state | Direct placement command, fixed target button, or flat-color preview alone |
 | EMVP-ROAD | The player draws connected roads directly in the world with live path, cost and per-cell validity feedback | Pointer and controller/keyboard traces; preview semantics; authoritative road batch/events; real-viewport valid/invalid/intersection evidence | Headless Manhattan-path tests or debug target buttons alone |
 | EMVP-LOGISTICS | Visible Cog and local cargo vehicles project real simulated cargo movement | Vehicle/cargo/route projections and events correlated by stable entity ID and tick; real-viewport departure/travel/arrival/unload and local-delivery captures | Route-state records, UI rows, or cosmetic animation without correlation |
@@ -552,7 +558,7 @@ Exit: an empty deterministic simulation can be authored, launched, queried throu
 
 ### Increment 1 — Headless economy and data authoring
 
-- Ten goods, recipes, buildings, needs, the required Lübeck/Rostock market records and shortage fixture; compatible extra market records may remain non-gating.
+- Fifteen goods, recipes, buildings, needs, the required Lübeck/Rostock market records and shortage fixture; compatible extra market records may remain non-gating.
 - Production, population, inventory, market and price systems.
 - Authoring/validation for the corresponding definitions.
 - Gameplay queries, fixture control, stepping, invariants and checksum evidence.
@@ -600,8 +606,8 @@ Exit: every acceptance gate in this document passes from a clean checkout.
 
 - a second fully buildable city, including buildable Rostock;
 - additional required rendered/player-facing cities beyond Lübeck and Rostock, including Hamburg or Lüneburg, the full Europe map, and a player-facing intercity land-route journey;
-- locally buildable production chains beyond bread, fish, planks, and beer, including smithy/tools;
-- more than thirteen goods, two population tiers or three research branches;
+- locally buildable production chains beyond bread, fish, planks, beer, and firewood, including smithy/tools;
+- more than fifteen goods, two population tiers or three research branches;
 - politics, Hanseatic assembly, diplomacy, contracts, loans, insurance and bankruptcy recovery;
 - combat, piracy, convoys, detailed weather, fire, disease or crime;
 - quality tiers, detailed spoilage, packaging beyond the empty-barrel good and advanced conditional orders;
@@ -647,7 +653,7 @@ The Hansa MVP is complete only when:
 4. all implemented features satisfy the game/editor/automation parity contract;
 5. Lübeck is buildable and Rostock is rendered, prebuilt, inspectable and tradeable without construction controls;
 6. ordinary card drag, accessible placement alternatives and direct road drawing operate the three local chain families with authored production presentations;
-7. the full thirteen-good population/market loop and a visible, cargo-correlated Lübeck–Rostock Cog delivery are proven;
+7. the full fifteen-good population/market loop and a visible, cargo-correlated Lübeck–Rostock Cog delivery are proven;
 8. real assembled game-viewport, semantic, input and structured evidence satisfies every row in §10.1 at the required native resolutions;
 9. generated data/media is traceable, validated and explicitly approved;
 10. normal CI performs no billable provider calls;
@@ -669,3 +675,19 @@ tools receive a 1,000-unit construction-testing grant, for 1,018 total. Other op
 goods and existing saves remain unchanged. This is a gameplay
 placement revision, not a promotion or historical reapproval of the staged terrain.
 See [Development/SurveyWaterfrontOpening.md](Development/SurveyWaterfrontOpening.md).
+
+
+### Starting Cog and local water exploration — 2026-09-17
+
+The user explicitly adds a starting selectable Cog and manual sailing across connected navigable water on the complete current map, including rivers. This supersedes the earlier river-navigation exclusion for this local exploration feature. Reuse the approved cargo inspector and ship assets. Right-click sets a course; right-drag retains camera panning. See [ship navigation contract](Development/ShipNavigation.md) for authoritative commands, terrain validation, save migration, semantic controls and evidence.
+
+
+### Craftsmen production scope extension — 2026-09-19
+
+The user's explicit request extends normal gameplay with local Tools and Shoes production and a Day Laborers charcoal supply chain. This supersedes the earlier exclusion of buildable smithies/tools and the fifteen-good ceiling for this feature. Catalog v28 contains twenty goods, including charcoal, raw hides, tanning bark, leather and shoes. Iron bars + charcoal produce Tools at the Smithy; raw hides + tanning bark produce Leather at the Tannery; Leather produces Shoes at the Shoemaker. Artisan households consume Shoes. Inputs use the existing import/market system. See Development/ArtisanProduction.md.
+
+Linen, candles and rope are now an isolated development review candidate rather than accepted content. The candidate adds prepared flax/hemp and beeswax imports, Weaver, Tailor, Chandler and Ropewalk workshops, Craftsmen needs and separate Ropewalk recipes without changing the accepted v28 catalog. It must pass disk-reload hash verification, playable UAT and explicit promotion approval before normal New Game uses it. See [Development/TextileProduction/README.md](Development/TextileProduction/README.md).
+
+### Regional production economy — 2026-09-19
+
+Remote-city production is represented by reusable `ProductionChain.*` definitions, five `Region.*` portfolios, and per-city stage subsets for thirty cities. Market-only industries consume inputs and create outputs through recipe semantics and physical city inventories. Bounded same-region exchange commits goods at source and delivers them after at least one market update; Lübeck never participates automatically. Legacy background-production fields remain migration-readable but are zero for regional cities. Raw hides and tanning bark are accessible from Rostock through normal market trade, while their source activities remain remote-only rather than player buildings. Save format 11 / determinism fingerprint 24 require a new game. See [Development/RegionalProductionEconomy.md](Development/RegionalProductionEconomy.md).

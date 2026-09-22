@@ -1,0 +1,14 @@
+{
+  "Operation": "RunAutomationTests",
+  "Status": "Succeeded",
+  "Filter": "Hansa.ShipNavigation",
+  "Configuration": "Development",
+  "TestsFound": 2,
+  "EditorBuildSkipped": false,
+  "RenderingEnabled": false,
+  "ProjectFile": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\ShipNavigationVerify\\Hansa.uproject",
+  "EngineRoot": "H:\\Unreal\\UE_5.8",
+  "CompletedUtc": "2026-09-17T16:54:14.7877275Z",
+  "UnrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\ShipNavigationVerify\\Saved\\BuildArtifacts\\20260917-185345455-automation-Hansa.ShipNavigation\\UnrealEditor.log",
+  "CommandLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\ShipNavigationVerify\\Saved\\BuildArtifacts\\20260917-185345455-automation-Hansa.ShipNavigation\\AutomationCommand.log"
+}

@@ -2,6 +2,7 @@
 #include "World/HansaCargoProjectionManager.h"
 
 #include "Definitions/HansaEconomicRegistry.h"
+#include "Definitions/HansaDefinitionBase.h"
 #include "Construction/HansaConstruction.h"
 #include "Commands/HansaGameplayCommandGateway.h"
 #include "Events/HansaDomainEvent.h"
@@ -18,7 +19,9 @@ namespace
 
 	FText InspectorPresentationModelStableLabel(const FString& StableId)
 	{
-		FString Result = StableId;
+		if (StableId == TEXT("Good.Fish")) return LOCTEXT("FreshFishGood", "Fresh fish");
+        if (StableId == TEXT("Good.PreservedFish")) return LOCTEXT("PreservedFishGood", "Preserved fish");
+        FString Result = StableId;
 		int32 Separator = INDEX_NONE;
 		if (Result.FindLastChar(TEXT('.'), Separator)) Result.RightChopInline(Separator + 1);
 		Result.ReplaceInline(TEXT("_"), TEXT(" "));
@@ -169,6 +172,18 @@ FHansaCausalPresentation MakeProductionCausalPresentation(
 		Result.RelatedSemanticId = TEXT("CityOverview.Storage");
 		Result.Severity = EHansaCausalSeverity::Warning;
 		break;
+    case EHansaProductionBlocker::HouseholdFuelProtected:
+        Result.Problem = LOCTEXT("HeatingProtectedProblem", "Firewood protected for households");
+        Result.Cause = LOCTEXT("HeatingProtectedCause", "The household reserve leaves insufficient workshop fuel.");
+        Result.Remedy = LOCTEXT("HeatingProtectedRemedy", "Produce or import firewood, reduce reserve days at the market, or release protection.");
+        break;
+	case EHansaProductionBlocker::NoNearbyTrees:
+        Result.Problem = LOCTEXT("NoNearbyTreesProblem", "No nearby trees");
+        Result.Cause = LOCTEXT("NoNearbyTreesCause", "This lumber camp has no standing trees in harvesting range.");
+        Result.Evidence = LOCTEXT("NoNearbyTreesEvidence", "Trees must be within 48 m of the camp footprint and clear of buildings and roads.");
+        Result.Remedy = LOCTEXT("NoNearbyTreesRemedy", "Build a lumber camp closer to the forest.");
+        Result.Severity = EHansaCausalSeverity::Warning;
+        break;
 	case EHansaProductionBlocker::StorageBlocked:
 		Result.StableCode = TEXT("OutputFull");
 		Result.Problem = LOCTEXT("OutputFullProblem", "Output storage is full");
@@ -229,10 +244,10 @@ FHansaCausalPresentation MakeResidenceCausalPresentation(
 	else if (!Residence.bHasMarketAccess)
 	{
 		Result.StableCode = TEXT("ResidenceNoMarketAccess");
-		Result.Problem = LOCTEXT("ResidenceNoMarketProblem", "No Market access");
-		Result.Cause = LOCTEXT("ResidenceNoMarketCause", "This residence has no completed road route to a completed Market.");
+		Result.Problem = LOCTEXT("ResidenceNoMarketProblem", "Market not in range");
+		Result.Cause = LOCTEXT("ResidenceNoMarketCause", "This residence has no completed road route within a market's transport range.");
 		Result.Evidence = LOCTEXT("ResidenceNoMarketEvidence", "Bread, fish, and beer cannot reach this house, so no residents will move in.");
-		Result.Remedy = LOCTEXT("ResidenceNoMarketRemedy", "Connect the residence and a completed Market to the same completed road network.");
+		Result.Remedy = LOCTEXT("ResidenceNoMarketRemedy", "Build a closer market or shorten and complete the road route to a market.");
 		Result.Severity = EHansaCausalSeverity::Critical;
 	}
 	else if (Weakest != nullptr && Weakest->SatisfactionBasisPoints < 8000)
@@ -349,15 +364,160 @@ void UHansaInspectorPresentationModel::AppendWorldActions()
 		Snapshot.Actions.Add(MoveTemp(Toggle));
 	}
 
+	// Simulation events can arrive before the world Actor has refreshed after an upgrade.
+	// Resolve identity from the authoritative record, including stages hidden from the build menu.
+	if (const auto* Building = Projection.Value.GetBuildingWorldProjections().FindByPredicate(
+		[&BuildingId](const auto& Value) { return Value.BuildingId == BuildingId.Value; }))
+	{
+		SelectedBuildingDefinitionId = Building->Placement.BuildingDefinitionId.ToString();
+	}
 	const FHansaEconomicRegistry* Registry = Host->GetEconomicRegistry();
 	const FHansaCompiledBuildingDefinition* Definition = Registry != nullptr
 		? Registry->FindBuilding(SelectedBuildingDefinitionId) : nullptr;
+	if (Definition != nullptr && !Definition->DisplayName.IsEmpty())
+	{
+		Snapshot.Identity = FText::FromString(Definition->DisplayName);
+	}
+	if (Definition && Definition->bProvidesMarketAccess && Registry->FindNeed(TEXT("Need.Heating")))
+	{
+		const auto H = Host->QueryHeating();
+		const FText Summary = FText::Format(LOCTEXT("HeatingLedger", "Firewood: {0} in household pools; {1} committed. Households {2}/day; protected target {3}; surplus {4}. Winter target {5}. Workshops {6}/day at nominal capacity; seasonal heating {7}%. {8}"),
+			FText::AsNumber(H.StockRaw / 1000.), FText::AsNumber(H.CommittedRaw / 1000.), FText::AsNumber(H.HouseholdDailyRaw / 1000.),
+			FText::AsNumber(H.ProtectedRaw / 1000.), FText::AsNumber(H.SurplusRaw / 1000.), FText::AsNumber(H.WinterDailyRaw * H.ReserveDays / 1000.), FText::AsNumber(H.WorkshopDailyRaw / 1000.), FText::AsNumber(H.SeasonMultiplier / 100.),
+            H.SeasonMultiplier == 0 ? LOCTEXT("HeatingSummer", "Household heating is not needed this season; stockpile for winter.") :
+            H.StockRaw - H.CommittedRaw < H.WinterDailyRaw * H.ReserveDays ? LOCTEXT("HeatingWinterShort", "Winter reserve is short: produce or import firewood.") : FText());
+		Snapshot.Actions.Add(Action(TEXT("Inspector.Heating.Decrease"), LOCTEXT("HeatingLess", "Reduce heating reserve by one day"), Summary));
+		Snapshot.Actions.Last().bEnabled = H.ReserveDays > 0;
+		Snapshot.Actions.Add(Action(TEXT("Inspector.Heating.Increase"), FText::Format(LOCTEXT("HeatingMore", "Heating reserve: {0} days (+1)"), FText::AsNumber(H.ReserveDays)), Summary));
+		Snapshot.Actions.Last().bEnabled = H.ReserveDays < 90;
+		Snapshot.Actions.Add(Action(TEXT("Inspector.Heating.Override"), H.bOverride ? LOCTEXT("HeatingProtect", "Restore household fuel protection") : LOCTEXT("HeatingRelease", "Release household fuel reserve"), Summary));
+		Snapshot.Actions.Last().bSelected = H.bOverride;
+	}
+    Snapshot.PreservationSummary=FText::GetEmpty();
+    if (Production && Definition)
+    {
+        const auto* Target=Registry->FindBuilding(Definition->UpgradeTargetBuildingId);
+        if (Target && !Definition->ResidenceCapacity)
+        {
+            FString Materials;
+            for (const auto& Cost:Target->ConstructionCosts) Materials+=FString::Printf(TEXT("%s %.1f; "),*InspectorPresentationModelStableLabel(Cost.GoodId).ToString(),Cost.QuantityMilliUnits/1000.);
+            auto Upgrade=Action(TEXT("Inspector.Preservation.Upgrade"),LOCTEXT("BuildSaltingShed","Build salting shed"),FText::Format(LOCTEXT("ShedCosts","{0}{1} pfennig; {2} ticks. Finishes the current batch first."),FText::FromString(Materials),FText::AsNumber(Target->ConstructionCostPfennig),FText::AsNumber(Target->BuildTicks)));
+            const auto Preview=Host->PreviewUpgradeProduction(Production->Id); Upgrade.bEnabled=Preview.IsSuccess();
+            Upgrade.DisabledReason=Production->PendingUpgradeBuildingId.IsValid()?LOCTEXT("ShedQueued","Salting shed paid for; waiting for this batch to finish."):GatewayFailure(Preview);
+            Snapshot.Actions.Add(MoveTemp(Upgrade));
+        }
+        if (Definition->RecipeIds.Contains(TEXT("Recipe.SaltedCatch")))
+        {
+            const auto ModeLabel=[](const FHansaRecipeId Id){return Id.ToString()==TEXT("Recipe.SaltedCatch")?LOCTEXT("SaltedCatch","Salted catch"):LOCTEXT("FreshCatch","Fresh catch");};
+            Snapshot.Identity = LOCTEXT("SaltingShedTitle", "Salting shed");
+            Snapshot.PreservationSummary=FText::Format(LOCTEXT("FishModesCompact","Selected: {0}\nActive: {1}"),ModeLabel(Production->RequestedRecipeId),ModeLabel(Production->RecipeId));
+            auto Status=FText::Format(LOCTEXT("FishModes","Selected: {0}\nActive: {1}\nChanges apply after this batch. Same food value; lower storage loss."),ModeLabel(Production->RequestedRecipeId),ModeLabel(Production->RecipeId));
+            if(Production->RequestedRecipeId.ToString()==TEXT("Recipe.SaltedCatch") && !(Production->ProgressTicks>0 && Production->RecipeId.ToString()==TEXT("Recipe.SaltedCatch")))
+            {
+                const auto* Inputs=Projection.Value.GetInventories().FindByPredicate([&](const auto& I){return I.Id==Production->InputInventoryId;});
+                const auto* Selected=Registry->FindRecipe(TEXT("Recipe.SaltedCatch"));
+                TArray<FText> Missing;
+                if(Selected) for(const auto& Input:Selected->Inputs)
+                {
+                    const auto* Stock=Inputs?Inputs->Stocks.FindByPredicate([&](const auto& G){return G.GoodId.ToString()==Input.GoodId;}):nullptr;
+                    if(!Stock || Stock->Available.GetRawValue()<Input.QuantityMilliUnits)
+                        Missing.Add(Input.GoodId==TEXT("Good.Salt")?LOCTEXT("MissingSalt","Missing salt"):LOCTEXT("MissingBarrels","Missing barrels"));
+                }
+                if(!Missing.IsEmpty()) Snapshot.PreservationSummary=FText::Format(LOCTEXT("FishShortageCompact","{0}\n{1}"),Snapshot.PreservationSummary,FText::Join(LOCTEXT("FishModeComma",", "),Missing));
+                if(!Missing.IsEmpty()) Status=FText::Format(LOCTEXT("FishModeShortage","{0}\n{1}. Deliver supplies to resume preservation."),Status,FText::Join(LOCTEXT("FishModeComma",", "),Missing));
+            }
+            if(const auto* SaltedRecipe=Registry->FindRecipe(TEXT("Recipe.SaltedCatch")))
+            {
+                FString Inputs;
+                for(const auto& Input:SaltedRecipe->Inputs) Inputs+=FString::Printf(TEXT("%.2f %s; "),Input.QuantityMilliUnits/1000.,*InspectorPresentationModelStableLabel(Input.GoodId).ToString());
+                Status=FText::Format(LOCTEXT("SaltedRequirements","{0}\nSalted batch: {1} laborers, {2} ticks. Inputs: {3}"),Status,FText::AsNumber(SaltedRecipe->LaborerWorkforce),FText::AsNumber(SaltedRecipe->CycleTicks),FText::FromString(Inputs));
+            }
+            const auto* FreshGood=Registry->FindGood(TEXT("Good.Fish"));const auto* SaltedGood=Registry->FindGood(TEXT("Good.PreservedFish"));
+            if(FreshGood && SaltedGood) Status=FText::Format(LOCTEXT("FishLossRates","{0}\nDaily loss rates: fresh {1}%, preserved {2}%."),Status,FText::AsNumber(FreshGood->SpoilageBasisPointsPerDay/100.),FText::AsNumber(SaltedGood->SpoilageBasisPointsPerDay/100.));
+            for(const auto& Loss:Projection.Value.GetSpoilage()) if(Loss.GoodId.ToString()==TEXT("Good.Fish") || Loss.GoodId.ToString()==TEXT("Good.PreservedFish"))
+            {
+                const auto* GoodDefinition=Registry->FindGood(Loss.GoodId.ToString());
+                Status=FText::Format(LOCTEXT("FishLossReport","{0}\nSpoiled across all stores: {1} kg {2}."),Status,FText::AsNumber(Loss.DestroyedMilliUnits/1000.),FText::FromString(GoodDefinition?GoodDefinition->DisplayName:Loss.GoodId.ToString()));
+            }
+            Snapshot.Actions.Add(Action(TEXT("Inspector.Preservation.Fresh"),LOCTEXT("FreshCatch","Fresh catch"),Status)); Snapshot.Actions.Last().bSelected=Production->RequestedRecipeId.ToString()==TEXT("Recipe.CatchFish");
+            Snapshot.Actions.Add(Action(TEXT("Inspector.Preservation.Salted"),LOCTEXT("SaltedCatch","Salted catch"),Status)); Snapshot.Actions.Last().bSelected=Production->RequestedRecipeId.ToString()==TEXT("Recipe.SaltedCatch");
+            Snapshot.Actions.Add(Action(TEXT("Inspector.Preservation.Fallback"),Production->bFallbackToFresh?LOCTEXT("FallbackOn","Fresh fallback: On"):LOCTEXT("FallbackOff","Fresh fallback: Off"),LOCTEXT("FallbackTip","When salt or barrels are missing, make fresh fish. Retry salted catch at each batch boundary."))); Snapshot.Actions.Last().bSelected=Production->bFallbackToFresh;
+            for (auto& A:Snapshot.Actions) if (A.StableId.ToString().StartsWith(TEXT("Inspector.Preservation.")))
+            { A.bEnabled=Construction && Construction->State==EHansaConstructionState::Completed; A.DisabledReason=LOCTEXT("ShedBuilding","Finish construction before selecting a mode."); }
+        }
+		else if (Definition->RecipeIds.Num() > 1)
+		{
+			auto RecipeLabel = [&](const FHansaRecipeId Id)
+			{
+				if (const auto* Authored = UHansaDefinitionBase::ResolveByStableId(Id.ToString())) return Authored->DisplayName;
+				return InspectorPresentationModelStableLabel(Id.ToString());
+			};
+			Snapshot.PreservationSummary = FText::Format(
+				LOCTEXT("WorkshopRecipeSummary", "Selected recipe: {0}\nActive recipe: {1}\nChanges apply at the next batch boundary."),
+				RecipeLabel(Production->RequestedRecipeId), RecipeLabel(Production->RecipeId));
+			const auto* Inventory = Projection.Value.GetInventories().FindByPredicate(
+				[&](const auto& Value) { return Value.Id == Production->InputInventoryId; });
+			for (const FString& RecipeIdString : Definition->RecipeIds)
+			{
+				const auto* Recipe = Registry->FindRecipe(RecipeIdString);
+				if (!Recipe) continue;
+				FString Requirements;
+				TArray<FText> Missing;
+				for (const auto& Input : Recipe->Inputs)
+				{
+					if (!Requirements.IsEmpty()) Requirements += TEXT(" + ");
+					Requirements += FString::Printf(TEXT("%.1f %s"), Input.QuantityMilliUnits / 1000.0,
+						*InspectorPresentationModelStableLabel(Input.GoodId).ToString().ToLower());
+					const auto* Stock = Inventory ? Inventory->Stocks.FindByPredicate(
+						[&](const auto& Value) { return Value.GoodId.ToString() == Input.GoodId; }) : nullptr;
+					if (!Stock || Stock->Available.GetRawValue() < Input.QuantityMilliUnits)
+					{
+						Missing.Add(FText::Format(LOCTEXT("MissingRecipeInput", "Missing {0}"), InspectorPresentationModelStableLabel(Input.GoodId)));
+					}
+				}
+				FText Status = FText::Format(
+					LOCTEXT("WorkshopRecipeDetails", "{0} artisans · {1} ticks · Inputs: {2}"),
+					FText::AsNumber(Recipe->ArtisanWorkforce), FText::AsNumber(Recipe->CycleTicks), FText::FromString(Requirements));
+				if (!Missing.IsEmpty())
+				{
+					Status = FText::Format(LOCTEXT("WorkshopRecipeShortage", "{0}\n{1}. Select now; production waits for delivery."),
+						Status, FText::Join(LOCTEXT("RecipeMissingComma", ", "), Missing));
+				}
+				const FName ActionId(*(TEXT("Inspector.Recipe.") + RecipeIdString));
+				Snapshot.Actions.Add(Action(*ActionId.ToString(), RecipeLabel(FHansaRecipeId::TryParse(RecipeIdString).Value), Status));
+				auto& RecipeAction = Snapshot.Actions.Last();
+				RecipeAction.bSelected = Production->RequestedRecipeId.ToString() == RecipeIdString;
+				RecipeAction.bEnabled = Construction && Construction->State == EHansaConstructionState::Completed;
+				if (!RecipeAction.bEnabled) RecipeAction.DisabledReason = LOCTEXT("WorkshopBuilding", "Finish construction before selecting a recipe.");
+			}
+		}
+    }
+    if (Definition && Definition->bProvidesMarketAccess && Registry->FindGood(TEXT("Good.PreservedFish")))
+    {
+        const auto Good=FHansaGoodId::TryParse(TEXT("Good.PreservedFish")).Value;
+        bool bAvailable=true;
+        int64 HouseholdStock=0, PhysicalReserved=0, PolicyExcluded=0;
+        for (const auto& Inventory:Projection.Value.GetInventories())
+            if (Inventory.OwnerKind==EHansaInventoryOwnerKind::City && Projection.Value.GetBuildingWorldProjections().ContainsByPredicate([&](const auto& World){return World.BuildingId==BuildingId.Value && World.Placement.CityId==Inventory.CityId;}))
+            {
+                const bool Allowed=!Inventory.HouseholdExcludedGoods.Contains(Good); bAvailable &= Allowed;
+                if(const auto* Stock=Inventory.Stocks.FindByPredicate([&](const auto& G){return G.GoodId==Good;}))
+                {
+                    PhysicalReserved+=FMath::Min(MAX_int64-PhysicalReserved,Stock->Reserved.GetRawValue());
+                    auto& Total=Allowed?HouseholdStock:PolicyExcluded;
+                    Total+=FMath::Min(MAX_int64-Total,Stock->Available.GetRawValue());
+                }
+            }
+        auto Policy=Action(TEXT("Inspector.Preservation.Households"),bAvailable?LOCTEXT("FishAvailable","Preserved fish: Available to households"):LOCTEXT("FishTrade","Preserved fish: Reserved for trade"),LOCTEXT("FishPolicyTip","Toggle household use. Cargo reservations and route minimum stock remain separate."));
+        Policy.ToolTip=FText::Format(LOCTEXT("FishPolicyQuantities","{0}\nHousehold-available: {1} kg\nExcluded from households: {2} kg\nPhysically reserved: {3} kg"),Policy.ToolTip,FText::AsNumber(HouseholdStock/1000.),FText::AsNumber(PolicyExcluded/1000.),FText::AsNumber(PhysicalReserved/1000.));
+        Policy.bSelected=bAvailable; Snapshot.Actions.Add(MoveTemp(Policy));
+    }
 	if (Residence != nullptr && Definition != nullptr && !Definition->UpgradeTargetBuildingId.IsEmpty())
 	{
 		const FHansaCommandGatewayResult Preview = Host->PreviewUpgradeResidence(BuildingId.Value);
 		FHansaInspectorActionPresentation Upgrade = Action(TEXT("Inspector.Action.UpgradeResidence"),
-			FText::Format(LOCTEXT("UpgradeResidence", "Upgrade to {0} [U]"), InspectorPresentationModelStableLabel(Definition->UpgradeTargetBuildingId)),
-			LOCTEXT("UpgradeResidenceTip", "Move this residence and its population to the next authored tier."));
+			FText::Format(LOCTEXT("UpgradeResidence", "Upgrade to {0} [U]"), Host->FindBuildingDefinition(Definition->UpgradeTargetBuildingId) ? FText::FromString(Host->FindBuildingDefinition(Definition->UpgradeTargetBuildingId)->DisplayName) : InspectorPresentationModelStableLabel(Definition->UpgradeTargetBuildingId)),
+			LOCTEXT("UpgradeResidenceTip", "Develop this residence to its next authored stage or population tier."));
 		Upgrade.bEnabled = Preview.IsSuccess();
 		if (!Upgrade.bEnabled)
 		{
@@ -408,7 +568,7 @@ void UHansaInspectorPresentationModel::AppendWorldActions()
 		const bool bArmed = Snapshot.PendingConfirmationAction == TEXT("Inspector.Action.RemoveBuilding");
 		FHansaInspectorActionPresentation Remove = Action(TEXT("Inspector.Action.RemoveBuilding"),
 			bArmed ? LOCTEXT("ConfirmRemoveBuilding", "Confirm demolition [X]") : LOCTEXT("RemoveBuilding", "Demolish building [X]"),
-			LOCTEXT("RemoveBuildingTip", "Permanently remove this completed, dependent-free building. Completed demolition has no refund."));
+			Definition && !Definition->ResidentialCompoundId.IsEmpty() ? LOCTEXT("RemoveCompoundTip", "Demolish the entire compound. Its residents leave the city. There is no refund; stored goods, production and active deliveries must be cleared first.") : LOCTEXT("RemoveBuildingTip", "Permanently remove this completed, dependent-free building. Completed demolition has no refund."));
 		Remove.bEnabled = Preview.IsSuccess(); Remove.bSelected = bArmed;
 		if (!Remove.bEnabled) Remove.DisabledReason = GatewayFailure(Preview);
 		Snapshot.Actions.Add(MoveTemp(Remove));
@@ -441,8 +601,8 @@ bool UHansaInspectorPresentationModel::ShowProduction(
 	{
 		FHansaInspectorFlowPresentation Row; Row.StableId = FName(*Input.GoodId); Row.Label = InspectorPresentationModelStableLabel(Input.GoodId);
 		Row.Value = FText::Format(LOCTEXT("InputRequired", "Required {0}"), InspectorPresentationModelQuantity(Input.QuantityMilliUnits));
-		Row.bProblem = Production.Blocker == EHansaProductionBlocker::MissingInput && Production.BlockingGoodId.ToString() == Input.GoodId;
-		Row.State = Row.bProblem ? LOCTEXT("Missing", "Missing") : LOCTEXT("Input", "Input"); Snapshot.Flows.Add(MoveTemp(Row));
+		Row.bProblem = (Production.Blocker == EHansaProductionBlocker::MissingInput || Production.Blocker == EHansaProductionBlocker::HouseholdFuelProtected) && Production.BlockingGoodId.ToString() == Input.GoodId;
+		Row.State = Row.bProblem ? (Production.Blocker == EHansaProductionBlocker::HouseholdFuelProtected ? LOCTEXT("ProtectedInput", "Protected for households") : LOCTEXT("Missing", "Missing")) : LOCTEXT("Input", "Input"); Snapshot.Flows.Add(MoveTemp(Row));
 	}
 	for (const FHansaProductionThroughputProjection& Output : Production.Outputs)
 	{
@@ -467,7 +627,7 @@ bool UHansaInspectorPresentationModel::ShowProduction(
 	SetCommonActions(); PublishIfChanged(Previous); return true;
 }
 
-static FHansaInspectorResidenceData BuildResidenceDetail(const Hansa::Simulation::FHansaPopulationCohortProjection& P,const Hansa::Simulation::FHansaEconomicRegistry& Registry)
+static FHansaInspectorResidenceData BuildResidenceDetail(const Hansa::Simulation::FHansaPopulationCohortProjection& P,const Hansa::Simulation::FHansaEconomicRegistry& Registry, int32 HeatingMultiplier = -1)
 {
  using namespace Hansa::Simulation;
  FHansaInspectorResidenceData D;D.bValid=true;D.Residents=P.Residents;D.Capacity=P.ResidenceCapacity;D.Workforce=P.WorkforceSupply;
@@ -492,7 +652,17 @@ static FHansaInspectorResidenceData BuildResidenceDetail(const Hansa::Simulation
   {
    N.bKnown=P.Consumption.CoveredMinutes>0;N.Fulfillment=0;
    if(const auto* Total=P.Consumption.Goods.FindByPredicate([&](const auto& T){return T.CityId==P.CityId && FName(*T.GoodId.ToString())==N.GoodId;}))
-   {N.Required=Total->Required;N.Consumed=Total->Consumed;}
+   {
+    N.Required=Total->Required;N.Consumed=Total->Consumed;
+    if(Def && !Def->Alternatives.IsEmpty())
+    {
+     FString Accepted=InspectorPresentationModelStableLabel(Def->GoodId).ToString();
+     for(const auto& A:Def->Alternatives) Accepted+=TEXT(", ")+InspectorPresentationModelStableLabel(A.GoodId).ToString();
+     FString Mix;
+     for(const auto& G:Total->SuppliedGoods) Mix+=FString::Printf(TEXT("%s: %.3f kg (%.1f%%); "),*InspectorPresentationModelStableLabel(G.GoodId.ToString()).ToString(),G.QuantityMilliUnits/1000.,Total->Consumed>0?100.*G.FulfillmentMilliUnits/Total->Consumed:0.);
+     N.SupplyDetail=FText::Format(LOCTEXT("FishSupplyDetail","Accepted: {0}.\nSupplied this period: {1}\nUnmet: {2} edible units. Fresh is used first; preserved fish gives equal food value."),FText::FromString(Accepted),FText::FromString(Mix),FText::AsNumber((Total->Required-Total->Consumed)/1000.));
+    }
+   }
    N.Percent=LOCTEXT("ResidenceUnknownPercent","—");
    if(!N.bKnown) N.Amount=LOCTEXT("ResidencePendingConsumption","Awaiting consumption history");
    else if(N.Required==0) N.Amount=LOCTEXT("ResidenceNoDemand","No demand in this period");
@@ -504,6 +674,11 @@ static FHansaInspectorResidenceData BuildResidenceDetail(const Hansa::Simulation
     N.Amount=FText::Format(LOCTEXT("ResidenceConsumptionAmounts","{0} / {1} units consumed"),
      FText::AsNumber(N.Consumed/1000.,&AmountFormat),FText::AsNumber(N.Required/1000.,&AmountFormat));
    }
+  }
+  if(Id==TEXT("Need.Heating") && HeatingMultiplier==0)
+  {
+   N.bKnown=false;N.Fulfillment=0;N.Percent=LOCTEXT("HeatingNotApplicable","N/A");
+   N.Amount=LOCTEXT("ResidenceSummerHeating","Not needed this season; stockpile for winter.");
   }
   D.Needs.Add(MoveTemp(N));
  };
@@ -522,7 +697,7 @@ bool UHansaInspectorPresentationModel::ShowResidence(
 	const FHansaInspectorSnapshot Previous = Snapshot;
 	SelectedBuildingDefinitionId.Reset();
 	Snapshot = {};
-	Snapshot.Residence=BuildResidenceDetail(Residence,Registry);
+	Snapshot.Residence=BuildResidenceDetail(Residence,Registry,RuntimeHost.IsValid()?RuntimeHost->QueryHeating().SeasonMultiplier:-1);
 	Snapshot.Kind = EHansaInspectorObjectKind::Residence; Snapshot.ObjectStableId = FName(*Residence.ResidenceBuildingId.ToDebugString());
 	Snapshot.BuildingValue = static_cast<int64>(Residence.ResidenceBuildingId.GetValue());
 	Snapshot.Identity = FText::Format(LOCTEXT("ResidenceIdentity", "{0} residence"), InspectorPresentationModelStableLabel(Residence.TierId.ToString()));
@@ -629,6 +804,9 @@ void UHansaInspectorPresentationModel::ShowWorldBuilding(
                 Snapshot.Causal.Problem = LOCTEXT("MarketDemandExplanation", "Supply fulfillment");
                 Snapshot.Causal.Cause = LOCTEXT("MarketDemandCause", "Each bar compares total goods consumed with total citizen demand over the recorded period, up to 30 game days. Stock and incoming shipments count only when consumed. Access and affordability can limit fulfillment.");
                 Snapshot.Causal.Remedy = LOCTEXT("MarketDemandRemedy", "For shortages, check production, deliveries, market access and affordability.");
+                if (const auto* Definition = Registry->FindBuilding(BuildingDefinitionId))
+                    Snapshot.Causal.Evidence = FText::Format(LOCTEXT("MarketTransportReach", "Transport range: {0} road cells ({1} metres), measured along completed roads including entrances."),
+                        FText::AsNumber(Definition->MaximumMarketRoadDistanceCells), FText::AsNumber(Definition->MaximumMarketRoadDistanceCells * 4));
                 Snapshot.Causal.RelatedSemanticId = TEXT("CityOverview.Market");
             }
             else
@@ -641,7 +819,7 @@ void UHansaInspectorPresentationModel::ShowWorldBuilding(
         }
 		else if (Residence != nullptr)
 		{
-			if(const auto* Registry=Host->GetEconomicRegistry())Snapshot.Residence=BuildResidenceDetail(*Residence,*Registry);
+			if(const auto* Registry=Host->GetEconomicRegistry())Snapshot.Residence=BuildResidenceDetail(*Residence,*Registry,Host->QueryHeating().SeasonMultiplier);
 			Snapshot.Kind = EHansaInspectorObjectKind::Residence;
 			Snapshot.State = Residence->bResidenceOperational ? LOCTEXT("WorldResidenceOccupied", "Occupied") : LOCTEXT("WorldResidenceUnavailable", "! Unavailable");
 			Snapshot.PrimaryResult = FText::Format(LOCTEXT("WorldResidenceResult", "{0}/{1} residents · satisfaction {2} · workforce {3}"),
@@ -690,7 +868,7 @@ void UHansaInspectorPresentationModel::ShowWorldBuilding(
 			{
 				FHansaInspectorFlowPresentation Row; Row.StableId = FName(*Input.GoodId); Row.Label = InspectorPresentationModelStableLabel(Input.GoodId);
 				Row.Value = FText::Format(LOCTEXT("WorldInputRequired", "Required {0}"), InspectorPresentationModelQuantity(Input.QuantityMilliUnits)); Row.State = LOCTEXT("WorldInput", "Input");
-				Row.bProblem = Production->Blocker == EHansaProductionBlocker::MissingInput && Production->BlockingGoodId.ToString() == Input.GoodId; Snapshot.Flows.Add(MoveTemp(Row));
+				Row.bProblem = (Production->Blocker == EHansaProductionBlocker::MissingInput || Production->Blocker == EHansaProductionBlocker::HouseholdFuelProtected) && Production->BlockingGoodId.ToString() == Input.GoodId; Snapshot.Flows.Add(MoveTemp(Row));
 			}
 			for (const FHansaProductionThroughputProjection& Output : Production->Outputs)
 			{
@@ -821,6 +999,101 @@ bool UHansaInspectorPresentationModel::ArmDestructiveAction(const FName Semantic
 	return false;
 }
 
+bool UHansaInspectorPresentationModel::PreservationIntent(FName Id)
+{
+ using namespace Hansa::Simulation;
+ if (!IsActionEnabled(Id)) return false;
+ auto* Host=RuntimeHost.Get(); if (!Host) return false;
+ const auto Projection=Host->BuildProjection(); if (!Projection) return false;
+ const auto Building=FHansaBuildingId::TryCreate(Snapshot.BuildingValue); if (!Building) return false;
+ const auto* Production=Projection.Value.GetProductions().FindByPredicate([&](const auto& P){return P.BuildingId==Building.Value;});
+	if (NetworkCommandIntent)
+	{
+		FHansaClientCommandIntent Intent;
+		if (Id == TEXT("Inspector.Preservation.Households"))
+		{
+			const auto* Action = Snapshot.Actions.FindByPredicate([&](const auto& Value){ return Value.StableId == Id; });
+			Intent.Type = EHansaClientIntentType::SetHouseholdAvailability;
+			Intent.BuildingId = Snapshot.BuildingValue;
+			Intent.GoodId = TEXT("Good.PreservedFish");
+			Intent.bAvailable = Action && !Action->bSelected;
+		}
+		else if (!Production) return false;
+		else if (Id == TEXT("Inspector.Preservation.Upgrade"))
+		{
+			Intent.Type = EHansaClientIntentType::UpgradeProduction;
+			Intent.ProductionId = Production->Id.GetValue();
+		}
+		else
+		{
+			Intent.Type = EHansaClientIntentType::SetProductionMode;
+			Intent.ProductionId = Production->Id.GetValue();
+			Intent.RecipeId = Production->RequestedRecipeId.ToString();
+			if (Id == TEXT("Inspector.Preservation.Fresh")) Intent.RecipeId = TEXT("Recipe.CatchFish");
+			if (Id == TEXT("Inspector.Preservation.Salted")) Intent.RecipeId = TEXT("Recipe.SaltedCatch");
+			Intent.bFallback = Id == TEXT("Inspector.Preservation.Fallback") ? !Production->bFallbackToFresh : Production->bFallbackToFresh;
+		}
+		const bool bSent = NetworkCommandIntent(Intent);
+		const auto Previous = Snapshot;
+		Snapshot.LastActionResult = bSent ? LOCTEXT("PreservationPending", "Preservation change sent to the authoritative server") : LOCTEXT("PreservationSendFailed", "Could not send the preservation change");
+		SetCommonActions(); PublishIfChanged(Previous); return bSent;
+	}
+ FHansaCommandGatewayResult Result;
+ if (Id==TEXT("Inspector.Preservation.Households"))
+ {
+  const auto* A=Snapshot.Actions.FindByPredicate([&](const auto& V){return V.StableId==Id;});
+  Result=Host->SetHouseholdAvailability(Building.Value,A && !A->bSelected);
+ }
+ else if (!Production) return false;
+ else if (Id==TEXT("Inspector.Preservation.Upgrade")) Result=Host->UpgradeProduction(Production->Id);
+ else
+ {
+  auto Recipe=Production->RequestedRecipeId;
+  if (Id==TEXT("Inspector.Preservation.Fresh")) Recipe=FHansaRecipeId::TryParse(TEXT("Recipe.CatchFish")).Value;
+  if (Id==TEXT("Inspector.Preservation.Salted")) Recipe=FHansaRecipeId::TryParse(TEXT("Recipe.SaltedCatch")).Value;
+  Result=Host->SetProductionMode(Production->Id,Recipe,Id==TEXT("Inspector.Preservation.Fallback")?!Production->bFallbackToFresh:Production->bFallbackToFresh);
+ }
+ const auto Previous=Snapshot; Snapshot.LastActionResult=Result?LOCTEXT("PreservationApplied","Preservation setting applied"):GatewayFailure(Result);
+ SetCommonActions(); PublishIfChanged(Previous); return Result.IsSuccess();
+}
+
+bool UHansaInspectorPresentationModel::RecipeIntent(const FName Id)
+{
+	using namespace Hansa::Simulation;
+	if (!IsActionEnabled(Id)) return false;
+	const FString Value = Id.ToString();
+	const FString Prefix = TEXT("Inspector.Recipe.");
+	if (!Value.StartsWith(Prefix)) return false;
+	const FString RecipeIdString = Value.RightChop(Prefix.Len());
+	const auto RecipeId = FHansaRecipeId::TryParse(RecipeIdString);
+	auto* Host = RuntimeHost.Get();
+	const auto Projection = Host ? Host->BuildProjection() : THansaValueResult<FHansaSimulationProjection>::Failure(EHansaValueError::InvalidZero);
+	const auto Building = FHansaBuildingId::TryCreate(Snapshot.BuildingValue);
+	if (!RecipeId || !Projection || !Building) return false;
+	const auto* Production = Projection.Value.GetProductions().FindByPredicate(
+		[&](const auto& Item) { return Item.BuildingId == Building.Value; });
+	if (!Production) return false;
+	if (NetworkCommandIntent)
+	{
+		FHansaClientCommandIntent Intent;
+		Intent.Type = EHansaClientIntentType::SetProductionMode;
+		Intent.ProductionId = Production->Id.GetValue();
+		Intent.RecipeId = RecipeIdString;
+		Intent.bFallback = Production->bFallbackToFresh;
+		const bool bSent = NetworkCommandIntent(Intent);
+		const auto Previous = Snapshot;
+		Snapshot.LastActionResult = bSent ? LOCTEXT("WorkshopRecipePending", "Recipe change sent to the authoritative server") : LOCTEXT("WorkshopRecipeSendFailed", "Could not send the recipe change");
+		SetCommonActions(); PublishIfChanged(Previous); return bSent;
+	}
+	const FHansaCommandGatewayResult Result = Host->SetProductionMode(Production->Id, RecipeId.Value, Production->bFallbackToFresh);
+	const auto Previous = Snapshot;
+	Snapshot.LastActionResult = Result.IsSuccess()
+		? LOCTEXT("WorkshopRecipeApplied", "Recipe selection applied") : GatewayFailure(Result);
+	SetCommonActions();
+	PublishIfChanged(Previous);
+	return Result.IsSuccess();
+}
+
 bool UHansaInspectorPresentationModel::ToggleProductionIntent()
 {
 	using namespace Hansa::Simulation;
@@ -835,6 +1108,15 @@ bool UHansaInspectorPresentationModel::ToggleProductionIntent()
 		[&BuildingId](const FHansaProductionProjection& Value) { return Value.BuildingId == BuildingId.Value; });
 	if (Production == nullptr) return false;
 	const bool bActivate = !Production->bActive;
+	if (NetworkCommandIntent)
+	{
+		FHansaClientCommandIntent Intent; Intent.Type = EHansaClientIntentType::SetProductionActive;
+		Intent.ProductionId = Production->Id.GetValue(); Intent.bActive = bActivate;
+		const bool bSent = NetworkCommandIntent(Intent); const FHansaInspectorSnapshot Previous = Snapshot;
+		Snapshot.PendingConfirmationAction = NAME_None;
+		Snapshot.LastActionResult = bSent ? LOCTEXT("ProductionTogglePending", "Production change sent to the authoritative server") : LOCTEXT("ProductionToggleSendFailed", "Could not send the production change");
+		SetCommonActions(); PublishIfChanged(Previous); return bSent;
+	}
 	const FHansaCommandGatewayResult Result = Host->SetProductionActive(Production->Id, bActivate);
 	const FHansaInspectorSnapshot Previous = Snapshot;
 	Snapshot.PendingConfirmationAction = NAME_None;
@@ -852,10 +1134,17 @@ bool UHansaInspectorPresentationModel::UpgradeResidenceIntent()
 	const auto BuildingId = Snapshot.BuildingValue > 0 ? FHansaBuildingId::TryCreate(static_cast<uint64>(Snapshot.BuildingValue))
 		: THansaValueResult<FHansaBuildingId>::Failure(EHansaValueError::InvalidZero);
 	if (Host == nullptr || !BuildingId) return false;
+	if (NetworkCommandIntent)
+	{
+		FHansaClientCommandIntent Intent; Intent.Type = EHansaClientIntentType::UpgradeResidence; Intent.BuildingId = Snapshot.BuildingValue;
+		const bool bSent = NetworkCommandIntent(Intent); const FHansaInspectorSnapshot Previous = Snapshot;
+		Snapshot.PendingConfirmationAction = NAME_None; Snapshot.LastActionResult = bSent ? LOCTEXT("ResidenceUpgradePending", "Residence upgrade sent to the authoritative server") : LOCTEXT("ResidenceUpgradeSendFailed", "Could not send the residence upgrade");
+		SetCommonActions(); PublishIfChanged(Previous); return bSent;
+	}
 	const FHansaCommandGatewayResult Result = Host->UpgradeResidence(BuildingId.Value);
 	const FHansaInspectorSnapshot Previous = Snapshot;
 	Snapshot.PendingConfirmationAction = NAME_None;
-	Snapshot.LastActionResult = Result.IsSuccess() ? LOCTEXT("ResidenceUpgradedResult", "Residence upgraded; population and building appearance moved to the next tier") : GatewayFailure(Result);
+	Snapshot.LastActionResult = Result.IsSuccess() ? LOCTEXT("ResidenceUpgradedResult", "Residence upgraded to its next authored stage or population tier") : GatewayFailure(Result);
 	SetCommonActions(); PublishIfChanged(Previous); return true;
 }
 
@@ -869,6 +1158,13 @@ bool UHansaInspectorPresentationModel::CancelConstructionIntent()
 	const auto BuildingId = Snapshot.BuildingValue > 0 ? FHansaBuildingId::TryCreate(static_cast<uint64>(Snapshot.BuildingValue))
 		: THansaValueResult<FHansaBuildingId>::Failure(EHansaValueError::InvalidZero);
 	if (Host == nullptr || !BuildingId) return false;
+	if (NetworkCommandIntent)
+	{
+		FHansaClientCommandIntent Intent; Intent.Type = EHansaClientIntentType::CancelConstruction; Intent.BuildingId = Snapshot.BuildingValue;
+		const bool bSent = NetworkCommandIntent(Intent); const FHansaInspectorSnapshot Previous = Snapshot;
+		Snapshot.PendingConfirmationAction = NAME_None; Snapshot.LastActionResult = bSent ? LOCTEXT("CancelPending", "Cancellation sent to the authoritative server") : LOCTEXT("CancelSendFailed", "Could not send the cancellation");
+		SetCommonActions(); PublishIfChanged(Previous); return bSent;
+	}
 	const FHansaCommandGatewayResult Result = Host->CancelConstruction(BuildingId.Value);
 	if (Result.IsSuccess())
 	{
@@ -884,11 +1180,18 @@ bool UHansaInspectorPresentationModel::RemoveBuildingIntent()
 	using namespace Hansa::Simulation;
 	const FName ActionId(TEXT("Inspector.Action.RemoveBuilding"));
 	if (!IsActionEnabled(ActionId)) return false;
-	if (!ArmDestructiveAction(ActionId, LOCTEXT("RemoveArmed", "Activate Demolish building again to confirm permanent removal without a refund."))) return true;
+	if (!ArmDestructiveAction(ActionId, Snapshot.Residence.bValid ? LOCTEXT("RemoveResidenceArmed", "Confirm demolition of the whole parcel. Its residents leave the city; there is no refund.") : LOCTEXT("RemoveArmed", "Activate Demolish building again to confirm permanent removal without a refund."))) return true;
 	UHansaRuntimeSimulationHost* Host = RuntimeHost.Get();
 	const auto BuildingId = Snapshot.BuildingValue > 0 ? FHansaBuildingId::TryCreate(static_cast<uint64>(Snapshot.BuildingValue))
 		: THansaValueResult<FHansaBuildingId>::Failure(EHansaValueError::InvalidZero);
 	if (Host == nullptr || !BuildingId) return false;
+	if (NetworkCommandIntent)
+	{
+		FHansaClientCommandIntent Intent; Intent.Type = EHansaClientIntentType::RemoveBuilding; Intent.BuildingId = Snapshot.BuildingValue;
+		const bool bSent = NetworkCommandIntent(Intent); const FHansaInspectorSnapshot Previous = Snapshot;
+		Snapshot.PendingConfirmationAction = NAME_None; Snapshot.LastActionResult = bSent ? LOCTEXT("DemolitionPending", "Demolition sent to the authoritative server") : LOCTEXT("DemolitionSendFailed", "Could not send the demolition");
+		SetCommonActions(); PublishIfChanged(Previous); return bSent;
+	}
 	const FHansaCommandGatewayResult Result = Host->RemoveBuilding(BuildingId.Value);
 	if (Result.IsSuccess())
 	{
@@ -901,6 +1204,57 @@ bool UHansaInspectorPresentationModel::RemoveBuildingIntent()
 
 bool UHansaInspectorPresentationModel::ActivateAction(const FName SemanticId)
 {
+    if (SemanticId==TEXT("Inspector.Ship.Home") || SemanticId==TEXT("Inspector.Ship.Stop"))
+    {
+        auto* Host=RuntimeHost.Get();
+        if (!Host || !IsActionEnabled(SemanticId) || Snapshot.Kind!=EHansaInspectorObjectKind::Cargo) return false;
+        const auto P=Host->BuildProjection();if(!P)return false;
+        for (const auto& V:P.Value.GetVehicles())
+        {
+            const FName Id(*FString::Printf(TEXT("World.Cargo.Vehicle.%llu.%u"),static_cast<unsigned long long>(V.Id.GetValue()),V.Id.GetGeneration()));
+            if (Id!=Snapshot.ObjectStableId) continue;
+			if (NetworkCommandIntent)
+			{
+				const auto Target = SemanticId == TEXT("Inspector.Ship.Home") ? V.Navigation.Home : V.Navigation.Cell;
+				FHansaClientCommandIntent Intent; Intent.Type = EHansaClientIntentType::MoveShip;
+				Intent.VehicleId = V.Id.GetValue(); Intent.TargetX = Target.X; Intent.TargetY = Target.Y;
+				const bool bSent = NetworkCommandIntent(Intent); const auto Previous = Snapshot;
+				Snapshot.LastActionResult = bSent ? LOCTEXT("ShipOrderPending", "Course sent to the authoritative server") : LOCTEXT("ShipOrderSendFailed", "Could not send the course");
+				PublishIfChanged(Previous); return bSent;
+			}
+            const auto R=Host->MoveShip(V.Id,SemanticId==TEXT("Inspector.Ship.Home")?V.Navigation.Home:V.Navigation.Cell);
+            const auto Previous=Snapshot;
+            Snapshot.LastActionResult=R?LOCTEXT("ShipOrderAccepted","Course updated."):GatewayFailure(R);
+            PublishIfChanged(Previous);return R.IsSuccess();
+        }
+        return false;
+    }
+	if (SemanticId.ToString().StartsWith(TEXT("Inspector.Heating.")))
+	{
+		auto* Host = RuntimeHost.Get();
+		const auto Id = Hansa::Simulation::FHansaBuildingId::TryCreate(Snapshot.BuildingValue);
+		if (!Host || !Id || !IsActionEnabled(SemanticId)) return false;
+		const auto H = Host->QueryHeating();
+		int32 Days = H.ReserveDays; bool Override = H.bOverride;
+		if (SemanticId == TEXT("Inspector.Heating.Increase")) ++Days;
+		else if (SemanticId == TEXT("Inspector.Heating.Decrease")) --Days;
+		else if (SemanticId == TEXT("Inspector.Heating.Override")) Override = !Override;
+		else return false;
+		if (NetworkCommandIntent)
+		{
+			FHansaClientCommandIntent Intent; Intent.Type = EHansaClientIntentType::SetHeatingReserve;
+			Intent.BuildingId = Snapshot.BuildingValue; Intent.ReserveDays = Days; Intent.bReleaseProtection = Override;
+			const bool bSent = NetworkCommandIntent(Intent); const auto Previous = Snapshot;
+			Snapshot.LastActionResult = bSent ? LOCTEXT("HeatingPolicyPending", "Household fuel policy sent to the authoritative server") : LOCTEXT("HeatingPolicySendFailed", "Could not send the household fuel policy");
+			PublishIfChanged(Previous); return bSent;
+		}
+		const auto Result = Host->SetHeatingReserve(Id.Value, Days, Override);
+		Snapshot.LastActionResult = Result.IsSuccess() ? LOCTEXT("HeatingPolicySaved", "Household fuel policy updated") : GatewayFailure(Result);
+		return Result.IsSuccess();
+	}
+
+    if (SemanticId.ToString().StartsWith(TEXT("Inspector.Preservation."))) return PreservationIntent(SemanticId);
+	if (SemanticId.ToString().StartsWith(TEXT("Inspector.Recipe."))) return RecipeIntent(SemanticId);
 	if(Snapshot.DataState!=EHansaInspectorDataState::Ready && SemanticId!=TEXT("Inspector.Close"))return false;
 	if (SemanticId == TEXT("Inspector.Close")) return CloseIntent();
 	if (SemanticId == TEXT("Inspector.Action.Frame")) return FrameIntent();
@@ -959,14 +1313,29 @@ void UHansaInspectorPresentationModel::ShowCargo(const FHansaCargoWorldObservati
         case EHansaCargoWorldPhase::Cancelled: Snapshot.State=LOCTEXT("CargoCancelled","Route cancelled");break;
         default: Snapshot.State=LOCTEXT("CargoBerthed","At berth");break;
     }
+    if (O.bFreeNavigation) Snapshot.State=O.bNavigationMoving?LOCTEXT("ShipSailing","Sailing"):LOCTEXT("ShipIdle","At anchor");
     Snapshot.PrimaryResult=O.JobId.IsEmpty()
-        ? FText::Format(LOCTEXT("CargoQuantity","{0} units aboard"),InspectorPresentationModelQuantity(O.CargoMilliUnits))
+        ? FText::Format(LOCTEXT("ShipCapacity","Cargo {0} / {1} units"),InspectorPresentationModelQuantity(O.CargoMilliUnits),InspectorPresentationModelQuantity(O.CapacityMilliUnits))
         : FText::Format(LOCTEXT("LocalCargoQuantity","{0} {1} aboard · {2} to {3}"),
             InspectorPresentationModelQuantity(O.CargoMilliUnits),GoodLabel,SourceLabel,DestinationLabel);
     FHansaInspectorFlowPresentation Flow;
     Flow.StableId=TEXT("Inspector.Cargo.Progress"); Flow.Label=LOCTEXT("CargoProgress","Journey");
-    Flow.Value=InspectorPresentationModelPercent(FMath::RoundToInt(O.Progress*10000));
+    Flow.Value=O.bFreeNavigation?Snapshot.State:InspectorPresentationModelPercent(FMath::RoundToInt(O.Progress*10000));
     Flow.State=O.bVisible?LOCTEXT("CargoVisible","In view"):LOCTEXT("CargoOffscreen","Outside the loaded view"); Snapshot.Flows.Add(Flow);
+    if (O.JobId.IsEmpty())
+    {
+        FHansaInspectorFlowPresentation Ship;
+        Ship.StableId=TEXT("Inspector.Ship.Owner");Ship.Label=LOCTEXT("ShipOwner","Owner");
+        Ship.Value=LOCTEXT("ShipPlayer","Your merchant house");
+        Ship.State=FText::Format(LOCTEXT("ShipUpkeep","{0} pfennig per travel tick"),FText::AsNumber(O.UpkeepPfennigPerTick));Snapshot.Flows.Add(Ship);
+        if(O.bFreeNavigation)
+        {
+            Ship.StableId=TEXT("Inspector.Ship.Navigation");Ship.Label=LOCTEXT("ShipOrders","Sailing orders");
+            Ship.Value=O.bNavigationMoving?LOCTEXT("ShipCourse","Following waterway"):LOCTEXT("ShipReady","Ready to explore");
+            Ship.State=LOCTEXT("ShipMoveHelp","Speed: 4 m per tick. Right-click water to sail; right-drag pans. G also sails to the pointer.");
+            Snapshot.Flows.Add(Ship);
+        }
+    }
     if(!O.JobId.IsEmpty())
     {
         FHansaInspectorFlowPresentation Route;
@@ -994,6 +1363,12 @@ void UHansaInspectorPresentationModel::ShowCargo(const FHansaCargoWorldObservati
             ? LOCTEXT("CargoRoadRemedy","Reconnect the source, destination and market road network.")
             : O.JobId.IsEmpty()?LOCTEXT("CargoRemedy","Inspect trade routes for orders and cargo history.")
                 : LOCTEXT("CargoLocalRemedy","Inspect the source, destination or road connection.");
+    if(O.bFreeNavigation)
+    {
+        Snapshot.Causal.Evidence=LOCTEXT("ShipWaterPath","The Cog follows connected water and keeps clear of the shoreline.");
+        Snapshot.Causal.Remedy=LOCTEXT("ShipHomeHelp","Return to berth before assigning a trade route. Resume time to move.");
+    }
+    Snapshot.LastActionResult=O.NavigationFeedback;
     Snapshot.Causal.RelatedSemanticId=TEXT("TradeMap.Root");
     Snapshot.Causal.Severity=O.PresentationFailure.IsEmpty()?EHansaCausalSeverity::None:EHansaCausalSeverity::Warning;
     if(O.TransferTick>=0)
@@ -1003,7 +1378,121 @@ void UHansaInspectorPresentationModel::ShowCargo(const FHansaCargoWorldObservati
         Receipt.Age=FText::Format(LOCTEXT("CargoReceiptTick","Tick {0}"),FText::AsNumber(O.TransferTick)); Snapshot.History.Add(Receipt);
     }
     SetCommonActions(); Snapshot.Actions[0].bEnabled=O.bVisible;
+    if(O.bFreeNavigation)
+    {
+        Snapshot.Actions.Add(Action(TEXT("Inspector.Ship.Home"),LOCTEXT("ShipHome","Return to berth"),LOCTEXT("ShipHomeTip","Sail back to the starting berth to use a trade route.")));
+        Snapshot.Actions.Add(Action(TEXT("Inspector.Ship.Stop"),LOCTEXT("ShipStop","Stop ship"),LOCTEXT("ShipStopTip","Clear the course and anchor at the current water position.")));
+    }
     if(!O.bVisible)Snapshot.Actions[0].DisabledReason=LOCTEXT("CargoFrameUnavailable","The vehicle is outside the loaded city view.");
     PublishIfChanged(Previous);
 }
+
+void UHansaInspectorPresentationModel::ShowTradeStation(
+	const Hansa::Simulation::FHansaTradeStationProjection& Station,
+	const Hansa::Simulation::FHansaForeignPresenceProjection& Presence,
+	const FName FocusOrigin)
+{
+	using namespace Hansa::Simulation;
+	const FHansaInspectorSnapshot Previous = Snapshot;
+	const FName StableId(*FString::Printf(TEXT("TradeStation.%llu"),
+		static_cast<unsigned long long>(Station.Station.Id.GetValue())));
+	const bool bSame = Snapshot.Kind == EHansaInspectorObjectKind::TradeStation &&
+		Snapshot.ObjectStableId == StableId;
+	Snapshot = {};
+	SelectedBuildingDefinitionId.Reset();
+	Snapshot.Kind = EHansaInspectorObjectKind::TradeStation;
+	Snapshot.ObjectStableId = StableId;
+	Snapshot.bOpen = true;
+	Snapshot.FocusOriginSemanticId = bSame ? Previous.FocusOriginSemanticId : FocusOrigin;
+	Snapshot.FocusedSemanticId = bSame ? Previous.FocusedSemanticId : TEXT("Inspector.Close");
+	Snapshot.bPinned = bSame && Previous.bPinned;
+	Snapshot.bCauseExpanded = bSame && Previous.bCauseExpanded;
+	Snapshot.Identity = LOCTEXT("RostockTradeStation", "Rostock trade station");
+
+	switch (Station.Station.Status)
+	{
+	case EHansaTradeStationStatus::Proposed: Snapshot.State = LOCTEXT("StationProposed", "Proposed"); break;
+	case EHansaTradeStationStatus::UnderConstruction: Snapshot.State = LOCTEXT("StationBuilding", "Under construction"); break;
+	case EHansaTradeStationStatus::Active: Snapshot.State = LOCTEXT("StationActive", "Active"); break;
+	case EHansaTradeStationStatus::Suspended: Snapshot.State = LOCTEXT("StationSuspended", "Suspended"); break;
+	case EHansaTradeStationStatus::Closed: Snapshot.State = LOCTEXT("StationClosed", "Closed"); break;
+	default: Snapshot.State = LOCTEXT("StationUnknown", "Unavailable"); break;
+	}
+	switch(Station.Station.OperationalState)
+	{
+	case EHansaTradeStationOperationalState::Underfunded: Snapshot.State=LOCTEXT("StationUnderfunded","Underfunded"); break;
+	case EHansaTradeStationOperationalState::StorageBlocked: Snapshot.State=LOCTEXT("StationStorageBlocked","Storage blocked"); break;
+	case EHansaTradeStationOperationalState::OrderSuspended: Snapshot.State=LOCTEXT("StationOrdersSuspended","Orders suspended"); break;
+	case EHansaTradeStationOperationalState::RightsSuspended: Snapshot.State=LOCTEXT("StationRightsSuspended","Rights suspended"); break;
+	case EHansaTradeStationOperationalState::VoluntarilyClosed: Snapshot.State=LOCTEXT("StationVoluntarilyClosed","Voluntarily closed"); break;
+	case EHansaTradeStationOperationalState::Revoked: Snapshot.State=LOCTEXT("StationRevoked","Revoked"); break;
+	default: break;
+	}
+	Snapshot.PrimaryResult = FText::Format(
+		LOCTEXT("StationStorageSummary", "Storage {0} / {1} units; upkeep {2} pfennig per tick"),
+		InspectorPresentationModelQuantity(Station.StorageUsed.GetRawValue()),
+		InspectorPresentationModelQuantity(Station.StorageCapacity.GetRawValue()),
+		FText::AsNumber(Station.Station.UpkeepPfennigPerTick));
+
+	auto AddFlow = [this](const FName Id, const FText& Label, const FText& Value, const FText& State, const bool bProblem = false)
+	{
+		FHansaInspectorFlowPresentation Row;
+		Row.StableId = Id; Row.Label = Label; Row.Value = Value; Row.State = State; Row.bProblem = bProblem;
+		Snapshot.Flows.Add(MoveTemp(Row));
+	};
+	AddFlow(TEXT("Inspector.Station.Identity"), LOCTEXT("StationIdentity", "Station identity"),
+		FText::AsNumber(Station.Station.Id.GetValue()), FText::FromString(Station.Station.SiteId));
+	AddFlow(TEXT("Inspector.Station.Presence"), LOCTEXT("StationPresence", "Presence stage"),
+		FText::FromString(Presence.CurrentStageDisplayName.IsEmpty() ? Presence.CurrentStageId : Presence.CurrentStageDisplayName),
+		FText::Format(LOCTEXT("StationCapabilities", "{0} granted capabilities"), FText::AsNumber(Presence.Capabilities.Num())));
+	AddFlow(TEXT("Inspector.Station.Factor"), LOCTEXT("StationFactor", "Resident factor"),
+		FText::AsNumber(Station.Station.FactorId.GetValue()), LOCTEXT("StationFactorResident", "Buys/sells through station orders; Cog transfers do not settle money"));
+	AddFlow(TEXT("Inspector.Station.Lease"), LOCTEXT("StationLease", "Leased plot"),
+		FText::AsNumber(Station.Lease.Id.GetValue()),
+		FText::Format(LOCTEXT("StationLeaseState", "{0}; {1}"), FText::FromString(Station.Lease.PlotCategory),
+			Station.Lease.bActive ? LOCTEXT("LeaseActive", "active") : LOCTEXT("LeaseInactive", "inactive")));
+	AddFlow(TEXT("Inspector.Station.Storage"), LOCTEXT("StationStorage", "Physical storage"),
+		FText::Format(LOCTEXT("StationStorageValue", "{0} / {1} units"),
+			InspectorPresentationModelQuantity(Station.StorageUsed.GetRawValue()),
+			InspectorPresentationModelQuantity(Station.StorageCapacity.GetRawValue())),
+		FText::Format(LOCTEXT("StationReserved", "{0} units reserved"), InspectorPresentationModelQuantity(Station.StorageReserved.GetRawValue())),
+		Station.StorageCapacity.GetRawValue() > 0 && Station.StorageUsed.GetRawValue() >= Station.StorageCapacity.GetRawValue());
+	for (const FHansaPresenceCapabilityProjection& Capability : Presence.Capabilities)
+	{
+		FString Suffix = Capability.CapabilityId; Suffix.ReplaceInline(TEXT("."), TEXT("_"));
+		AddFlow(FName(*FString::Printf(TEXT("Inspector.Station.Capability.%s"), *Suffix)),
+			FText::FromString(Capability.DisplayName.IsEmpty() ? Capability.CapabilityId : Capability.DisplayName),
+			Capability.bGranted ? LOCTEXT("CapabilityGranted", "Granted") : LOCTEXT("CapabilityUnavailable", "Unavailable"),
+			FText::FromString(Capability.Reason), !Capability.bGranted);
+	}
+
+	Snapshot.Causal.StableCode = Station.Blocker.IsEmpty() ? TEXT("Station.Operational") : TEXT("Station.Blocked");
+	Snapshot.Causal.Problem = Station.Blocker.IsEmpty() ? LOCTEXT("StationOperational", "Station is operational") : FText::FromString(Station.Blocker);
+	Snapshot.Causal.Cause = Station.Blocker.IsEmpty() ? LOCTEXT("StationOperationalCause", "The leased site, resident factor and storage are active.") : FText::FromString(Station.Blocker);
+	Snapshot.Causal.Evidence = FText::Format(LOCTEXT("StationEvidence", "Site {0}; factor {1}; lease {2}; station {3}"),
+		FText::FromString(Station.Station.SiteId), FText::AsNumber(Station.Station.FactorId.GetValue()),
+		FText::AsNumber(Station.Lease.Id.GetValue()), FText::AsNumber(Station.Station.Id.GetValue()));
+	Snapshot.Causal.Remedy = FText::FromString(Station.NextStep);
+	Snapshot.Causal.RelatedSemanticId = TEXT("TradeMap.Station.Action");
+	Snapshot.Causal.Severity = Station.Blocker.IsEmpty() ? EHansaCausalSeverity::None : EHansaCausalSeverity::Warning;
+
+	auto AddHistory = [this](const FName Id, const FText& Label, const FHansaSimulationTick Tick)
+	{
+		FHansaInspectorHistoryPresentation Entry; Entry.StableId = Id; Entry.Label = Label;
+		Entry.Age = FText::Format(LOCTEXT("StationHistoryTick", "Tick {0}"), FText::AsNumber(Tick.GetValue()));
+		Snapshot.History.Add(MoveTemp(Entry));
+	};
+	AddHistory(TEXT("Inspector.Station.History.Proposed"), LOCTEXT("StationWasProposed", "Station proposed"), Station.Station.ProposedTick);
+	AddHistory(TEXT("Inspector.Station.History.Funded"), LOCTEXT("StationWasFunded", "Construction funded"), Station.Station.FundedTick);
+	AddHistory(TEXT("Inspector.Station.History.Completed"), LOCTEXT("StationWasCompleted", "Construction completed"), Station.Station.CompletedTick);
+	SetCommonActions();
+	if (FHansaInspectorActionPresentation* Frame = Snapshot.Actions.FindByPredicate([](const auto& ActionValue)
+		{ return ActionValue.StableId == TEXT("Inspector.Action.Frame"); }))
+	{
+		Frame->bEnabled = false;
+		Frame->DisabledReason = LOCTEXT("StationAlreadyFramed", "The selected station is already visible in the Rostock view.");
+	}
+	PublishIfChanged(Previous);
+}
+
 #undef LOCTEXT_NAMESPACE

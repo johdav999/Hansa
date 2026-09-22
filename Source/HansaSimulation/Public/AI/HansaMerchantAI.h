@@ -11,6 +11,10 @@ namespace Hansa::Simulation
 		None = 0,
 		RecoverShortage,
 		OperateTradeRoute,
+		DirectTrade,
+		EstablishTradeStation,
+		OperateTradeStation,
+		AdvancePresence,
 		Research,
 		TradeObjectiveComplete
 	};
@@ -19,6 +23,13 @@ namespace Hansa::Simulation
 	{
 		ActivateProduction = 0,
 		ActivateRoute,
+		SpotTrade,
+		ProposeTradeStation,
+		FundTradeStation,
+		CreateStationOrder,
+		RequestPresenceUpgrade,
+		FundPresenceUpgrade,
+		ApplyPresenceSpecialization,
 		QueueResearch
 	};
 
@@ -66,6 +77,17 @@ namespace Hansa::Simulation
 		FHansaMerchantAIDecisionTrace Trace;
 	};
 
+	/** Allowlisted automation/diagnostic view. Private reports, cargo, inventories and order terms are omitted. */
+	struct HANSASIMULATION_API FHansaMerchantAIExplanationProjection final
+	{
+		int64 DecisionTick = -1;
+		FString Goal;
+		FString Action;
+		FString Reason;
+		bool bCommandAccepted = false;
+		FString GatewayOutcome;
+	};
+
 	/**
 	 * Server-side merchant controller. It observes only immutable read models and emits the same closed typed
 	 * commands as a player. Decision history is diagnostic controller state, never authoritative economy state.
@@ -86,9 +108,11 @@ namespace Hansa::Simulation
 
 		[[nodiscard]] const FHansaMerchantAIDecisionTrace* GetLastDecision() const;
 		[[nodiscard]] TConstArrayView<FHansaMerchantAIDecisionTrace> GetDecisionHistory() const { return History; }
+		[[nodiscard]] TArray<FHansaMerchantAIExplanationProjection> BuildExplanationProjection() const;
 
 	private:
 		uint64 DecisionOrdinal = 0;
+		int64 LastAcceptedActionTick = MIN_int64;
 		TArray<FHansaMerchantAIDecisionTrace> History;
 	};
 }

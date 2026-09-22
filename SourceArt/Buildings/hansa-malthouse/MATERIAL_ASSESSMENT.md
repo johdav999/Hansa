@@ -1,0 +1,15 @@
+# Material gap ledger
+
+Reference photograph R4 is a regional brewery comparison, not an exact subject match. Its camera/scale differs from the reconstruction. Whole and detail native-size comparisons are in comparison.html. Photograph shows material families; unobserved microscopic properties remain inferred.
+
+| Material / view | Reference observation | Render observation | Gap / priority | Cause / uncertainty | Correction | Evidence / status |
+|---|---|---|---|---|---|---|
+| Brick / facade | Warm irregular brick courses with recessed joints | Real courses and gable brick depth; stronger dark seams in Unreal | Engine joint contrast, medium | Lighting and dense geometry, not missing base color | Corrected winding and exposed backing; separate clay face without painted joints | r4, clean exports, final Unreal: coverage verified; studio/engine contrast differs |
+| Clay / roof | Overlapping clay tiles with restrained mineral variation | r1 cloudy surface; r2+ clear seams and ridge | Large mottles, high, corrected | Earlier color source plus edge spacing | New ImageGen surface, 8 mm seams and real overlap | r2/r4 roof detail, clean exports: corrected; kiln sloped faces have simpler edge treatment |
+| Oak / doors and beams | Aged timber and recessed openings | Directional grain and deep frames; source no plank grid | Narrow jambs, medium, corrected | Geometry width | Broadened jambs, aligned grain with members; reused continuous oak source | clean detail exports: readable frames and grain; exact aging remains inferred |
+| Mortar / joints and steps | Pale mineral joints | Matte lime bedding, physical relief | Backing exposure, high, corrected | Incorrect offset at kiln | Moved backing and completed doorway | r4 courtyard and final Unreal: corrected |
+| Iron / hinges and hoist | Hardware too small in source photo for roughness evidence | Dark hinges, bands and pulley | Missing engine metallic constant, medium, corrected | Material translation | Explicit metallic 0.78; independent roughness and normal | Material compile/readback; close-up silhouette visible, microfinish not historically verified |
+| Sacking / workyard | No source fabric detail available | Tied folded bags; subdued woven material | Shape improved; fabric microdetail not assessable from hero | Small projected size | Fold geometry and separately authored weave | r3/r4 detail and clean reimport: silhouette improved; no scanned-cloth claim |
+| Recess / vents | Deep dark openings | Louvre gaps remain dark and physically recessed | None prominent at review distance | Interior omitted deliberately | Utility matte material, actual louvre geometry | Whole and detail captures: acceptable exterior approximation |
+
+Nanite trial failed component preservation. Disabling it restored the verified source geometry. No claim of runtime cost acceptance. Projected UV density falls below the project minimum on a subset of surfaces; see measured audit and evaluation. Imported result is offered for design review with those limits explicit.

@@ -89,3 +89,48 @@ bool FHansaResearchAuthoritativePipelineTest::RunTest(const FString&)
 	TestNotEqual(TEXT("Research progress participates in deterministic state hash"),State.CreateReadOnlyAccess(Definitions).BuildStateHashReport().GetOverallHash(),HashAfterQueue);
 	return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaResearchEffectResolverTest,
+	"Hansa.Simulation.Research.EffectResolverOwnershipTargetsStackingAndFractionalWork",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaResearchEffectResolverTest::RunTest(const FString&)
+{
+	const FHansaHouseId First = FHansaHouseId::TryCreate(1, 1).Value;
+	const FHansaHouseId Second = FHansaHouseId::TryCreate(2, 1).Value;
+	FHansaHouseResearchState FirstState;
+	FirstState.HouseId = First;
+	FirstState.AppliedEffects = {
+		{TEXT("Technology.A"), EHansaResearchEffectKind::ProductionThroughputBasisPoints, TEXT("Recipe.MillFlour"), 600},
+		{TEXT("Technology.B"), EHansaResearchEffectKind::ProductionThroughputBasisPoints, TEXT("Recipe.MillFlour"), 400},
+		{TEXT("Technology.C"), EHansaResearchEffectKind::VehicleCapacityBasisPoints, TEXT("Vehicle.Wagon"), 1500},
+		{TEXT("Technology.D"), EHansaResearchEffectKind::RouteScheduling, TEXT("Route.SaltRoad"), 1}
+	};
+	FHansaHouseResearchState SecondState;
+	SecondState.HouseId = Second;
+	const TArray<FHansaHouseResearchState> States = {FirstState, SecondState};
+
+	TestEqual(TEXT("Matching percentage effects stack additively"),
+		FHansaResearchEffectResolver::GetBasisPoints(States, First,
+			EHansaResearchEffectKind::ProductionThroughputBasisPoints, TEXT("Recipe.MillFlour")), 1000);
+	TestEqual(TEXT("A different target receives no bonus"),
+		FHansaResearchEffectResolver::GetBasisPoints(States, First,
+			EHansaResearchEffectKind::ProductionThroughputBasisPoints, TEXT("Recipe.SawPlanks")), 0);
+	TestEqual(TEXT("A different house receives no bonus"),
+		FHansaResearchEffectResolver::GetBasisPoints(States, Second,
+			EHansaResearchEffectKind::VehicleCapacityBasisPoints, TEXT("Vehicle.Wagon")), 0);
+	TestTrue(TEXT("Boolean unlocks resolve through the same path"),
+		FHansaResearchEffectResolver::IsEnabled(States, First,
+			EHansaResearchEffectKind::RouteScheduling, TEXT("Route.SaltRoad")));
+
+	int32 NormalWork = 0;
+	int32 ImprovedWork = 0;
+	for (int32 Tick = 1; Tick <= 100; ++Tick)
+	{
+		const FHansaSimulationTick Time = FHansaSimulationTick::TryCreate(Tick).Value;
+		NormalWork += FHansaResearchEffectResolver::WorkUnitsForTick(0, Time);
+		ImprovedWork += FHansaResearchEffectResolver::WorkUnitsForTick(1000, Time);
+	}
+	TestEqual(TEXT("Ten percent throughput produces ten percent more long-run work even for short cycles"),
+		ImprovedWork, NormalWork + NormalWork / 10);
+	return true;
+}

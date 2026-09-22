@@ -1,0 +1,5 @@
+# Leather icon
+
+Mode: built-in ImageGen generate. Intended display variants: 32, 48, 64, 96px. Requested 1024 square; verify original metadata. Native original retained. QA: folded finished leather clearly distinguished from raw hide; variant review pending.
+
+Use case: stylized-concept. One Hansa GUI goods icon: a loosely folded sheet of finished vegetable-tanned brown leather, thick natural irregular hide edge, warm chestnut color, smooth supple surface. Clearly processed leather, not fur, not raw animal skin, not a bag. Three-quarter overhead view, centered generous 15% transparent margins. Genuine transparent background, standalone object, no scenery, text, border, badge, logo or watermark. Naturally colored painterly realism with restrained highlights and strong silhouette readable at 24–32 pixels on navy #152A35 and slate #29424D. Match medieval Hanseatic illustrated construction goods. Native square 1024x1024 requested.

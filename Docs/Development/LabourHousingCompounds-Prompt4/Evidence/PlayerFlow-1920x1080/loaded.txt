@@ -1,0 +1,10 @@
+map=L_Lubeck_Terrain_Preview_WP;stage=7;viewport=1920x1080;building=5
+Scenario.Root	Scenario active
+Scenario.Close	close
+Scenario.Resume	resume
+Scenario.SaveLoad	save-load
+Scenario.Settings	settings
+Scenario.ReturnTitle	return-title
+Scenario.Progress	progress
+Scenario.Help.Toggle	off
+Scenario.Help.Reset	reset-tips

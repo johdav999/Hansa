@@ -33,6 +33,9 @@
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/SOverlay.h"
+#include "Widgets/Input/SComboButton.h"
+#include "UI/SHansaReferenceFrame.h"
+#include "UI/SHansaMinimap.h"
 #include "Widgets/Text/STextBlock.h"
 
 #define LOCTEXT_NAMESPACE "SHansaRootHud"
@@ -48,11 +51,7 @@ namespace Hansa::UI
 
         float TopBarHeight(const FHansaHudLayoutMetrics& Metrics,const FUiPreferences& Prefs, bool bRemoteCity=false)
         {
-            const float Available=FMath::Min(460.f,(Metrics.ViewportSize.X-2*Metrics.SafeArea)/3.f-16.f)-16.f;
-            const float Widths[]={Prefs.bLargeText?108.f:92.f,Prefs.bLargeText?128.f:104.f,Prefs.bLargeText?124.f:104.f,Prefs.bLargeText?80.f:68.f};
-            float Used=0; int32 Rows=1;
-            for(float W:Widths){if(Used>0 && Used+4+W>Available){++Rows;Used=0;}Used+=(Used>0?4:0)+W;}
-            return FMath::Max(108.f,16.f+48.f/FMath::Min(1.f,Prefs.UiScale)+4.f+Rows*48.f/FMath::Min(1.f,Prefs.UiScale));
+            return Metrics.ViewportSize.X < 1500 || Prefs.bLargeText ? 120.f : 72.f;
 
         }
 
@@ -71,79 +70,79 @@ namespace Hansa::UI
 
     TSharedRef<SWidget> SHansaRootHud::BuildTopMenu()
     {
-        auto Metric=[&](EUiGlyph Glyph,TSharedPtr<STextBlock>& Text,TSharedPtr<SWidget>& Chip,TSharedPtr<SHansaGlyph>* OutIcon=nullptr)->TSharedRef<SWidget>{
-            TSharedPtr<SHansaGlyph> Icon;
-            auto Row=SNew(SHorizontalBox)
-                +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(4,0)[SAssignNew(Icon,SHansaGlyph).Glyph(Glyph).OnDark(true).Size(24)]
-                +SHorizontalBox::Slot().FillWidth(1).VAlign(VAlign_Center).Padding(4,0)[StatusText(&DarkDataStyle,Text)];
-            if(OutIcon)*OutIcon=Icon;
-            Chip=SNew(SBox).HeightOverride(32)[Row];
+        auto Metric=[&](EUiGlyph Glyph,FText Label,TSharedPtr<STextBlock>& Text,TSharedPtr<SWidget>& Chip)->TSharedRef<SWidget>{
+            Chip=SNew(SBox).MinDesiredWidth(92).HeightOverride(Label.IsEmpty()?38.f:56.f)
+            [SNew(SHorizontalBox)
+                +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(6,0)[SNew(SHansaGlyph).Glyph(Glyph).Size(32)]
+                +SHorizontalBox::Slot().FillWidth(1).VAlign(VAlign_Center)[SNew(SVerticalBox)
+                    +SVerticalBox::Slot().AutoHeight()[StatusText(&DarkDataStyle,Text)]
+                    +SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(Label).TextStyle(&DarkCaptionStyle)]]];
             return Chip.ToSharedRef();
         };
-        auto Left=SNew(SHorizontalBox)
-            +SHorizontalBox::Slot().FillWidth(1.15f)[Metric(EUiGlyph::Coin,MoneyText,MoneyChip)]
-            +SHorizontalBox::Slot().FillWidth(1.f)[Metric(EUiGlyph::Trend,MoneyTrendText,TrendChip)]
-            +SHorizontalBox::Slot().FillWidth(1.f)[Metric(EUiGlyph::People,PopulationText,PopulationChip)];
-        auto Products=SNew(SHorizontalBox);
-        for(int32 I=0;I<3;++I)Products->AddSlot().AutoWidth()[Metric(EUiGlyph::Production,ProductTexts[I],ProductChips[I],&ProductGlyphs[I])];
-        auto Citizens=SNew(SHorizontalBox)
-            +SHorizontalBox::Slot().FillWidth(1)[Metric(EUiGlyph::Laborer,WorkforceText,LaborerChip)]
-            +SHorizontalBox::Slot().FillWidth(1)[Metric(EUiGlyph::Wealthy,WealthyText,WealthyChip)];
-        auto Center=SNew(SVerticalBox)
-            +SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)[Products]
-            +SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)[SNew(SBox).WidthOverride(240)[Citizens]];
+        auto Metrics=SNew(SHorizontalBox)
+            +SHorizontalBox::Slot().AutoWidth()[SNew(SVerticalBox)
+                +SVerticalBox::Slot().AutoHeight()[Metric(EUiGlyph::Coin,FText::GetEmpty(),MoneyText,MoneyChip)]
+                +SVerticalBox::Slot().AutoHeight()[SAssignNew(TrendChip,SBox)[StatusText(&DarkCaptionStyle,MoneyTrendText)]]]
+            +SHorizontalBox::Slot().AutoWidth()[Metric(EUiGlyph::People,LOCTEXT("Citizens","Citizens"),PopulationText,PopulationChip)]
+            +SHorizontalBox::Slot().AutoWidth()[Metric(EUiGlyph::Wealthy,LOCTEXT("Artisans","Artisans"),WealthyText,WealthyChip)]
+            +SHorizontalBox::Slot().AutoWidth()[Metric(EUiGlyph::Laborer,LOCTEXT("Laborers","Laborers"),WorkforceText,LaborerChip)];
+        // Retain legacy semantic data widgets off-screen; goods remain available in city/market views.
+        for(int32 I=0;I<3;++I) ProductChips[I]=SNew(SBox)
+            [SNew(SHorizontalBox)+SHorizontalBox::Slot()[SAssignNew(ProductTexts[I],STextBlock)]
+             +SHorizontalBox::Slot()[SAssignNew(ProductGlyphs[I],SHansaGlyph)]];
+        auto City=SNew(SVerticalBox)
+            +SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)
+            [SAssignNew(CityOverviewButton,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences)
+                .OnClicked(this,&SHansaRootHud::HandleCityOverviewOpen)
+                [StatusText(&DarkDataStyle,CityBreadcrumbText)]]
+            +SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)
+            [SAssignNew(ReturnCityButton,SHansaAction).Compact(true).Preferences(Preferences).Label(LOCTEXT("ReturnCityShort","Return"))
+                .OnClicked_Lambda([this]{return ActivateSemanticId(TEXT("HUD.TopStatus.ReturnCity"))?FReply::Handled():FReply::Unhandled();})];
+        CityBreadcrumbText->SetFont(GetComponentFont(EHansaUiTypographyToken::Heading1,Preferences));
         auto Speed=[&](TSharedPtr<SButton>& Button,EUiGlyph Glyph,EHansaHudGameSpeed Value,const TCHAR* Id)->TSharedRef<SWidget>{
-            return SNew(SBox).WidthOverride(48.f/FMath::Min(1.f,Preferences.UiScale))
+            return SNew(SBox).WidthOverride(48).HeightOverride(56)
                 [SAssignNew(Button,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences)
-                 .OnClicked(this,&SHansaRootHud::HandleSpeed,Value,Id)
-                 [SNew(SBox).HAlign(HAlign_Center)[SNew(SHansaGlyph).Glyph(Glyph).OnDark(true)]]];
+                 .OnClicked(this,&SHansaRootHud::HandleSpeed,Value,Id)[SNew(SHansaGlyph).Glyph(Glyph).Size(28)]];
         };
         auto Speeds=SAssignNew(SpeedGroupWidget,SHorizontalBox)
             +SHorizontalBox::Slot().AutoWidth()[Speed(PauseButton,EUiGlyph::Pause,EHansaHudGameSpeed::Paused,TEXT("HUD.TopStatus.Speed.Pause"))]
             +SHorizontalBox::Slot().AutoWidth()[Speed(NormalButton,EUiGlyph::Play,EHansaHudGameSpeed::Normal,TEXT("HUD.TopStatus.Speed.Normal"))]
             +SHorizontalBox::Slot().AutoWidth()[Speed(FastButton,EUiGlyph::Fast,EHansaHudGameSpeed::Fast,TEXT("HUD.TopStatus.Speed.Fast"))]
             +SHorizontalBox::Slot().AutoWidth()[Speed(FastestButton,EUiGlyph::Fastest,EHansaHudGameSpeed::Fastest,TEXT("HUD.TopStatus.Speed.Fastest"))];
-        auto CityControls=SNew(SHorizontalBox)
-            +SHorizontalBox::Slot().FillWidth(1)[SAssignNew(CityOverviewButton,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences)
-                .Reason(LOCTEXT("CityOverviewTip","Open population, production and markets for this city.")).OnClicked(this,&SHansaRootHud::HandleCityOverviewOpen)[StatusText(&DarkBodyStyle,CityBreadcrumbText)]]
-            +SHorizontalBox::Slot().AutoWidth()[SAssignNew(ReturnCityButton,SHansaAction).Kind(EHansaUiButtonStyle::Secondary).Compact(true).Preferences(Preferences).Label(LOCTEXT("ReturnCityShort","Return")).Reason(LOCTEXT("ReturnCityTip","Return to Lubeck.")).OnClicked_Lambda([this]{return ActivateSemanticId(TEXT("HUD.TopStatus.ReturnCity"))?FReply::Handled():FReply::Unhandled();})];
-        auto Navigation=SNew(SWrapBox).UseAllottedSize(true).InnerSlotPadding(FVector2D(4,0))
-            +SWrapBox::Slot()[SNew(SBox).WidthOverride(Preferences.bLargeText?108:92)[SAssignNew(ResearchButton,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences).OnClicked(this,&SHansaRootHud::HandleResearchOpen)[StatusText(&DarkBodyStyle,ResearchText)]]]
-            +SWrapBox::Slot()[SNew(SBox).WidthOverride(Preferences.bLargeText?128:104)[SAssignNew(SaveLoadButton,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences).Label(LOCTEXT("SaveLoad","Save / load")).Reason(LOCTEXT("SaveLoadTip","Open save and autosave slots.")).OnClicked(this,&SHansaRootHud::HandleSaveLoadOpen)]]
-            +SWrapBox::Slot()[SNew(SBox).WidthOverride(Preferences.bLargeText?124:104)[SAssignNew(TradeMapButton,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences).Label(LOCTEXT("TradeMap","Trade map")).Reason(LOCTEXT("TradeMapTip","Open known cities and trade routes.")).OnClicked(this,&SHansaRootHud::HandleTradeMapOpen)]]
-            +SWrapBox::Slot()[SNew(SBox).WidthOverride(Preferences.bLargeText?80:68)[SAssignNew(SessionButton,SHansaAction).Kind(EHansaUiButtonStyle::Secondary).Compact(true).Preferences(Preferences).Label(LOCTEXT("SessionMenu","Menu")).Reason(LOCTEXT("MenuTip","Open the session menu.")).OnClicked(this,&SHansaRootHud::HandleSessionOpen)]];
-        auto LeftContent=SNew(SVerticalBox)
-            +SVerticalBox::Slot().AutoHeight()[Left]
-            +SVerticalBox::Slot().AutoHeight().Padding(0,4,0,0)[CityControls];
-        auto CenterContent=SNew(SVerticalBox)
-            +SVerticalBox::Slot().AutoHeight()[Center]
-            +SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center).Padding(0,4,0,0)[StatusText(&DarkCaptionStyle,DateText)];
-        auto RightContent=SNew(SVerticalBox)
-            +SVerticalBox::Slot().AutoHeight()[SNew(SHorizontalBox)
-                +SHorizontalBox::Slot().AutoWidth()[Speeds]
-                +SHorizontalBox::Slot().FillWidth(1).VAlign(VAlign_Center).Padding(8,0,0,0)
-                [
-                    SNew(SVerticalBox)
-                    +SVerticalBox::Slot().AutoHeight()
-                    [StatusText(&DarkCaptionStyle,ConnectionText)]
-                    +SVerticalBox::Slot().AutoHeight().Padding(0,2,0,0)
-                    [
-                        SAssignNew(FpsText,STextBlock)
-                        .Text(LOCTEXT("FpsPending","FPS —"))
-                        .TextStyle(&DarkDataStyle)
-                        .ToolTipText(LOCTEXT("FpsTip","Rendered frames per second, averaged over the last half second."))
-                    ]
-                ]]
-            +SVerticalBox::Slot().AutoHeight().Padding(0,4,0,0)[Navigation];
-        auto Panel=[this](float Maximum,TSharedRef<SWidget> Content,TSharedPtr<SWidget>& Out)->TSharedRef<SWidget>{
-            Out=SNew(SBox).WidthOverride_Lambda([this,Maximum]{return FMath::Min(Maximum,(Layout.ViewportSize.X-2*Layout.SafeArea)/3.f-16.f);})
-                [SNew(SBorder).BorderImage(&WorldOverlayBrush).Padding(8)[Content]];
-            return Out.ToSharedRef();
-        };
-        return SNew(SHorizontalBox).Visibility(EVisibility::SelfHitTestInvisible)
-            +SHorizontalBox::Slot().FillWidth(1).HAlign(HAlign_Left).VAlign(VAlign_Top)[Panel(400,LeftContent,TopLeftPanel)]
-            +SHorizontalBox::Slot().FillWidth(1).HAlign(HAlign_Center).VAlign(VAlign_Top)[Panel(360,CenterContent,TopCenterPanel)]
-            +SHorizontalBox::Slot().FillWidth(1).HAlign(HAlign_Right).VAlign(VAlign_Top)[Panel(460,RightContent,TopRightPanel)];
+        auto Utilities=SNew(SVerticalBox)
+            +SVerticalBox::Slot().AutoHeight()[SAssignNew(SaveLoadButton,SHansaAction).Preferences(Preferences).Label(LOCTEXT("SaveLoad","Save / load")).OnClicked(this,&SHansaRootHud::HandleSaveLoadOpen)]
+            +SVerticalBox::Slot().AutoHeight()[SAssignNew(TradeMapButton,SHansaAction).Preferences(Preferences).Label(LOCTEXT("TradeMap","Trade map")).OnClicked(this,&SHansaRootHud::HandleTradeMapOpen)]
+            +SVerticalBox::Slot().AutoHeight()[SAssignNew(SessionButton,SHansaAction).Preferences(Preferences).Label(LOCTEXT("SessionMenu","Menu")).OnClicked(this,&SHansaRootHud::HandleSessionOpen)]
+            +SVerticalBox::Slot().AutoHeight()[StatusText(&DarkCaptionStyle,ConnectionText)]
+            +SVerticalBox::Slot().AutoHeight()[SAssignNew(FpsText,STextBlock).Text(LOCTEXT("FpsPending","FPS —")).TextStyle(&DarkCaptionStyle)];
+        auto Right=SNew(SHorizontalBox)
+            +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(8,0)
+            [SNew(SHorizontalBox)+SHorizontalBox::Slot().AutoWidth().Padding(0,0,6,0)[SNew(SHansaGlyph).Glyph(EUiGlyph::Season).Size(28)]
+             +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)[StatusText(&DarkCaptionStyle,DateText)]]
+            +SHorizontalBox::Slot().AutoWidth()[Speeds]
+            +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(8,0)
+            [SNew(SHorizontalBox)+SHorizontalBox::Slot().AutoWidth()[SNew(SHansaGlyph).Glyph(EUiGlyph::Civic).Size(32)]
+             +SHorizontalBox::Slot().AutoWidth()[SAssignNew(InfluenceText,STextBlock).Text(LOCTEXT("InfluenceUnavailable","Influence\n—")).TextStyle(&DarkCaptionStyle)
+                .ToolTipText(LOCTEXT("InfluenceUnavailableTip","Influence is not available in this scenario."))]]
+            +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+            [SAssignNew(ResearchButton,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences).OnClicked(this,&SHansaRootHud::HandleResearchOpen)
+                [SNew(SHorizontalBox)+SHorizontalBox::Slot().AutoWidth()[SNew(SHansaGlyph).Glyph(EUiGlyph::Research).Size(32)]
+                 +SHorizontalBox::Slot().AutoWidth()[StatusText(&DarkCaptionStyle,ResearchText)]]]
+            +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+            [SAssignNew(UtilityMenu,SComboButton).HasDownArrow(false)
+                .ButtonContent()[SNew(SHansaGlyph).Glyph(EUiGlyph::Settings).Size(24)]
+                .MenuContent()[SNew(SBorder).BorderImage(&WorldOverlayBrush).Padding(12)[Utilities]]];
+        TopLeftPanel=Metrics;TopCenterPanel=City;TopRightPanel=Right;
+        if(Layout.ViewportSize.X>=1500 && !Preferences.bLargeText)
+            return SNew(SHansaReferenceFrame).Dark(true).Padding(FMargin(12,2))
+            [SNew(SOverlay)
+             +SOverlay::Slot().HAlign(HAlign_Left).VAlign(VAlign_Center)[Metrics]
+             +SOverlay::Slot().HAlign(HAlign_Center).VAlign(VAlign_Center)[City]
+             +SOverlay::Slot().HAlign(HAlign_Right).VAlign(VAlign_Center)[Right]];
+        return SNew(SHansaReferenceFrame).Dark(true).Padding(FMargin(12,2))
+            [SNew(SVerticalBox)
+             +SVerticalBox::Slot().FillHeight(1)[SNew(SHorizontalBox)+SHorizontalBox::Slot().AutoWidth()[Metrics]+SHorizontalBox::Slot().FillWidth(1).HAlign(HAlign_Right).VAlign(VAlign_Center)[City]]
+             +SVerticalBox::Slot().FillHeight(1).HAlign(HAlign_Right)[Right]];
 
     }
 
@@ -193,7 +192,7 @@ namespace Hansa::UI
 		SetCanTick(true);
 		FpsSampleElapsedSeconds = 0.0;
 		FpsSampleFrameCount = 0;
-		RebuildArguments=Arguments;Preferences=Arguments._Preferences;PresentedAlerts.Reset();PresentedNotifications.Reset();SemanticWidgets.Reset();AlertSemanticWidgets.Reset();
+		RebuildArguments=Arguments;Preferences=Arguments._Preferences;PresentedAlerts.Reset();AlertCards.Reset();PinnedAlertTexts.Reset();PresentedNotifications.Reset();SemanticWidgets.Reset();AlertSemanticWidgets.Reset();
 		Model = Arguments._Model;
 		BuildModel = Arguments._BuildModel;
 		InspectorModel = Arguments._InspectorModel;
@@ -238,7 +237,7 @@ namespace Hansa::UI
 				[
 					SNew(SBorder).BorderImage(WhiteBrush).BorderBackgroundColor(Transparent).Visibility(EVisibility::HitTestInvisible)
 				]
-				+ SOverlay::Slot().Expose(TopStatusSlot).HAlign(HAlign_Fill).VAlign(VAlign_Top).Padding(Safe)
+				+ SOverlay::Slot().Expose(TopStatusSlot).HAlign(HAlign_Fill).VAlign(VAlign_Top).Padding(0)
 				[
 					SAssignNew(TopStatusBox, SBox).HeightOverride(Layout.TopBarHeight)
 					[
@@ -252,19 +251,19 @@ BuildTopMenu()
 				[
 					SAssignNew(AlertHostBox, SBox).WidthOverride(Layout.AlertWidth)
 					[
-						SAssignNew(AlertStackWidget, SBorder).BorderImage(&WorkingBrush).Padding(12.0f)
+						SAssignNew(AlertStackWidget, SBorder).BorderImage(FCoreStyle::Get().GetBrush(TEXT("NoBorder"))).Padding(0.0f)
 						[
 							SNew(SVerticalBox)
 							+ SVerticalBox::Slot().AutoHeight()
 							[
-								SAssignNew(AlertToggleButton, SHansaAction).Kind(EHansaUiButtonStyle::Secondary).Compact(true).Preferences(Preferences).Reason(LOCTEXT("AlertsTip","Expand or collapse objectives and causal alerts.")).OnClicked(this, &SHansaRootHud::HandleAlertToggle)
+								SAssignNew(AlertToggleButton, SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences).Reason(LOCTEXT("AlertsTip","Expand or collapse objectives and causal alerts.")).OnClicked(this, &SHansaRootHud::HandleAlertToggle)
 								[
-									SAssignNew(AlertToggleText, STextBlock).TextStyle(&LightBodyStyle)
+									SAssignNew(AlertToggleText, STextBlock).TextStyle(&DarkDataStyle)
 								]
 							]
 							+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 8.0f, 0.0f, 0.0f)
 							[
-								SAssignNew(AlertRowsHostBox, SBox).MaxDesiredHeight(Layout.AlertExpandedHeight)
+								SAssignNew(AlertRowsHostBox, SBox).MaxDesiredHeight(FMath::Max(48.f,FMath::Min(360.f,Layout.ViewportSize.Y-Layout.TopBarHeight-3*Layout.SafeArea-(Layout.ViewportSize.X<1280?160.f:240.f)-96.f)))
 								[
 									SAssignNew(AlertScroll,SScrollBox)
 									+ SScrollBox::Slot()
@@ -286,6 +285,8 @@ BuildTopMenu()
 						]
 					]
 				]
+                +SOverlay::Slot().HAlign(HAlign_Left).VAlign(VAlign_Bottom).Padding(12,0,0,12)
+                [SAssignNew(MinimapWidget,SHansaMinimap).Controller(PlacementController.Get()).MapSize(Layout.ViewportSize.X<1280?160.f:240.f)]
 				+ SOverlay::Slot().Expose(BottomSlot).HAlign(HAlign_Center).VAlign(VAlign_Bottom).Padding(0.0f, 0.0f, 0.0f, Layout.SafeArea)
 				[
 					SAssignNew(BottomHostBox, SBox).WidthOverride(Layout.BottomWidth).HeightOverride(Layout.BottomHeight)
@@ -301,7 +302,7 @@ BuildTopMenu()
 				+ SOverlay::Slot().Expose(BuildMenuSlot).HAlign(HAlign_Center).VAlign(VAlign_Bottom).Padding(Layout.SafeArea, 0.0f, Layout.SafeArea, Layout.SafeArea)
 				[
 					SAssignNew(BuildMenuHostBox, SBox)
-					.WidthOverride(FMath::Min(1248.0f, static_cast<float>(Layout.ViewportSize.X) - Layout.SafeArea * 2.0f))
+					.WidthOverride(FMath::Min(880.f, static_cast<float>(Layout.ViewportSize.X) - 360.f))
 					.MaxDesiredHeight(static_cast<float>(Layout.ViewportSize.Y)-Layout.TopBarHeight-Layout.SafeArea*3.f)
 					[
 						SAssignNew(BuildMenuWidget, SHansaBuildMenu).Preferences(Preferences).Model(BuildModel.Get()).PlacementController(PlacementController.Get())
@@ -313,7 +314,7 @@ BuildTopMenu()
 					[
 						SAssignNew(InspectorHostWidget, SBorder).BorderImage(&WorkingBrush).Padding(0.0f)
 						[
-							SAssignNew(InspectorWidget, SHansaContextInspector).Preferences(Preferences).Model(InspectorModel.Get())
+							SNew(SHansaReferenceFrame).Dark(false).Padding(6)[SAssignNew(InspectorWidget, SHansaContextInspector).Preferences(Preferences).Model(InspectorModel.Get())]
 						]
 					]
 				]
@@ -393,6 +394,8 @@ BuildTopMenu()
         MapWidget(TEXT("HUD.TopStatus.Session"),SessionButton);
 		MapWidget(TEXT("HUD.TopStatus"), TopStatusWidget);
         MapWidget(TEXT("HUD.TopStatus.LeftPanel"),TopLeftPanel);
+        MapWidget(TEXT("HUD.TopStatus.Influence"),InfluenceText);
+        if(MinimapWidget)for(const TCHAR* Id:{TEXT("HUD.Minimap"),TEXT("HUD.Minimap.ZoomIn"),TEXT("HUD.Minimap.ZoomOut"),TEXT("HUD.Minimap.Overlay"),TEXT("HUD.Minimap.Center")})MapWidget(Id,MinimapWidget->Resolve(Id));
         MapWidget(TEXT("HUD.TopStatus.CenterPanel"),TopCenterPanel);
         MapWidget(TEXT("HUD.TopStatus.RightPanel"),TopRightPanel);
 		MapWidget(TEXT("HUD.TopStatus.Money"), MoneyChip);
@@ -540,18 +543,33 @@ BuildTopMenu()
         if(Id.StartsWith(TEXT("TradeMap."))&&TradeMapWidget)return TradeMapWidget->ResolveSemanticWidget(Id);
         if(Id.StartsWith(TEXT("Market."))&&CityOverviewWidget&&CityOverviewWidget->GetMarketTable())return CityOverviewWidget->GetMarketTable()->ResolveSemanticWidget(Id);
         if(Id.StartsWith(TEXT("CityOverview."))&&CityOverviewWidget)return CityOverviewWidget->ResolveSemanticWidget(Id);
+        if(MinimapWidget && Id.StartsWith(TEXT("HUD.Minimap")))return MinimapWidget->Resolve(Id);
         const auto* W=AlertSemanticWidgets.Find(Id);if(!W)W=SemanticWidgets.Find(Id);return W?W->Pin():nullptr;
     }
 
 	void SHansaRootHud::SetPresentationSize(const FIntPoint Size)
 	{
-		PhysicalViewportSize=Size;Layout = MakeHudLayoutMetrics(FIntPoint(FMath::RoundToInt(Size.X/Preferences.UiScale),FMath::RoundToInt(Size.Y/Preferences.UiScale)));Layout.TopBarHeight=TopBarHeight(Layout,Preferences,Model.IsValid()&&Model->GetSnapshot().bRemoteCityView);
+		const bool WasWide=Layout.ViewportSize.X>=1500;
+        const bool NowWide=Size.X/Preferences.UiScale>=1500;
+        PhysicalViewportSize=Size;
+        if(WasWide!=NowWide || (Layout.ViewportSize.X<1280)!=(Size.X/Preferences.UiScale<1280)){SetPreferences(Preferences);return;}
+        Layout = MakeHudLayoutMetrics(FIntPoint(FMath::RoundToInt(Size.X/Preferences.UiScale),FMath::RoundToInt(Size.Y/Preferences.UiScale)));Layout.TopBarHeight=TopBarHeight(Layout,Preferences,Model.IsValid()&&Model->GetSnapshot().bRemoteCityView);
 		ApplyResponsiveLayout();
 		if (UHansaHudPresentationModel* PinnedModel = Model.Get())
 		{
 			Refresh(PinnedModel->GetSnapshot(), PinnedModel->GetRevision());
 		}
 	}
+
+    void SHansaRootHud::LayoutConstructionTray()
+    {
+        const bool ReserveInspector=Layout.ViewportSize.X>=1600 || (InspectorModel.IsValid() && InspectorModel->GetSnapshot().bOpen);
+        const float RightReserve=ReserveInspector?(Preferences.bLargeText?416.f:Layout.InspectorWidth)+24.f:24.f;
+        const float Available=FMath::Max(120.f,Layout.ViewportSize.X-340.f-RightReserve);
+        const float Width=FMath::Min(880.f,Available);
+        if(BuildMenuHostBox){BuildMenuHostBox->SetWidthOverride(Width);BuildMenuHostBox->SetMaxDesiredHeight(Layout.ViewportSize.Y-Layout.TopBarHeight-Layout.SafeArea*3.f);}
+        if(BuildMenuSlot){BuildMenuSlot->SetHorizontalAlignment(HAlign_Left);BuildMenuSlot->SetPadding(FMargin(340.f+FMath::Max(0.f,(Available-Width)*.5f),0.f,0.f,Layout.SafeArea));}
+    }
 
 	void SHansaRootHud::ApplyResponsiveLayout()
 	{
@@ -562,26 +580,22 @@ BuildTopMenu()
 		}
 		if (TopStatusBox.IsValid()) TopStatusBox->SetHeightOverride(Layout.TopBarHeight);
 		if (AlertHostBox.IsValid()) AlertHostBox->SetWidthOverride(Layout.AlertWidth);
-		if (AlertRowsHostBox.IsValid()) AlertRowsHostBox->SetMaxDesiredHeight(Layout.AlertExpandedHeight);
+		if (AlertRowsHostBox.IsValid()) AlertRowsHostBox->SetMaxDesiredHeight(FMath::Max(48.f,FMath::Min(360.f,Layout.ViewportSize.Y-Layout.TopBarHeight-3*Layout.SafeArea-(Layout.ViewportSize.X<1280?160.f:240.f)-96.f)));
 		if (BottomHostBox.IsValid())
 		{
 			BottomHostBox->SetWidthOverride(Layout.BottomWidth);
 			BottomHostBox->SetHeightOverride(Layout.BottomHeight);
 		}
-		if (BuildMenuHostBox.IsValid())
-		{
-			BuildMenuHostBox->SetWidthOverride(FMath::Min(1248.0f, static_cast<float>(Layout.ViewportSize.X) - Layout.SafeArea * 2.0f));
-			BuildMenuHostBox->SetMaxDesiredHeight(static_cast<float>(Layout.ViewportSize.Y)-Layout.TopBarHeight-Layout.SafeArea*3.f);
-		}
+        LayoutConstructionTray();
 		if (InspectorHostBox.IsValid()) InspectorHostBox->SetWidthOverride(Layout.InspectorWidth);
 		if (NotificationHostBox.IsValid()) NotificationHostBox->SetWidthOverride(Layout.NotificationWidth);
-		if (TopStatusSlot != nullptr) TopStatusSlot->SetPadding(FMargin(Layout.SafeArea));
+		if (TopStatusSlot != nullptr) TopStatusSlot->SetPadding(FMargin(0));
 		if (AlertSlot != nullptr) AlertSlot->SetPadding(FMargin(Layout.SafeArea, Layout.SafeArea * 2.0f + Layout.TopBarHeight, 0.0f, 0.0f));
 		if (BottomSlot != nullptr) BottomSlot->SetPadding(FMargin(0.0f, 0.0f, 0.0f, Layout.SafeArea));
-		if (BuildMenuSlot != nullptr) BuildMenuSlot->SetPadding(FMargin(Layout.SafeArea, 0.0f, Layout.SafeArea, Layout.SafeArea));
+
 		if (InspectorSlot != nullptr) InspectorSlot->SetPadding(FMargin(0.0f, Layout.SafeArea * 2.0f + Layout.TopBarHeight, Layout.SafeArea, Layout.SafeArea * 2.0f + Layout.BottomHeight));
         if(InspectorModel.IsValid())RefreshInspectorHost(InspectorModel->GetSnapshot(),InspectorModel->GetRevision());
-		if (NotificationSlot != nullptr) NotificationSlot->SetPadding(FMargin(Layout.SafeArea, 0.0f, 0.0f, Layout.SafeArea * 2.0f + Layout.BottomHeight));
+		if (NotificationSlot != nullptr) NotificationSlot->SetPadding(FMargin(Layout.SafeArea, 0.0f, 0.0f, 280.f));
 		if (FocusSlot != nullptr) FocusSlot->SetPadding(FMargin(Layout.SafeArea, 0.0f, 0.0f, Layout.SafeArea));
 		const FMargin ModalPadding(Layout.SafeArea);
         const FIntPoint ModalSize(Layout.ViewportSize.X-FMath::RoundToInt(Layout.SafeArea*2),Layout.ViewportSize.Y-FMath::RoundToInt(Layout.SafeArea*2));
@@ -627,31 +641,19 @@ BuildTopMenu()
         TrendChip->SetToolTipText(Snapshot.MoneyTrendTooltip);
         PopulationChip->SetToolTipText(FText::Format(LOCTEXT("CurrentPopulationTip","Total residents in the current city: {0}."),Snapshot.Population));
         LaborerChip->SetToolTipText(FText::Format(LOCTEXT("LaborersTip","Laborers living in the current city: {0}. This is the resident count, not available workforce."),Snapshot.Workforce));
-        WealthyChip->SetToolTipText(FText::Format(LOCTEXT("WealthyTip","Wealthy citizens in the current city: {0}. The current scenario represents this group with artisan residents."),Snapshot.WealthyCitizens));
+        WealthyChip->SetToolTipText(FText::Format(LOCTEXT("WealthyTip","Artisan residents in the current city: {0}. Included in total citizens."),Snapshot.WealthyCitizens));
         for(int32 I=0;I<3;++I){
             const bool Present=Snapshot.TopProducts.IsValidIndex(I);
             ProductChips[I]->SetVisibility(Present?EVisibility::Visible:EVisibility::Collapsed);
             if(!Present)continue;
             ProductTexts[I]->SetText(Snapshot.TopProducts[I].Value);
             ProductChips[I]->SetToolTipText(Snapshot.TopProducts[I].Tooltip);
-            EUiGlyph Glyph=EUiGlyph::Production;
-            if(Present){const FName Good=Snapshot.TopProducts[I].GoodId;
-                if(Good==TEXT("Good.Bread"))Glyph=EUiGlyph::Bread;
-                else if(Good==TEXT("Good.Fish"))Glyph=EUiGlyph::Fish;
-                else if(Good==TEXT("Good.Planks"))Glyph=EUiGlyph::Planks;
-                else if(Good==TEXT("Good.Grain"))Glyph=EUiGlyph::Grain;
-                else if(Good==TEXT("Good.Flour"))Glyph=EUiGlyph::Flour;
-                else if(Good==TEXT("Good.Timber"))Glyph=EUiGlyph::Timber;
-                else if(Good==TEXT("Good.Salt"))Glyph=EUiGlyph::Salt;
-                else if(Good==TEXT("Good.Iron"))Glyph=EUiGlyph::Iron;
-                else if(Good==TEXT("Good.Tools"))Glyph=EUiGlyph::Tools;
-                else if(Good==TEXT("Good.Beer"))Glyph=EUiGlyph::Beer;
-            }
+            const EUiGlyph Glyph=GlyphForGood(Snapshot.TopProducts[I].GoodId);
             ProductGlyphs[I]->SetGlyph(Glyph);
         }
-		CityBreadcrumbText->SetText(Snapshot.CityBreadcrumb);CityBreadcrumbText->SetAutoWrapText(true);CityBreadcrumbText->SetToolTipText(Snapshot.CityBreadcrumb);
+		FString CityTitle=Snapshot.CityBreadcrumb.ToString(); int32 CitySlash; if(CityTitle.FindLastChar(TCHAR(47),CitySlash))CityTitle=CityTitle.Mid(CitySlash+1).TrimStartAndEnd(); CityBreadcrumbText->SetText(FText::FromString(CityTitle));CityBreadcrumbText->SetAutoWrapText(true);CityBreadcrumbText->SetToolTipText(Snapshot.CityBreadcrumb);
 		DateText->SetText(Snapshot.DateAndSeason);
-		ResearchText->SetText(LOCTEXT("ResearchCompact","Research"));ResearchButton->SetToolTipText(Snapshot.Research);
+		ResearchText->SetText(FText::Format(LOCTEXT("ResearchCompact","Research\n{0}"),Snapshot.ResearchPoints));ResearchButton->SetToolTipText(Snapshot.Research);
 		CityOverviewButton->SetToolTipText(FText::Format(LOCTEXT("CityNavigationTip","{0}. Open the city overview."),Snapshot.CityBreadcrumb));
 		ConnectionText->SetText(Snapshot.Connection);ConnectionText->SetAutoWrapText(true);
 		SelectionText->SetText(Snapshot.SelectionSummary);
@@ -660,9 +662,9 @@ BuildTopMenu()
         if(RemoteLayoutChanged)SetPresentationSize(PhysicalViewportSize);
         if(BuildMenuHostBox)BuildMenuHostBox->SetVisibility(Snapshot.bRemoteCityView?EVisibility::Collapsed:EVisibility::Visible);
 		AlertToggleText->SetText(Snapshot.bAlertStackExpanded
-			? FText::Format(LOCTEXT("HideAlerts", "Alerts ({0}) · Hide"), FText::AsNumber(Snapshot.Alerts.Num()))
-			: FText::Format(LOCTEXT("ShowAlerts", "Alerts ({0}) · Show"), FText::AsNumber(Snapshot.Alerts.Num())));
-		AlertRows->SetVisibility(Snapshot.bAlertStackExpanded ? EVisibility::Visible : EVisibility::Collapsed);
+			? FText::Format(LOCTEXT("HideAlerts", "Alerts ({0}) · Hide"), FText::AsNumber(Snapshot.Alerts.FilterByPredicate([](const auto& Alert){ return !Alert.bSnoozed; }).Num()))
+			: FText::Format(LOCTEXT("ShowAlerts", "Alerts ({0}) · Show"), FText::AsNumber(Snapshot.Alerts.FilterByPredicate([](const auto& Alert){ return !Alert.bSnoozed; }).Num())));
+		AlertRowsHostBox->SetVisibility(Snapshot.bAlertStackExpanded ? EVisibility::Visible : EVisibility::Collapsed);
 		BottomAreaWidget->SetVisibility(!BuildModel.IsValid() && Snapshot.bBottomAreaOpen ? EVisibility::Visible : EVisibility::Collapsed);
 		const UHansaInspectorPresentationModel* PinnedInspector = InspectorModel.Get();
 		const bool bInspectorOpen = PinnedInspector != nullptr ? PinnedInspector->GetSnapshot().bOpen : Snapshot.bInspectorOpen;
@@ -689,14 +691,19 @@ BuildTopMenu()
 		if (InspectorHostWidget.IsValid()) InspectorHostWidget->SetVisibility(Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed);
 
         const bool Market=Snapshot.Kind==EHansaInspectorObjectKind::Market;
+        const bool Preservation=!Snapshot.PreservationSummary.IsEmpty();
         const bool Compact=Snapshot.Production.bValid || Snapshot.Residence.bValid || Market;
-        if(InspectorSlot)InspectorSlot->SetVerticalAlignment(Compact?VAlign_Bottom:VAlign_Fill);
+        if(InspectorSlot)InspectorSlot->SetVerticalAlignment(VAlign_Top);
         if(InspectorHostBox.IsValid())
         {
-            InspectorHostBox->SetWidthOverride(Market?360.f:Compact?320.f:Layout.InspectorWidth);
-            const float Available=Layout.ViewportSize.Y-Layout.TopBarHeight-Layout.BottomHeight-Layout.SafeArea*4.f;
-            InspectorHostBox->SetHeightOverride(Compact?FOptionalSize(FMath::Min(Snapshot.Residence.bValid?600.f:Market?520.f:480.f,Available)):FOptionalSize());
+            InspectorHostBox->SetWidthOverride(Preferences.bLargeText?416.f:Layout.InspectorWidth);
+            // The construction tray reserves inspector width, so compact inspectors can
+            // use the vertical space below it without overlapping controls.
+            const float BottomReserve = Layout.ViewportSize.X < 1280 ? Layout.SafeArea : Layout.BottomHeight + Layout.SafeArea * 2.f;
+            const float Available=FMath::Max(120.f,Layout.ViewportSize.Y-Layout.TopBarHeight-Layout.SafeArea*2.f-BottomReserve);
+            InspectorHostBox->SetHeightOverride(FOptionalSize(FMath::Min(720.f,Available)));
         }
+        LayoutConstructionTray();
         if(InspectorHostWidget.IsValid())StaticCastSharedPtr<SBorder>(InspectorHostWidget)->SetBorderImage(Compact?FCoreStyle::Get().GetBrush(TEXT("NoBorder")):&WorkingBrush);
 		if (Snapshot.bOpen) UpdateFocusIndicator(Snapshot.FocusedSemanticId);
         if(Snapshot.bOpen&&Snapshot.Kind!=EHansaInspectorObjectKind::Cargo&&ScenarioModel.IsValid())ScenarioModel->OfferHelp(EHansaSessionHelpTopic::Inspection);
@@ -770,117 +777,148 @@ BuildTopMenu()
 		FocusSemanticId(TEXT("HUD.TopStatus.Research.Open"));
 	}
 
-	void SHansaRootHud::RebuildAlerts(const FHansaHudPresentationSnapshot& Snapshot)
-	{
-		if(PresentedAlerts==Snapshot.Alerts && AlertRows->NumSlots()>0)return;
-		FString Restore;
-		if(FSlateApplication::IsInitialized())for(const auto& Pair:AlertSemanticWidgets)if(Pair.Value.Pin()==FSlateApplication::Get().GetKeyboardFocusedWidget())Restore=Pair.Key;
-		PresentedAlerts=Snapshot.Alerts;
-		AlertRows->ClearChildren(); PinnedTrackerRows->ClearChildren(); AlertSemanticWidgets.Reset();
-		auto SafeId = [](const FName StableId)
-		{
-			FString Value = StableId.ToString(); Value.ReplaceInline(TEXT("."), TEXT("_")); return Value;
-		};
-		TArray<FName> Groups;
-		for (const FHansaHudAlertPresentation& Alert : Snapshot.Alerts)
-		{
-			if (!Alert.bSnoozed && !Groups.Contains(Alert.GroupId)) Groups.Add(Alert.GroupId);
-			if (Alert.bPinned)
-			{
-				PinnedTrackerRows->AddSlot().AutoHeight().Padding(0.0f, 2.0f)
-				[
-					SNew(STextBlock).Text(FText::Format(LOCTEXT("PinnedTrackerRow", "{0} · {1}"), Alert.AffectedObject, Alert.Causal.Problem)).TextStyle(&DarkCaptionStyle).AutoWrapText(true)
-				]
-			;
-			}
-		}
-		PinnedTrackersWidget->SetVisibility(PinnedTrackerRows->NumSlots() > 0 ? EVisibility::Visible : EVisibility::Collapsed);
-
-		int32 ExpandedGroups = 0;
-		for (const FName GroupId : Groups)
-		{
-			if (ExpandedGroups++ >= 3) break;
-			TArray<const FHansaHudAlertPresentation*> GroupAlerts;
-			for (const FHansaHudAlertPresentation& Alert : Snapshot.Alerts) if (!Alert.bSnoozed && Alert.GroupId == GroupId) GroupAlerts.Add(&Alert);
-			if (GroupAlerts.IsEmpty()) continue;
-			const FString GroupSemanticId = FString::Printf(TEXT("HUD.AlertStack.Group.%s"), *SafeId(GroupId));
-			TSharedPtr<SBorder> GroupWidget;
-			TSharedPtr<SHansaAction> ExplainButton;
-			AlertRows->AddSlot().AutoHeight().Padding(0.0f, 2.0f)
-			[
-				SAssignNew(GroupWidget, SBorder).BorderImage(&FloatingBrush).Padding(6.0f)
-				[
-					SNew(SHorizontalBox)
-                    +SHorizontalBox::Slot().FillWidth(1).VAlign(VAlign_Center)[SNew(STextBlock).Text(FText::Format(LOCTEXT("AlertGroup", "{0} · {1}"),FText::FromName(GroupId),FText::AsNumber(GroupAlerts.Num()))).TextStyle(&DarkBodyStyle).AutoWrapText(true)]
-                    +SHorizontalBox::Slot().AutoWidth().Padding(4,0)[SNew(SBox).WidthOverride(88)[SAssignNew(ExplainButton,SHansaAction).Compact(true).Preferences(Preferences).Label(LOCTEXT("ExplainAlert","Details"))
-                     .Reason(FText::Format(LOCTEXT("ExplainAlertTip","Cause: {0}\nRemedy: {1}"),GroupAlerts[0]->Causal.Cause,GroupAlerts[0]->Causal.Remedy))
-                     .OnClicked(this,&SHansaRootHud::HandleAlertAction,GroupAlerts[0]->StableId,EHansaHudAlertAction::OpenCause)]]
-				]
-			];
-			AlertSemanticWidgets.Add(GroupSemanticId, GroupWidget);
-			const FString ExplainId=FString::Printf(TEXT("HUD.AlertStack.Alert.%s.OpenCause"),*SafeId(GroupAlerts[0]->StableId));
-			AlertSemanticWidgets.Add(ExplainId,ExplainButton);ExplainButton->SetFocusHandler(FSimpleDelegate::CreateSP(this,&SHansaRootHud::RecordNativeFocus,FName(*ExplainId)));
-
-			const FHansaHudAlertPresentation& Alert = *GroupAlerts[0];
-			const EHansaUiSeverity SeverityToken = Alert.Causal.Severity == EHansaCausalSeverity::Critical ? EHansaUiSeverity::Critical :
-				(Alert.bWarning ? EHansaUiSeverity::Warning : EHansaUiSeverity::Notice);
-			const FHansaUiSeverityStyle Severity = UHansaUiStyleLibrary::GetSeverityStyle(SeverityToken);
-			const FString AlertSemanticId = FString::Printf(TEXT("HUD.AlertStack.Alert.%s"), *SafeId(Alert.StableId));
-			TSharedPtr<SBorder> AlertWidget;
-			TSharedPtr<SUniformGridPanel> Actions;
-			AlertRows->AddSlot().AutoHeight().Padding(0.0f, 2.0f, 0.0f, 6.0f)
-			[
-				SAssignNew(AlertWidget, SBorder).BorderImage(&WorkingBrush).BorderBackgroundColor(Severity.AccentColor.CopyWithNewOpacity(0.22f)).Padding(8.0f)
-				[
-					SNew(SVerticalBox)
-					+ SVerticalBox::Slot().AutoHeight()
-					[
-						SNew(SHorizontalBox)
-                        +SHorizontalBox::Slot().AutoWidth().Padding(0,0,6,0)[SNew(SHansaGlyph).Size(20).Glyph(Alert.Causal.Severity==EHansaCausalSeverity::Critical?EUiGlyph::Error:(Alert.bWarning?EUiGlyph::Warning:EUiGlyph::Information))]
-                        +SHorizontalBox::Slot().FillWidth(1)[SNew(STextBlock).Text(FText::Format(LOCTEXT("AlertSummary", "{0} {1}\n{3}"),
-							Alert.Causal.Severity == EHansaCausalSeverity::Critical ? LOCTEXT("CriticalGlyph", "Critical ·") :
-								(Alert.bWarning ? LOCTEXT("WarningGlyph", "Warning ·") : LOCTEXT("NoticeGlyph", "Notice ·")),
-							Alert.AffectedObject, Alert.Age, Alert.Label, Alert.Causal.Cause)).TextStyle(&LightBodyStyle).AutoWrapText(true)]
-					]
-					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 6.0f, 0.0f, 0.0f)[SAssignNew(Actions, SUniformGridPanel).SlotPadding(FMargin(2.0f))]
-				]
-			];
-			AlertSemanticWidgets.Add(AlertSemanticId, AlertWidget);
-			int32 ActionIndex = 0;
-			auto AddAction = [this, &Actions, &Alert, &SafeId, &ActionIndex](const TCHAR* Suffix, const FText& Label, const EHansaHudAlertAction Action, const FText& ToolTip)
-			{
-				const FString Id = FString::Printf(TEXT("HUD.AlertStack.Alert.%s.%s"), *SafeId(Alert.StableId), Suffix);
-				TSharedPtr<SButton> Button;
-				Actions->AddSlot(ActionIndex % 3, ActionIndex / 3)
-				[
-					SNew(SBox).MinDesiredHeight(UHansaUiStyleLibrary::GetSpacing(EHansaUiSpacingToken::ControllerFocusTarget))
-					[
-						SAssignNew(Button, SHansaAction).Kind(EHansaUiButtonStyle::Secondary).Compact(true).Preferences(Preferences).Label(Label).Reason(ToolTip).OnClicked(this, &SHansaRootHud::HandleAlertAction, Alert.StableId, Action)
-					]
-				];
-				++ActionIndex;
-				AlertSemanticWidgets.Add(Id, Button);
-				StaticCastSharedPtr<SHansaAction>(Button)->SetFocusHandler(FSimpleDelegate::CreateSP(this,&SHansaRootHud::RecordNativeFocus,FName(*Id)));
-			};
-			AddAction(TEXT("Frame"), LOCTEXT("FrameAlert", "Frame"), EHansaHudAlertAction::Frame, LOCTEXT("FrameAlertTip", "Frame the affected object [F]."));
-
-			AddAction(TEXT("Snooze"), LOCTEXT("SnoozeAlert", "Snooze"), EHansaHudAlertAction::Snooze, LOCTEXT("SnoozeAlertTip", "Snooze this alert for the current presentation interval."));
-			AddAction(TEXT("Pin"), Alert.bPinned ? LOCTEXT("PinnedAlert", "Pinned") : LOCTEXT("PinAlert", "Pin"), EHansaHudAlertAction::Pin, LOCTEXT("PinAlertTip", "Toggle persistent pinned tracking."));
-		}        for(const auto& Alert:Snapshot.Alerts)if(Alert.bSnoozed){
-            const FString Id=FString::Printf(TEXT("HUD.AlertStack.Alert.%s.Snooze"),*SafeId(Alert.StableId));TSharedPtr<SHansaAction> Button;
-            AlertRows->AddSlot().AutoHeight().Padding(0,4)[SAssignNew(Button,SHansaAction).Compact(true).Preferences(Preferences)
-             .Label(FText::Format(LOCTEXT("RestoreAlert","Restore alert: {0}"),Alert.AffectedObject)).Reason(LOCTEXT("RestoreAlertTip","Show this snoozed alert again."))
-             .OnClicked(this,&SHansaRootHud::HandleAlertAction,Alert.StableId,EHansaHudAlertAction::Snooze)];
-            AlertSemanticWidgets.Add(Id,Button);Button->SetFocusHandler(FSimpleDelegate::CreateSP(this,&SHansaRootHud::RecordNativeFocus,FName(*Id)));
+    void SHansaRootHud::RefreshAlertContent(const FHansaHudPresentationSnapshot& Snapshot)
+    {
+        for (const auto& Alert : Snapshot.Alerts)
+        {
+            FString Safe = Alert.StableId.ToString(); Safe.ReplaceInline(TEXT("."), TEXT("_"));
+            const FString Base = TEXT("HUD.AlertStack.Alert.") + Safe;
+            const FText Reason = FText::Format(LOCTEXT("AlertCausalTip", "Cause: {0}\nEvidence: {1}\nNext step: {2}"), Alert.Causal.Cause, Alert.Causal.Evidence, Alert.Causal.Remedy);
+            if (const auto* Tracker = PinnedAlertTexts.Find(Alert.StableId))
+                (*Tracker)->SetText(FText::Format(LOCTEXT("PinnedTrackerRow", "{0} · {1}"), Alert.AffectedObject, Alert.Causal.Problem));
+            if (Alert.bSnoozed)
+                if (const auto* Widget = AlertSemanticWidgets.Find(Base + TEXT(".Snooze")); Widget && Widget->IsValid())
+                    StaticCastSharedPtr<SHansaAction>(Widget->Pin())->SetLabel(FText::Format(LOCTEXT("RestoreAlert","Restore: {0}"),Alert.AffectedObject));
+            if (auto* Card = AlertCards.Find(Alert.StableId))
+            {
+                const bool Critical = Alert.Causal.Severity == EHansaCausalSeverity::Critical;
+                const bool Warning = Alert.bWarning || Alert.Causal.Severity == EHansaCausalSeverity::Warning;
+                Card->Identity->SetText(Alert.AffectedObject);
+                Card->Age->SetText(Alert.Age); Card->Age->SetVisibility(EVisibility::Collapsed);
+                Card->Title->SetText(Alert.Label);
+                Card->Cause->SetText(Alert.Causal.Cause);
+                Card->Cause->SetVisibility(EVisibility::Collapsed);
+                Card->Icon->SetGlyph(Critical ? EUiGlyph::Error : Warning ? EUiGlyph::Warning : EUiGlyph::Information);
+                Card->Accent->SetBorderBackgroundColor(UHansaUiStyleLibrary::GetSeverityStyle(Critical ? EHansaUiSeverity::Critical : Warning ? EHansaUiSeverity::Warning : EHansaUiSeverity::Notice).AccentColor);
+            }
+            if (const auto* Widget = AlertSemanticWidgets.Find(Base + TEXT(".OpenCause")); Widget && Widget->IsValid())
+            {
+                const auto Button = StaticCastSharedPtr<SHansaAction>(Widget->Pin());
+                Button->SetToolTipText(Reason);
+                if (!AlertCards.Contains(Alert.StableId)) Button->SetLabel(FText::Format(LOCTEXT("CompactAlertDetails", "{0} · Details"), Alert.Label));
+            }
+            if (const auto* Widget = AlertSemanticWidgets.Find(Base); Widget && Widget->IsValid()) Widget->Pin()->SetToolTipText(Reason);
         }
-        if(!Restore.IsEmpty()){
-            const auto* Target=AlertSemanticWidgets.Find(Restore);
-            if(Target && Target->IsValid())FSlateApplication::Get().SetKeyboardFocus(Target->Pin(),EFocusCause::SetDirectly);
+    }
+
+    void SHansaRootHud::RebuildAlerts(const FHansaHudPresentationSnapshot& Snapshot)
+    {
+        if (PresentedAlerts == Snapshot.Alerts && AlertRows->NumSlots() > 0) return;
+        // Age and economic evidence change every simulation tick. They must never
+        // replace native buttons or restart layout, hover, tooltips and focus.
+        bool SameStructure = PresentedAlerts.Num() == Snapshot.Alerts.Num() && AlertRows->NumSlots() > 0;
+        for (int32 I = 0; SameStructure && I < Snapshot.Alerts.Num(); ++I)
+        {
+            const auto& A = PresentedAlerts[I]; const auto& B = Snapshot.Alerts[I];
+            SameStructure = A.StableId == B.StableId && A.GroupId == B.GroupId && A.bSnoozed == B.bSnoozed && A.bPinned == B.bPinned;
+        }
+        PresentedAlerts = Snapshot.Alerts;
+        if (SameStructure) { RefreshAlertContent(Snapshot); return; }
+        const float ScrollOffset = AlertScroll->GetScrollOffset();
+        FString Restore;
+        if (FSlateApplication::IsInitialized()) for (const auto& Pair : AlertSemanticWidgets)
+            if (Pair.Value.Pin() == FSlateApplication::Get().GetKeyboardFocusedWidget()) Restore = Pair.Key;
+        AlertRows->ClearChildren(); PinnedTrackerRows->ClearChildren(); AlertSemanticWidgets.Reset(); AlertCards.Reset(); PinnedAlertTexts.Reset(); AlertActionHosts.Reset();
+        auto SafeId = [](FName Id) { FString Value = Id.ToString(); Value.ReplaceInline(TEXT("."), TEXT("_")); return Value; };
+        auto RegisterAction = [this](const FString& Id, TSharedPtr<SHansaAction> Button)
+        {
+            AlertSemanticWidgets.Add(Id, Button);
+            Button->SetFocusHandler(FSimpleDelegate::CreateSP(this, &SHansaRootHud::RecordNativeFocus, FName(*Id)));
+        };
+        TArray<FName> Groups;
+        for (const auto& Alert : Snapshot.Alerts)
+        {
+            if (!Alert.bSnoozed) Groups.AddUnique(Alert.GroupId);
+            if (Alert.bPinned)
+            {
+                TSharedPtr<STextBlock> Tracker;
+                PinnedTrackerRows->AddSlot().AutoHeight().Padding(0, 4)
+                    [SAssignNew(Tracker,STextBlock).TextStyle(&DarkCaptionStyle).AutoWrapText(true)];
+                PinnedAlertTexts.Add(Alert.StableId,Tracker);
+            }
+        }
+        PinnedTrackersWidget->SetVisibility(PinnedTrackerRows->NumSlots() ? EVisibility::Visible : EVisibility::Collapsed);
+        for (const auto& Alert : Snapshot.Alerts)
+        {
+            if(Alert.bSnoozed)continue;
+            const FString Base=TEXT("HUD.AlertStack.Alert.")+SafeId(Alert.StableId);
+            auto& Card=AlertCards.Add(Alert.StableId);
+            TSharedPtr<SHansaAction> Main;
+            TSharedPtr<SVerticalBox> Details;
+            TSharedPtr<SBox> DetailBox;
+            auto DetailContent=SAssignNew(DetailBox,SBox).Visibility(EVisibility::Collapsed)
+                [SAssignNew(Details,SVerticalBox)];
+            TSharedPtr<SHansaAction> Expand;
+            auto Tablet=SNew(SHansaReferenceFrame).Padding(4)
+                [SNew(SVerticalBox)
+                 +SVerticalBox::Slot().AutoHeight()
+                 [SNew(SHorizontalBox)
+                  +SHorizontalBox::Slot().FillWidth(1)
+                  [SAssignNew(Main,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences)
+                   .OnClicked(this,&SHansaRootHud::HandleAlertAction,Alert.StableId,EHansaHudAlertAction::OpenCause)
+                   [SNew(SHorizontalBox)
+                    +SHorizontalBox::Slot().AutoWidth().Padding(0,0,8,0)
+                    [SAssignNew(Card.Accent,SBorder).BorderImage(FCoreStyle::Get().GetBrush(TEXT("WhiteBrush"))).Padding(6)
+                     [SAssignNew(Card.Icon,SHansaGlyph).Size(32).OnDark(true)]]
+                    +SHorizontalBox::Slot().FillWidth(1).VAlign(VAlign_Center)
+                    [SNew(SVerticalBox)
+                     +SVerticalBox::Slot().AutoHeight()[SAssignNew(Card.Title,STextBlock).TextStyle(&DarkDataStyle).AutoWrapText(true)]
+                     +SVerticalBox::Slot().AutoHeight()[SAssignNew(Card.Identity,STextBlock).TextStyle(&DarkCaptionStyle).AutoWrapText(true)]]]]
+                  +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+                  [SAssignNew(Expand,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences)
+                   .Reason(LOCTEXT("AlertOptions","Show alert actions"))
+                   .OnClicked_Lambda([DetailBox]{DetailBox->SetVisibility(DetailBox->GetVisibility()==EVisibility::Collapsed?EVisibility::Visible:EVisibility::Collapsed);return FReply::Handled();})
+                   [SNew(SHansaGlyph).Glyph(EUiGlyph::Down).Size(20)]]]
+                 +SVerticalBox::Slot().AutoHeight()[DetailContent]];
+            Card.Age=SNew(STextBlock);Card.Cause=SNew(STextBlock);
+            AlertRows->AddSlot().AutoHeight().Padding(0,0,0,8)[Tablet];
+            RegisterAction(Base+TEXT(".OpenCause"),Main);
+            RegisterAction(Base+TEXT(".Options"),Expand); AlertActionHosts.Add(Base+TEXT(".Options"),DetailBox);
+            AlertSemanticWidgets.Add(Base,Tablet);
+            AlertSemanticWidgets.Add(TEXT("HUD.AlertStack.Group.")+SafeId(Alert.GroupId),Tablet);
+            for(const auto& Action : {TPair<const TCHAR*,EHansaHudAlertAction>(TEXT("Frame"),EHansaHudAlertAction::Frame),
+                {TEXT("Snooze"),EHansaHudAlertAction::Snooze},{TEXT("Pin"),EHansaHudAlertAction::Pin}})
+            {
+                TSharedPtr<SHansaAction> Button;
+                const FText Label=Action.Value==EHansaHudAlertAction::Frame?LOCTEXT("AlertLocate","Locate"):
+                    Action.Value==EHansaHudAlertAction::Snooze?LOCTEXT("SnoozeAlert","Snooze"):LOCTEXT("PinAlert","Pin");
+                Details->AddSlot().AutoHeight()
+                    [SAssignNew(Button,SHansaAction).Compact(true).Preferences(Preferences).Label(Label)
+                     .OnClicked(this,&SHansaRootHud::HandleAlertAction,Alert.StableId,Action.Value)];
+                RegisterAction(Base+TEXT(".")+Action.Key,Button);
+                AlertActionHosts.Add(Base+TEXT(".")+Action.Key,DetailBox);
+            }
+        }
+        for (const auto& Alert : Snapshot.Alerts) if (Alert.bSnoozed)
+        {
+            TSharedPtr<SHansaAction> Button;
+            AlertRows->AddSlot().AutoHeight().Padding(0,4)
+            [SAssignNew(Button,SHansaAction).Kind(EHansaUiButtonStyle::Icon).Compact(true).Preferences(Preferences)
+                .Label(FText::Format(LOCTEXT("RestoreAlert","Restore: {0}"),Alert.AffectedObject)).Reason(LOCTEXT("RestoreAlertTip","Show this snoozed alert again."))
+                .OnClicked(this,&SHansaRootHud::HandleAlertAction,Alert.StableId,EHansaHudAlertAction::Snooze)];
+            RegisterAction(TEXT("HUD.AlertStack.Alert.") + SafeId(Alert.StableId) + TEXT(".Snooze"),Button);
+        }
+        if (Snapshot.Alerts.IsEmpty()) AlertRows->AddSlot().AutoHeight().Padding(8)
+            [SNew(STextBlock).Text(LOCTEXT("NoAlerts","No current alerts.")).TextStyle(&DarkBodyStyle).AutoWrapText(true)];
+        RefreshAlertContent(Snapshot);
+        AlertScroll->SetScrollOffset(ScrollOffset);
+        if (!Restore.IsEmpty())
+        {
+            const auto* Target = AlertSemanticWidgets.Find(Restore);
+            if (Target && Target->IsValid()) FSlateApplication::Get().SetKeyboardFocus(Target->Pin(),EFocusCause::SetDirectly);
             else FocusSemanticId(TEXT("HUD.AlertStack.Toggle"));
         }
-        if(Snapshot.Alerts.IsEmpty())AlertRows->AddSlot().AutoHeight()[SNew(STextBlock).Text(LOCTEXT("NoAlerts","No current alerts.")).TextStyle(&LightBodyStyle).AutoWrapText(true)];
-
-	}
+    }
 
 	void SHansaRootHud::RebuildNotifications(const FHansaHudPresentationSnapshot& Snapshot)
 	{
@@ -1043,10 +1081,12 @@ BuildTopMenu()
 
 	bool SHansaRootHud::ActivateSemanticId(const FString& SemanticId)
 	{
+        if(MinimapWidget && SemanticId.StartsWith(TEXT("HUD.Minimap")))return MinimapWidget->Activate(SemanticId);
         if(SemanticId==TEXT("HUD.TopStatus.Session"))return HandleSessionOpen().IsEventHandled();
         if(SemanticId.StartsWith(TEXT("Session.Help."))&&SessionCoach){const bool Done=SessionCoach->ActivateSemanticId(SemanticId);if(Done){const auto Order=GetControllerFocusOrder();if(!Order.IsEmpty())FocusSemanticId(Order[0]);}return Done;}
 
-		if(SemanticId.StartsWith(TEXT("HUD.AlertStack.Alert.")) && (!Model.IsValid() || !Model->GetSnapshot().bAlertStackExpanded || !AlertSemanticWidgets.Contains(SemanticId)))return false;
+		if(SemanticId.EndsWith(TEXT(".Options"))){if(auto* Host=AlertActionHosts.Find(SemanticId)){(*Host)->SetVisibility((*Host)->GetVisibility()==EVisibility::Collapsed?EVisibility::Visible:EVisibility::Collapsed);return true;}}
+        if(SemanticId.StartsWith(TEXT("HUD.AlertStack.Alert.")) && (!Model.IsValid() || !Model->GetSnapshot().bAlertStackExpanded || !AlertSemanticWidgets.Contains(SemanticId)))return false;
 		if (SaveLoadWidget.IsValid() && SaveLoadModel.IsValid() && SaveLoadModel->GetSnapshot().bOpen)
 		{
 			return SaveLoadWidget->ActivateSemanticId(SemanticId);
@@ -1124,7 +1164,9 @@ BuildTopMenu()
 		if (Found == nullptr) Found = SemanticWidgets.Find(SemanticId);
 		const TSharedPtr<SWidget> Widget = Found != nullptr ? Found->Pin() : nullptr;
 		if (!Widget.IsValid() || !Widget->IsEnabled() || !GetControllerFocusOrder().Contains(SemanticId)) return false;
-		if(AlertSemanticWidgets.Contains(SemanticId))AlertScroll->ScrollDescendantIntoView(Widget,false,EDescendantScrollDestination::IntoView);
+		if(!SemanticId.EndsWith(TEXT(".Options")))if(auto* Host=AlertActionHosts.Find(SemanticId))(*Host)->SetVisibility(EVisibility::Visible);
+        if(UtilityMenu && (SemanticId==TEXT("HUD.TopStatus.Session")||SemanticId==TEXT("HUD.TopStatus.SaveLoad")||SemanticId==TEXT("HUD.TopStatus.TradeMap")))UtilityMenu->SetIsOpen(true);
+        if(AlertSemanticWidgets.Contains(SemanticId))AlertScroll->ScrollDescendantIntoView(Widget,false,EDescendantScrollDestination::IntoView);
 		if (UHansaHudPresentationModel* PinnedModel = Model.Get()) PinnedModel->SetFocusedSemanticId(FName(*SemanticId));
 		if (FSlateApplication::IsInitialized()) FSlateApplication::Get().SetKeyboardFocus(Widget, EFocusCause::SetDirectly);
 		return true;
@@ -1159,7 +1201,7 @@ BuildTopMenu()
 				if (!Pinned->GetSnapshot().bAlertStackExpanded) continue;
 				FString SafeAlertId = Alert.StableId.ToString(); SafeAlertId.ReplaceInline(TEXT("."), TEXT("_"));
 				const FString Base = FString::Printf(TEXT("HUD.AlertStack.Alert.%s"), *SafeAlertId);
-				for(const FString& Id:{Base+TEXT(".Frame"),Base+TEXT(".OpenCause"),Base+TEXT(".Snooze"),Base+TEXT(".Pin")})if(AlertSemanticWidgets.Contains(Id))Result.Add(Id);
+				for(const FString& Id:{Base+TEXT(".OpenCause"),Base+TEXT(".Options"),Base+TEXT(".Frame"),Base+TEXT(".Snooze"),Base+TEXT(".Pin")})if(AlertSemanticWidgets.Contains(Id))Result.Add(Id);
 			}
 		}
 		if (CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen && CityOverviewWidget.IsValid())
@@ -1178,7 +1220,8 @@ BuildTopMenu()
 		{
 			Result.Append(BuildMenuWidget->GetControllerFocusOrder());
 		}
-		return WithCoach(Result);
+		if(MinimapWidget)for(const TCHAR* Id:{TEXT("HUD.Minimap"),TEXT("HUD.Minimap.ZoomIn"),TEXT("HUD.Minimap.ZoomOut"),TEXT("HUD.Minimap.Overlay"),TEXT("HUD.Minimap.Center")})Result.Add(Id);
+        return WithCoach(Result);
 	}
 
 	FReply SHansaRootHud::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
@@ -1196,6 +1239,7 @@ BuildTopMenu()
 			if (TradeMapModel.IsValid() && TradeMapModel->GetSnapshot().bOpen) return ActivateSemanticId(TEXT("TradeMap.Close")) ? FReply::Handled() : FReply::Unhandled();
 			if (CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen) return ActivateSemanticId(TEXT("CityOverview.Close")) ? FReply::Handled() : FReply::Unhandled();
 			if (InspectorModel.IsValid() && InspectorModel->GetSnapshot().bOpen) return ActivateSemanticId(TEXT("Inspector.Close")) ? FReply::Handled() : FReply::Unhandled();
+			if (BuildModel.IsValid() && BuildModel->GetSnapshot().bDemolitionMode) { BuildModel->CancelIntent(); return FReply::Handled(); }
 			if (BuildModel.IsValid() && BuildModel->GetSnapshot().bOpen) { BuildModel->SetOpen(false); return FReply::Handled(); }
 			return HandleSessionOpen();
 		}
@@ -1265,6 +1309,8 @@ BuildTopMenu()
 
 		Add(TEXT("HUD.Root"), TEXT(""), TEXT("Main HUD"), EHansaHudSemanticRole::Screen);
 		Add(TEXT("HUD.TopStatus"), TEXT("HUD.Root"), TEXT("Top status"), EHansaHudSemanticRole::Panel);
+        Add(TEXT("HUD.TopStatus.Influence"),TEXT("HUD.TopStatus"),TEXT("Influence"),EHansaHudSemanticRole::Status,false,false,TEXT("availability"),TEXT("unavailable"));
+        if(MinimapWidget)for(const TCHAR* Id:{TEXT("HUD.Minimap"),TEXT("HUD.Minimap.ZoomIn"),TEXT("HUD.Minimap.ZoomOut"),TEXT("HUD.Minimap.Overlay"),TEXT("HUD.Minimap.Center")})Add(Id,TEXT("HUD.Root"),Id,EHansaHudSemanticRole::Button,true,true);
         Add(TEXT("HUD.TopStatus.LeftPanel"),TEXT("HUD.TopStatus"),TEXT("Player and city"),EHansaHudSemanticRole::Panel);
         Add(TEXT("HUD.TopStatus.CenterPanel"),TEXT("HUD.TopStatus"),TEXT("City production and citizens"),EHansaHudSemanticRole::Panel);
         Add(TEXT("HUD.TopStatus.RightPanel"),TEXT("HUD.TopStatus"),TEXT("Speed and navigation"),EHansaHudSemanticRole::Panel);
@@ -1272,8 +1318,8 @@ BuildTopMenu()
 		Add(TEXT("HUD.TopStatus.MoneyTrend"), TEXT("HUD.TopStatus.Money"), TEXT("Money trend"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), State.MoneyTrend.ToString());
 		Add(TEXT("HUD.TopStatus.Population"), TEXT("HUD.TopStatus"), TEXT("Population"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), State.Population.ToString());
 		Add(TEXT("HUD.TopStatus.Workforce"), TEXT("HUD.TopStatus"), TEXT("Laborers"), EHansaHudSemanticRole::Status, false, false, TEXT("text"), State.Workforce.ToString());
-        Add(TEXT("HUD.TopStatus.WealthyCitizens"),TEXT("HUD.TopStatus"),TEXT("Wealthy citizens"),EHansaHudSemanticRole::Status,false,false,TEXT("text"),State.WealthyCitizens.ToString());
-        for(int32 I=0;I<FMath::Min(3,State.TopProducts.Num());++I)Add(FString::Printf(TEXT("HUD.TopStatus.Product.%d"),I+1),TEXT("HUD.TopStatus"),State.TopProducts[I].GoodId.ToString(),EHansaHudSemanticRole::Status,false,false,TEXT("text"),State.TopProducts[I].Value.ToString());
+        Add(TEXT("HUD.TopStatus.WealthyCitizens"),TEXT("HUD.TopStatus"),TEXT("Artisans"),EHansaHudSemanticRole::Status,false,false,TEXT("text"),State.WealthyCitizens.ToString());
+        for(int32 I=0;I<FMath::Min(3,State.TopProducts.Num());++I)Add(FString::Printf(TEXT("HUD.TopStatus.Product.%d"),I+1),TEXT("HUD.TopStatus"),State.TopProducts[I].GoodId.ToString(),EHansaHudSemanticRole::Status,false,false,TEXT("text"),State.TopProducts[I].Value.ToString(),false,false,false);
 		Add(TEXT("HUD.TopStatus.CityBreadcrumb"), TEXT("HUD.TopStatus"), TEXT("Selected city"), EHansaHudSemanticRole::Text, false, false, TEXT("text"), State.CityBreadcrumb.ToString());
 		const bool bCityOverviewOpen = CityOverviewModel.IsValid() && CityOverviewModel->GetSnapshot().bOpen;
 		Add(TEXT("HUD.TopStatus.CityOverview"), TEXT("HUD.TopStatus"), TEXT("Open City Overview"), EHansaHudSemanticRole::Button, true, true, TEXT("open"), bCityOverviewOpen ? TEXT("true") : TEXT("false"), bCityOverviewOpen);
@@ -1312,7 +1358,8 @@ BuildTopMenu()
 					false, false, TEXT("count"), FString::FromInt(Count), false, Alert.bWarning, State.bAlertStackExpanded && Count > 0);
 			}
 			const FString AlertId = FString::Printf(TEXT("HUD.AlertStack.Alert.%s"), *SafeAlertId);
-			const bool bCritical = Alert.Causal.Severity == EHansaCausalSeverity::Critical;
+			Add(AlertId+TEXT(".Options"),AlertId,TEXT("Alert actions"),EHansaHudSemanticRole::Button,true,true,TEXT("action"),TEXT("expand"),false,false,State.bAlertStackExpanded&&!Alert.bSnoozed);
+            const bool bCritical = Alert.Causal.Severity == EHansaCausalSeverity::Critical;
 			const FString Value = FString::Printf(TEXT("severity=%s;age=%s;object=%s;cause=%s;remedy=%s;snoozed=%s;pinned=%s"),
 				bCritical ? TEXT("critical") : Alert.bWarning ? TEXT("warning") : TEXT("notice"), *Alert.Age.ToString(), *Alert.AffectedObject.ToString(),
 				*Alert.Causal.Cause.ToString(), *Alert.Causal.Remedy.ToString(), Alert.bSnoozed ? TEXT("true") : TEXT("false"), Alert.bPinned ? TEXT("true") : TEXT("false"));
@@ -1324,12 +1371,12 @@ BuildTopMenu()
 			{
 				Add(AlertId + TEXT(".") + Action.Key, Alert.bSnoozed?FString(TEXT("HUD.AlertStack")):AlertId, Alert.bSnoozed?TEXT("Restore alert"):Action.Key, EHansaHudSemanticRole::Button, true, true,
 					TEXT("alert-action"), Action.Key, Action.Value == EHansaHudAlertAction::Pin && Alert.bPinned, Alert.bWarning,
-					State.bAlertStackExpanded && AlertSemanticWidgets.Contains(AlertId+TEXT(".")+Action.Key), bCritical);
+					State.bAlertStackExpanded && AlertSemanticWidgets.Contains(AlertId+TEXT(".")+Action.Key) && (!AlertActionHosts.Contains(AlertId+TEXT(".")+Action.Key) || AlertActionHosts[AlertId+TEXT(".")+Action.Key]->GetVisibility().IsVisible()), bCritical);
 			}
 		}
 		int32 PinnedCount = 0;
 		for (const FHansaHudAlertPresentation& Alert : State.Alerts) PinnedCount += Alert.bPinned ? 1 : 0;
-		Add(TEXT("HUD.PinnedTrackers"), TEXT("HUD.AlertStack"), TEXT("Pinned tracking"), EHansaHudSemanticRole::Panel, false, false, TEXT("count"), FString::FromInt(PinnedCount), false, false, PinnedCount > 0);
+		Add(TEXT("HUD.PinnedTrackers"), TEXT("HUD.AlertStack"), TEXT("Pinned tracking"), EHansaHudSemanticRole::Panel, false, false, TEXT("count"), FString::FromInt(PinnedCount), false, false, State.bAlertStackExpanded && PinnedCount > 0);
 		for (const FHansaHudAlertPresentation& Alert : State.Alerts) if (Alert.bPinned)
 		{
 			FString SafeAlertId = Alert.StableId.ToString(); SafeAlertId.ReplaceInline(TEXT("."), TEXT("_"));

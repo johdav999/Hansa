@@ -66,6 +66,7 @@ UHansaFrontendPresentationModel* GetFrontendPresentationModel() const {return Fr
 private:
     UFUNCTION() void HandleRostockShown();
     void RefreshRostockPresentation();
+	bool InspectRostockTradeStation();
     void PublishCityVisit();
     void CancelCityVisit();
     FName SelectedRostockRole;
@@ -75,6 +76,8 @@ private:
     FTimerHandle CityVisitTimeout;
     Hansa::Game::FHansaStrategyCameraState HomeView;
     UPROPERTY(Transient) TObjectPtr<class ULevelStreamingDynamic> RostockLevel;
+    UPROPERTY(Transient) TObjectPtr<AActor> RostockTradeStationPresentation;
+	int64 SelectedTradeStationValue = 0;
 public:
     UFUNCTION(BlueprintCallable, Category="Hansa|World|Cargo") bool InspectCargo(FName SemanticId);
 private:

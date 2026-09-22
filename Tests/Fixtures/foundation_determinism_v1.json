@@ -25,7 +25,14 @@
   "expected": {
     "processedCommandCount": 2,
     "finalTick": 6,
-    "finalChecksum": "B321103452ABE908",
+    "finalChecksum": "2E3FB0BDDBD88A2C",
     "fingerprintVersion": 20
+  },
+  "expectedV28Command11": {
+    "processedCommandCount": 2,
+    "finalTick": 6,
+    "finalChecksum": "E31D1E3C056652E6",
+    "fingerprintVersion": 28,
+    "commandSchemaVersion": 11
   }
 }

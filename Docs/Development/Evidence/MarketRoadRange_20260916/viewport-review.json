@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "captures": [
+    {
+      "file": "Docs\\Images\\UI\\MarketRange\\market-range-1280x720-missing.png",
+      "nativeDimensions": [
+        1280,
+        720
+      ],
+      "sha256": "da9045827e8248f1e3cd5933a2f07c639bc15212132dc368d0681f568437c28d",
+      "visualReview": "warning clear above roof and matching inspector text"
+    },
+    {
+      "file": "Docs\\Images\\UI\\MarketRange\\market-range-1280x720-recovered.png",
+      "nativeDimensions": [
+        1280,
+        720
+      ],
+      "sha256": "5da46bc70c8cff4e301cb8b5751edc5402046449e6a2254e30e6b310f4b699ea",
+      "visualReview": "market built, warning hidden, ordinary production status restored"
+    },
+    {
+      "file": "Docs\\Images\\UI\\MarketRange\\market-range-1920x1080-missing.png",
+      "nativeDimensions": [
+        1920,
+        1080
+      ],
+      "sha256": "ef1bd1bc094a113dcd94b88b95888f51cd164a61873023370d58f5ef5ecd14e4",
+      "visualReview": "warning clear above roof and matching inspector text"
+    },
+    {
+      "file": "Docs\\Images\\UI\\MarketRange\\market-range-1920x1080-recovered.png",
+      "nativeDimensions": [
+        1920,
+        1080
+      ],
+      "sha256": "de19115ff302cc12ea2491756facd6535ce802ff2e1b147b3eac645b8aef0904",
+      "visualReview": "market built, warning hidden, ordinary production status restored"
+    }
+  ],
+  "test": "Hansa.UI.MarketRange.RealViewport",
+  "method": "real game, ordinary placement commands, native Slate viewport screenshots; no resampling"
+}

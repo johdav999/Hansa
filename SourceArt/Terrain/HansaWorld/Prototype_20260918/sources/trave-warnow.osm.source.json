@@ -1,0 +1,9 @@
+{
+  "url": "https://overpass-api.de/api/interpreter",
+  "query": "[out:json][timeout:90];way[waterway=river][name~\"^(Trave|Warnow)$\"](52,8,55,14);out geom;",
+  "accessed_utc": "2026-09-18T05:54:33.390612+00:00",
+  "sha256": "3ff1d91371b9535c22e00ae0e7f431533733fa07d39741b7681369875f009e79",
+  "license": "ODbL 1.0",
+  "attribution": "\u00a9 OpenStreetMap contributors",
+  "license_url": "https://www.openstreetmap.org/copyright"
+}

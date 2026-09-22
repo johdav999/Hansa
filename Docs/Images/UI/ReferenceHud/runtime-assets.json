@@ -1,0 +1,156 @@
+{
+  "generation": "built-in ImageGen",
+  "use": "individual Slate brush art; native layout/text",
+  "assets": [
+    {
+      "path": "Content/Hansa/UI/Icons/Season--112.png",
+      "width": 112,
+      "height": 112,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--16.png",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--160.png",
+      "width": 160,
+      "height": 160,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--20.png",
+      "width": 20,
+      "height": 20,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--24.png",
+      "width": 24,
+      "height": 24,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--28.png",
+      "width": 28,
+      "height": 28,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--32.png",
+      "width": 32,
+      "height": 32,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--40.png",
+      "width": 40,
+      "height": 40,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--48.png",
+      "width": 48,
+      "height": 48,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--56.png",
+      "width": 56,
+      "height": 56,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--64.png",
+      "width": 64,
+      "height": 64,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--80.png",
+      "width": 80,
+      "height": 80,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/Icons/Season--96.png",
+      "width": 96,
+      "height": 96,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner0--28.png",
+      "width": 28,
+      "height": 28,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner0--40.png",
+      "width": 40,
+      "height": 40,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner0--56.png",
+      "width": 56,
+      "height": 56,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner1--28.png",
+      "width": 28,
+      "height": 28,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner1--40.png",
+      "width": 40,
+      "height": 40,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner1--56.png",
+      "width": 56,
+      "height": 56,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner2--28.png",
+      "width": 28,
+      "height": 28,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner2--40.png",
+      "width": 40,
+      "height": 40,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner2--56.png",
+      "width": 56,
+      "height": 56,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner3--28.png",
+      "width": 28,
+      "height": 28,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner3--40.png",
+      "width": 40,
+      "height": 40,
+      "mode": "RGBA"
+    },
+    {
+      "path": "Content/Hansa/UI/ReferenceHud/Corner3--56.png",
+      "width": 56,
+      "height": 56,
+      "mode": "RGBA"
+    }
+  ]
+}

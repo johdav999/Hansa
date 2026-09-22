@@ -55,7 +55,7 @@ public:
 	UClass* LoadPresentationActorClass() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trade", meta = (
-		DisplayName = "Route mode", ToolTip = "Network mode this vehicle can traverse.",
+		DisplayName = "Route mode", ToolTip = "Network mode this vehicle can traverse. The starting sea Cog also explores connected surveyed water; the shared navigation validator reserves four metres of lateral beam clearance on the four-metre map grid.",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
 		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "Enum"))
 	EHansaAuthoredRouteMode Mode = EHansaAuthoredRouteMode::Sea;
@@ -68,7 +68,7 @@ public:
 	int64 CargoCapacityMilliUnits = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trade", meta = (
-		DisplayName = "Travel upkeep", ToolTip = "Operating cost charged for each tick spent traveling.", ClampMin = "0",
+		DisplayName = "Travel upkeep", ToolTip = "Operating cost charged for each tick spent traveling, including player-ordered water exploration. Returning to the starting berth is required before route activation.", ClampMin = "0",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
 		HansaMigration = "Compatible", HansaSerialization = "Included", HansaValidation = "NonNegative",
 		HansaUnit = "PfennigPerTravelTick", HansaMin = "0", HansaMax = "1000000000"))
@@ -102,7 +102,7 @@ public:
 	TArray<FHansaRouteConnectionDefinition> Connections;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trade|Advanced", meta = (
-		DisplayName = "Cargo-rule schema", ToolTip = "Reserved schema version for future conditional cargo rules; MVP supports unconditional actions only.",
+		DisplayName = "Cargo-rule schema", ToolTip = "Unconditional cargo rules. Saved Load/Unload retain legacy market settlement; StationLoad/StationUnload transfer owned station stock, and OwnedCityLoad/OwnedCityUnload transfer home stock without settlement. Targets use stable owner and city identities; station actions require active RouteAccess and LocalStorage capabilities.",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "false", HansaAIAccess = "Read",
 		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "ExactOne",
 		HansaUnit = "Version", HansaMin = "1", HansaMax = "1"))

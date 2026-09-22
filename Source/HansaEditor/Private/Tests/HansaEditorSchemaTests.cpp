@@ -1,6 +1,7 @@
 #include "Tests/HansaEditorSchemaTestDefinitions.h"
 
 #include "Definitions/HansaFoundationSampleDefinition.h"
+#include "Definitions/HansaScenarioDefinitions.h"
 #include "Editor.h"
 #include "Misc/AutomationTest.h"
 #include "Misc/FileHelper.h"
@@ -28,6 +29,27 @@ namespace Hansa::Editor::Tests
 		Text.ReplaceInline(TEXT("\r\n"), TEXT("\n"));
 		return Text;
 	}
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FHansaMultiplayerScenarioSchemaTest,
+	"Hansa.Architecture.Authoring.MultiplayerScenarioSchema",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaMultiplayerScenarioSchemaTest::RunTest(const FString& Parameters)
+{
+	FHansaEditorSchemaRegistry Registry;
+	const FHansaDefinitionClassSchema Schema = Registry.BuildSchemaForClass(UHansaScenarioDefinition::StaticClass());
+	TestTrue(TEXT("Scenario multiplayer metadata is complete"), Schema.IsValid());
+	const FHansaEditorSchemaProperty* Slots = Schema.Properties.FindByPredicate([](const FHansaEditorSchemaProperty& Property)
+	{
+		return Property.Name == GET_MEMBER_NAME_STRING_CHECKED(UHansaScenarioDefinition, MultiplayerSlots);
+	});
+	TestNotNull(TEXT("Multiplayer slots are available to generic authoring and export"), Slots);
+	const FString Json = Registry.ExportJsonSchema(Schema);
+	TestTrue(TEXT("Generated/imported schema contains multiplayer slots"), Json.Contains(TEXT("\"MultiplayerSlots\"")));
+	TestTrue(TEXT("Scenario schema version advances for slot migration"), Json.Contains(TEXT("Hansa.ScenarioDefinition")));
+	return !HasAnyErrors();
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(

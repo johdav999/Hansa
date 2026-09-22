@@ -172,7 +172,7 @@ public:
             Test->TestTrue(TEXT("Direct sunlight remains in the softer Baltic midday band"),ActiveSun->Intensity>=14000.f&&ActiveSun->Intensity<=16000.f);
             Test->TestEqual(TEXT("Production contact shadows remain disabled"),ActiveSun->ContactShadowLength,0.f);
         }
-        if(ActiveSky)Test->TestTrue(TEXT("Production skylight provides the stronger cool fill"),ActiveSky->Intensity>=1.7f&&ActiveSky->Intensity<=1.9f);
+        if(ActiveSky)Test->TestTrue(TEXT("Production skylight provides the stronger cool fill"),ActiveSky->Intensity>=1900.f&&ActiveSky->Intensity<=2100.f);
 		const Hansa::Game::LubeckWorldArt::FHansaLightingState ExpectedLighting=
 			Hansa::Game::LubeckWorldArt::EvaluateLighting(Calendar,Fraction,MinutesPerTick);
 		Test->TestEqual(TEXT("Final camera consumes the continuous EV100 curve"),Camera->Camera->PostProcessSettings.AutoExposureMinBrightness,ExpectedLighting.ExposureEV100);

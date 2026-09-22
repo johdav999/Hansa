@@ -64,11 +64,21 @@
     "full_projection_resynchronized",
     "native_screenshots_captured"
   ],
-  "expectedFinalAuthoritativeHash": "2b9e8957c51b7c0e",
+  "expectedFinalAuthoritativeHash": "82d2956bb00d338b",
   "evidence": {
-    "logs": ["server", "client1", "client2", "client2-reconnect"],
+    "logs": [
+      "server",
+      "client1",
+      "client2",
+      "client2-reconnect"
+    ],
     "correlations": true,
-    "nativeScreenshotSizes": ["1280x720", "1920x1080"],
+    "nativeScreenshotSizes": [
+      "1280x720",
+      "1920x1080"
+    ],
     "postCaptureResized": false
-  }
+  },
+  "expectedFinalAuthoritativeHashV28Command11": "7d2c59fd78e1a566",
+  "fingerprintTransitionTR05": "Fingerprint 28 includes station orders; command schema 11 changes retained command fingerprints even when no orders exist. The original v27/command10 golden remains preserved above."
 }

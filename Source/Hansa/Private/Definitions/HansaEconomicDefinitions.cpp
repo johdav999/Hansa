@@ -1,4 +1,6 @@
 #include "Definitions/HansaEconomicDefinitions.h"
+#include "Definitions/HansaResidentialCompoundDefinition.h"
+#include "World/HansaCompoundPresentation.h"
 #include "GameFramework/Actor.h"
 
 #include "Model/HansaIds.h"
@@ -123,6 +125,7 @@ void UHansaGoodDefinition::AppendDefinitionHashData(FString& InOutCanonicalData)
 		PriceElasticityBasisPoints,
 		SpoilageBasisPointsPerDay,
 		*Icon.ToSoftObjectPath().ToString());
+    if (bSpoilageEnabled) InOutCanonicalData += TEXT("|spoilage-enabled=1");
 }
 
 UHansaRecipeDefinition::UHansaRecipeDefinition()
@@ -182,6 +185,7 @@ void UHansaRecipeDefinition::AppendDefinitionHashData(FString& InOutCanonicalDat
 		ArtisanWorkforce,
 		bDeclaredSource ? 1 : 0,
 		bDeclaredSink ? 1 : 0);
+    if (!InternalCatchRecipeId.IsEmpty()) InOutCanonicalData += TEXT("|internal-catch=") + InternalCatchRecipeId;
 }
 
 UHansaBuildingDefinition::UHansaBuildingDefinition()
@@ -192,8 +196,15 @@ UHansaBuildingDefinition::UHansaBuildingDefinition()
 	PresentationMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Engine/BasicShapes/Cube.Cube")));
 }
 
+UHansaResidentialCompoundDefinition* UHansaBuildingDefinition::LoadResidentialCompound() const
+{
+ const FString Path=ResidentialCompound.ToSoftObjectPath().ToString();
+ if(Path.Contains(TEXT("/Developer/"))||Path.Contains(TEXT("/Generated/Staging/")))return nullptr;
+ return ResidentialCompound.LoadSynchronous();
+}
 UClass* UHansaBuildingDefinition::LoadPresentationActorClass() const
 {
+ if(!ResidentialCompound.IsNull())return AHansaCompoundPresentation::StaticClass();
 	const FString Path = PresentationActorClass.ToSoftObjectPath().ToString();
 	if (Path.Contains(TEXT("/Generated/Staging/")) || Path.Contains(TEXT("/Developer/"))) return nullptr;
 	UClass* Class = PresentationActorClass.LoadSynchronous();
@@ -270,7 +281,13 @@ void UHansaBuildingDefinition::ValidateDefinition(TArray<FHansaDefinitionValidat
 			NSLOCTEXT("HansaEconomicDefinition", "BuildingConstructionOrder", "A visible construction card requires a non-negative menu order."),
 			NSLOCTEXT("HansaEconomicDefinition", "BuildingConstructionOrderRemedy", "Assign a stable zero-based order within its category or chain."));
 	}
-	const bool bProductionCard = bShowInConstructionMenu && ConstructionMenuCategory == EHansaConstructionMenuCategory::Production;
+	if (!StaticEnum<EHansaConstructionTier>()->IsValidEnumValue(static_cast<int64>(ConstructionTier)))
+    {
+        AddIssue(OutIssues, TEXT("HSA-BUILDING-CONSTRUCTION-TIER"), TEXT("ConstructionTier"),
+            NSLOCTEXT("HansaEconomicDefinition", "InvalidConstructionTier", "Construction tier is invalid."),
+            NSLOCTEXT("HansaEconomicDefinition", "InvalidConstructionTierRemedy", "Select Day Laborers, Craftsmen, Merchants or the legacy compatibility value."));
+    }
+    const bool bProductionCard = bShowInConstructionMenu && ConstructionMenuCategory == EHansaConstructionMenuCategory::Production;
 	const bool bHasChain = !ConstructionChainOutputGoodId.IsEmpty();
 	if (bProductionCard != bHasChain || (bHasChain &&
 		(!HasValidDomain(ConstructionChainOutputGoodId, TEXT("Good")) || ConstructionChainStage < 1 ||
@@ -288,6 +305,12 @@ void UHansaBuildingDefinition::ValidateDefinition(TArray<FHansaDefinitionValidat
 			NSLOCTEXT("HansaEconomicDefinition", "BuildingConstructionTechnology", "The construction unlock is not a canonical Technology.* identity."),
 			NSLOCTEXT("HansaEconomicDefinition", "BuildingConstructionTechnologyRemedy", "Reference an existing Technology.* definition or leave the field empty."));
 	}
+ if (MaximumMarketRoadDistanceCells < 2 || MaximumMarketRoadDistanceCells > 4096)
+ {
+  AddIssue(OutIssues, TEXT("HSA-BUILDING-MARKET-RANGE"), TEXT("MaximumMarketRoadDistanceCells"),
+   NSLOCTEXT("HansaEconomicDefinition", "MarketRange", "Market road distance must be between 2 and 4096 cells."),
+   NSLOCTEXT("HansaEconomicDefinition", "MarketRangeRemedy", "Set a bounded road-distance limit, including both entrance steps."));
+ }
 	if (bProvidesMarketAccess && (!bRequiresRoad || StorageCapacityMilliUnits <= 0))
 	{
 		AddIssue(OutIssues, TEXT("HSA-BUILDING-013"), TEXT("bProvidesMarketAccess"),
@@ -300,7 +323,20 @@ void UHansaBuildingDefinition::ValidateDefinition(TArray<FHansaDefinitionValidat
 			NSLOCTEXT("HansaEconomicDefinition", "ProductionRoadAccessContract", "A production building must require road access so its external input and output transfers use a physical market network."),
 			NSLOCTEXT("HansaEconomicDefinition", "ProductionRoadAccessRemedy", "Enable Requires road, then connect the completed building to an operational market."));
 	}
-	if (PresentationMesh.IsNull() && PresentationActorClass.IsNull())
+ if (!ResidentialCompound.IsNull())
+ {
+  const auto* Compound=LoadResidentialCompound();
+  if(!Compound || Compound->FootprintWidthCells!=FootprintWidthCells || Compound->FootprintHeightCells!=FootprintHeightCells ||
+    Compound->PopulationTierId!=ResidentPopulationTierId || ResidenceCapacity<=0 || !bRequiresRoad || CompoundStage<1 || CompoundStage>3 || !PresentationActorClass.IsNull())
+   AddIssue(OutIssues,TEXT("HSA-BUILDING-COMPOUND"),TEXT("ResidentialCompound"),FText::FromString(TEXT("Compound must resolve, match the logical footprint and resident tier, require a road and replace the optional actor class.")),FText::FromString(TEXT("Author a larger building footprint explicitly; never shrink child meshes or expand occupied legacy parcels silently.")));
+  if(Compound)
+  {
+   Compound->ValidateDefinition(OutIssues);
+   if(!Compound->Layouts.ContainsByPredicate([this](const FHansaCompoundLayout& L){return L.DevelopmentStage==CompoundStage&&(L.DistrictIds.IsEmpty()||L.DistrictIds.Contains(CompoundDistrictId));}))
+    AddIssue(OutIssues,TEXT("HSA-BUILDING-COMPOUND-STAGE"),TEXT("CompoundStage"),FText::FromString(TEXT("No eligible compound layout for the configured stage/district.")),FText::FromString(TEXT("Supply an eligible reviewed layout.")));
+  }
+ }
+	if (PresentationMesh.IsNull() && PresentationActorClass.IsNull() && ResidentialCompound.IsNull())
 	{
 		AddIssue(OutIssues, TEXT("HSA-BUILDING-006"), TEXT("PresentationMesh"),
 			NSLOCTEXT("HansaEconomicDefinition", "BuildingMissingMesh", "A building needs a promoted or explicit placeholder presentation mesh."),
@@ -335,7 +371,16 @@ void UHansaBuildingDefinition::AppendDefinitionHashData(FString& InOutCanonicalD
 		bRequiresRoad ? 1 : 0,
 		bRequiresShoreline ? 1 : 0,
 		*PresentationMesh.ToSoftObjectPath().ToString());
-	// Empty is the compatible default: legacy mesh-only content keeps its existing hash.
+ if (!ResidentialCompound.IsNull())
+ {
+  const auto* Compound=LoadResidentialCompound();
+  InOutCanonicalData+=FString::Printf(TEXT("compound=%s/%llu/%d/%s\n"),Compound?*Compound->StableDefinitionId:*ResidentialCompound.ToSoftObjectPath().ToString(),
+   static_cast<unsigned long long>(Compound?Compound->ComputeDeterministicContentHash():0),CompoundStage,*CompoundDistrictId);
+ }
+	// The additive default preserves historical catalog hashes and save lineages.
+    if (ConstructionTier != EHansaConstructionTier::Legacy)
+        InOutCanonicalData += TEXT("constructionTier=") + StaticEnum<EHansaConstructionTier>()->GetNameStringByValue(static_cast<int64>(ConstructionTier)) + TEXT("\n");
+    // Empty is the compatible default: legacy mesh-only content keeps its existing hash.
 	if (!PresentationActorClass.IsNull())
 	{
 		InOutCanonicalData += TEXT("presentationActorClass=") + PresentationActorClass.ToSoftObjectPath().ToString() + TEXT("\n");
@@ -360,4 +405,7 @@ void UHansaBuildingDefinition::AppendDefinitionHashData(FString& InOutCanonicalD
 	{
 		InOutCanonicalData += FString::Printf(TEXT("providesMarketAccess=%d\n"), bProvidesMarketAccess ? 1 : 0);
 	}
+ // Additive default preserves the legacy catalog lineage; authored overrides participate in hashing.
+ if (MaximumMarketRoadDistanceCells != 40)
+  InOutCanonicalData += FString::Printf(TEXT("maximumMarketRoadDistanceCells=%d\n"), MaximumMarketRoadDistanceCells);
 }

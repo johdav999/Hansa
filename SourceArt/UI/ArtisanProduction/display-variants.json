@@ -1,0 +1,317 @@
+[
+  {
+    "name": "Charcoal",
+    "master": "SourceArt\\UI\\ArtisanProduction\\artisanproduction--charcoal--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      0,
+      21,
+      1234,
+      1254
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "b889a0c82a4175236622204c6ab0eb3aa9b6992720ab9c09beb4951dd09fc04f"
+  },
+  {
+    "name": "RawHides",
+    "master": "SourceArt\\UI\\ArtisanProduction\\artisanproduction--rawhides--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      0,
+      20,
+      1237,
+      1254
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "b8d6535dd38b2944927e6bc55c406f58469e332f26ae1f7344f75ee021681f43"
+  },
+  {
+    "name": "TanningBark",
+    "master": "SourceArt\\UI\\ArtisanProduction\\artisanproduction--tanningbark--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      0,
+      21,
+      1224,
+      1254
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "36758bf7b0997d3c01448d10b2263c65c1692b60e6599bd489986e8e976b0fa0"
+  },
+  {
+    "name": "Leather",
+    "master": "SourceArt\\UI\\ArtisanProduction\\artisanproduction--leather--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      0,
+      21,
+      1214,
+      1254
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "cdd9ba4e0ff5322388a89d8fb1cfb538be13e0670d544ad3b41ff3409901feb7"
+  },
+  {
+    "name": "Shoes",
+    "master": "SourceArt\\UI\\ArtisanProduction\\artisanproduction--shoes--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      49,
+      53,
+      1236,
+      1214
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "018a61141846e56de4addf62740642739730c741ab915df8d8c2a21f7d15b00f"
+  },
+  {
+    "name": "Smithy",
+    "master": "SourceArt\\UI\\ArtisanProduction\\artisanproduction--smithy--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      0,
+      28,
+      1228,
+      1254
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "732f0f8bdd2e9e66fc6490b7bfe70d88e4436a6814498f62c381c8e8d569e88c"
+  },
+  {
+    "name": "Tannery",
+    "master": "SourceArt\\UI\\ArtisanProduction\\artisanproduction--tannery--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      0,
+      39,
+      1208,
+      1254
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "8a802b678313abe00df85454d2bcc67d31e0d521b2af758ddb786e6347e11b71"
+  },
+  {
+    "name": "Shoemaker",
+    "master": "SourceArt\\UI\\ArtisanProduction\\artisanproduction--shoemaker--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      0,
+      21,
+      1235,
+      1254
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "0689c3456172f31f40c61751c8f7d2608e604614feb23e134e7464b7a83fdc17"
+  },
+  {
+    "name": "CharcoalBurner",
+    "master": "SourceArt\\UI\\ArtisanProduction\\artisanproduction--charcoalburner--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "crop": [
+      0,
+      20,
+      1234,
+      1223
+    ],
+    "variants": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ],
+    "method": "transparent-margin crop, square padding, premultiplied-alpha Lanczos proportional resampling, 88% content extent",
+    "masterSHA256": "8680d48637776c41a27af11826b114a8fba89d1b8e83f3e459625bab85657ddc"
+  }
+]
