@@ -1,5 +1,21 @@
 # Local-only development assets
 
+## Current scope update — whole generated-source archive
+
+The user subsequently requested exclusion of **all `SourceArt/Generated/`**.
+This supersedes the selective retention rules below for that directory: its
+masters, exports, textures, generation scripts, provenance and evidence are now
+local-only. Production `Content`, main `Source`, main `Scripts`, `Tests` and
+other `SourceArt` directories remain tracked. Files on disk are preserved.
+
+Fresh clones will not contain generated source masters or their embedded tools.
+Reimporting or regenerating those assets requires restoring this directory from
+a separate archive. Make an off-machine backup before deleting any local copy.
+The recovery branch for this additional change is
+`backup/before-generated-source-exclusion-9890969f`; do not push it.
+
+The historical description below records the earlier, narrower cleanup.
+
 On 2026-09-22, the user requested a smaller Git LFS upload. The cleanup keeps
 production `Content`, Python/build scripts, final editable masters, final export
 files, authored textures and test golden images in Git. It is not a blanket

@@ -46,6 +46,8 @@ cmake-build-*/
 *.blend1
 *.npy
 # Local-only asset archives: keep final masters, production Content and scripts.
+# User-approved whole-tree source archive; including its embedded scripts/masters.
+/SourceArt/Generated/
 /Deliverables/PreservedFish/preservedfish-candidate.zip
 /SourceArt/Terrain/HansaWorld/Prototype_20260918/sources/etopo.tif
 /SourceArt/Generated/**/checkpoints/*.blend
