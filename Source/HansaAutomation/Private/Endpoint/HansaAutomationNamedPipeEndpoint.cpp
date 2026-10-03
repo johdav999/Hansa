@@ -29,6 +29,13 @@
 #include "UI/HansaRouteDeliveryAutomationScreen.h"
 #include "UI/HansaStrategicAutomationScreen.h"
 #include "World/HansaRuntimeSimulationHost.h"
+#include "UI/HansaRootHud.h"
+#include "UI/SHansaRootHud.h"
+#include "GameFramework/PlayerController.h"
+#include "Engine/GameViewportClient.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Widgets/SViewport.h"
+#include "UnrealClient.h"
 
 #if PLATFORM_WINDOWS
 #include "Windows/WindowsHWrapper.h"
@@ -287,6 +294,7 @@ namespace Hansa::Automation
 			State->SetBoolField(TEXT("focused"), Node.State.bFocused);
 			State->SetBoolField(TEXT("selected"), Node.State.bSelected);
 			State->SetBoolField(TEXT("loading"), Node.State.bLoading);
+            State->SetBoolField(TEXT("clipped"), Node.State.bClipped);
 			State->SetBoolField(TEXT("warning"), Node.State.bWarning);
 			State->SetBoolField(TEXT("error"), Node.State.bError);
 			State->SetStringField(TEXT("valueType"), Node.State.ValueType);
@@ -413,13 +421,49 @@ namespace Hansa::Automation
 		ResetConnection();
 	}
 
+    bool FHansaAutomationNamedPipeEndpoint::SynchronizeNativeHud()
+    {
+        TSharedPtr<Hansa::UI::SHansaRootHud> Root;
+        if(GEngine)for(const auto& Context:GEngine->GetWorldContexts()){
+            UWorld* World=Context.World();if(!World||!World->IsGameWorld())continue;
+            auto* Controller=World->GetFirstPlayerController();
+            if(Controller&&Controller->IsLocalController())if(auto* Hud=Cast<AHansaRootHud>(Controller->GetHUD())){Root=Hud->GetRootWidget();if(Root)break;}
+        }
+        if(!Root){if(NativeHudIdentity){SemanticRegistry->Reset();NativeHudIdentity=nullptr;NativeHudSignature.Reset();}return false;}
+        TArray<FHansaSemanticNode> Nodes;FString Signature;TSet<FString> Ids;
+        for(const auto& Native:Root->GetSemanticSnapshot()){
+            FHansaSemanticNode N;N.Id=Native.Id;N.ParentId=Native.ParentId;N.Label=Native.Label;
+            // Runtime and automation role enums have the same closed ordered contract.
+            N.Role=static_cast<EHansaSemanticRole>(Native.Role);
+            N.State.bVisible=Native.State.bVisible;N.State.bEnabled=Native.State.bEnabled;N.State.bFocused=Native.State.bFocused;N.State.bSelected=Native.State.bSelected;N.State.bLoading=Native.State.bLoading;N.State.bClipped=Native.State.bClipped;N.State.bWarning=Native.State.bWarning;N.State.bError=Native.State.bError;N.State.ValueType=Native.State.ValueType;N.State.Value=Native.State.Value;
+            N.Bounds={Native.Bounds.Min.X,Native.Bounds.Min.Y,Native.Bounds.Width(),Native.Bounds.Height()};
+            if(Native.bCanActivate&&N.State.bEnabled&&N.State.bVisible)N.Actions.Add(EHansaSemanticAction::Activate);
+            if(Native.bCanFocus&&N.State.bEnabled)N.Actions.Add(EHansaSemanticAction::Focus);
+            Signature+=SerializeResponse(MakeSemanticNode(N));Ids.Add(N.Id);Nodes.Add(MoveTemp(N));
+        }
+        if(NativeHudIdentity==Root.Get()&&NativeHudSignature==Signature&&(!Nodes.Num()||SemanticRegistry->FindNode(Nodes[0].Id)))return true;
+        NativeHudIdentity=Root.Get();NativeHudSignature=MoveTemp(Signature);SemanticRegistry->Reset();
+        for(auto& N:Nodes)if(!Ids.Contains(N.ParentId))N.ParentId.Reset();
+        // Register parents before descendants; focus resolves the actual native widget and reveals scroll-clipped rows.
+        while(!Nodes.IsEmpty()){
+            bool Progress=false;
+            for(int32 I=Nodes.Num()-1;I>=0;--I){auto& N=Nodes[I];if(!N.ParentId.IsEmpty()&&!SemanticRegistry->FindNode(N.ParentId))continue;
+                const FString Id=N.Id;const TWeakPtr<Hansa::UI::SHansaRootHud> Weak=Root;FHansaSemanticActionHandlers H;
+                H.Activate=[Weak,Id]{auto R=Weak.Pin();return R&&R->ActivateSemanticId(Id);};H.Focus=[Weak,Id]{auto R=Weak.Pin();return R&&R->FocusSemanticId(Id);};
+                SemanticRegistry->RegisterNode(MoveTemp(N),MoveTemp(H));Nodes.RemoveAt(I);Progress=true;
+            }
+            if(!Progress)break;
+        }
+        return true;
+    }
+
 	bool FHansaAutomationNamedPipeEndpoint::Tick(const float DeltaTime)
 	{
 		(void)DeltaTime;
 		if (bStrategicFixtureActive && StrategicScreenHost.IsValid()) StrategicScreenHost->SynchronizeSemantics();
 		else if (bRouteDeliveryFixtureActive && RouteDeliveryScreenHost.IsValid()) RouteDeliveryScreenHost->SynchronizeSemantics();
 		else if (bPlacementFixtureActive && PlacementScreenHost.IsValid()) PlacementScreenHost->SynchronizeSemantics();
-		else if (ProofScreenHost.IsValid()) ProofScreenHost->SynchronizeSemantics();
+		else if (!SynchronizeNativeHud() && ProofScreenHost.IsValid()) ProofScreenHost->SynchronizeSemantics();
 		WaitService->Tick(MonotonicMilliseconds());
 		if (!IsRunning() && !CreateServerPipe())
 		{
@@ -1309,7 +1353,7 @@ namespace Hansa::Automation
 					? RouteDeliveryScreenHost.IsValid() && RouteDeliveryScreenHost->EnsureScreen()
 				: bPlacementFixtureActive
 					? PlacementScreenHost.IsValid() && PlacementScreenHost->EnsureScreen()
-					: ProofScreenHost.IsValid() && ProofScreenHost->EnsureScreen();
+					: SynchronizeNativeHud() || (ProofScreenHost.IsValid() && ProofScreenHost->EnsureScreen());
 			if (!bScreenReady)
 			{
 				return MakeErrorResponse(RequestId, MakeEndpointError(
@@ -1322,7 +1366,7 @@ namespace Hansa::Automation
 			if (bStrategicFixtureActive) StrategicScreenHost->SynchronizeSemantics();
 			else if (bRouteDeliveryFixtureActive) RouteDeliveryScreenHost->SynchronizeSemantics();
 			else if (bPlacementFixtureActive) PlacementScreenHost->SynchronizeSemantics();
-			else ProofScreenHost->SynchronizeSemantics();
+			else if (!SynchronizeNativeHud()) ProofScreenHost->SynchronizeSemantics();
 			const FHansaSemanticNode* Node = SemanticRegistry->FindNode(SemanticId);
 			if (Node == nullptr)
 			{
@@ -1349,12 +1393,12 @@ namespace Hansa::Automation
 				if (bStrategicFixtureActive) StrategicScreenHost->SynchronizeSemantics();
 				else if (bRouteDeliveryFixtureActive) RouteDeliveryScreenHost->SynchronizeSemantics();
 				else if (bPlacementFixtureActive) PlacementScreenHost->SynchronizeSemantics();
-				else ProofScreenHost->SynchronizeSemantics();
+				else if (!SynchronizeNativeHud()) ProofScreenHost->SynchronizeSemantics();
 				Node = SemanticRegistry->FindNode(SemanticId);
 			}
 			TSharedRef<FJsonObject> Result = MakeShared<FJsonObject>();
 			Result->SetNumberField(TEXT("revision"), static_cast<double>(SemanticRegistry->GetRevision()));
-			Result->SetObjectField(TEXT("node"), MakeSemanticNode(*Node));
+			if(Node)Result->SetObjectField(TEXT("node"), MakeSemanticNode(*Node));else Result->SetBoolField(TEXT("nodeRemoved"),true);
 			return MakeSuccessResponse(RequestId, Result);
 		}
 
@@ -1402,7 +1446,7 @@ namespace Hansa::Automation
 				PlacementScreenHost->EnsureScreen();
 				PlacementScreenHost->SynchronizeSemantics();
 			}
-			else if (ProofScreenHost.IsValid())
+			else if (!SynchronizeNativeHud() && ProofScreenHost.IsValid())
 			{
 				ProofScreenHost->EnsureScreen();
 				ProofScreenHost->SynchronizeSemantics();
@@ -1634,8 +1678,9 @@ namespace Hansa::Automation
 					TEXT("The requested screenshot size is not supported."),
 					TEXT("Request exactly 1280x720 or 1920x1080.")));
 			}
-			const bool bScreenReady = bStrategicFixtureActive
-				? StrategicScreenHost.IsValid() && StrategicScreenHost->EnsureScreen(Size)
+            const bool bNativeHudCapture=!bStrategicFixtureActive&&!bRouteDeliveryFixtureActive&&!bPlacementFixtureActive&&SynchronizeNativeHud();
+            const bool bScreenReady = bNativeHudCapture ? GEngine&&GEngine->GameViewport&&GEngine->GameViewport->Viewport&&GEngine->GameViewport->Viewport->GetSizeXY()==Size : bStrategicFixtureActive
+                ? StrategicScreenHost.IsValid() && StrategicScreenHost->EnsureScreen(Size)
 				: bRouteDeliveryFixtureActive
 					? RouteDeliveryScreenHost.IsValid() && RouteDeliveryScreenHost->EnsureScreen(Size)
 				: bPlacementFixtureActive
@@ -1653,7 +1698,7 @@ namespace Hansa::Automation
 			if (bStrategicFixtureActive) StrategicScreenHost->SynchronizeSemantics();
 			else if (bRouteDeliveryFixtureActive) RouteDeliveryScreenHost->SynchronizeSemantics();
 			else if (bPlacementFixtureActive) PlacementScreenHost->SynchronizeSemantics();
-			else ProofScreenHost->SynchronizeSemantics();
+			else if (!SynchronizeNativeHud()) ProofScreenHost->SynchronizeSemantics();
 			FHansaScreenshotContext ScreenshotContext;
 			ScreenshotContext.BundleId = BundleId;
 			ScreenshotContext.MapName = GetCurrentMapName();
@@ -1814,15 +1859,17 @@ namespace Hansa::Automation
 					: PlacementFixture->GetPlacedBuildingCount() == 2 && CameraNode != nullptr && ValidationNode != nullptr &&
 						ResultNode != nullptr && ResultNode->State.bSelected;
 			}
-			ScreenshotContext.UiRevision = SemanticRegistry->GetRevision();
+			if(bNativeHudCapture)ScreenshotContext.CaptureMethod=TEXT("Slate.TakeScreenshot(real game viewport; no resize)");
+            ScreenshotContext.UiRevision = SemanticRegistry->GetRevision();
 			ScreenshotContext.FrameNumber = GFrameCounter;
 			ScreenshotContext.SemanticSnapshotJson = SerializeResponse(MakeSemanticSnapshot(*SemanticRegistry));
 			const FHansaScreenshotResult Capture = ScreenshotService->Capture(
 				Size,
 				ScreenshotContext,
-				[this](const FIntPoint& NativeSize, TArray<FColor>& Pixels)
-				{
-					return bStrategicFixtureActive
+                [this,bNativeHudCapture](const FIntPoint& NativeSize, TArray<FColor>& Pixels)
+                {
+                    if(bNativeHudCapture){FIntVector Captured;return GEngine&&GEngine->GameViewport&&GEngine->GameViewport->GetGameViewportWidget().IsValid()&&FSlateApplication::Get().TakeScreenshot(GEngine->GameViewport->GetGameViewportWidget().ToSharedRef(),Pixels,Captured)&&Captured.X==NativeSize.X&&Captured.Y==NativeSize.Y;}
+                    return bStrategicFixtureActive
 						? StrategicScreenHost->CaptureNative(NativeSize, Pixels)
 						: bRouteDeliveryFixtureActive
 							? RouteDeliveryScreenHost->CaptureNative(NativeSize, Pixels)

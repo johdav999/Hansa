@@ -1,0 +1,75 @@
+{
+  "status": "partial; acceptance open",
+  "date": "2026-09-23",
+  "configuration": "DebugGame",
+  "uiScale": 1.0,
+  "buildAndBrowser": "Saved/BuildArtifacts/20260923-214115536-automation-Hansa.UI.TradeMap.Construction",
+  "authorityRegression": "Saved/BuildArtifacts/20260923-213953713-automation-Hansa.Integration.TradePresence.LeasedForeignConstruction",
+  "captures": [
+    "Saved/BuildArtifacts/20260923-214155333-gui-repair-1280-720",
+    "Saved/BuildArtifacts/20260923-214157269-gui-repair-1920-1080"
+  ],
+  "files": [
+    {
+      "bytes": 337374,
+      "name": "construction-1280x720-0.png",
+      "sha256": "96F3EE88DFAF98EB68BFA88CF896A06AE737CE5790F608F3E7A60B4276E7D484"
+    },
+    {
+      "bytes": 7258,
+      "name": "construction-1280x720-0.tsv",
+      "sha256": "DE1315555E2D315402016C60260445B1B51CBC1C2944774022C23F7DC329BF22"
+    },
+    {
+      "bytes": 279718,
+      "name": "construction-1280x720-1.png",
+      "sha256": "C46D0BE6A75FA0A275FF497339830C167CFC1E17731BBB2892887FDF553A3A98"
+    },
+    {
+      "bytes": 8124,
+      "name": "construction-1280x720-1.tsv",
+      "sha256": "AA7719BC9906A153F8241AE61A11EB29425CA05876D15600FF4E8B1BC4423237"
+    },
+    {
+      "bytes": 536292,
+      "name": "construction-1280x720-2.png",
+      "sha256": "1004ACC0CBD80D934E6BCAE5DA707023583A36A780740526BA3A0974DCE6C866"
+    },
+    {
+      "bytes": 8156,
+      "name": "construction-1280x720-2.tsv",
+      "sha256": "31DD5BFE12483A20C1E8F688E58852E26A9D83D48ABBF78CBBF07966A5E6B536"
+    },
+    {
+      "bytes": 2496590,
+      "name": "construction-1920x1080-0.png",
+      "sha256": "97A1261C9E47BAFB8B726F57F01FAA8CBB2A5CA2255132A5BE5F37203F92BE2F"
+    },
+    {
+      "bytes": 7296,
+      "name": "construction-1920x1080-0.tsv",
+      "sha256": "53C5FE938EE77C6C651CCDA760D02E933F7D25FE3C782619D7D1258F16BA9099"
+    },
+    {
+      "bytes": 2543650,
+      "name": "construction-1920x1080-1.png",
+      "sha256": "3093C43F58B27E69AE0CF00B74A948FEF7DA2F97EE7770246CA76259DF4299ED"
+    },
+    {
+      "bytes": 8134,
+      "name": "construction-1920x1080-1.tsv",
+      "sha256": "75F470EE1E01564C9D52E887F271487CC7BC41E0B8C2209972C5E5BE32EF4390"
+    },
+    {
+      "bytes": 2600983,
+      "name": "construction-1920x1080-2.png",
+      "sha256": "4B1DA58C34D8D8F9E21D29FB8DF2F738A190536650C2891F42CFB6E323A00155"
+    },
+    {
+      "bytes": 8194,
+      "name": "construction-1920x1080-2.tsv",
+      "sha256": "06B442484B0E276AF84AB337381359276AFCE37AE29FBC063C94BBDAEB162559"
+    }
+  ],
+  "componentRegression": "Saved/BuildArtifacts/20260923-214337454-automation-Hansa.UI.TradeMap.Components"
+}

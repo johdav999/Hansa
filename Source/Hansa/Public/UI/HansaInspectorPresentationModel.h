@@ -19,6 +19,26 @@ namespace Hansa::Simulation
 class UHansaRuntimeSimulationHost;
 struct FHansaCargoWorldObservation;
 
+/** Read-only ship UI data. Capacity is shared across all persistent slots. */
+struct FHansaInspectorShipSlot
+{
+    FName GoodId;
+    int64 Quantity = 0;
+    bool operator==(const FHansaInspectorShipSlot& R) const { return GoodId == R.GoodId && Quantity == R.Quantity; }
+};
+struct FHansaInspectorShipData
+{
+    bool bValid = false, bSlotsKnown = false, bVoyage = false;
+    int32 ProgressBasisPoints = 0;
+    int64 Cargo = 0, Capacity = 0, Upkeep = 0;
+    TArray<FHansaInspectorShipSlot> Slots;
+    bool operator==(const FHansaInspectorShipData& R) const
+    {
+        return bValid == R.bValid && bSlotsKnown == R.bSlotsKnown && bVoyage == R.bVoyage &&
+            ProgressBasisPoints == R.ProgressBasisPoints && Cargo == R.Cargo && Capacity == R.Capacity && Upkeep == R.Upkeep && Slots == R.Slots;
+    }
+};
+
 /** Presentation-only data; authored recipe and save schemas are unchanged. */
 struct HANSA_API FHansaInspectorProductionPort
 {
@@ -173,6 +193,7 @@ struct HANSA_API FHansaInspectorSnapshot final
 
 	FHansaInspectorProductionData Production;
 	FHansaInspectorResidenceData Residence;
+	FHansaInspectorShipData Ship;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Inspector") FName ObjectStableId;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Inspector") EHansaInspectorDataState DataState = EHansaInspectorDataState::Ready;

@@ -1,0 +1,120 @@
+[
+  {
+    "component": "panorama",
+    "master": "SourceArt\\UI\\CityOverview\\city-overview--panorama--default--2031x774--v1.png",
+    "native": [
+      2031,
+      774
+    ],
+    "variants": [
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\panorama--420.png",
+        "width": 420,
+        "height": 114,
+        "sha256": "390c962df95959fbd315f0caad8f16815da0d0d9a96c642cd3b2dbd2d926cda7"
+      },
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\panorama--630.png",
+        "width": 630,
+        "height": 171,
+        "sha256": "c782874881b3ef5f9860b82a48bc3dd636866915037970b0574e631fcae4aeb1"
+      },
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\panorama--840.png",
+        "width": 840,
+        "height": 228,
+        "sha256": "07d1b0ff5a96a7954a0c43b8ed8a8dcfabc1a66f7d6180bbb7908d8805767623"
+      }
+    ],
+    "crop": [
+      0,
+      70,
+      2031,
+      622
+    ]
+  },
+  {
+    "component": "office",
+    "master": "SourceArt\\UI\\CityOverview\\city-overview--office--default--1536x1024--v1.png",
+    "native": [
+      1536,
+      1024
+    ],
+    "variants": [
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\office--120.png",
+        "width": 120,
+        "height": 80,
+        "sha256": "f118d6bd88ced077f295dbe385cc4ce2b7252bf6baf8e4af647e676455b2f113"
+      },
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\office--180.png",
+        "width": 180,
+        "height": 120,
+        "sha256": "432416acc3caf6e2ec33a4c5de16ffd0df6651b71d4e4395010f0c5dc1117244"
+      },
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\office--240.png",
+        "width": 240,
+        "height": 160,
+        "sha256": "705214c0a964b97a1c0c5dc6552f5fabe57248fad9950b3690e80a298a89f60f"
+      }
+    ]
+  },
+  {
+    "component": "routes",
+    "master": "SourceArt\\UI\\CityOverview\\city-overview--routes--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "variants": [
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\routes--48.png",
+        "width": 48,
+        "height": 48,
+        "sha256": "a00151569c46925257aeecc36087fc531237c2d18893dcf58ac01ab411239493"
+      },
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\routes--72.png",
+        "width": 72,
+        "height": 72,
+        "sha256": "8c4e93db97a3624bf754c4824598a06ef1096f2687e3355f21c2072591d77b6a"
+      },
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\routes--96.png",
+        "width": 96,
+        "height": 96,
+        "sha256": "49e34151fe2a2a211d6fa976efaf23d93382179be13afa5cdbcb404ee77c208a"
+      }
+    ]
+  },
+  {
+    "component": "scales",
+    "master": "SourceArt\\UI\\CityOverview\\city-overview--scales--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "variants": [
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\scales--24.png",
+        "width": 24,
+        "height": 24,
+        "sha256": "2672a2b925bc0936335b203bcf1fe2a9bd2ebbdf13a439a993d7eae4b0145d42"
+      },
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\scales--36.png",
+        "width": 36,
+        "height": 36,
+        "sha256": "ad6d1df16eae49902154cf69e0f770d10d72e06c350241f304128f7fef15c4fc"
+      },
+      {
+        "path": "Content\\Hansa\\UI\\CityOverview\\scales--48.png",
+        "width": 48,
+        "height": 48,
+        "sha256": "0379bf1576a7f4aebea44354c34407cf528807c0e44ebaa6b322c37242306ce8"
+      }
+    ]
+  }
+]

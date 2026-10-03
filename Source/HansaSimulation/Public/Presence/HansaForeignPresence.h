@@ -23,7 +23,15 @@ namespace Hansa::Simulation
 		VoluntarilyClosed,
 		Revoked
 	};
-	enum class EHansaPresenceUpgradeStatus : uint8 { None = 0, Requested, Funded };
+	enum class EHansaPresenceUpgradeStatus : uint8 { None = 0, Requested, Funded, AwaitingMaterials };
+	/** Physical construction contract shared by initial stations and presence upgrades.
+	 * Legacy orders leave bLocalDelivery false and keep their original payment/material semantics. */
+	struct HANSASIMULATION_API FHansaPresenceConstructionSite final
+	{
+		bool bLocalDelivery = false;
+		FHansaGridCoordinate Anchor;
+		EHansaGridRotation Rotation = EHansaGridRotation::North;
+	};
 	enum class EHansaPresenceHistoryKind : uint8 { Contribution = 0, UpgradeRequested, UpgradeFunded, UpgradeCompleted, SpecializationApplied, SpecializationReversed };
 
 	struct HANSASIMULATION_API FHansaForeignPresenceContributions final
@@ -47,6 +55,7 @@ namespace Hansa::Simulation
 		int64 MoneyPfennig = 0;
 	};
 
+	struct HANSASIMULATION_API FHansaTradeStationSpentGood final { FHansaGoodId GoodId; FHansaQuantity Quantity; };
 	struct HANSASIMULATION_API FHansaPresenceUpgradeState final
 	{
 		EHansaPresenceUpgradeStatus Status = EHansaPresenceUpgradeStatus::None;
@@ -56,6 +65,8 @@ namespace Hansa::Simulation
 		FHansaSimulationTick FundedTick;
 		FHansaSimulationTick CompletionTick;
 		int64 SpentMoneyPfennig = 0;
+		FHansaPresenceConstructionSite ConstructionSite;
+		TArray<FHansaTradeStationSpentGood> DeliveredGoods;
 	};
 
 	/** One authoritative record, canonically keyed by (HouseId, CityId). */
@@ -151,7 +162,6 @@ struct HANSASIMULATION_API FHansaForeignPresenceState final
 		FHansaSimulationTick GovernanceGrantedTick;
 		int64 AuthorityRevision=0;
 	};
-	struct HANSASIMULATION_API FHansaTradeStationSpentGood final { FHansaGoodId GoodId; FHansaQuantity Quantity; };
 
 	struct HANSASIMULATION_API FHansaTradeStationState final
 	{
@@ -172,9 +182,15 @@ struct HANSASIMULATION_API FHansaForeignPresenceState final
 		FHansaSimulationTick CompletedTick;
 		int64 UpkeepPfennigPerTick = 0;
 		int64 SpentMoneyRaw = 0;
+        // Proposed + valid FundingInventoryId is a paid pickup order. SpentGoods is
+        // construction escrow, removed from route cargo. Existing save fields persist it.
 		FHansaInventoryId FundingInventoryId;
 		TArray<FHansaTradeStationSpentGood> SpentGoods;
 		TArray<FHansaStationOrderState> Orders;
+		FHansaPresenceConstructionSite ConstructionSite;
+        // 0: existing manual delivery; 1: wait for spare space; 2: explicitly approved priority.
+        uint8 DeliveryMode=0;
+        TArray<FHansaReservationId> DeliveryReservations;
 	};
 
 	struct HANSASIMULATION_API FHansaLeasedPlotState final

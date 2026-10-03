@@ -10,6 +10,7 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Presence/HansaForeignPresenceInitialization.h"
+#include "Placement/HansaRostockPlacement.h"
 #include "Queries/HansaSimulationReadOnly.h"
 #include "Save/HansaSaveEnvelope.h"
 #include "Schema/HansaEditorSchemaRegistry.h"
@@ -73,6 +74,10 @@ namespace Hansa::Editor::Tests::TradePresence
 		const auto CapabilitySchema=SchemaRegistry.BuildSchemaForClass(UHansaPresenceCapabilityDefinition::StaticClass());
 		TestTrue(TEXT("Presence stage schema is generic-editor ready"),StageSchema.IsValid());
 		TestTrue(TEXT("City policy schema is generic-editor ready"),PolicySchema.IsValid());
+        TestTrue(TEXT("Local delivery semantics are exported to editor and AI schema"),SchemaRegistry.ExportJsonSchema(StageSchema).Contains(TEXT("destination city")));
+        TestTrue(TEXT("Placed presence receives impact review"),EconomicDefinitions::DescribeEconomicImpact(TEXT("CityTradePolicy.Rostock"),Forward).ContainsByPredicate([](const FString& Impact){return Impact.Contains(TEXT(".PlacedPresence"));}));
+        TestTrue(TEXT("Paid placement qualification exception exports to schema"),SchemaRegistry.ExportJsonSchema(StageSchema).Contains(TEXT("does not require trade qualification")));
+        TestTrue(TEXT("Stage impact describes paid placement exception"),EconomicDefinitions::DescribeEconomicImpact(TEXT("PresenceStage.TradeStation"),Forward).ContainsByPredicate([](const FString& Impact){return Impact.Contains(TEXT("bypasses trade qualification"));}));
         const auto RouteSchema=SchemaRegistry.BuildSchemaForClass(UHansaRouteDefinition::StaticClass());
         TestTrue(TEXT("Route target help exports through generic schema"),RouteSchema.IsValid());
         FFileHelper::SaveStringToFile(SchemaRegistry.ExportJsonSchema(RouteSchema),*(FPaths::ProjectSavedDir()/TEXT("TR06-Route.schema.json")));
@@ -292,9 +297,11 @@ namespace Hansa::Editor::Tests::TradePresence
 		// Qualify through trade, with no prior station investment or station inventory.
 		Initial.ForeignPresences[0].Contributions={50000,3,0,50000,10000,3,3};auto Made=FHansaSimulationState::TryCreate(MoveTemp(Initial));if(!TestTrue(TEXT("Station fixture validates"),Made.IsSuccess()))return false;
 		FHansaSimulationState State=MoveTemp(Made.Value);FHansaSimulationTransientCache Cache;uint64 Next=1;
-		TStrongObjectPtr<UHansaTradeMapPresentationModel> ProposalUi(NewObject<UHansaTradeMapPresentationModel>());ProposalUi->InitializeDefaults();
+		TStrongObjectPtr<UHansaTradeMapPresentationModel> ProposalUi(NewObject<UHansaTradeMapPresentationModel>());ProposalUi->InitializeDefaults();ProposalUi->SetViewerHouse(House);
 		ProposalUi->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Registry);ProposalUi->Open();
-		TestTrue(TEXT("Qualified visiting contact can propose without nonexistent station stock"),ProposalUi->GetSnapshot().bCanTradeStationAction);
+		TestFalse(TEXT("No implicit site is selected"),ProposalUi->GetSnapshot().bCanTradeStationAction);
+        TestTrue(TEXT("Explicit site selection"),ProposalUi->SelectEstablishmentSite(TEXT("TradeStationSite.Rostock.Harbor.01")));
+        TestTrue(TEXT("Qualified visiting contact can propose without nonexistent station stock"),ProposalUi->GetSnapshot().bCanTradeStationAction);
 		TestFalse(TEXT("Station establishment is not advertised as an office upgrade"),ProposalUi->GetSnapshot().bCanPresenceUpgradeAction);
 		auto Submit=[&](FHansaHouseId Issuer,const auto& Payload){FHansaCommandHeader H;H.CommandId=FHansaCommandId::TryCreate(Next).Value;H.GlobalSequence=Next++;H.Authority={Issuer,Issuer==House?uint64(1):uint64(2),EHansaCommandOrigin::ControlledAutomation};H.RequestedExecutionTick=State.CreateReadOnlyAccess(Definitions).GetClock().GetTick();const auto C=FHansaGameplayCommand::Create(H,Payload);return FHansaGameplayCommandGateway::ExecuteTick(State,Definitions,MakeArrayView(&C,1),Cache);};
 		const auto Station=FHansaTradeStationId::TryCreate(1).Value;
@@ -321,7 +328,20 @@ namespace Hansa::Editor::Tests::TradePresence
 		TestFalse(TEXT("Closure clears active station reference"),Read.QueryForeignPresence(House,Rostock)->StationId.IsValid());TestFalse(TEXT("Closure clears active lease reference"),Read.QueryForeignPresence(House,Rostock)->LeasedPlotId.IsValid());
 		FHansaProposeTradeStationCommand Reopen{FHansaTradeStationId::TryCreate(4).Value,FHansaFactorId::TryCreate(4).Value,FHansaLeasedPlotId::TryCreate(4).Value,FHansaInventoryId::TryCreate(4).Value,Rostock,Proposal.SiteId};
 		TestTrue(TEXT("Released site can be established again with new stable identities"),Submit(House,Reopen).IsSuccess());
-		TStrongObjectPtr<UHansaTradeMapPresentationModel> UiModel(NewObject<UHansaTradeMapPresentationModel>());UiModel->InitializeDefaults();UiModel->ApplyProjection(Loaded.State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Registry);UiModel->Open();auto Ui=SNew(Hansa::UI::SHansaTradeMap).Model(UiModel.Get());TestTrue(TEXT("Station action is a semantic ordinary control"),Ui->GetSemanticSnapshot().ContainsByPredicate([](const auto& N){return N.Id==TEXT("TradeMap.Station.Action");}));
+		TStrongObjectPtr<UHansaTradeMapPresentationModel> UiModel(NewObject<UHansaTradeMapPresentationModel>());UiModel->InitializeDefaults();UiModel->SetViewerHouse(House);UiModel->ApplyProjection(Loaded.State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Registry);UiModel->Open();auto Ui=SNew(Hansa::UI::SHansaTradeMap).Model(UiModel.Get());TestTrue(TEXT("Station action is a semantic ordinary control"),Ui->GetSemanticSnapshot().ContainsByPredicate([](const auto& N){return N.Id==TEXT("TradeMap.Station.Action");}));
+        const auto ScopedProjection=Loaded.State.CreateReadOnlyAccess(Definitions).BuildProjection().Value;
+        TestEqual(TEXT("Selected foreign city exposes own saved station"),UiModel->GetSnapshot().TradeStationValue,int64(Proposal.StationId.GetValue()));
+        UiModel->SelectCityIntent(TEXT("City.Lubeck"));
+        TestEqual(TEXT("Home city never inherits foreign station"),UiModel->GetSnapshot().TradeStationValue,int64(0));
+        TestFalse(TEXT("Home station action unavailable"),UiModel->GetSnapshot().bCanTradeStationAction);
+        UiModel->SelectCityIntent(TEXT("City.Rostock"));
+        TestEqual(TEXT("Returning restores correct station"),UiModel->GetSnapshot().TradeStationValue,int64(Proposal.StationId.GetValue()));
+        UiModel->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Registry);
+        TestEqual(TEXT("Reopened station supersedes closed history in the same city"),UiModel->GetSnapshot().TradeStationValue,int64(Reopen.StationId.GetValue()));
+        TStrongObjectPtr<UHansaTradeMapPresentationModel> RivalUi(NewObject<UHansaTradeMapPresentationModel>());RivalUi->InitializeDefaults();RivalUi->SetViewerHouse(Rival);RivalUi->ApplyProjection(ScopedProjection,*Registry);
+        TestEqual(TEXT("Rival never receives this house's station"),RivalUi->GetSnapshot().TradeStationValue,int64(0));
+        RivalUi->SetViewerHouse(FHansaHouseId());RivalUi->ApplyProjection(ScopedProjection,*Registry);
+        TestEqual(TEXT("Absent viewer never receives station"),RivalUi->GetSnapshot().TradeStationValue,int64(0));
 		TStrongObjectPtr<UHansaInspectorPresentationModel> StationInspector(NewObject<UHansaInspectorPresentationModel>());StationInspector->InitializeDefaults();
 		const auto LoadedProjection=Loaded.State.CreateReadOnlyAccess(Definitions).BuildProjection();
 		const auto* LoadedStation=LoadedProjection.Value.GetTradeStations().FindByPredicate([&](const auto& V){return V.Station.Id==Proposal.StationId;});
@@ -356,14 +376,30 @@ namespace Hansa::Editor::Tests::TradePresence
 		auto Made=FHansaSimulationState::TryCreate(MoveTemp(Initial));if(!TestTrue(TEXT("Progression fixture validates"),Made.IsSuccess()))return false;FHansaSimulationState State=MoveTemp(Made.Value);FHansaSimulationTransientCache Cache;uint64 Sequence=1;
 		auto Submit=[&](const auto& Payload){FHansaCommandHeader H;H.CommandId=FHansaCommandId::TryCreate(Sequence).Value;H.GlobalSequence=Sequence++;H.Authority={House,1,EHansaCommandOrigin::ControlledAutomation};H.RequestedExecutionTick=State.CreateReadOnlyAccess(Definitions).GetClock().GetTick();const auto C=FHansaGameplayCommand::Create(H,Payload);return FHansaGameplayCommandGateway::ExecuteTick(State,Definitions,MakeArrayView(&C,1),Cache);};
 		const FString Office=TEXT("PresenceStage.MerchantOffice");auto Before=State.CreateReadOnlyAccess(Definitions).QueryForeignPresence(House,City);TestTrue(TEXT("Exact requirements are queryable"),Before.IsSet()&&!Before->NextStages.IsEmpty()&&Before->NextStages[0].bProgressRequirementsMet&&Before->NextStages[0].bFundingAvailable);
-		TStrongObjectPtr<UHansaTradeMapPresentationModel> UpgradeUi(NewObject<UHansaTradeMapPresentationModel>());UpgradeUi->InitializeDefaults();UpgradeUi->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Registry);UpgradeUi->Open();
+		TStrongObjectPtr<UHansaTradeMapPresentationModel> UpgradeUi(NewObject<UHansaTradeMapPresentationModel>());UpgradeUi->InitializeDefaults();UpgradeUi->SetViewerHouse(House);UpgradeUi->SetNetworkCommandIntent([&](const FHansaClientCommandIntent& I){
+            if(I.Type==EHansaClientIntentType::RequestPresenceUpgrade)return Submit(FHansaRequestPresenceUpgradeCommand{City,I.PresenceStageId}).IsSuccess();
+            if(I.Type==EHansaClientIntentType::FundPresenceUpgrade)return Submit(FHansaFundPresenceUpgradeCommand{City,I.PresenceStageId,FHansaInventoryId::TryCreate(uint64(I.FundingInventoryId)).Value}).IsSuccess();
+            return false;
+        });UpgradeUi->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Registry);UpgradeUi->Open();UpgradeUi->SelectCityIntent(TEXT("City.Rostock"));TestEqual(TEXT("Ready local city marker opens Presence"),UpgradeUi->GetSnapshot().ActiveSection,FString(TEXT("Presence")));
 		auto UpgradeScreen=SNew(Hansa::UI::SHansaTradeMap).Model(UpgradeUi.Get());
 		TestTrue(TEXT("Presence tab opens through ordinary input"),UpgradeScreen->ActivateSemanticId(TEXT("TradeMap.Navigate.Presence")));
 		TestTrue(TEXT("Available office upgrade participates in controller navigation"),UpgradeScreen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Presence.Upgrade")));
 		TestTrue(TEXT("Available office upgrade accepts keyboard focus"),UpgradeScreen->FocusSemanticId(TEXT("TradeMap.Presence.Upgrade")));
-		TestTrue(TEXT("Review request is accepted"),Submit(FHansaRequestPresenceUpgradeCommand{City,Office}).IsSuccess());const uint64 RequestedHash=State.CreateReadOnlyAccess(Definitions).GetFingerprint().Value;
+		const uint64 BeforeReviewHash=State.CreateReadOnlyAccess(Definitions).GetFingerprint().Value;
+        TestTrue(TEXT("Ordinary input opens office review"),UpgradeScreen->ActivateSemanticId(TEXT("TradeMap.Presence.Upgrade")));
+        TestEqual(TEXT("Review alone spends nothing"),State.CreateReadOnlyAccess(Definitions).GetFingerprint().Value,BeforeReviewHash);
+        TestTrue(TEXT("Ordinary input submits office review"),UpgradeScreen->ActivateSemanticId(TEXT("TradeMap.Presence.Upgrade")));
+        const uint64 RequestedHash=State.CreateReadOnlyAccess(Definitions).GetFingerprint().Value;
 		TestEqual(TEXT("Repeated request is rejected"),Submit(FHansaRequestPresenceUpgradeCommand{City,Office}).GetError(),EHansaCommandGatewayError::PresenceUpgradeUnavailable);TestEqual(TEXT("Rejected request does not mutate"),State.CreateReadOnlyAccess(Definitions).GetFingerprint().Value,RequestedHash);
-		const int64 MoneyBefore=State.CreateReadOnlyAccess(Definitions).GetHouses()[0].Money.GetRawValue();TestTrue(TEXT("Funding is atomic"),Submit(FHansaFundPresenceUpgradeCommand{City,Office,InventoryId}).IsSuccess());auto Read=State.CreateReadOnlyAccess(Definitions);TestEqual(TEXT("Authored money and one station-upkeep tick consumed"),Read.GetHouses()[0].Money.GetRawValue(),MoneyBefore-150025);TestEqual(TEXT("Planks consumed once"),Read.GetInventories().QueryStock(InventoryId,Planks)->Stock.GetRawValue(),int64(18000));TestEqual(TEXT("Tools consumed once"),Read.GetInventories().QueryStock(InventoryId,Tools)->Stock.GetRawValue(),int64(5000));
+		UpgradeUi->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Registry);
+        TestTrue(TEXT("No funding source is selected automatically"),UpgradeUi->GetSnapshot().PresenceSourceId.IsEmpty());
+        TestTrue(TEXT("Ordinary input chooses an owned source"),UpgradeScreen->ActivateSemanticId(TEXT("TradeMap.Presence.Source")));
+        TestEqual(TEXT("Explicit source is station inventory"),UpgradeUi->GetSnapshot().PresenceSourceId,FString::Printf(TEXT("%llu"),InventoryId.GetValue()));
+        const int64 MoneyBefore=State.CreateReadOnlyAccess(Definitions).GetHouses()[0].Money.GetRawValue();
+        TestTrue(TEXT("Ordinary input opens exact funding review"),UpgradeScreen->ActivateSemanticId(TEXT("TradeMap.Presence.Upgrade")));
+        TestEqual(TEXT("Funding review spends nothing"),State.CreateReadOnlyAccess(Definitions).GetHouses()[0].Money.GetRawValue(),MoneyBefore);
+        TestTrue(TEXT("Funding is atomic through ordinary input"),UpgradeScreen->ActivateSemanticId(TEXT("TradeMap.Presence.Upgrade")));
+        auto Read=State.CreateReadOnlyAccess(Definitions);TestEqual(TEXT("Authored money and one station-upkeep tick consumed"),Read.GetHouses()[0].Money.GetRawValue(),MoneyBefore-150025);TestEqual(TEXT("Planks consumed once"),Read.GetInventories().QueryStock(InventoryId,Planks)->Stock.GetRawValue(),int64(18000));TestEqual(TEXT("Tools consumed once"),Read.GetInventories().QueryStock(InventoryId,Tools)->Stock.GetRawValue(),int64(5000));
 		FHansaSaveSnapshot Snapshot;Snapshot.State=State;Snapshot.BuildVersion=TEXT("TR-07-Test");Snapshot.SavedUtc=TEXT("2026-09-20T00:00:00Z");Snapshot.Players={{1,House}};TArray<uint8> Bytes;TestTrue(TEXT("Funded progression saves"),FHansaSaveEnvelope::Encode(Snapshot,Definitions,Bytes).IsSuccess());FHansaSaveSnapshot Loaded;TestTrue(TEXT("Funded progression reloads"),FHansaSaveEnvelope::Decode(Bytes,Definitions,Loaded).IsSuccess());State=MoveTemp(Loaded.State);
 		for(int32 I=0;I<3;++I)TestTrue(TEXT("Office construction advances"),FHansaGameplayCommandGateway::ExecuteTick(State,Definitions,{},Cache).IsSuccess());Read=State.CreateReadOnlyAccess(Definitions);const auto After=Read.QueryForeignPresence(House,City);if(!TestTrue(TEXT("Completed office is queryable"),After.IsSet()))return false;
 		TestEqual(TEXT("Stage advances exactly once"),After->CurrentStageId,Office);TestTrue(TEXT("Only authored office capability is granted"),After->Capabilities.ContainsByPredicate([](const auto& C){return C.CapabilityId==TEXT("PresenceCapability.MerchantOffice")&&C.bGranted;}));TestEqual(TEXT("Station identity preserved"),After->StationId,StationId);TestEqual(TEXT("Storage expands from authored city policy"),Read.QueryTradeStation(StationId)->StorageCapacity.GetRawValue(),int64(100000));TestTrue(TEXT("History preserves request, funding and completion"),After->History.Num()>=3);
@@ -389,7 +425,7 @@ namespace Hansa::Editor::Tests::TradePresence
 		TestTrue(TEXT("Harbor replaces Market"),Specialized->Specializations.ContainsByPredicate([](const auto& B){return B.SpecializationId==TEXT("Harbor")&&B.bSelected;})&&!Specialized->Specializations.ContainsByPredicate([](const auto& B){return B.SpecializationId==TEXT("Market")&&B.bSelected;}));
 		TestEqual(TEXT("Respec refunds 25 percent of prior money only after station upkeep"),Read.GetHouses()[0].Money.GetRawValue(),BeforeRespecMoney-110000+18750-25);
 		FHansaSaveSnapshot BranchSave;BranchSave.State=State;BranchSave.BuildVersion=TEXT("TR-08-Test");BranchSave.SavedUtc=TEXT("2026-09-20T00:00:00Z");BranchSave.Players={{1,House}};TArray<uint8> BranchBytes;const auto BranchEncoded=FHansaSaveEnvelope::Encode(BranchSave,Definitions,BranchBytes);if(!TestTrue(*BranchEncoded.Message,BranchEncoded.IsSuccess()))return false;FHansaSaveSnapshot BranchLoaded;const auto BranchDecoded=FHansaSaveEnvelope::Decode(BranchBytes,Definitions,BranchLoaded);if(!TestTrue(*BranchDecoded.Message,BranchDecoded.IsSuccess()))return false;TestEqual(TEXT("Reload preserves selected branch"),BranchLoaded.State.CreateReadOnlyAccess(Definitions).QueryForeignPresence(House,City)->SpecializationRevision,int64(2));
-		TStrongObjectPtr<UHansaTradeMapPresentationModel> Model(NewObject<UHansaTradeMapPresentationModel>());Model->InitializeDefaults();Model->ApplyProjection(Read.BuildProjection().Value,*Registry);Model->Open();auto Ui=SNew(Hansa::UI::SHansaTradeMap).Model(Model.Get());const auto Semantics=Ui->GetSemanticSnapshot();TestTrue(TEXT("Presence progression is semantic"),Semantics.ContainsByPredicate([](const auto& N){return N.Id==TEXT("TradeMap.Presence.Progress");}));TestTrue(TEXT("Presence upgrade action is semantic"),Semantics.ContainsByPredicate([](const auto& N){return N.Id==TEXT("TradeMap.Presence.Upgrade");}));
+		TStrongObjectPtr<UHansaTradeMapPresentationModel> Model(NewObject<UHansaTradeMapPresentationModel>());Model->InitializeDefaults();Model->SetViewerHouse(House);Model->ApplyProjection(Read.BuildProjection().Value,*Registry);Model->Open();auto Ui=SNew(Hansa::UI::SHansaTradeMap).Model(Model.Get());const auto Semantics=Ui->GetSemanticSnapshot();TestTrue(TEXT("Presence progression is semantic"),Semantics.ContainsByPredicate([](const auto& N){return N.Id==TEXT("TradeMap.Presence.Progress");}));TestTrue(TEXT("Presence upgrade action is semantic"),Semantics.ContainsByPredicate([](const auto& N){return N.Id==TEXT("TradeMap.Presence.Upgrade");}));
 		for(const TCHAR* Id:{TEXT("TradeMap.Presence.Specialization.Warehouse"),TEXT("TradeMap.Presence.Specialization.Market"),TEXT("TradeMap.Presence.Specialization.Harbor"),TEXT("TradeMap.Presence.Specialization.Apply")})
 		{
 			const bool bExpectedEnabled=Model->CanPresenceSpecializationIntent(FString(Id).RightChop(33));
@@ -401,6 +437,100 @@ namespace Hansa::Editor::Tests::TradePresence
 		TestEqual(TEXT("Ordinary specialization input updates the reviewed choice"),Model->GetSnapshot().SelectedPresenceSpecializationId,FString(TEXT("Warehouse")));
 		Ui->SetPresentationSize(FIntPoint(1280,720));TestTrue(TEXT("Compact specialization comparison remains semantic and focusable"),Model->GetSnapshot().bCompact&&Ui->GetControllerFocusOrder().Contains(TEXT("TradeMap.Presence.Specialization.Apply")));
 		Ui->SetPresentationSize(FIntPoint(1920,1080));TestTrue(TEXT("Wide specialization comparison remains semantic and focusable"),!Model->GetSnapshot().bCompact&&Ui->GetControllerFocusOrder().Contains(TEXT("TradeMap.Presence.Specialization.Apply")));
+		return !HasAnyErrors();
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaRouteStationQualificationTest,
+		"Hansa.Integration.TradePresence.RouteStationQualification",
+		EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+	bool FHansaRouteStationQualificationTest::RunTest(const FString& Parameters)
+	{
+		auto Owned=EconomicDefinitions::CreateMvpDefinitionSet(GetTransientPackage());
+		TArray<const UHansaDefinitionBase*> Raw; for(const auto& V:Owned) Raw.Add(V.Get());
+		auto Compiled=FHansaEconomicDefinitionCompiler::Compile(Raw);
+		if(!TestTrue(TEXT("Presence catalog compiles"),Compiled.IsValid()))return false;
+		auto Topology=FHansaPlacementTopology::TryCreate({RostockPlacement::CreateMap()});
+		if(!TestTrue(TEXT("Municipal placement topology compiles"),Topology.IsSuccess()))return false;
+		auto Definitions=FHansaSimulationDefinitionContext::TryCreate(FHansaScenarioId::TryParse(TEXT("Scenario.LubeckGrainShortageV1")).Value,Compiled.Registry.GetRegistryHash(),MoveTemp(Compiled.Registry),MoveTemp(Topology.Value)).Value;
+		const auto House=FHansaHouseId::TryCreate(1).Value;
+		const auto Lubeck=FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")).Value;
+		const auto Rostock=FHansaCityDefinitionId::TryParse(TEXT("City.Rostock")).Value;
+		const auto Bread=FHansaGoodId::TryParse(TEXT("Good.Bread")).Value;
+		const auto CogId=FHansaVehicleId::TryCreate(1).Value;
+		const auto SourceId=FHansaInventoryId::TryCreate(1).Value;
+		const auto MarketId=FHansaInventoryId::TryCreate(2).Value;
+		const auto CargoId=FHansaInventoryId::TryCreate(3).Value;
+		FHansaSimulationInitialization Initial;
+		Initial.Clock=FHansaSimulationClock::TryCreate(FHansaSimulationVersion::TryCreate(1).Value,FHansaSimulationTick()).Value;
+		Initial.CampaignSeed=270927;
+		Initial.Houses.Add({House,FHansaMoney::FromRaw(100000)});
+		Initial.Cities.Add({Lubeck,{}});Initial.Cities.Add({Rostock,{}});
+		// Foreign lease/construction coverage must not disable the municipal port.
+		Initial.Placement.Maps.Add(RostockPlacement::CreateMap());
+		FHansaVehicleState Cog;Cog.Id=CogId;Cog.DefinitionId=FHansaVehicleDefinitionId::TryParse(TEXT("Vehicle.Cog")).Value;
+		Cog.OwnerId=House;Cog.CargoInventoryId=CargoId;Cog.Mode=EHansaRouteMode::Sea;
+		Cog.Capacity=FHansaQuantity::FromRaw(30000);Cog.CurrentCityId=Lubeck;Cog.UpkeepPfennigPerTravelTick=2;Initial.Vehicles.Add(Cog);
+		FHansaInventoryInitialization Source;Source.Id=SourceId;Source.OwnerKind=EHansaInventoryOwnerKind::City;Source.CityId=Lubeck;
+		Source.Capacity=FHansaQuantity::FromRaw(200000);Source.AcceptedGoods.Add(Bread);Source.InitialStock.Add({Bread,FHansaQuantity::FromRaw(100000)});Initial.Inventories.Add(Source);
+		FHansaInventoryInitialization Destination;Destination.Id=MarketId;Destination.OwnerKind=EHansaInventoryOwnerKind::City;Destination.CityId=Rostock;
+		Destination.Capacity=FHansaQuantity::FromRaw(200000);Destination.AcceptedGoods.Add(Bread);Initial.Inventories.Add(Destination);
+		FHansaInventoryInitialization Hold;Hold.Id=CargoId;Hold.OwnerKind=EHansaInventoryOwnerKind::Vehicle;Hold.VehicleId=CogId;
+		Hold.Capacity=Cog.Capacity;Hold.AcceptedGoods.Add(Bread);Initial.Inventories.Add(Hold);
+		for(const auto City:{Lubeck,Rostock})
+		{
+			FHansaCityMarketInitialization Market;Market.CityId=City;Market.GoodId=Bread;Market.InventoryIds.Add(City==Lubeck?SourceId:MarketId);
+			Market.DesiredReserve=FHansaQuantity::FromRaw(City==Rostock?10000:0);Market.bMarketOnly=City==Rostock;
+			// Keep this access/accounting fixture independent of falling market prices.
+			Market.MinimumPriceMilliMarks=2000;Market.MaximumPriceMilliMarks=2000;Market.InitialPriceMilliMarks=2000;
+			Market.InitialLastUpdateTick=0;Market.InitialReportTick=0;Initial.Markets.Add(Market);
+		}
+		FHansaRouteCargoAction Load;Load.Kind=EHansaRouteCargoActionKind::OwnedCityLoad;Load.GoodId=Bread;
+		Load.QuantityLimit=FHansaQuantity::FromRaw(10000);Load.CargoSlotIndex=0;
+		FHansaRouteCargoAction Sell;Sell.Kind=EHansaRouteCargoActionKind::Unload;Sell.GoodId=Bread;
+		Sell.QuantityLimit=FHansaQuantity::FromRaw(10000);Sell.CargoSlotIndex=0;
+		FHansaRouteStop Origin;Origin.CityId=Lubeck;Origin.Actions.Add(Load);
+		FHansaRouteStop Port;Port.CityId=Rostock;Port.Actions.Add(Sell);
+		FHansaRouteState Route;Route.Id=FHansaRouteId::TryCreate(1).Value;Route.OwnerId=House;Route.VehicleId=CogId;
+		Route.RouteDefinitionId=FHansaRouteDefinitionId::TryParse(TEXT("Route.BalticSea")).Value;
+		Route.Mode=EHansaRouteMode::Sea;Route.Stops={Origin,Port};Route.Lifecycle=EHansaRouteLifecycleState::AtStop;
+		Route.CurrentStopIndex=0;Route.NextStopIndex=1;Route.bPendingStopActions=true;Initial.Routes.Add(Route);
+		if(!TestTrue(TEXT("Rostock visiting presence seeds"),FHansaForeignPresenceInitialization::SeedAuthoredInitialPresence(Initial,*Definitions.GetEconomicRegistry())))return false;
+		auto Made=FHansaSimulationState::TryCreate(MoveTemp(Initial));if(!TestTrue(TEXT("Route qualification state validates"),Made.IsSuccess()))return false;
+		FHansaSimulationState State=MoveTemp(Made.Value);FHansaSimulationTransientCache Cache;
+		if(!TestTrue(TEXT("Initial route load tick succeeds"),FHansaGameplayCommandGateway::ExecuteTick(State,Definitions,{},Cache).IsSuccess()))return false;
+		const auto BeforeSale=State.CreateReadOnlyAccess(Definitions).QueryForeignPresence(House,Rostock);
+		if(!TestTrue(TEXT("Rostock presence is queryable before sale"),BeforeSale.IsSet()))return false;
+		TestEqual(TEXT("Home loading alone earns no Rostock trade credit"),BeforeSale->Contributions.LawfulTradeVolumeMilliUnits,int64(0));
+		for(int32 Tick=0;Tick<16;++Tick)
+		{
+			if(!TestTrue(TEXT("Route tick succeeds"),FHansaGameplayCommandGateway::ExecuteTick(State,Definitions,{},Cache).IsSuccess()))return false;
+			const auto Progress=State.CreateReadOnlyAccess(Definitions).QueryForeignPresence(House,Rostock);
+			if(Progress&&Progress->Contributions.CompletedDeliveryCount>0)break;
+		}
+		const auto First=State.CreateReadOnlyAccess(Definitions).QueryForeignPresence(House,Rostock);
+		if(!TestTrue(TEXT("Rostock progress exists"),First.IsSet()))return false;
+		TestEqual(TEXT("One settled route sale credits one delivery"),First->Contributions.CompletedDeliveryCount,int64(1));
+		TestEqual(TEXT("Only applied cargo credits lawful volume"),First->Contributions.LawfulTradeVolumeMilliUnits,int64(10000));
+		TestEqual(TEXT("Only pre-delivery reserve gap credits shortage relief"),First->Contributions.FulfilledShortageMilliUnits,int64(10000));
+		TestTrue(TEXT("Settled sale credits transaction value"),First->Contributions.TransactionValuePfennig>0);
+		TestTrue(TEXT("Operating Cog credits reliable and solvent time"),First->Contributions.ReliableOperatingTicks>=3&&First->Contributions.SolventOperatingTicks>=3);
+		TestFalse(TEXT("Home city does not gain foreign-presence progress"),State.CreateReadOnlyAccess(Definitions).QueryForeignPresence(House,Lubeck).IsSet());
+		FHansaSaveSnapshot Save;Save.State=State;Save.BuildVersion=TEXT("RoutePresence-Test");Save.SavedUtc=TEXT("2026-09-27T00:00:00Z");Save.Players={{1,House}};
+		TArray<uint8> Bytes;if(!TestTrue(TEXT("Progress saves"),FHansaSaveEnvelope::Encode(Save,Definitions,Bytes).IsSuccess()))return false;
+		FHansaSaveSnapshot Loaded;if(!TestTrue(TEXT("Progress reloads"),FHansaSaveEnvelope::Decode(Bytes,Definitions,Loaded).IsSuccess()))return false;
+		State=MoveTemp(Loaded.State);
+		TestEqual(TEXT("Reload does not duplicate delivered volume"),State.CreateReadOnlyAccess(Definitions).QueryForeignPresence(House,Rostock)->Contributions.LawfulTradeVolumeMilliUnits,int64(10000));
+		// Five deliveries need four further round trips plus the stop-action ticks.
+		for(int32 Tick=0;Tick<128;++Tick)
+		{
+			if(!TestTrue(TEXT("Repeated route tick succeeds"),FHansaGameplayCommandGateway::ExecuteTick(State,Definitions,{},Cache).IsSuccess()))return false;
+			const auto Progress=State.CreateReadOnlyAccess(Definitions).QueryForeignPresence(House,Rostock);
+			if(Progress&&Progress->Contributions.CompletedDeliveryCount>=5)break;
+		}
+		const auto Final=State.CreateReadOnlyAccess(Definitions).QueryForeignPresence(House,Rostock);
+		TestTrue(TEXT("Five physical deliveries advance the station requirements"),Final&&Final->Contributions.LawfulTradeVolumeMilliUnits>=50000&&Final->Contributions.CompletedDeliveryCount>=5&&Final->Contributions.FulfilledShortageMilliUnits==10000);
+		TestTrue(TEXT("Trade-station progress gate is met"),Final&&Final->NextStages.ContainsByPredicate([](const auto& Stage){return Stage.StageId==TEXT("PresenceStage.TradeStation")&&Stage.bProgressRequirementsMet;}));
 		return !HasAnyErrors();
 	}
 }

@@ -52,6 +52,12 @@ void UHansaVehicleDefinition::ValidateDefinition(TArray<FHansaDefinitionValidati
 			NSLOCTEXT("HansaTradeDefinition", "VehicleDomain", "A vehicle definition requires a Vehicle.* stable identity."),
 			NSLOCTEXT("HansaTradeDefinition", "VehicleDomainRemedy", "Assign a canonical Vehicle.* identity."));
 	}
+	if (CargoSlotCount != 3)
+    {
+        AddTradeIssue(OutIssues, TEXT("HSA-VEHICLE-004"), TEXT("CargoSlotCount"),
+            NSLOCTEXT("HansaTradeDefinition", "Slots", "This runtime supports exactly three persistent cargo slots."),
+            NSLOCTEXT("HansaTradeDefinition", "SlotsRemedy", "Restore the supported three-slot contract; slot count does not divide cargo capacity."));
+    }
 	if (CargoCapacityMilliUnits <= 0 || UpkeepPfennigPerTravelTick < 0)
 	{
 		AddTradeIssue(OutIssues, TEXT("HSA-VEHICLE-002"), TEXT("CargoCapacityMilliUnits"),

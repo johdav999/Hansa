@@ -314,4 +314,23 @@ bool FHansaTradePhysicalHarborHandoffTest::RunTest(const FString& Parameters)
 		ConnectedRead.QueryVehicle(Connected.VehicleId)->Cargo.GetRawValue(), int64(50'000));
 	return !HasAnyErrors();
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaPhysicalCargoSlotRouteTest,
+ "Hansa.TradeRoute.Slots.AuthoritativeDelivery",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHansaPhysicalCargoSlotRouteTest::RunTest(const FString&)
+{
+ using namespace Hansa::Simulation;
+ using namespace Hansa::Tests::Trade;
+ auto Harness=MakeHarness();auto Plan=Stops(Harness,0);
+ for(auto& Stop:Plan)for(auto& Action:Stop.Actions)Action.CargoSlotIndex=2;
+ if(!TestTrue(TEXT("Third-slot route activates through gateway"),CreateActiveRoute(Harness,1,Plan).IsSuccess()))return false;
+ auto Read=Harness.State.CreateReadOnlyAccess(Harness.Definitions);
+ TestEqual(TEXT("Load goes into exact physical slot 3"),Read.QueryVehicle(Harness.VehicleId)->CargoSlots[2].Quantity.GetRawValue(),int64(15000));
+ TestEqual(TEXT("Slot 1 stays empty"),Read.QueryVehicle(Harness.VehicleId)->CargoSlots[0].Quantity.GetRawValue(),int64(0));
+ for(int32 I=0;I<4;++I)TestTrue(TEXT("Route ticks through normal executor"),Step(Harness).IsSuccess());
+ Read=Harness.State.CreateReadOnlyAccess(Harness.Definitions);
+ TestEqual(TEXT("Selected slot delivered to destination"),Read.GetInventories().QueryStock(Harness.DestinationInventoryId,Harness.Grain)->Stock.GetRawValue(),int64(15000));
+ TestEqual(TEXT("Selected allocation cleared after unload"),Read.QueryVehicle(Harness.VehicleId)->CargoSlots[2].Quantity.GetRawValue(),int64(0));
+ return !HasAnyErrors();
+}
 #endif

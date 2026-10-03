@@ -5,6 +5,7 @@
 #include "Model/HansaIds.h"
 #include "Multiplayer/HansaAdmission.h"
 #include "Network/HansaMultiplayerTypes.h"
+#include "Queries/HansaLandQuery.h"
 
 class UHansaRuntimeSimulationHost;
 
@@ -33,6 +34,11 @@ namespace Hansa::Multiplayer
 		FHansaClientCommandFeedback SubmitIntent(uint64 PrincipalId, const FHansaClientCommandIntent& Intent);
 		bool BuildProjection(uint64 PrincipalId, int64 ClientKnownRevision, bool bForceFullRefresh,
 			FHansaClientProjectionSnapshot& OutProjection, FString& OutError);
+		/** Viewer identity is bound to the admitted principal and city interest on the server. */
+		bool QueryLand(uint64 PrincipalId, Hansa::Simulation::FHansaCityDefinitionId CityId,
+			Hansa::Simulation::FHansaGridCoordinate BoundsMin,
+			Hansa::Simulation::FHansaGridCoordinate BoundsMax,
+			Hansa::Simulation::FHansaLandQueryResult& OutResult, FString& OutError, bool bCompactSurvey = false) const;
 
 	private:
 		struct FClientState

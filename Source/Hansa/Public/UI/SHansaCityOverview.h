@@ -49,6 +49,8 @@ namespace Hansa::UI
 		virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
 
 	private:
+		bool CompactMarket() const { return bFullMarket && Model.IsValid() && Model->GetSnapshot().ActiveTab==EHansaCityOverviewTab::Market && Model->GetSnapshot().LoadState==EHansaCityOverviewLoadState::Ready && (Preferences.bLargeText || PresentationSize.X<1500); }
+		TSharedPtr<SHansaAction> CompactMarketBack;
         TSharedPtr<class SHansaAction> VisitButton; 
 		void Refresh(const FHansaCityOverviewSnapshot& Snapshot, uint64 Revision);
 		TSharedRef<ITableRow> GenerateRow(TSharedPtr<FHansaCityOverviewRowPresentation> Item, const TSharedRef<STableViewBase>& OwnerTable);

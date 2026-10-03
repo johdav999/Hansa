@@ -1,4 +1,6 @@
 #include "Trade/HansaTradeInternal.h"
+#include "Trade/HansaCargoPlan.h"
+#include "Presence/HansaConstructionDelivery.h"
 
 #include "Logistics/HansaLocalLogistics.h"
 #include "Math/NumericLimits.h"
@@ -17,40 +19,17 @@ namespace Hansa::Simulation
 			return Houses.FindByPredicate([Id](const FHansaHouseState& House) { return House.Id == Id; });
 		}
 
-		bool TradeInternalHasPlacementMap(const FHansaPlacementState& Placement, const FHansaCityDefinitionId CityId)
-		{
-			for (const FHansaPlacementMapInitialization& Map : Placement.GetMaps())
-			{
-				if (Map.CityId == CityId) return true;
-			}
-			return false;
-		}
-
-		bool CanUseCityInventory(const FHansaInventoryProjection& Inventory,
-			const EHansaRouteMode Mode, const FHansaInventoryLedger& Inventories,
-			const FHansaPlacementState& Placement, const TConstArrayView<FHansaBuildingState> Buildings,
-			const FHansaEconomicRegistry& Registry)
-		{
-			if (!TradeInternalHasPlacementMap(Placement, Inventory.CityId)) return true;
-			if (!FHansaLocalLogisticsQueries::QueryRoadPath(
-				Inventory.Id, Inventory.Id, Inventories.CreateReadOnlyAccess(), Placement, Buildings, &Registry).bMarketEligible)
-			{
-				return false;
-			}
-			if (Mode != EHansaRouteMode::Sea) return true;
-			for (const FHansaPlacedBuildingRecord& Record : Placement.GetPlacements())
-			{
-				if (Record.Spec.CityId == Inventory.CityId &&
-					Record.Spec.BuildingDefinitionId.ToString() == TEXT("Building.Dock") &&
-					FHansaLocalLogisticsQueries::QueryBuildingMarketAccess(
-						Record.BuildingId, Inventory.Id, Inventories.CreateReadOnlyAccess(),
-						Placement, Buildings, &Registry).bMarketEligible)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
+        bool CanUseCityInventory(const FHansaInventoryProjection& Inventory,
+            const EHansaRouteMode Mode,const FHansaInventoryLedger& Inventories,
+            const FHansaPlacementState& Placement,TConstArrayView<FHansaBuildingState> Buildings,
+            const FHansaEconomicRegistry& Registry)
+        {
+            if(Mode==EHansaRouteMode::Sea)return FHansaLocalLogisticsQueries::HasSeaTradeAccess(Inventory,Inventories.CreateReadOnlyAccess(),Placement,Buildings,Registry);
+            const auto* City=Registry.FindCityMarket(Inventory.CityId.ToString());
+            if(City&&City->bMarketOnly)return true;
+            if(!Placement.FindMap(Inventory.CityId))return true;
+            return FHansaLocalLogisticsQueries::QueryRoadPath(Inventory.Id,Inventory.Id,Inventories.CreateReadOnlyAccess(),Placement,Buildings,&Registry).bMarketEligible;
+        }
 
 		TArray<FHansaInventoryProjection> CityInventories(const FHansaInventoryLedger& Inventories,
 			const FHansaCityDefinitionId CityId, const FHansaGoodId GoodId, const EHansaRouteMode Mode,
@@ -70,6 +49,92 @@ namespace Hansa::Simulation
 			return Result;
 		}
 
+    }
+        void FHansaTradeExecutor::CollectConstruction(FHansaVehicleState& Vehicle, FHansaInventoryLedger& Inventories,
+            const FHansaPlacementState& Placement, TConstArrayView<FHansaBuildingState> Buildings,
+            const FHansaEconomicRegistry& Registry, FHansaSimulationTick Tick,
+            TArray<FHansaForeignPresenceState>& Presences, TArray<FHansaTradeStationState>& Stations,
+            uint8 Pickup, uint64& EventSequence, TArray<FHansaDomainEvent>& Events)
+        {
+            // Upgrade deliveries take priority over route sale/unload actions at the destination.
+            for(auto& Presence:Presences){
+                auto& U=Presence.Upgrade;
+                if(U.Status!=EHansaPresenceUpgradeStatus::AwaitingMaterials||!U.ConstructionSite.bLocalDelivery||Presence.Status!=EHansaForeignPresenceStatus::Active||Presence.HouseId!=Vehicle.OwnerId||U.FundingInventoryId!=Vehicle.CargoInventoryId)continue;
+                const auto* Stage=Registry.FindPresenceStage(U.TargetStageId);if(!Stage)continue;
+                auto* Station=Stations.FindByPredicate([&](const auto& S){return S.Id==Presence.StationId&&S.OwnerId==Vehicle.OwnerId&&S.Status==EHansaTradeStationStatus::Active;});if(!Station)continue;
+                if(Station->DeliveryMode){
+                    TArray<FHansaInventoryId> Sources;const auto* Home=Registry.FindCityMarket(Vehicle.CurrentCityId.ToString());
+                    if(Pickup&&!(Pickup==2&&Station->DeliveryMode==1)&&Home&&!Home->bMarketOnly)for(const auto& Cost:Stage->UpgradeGoods)
+                        for(const auto& I:CityInventories(Inventories,Vehicle.CurrentCityId,FHansaGoodId::TryParse(Cost.GoodId).Value,Vehicle.Mode,Placement,Buildings,Registry))Sources.AddUnique(I.Id);
+                    FHansaConstructionDelivery::Collect(U.FundingInventoryId,U.DeliveredGoods,Station->DeliveryReservations,Inventories,Stage->UpgradeGoods,Tick,Vehicle.CurrentCityId==Presence.CityId,Sources);
+                    continue;
+                }
+                if(Presence.CityId!=Vehicle.CurrentCityId)continue;
+                for(const auto& Cost:Stage->UpgradeGoods){
+                    const auto Good=FHansaGoodId::TryParse(Cost.GoodId);if(!Good)continue;
+                    auto* Delivered=U.DeliveredGoods.FindByPredicate([&](const auto& G){return G.GoodId==Good.Value;});
+                    const auto Stock=Inventories.CreateReadOnlyAccess().QueryStock(Vehicle.CargoInventoryId,Good.Value);
+                    const int64 Raw=Stock?FMath::Min(FMath::Max<int64>(0,Cost.QuantityMilliUnits-(Delivered?Delivered->Quantity.GetRawValue():0)),Stock->Available.GetRawValue()):0;
+                    if(Raw>0&&Inventories.TryTransfer(FHansaInventoryEndpoint::Inventory(Vehicle.CargoInventoryId),FHansaInventoryEndpoint::Sink(TEXT("PresenceConstructionEscrow")),Good.Value,FHansaQuantity::FromRaw(Raw),Tick,Inventories.CreateReadOnlyAccess().GetLastMovementSequence()+1).IsSuccess()){
+                        if(Delivered)Delivered->Quantity=FHansaQuantity::FromRaw(Delivered->Quantity.GetRawValue()+Raw);else U.DeliveredGoods.Add({Good.Value,FHansaQuantity::FromRaw(Raw)});
+                    }
+                }
+                U.DeliveredGoods.Sort([](const auto& A,const auto& B){return A.GoodId<B.GoodId;});
+            }
+            for(auto& Station:Stations){
+                if(Station.Status!=EHansaTradeStationStatus::Proposed || Station.FundingInventoryId!=Vehicle.CargoInventoryId || Station.OwnerId!=Vehicle.OwnerId)continue;
+                if(Station.ConstructionSite.bLocalDelivery&&!Station.DeliveryMode&&Vehicle.CurrentCityId!=Station.CityId)continue;
+                const auto* Presence=Presences.FindByPredicate([&](const auto& P){return P.HouseId==Station.OwnerId&&P.CityId==Station.CityId&&P.Status==EHansaForeignPresenceStatus::Active;});
+                const auto* Policy=Registry.FindCityTradePolicyForCity(Station.CityId.ToString());
+                const auto* Site=Policy?Policy->TradeStationSites.FindByPredicate([&](const auto& S){return S.SiteId==Station.SiteId;}):nullptr;
+                const auto* Stage=Presence?Registry.GetPresenceStages().FindByPredicate([&](const auto& S){return S.GrantedCapabilityIds.Contains(TEXT("PresenceCapability.TradeStation"))&&Registry.IsValidPresenceTransition(Station.CityId.ToString(),Presence->CurrentStageId,S.StableId);}):nullptr;
+                if(!Site||!Stage||Policy->DeniedCapabilityIds.Contains(TEXT("PresenceCapability.TradeStation")))continue;
+                bool Complete=true;
+                if(Station.ConstructionSite.bLocalDelivery&&Station.DeliveryMode){
+                    TArray<FHansaInventoryId> Sources;
+                    const auto* Home=Registry.FindCityMarket(Vehicle.CurrentCityId.ToString());
+                    if(Pickup&&!(Pickup==2&&Station.DeliveryMode==1)&&Home&&!Home->bMarketOnly)for(const auto& Cost:Stage->UpgradeGoods)
+                        for(const auto& I:CityInventories(Inventories,Vehicle.CurrentCityId,FHansaGoodId::TryParse(Cost.GoodId).Value,Vehicle.Mode,Placement,Buildings,Registry))Sources.AddUnique(I.Id);
+                    FHansaConstructionDelivery::Collect(Station,Inventories,Stage->UpgradeGoods,Tick,Vehicle.CurrentCityId==Station.CityId,Sources);
+                    for(const auto& Cost:Stage->UpgradeGoods){const auto* D=Station.SpentGoods.FindByPredicate([&](const auto& G){return G.GoodId.ToString()==Cost.GoodId;});Complete&=D&&D->Quantity.GetRawValue()>=Cost.QuantityMilliUnits;}
+                    if(Vehicle.CurrentCityId!=Station.CityId||!Complete)continue;
+                }
+                for(const auto& Cost:Stage->UpgradeGoods){
+                    const auto Good=FHansaGoodId::TryParse(Cost.GoodId).Value;
+                    auto* Spent=Station.SpentGoods.FindByPredicate([&](const auto& G){return G.GoodId==Good;});
+                    int64 Missing=FMath::Max<int64>(0,Cost.QuantityMilliUnits-(Spent?Spent->Quantity.GetRawValue():0));
+                    auto Secure=[&](){
+                        const auto Stock=Inventories.CreateReadOnlyAccess().QueryStock(Vehicle.CargoInventoryId,Good);
+                        const int64 Raw=Stock.IsSet()?FMath::Min(Missing,Stock->Available.GetRawValue()):0;
+                        if(Raw<=0)return;
+                        if(!Inventories.TryTransfer(FHansaInventoryEndpoint::Inventory(Vehicle.CargoInventoryId),FHansaInventoryEndpoint::Sink(TEXT("TradeStationConstruction")),Good,FHansaQuantity::FromRaw(Raw),Tick,Inventories.CreateReadOnlyAccess().GetLastMovementSequence()+1).IsSuccess())return;
+                        Spent=Station.SpentGoods.FindByPredicate([&](const auto& G){return G.GoodId==Good;});
+                        if(Spent)Spent->Quantity=FHansaQuantity::FromRaw(Spent->Quantity.GetRawValue()+Raw);else Station.SpentGoods.Add({Good,FHansaQuantity::FromRaw(Raw)});
+                        Missing-=Raw;
+                    };
+                    Secure();
+                    const auto* City=Registry.FindCityMarket(Vehicle.CurrentCityId.ToString());
+                    if(Pickup&&!Station.ConstructionSite.bLocalDelivery&&City&&!City->bMarketOnly&&Missing>0){
+                        for(const auto& Source:CityInventories(Inventories,Vehicle.CurrentCityId,Good,Vehicle.Mode,Placement,Buildings,Registry)){
+                            const auto Stock=Inventories.CreateReadOnlyAccess().QueryStock(Source.Id,Good);
+                            const auto Cargo=Inventories.CreateReadOnlyAccess().QueryInventory(Vehicle.CargoInventoryId);
+                            const int64 Available=Stock.IsSet()?FMath::Max<int64>(0,Stock->Available.GetRawValue()-Inventories.CreateReadOnlyAccess().QueryProtectedRaw(Source.Id,Good)):0;
+                            const int64 Raw=Cargo.IsSet()?FMath::Min3(Missing,Available,Cargo->FreeCapacity.GetRawValue()):0;
+                            if(Raw>0&&Inventories.TryTransfer(FHansaInventoryEndpoint::Inventory(Source.Id),FHansaInventoryEndpoint::CargoSlot(Vehicle.CargoInventoryId,INDEX_NONE),Good,FHansaQuantity::FromRaw(Raw),Tick,Inventories.CreateReadOnlyAccess().GetLastMovementSequence()+1).IsSuccess())Secure();
+                            if(Missing==0)break;
+                        }
+                    }
+                    Complete &= Missing==0;
+                }
+                Station.SpentGoods.Sort([](const auto& A,const auto& B){return A.GoodId<B.GoodId;});
+                if(!Complete)continue;
+                const auto Completion=FHansaSimulationTick::TryCreate(Tick.GetValue()+Site->ConstructionTicks);if(!Completion)continue;
+                Station.DeliveryMode=0;Station.Status=EHansaTradeStationStatus::UnderConstruction;Station.FundedTick=Tick;Station.CompletionTick=Completion.Value;
+                FHansaDomainEvent E;E.Type=EHansaDomainEventType::TradeStationFunded;E.Tick=Tick;E.GlobalSequence=++EventSequence;E.IssuingHouseId=Station.OwnerId;E.TradeStationId=Station.Id;E.CityId=Station.CityId;Events.Add(E);
+            }
+        }
+
+    namespace {
 		int64 TradeInternalAddClamped(const int64 Left, const int64 Right)
 		{
 			return Right > 0 && Left > TNumericLimits<int64>::Max() - Right
@@ -199,7 +264,7 @@ const FHansaTradeStationState* FindAccessibleStation(FHansaHouseId Owner, FHansa
 						const int64 Transfer = FMath::Min(Remaining, FMath::Max<int64>(0, Stock->Available.GetRawValue() - Inventories.CreateReadOnlyAccess().QueryProtectedRaw(Source.Id, Action.GoodId)));
 						if (Transfer <= 0) continue;
 						const auto Result = Inventories.TryTransfer(FHansaInventoryEndpoint::Inventory(Source.Id),
-							FHansaInventoryEndpoint::Inventory(Vehicle.CargoInventoryId), Action.GoodId,
+							FHansaInventoryEndpoint::CargoSlot(Vehicle.CargoInventoryId, Action.CargoSlotIndex), Action.GoodId,
 							FHansaQuantity::FromRaw(Transfer), Tick,
 							Inventories.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
 						if (!Result.IsSuccess()) continue;
@@ -213,6 +278,7 @@ const FHansaTradeStationState* FindAccessibleStation(FHansaHouseId Owner, FHansa
 				const TOptional<FHansaInventoryStockProjection> CargoStock =
 					Inventories.CreateReadOnlyAccess().QueryStock(Vehicle.CargoInventoryId, Action.GoodId);
 				Remaining = CargoStock.IsSet() ? FMath::Min(Remaining, CargoStock->Available.GetRawValue()) : 0;
+                if (Action.CargoSlotIndex != INDEX_NONE) { const auto Hold = Inventories.CreateReadOnlyAccess().QueryInventory(Vehicle.CargoInventoryId); Remaining = Hold && Hold->CargoSlots.IsValidIndex(Action.CargoSlotIndex) && Hold->CargoSlots[Action.CargoSlotIndex].GoodId == Action.GoodId ? FMath::Min(Remaining, Hold->CargoSlots[Action.CargoSlotIndex].Quantity.GetRawValue()) : 0; }
                 if (Action.Kind == EHansaRouteCargoActionKind::StationUnload || Action.Kind == EHansaRouteCargoActionKind::OwnedCityUnload)
                     Remaining = CargoStock ? FMath::Min(Remaining, FMath::Max<int64>(0, CargoStock->Available.GetRawValue() - FMath::Max(Action.MinimumSourceReserve.GetRawValue(), Inventories.CreateReadOnlyAccess().QueryProtectedRaw(Vehicle.CargoInventoryId, Action.GoodId)))) : 0;
 				for (const FHansaInventoryProjection& Destination : Endpoints)
@@ -224,7 +290,7 @@ const FHansaTradeStationState* FindAccessibleStation(FHansaHouseId Owner, FHansa
 					const int64 Transfer = FMath::Min(Remaining, Current->FreeCapacity.GetRawValue());
 					if (Transfer <= 0) continue;
 					const auto Result = Inventories.TryTransfer(
-						FHansaInventoryEndpoint::Inventory(Vehicle.CargoInventoryId),
+						FHansaInventoryEndpoint::CargoSlot(Vehicle.CargoInventoryId, Action.CargoSlotIndex),
 						FHansaInventoryEndpoint::Inventory(Destination.Id), Action.GoodId,
 						FHansaQuantity::FromRaw(Transfer), Tick,
 						Inventories.CreateReadOnlyAccess().GetLastMovementSequence() + 1);
@@ -303,7 +369,7 @@ const FHansaTradeStationState* FindAccessibleStation(FHansaHouseId Owner, FHansa
 		const TOptional<FHansaInventoryProjection> Cargo =
 			Inventories.CreateReadOnlyAccess().QueryInventory(Vehicle.CargoInventoryId);
 		if (!Cargo.IsSet() || Cargo->OwnerKind != EHansaInventoryOwnerKind::Vehicle ||
-			Cargo->VehicleId != Vehicle.Id || Cargo->Capacity.GetRawValue() != VehicleDefinition->CargoCapacityMilliUnits)
+			Cargo->VehicleId != Vehicle.Id || Cargo->Capacity != Vehicle.Capacity)
 			return EHansaRoutePlanError::InvalidCargoInventory;
 		if (Stops.Num() < 2 || Stops.Num() > 16) return EHansaRoutePlanError::InvalidStops;
 		int32 ActionCount = 0;
@@ -320,6 +386,8 @@ const FHansaTradeStationState* FindAccessibleStation(FHansaHouseId Owner, FHansa
 			for (const FHansaRouteCargoAction& Action : Stop.Actions)
 			{
 				++ActionCount;
+                if (Action.CargoSlotIndex < INDEX_NONE || Action.CargoSlotIndex >= 3) return EHansaRoutePlanError::InvalidAction;
+                if (Action.CargoSlotIndex != INDEX_NONE && Stop.Actions.ContainsByPredicate([&](const auto& Other){return &Other != &Action && Other.CargoSlotIndex == Action.CargoSlotIndex && IsRouteLoad(Other.Kind) == IsRouteLoad(Action.Kind);})) return EHansaRoutePlanError::InvalidAction;
                 if (static_cast<uint8>(Action.Kind) > static_cast<uint8>(EHansaRouteCargoActionKind::OwnedCityUnload)) return EHansaRoutePlanError::InvalidAction;
                 if (IsStationTransfer(Action.Kind))
                 {
@@ -338,11 +406,12 @@ const FHansaTradeStationState* FindAccessibleStation(FHansaHouseId Owner, FHansa
 				if (!Action.GoodId.IsValid() || Registry.FindGood(Action.GoodId.ToString()) == nullptr ||
 					Action.Condition != EHansaRouteCargoCondition::Always ||
 					Action.QuantityLimit.GetRawValue() <= 0 ||
-					Action.QuantityLimit.GetRawValue() > VehicleDefinition->CargoCapacityMilliUnits ||
+					Action.QuantityLimit.GetRawValue() > Cargo->Capacity.GetRawValue() ||
 					Action.MinimumSourceReserve.GetRawValue() < 0)
 					return EHansaRoutePlanError::InvalidAction;
 			}
 		}
+		if (!FHansaCargoPlan::Validate(Stops, Cargo->Capacity.GetRawValue())) return EHansaRoutePlanError::InvalidAction;
 		return ActionCount > 0 ? EHansaRoutePlanError::None : EHansaRoutePlanError::InvalidStops;
 	}
 
@@ -353,7 +422,7 @@ const FHansaTradeStationState* FindAccessibleStation(FHansaHouseId Owner, FHansa
 		const TConstArrayView<FHansaHouseResearchState> Research, const FHansaEconomicRegistry& Registry,
 		const FHansaSimulationTick Tick, uint64& InOutPublishedEventCount,
 		TArray<FHansaDomainEvent>& OutEvents,
-		TConstArrayView<FHansaForeignPresenceState> Presences, TConstArrayView<FHansaTradeStationState> Stations)
+		TArray<FHansaForeignPresenceState>& Presences, TArray<FHansaTradeStationState>& Stations)
 	{
 		for (FHansaVehicleState& Vehicle : Vehicles)
 		{
@@ -406,11 +475,28 @@ const FHansaTradeStationState* FindAccessibleStation(FHansaHouseId Owner, FHansa
 				continue;
 			}
 
+            CollectConstruction(*Vehicle,Inventories,Placement,Buildings,Registry,Tick,Presences,Stations,false,InOutPublishedEventCount,OutEvents);
 			if (Route.bPendingStopActions)
 			{
 				const FHansaRouteStop& Stop = Route.Stops[Route.CurrentStopIndex];
-				for (int32 ActionIndex = 0; ActionIndex < Stop.Actions.Num(); ++ActionIndex)
+				TArray<int32> ActionOrder; for (int32 I = 0; I < Stop.Actions.Num(); ++I) ActionOrder.Add(I);
+                if (!Stop.Actions.ContainsByPredicate([](const auto& A){return A.CargoSlotIndex == INDEX_NONE;})) ActionOrder.StableSort([&](int32 A, int32 B){return !IsRouteLoad(Stop.Actions[A].Kind) && IsRouteLoad(Stop.Actions[B].Kind);});
+                for (const int32 ActionIndex : ActionOrder)
 				{
+					const FHansaRouteCargoAction& Action = Stop.Actions[ActionIndex];
+                    if(IsRouteLoad(Action.Kind))CollectConstruction(*Vehicle,Inventories,Placement,Buildings,Registry,Tick,Presences,Stations,2,InOutPublishedEventCount,OutEvents);
+					int64 ShortageBefore = 0;
+					if (Action.Kind == EHansaRouteCargoActionKind::Unload)
+						for (const FHansaCityMarketState& Market : Markets)
+						{
+						if (Market.CityId != Stop.CityId || Market.GoodId != Action.GoodId || !Market.bMarketOnly) continue;
+						int64 StockBefore = 0;
+						for (const FHansaInventoryId InventoryId : Market.InventoryIds)
+							if (const auto Stock = Inventories.CreateReadOnlyAccess().QueryStock(InventoryId, Action.GoodId); Stock.IsSet())
+								StockBefore = TradeInternalAddClamped(StockBefore, Stock->Stock.GetRawValue());
+						ShortageBefore = FMath::Max<int64>(0, Market.DesiredReserve.GetRawValue() - StockBefore);
+						break;
+						}
 					Route.LastTransfer = ExecuteAction(Route, *Vehicle, Stop.Actions[ActionIndex],
 						ActionIndex, Inventories, Placement, Buildings, Registry, Tick,
 						TradeInternalFindHouse(Houses, Route.OwnerId), Markets, Research, Presences, Stations);
@@ -424,6 +510,26 @@ const FHansaTradeStationState* FindAccessibleStation(FHansaHouseId Owner, FHansa
 						Tick, Stop.CityId, Route.LastTransfer.GoodId, Route.LastTransfer.Kind,
 						Route.LastTransfer.AppliedQuantity.GetRawValue(),
 						Route.LastTransfer.RequestedQuantity.GetRawValue(), InOutPublishedEventCount, OutEvents);
+					if (Action.Kind == EHansaRouteCargoActionKind::Unload &&
+						Route.LastTransfer.AppliedQuantity.GetRawValue() > 0 && Route.LastTransfer.SettledMoneyRaw > 0)
+						if (FHansaForeignPresenceState* Presence = Presences.FindByPredicate([&](const auto& P)
+							{ return P.HouseId == Route.OwnerId && P.CityId == Stop.CityId && P.Status == EHansaForeignPresenceStatus::Active; }))
+						{
+						const uint64 SourceSequence = OutEvents.Last().GetGlobalSequence();
+						if (SourceSequence > Presence->LastAcceptedContributionEventSequence)
+						{
+							const int64 Applied = Route.LastTransfer.AppliedQuantity.GetRawValue();
+							auto& C = Presence->Contributions;
+							C.LawfulTradeVolumeMilliUnits = TradeInternalAddClamped(C.LawfulTradeVolumeMilliUnits, Applied);
+							C.CompletedDeliveryCount = TradeInternalAddClamped(C.CompletedDeliveryCount, 1);
+							C.TransactionValuePfennig = TradeInternalAddClamped(C.TransactionValuePfennig, Route.LastTransfer.SettledMoneyRaw);
+							C.FulfilledShortageMilliUnits = TradeInternalAddClamped(C.FulfilledShortageMilliUnits, FMath::Min(Applied, ShortageBefore));
+							Presence->LastAcceptedContributionEventSequence = SourceSequence;
+							if (Presence->History.Num() >= 64) Presence->History.RemoveAt(0);
+							Presence->History.Add({EHansaPresenceHistoryKind::Contribution, Tick, SourceSequence,
+								Presence->CurrentStageId, Applied, Route.LastTransfer.SettledMoneyRaw});
+						}
+						}
                     if (IsStationTransfer(Route.LastTransfer.Kind))
                     {
                         for (const auto& Presence : Presences)
@@ -431,6 +537,7 @@ const FHansaTradeStationState* FindAccessibleStation(FHansaHouseId Owner, FHansa
                                 OutEvents.Last().TradeStationId = Presence.StationId;
                     }
 				}
+                CollectConstruction(*Vehicle,Inventories,Placement,Buildings,Registry,Tick,Presences,Stations,true,InOutPublishedEventCount,OutEvents);
 				Route.bPendingStopActions = false;
 			}
 

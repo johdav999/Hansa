@@ -67,6 +67,12 @@ public:
 		HansaUnit = "MilliUnit", HansaMin = "1", HansaMax = "9223372036854775807"))
 	int64 CargoCapacityMilliUnits = 1;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trade", meta = (
+        DisplayName = "Physical cargo slots", ToolTip = "Three persistent product columns share the total cargo capacity. At each town unload instructions execute before load instructions. Legacy excess products remain withdrawal-only recovery cargo.",
+        HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "false", HansaAIAccess = "Read",
+        HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "CargoSlots", HansaUnit = "Count", HansaMin = "3", HansaMax = "3"))
+    int32 CargoSlotCount = 3;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trade", meta = (
 		DisplayName = "Travel upkeep", ToolTip = "Operating cost charged for each tick spent traveling, including player-ordered water exploration. Returning to the starting berth is required before route activation.", ClampMin = "0",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "true", HansaAIAccess = "Suggest",
@@ -102,7 +108,7 @@ public:
 	TArray<FHansaRouteConnectionDefinition> Connections;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trade|Advanced", meta = (
-		DisplayName = "Cargo-rule schema", ToolTip = "Unconditional cargo rules. Saved Load/Unload retain legacy market settlement; StationLoad/StationUnload transfer owned station stock, and OwnedCityLoad/OwnedCityUnload transfer home stock without settlement. Targets use stable owner and city identities; station actions require active RouteAccess and LocalStorage capabilities.",
+		DisplayName = "Cargo-rule schema", ToolTip = "Unconditional cargo rules. Instructions identify a zero-based physical CargoSlotIndex (0-2); -1 is preserved legacy pooled cargo. Town stops execute Unload then Load in persistent slot columns. Capacity is shared across slots. Saved Load/Unload retain legacy market settlement; StationLoad/StationUnload transfer owned station stock, and OwnedCityLoad/OwnedCityUnload transfer home stock without settlement. Targets use stable owner and city identities; station actions require active RouteAccess and LocalStorage capabilities.",
 		HansaRequired = "true", HansaReference = "None", HansaBulkEditable = "false", HansaAIAccess = "Read",
 		HansaMigration = "RequiresMigration", HansaSerialization = "Included", HansaValidation = "ExactOne",
 		HansaUnit = "Version", HansaMin = "1", HansaMax = "1"))

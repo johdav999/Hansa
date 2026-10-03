@@ -1,7 +1,9 @@
 #include "UI/HansaRootHud.h"
+#include "World/HansaCityCentrePresentation.h"
 #include "World/HansaCargoProjectionManager.h"
 #include "World/HansaCargoVehiclePresentation.h"
 #include "World/HansaRostockQuarter.h"
+#include "World/HansaTradeStationPresentation.h"
 #include "World/HansaCargoVehiclePresentation.h"
 #include "Misc/ConfigCacheIni.h"
 #include "Misc/Paths.h"
@@ -12,8 +14,13 @@
 #include "HAL/PlatformMisc.h"
 
 #include "Engine/Engine.h"
+#include "GameMapsSettings.h"
 #include "Engine/GameViewportClient.h"
 #include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
+#include "Misc/CommandLine.h"
+#include "Misc/PackageName.h"
+#include "Misc/Parse.h"
 #include "UnrealClient.h"
 #include "GameFramework/Actor.h"
 #include "HansaLog.h"
@@ -28,6 +35,7 @@
 #include "Save/HansaSaveSubsystem.h"
 #include "UI/HansaTradeMapPresentationModel.h"
 #include "UI/SHansaRootHud.h"
+#include "UI/SHansaCityOverview.h"
 #include "World/HansaBuildingWorldProjection.h"
 #include "World/HansaGameMode.h"
 #include "World/HansaRuntimeSimulationHost.h"
@@ -43,6 +51,7 @@ void AHansaRootHud::BeginPlay()
 	PresentationModel->InitializeDefaults();
     auto WaitingHud=PresentationModel->GetSnapshot();
     WaitingHud.Money=LOCTEXT("WaitingTreasury","Treasury unavailable");WaitingHud.MoneyTrend=FText();
+    WaitingHud.WealthyCitizens=LOCTEXT("WaitingArtisans","Unavailable");
     WaitingHud.Population=LOCTEXT("WaitingPopulation","Population unavailable");WaitingHud.Workforce=LOCTEXT("WaitingWorkforce","Workforce unavailable");
     WaitingHud.DateAndSeason=LOCTEXT("WaitingClock","Waiting for city");
     WaitingHud.Connection=GetNetMode()==NM_Standalone?LOCTEXT("LocalSession","Local game"):LOCTEXT("NetworkSession","Network game");
@@ -52,6 +61,7 @@ void AHansaRootHud::BeginPlay()
 		SimulationHost = GameMode->GetSimulationHost();
 	}
 	BuildMenuPresentationModel = NewObject<UHansaBuildMenuPresentationModel>(this, TEXT("BuildMenuPresentation"));
+    BuildMenuPresentationModel->ShipIntent = [this](int64 Id, bool) { return CenterShipIntent(Id); };
 	InspectorPresentationModel = NewObject<UHansaInspectorPresentationModel>(this, TEXT("InspectorPresentation"));
 	InspectorPresentationModel->InitializeDefaults();
 	InspectorPresentationModel->BindRuntime(SimulationHost);
@@ -71,12 +81,27 @@ void AHansaRootHud::BeginPlay()
 	MarketTablePresentationModel = NewObject<UHansaMarketTablePresentationModel>(this, TEXT("MarketTablePresentation"));
 	MarketTablePresentationModel->InitializeDefaults();
 	MarketTablePresentationModel->BindRuntime(SimulationHost);
+    if(auto* C=Cast<AHansaStrategyPlayerController>(PlayerOwner))C->OnCommandFeedback.AddUObject(MarketTablePresentationModel,&UHansaMarketTablePresentationModel::ReceiveCommandFeedback);
+    MarketTablePresentationModel->VisitingLinkRequested=[this](FName City,FName Good,int64 Ship,FName Action){
+     CityOverviewPresentationModel->CloseIntent();TradeMapPresentationModel->Open(TEXT("Market.Detail.SpotTrade.Station"),Good,City,false);TradeMapPresentationModel->SelectCityIntent(City);
+     if(Action==TEXT("Station")){TradeMapPresentationModel->SelectSectionIntent(TEXT("Presence"));TradeMapPresentationModel->SelectWorkspacePageIntent(TEXT("Workspace"));}
+    };
 	if (GetNetMode() != NM_Standalone) MarketTablePresentationModel->SetNetworkCommandIntent([this](const FHansaClientCommandIntent& Intent)
 	{ if (auto* Controller = Cast<AHansaStrategyPlayerController>(PlayerOwner)) return Controller->SubmitLocalHansaIntent(Intent); return false; });
 	TradeMapPresentationModel = NewObject<UHansaTradeMapPresentationModel>(this, TEXT("TradeMapPresentation"));
 	TradeMapPresentationModel->InitializeDefaults();
+    TradeMapPresentationModel->MarketRequested=[this](FName City,FName Good){
+     if(!CityOverviewPresentationModel||!MarketTablePresentationModel)return false;
+     if(!SimulationHost)if(auto* C=Cast<AHansaStrategyPlayerController>(PlayerOwner)){FHansaClientInterest Interest;Interest.CityIds.AddUnique(City.ToString());C->ServerSetHansaInterest(Interest);}
+     TradeMapPresentationModel->CloseIntent();CityOverviewPresentationModel->Open(TEXT("TradeMap.Overview.Market"));CityOverviewPresentationModel->SelectCityIntent(City);CityOverviewPresentationModel->SelectTabIntent(EHansaCityOverviewTab::Market);RefreshCityOverview();MarketTablePresentationModel->SelectGoodIntent(Good);
+     if(RootHudWidget){RootHudWidget->FocusSemanticId(TEXT("CityOverview.Market.Details"));if(!RootHudWidget->GetCityOverview()->IsFullMarket())RootHudWidget->ActivateSemanticId(TEXT("CityOverview.Market.Details"));}return true;
+    };
+    TradeMapPresentationModel->StationMapRequested=[this](FName City,int64 Station){return ShowStationOnMap(City,Station);};
     TradeMapPresentationModel->VisitRequested=[this](FName City){return VisitCityIntent(City);};
+    TradeMapPresentationModel->RemoteInterestRequested=[this](FName City){if(auto* C=Cast<AHansaStrategyPlayerController>(PlayerOwner)){FHansaClientInterest Interest;Interest.CityIds={TEXT("City.Lubeck")};Interest.CityIds.AddUnique(City.ToString());C->ServerSetHansaInterest(Interest);}};
+    TradeMapPresentationModel->ConstructionRequested=[this](FName City,uint64 Lease,FName Building){return BeginForeignConstruction(City,Lease,Building);};
 	TradeMapPresentationModel->BindRuntime(SimulationHost);
+    if(auto* Controller=Cast<AHansaStrategyPlayerController>(PlayerOwner))Controller->OnCommandFeedback.AddUObject(TradeMapPresentationModel,&UHansaTradeMapPresentationModel::ReceiveCommandFeedback);
 	if (GetNetMode() != NM_Standalone)
 	{
 		TradeMapPresentationModel->SetNetworkCommandIntent([this](const FHansaClientCommandIntent& Intent)
@@ -85,6 +110,7 @@ void AHansaRootHud::BeginPlay()
 			return false;
 		});
 	}
+    if(!SimulationHost)if(auto* Controller=Cast<AHansaStrategyPlayerController>(PlayerOwner))TradeMapPresentationModel->ApplyRemoteEstablishment(Controller->GetClientProjection());
 	ResearchPresentationModel = NewObject<UHansaResearchPresentationModel>(this, TEXT("ResearchPresentation"));
 	ResearchPresentationModel->SetQueueIntent([this](const FString& TechnologyId)
 	{
@@ -157,6 +183,7 @@ void AHansaRootHud::BeginPlay()
             if(FrontendPresentationModel)FrontendPresentationModel->SessionStarted();
             if(SaveLoadPresentationModel)SaveLoadPresentationModel->SetSavingAllowed(true);
             if(ScenarioPresentationModel)ScenarioPresentationModel->SessionRestored();
+            if(RootHudWidget)RootHudWidget->CloseAllMenus();
             SessionResumeSpeed=uint8(EHansaHudGameSpeed::Normal);
             if(PresentationModel)PresentationModel->SetSpeed(EHansaHudGameSpeed::Paused);
         });
@@ -183,6 +210,7 @@ void AHansaRootHud::BeginPlay()
         {
             if(!TradeMapPresentationModel)return;
             TradeMapPresentationModel->Open();
+            if(Target.ToString().StartsWith(TEXT("TradeMap.Fleet."))){TradeMapPresentationModel->DirectoryIntent(TEXT("Fleet"));if(TradeMapPresentationModel->SelectFleetIntent(FCString::Atoi64(*Target.ToString().RightChop(15)))){TradeMapPresentationModel->SelectSectionIntent(TEXT("Route"));if(RootHudWidget)RootHudWidget->FocusSemanticId(TEXT("TradeMap.Ship.Route"));}return;}
             if(RootHudWidget)RootHudWidget->FocusSemanticId(Target.ToString());
             return;
         }
@@ -229,6 +257,10 @@ void AHansaRootHud::BeginPlay()
 	{
 		UE_LOG(LogHansa, Error, TEXT("Hansa build menu initialization failed: %s"), *BuildInitializationError);
 	}
+	BuildMenuPresentationModel->TradeHousePlacementRequested=[this]{
+        if(!VisitCityIntent(TEXT("City.Rostock")))if(auto* Camera=PlayerOwner?Cast<AHansaStrategyCameraPawn>(PlayerOwner->GetPawn()):nullptr)Camera->FocusWorldLocationIntent(AHansaTradeStationPresentation::SiteTransform(GetWorld()).TransformPosition(FVector(59800,-600,100)));
+    };
+    if(GetNetMode()==NM_Client)BuildMenuPresentationModel->RemotePlacementProjection=[this]()->const FHansaClientProjectionSnapshot*{const auto* C=Cast<AHansaStrategyPlayerController>(PlayerOwner);return C?&C->GetClientProjection():nullptr;};
 	BuildMenuChangedHandle = BuildMenuPresentationModel->OnChanged().AddUObject(
 		this, &AHansaRootHud::HandleBuildMenuPresentationChanged);
 	HudPresentationChangedHandle = PresentationModel->OnChanged().AddUObject(
@@ -282,6 +314,26 @@ void AHansaRootHud::BeginPlay()
 	{
 		Controller->OnWorldSelectionChanged.AddDynamic(this, &AHansaRootHud::HandleWorldSelectionChanged);
 	}
+    RefreshRemoteSession();
+    if (GetNetMode() == NM_Standalone && GetWorld() && GetWorld()->URL.HasOption(TEXT("HansaNewGame=1")))
+    {
+        GetWorldTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]
+        {
+            if (FrontendPresentationModel) FrontendPresentationModel->Request(TEXT("NewGame"));
+        }));
+    }
+}
+
+void AHansaRootHud::RefreshRemoteSession()
+{
+    RefreshShipMenu();
+    if(GetNetMode()==NM_Client)RefreshRostockPresentation();
+    if(GetNetMode()!=NM_Client||bRemoteSessionEntered||!FrontendPresentationModel||!ScenarioPresentationModel)return;
+    const auto* Controller=Cast<AHansaStrategyPlayerController>(PlayerOwner);
+    if(!Controller||Controller->GetClientProjection().OwnerHouseId<=0||Controller->GetClientProjection().Revision<=0)return;
+    // A remote participant joins an existing session; local New Game and briefing are not entry gates.
+    bRemoteSessionEntered=true;FrontendPresentationModel->SessionStarted();
+    ScenarioPresentationModel->SessionRestored();ScenarioPresentationModel->Close();
 }
 
 void AHansaRootHud::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -336,14 +388,26 @@ void AHansaRootHud::HandleViewportResized(FViewport* Viewport, const uint32 Unus
 
 void AHansaRootHud::HandleWorldSelectionChanged(AActor* SelectedActor, const FHitResult& HitResult)
 {
+    if(RootHudWidget.IsValid())
+    {
+        if(RootHudWidget->SelectLandWorldHit(HitResult))return;
+        RootHudWidget->CloseLandSelection();
+    }
+    if(auto* Station=Cast<AHansaTradeStationPresentation>(SelectedActor)){InspectRostockTradeStation();return;}
+    if(RostockTradeStationPresentation)RostockTradeStationPresentation->SetSelected(false);
+    if(TradeMapPresentationModel&&TradeMapPresentationModel->bWorldStationDetail)TradeMapPresentationModel->CloseIntent();
     if(auto* Cargo=Cast<AHansaCargoVehiclePresentation>(SelectedActor)) {InspectCargo(Cargo->SemanticId); return;}
     SelectedCargo=NAME_None;SelectedTradeStationValue=0;
     for(TActorIterator<AHansaCargoProjectionManager> It(GetWorld());It;++It)It->ClearSelection();
+    if(Cast<AHansaCityCentrePresentation>(SelectedActor)){
+        // Municipal scenery is not owned by the player and is not an overview shortcut.
+        if(InspectorPresentationModel)InspectorPresentationModel->CloseIntent();
+        return;
+    }
 	if(ViewedCity==TEXT("City.Rostock"))
     {
-        if(Cast<AHansaRostockQuarter>(SelectedActor))InspectRostockRole(AHansaRostockQuarter::RoleFor(HitResult.GetComponent()));
-        else if(SelectedActor&&SelectedActor->Tags.Contains(TEXT("TradeStation")))InspectRostockTradeStation();
-        else if(SelectedActor&&SelectedActor->Tags.Contains(TEXT("City.Rostock")))InspectRostockRole(TEXT("Cargo"));
+        if(SelectedActor&&SelectedActor->Tags.Contains(TEXT("TradeStation")))InspectRostockTradeStation();
+        else if(InspectorPresentationModel)InspectorPresentationModel->CloseIntent();
         return;
     }
     (void)HitResult;
@@ -389,12 +453,14 @@ void AHansaRootHud::HandleHudPresentationChanged(
 void AHansaRootHud::HandleBuildMenuPresentationChanged(
 	const FHansaBuildMenuSnapshot& Snapshot, const uint64 Revision)
 {
-    if(ScenarioPresentationModel&&Snapshot.bOpen)ScenarioPresentationModel->OfferHelp(Snapshot.SelectedCategory==EHansaBuildCategory::Roads?EHansaSessionHelpTopic::Roads:EHansaSessionHelpTopic::Construction);
+    if (BuildMenuPresentationModel->IsShipsOpen() && InspectorPresentationModel && InspectorPresentationModel->GetSnapshot().bOpen) InspectorPresentationModel->CloseIntent();
+    if(ScenarioPresentationModel&&Snapshot.bOpen&&!BuildMenuPresentationModel->IsShipsOpen())ScenarioPresentationModel->OfferHelp(Snapshot.SelectedCategory==EHansaBuildCategory::Roads?EHansaSessionHelpTopic::Roads:EHansaSessionHelpTopic::Construction);
     (void)Revision;
     if (AHansaStrategyPlayerController* Controller = Cast<AHansaStrategyPlayerController>(PlayerOwner))
 	{
 		Controller->RefreshBuildingPlacementPresentation();
 	}
+    if (RootHudWidget.IsValid()) RootHudWidget->RefreshLandPlacement();
 }
 
 void AHansaRootHud::HandleSimulationAdvanced(const int64 SimulationTick)
@@ -425,8 +491,14 @@ void AHansaRootHud::HandleSimulationAdvanced(const int64 SimulationTick)
 
 void AHansaRootHud::RefreshCityOverview()
 {
+    RefreshShipMenu();
     RefreshRostockPresentation();
-	if (CityOverviewPresentationModel == nullptr || SimulationHost == nullptr) return;
+	if (CityOverviewPresentationModel == nullptr) return;
+    if(!SimulationHost){if(auto* C=Cast<AHansaStrategyPlayerController>(PlayerOwner)){
+      const auto City=CityOverviewPresentationModel->GetSnapshot().CityStableId;
+      MarketTablePresentationModel->ApplyRemoteVisiting(C->GetClientProjection(),City);
+      CityOverviewPresentationModel->ApplyRemoteMarketCity(City);
+    }return;}
 	const Hansa::Simulation::FHansaEconomicRegistry* Registry = SimulationHost->GetEconomicRegistry();
 	const auto Projection = SimulationHost->BuildProjection();
 	if (Registry == nullptr || !Projection)
@@ -438,7 +510,7 @@ void AHansaRootHud::RefreshCityOverview()
 	}
 	CityOverviewPresentationModel->ApplyProjection(
 		Projection.Value, *Registry, Hansa::Simulation::FHansaCityDefinitionId::TryParse(CityOverviewPresentationModel->GetSnapshot().CityStableId.ToString()).Value,
-        CityOverviewPresentationModel->GetSnapshot().CityStableId==TEXT("City.Rostock")?LOCTEXT("Rostock","Rostock"):LOCTEXT("Lubeck", "Lübeck"), 0, SimulationHost);
+        CityOverviewPresentationModel->GetSnapshot().CityStableId==TEXT("City.Lubeck")?LOCTEXT("Lubeck", "Lübeck"):FText::FromString(CityOverviewPresentationModel->GetSnapshot().CityStableId.ToString().RightChop(5)), 0, SimulationHost);
 	if (PresentationModel != nullptr)
 	{
 		// PublishCityVisit selects the current world city for every top-menu metric.
@@ -447,11 +519,12 @@ void AHansaRootHud::RefreshCityOverview()
 	}
 	if (MarketTablePresentationModel != nullptr)
 	{
-		MarketTablePresentationModel->ApplyProjection(Projection.Value, *Registry, SimulationHost->GetCityId());
+		MarketTablePresentationModel->ApplyProjection(Projection.Value, *Registry, Hansa::Simulation::FHansaCityDefinitionId::TryParse(CityOverviewPresentationModel->GetSnapshot().CityStableId.ToString()).Value);
 	}
 	if (TradeMapPresentationModel != nullptr)
 	{
 		TradeMapPresentationModel->ApplyProjection(Projection.Value, *Registry);
+        if(PresentationModel)PresentationModel->ApplyRecoveryAlerts(TradeMapPresentationModel->Recoveries);
 	}
 	if (ResearchPresentationModel != nullptr)
 	{
@@ -503,9 +576,10 @@ void AHansaRootHud::HandleMarketRouteRequested(const FName GoodStableId)
 	{
 		const auto* Row = MarketTablePresentationModel ? MarketTablePresentationModel->GetSnapshot().AllRows.FindByPredicate(
             [GoodStableId](const auto& R){ return R.GoodStableId == GoodStableId; }) : nullptr;
-        // The full market is the home-city report. Shortages need an import, not an export.
+        // Retain a visiting market city and good when beginning its route.
+        if(MarketTablePresentationModel)TradeMapPresentationModel->SelectCityIntent(MarketTablePresentationModel->GetMarketCity());
         TradeMapPresentationModel->Open(TEXT("Market.Detail.Action.BeginRoute"), GoodStableId,
-            Row && Row->bShortage ? FName(TEXT("City.Rostock")) : FName(TEXT("City.Lubeck")));
+            MarketTablePresentationModel && MarketTablePresentationModel->GetMarketCity()!=TEXT("City.Lubeck") ? MarketTablePresentationModel->GetMarketCity() : Row && Row->bShortage ? FName(TEXT("City.Rostock")) : FName(TEXT("City.Lubeck")));
 	}
 }
 
@@ -584,10 +658,18 @@ void AHansaRootHud::HandleFrontendIntent(FName Action){
  if(Action!=TEXT("NewGame")&&Action!=TEXT("Continue"))return;
  // Defer until loading feedback has been painted; no blocking provider or filesystem work in Slate callbacks.
  FTimerHandle OperationTimer;GetWorldTimerManager().SetTimer(OperationTimer,FTimerDelegate::CreateWeakLambda(this,[this,Action]{
+  if(Action==TEXT("NewGame")&&GetNetMode()==NM_Standalone&&(!FApp::IsUnattended()||FParse::Param(FCommandLine::Get(),TEXT("HansaRouteNewGame")))){
+   const FString CampaignMap=UGameMapsSettings::GetGameDefaultMap();
+   if(!CampaignMap.IsEmpty()&&UGameplayStatics::GetCurrentLevelName(this,true)!=FPackageName::GetShortName(CampaignMap)){
+    UE_LOG(LogHansa,Display,TEXT("New Game travelling from %s to %s"),*UGameplayStatics::GetCurrentLevelName(this,true),*CampaignMap);
+    UGameplayStatics::OpenLevel(this,FName(*CampaignMap),true,TEXT("HansaNewGame=1"));
+    return;
+   }
+  }
   FText Error,Remedy;bool Success=false;
   if(Action==TEXT("NewGame")){if(PresentationModel)PresentationModel->ResetCashHistory();CancelCityVisit();FString Reason;Success=SimulationHost&&SimulationHost->StartNewGame(Reason);Error=FText::FromString(Reason);if(Success){if(auto* Camera=PlayerOwner?Cast<AHansaStrategyCameraPawn>(PlayerOwner->GetPawn()):nullptr){Camera->ClearCameraIntents();Camera->FocusWorldLocationIntent(SessionStartCameraFocus);}ScenarioPresentationModel->InitializeDefaults();ScenarioPresentationModel->LoadHelpPreferences(FPaths::ProjectSavedDir()/TEXT("Config/HansaSessionHelp.ini"));RefreshScenario();SessionResumeSpeed=uint8(EHansaHudGameSpeed::Normal);BuildMenuPresentationModel->CancelIntent();BuildMenuPresentationModel->SetOpen(false);}}
-  else if(SaveSubsystem)Success=SaveSubsystem->Load(FrontendPresentationModel->GetSnapshot().ContinueSlot,Error,Remedy);
-  FrontendPresentationModel->Complete(Success,Error);if(Success){SaveLoadPresentationModel->SetSavingAllowed(true);ApplySystemPreferences();GetWorldTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this,[this,Action]{RootHudWidget->FocusSemanticId(Action==TEXT("NewGame")?TEXT("Scenario.Begin"):TEXT("Scenario.Resume"));}));}
+  else if(SaveSubsystem)Success=SaveSubsystem->LoadById(FrontendPresentationModel->GetSnapshot().ContinueSaveId,Error,Remedy);
+  FrontendPresentationModel->Complete(Success,Error);if(Success){SaveLoadPresentationModel->SetSavingAllowed(true);ApplySystemPreferences();GetWorldTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this,[this,Action]{RootHudWidget->FocusSemanticId(Action==TEXT("NewGame")?TEXT("Scenario.Begin"):TEXT("HUD.TopStatus.Speed.Pause"));}));}
  }),.1f,false);
 }
 

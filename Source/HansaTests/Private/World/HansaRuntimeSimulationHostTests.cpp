@@ -758,4 +758,35 @@ bool FHansaSecondMarketRangeRefreshTest::RunTest(const FString& Parameters)
  return !HasAnyErrors();
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaRuntimeProjectionReuseTest,
+	"Hansa.Integration.RuntimeSimulationHost.ProjectionReuseAndRestore",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaRuntimeProjectionReuseTest::RunTest(const FString&)
+{
+	TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>());
+	FString Error;
+	if (!TestTrue(TEXT("Host initializes"), Host->InitializeForLubeck(nullptr, Error, EHansaRuntimeScenario::EmptyLubeckBuild))) return false;
+	const auto Original = Host->BuildProjection();
+	if (!TestTrue(TEXT("Initial projection is available"), Original.IsSuccess())) return false;
+	TArray<uint8> Before, After;
+	const FString SavedUtc = TEXT("2026-09-29T15:00:00Z");
+	if (!TestTrue(TEXT("Save before repeated queries"), Host->CaptureSaveBytes(Before, TEXT("Projection regression"), SavedUtc).IsSuccess())) return false;
+	for (int32 I = 0; I < 10; ++I)
+	{
+		const auto Repeated = Host->BuildProjection();
+		TestTrue(TEXT("Repeated projection retains authoritative identity"), Repeated && Repeated.Value.GetFingerprint() == Original.Value.GetFingerprint());
+	}
+	TestTrue(TEXT("Save after repeated queries"), Host->CaptureSaveBytes(After, TEXT("Projection regression"), SavedUtc).IsSuccess());
+	TestTrue(TEXT("Derived cache does not enter saved data"), Before == After);
+	TestTrue(TEXT("Simulation advances"), Host->AdvanceTicks(1));
+	const auto Advanced = Host->BuildProjection();
+	TestTrue(TEXT("Projection refreshes after a state change"), Advanced && Advanced.Value.GetFingerprint() != Original.Value.GetFingerprint());
+	TestEqual(TEXT("Caller snapshots retain their original tick"), Original.Value.GetClock().GetTick().GetValue(), int64(0));
+	TestTrue(TEXT("Save restores"), Host->RestoreSaveBytes(Before).IsSuccess());
+	const auto Restored = Host->BuildProjection();
+	TestTrue(TEXT("Cache follows restored state"), Restored && Restored.Value.GetFingerprint() == Original.Value.GetFingerprint());
+	return !HasAnyErrors();
+}
+
 #endif

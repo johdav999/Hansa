@@ -32,6 +32,7 @@ static bool ValidateState(const FHansaSimulationState& S, const FHansaSimulation
 	I.InventoryMovementHistoryCapacity = S.InventoryLedger.MovementCapacity;
 	for (const auto& V : S.InventoryLedger.Inventories)
 	{
+		if (!FHansaInventoryLedger::ValidateCargoSlots(V)) return false;
 		FHansaInventoryInitialization R;
 		R.Id = V.Id;
 		R.OwnerKind = V.OwnerKind;
@@ -134,9 +135,28 @@ static bool ValidateState(const FHansaSimulationState& S, const FHansaSimulation
 		I.Research.Add(MoveTemp(R));
 	}
 	if (!D.GetEconomicRegistry()) return false;
+    TSet<uint64> DeliveryReservationOwners;
     for (const auto& Station : S.TradeStations) {
         const auto* Policy=D.GetEconomicRegistry()->FindCityTradePolicyForCity(Station.CityId.ToString());
         if(!Policy || Station.Orders.Num()>4096) return false;
+        const auto* DeliveryPresence=S.ForeignPresences.FindByPredicate([&](const auto& P){return P.StationId==Station.Id&&P.HouseId==Station.OwnerId&&P.CityId==Station.CityId;});
+        const bool UpgradeDelivery=DeliveryPresence&&DeliveryPresence->Upgrade.Status==EHansaPresenceUpgradeStatus::AwaitingMaterials&&DeliveryPresence->Upgrade.ConstructionSite.bLocalDelivery&&DeliveryPresence->Upgrade.FundingInventoryId==Station.FundingInventoryId&&(Station.Status==EHansaTradeStationStatus::Active||Station.Status==EHansaTradeStationStatus::Suspended);
+        if((Station.DeliveryMode&&(!Station.ConstructionSite.bLocalDelivery||(Station.Status!=EHansaTradeStationStatus::Proposed&&!UpgradeDelivery)))||Station.DeliveryMode>2||(!Station.DeliveryMode&&!Station.DeliveryReservations.IsEmpty()))return false;
+        if(Station.ConstructionSite.bLocalDelivery){
+            const auto* Stage=D.GetEconomicRegistry()->GetPresenceStages().FindByPredicate([&](const auto& V){return V.GrantedCapabilityIds.Contains(TEXT("PresenceCapability.TradeStation"))&&D.GetEconomicRegistry()->IsValidPresenceTransition(Station.CityId.ToString(),Policy->InitialStageId,V.StableId);});
+            if(!Stage||Station.SpentMoneyRaw!=Stage->UpgradeCostPfennig)return false;
+            const auto* DeliveryStage=UpgradeDelivery?D.GetEconomicRegistry()->FindPresenceStage(DeliveryPresence->Upgrade.TargetStageId):Stage;if(!DeliveryStage)return false;
+            const auto Ledger=S.InventoryLedger.CreateReadOnlyAccess().CaptureSnapshot();TSet<uint64> Seen;
+            for(const auto Id:Station.DeliveryReservations){
+                if(!Id.IsValid()||DeliveryReservationOwners.Contains(Id.GetValue())||Seen.Contains(Id.GetValue())||!Station.DeliveryMode||(Station.Status!=EHansaTradeStationStatus::Proposed&&!UpgradeDelivery))return false;Seen.Add(Id.GetValue());DeliveryReservationOwners.Add(Id.GetValue());
+                const auto* R=Ledger.GetReservations().FindByPredicate([&](const auto& R){return R.Id==Id;});
+                if(!R||R->InventoryId!=Station.FundingInventoryId)return false;
+                const auto* Cost=DeliveryStage->UpgradeGoods.FindByPredicate([&](const auto& C){return C.GoodId==R->GoodId.ToString();});if(!Cost)return false;
+            }
+            for(const auto& C:DeliveryStage->UpgradeGoods){int64 Total=0;for(const auto& G:UpgradeDelivery?DeliveryPresence->Upgrade.DeliveredGoods:Station.SpentGoods)if(G.GoodId.ToString()==C.GoodId)Total+=G.Quantity.GetRawValue();for(const auto& R:Ledger.GetReservations())if(Station.DeliveryReservations.Contains(R.Id)&&R.GoodId.ToString()==C.GoodId)Total+=R.Quantity.GetRawValue();if(Total>C.QuantityMilliUnits)return false;}
+            if(Station.DeliveryMode&&!S.Vehicles.ContainsByPredicate([&](const auto& V){return V.CargoInventoryId==Station.FundingInventoryId&&V.OwnerId==Station.OwnerId&&V.Mode==EHansaRouteMode::Sea;}))return false;
+            for(const auto& G:Station.SpentGoods){const auto* Cost=Stage->UpgradeGoods.FindByPredicate([&](const auto& C){return C.GoodId==G.GoodId.ToString();});if(!Cost||G.Quantity.GetRawValue()>Cost->QuantityMilliUnits)return false;}
+        }
         int32 Live=0;
         for(const auto& Order:Station.Orders) {
             if(!D.GetEconomicRegistry()->FindGood(Order.Terms.GoodId.ToString()))return false;
@@ -155,6 +175,11 @@ static bool ValidateState(const FHansaSimulationState& S, const FHansaSimulation
 		const auto* Stage = D.GetEconomicRegistry()->FindPresenceStage(Presence.CurrentStageId);
 		const auto* Policy = D.GetEconomicRegistry()->FindCityTradePolicyForCity(Presence.CityId.ToString());
 		if (!Stage || !Policy || !Policy->AllowedStageIds.Contains(Stage->StableId)) return false;
+        if(Presence.Upgrade.ConstructionSite.bLocalDelivery){
+            const auto* Target=D.GetEconomicRegistry()->FindPresenceStage(Presence.Upgrade.TargetStageId);
+            if(!Target||Presence.Upgrade.SpentMoneyPfennig!=Target->UpgradeCostPfennig||!D.GetEconomicRegistry()->IsValidPresenceTransition(Presence.CityId.ToString(),Presence.CurrentStageId,Target->StableId))return false;
+            for(const auto& G:Presence.Upgrade.DeliveredGoods){const auto* Cost=Target->UpgradeGoods.FindByPredicate([&](const auto& C){return C.GoodId==G.GoodId.ToString();});if(!Cost||G.Quantity.GetRawValue()>Cost->QuantityMilliUnits)return false;}
+        }
 		TArray<FString> Expected = Stage->GrantedCapabilityIds;
 		Expected.RemoveAll([&](const FString& CapabilityId){ return Policy->DeniedCapabilityIds.Contains(CapabilityId); });
 		TSet<FString> ActiveGroups;

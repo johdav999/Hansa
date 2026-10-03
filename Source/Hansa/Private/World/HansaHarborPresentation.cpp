@@ -2,6 +2,73 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"
+#include "World/HansaTerrainPlacement.h"
+#include "EngineUtils.h"
+#include "WaterBodyActor.h"
+#include "WaterBodyComponent.h"
+#include "WaterSplineComponent.h"
+
+namespace
+{
+    TOptional<double> WaterSurfaceHeight(UWorld* World, const FVector& Position)
+    {
+        if (!World) return {};
+        TOptional<double> Height;
+        double NearestDistance = MAX_dbl;
+        for (TActorIterator<AWaterBody> It(World); It; ++It)
+        {
+            const auto* Body = It->GetWaterBodyComponent();
+            const auto* Spline = It->GetWaterSpline();
+            if (!Body || !Spline || !Body->Bounds.GetBox().IsInsideXY(Position)) continue;
+            const double Distance = FVector::DistSquaredXY(Position,
+                Spline->FindLocationClosestToWorldLocation(Position, ESplineCoordinateSpace::World));
+            if (Distance >= NearestDistance) continue;
+            const auto Query = Body->TryQueryWaterInfoClosestToWorldLocation(Position, EWaterBodyQueryFlags::ComputeLocation);
+            if (Query.HasValue())
+            {
+                Height = Query.GetValue().GetWaterSurfaceLocation().Z;
+                NearestDistance = Distance;
+            }
+        }
+        if (Height.IsSet()) return Height;
+        // The legacy city uses a non-colliding, explicitly tagged flat water surface.
+        for (TActorIterator<AActor> It(World); It; ++It)
+        {
+            TInlineComponentArray<UPrimitiveComponent*> Components(*It);
+            for (const auto* Component : Components)
+                if (Component->ComponentHasTag(TEXT("Hansa.World.Surface.Water")) &&
+                    Component->IsVisible() && Component->Bounds.GetBox().IsInsideXY(Position))
+                    Height = Height.IsSet() ? FMath::Max(Height.GetValue(), Component->Bounds.GetBox().Max.Z)
+                        : Component->Bounds.GetBox().Max.Z;
+        }
+        return Height;
+    }
+}
+
+FVector AHansaHarborPresentation::GroundDeckLocation(const FVector& NominalDeck, const FQuat& Heading) const
+{
+    TOptional<double> DeckHeight;
+    // Use the deck's centre and shore-side quay edge, never the lowest pile or seabed alone.
+    for (const FVector Offset : { FVector::ZeroVector, FVector(-800, -400, 0),
+        FVector(-800, 0, 0), FVector(-800, 400, 0) })
+    {
+        const FVector Sample = NominalDeck + Heading.RotateVector(Offset);
+        FHitResult Hit;
+        if (Hansa::Game::TerrainPlacement::Trace(GetWorld(), Sample + FVector(0, 0, 1000000),
+            Sample - FVector(0, 0, 1000000), Hit))
+            DeckHeight = DeckHeight.IsSet() ? FMath::Max(DeckHeight.GetValue(), Hit.ImpactPoint.Z) : Hit.ImpactPoint.Z;
+    }
+    // Match the authored deck-to-waterline contract (225 cm) at the actual berth.
+    // A centre sample also covers a preview whose berth is outside the water body's bounds.
+    for (const FVector Offset : { Berth->GetRelativeLocation(), FVector::ZeroVector })
+    {
+        const auto WaterHeight = WaterSurfaceHeight(GetWorld(), NominalDeck + Heading.RotateVector(Offset));
+        if (!WaterHeight.IsSet()) continue;
+        const double WaterDeck = WaterHeight.GetValue() - Berth->GetRelativeLocation().Z;
+        DeckHeight = DeckHeight.IsSet() ? FMath::Max(DeckHeight.GetValue(), WaterDeck) : WaterDeck;
+    }
+    return FVector(NominalDeck.X, NominalDeck.Y, DeckHeight.Get(NominalDeck.Z));
+}
 
 AHansaHarborPresentation::AHansaHarborPresentation()
 {

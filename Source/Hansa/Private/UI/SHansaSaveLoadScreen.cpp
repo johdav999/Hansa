@@ -85,7 +85,8 @@ namespace Hansa::UI
                             + SVerticalBox::Slot().AutoHeight()
 										[
 											SNew(SHorizontalBox)
-											+ SHorizontalBox::Slot().FillWidth(1.0f)[SAssignNew(SaveButton,SHansaAction).Preferences(Preferences).Kind(EHansaUiButtonStyle::Primary).Label(LOCTEXT("Save", "Save here")).OnClicked(this, &SHansaSaveLoadScreen::HandleSave)]
+											+ SHorizontalBox::Slot().FillWidth(1.0f)[SAssignNew(NewSaveButton,SHansaAction).Preferences(Preferences).Kind(EHansaUiButtonStyle::Primary).Label(LOCTEXT("NewSave", "New save")).OnClicked(this, &SHansaSaveLoadScreen::HandleNewSave)]
+											+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(12.0f, 0.0f, 0.0f, 0.0f)[SAssignNew(SaveButton,SHansaAction).Preferences(Preferences).Kind(EHansaUiButtonStyle::Secondary).Label(LOCTEXT("Save", "Save here")).OnClicked(this, &SHansaSaveLoadScreen::HandleSave)]
 											+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(12.0f, 0.0f, 0.0f, 0.0f)[SAssignNew(LoadButton,SHansaAction).Preferences(Preferences).Kind(EHansaUiButtonStyle::Secondary).Label(LOCTEXT("Load", "Load")).OnClicked(this, &SHansaSaveLoadScreen::HandleLoad)]
 										]
 							+ SVerticalBox::Slot().AutoHeight()
@@ -120,7 +121,7 @@ namespace Hansa::UI
 			]
 		];
 		SemanticWidgets.Add(TEXT("SaveLoad.Name"),SaveName);SemanticWidgets.Add(TEXT("SaveLoad.Content"),DetailScroll);SemanticWidgets.Add(TEXT("SaveLoad.Root"), RootWidget); SemanticWidgets.Add(TEXT("SaveLoad.Close"), CloseButton);
-		SemanticWidgets.Add(TEXT("SaveLoad.Action.Save"), SaveButton); SemanticWidgets.Add(TEXT("SaveLoad.Action.Load"), LoadButton);
+		SemanticWidgets.Add(TEXT("SaveLoad.Action.NewSave"), NewSaveButton); SemanticWidgets.Add(TEXT("SaveLoad.Action.Save"), SaveButton); SemanticWidgets.Add(TEXT("SaveLoad.Action.Load"), LoadButton);
 		SemanticWidgets.Add(TEXT("SaveLoad.Confirmation"), ConfirmationWidget); SemanticWidgets.Add(TEXT("SaveLoad.Confirmation.Confirm"), ConfirmButton);
 		SemanticWidgets.Add(TEXT("SaveLoad.Confirmation.Cancel"), CancelButton); SemanticWidgets.Add(TEXT("SaveLoad.Status"), StatusWidget);
         if(PreferencesWidget)for(const auto& Pair:PreferencesWidget->GetControls()){
@@ -138,7 +139,7 @@ namespace Hansa::UI
 	{
 		if(!SaveName->HasKeyboardFocus()&&SaveName->GetText().ToString()!=Snapshot.SaveName)SaveName->SetText(FText::FromString(Snapshot.SaveName));
         PresentedRevision = Revision; SetVisibility(Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed); RebuildSlots(Snapshot);
-		const FHansaSaveSlotMetadata* Slot = Snapshot.Slots.FindByPredicate([&](const auto& Candidate){return Candidate.SlotId==Snapshot.SelectedSlot;});
+		const FHansaSaveSlotMetadata* Slot = Snapshot.Slots.FindByPredicate([&](const auto& Candidate){return Candidate.StableId==Snapshot.SelectedSaveId;});
 		if (Slot)
 		{
 			DetailTitle->SetText(Slot->DisplayName.IsEmpty() ? Slot->SlotLabel : FText::FromString(Slot->DisplayName));
@@ -161,7 +162,8 @@ namespace Hansa::UI
 			StaticCastSharedPtr<SHansaAction>(LoadButton)->SetState(EUiState::Disabled);
 		}
 		SaveName->SetVisibility(Snapshot.bSavingAllowed?EVisibility::Visible:EVisibility::Collapsed);
-        SaveName->SetEnabled(Snapshot.bSavingAllowed&&Snapshot.SelectedSlot==EHansaSaveSlotId::Manual);
+        SaveName->SetEnabled(Snapshot.bSavingAllowed);
+		StaticCastSharedPtr<SHansaAction>(NewSaveButton)->SetState(Snapshot.bSavingAllowed&&!Snapshot.Slots.IsEmpty()?EUiState::Default:EUiState::Disabled);
         const bool bConfirm = Snapshot.Confirmation != EHansaSaveLoadConfirmation::None;
 		MainPanel->SetEnabled(!bConfirm);
 		ConfirmationWidget->SetVisibility(bConfirm ? EVisibility::Visible : EVisibility::Collapsed);
@@ -172,8 +174,8 @@ namespace Hansa::UI
 
 	void SHansaSaveLoadScreen::RebuildSlots(const FHansaSaveLoadPresentationSnapshot& Snapshot)
 	{
-		FString ContentKey=FString::FromInt(int32(Snapshot.SelectedSlot));
-		for(const auto& S:Snapshot.Slots)ContentKey+=S.StableId.ToString()+S.SlotLabel.ToString()+S.SavedUtc+S.CompatibilityLabel.ToString();
+		FString ContentKey=Snapshot.SelectedSaveId.ToString();
+		for(const auto& S:Snapshot.Slots)ContentKey+=S.StableId.ToString()+S.DisplayName+S.SlotLabel.ToString()+S.SavedUtc+S.CompatibilityLabel.ToString();
 		if(ContentKey==PresentedContentKey)return;
 		PresentedContentKey=MoveTemp(ContentKey);
 		SlotRows->ClearChildren();
@@ -193,7 +195,7 @@ namespace Hansa::UI
 			const FString SemanticId = TEXT("SaveLoad.Slot.") + Slot.StableId.ToString(); TSharedPtr<SButton> Button;
 			SlotRows->AddSlot().AutoHeight().Padding(0.0f, 4.0f)
 			[
-				SAssignNew(Button,SHansaAction).Preferences(Preferences).Kind(EHansaUiButtonStyle::Secondary).State(Slot.SlotId==Snapshot.SelectedSlot?EUiState::Selected:EUiState::Default).OnClicked(this, &SHansaSaveLoadScreen::HandleSelectSlot, Slot.SlotId)
+				SAssignNew(Button,SHansaAction).Preferences(Preferences).Kind(EHansaUiButtonStyle::Secondary).State(Slot.StableId==Snapshot.SelectedSaveId?EUiState::Selected:EUiState::Default).OnClicked(this, &SHansaSaveLoadScreen::HandleSelectSlot, Slot.StableId)
 				[
 					SNew(SVerticalBox)
 					 + SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(Slot.DisplayName.IsEmpty()?Slot.SlotLabel:FText::FromString(Slot.DisplayName)).TextStyle(&BodyStyle).AutoWrapText(true)]
@@ -207,7 +209,8 @@ namespace Hansa::UI
 	}
 
 	FReply SHansaSaveLoadScreen::HandleClose(){if(auto* P=Model.Get())P->Close();return FReply::Handled();}
-	FReply SHansaSaveLoadScreen::HandleSelectSlot(EHansaSaveSlotId S){if(auto* P=Model.Get())P->SelectSlot(S);FocusSemanticId(S==EHansaSaveSlotId::Manual?TEXT("SaveLoad.Slot.manual"):TEXT("SaveLoad.Slot.autosave"));return FReply::Handled();}
+	FReply SHansaSaveLoadScreen::HandleSelectSlot(FName Id){if(auto* P=Model.Get())P->SelectSave(Id);FocusSemanticId(TEXT("SaveLoad.Slot.")+Id.ToString());return FReply::Handled();}
+	FReply SHansaSaveLoadScreen::HandleNewSave(){if(auto* P=Model.Get())P->RequestNewSave();FocusSemanticId(TEXT("SaveLoad.Action.NewSave"));return FReply::Handled();}
 	FReply SHansaSaveLoadScreen::HandleSave(){if(auto* P=Model.Get()){P->RequestSave();FocusSemanticId(P->GetSnapshot().Confirmation==EHansaSaveLoadConfirmation::None?TEXT("SaveLoad.Action.Save"):TEXT("SaveLoad.Confirmation.Cancel"));}return FReply::Handled();}
 	FReply SHansaSaveLoadScreen::HandleLoad(){if(auto* P=Model.Get()){P->RequestLoad();FocusSemanticId(P->GetSnapshot().Confirmation==EHansaSaveLoadConfirmation::None?TEXT("SaveLoad.Action.Load"):TEXT("SaveLoad.Confirmation.Cancel"));}return FReply::Handled();}
 	FReply SHansaSaveLoadScreen::HandleConfirm(){if(auto* P=Model.Get())P->Confirm();FocusSemanticId(TEXT("SaveLoad.Close"));return FReply::Handled();}
@@ -218,13 +221,14 @@ namespace Hansa::UI
         if(Model.IsValid()&&Model->GetSnapshot().Confirmation!=EHansaSaveLoadConfirmation::None && !Id.StartsWith(TEXT("SaveLoad.Confirmation.")))return false;
 		if(Id.StartsWith(TEXT("SaveLoad.Preferences.")))return PreferencesWidget.IsValid()&&PreferencesWidget->ActivateControl(Id);
 		if(Id==TEXT("SaveLoad.Close"))return HandleClose().IsEventHandled();
+		if(Id==TEXT("SaveLoad.Action.NewSave"))return NewSaveButton->IsEnabled()&&HandleNewSave().IsEventHandled();
 		if(Id==TEXT("SaveLoad.Action.Save")&&!SaveButton->IsEnabled())return false;
         if(Id==TEXT("SaveLoad.Action.Load")&&!LoadButton->IsEnabled())return false;
         if(Id==TEXT("SaveLoad.Action.Save"))return HandleSave().IsEventHandled();
 		if(Id==TEXT("SaveLoad.Action.Load"))return HandleLoad().IsEventHandled();
 		if(Id==TEXT("SaveLoad.Confirmation.Confirm"))return HandleConfirm().IsEventHandled();
 		if(Id==TEXT("SaveLoad.Confirmation.Cancel"))return HandleCancel().IsEventHandled();
-		if(Id.StartsWith(TEXT("SaveLoad.Slot."))){if(auto* P=Model.Get())for(const auto& S:P->GetSnapshot().Slots)if(Id==TEXT("SaveLoad.Slot.")+S.StableId.ToString())return HandleSelectSlot(S.SlotId).IsEventHandled();}
+		if(Id.StartsWith(TEXT("SaveLoad.Slot."))){if(auto* P=Model.Get())for(const auto& S:P->GetSnapshot().Slots)if(Id==TEXT("SaveLoad.Slot.")+S.StableId.ToString())return HandleSelectSlot(S.StableId).IsEventHandled();}
 		return false;
 	}
 
@@ -268,6 +272,7 @@ namespace Hansa::UI
         TArray<FString> R={TEXT("SaveLoad.Close")};
         for(const auto& Slot:P->GetSnapshot().Slots)R.Add(TEXT("SaveLoad.Slot.")+Slot.StableId.ToString());
         if(SaveName->IsEnabled())R.Add(TEXT("SaveLoad.Name"));
+        if(NewSaveButton->IsEnabled())R.Add(TEXT("SaveLoad.Action.NewSave"));
         if(SaveButton->IsEnabled())R.Add(TEXT("SaveLoad.Action.Save"));
         if(LoadButton->IsEnabled())R.Add(TEXT("SaveLoad.Action.Load"));
         if(PreferencesWidget)for(const FString& Id:{TEXT("SaveLoad.Preferences.Contrast"),TEXT("SaveLoad.Preferences.Text"),TEXT("SaveLoad.Preferences.Motion"),TEXT("SaveLoad.Preferences.ScaleDown"),TEXT("SaveLoad.Preferences.ScaleUp"),TEXT("SaveLoad.Preferences.Reset")}){const auto* B=PreferencesWidget->GetControls().Find(Id);if(B&&(*B)->IsEnabled())R.Add(Id);}
@@ -280,10 +285,11 @@ namespace Hansa::UI
 		auto Add=[&](FString Id,FString Parent,FString Label,EHansaHudSemanticRole Role,bool Activate,bool Focus,FString Type,FString Value,bool Selected=false,bool Warning=false,bool Error=false,bool Visible=true,bool Enabled=true){FHansaHudSemanticNode N;N.Id=MoveTemp(Id);N.ParentId=MoveTemp(Parent);N.Label=MoveTemp(Label);N.Role=Role;N.bCanActivate=Activate;N.bCanFocus=Focus;N.State.bVisible=S.bOpen&&Visible;N.State.bEnabled=Enabled;N.State.bFocused=S.FocusedSemanticId==FName(*N.Id);N.State.bSelected=Selected;N.State.bWarning=Warning;N.State.bError=Error;N.State.ValueType=MoveTemp(Type);N.State.Value=MoveTemp(Value);R.Add(MoveTemp(N));};
 		Add(TEXT("SaveLoad.Root"),TEXT("HUD.Root"),TEXT("Save and load"),EHansaHudSemanticRole::Screen,false,false,TEXT("open"),S.bOpen?TEXT("true"):TEXT("false"));
 		Add(TEXT("SaveLoad.Close"),TEXT("SaveLoad.Root"),TEXT("Close"),EHansaHudSemanticRole::Button,true,true,TEXT("action"),TEXT("close"));
-		for(const auto& Slot:S.Slots){const FString Id=TEXT("SaveLoad.Slot.")+Slot.StableId.ToString();const FString Value=FString::Printf(TEXT("exists=%s;compatibility=%s;savedUtc=%s;scenario=%s;format=%u;build=%s;tick=%lld;hash=%s;remedy=%s"),Slot.bExists?TEXT("true"):TEXT("false"),*Slot.CompatibilityLabel.ToString(),*Slot.SavedUtc,*Slot.ScenarioId,Slot.FormatVersion,*Slot.BuildVersion,static_cast<long long>(Slot.SimulationTick),*Slot.AuthoritativeHash,*Slot.Remedy.ToString());Add(Id,TEXT("SaveLoad.Root"),Slot.SlotLabel.ToString(),EHansaHudSemanticRole::Button,true,true,TEXT("save-slot"),Value,Slot.SlotId==S.SelectedSlot,Slot.Compatibility==EHansaSaveSlotCompatibility::Incompatible,Slot.Compatibility==EHansaSaveSlotCompatibility::Corrupt,true,true);}
+		for(const auto& Slot:S.Slots){const FString Id=TEXT("SaveLoad.Slot.")+Slot.StableId.ToString();const FString Value=FString::Printf(TEXT("exists=%s;compatibility=%s;savedUtc=%s;scenario=%s;format=%u;build=%s;tick=%lld;hash=%s;remedy=%s"),Slot.bExists?TEXT("true"):TEXT("false"),*Slot.CompatibilityLabel.ToString(),*Slot.SavedUtc,*Slot.ScenarioId,Slot.FormatVersion,*Slot.BuildVersion,static_cast<long long>(Slot.SimulationTick),*Slot.AuthoritativeHash,*Slot.Remedy.ToString());Add(Id,TEXT("SaveLoad.Root"),Slot.SlotLabel.ToString(),EHansaHudSemanticRole::Button,true,true,TEXT("save-slot"),Value,Slot.StableId==S.SelectedSaveId,Slot.Compatibility==EHansaSaveSlotCompatibility::Incompatible,Slot.Compatibility==EHansaSaveSlotCompatibility::Corrupt,true,true);}
 		Add(TEXT("SaveLoad.Name"),TEXT("SaveLoad.Root"),TEXT("Manual save name"),EHansaHudSemanticRole::Button,false,true,TEXT("text"),S.SaveName,false,false,false,true,S.bSavingAllowed);
+        Add(TEXT("SaveLoad.Action.NewSave"),TEXT("SaveLoad.Root"),TEXT("New save"),EHansaHudSemanticRole::Button,true,true,TEXT("action"),TEXT("new-save"),false,false,false,true,!S.Slots.IsEmpty()&&S.bSavingAllowed);
         Add(TEXT("SaveLoad.Action.Save"),TEXT("SaveLoad.Root"),TEXT("Save here"),EHansaHudSemanticRole::Button,true,true,TEXT("action"),TEXT("save"),false,false,false,true,!S.Slots.IsEmpty()&&S.bSavingAllowed);
-		const auto* Slot=S.Slots.FindByPredicate([&](const auto& X){return X.SlotId==S.SelectedSlot;});Add(TEXT("SaveLoad.Action.Load"),TEXT("SaveLoad.Root"),TEXT("Load"),EHansaHudSemanticRole::Button,true,true,TEXT("action"),TEXT("load"),false,false,false,true,Slot&&Slot->bCanLoad);
+		const auto* Slot=S.Slots.FindByPredicate([&](const auto& X){return X.StableId==S.SelectedSaveId;});Add(TEXT("SaveLoad.Action.Load"),TEXT("SaveLoad.Root"),TEXT("Load"),EHansaHudSemanticRole::Button,true,true,TEXT("action"),TEXT("load"),false,false,false,true,Slot&&Slot->bCanLoad);
 		const bool C=S.Confirmation!=EHansaSaveLoadConfirmation::None;Add(TEXT("SaveLoad.Confirmation"),TEXT("SaveLoad.Root"),TEXT("Confirmation"),EHansaHudSemanticRole::Panel,false,false,TEXT("kind"),S.Confirmation==EHansaSaveLoadConfirmation::Overwrite?TEXT("overwrite"):TEXT("load"),false,false,false,C);
 		Add(TEXT("SaveLoad.Confirmation.Confirm"),TEXT("SaveLoad.Confirmation"),TEXT("Confirm"),EHansaHudSemanticRole::Button,true,true,TEXT("action"),TEXT("confirm"),false,false,false,C);
 		Add(TEXT("SaveLoad.Confirmation.Cancel"),TEXT("SaveLoad.Confirmation"),TEXT("Cancel"),EHansaHudSemanticRole::Button,true,true,TEXT("action"),TEXT("cancel"),false,false,false,C);

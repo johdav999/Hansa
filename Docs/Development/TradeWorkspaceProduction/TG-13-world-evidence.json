@@ -1,0 +1,288 @@
+{
+  "date": "2026-09-24",
+  "scope": "Requested Rostock world binding, authoritative occupancy, map/world lease overlays and save topology migration",
+  "checks": [
+    {
+      "command": "./Scripts/RunAutomationTests.ps1 -Configuration DebugGame -SkipBuild -TestFilter Hansa.Integration.Save -DisableMcp -NoZenDdc",
+      "artifacts": "Saved/BuildArtifacts/20260924-071506578-automation-Hansa.Integration.Save",
+      "tests": [
+        {
+          "test": "Hansa.Integration.Save.ConstructionCancellationRecoveryRoundTrip",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.CorruptionCompatibilityAtomicity",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.EveryIntermediateVersionRecovery",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.Format2RouteLabelMigration",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.FrontendNewGameAndRejectedRestore",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.HistoricalCatalogRejectionIsAtomic",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.PendingCommandVariants",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.PlayerArchive",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.RoadDrawingRoundTrip",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.RostockTopologyMigration",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.RoundTripContinuation",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.RuntimeAuthorityContinuation",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.ScenarioSustainAndTerminalState",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.StarterBalanceCompatibility",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.StationOrdersPriorFormat14",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.Integration.Save.SyntheticPriorSchema",
+          "status": "Success"
+        }
+      ]
+    },
+    {
+      "command": "./Scripts/RunAutomationTests.ps1 -Configuration DebugGame -SkipBuild -TestFilter Hansa.UI.TradeMap.Construction -DisableMcp -NoZenDdc",
+      "artifacts": "Saved/BuildArtifacts/20260924-071846160-automation-Hansa.UI.TradeMap.Construction",
+      "tests": [
+        {
+          "test": "Hansa.UI.TradeMap.Construction.Browser",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.UI.TradeMap.Construction.Permissions",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.UI.TradeMap.Construction.Reports",
+          "status": "Success"
+        },
+        {
+          "test": "Hansa.UI.TradeMap.Construction.WorldPlacement",
+          "status": "Success"
+        }
+      ]
+    },
+    {
+      "command": "./Scripts/RunAutomationTests.ps1 -Configuration DebugGame -SkipBuild -TestFilter Hansa.World.Rostock.PlacementAuthoring -DisableMcp -NoZenDdc",
+      "artifacts": "Saved/BuildArtifacts/20260924-072038625-automation-Hansa.World.Rostock.PlacementAuthoring",
+      "tests": [
+        {
+          "test": "Hansa.World.Rostock.PlacementAuthoring",
+          "status": "Success"
+        }
+      ]
+    },
+    {
+      "command": "./Scripts/RunAutomationTests.ps1 -Configuration DebugGame -SkipBuild -TestFilter Hansa.Integration.TradePresence.LeasedForeignConstruction -DisableMcp -NoZenDdc",
+      "artifacts": "Saved/BuildArtifacts/20260924-072038798-automation-Hansa.Integration.TradePresence.LeasedForeignConstruction",
+      "tests": [
+        {
+          "test": "Hansa.Integration.TradePresence.LeasedForeignConstruction",
+          "status": "Success"
+        }
+      ]
+    },
+    {
+      "command": "./Scripts/CaptureGuiRepair.ps1 -Configuration DebugGame -Width 1280 -Height 720 -TestFilter Hansa.UI.TradeConstruction.RealViewport -P31Candidate -DisableMcp -NoZenDdc",
+      "artifacts": "Saved/BuildArtifacts/20260924-072847848-gui-repair-1280-720",
+      "tests": [
+        {
+          "test": "Hansa.UI.TradeConstruction.RealViewport",
+          "status": "Success"
+        }
+      ]
+    },
+    {
+      "command": "./Scripts/CaptureGuiRepair.ps1 -Configuration DebugGame -Width 1920 -Height 1080 -TestFilter Hansa.UI.TradeConstruction.RealViewport -P31Candidate -DisableMcp -NoZenDdc",
+      "artifacts": "Saved/BuildArtifacts/20260924-072849429-gui-repair-1920-1080",
+      "tests": [
+        {
+          "test": "Hansa.UI.TradeConstruction.RealViewport",
+          "status": "Success"
+        }
+      ]
+    }
+  ],
+  "captures": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-0.png",
+      "bytes": 320528,
+      "sha256": "14edcff11f04007f23556e807b4889a496e60e8743bd99fee79260e4e4591e8d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-0.tsv",
+      "bytes": 9618,
+      "sha256": "a6b73474df0392fb48e4f13f0b2d606afea465a5b95f266cc7575e34a04a8c0c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-1.png",
+      "bytes": 274434,
+      "sha256": "588603f9a71e7e49b80f3cbf61605c3f0dee35f565c7dc167df07180e06d3526"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-1.tsv",
+      "bytes": 10530,
+      "sha256": "6e60cfb7b7419db967e5425daf19913463eb1e4e7b30536c49aa1c87aa167213"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-2.png",
+      "bytes": 489830,
+      "sha256": "652fd6c4f026b429ebc39f2eb2450bbb82b0d860e53b8d1948079a15649181d1"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-2.tsv",
+      "bytes": 10546,
+      "sha256": "fe4273e6143553efc1491522d5a3d412d3de7084c96a69dbbb5435e083825159"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-3.png",
+      "bytes": 686712,
+      "sha256": "bf31992db7f37c83cded1e7a32abc05e6460ed3c44b71024b4deae058f0b1e4a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-3.tsv",
+      "bytes": 10434,
+      "sha256": "07db1964e4cd73a91da7b1016bf0d79211b233d7159cfa0a765b008bce2019c4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-4.png",
+      "bytes": 685593,
+      "sha256": "33743f3c5a724c5e069c0c4e6c2cde9b8a97c93a6162d40a668ef1b1c17be644"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-4.tsv",
+      "bytes": 10434,
+      "sha256": "07db1964e4cd73a91da7b1016bf0d79211b233d7159cfa0a765b008bce2019c4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-5.png",
+      "bytes": 751385,
+      "sha256": "6de0f16104b866d3a304ff6cfa056cc6727387ed09dd5b08da757cee35ab69d5"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-5.tsv",
+      "bytes": 10624,
+      "sha256": "e5b828564027a39e179af2c4c529594a7cfc212b2f2ca174df03e1991bc56ca1"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-6.png",
+      "bytes": 276307,
+      "sha256": "8f80e5def2060415ea185d4220104546d4c874b01de1f3b03782fd9f0e630c6a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1280x720-6.tsv",
+      "bytes": 10736,
+      "sha256": "4e96efda2974f1084e6b58fd12484e04b8b43c053a700b0705b36ebaeec07e9a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-0.png",
+      "bytes": 477596,
+      "sha256": "87672585e5c21d527977012ed56c1d6beef8fa7142896d2e4893c1066e865435"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-0.tsv",
+      "bytes": 9696,
+      "sha256": "8c41ab0109f7991103b36ca23ee1a727ce266f2b80e40365c32bccccb02c6c28"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-1.png",
+      "bytes": 509923,
+      "sha256": "ce6e13f7c36dc7203bae84d97cdcf5e1c6a12574632d16bee14d2cc229a0621e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-1.tsv",
+      "bytes": 10596,
+      "sha256": "5f5348567df27b6d727f8faadc2bbc3611454d44e1cc38427ad1a79da9b9eceb"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-2.png",
+      "bytes": 569100,
+      "sha256": "63fee9ecb71800a708f1afb8d8aa7482bc753e0c77d1b2ec54fb74bfc9d13d16"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-2.tsv",
+      "bytes": 10616,
+      "sha256": "38e0dcb72f276804db107324da47bd8aa2eacf99ee9a4254bbe6467128c1dab7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-3.png",
+      "bytes": 2452992,
+      "sha256": "1f32177ebaf87169baa9da43106d823e6e34327b8b891e79e2ced1f4e4b7f027"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-3.tsv",
+      "bytes": 10434,
+      "sha256": "07db1964e4cd73a91da7b1016bf0d79211b233d7159cfa0a765b008bce2019c4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-4.png",
+      "bytes": 2457381,
+      "sha256": "8a0b9be2b2f2c2770a4d0c445786b975e6e9595a6c18cd0d902dfd26f24fb49f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-4.tsv",
+      "bytes": 10434,
+      "sha256": "07db1964e4cd73a91da7b1016bf0d79211b233d7159cfa0a765b008bce2019c4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-5.png",
+      "bytes": 2478373,
+      "sha256": "9e9cd3b70f78ca1da97539d8fd68861e195f030ae237504217e81bf6dd33408e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-5.tsv",
+      "bytes": 10624,
+      "sha256": "e5b828564027a39e179af2c4c529594a7cfc212b2f2ca174df03e1991bc56ca1"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-6.png",
+      "bytes": 516869,
+      "sha256": "37640c4ef6c767cc1cd27b3e24974fa3e7a3420060e81dafefbd46d82b3cd508"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-world-captures/construction-1920x1080-6.tsv",
+      "bytes": 10846,
+      "sha256": "43fa68c0cb6ee2e8e6b0517e32c6499067eb715cc2f8b909e7345bcbad6e3214"
+    }
+  ],
+  "capture_mode": "DebugGame offscreen native viewport, P31Candidate, UI scale 1.0; synthesized semantic input; unintended edge pan disabled and controller tick suspended during held-target capture; direct production deprojection verified",
+  "inspection": "Native-resolution browser and world captures reviewed; world label clipped behind tray corrected; ghost footprint tiles rebound to Rostock; placement camera reserves space above tray. No raster assets generated or resampled.",
+  "production_status": "Not promoted: explicit approval required by root AGENTS.md and automatic approval review. See TG-13-production-review.json.",
+  "limitations": [
+    "Normal game production quarter unavailable until approved promotion",
+    "Shipping cook/package and physical controller hardware not certified",
+    "Remote hostless city visit and broader TG-13 fidelity/localization/density gates remain outside the verified standalone journey"
+  ]
+}

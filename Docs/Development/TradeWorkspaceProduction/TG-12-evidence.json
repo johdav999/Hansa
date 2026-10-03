@@ -1,0 +1,124 @@
+{
+  "task": "TG-12",
+  "date": "2026-09-23",
+  "status": "Implementation and focused editor-hosted viewport tests pass; packaged startup and shared reference gate remain blocked/open",
+  "captures": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1920x1080-scale1.0-00.png",
+      "sha256": "6da2f5e433720340de4df0125863158c48229ee3795339ae3ddcb6ba917581c5",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1920x1080-scale1.0-00.tsv",
+      "sha256": "e41b4db7a935848aa61373f79ee36f872218550ae17698fe82762a327b411b3f",
+      "dimensions": null
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1920x1080-scale1.0-02.png",
+      "sha256": "7bafad6d7d0220ac383fcb18d82ac3a98c9845dca45d49333d06ea15350c9e19",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1920x1080-scale1.0-02.tsv",
+      "sha256": "19346d4aec106ea6ff8478994aecc4804d556fb462b8b0b5c96b81327f42866c",
+      "dimensions": null
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1920x1080-scale1.0-04.png",
+      "sha256": "fd23943278f22e7847c1ad60c2f00c8bc964e34d35572909c22eef30b04a32e1",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1920x1080-scale1.0-04.tsv",
+      "sha256": "4d7eb75852a41b620b34140494546414107b0aa6ea66e3fe6dc4339354026a85",
+      "dimensions": null
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1280x720-scale1.4-00.png",
+      "sha256": "f78859bdac3361ddc5bcd85e4ec381b26ac41150958cf38f4c70e16c4cda8822",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1280x720-scale1.4-00.tsv",
+      "sha256": "17fb723deb7e7a5f30aded51fcb29cf36fac3e1f929870469c5e9e9068a11cbd",
+      "dimensions": null
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1280x720-scale1.4-04.png",
+      "sha256": "493f405fe5823d5dcd3ea41660ded020b474bb618f27161e2de9778b74dfe58a",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1280x720-scale1.4-04.tsv",
+      "sha256": "117e4775a19f416df3d3f4f85542d63f3b9d2fd186e183510b1cd61322b8819c",
+      "dimensions": null
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1280x720-scale1.4-13-LEET.png",
+      "sha256": "c7870b9db6d552f59dd7c5a4e70a97c9646ea04d804a05cdcf72911c67311b99",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1280x720-scale1.4-13-LEET.tsv",
+      "sha256": "985b1296e827c1c5a5d91c20735cf3d62caea9bee2afd0a01c23e0924bfbd868",
+      "dimensions": null
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1280x720-scale1.4-21-LEET.png",
+      "sha256": "bc9b4cae0c1ff62fa4f2e6b1bf7def2f45c91986ffaf068a8cd4890de2bc6768",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1280x720-scale1.4-21-LEET.tsv",
+      "sha256": "128afdefec7ea5da9a85e8a91f5ae36b6475bea80748e7320362ea321e06ffaa",
+      "dimensions": null
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1280x720-scale1.4-29-LEET.png",
+      "sha256": "fd995210b85ad60cb48e512a9f8f2416554175cc280f3aa72937b6e9e3e948df",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-12-captures/office-1280x720-scale1.4-29-LEET.tsv",
+      "sha256": "14b25a5482fdfa3b5a39360947c9be6db4e228d89e7b7ae419361a3cb0d70031",
+      "dimensions": null
+    }
+  ],
+  "tests": {
+    "journey": "Saved/BuildArtifacts/20260923-210559657-automation-Hansa.UI.TradeMap.Specialization.Journey",
+    "wide": "Saved/BuildArtifacts/20260923-210640450-gui-repair-1920-1080",
+    "compactPseudo": "Saved/BuildArtifacts/20260923-210556456-gui-repair-1280-720"
+  },
+  "package": {
+    "build": "Development BuildCookRun archive succeeded; staged binary predates final compact label and feedback layout fixes",
+    "actualCatalog": "EE2F7D53434867C9",
+    "acceptedCatalog": "2A9D09E1C63AA6E1",
+    "mismatchedDefinitions": 18,
+    "causeScope": "5 residential compounds and 13 dependent residence definitions; all specialization/trade definitions match",
+    "log": "Saved/TradeWorkspace/TG12/packaged-catalog.log"
+  }
+}

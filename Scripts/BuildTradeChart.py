@@ -48,9 +48,27 @@ lines += ['};', '']
 output = root / 'Source/Hansa/Private/UI/HansaTradeChartData.inl'
 output.write_text('\n'.join(lines), encoding='utf-8')
 print(f'{len(points)//3} triangles, {len(outlines)} coastline rings: {output}')
-manifest = json.loads((root / 'SourceArt/Terrain/HansaWorld/Prototype_20260918/terrain-manifest.json').read_text(encoding='utf-8'))
-city_lines = ['// Display-only editorial city coordinates from the existing HansaWorld terrain manifest.',
-              '// Approximate city centres, not historical boundary or navigation claims.',
+# Rivers are geographic context, never an assertion of navigability.
+archive = zipfile.ZipFile(root / 'SourceArt/Terrain/HansaWorld/Prototype_20260918/sources/rivers.zip')
+reader = shapefile.Reader(shp=part('.shp'), shx=part('.shx'), dbf=part('.dbf'))
+rivers = []
+for item in reader.iterShapes():
+    geometry = shape(item.__geo_interface__)
+    if not geometry.intersects(extent):
+        continue
+    clipped = geometry.intersection(extent).simplify(.012, preserve_topology=True)
+    pieces = [clipped] if clipped.geom_type == 'LineString' else list(getattr(clipped, 'geoms', []))
+    for line in pieces:
+        if line.geom_type == 'LineString' and line.length > .1:
+            rivers.append([((x+1)/33, (61-y)/11) for x,y in line.coords])
+with output.open('a', encoding='utf-8') as f:
+    f.write('static const TArray<TArray<FVector2D>> TradeRivers = {\n')
+    for river in rivers:
+        f.write('{' + ','.join(f'{{{x:.7f},{y:.7f}}}' for x,y in river) + '},\n')
+    f.write('};\n')
+manifest = json.loads((root / 'SourceArt/UI/TradeWorkspace/Geography/reviewed-city-locations.json').read_text(encoding='utf-8'))
+city_lines = ['// Generated from SourceArt/UI/TradeWorkspace/Geography/reviewed-city-locations.json.',
+              '// GeoNames CC BY 4.0 (https://www.geonames.org/), reviewed approximate centres; not navigation data.',
               'static const TMap<FString,FVector2D> TradeCityLocations = {']
 for city in manifest['cities']:
     city_lines.append('{TEXT("%s"),FVector2D(%.7f,%.7f)},' % (city['id'], (city['longitude']+1)/33, (61-city['latitude'])/11))

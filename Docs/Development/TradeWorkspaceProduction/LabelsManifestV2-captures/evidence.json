@@ -1,0 +1,54 @@
+{
+  "configuration": "DebugGame",
+  "source": "actual Unreal game automation capture; no mockup compositing or resampling",
+  "captures": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/LabelsManifestV2-captures/trade-1536x1024-scale-1.0-0.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "7b9da027a1900837794d6541cec5460401d96aa665119b74ffc157e1b9c3ebfc"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/LabelsManifestV2-captures/trade-1920x1080-scale-1.0-0.png",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "sha256": "2c3d21cbf2fa338b3032242b6e9edfe5950cd819e134c0fcdc0745e8ad54ac3c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/LabelsManifestV2-captures/trade-3412x1132-scale-1.0-0.png",
+      "dimensions": [
+        3412,
+        1132
+      ],
+      "sha256": "d33f62657ce68243a29ded25d681d1d8f420913a268372bc11148a8aac1a2a2c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/LabelsManifestV2-captures/trade-1280x720-scale-1.4-5.png",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "sha256": "088463915dc01d2e9affcd16dcf1fec900c2d7cb2a26c0eca6e4ff52181b74c9"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/LabelsManifestV2-captures/trade-1280x720-scale-1.4-6.png",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "sha256": "82661ac24a1e864eb79d88172f6bdc1cd9d279c32be96781c6f4986b7cdfc893"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/LabelsManifestV2-captures/trade-1536x1024-scale-1.0-9.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "52dcf3f47f338e7fe7515d13d144f5da782b00d95251dcef6515b0cae084fa89"
+    }
+  ]
+}

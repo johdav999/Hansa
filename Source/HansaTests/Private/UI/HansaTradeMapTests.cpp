@@ -14,6 +14,7 @@
 #include "HansaTradeJourneySupport.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Widgets/SWindow.h"
+#include "Widgets/Layout/SScrollBox.h"
 
 namespace
 {
@@ -38,7 +39,7 @@ bool FHansaTradeMapProjectionAndEditorTest::RunTest(const FString& Parameters)
 	if (!Projection || Registry == nullptr) return false;
 	TStrongObjectPtr<UHansaTradeMapPresentationModel> Model(NewObject<UHansaTradeMapPresentationModel>());
 	Model->InitializeDefaults();
-	TestTrue(TEXT("Projection applies"), Model->ApplyProjection(Projection.Value, *Registry));
+	TestTrue(TEXT("Projection applies"), (Model->SetViewerHouse(Projection.Value.GetRoutes()[0].OwnerId), Model->ApplyProjection(Projection.Value, *Registry)));
 	TestEqual(TEXT("The MVP map has four cities"), Model->GetSnapshot().Cities.Num(), 4);
 	TestEqual(TEXT("The MVP map has cog and wagon routes"), Model->GetSnapshot().Routes.Num(), 2);
 	TestTrue(TEXT("Both route modes are represented"),
@@ -72,7 +73,7 @@ bool FHansaTradeMapSemanticsResponsiveEvidenceTest::RunTest(const FString& Param
 	const FHansaEconomicRegistry* Registry = Fixture.Value.GetDefinitions().GetEconomicRegistry();
 	if (!Projection || Registry == nullptr) return false;
 	TStrongObjectPtr<UHansaTradeMapPresentationModel> Model(NewObject<UHansaTradeMapPresentationModel>());
-	Model->InitializeDefaults(); Model->ApplyProjection(Projection.Value, *Registry);
+	Model->InitializeDefaults(); (Model->SetViewerHouse(Projection.Value.GetRoutes()[0].OwnerId), Model->ApplyProjection(Projection.Value, *Registry));
 	TStrongObjectPtr<UHansaHudPresentationModel> HudModel(NewObject<UHansaHudPresentationModel>());
 	HudModel->InitializeDefaults();
 	TSharedRef<Hansa::UI::SHansaRootHud> Hud = SNew(Hansa::UI::SHansaRootHud).Model(HudModel.Get()).TradeMapModel(Model.Get()).InitialViewportSize(FIntPoint(1280,720));
@@ -89,6 +90,7 @@ bool FHansaTradeMapSemanticsResponsiveEvidenceTest::RunTest(const FString& Param
 	TestNotNull(TEXT("City capability mode is an ordinary semantic control"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.City.Filter")));
 	TestNotNull(TEXT("Selected-good mode is an ordinary semantic control"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Good.Filter")));
 	TestNotNull(TEXT("City search is an ordinary semantic control"), TradeMapTestsFindNode(Nodes,TEXT("TradeMap.City.Search")));
+	Screen->ActivateSemanticId(TEXT("TradeMap.Navigate.Route"));Nodes=Screen->GetSemanticSnapshot();
 	const auto* RouteStateNode = TradeMapTestsFindNode(Nodes, TEXT("TradeMap.Editor.RouteState"));
 	const auto* RouteActionNode = TradeMapTestsFindNode(Nodes, TEXT("TradeMap.Editor.ToggleActive"));
 	TestTrue(TEXT("Selected stopped route exposes an explicit state"),
@@ -102,12 +104,11 @@ bool FHansaTradeMapSemanticsResponsiveEvidenceTest::RunTest(const FString& Param
 		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Editor.Quantity.Increase")) &&
 		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Editor.Reserve.Increase")) &&
 		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Editor.Save")) &&
-		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Editor.ToggleActive")) &&
-		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.City.Filter")) &&
-		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Good.Filter")) &&
-		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.City.Search")) &&
-		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Route.Page.Previous")) &&
-		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Route.Page.Next")));
+		Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Editor.ToggleActive")));
+    Screen->ActivateSemanticId(TEXT("TradeMap.Page.Routes"));
+    TestTrue(TEXT("Routes page exposes filters menu and search"),
+        Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Directory.More")) &&
+        Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.City.Search")));
 	TestTrue(TEXT("City search accepts a non-drag deterministic intent"),Model->SetCitySearchIntent(TEXT("Rostock")));
 	TestEqual(TEXT("City search narrows the visible marker projection"),Model->GetSnapshot().Cities.Num(),1);
 	TestEqual(TEXT("City search reports the complete matching count"),Model->GetSnapshot().MatchingCityCount,1);
@@ -220,9 +221,12 @@ bool FHansaTradeMapSectionNavigationTest::RunTest(const FString& Parameters)
         for(const TCHAR* Section:{TEXT("Route"),TEXT("Presence"),TEXT("Specialization"),TEXT("Orders")})
         {
             const FString Id=TEXT("TradeMap.Navigate.")+FString(Section);
+            if(Model->GetSnapshot().bCompact)Screen->ActivateSemanticId(TEXT("TradeMap.Page.Workspace"));
             TestTrue(TEXT("Section shortcut is controller reachable"),Screen->GetControllerFocusOrder().Contains(Id));
             TestTrue(TEXT("Section shortcut opens even when progression is locked"),Screen->ActivateSemanticId(Id));Draw();Draw();
             auto Nodes=Screen->GetSemanticSnapshot();
+            const auto* ScheduleNode=TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Schedule"));
+            TestTrue(TEXT("Schedule reflows into a bounded native region"),ScheduleNode&&(Model->GetSnapshot().bCompact?!ScheduleNode->State.bVisible:(ScheduleNode->State.bVisible&&ScheduleNode->Bounds.Height()<=180)));
             for(const TCHAR* Other:{TEXT("Route"),TEXT("Presence"),TEXT("Specialization"),TEXT("Orders")})
             {
                 const auto* Node=TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Navigate.")+FString(Other));
@@ -251,10 +255,129 @@ bool FHansaTradeMapSectionNavigationTest::RunTest(const FString& Parameters)
             TestTrue(TEXT("Keyboard focus reveals a previously buried presence control"),Node&&Node->State.bVisible&&Node->State.bFocused);
         }
     }
+    // Virtualized offscreen routes must reveal through the stable semantic ID.
+    const FString LastRouteId=FString::Printf(TEXT("TradeMap.Route.%lld"),Model->GetSnapshot().Routes.Last().RouteValue);
+    TestTrue(TEXT("Offscreen route accepts semantic focus"),Screen->FocusSemanticId(LastRouteId));Draw();Draw();
+    const auto FocusedRows=Screen->GetSemanticSnapshot();
+    const auto* LastRouteNode=TradeMapTestsFindNode(FocusedRows,LastRouteId);
+    TestTrue(TEXT("Virtual list reveals and focuses the requested route"),LastRouteNode&&LastRouteNode->State.bVisible&&LastRouteNode->State.bFocused);
+    TestTrue(TEXT("Stop accepts semantic focus"),Screen->FocusSemanticId(TEXT("TradeMap.Stop.0")));Draw();Draw();
+    const auto FocusedStop=FSlateApplication::Get().GetKeyboardFocusedWidget();
+    Model->AdjustQuantityIntent(5000);Draw();Draw();
+    TestTrue(TEXT("Live refresh retains actual Slate keyboard focus"),FocusedStop==FSlateApplication::Get().GetKeyboardFocusedWidget());
+    // A tab switch must retain its own bounded viewport offset.
+    auto FindScroll=[](TSharedPtr<SWidget> W)->TSharedPtr<SScrollBox>{while(W){if(W->GetType()==FName(TEXT("SScrollBox")))return StaticCastSharedPtr<SScrollBox>(W);W=W->GetParentWidget();}return nullptr;};
+    Screen->ActivateSemanticId(TEXT("TradeMap.Navigate.Route"));Draw();Draw();
+    const auto RouteScroll=FindScroll(Screen->ResolveSemanticWidget(TEXT("TradeMap.Stop.0")));
+    const auto PresenceScroll=FindScroll(Screen->ResolveSemanticWidget(TEXT("TradeMap.Station.Action")));
+    TestTrue(TEXT("Unrelated workflows have separate scroll owners"),RouteScroll&&PresenceScroll&&RouteScroll!=PresenceScroll);
+    if(RouteScroll){RouteScroll->SetScrollOffset(80);Draw();Draw();const float Before=RouteScroll->GetScrollOffset();
+      Screen->ActivateSemanticId(TEXT("TradeMap.Navigate.Presence"));Draw();Draw();
+      Screen->ActivateSemanticId(TEXT("TradeMap.Navigate.Route"));Draw();Draw();
+      TestEqual(TEXT("Switching tabs retains the route scroll offset"),RouteScroll->GetScrollOffset(),Before);}
+    TestFalse(TEXT("New route cannot overwrite unsaved edits"),Model->BeginCreateIntent());
+    TestTrue(TEXT("Rejected creation preserves edited draft"),Model->GetSnapshot().bDirty);
+    // Begin the independent creator-navigation check from the original clean fixture.
+    Model->InitializeDefaults();Model->ApplyProjection(Projection.Value,*Host->GetEconomicRegistry());Model->Open();
     TestTrue(TEXT("Route creation begins normally"),Model->BeginCreateIntent());
     TestFalse(TEXT("Section navigation cannot abandon an unsaved route draft"),Screen->ActivateSemanticId(TEXT("TradeMap.Navigate.Presence")));
     FSlateApplication::Get().RequestDestroyWindow(Window);
     return !HasAnyErrors();
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaTradeComponentOwnershipTest,
+ "Hansa.UI.TradeMap.Components.OwnershipAndRefresh",
+ EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaTradeComponentOwnershipTest::RunTest(const FString&)
+{
+ using namespace Hansa::UI;
+ const auto Fixture=Hansa::Simulation::FHansaProductionFixture::TryCreateGrainShortage();
+ if(!Fixture||!FSlateApplication::IsInitialized())return false;
+ const auto Projection=Fixture.Value.BuildProjection();
+ const auto* Registry=Fixture.Value.GetDefinitions().GetEconomicRegistry();
+ if(!Projection||!Registry)return false;
+ TStrongObjectPtr<UHansaTradeMapPresentationModel> Model(NewObject<UHansaTradeMapPresentationModel>());
+ Model->InitializeDefaults();(Model->SetViewerHouse(Projection.Value.GetRoutes()[0].OwnerId),Model->ApplyProjection(Projection.Value,*Registry));
+ Model->Open(TEXT("TG01.Origin"));
+ auto Screen=SNew(SHansaTradeMap).Model(Model.Get());
+ const FString RouteId=FString::Printf(TEXT("TradeMap.Route.%lld"),Model->GetSnapshot().SelectedRouteValue);
+ const auto Route=Screen->ResolveSemanticWidget(RouteId);
+ const auto Stop=Screen->ResolveSemanticWidget(TEXT("TradeMap.Stop.0"));
+ TestTrue(TEXT("Directory and route editor preserve semantic controls"),Route.IsValid()&&Stop.IsValid());
+ Model->AdjustQuantityIntent(5000);
+ TestTrue(TEXT("Live draft updates preserve route widget identity"),Route==Screen->ResolveSemanticWidget(RouteId));
+ TestTrue(TEXT("Live draft updates preserve stop widget identity"),Stop==Screen->ResolveSemanticWidget(TEXT("TradeMap.Stop.0")));
+ const auto Draft=Model->GetDraftStops();
+ TestTrue(TEXT("Presenter accepts office tab"),Screen->ActivateSemanticId(TEXT("TradeMap.Navigate.Specialization")));
+ TestEqual(TEXT("Presenter owns tab selection"),Model->GetSnapshot().ActiveSection,FString(TEXT("Specialization")));
+ auto Reopened=SNew(SHansaTradeMap).Model(Model.Get());
+ const auto Nodes=Reopened->GetSemanticSnapshot();
+ const auto* Office=TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Navigate.Specialization"));
+ TestTrue(TEXT("A second view observes the same selected tab"),Office&&Office->State.bSelected);
+ TestEqual(TEXT("Navigation retains route draft quantity"),Model->GetDraftStops()[0].Actions[0].QuantityLimit.GetRawValue(),Draft[0].Actions[0].QuantityLimit.GetRawValue());
+ const auto* OtherCity=Model->GetSnapshot().Cities.FindByPredicate([&](const auto& C){return C.StableId!=Model->GetSnapshot().SelectedCityStableId;});
+ if(!OtherCity)return false;
+ const FName City=OtherCity->StableId;
+ TestTrue(TEXT("Map city intent is accepted"),Model->SelectCityIntent(City));
+ TestEqual(TEXT("City intent updates shared inspector selection"),Model->GetSnapshot().SelectedCityStableId,City);
+ TestEqual(TEXT("City intent opens overview through presenter"),Model->GetSnapshot().ActiveSection,FString(TEXT("Overview")));
+ TestTrue(TEXT("Compact workspace page accepted"),Screen->ActivateSemanticId(TEXT("TradeMap.Page.Workspace")));
+ TestTrue(TEXT("Back returns compact workspace to Map"),Screen->ActivateSemanticId(TEXT("TradeMap.Back")));
+ TestEqual(TEXT("Map page selected by Back"),Model->GetSnapshot().WorkspacePage,FString(TEXT("Map")));
+ TestTrue(TEXT("First Back retains open workspace"),Model->GetSnapshot().bOpen);
+ TestEqual(TEXT("Page Back restores its origin"),Model->GetSnapshot().FocusedSemanticId,FName(TEXT("TradeMap.Page.Workspace")));
+ TestFalse(TEXT("Invalid page rejected"),Model->SelectWorkspacePageIntent(TEXT("Unsupported")));
+ TestFalse(TEXT("Invalid tab cannot mutate presenter"),Model->SelectSectionIntent(TEXT("Unsupported")));
+ Screen->SetPresentationSize(FIntPoint(1280,720));TestTrue(TEXT("Compact projection propagates"),Model->GetSnapshot().bCompact);
+ Screen->SetPresentationSize(FIntPoint(1920,1080));TestFalse(TEXT("Wide projection propagates"),Model->GetSnapshot().bCompact);
+ FName Restored;Model->OnFocusRestoreRequested().AddLambda([&](FName Id){Restored=Id;});
+ TestTrue(TEXT("Close accepted"),Model->CloseIntent());TestEqual(TEXT("Close restores the original caller"),Restored,FName(TEXT("TG01.Origin")));
+ return !HasAnyErrors();
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaTradeShellNavigationTest,
+ "Hansa.UI.TradeMap.Shell.InputAndFeedback",
+ EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaTradeShellNavigationTest::RunTest(const FString&)
+{
+ using namespace Hansa::UI;
+ if(!FSlateApplication::IsInitialized())return false;
+ TStrongObjectPtr<UHansaTradeMapPresentationModel> Model(NewObject<UHansaTradeMapPresentationModel>());
+ Model->InitializeDefaults();Model->Open();
+ FUiPreferences Preferences;Preferences.bLargeText=true;
+ auto Screen=SNew(SHansaTradeMap).Model(Model.Get()).Preferences(Preferences);
+ Screen->SetPresentationSize(FIntPoint(1920,1080));
+ TestTrue(TEXT("Large text uses bounded pages even at wide size"),Model->GetSnapshot().bCompact);
+ auto Nodes=Screen->GetSemanticSnapshot();
+ const auto* Loading=TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Workspace.Status"));
+ TestTrue(TEXT("Before projection the shell explains loading"),Loading&&Loading->State.ValueType==TEXT("loading")&&Loading->State.Value.Contains(TEXT("authoritative")));
+ const auto Fixture=Hansa::Simulation::FHansaProductionFixture::TryCreateGrainShortage();
+ if(!Fixture)return false;
+ const auto Projection=Fixture.Value.BuildProjection();const auto* Registry=Fixture.Value.GetDefinitions().GetEconomicRegistry();
+ if(!Projection||!Registry)return false;
+ (Model->SetViewerHouse(Projection.Value.GetRoutes()[0].OwnerId),Model->ApplyProjection(Projection.Value,*Registry));
+ const auto City=Model->GetSnapshot().SelectedCityStableId;const auto Route=Model->GetSnapshot().SelectedRouteValue;
+ Screen->ActivateSemanticId(TEXT("TradeMap.Page.Workspace"));
+ Screen->ActivateSemanticId(TEXT("TradeMap.Navigate.Route"));
+ TestTrue(TEXT("Right arrow selects next workflow"),Screen->OnKeyDown(FGeometry(),FKeyEvent(EKeys::Right,FModifierKeysState(),0,false,0,0)).IsEventHandled());
+ TestEqual(TEXT("Presence follows Route"),Model->GetSnapshot().ActiveSection,FString(TEXT("Presence")));
+ Screen->OnKeyDown(FGeometry(),FKeyEvent(EKeys::Gamepad_LeftShoulder,FModifierKeysState(),0,false,0,0));
+ TestEqual(TEXT("Controller shoulder selects previous workflow"),Model->GetSnapshot().ActiveSection,FString(TEXT("Route")));
+ TestEqual(TEXT("Tab input retains selected city"),Model->GetSnapshot().SelectedCityStableId,City);
+ TestEqual(TEXT("Tab input retains selected route"),Model->GetSnapshot().SelectedRouteValue,Route);
+ Nodes=Screen->GetSemanticSnapshot();const auto* Tab=TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Navigate.Route"));
+ TestTrue(TEXT("Workflow declares selected Tab semantics"),Tab&&Tab->Role==EHansaHudSemanticRole::Tab&&Tab->State.bSelected);
+ Screen->OnKeyDown(FGeometry(),FKeyEvent(EKeys::Escape,FModifierKeysState(),0,false,0,0));
+ TestEqual(TEXT("Escape returns to compact map"),Model->GetSnapshot().WorkspacePage,FString(TEXT("Map")));
+ TestFalse(TEXT("Unavailable action rejected"),Screen->ActivateSemanticId(TEXT("TradeMap.Navigate.Unsupported")));
+ Nodes=Screen->GetSemanticSnapshot();const auto* Error=TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Workspace.Status"));
+ TestTrue(TEXT("Rejected action has explicit error semantics and remedy"),Error&&Error->State.bError&&Error->State.Value.Contains(TEXT("Action unavailable")));
+ Screen->ActivateSemanticId(TEXT("TradeMap.Page.Map"));
+ Nodes=Screen->GetSemanticSnapshot();Error=TradeMapTestsFindNode(Nodes,TEXT("TradeMap.Workspace.Status"));
+ TestTrue(TEXT("Successful navigation clears command error"),Error&&!Error->State.bError);
+ return !HasAnyErrors();
 }
 
 #endif

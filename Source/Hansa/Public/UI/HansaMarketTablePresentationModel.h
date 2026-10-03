@@ -180,6 +180,8 @@ struct HANSA_API FHansaSelectedGoodPresentation final
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") bool bSpotTradeVisible = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") bool bSpotTradeBuy = true;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") bool bSpotTradeCanSubmit = false;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") bool bSpotTradePending = false;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") bool bSpotTradeHasShipChoices = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") TArray<FHansaMarketChartPointPresentation> History;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") TArray<FHansaMarketFactorPresentation> Factors;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|UI|Market") TArray<FHansaMarketRelationshipPresentation> Consumers;
@@ -251,7 +253,13 @@ public:
 	bool SelectGoodIntent(FName GoodStableId);
 	bool TogglePinIntent();
 	bool BeginRouteIntent();
-	bool CycleSpotTradeSideIntent();
+	bool CycleSpotTradeVehicleIntent();
+ bool SpotTradeLinkIntent(FName Action);
+ void ReceiveCommandFeedback(const FHansaClientCommandFeedback& Feedback);
+ void ApplyRemoteVisiting(const FHansaClientProjectionSnapshot& Projection, FName City);
+ FName GetMarketCity() const {return FName(*CurrentCityId.ToString());}
+ TFunction<void(FName,FName,int64,FName)> VisitingLinkRequested;
+ bool CycleSpotTradeSideIntent();
 	bool AdjustSpotTradeQuantityIntent(int64 DeltaMilliUnits);
 	bool ConfirmSpotTradeIntent();
 	void SetFocusedSemanticId(FName SemanticId);
@@ -282,6 +290,12 @@ private:
 	int64 SpotTradeQuantityRaw = 5000;
 	bool bSpotTradeBuy = true;
 	FText SpotTradeResult;
+ TArray<FHansaVisitingTradeOffer> VisitingOffers;
+ TArray<int64> VisitingVehicles;
+ bool bRemoteVisiting=false, bSpotPending=false;
+ int64 SpotSequence=0, SpotNonce=0, SpotOwner=0, SpotProjectionRevision=0;
+ void ApplyVisitingMarket(const TArray<FHansaReplicatedMarket>& Markets, FName City);
+ void DescribeVisitingGood(FHansaMarketTableRowPresentation& Row) const;
 #if WITH_DEV_AUTOMATION_TESTS
 	TFunction<Hansa::Simulation::FHansaSpotTradeQuoteProjection(Hansa::Simulation::EHansaSpotTradeSide,Hansa::Simulation::FHansaQuantity)> SpotTradeQuoteForTesting;
 #endif

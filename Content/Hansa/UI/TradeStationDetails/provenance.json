@@ -1,0 +1,37 @@
+{
+  "feature": "TradeStationDetails",
+  "generator": "built-in ImageGen",
+  "mode": "reference-guided individual component generation",
+  "anchor": "Docs/Images/UI/TradeStationDetails/trade-station-details--composed--upgrade-ready--1024x1536--v1.png",
+  "master": {
+    "path": "SourceArt/UI/TradeStationDetails/trade-station-details--harbor-banner--default--2172x724--v1.png",
+    "width": 2172,
+    "height": 724,
+    "sha256": "1F2B8763B74EE9D830C568C6299CBE8B8026C196A2F9E95D22EAE30B38BBCCA1"
+  },
+  "prompt": "SourceArt/UI/TradeStationDetails/trade-station-details--harbor-banner--default--2172x724--v1.prompt.md",
+  "crop": null,
+  "derivatives": "HighQualityBicubic proportional; approved GUI exception",
+  "variants": [
+    {
+      "path": "Content/Hansa/UI/TradeStationDetails/harbor--360.png",
+      "width": 360,
+      "height": 120,
+      "sha256": "57260632A909F730A93D3FBAA814ECFB74F0D29240CEEEF6A8537C2DCA9567BC"
+    },
+    {
+      "path": "Content/Hansa/UI/TradeStationDetails/harbor--540.png",
+      "width": 540,
+      "height": 180,
+      "sha256": "1CCD40CE7FE86EB5EF709EB23662C6EF18B15E306056B44CF7228A73A3C56C7C"
+    },
+    {
+      "path": "Content/Hansa/UI/TradeStationDetails/harbor--720.png",
+      "width": 720,
+      "height": 240,
+      "sha256": "0588BEA0B31818CBDA69E264B168D9164B34BA99F2F4C677B9150A851DADAA7A"
+    }
+  ],
+  "presentation": "native Slate brush, preserved aspect ratio, dedicated density selected, proportional ScaleToFit as authorized",
+  "shipping": "UFS runtime PNG artwork only; composed references excluded"
+}

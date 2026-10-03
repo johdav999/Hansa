@@ -1,0 +1,981 @@
+{
+  "prompt": "TG-03",
+  "artifact_class": "Development production-game viewport captures; not Shipping certification",
+  "build": {
+    "result": "passed",
+    "log": "Saved\\TG03-build-6.log",
+    "sha256": "af66065a796321d2add995192fa4078b0e4bebe9e90003f496f8e1d26322e9e7",
+    "target": "HansaEditor Win64 Development -DisableUnity"
+  },
+  "regression_tests": [
+    {
+      "log": "Saved/BuildArtifacts/20260922-211915963-automation-Hansa.UI.TradeMap/UnrealEditor.log",
+      "passed": 8,
+      "sha256": "629478941823fe2e1df6e64312b8b885f61a298c770ad9f262d2b083da5ec43d"
+    },
+    {
+      "log": "Saved/BuildArtifacts/20260922-210921743-automation-Hansa.Integration.TradePresence/UnrealEditor.log",
+      "passed": 8,
+      "sha256": "721cdde9e3bae4d6e5ed31dca16a78aa320a1d7bef44def92c5c8a7d55eab84b"
+    },
+    {
+      "log": "Saved/BuildArtifacts/20260922-211948517-automation-Hansa.Integration.Save.RoundTripContinuation/UnrealEditor.log",
+      "passed": 1,
+      "sha256": "16f15e196aa20920e293577039771c6723306eb406a4b9360862bf910fd5bdb4"
+    }
+  ],
+  "viewport_runs": [
+    {
+      "log": "Saved\\BuildArtifacts\\20260922-212658043-gui-repair-1280-720\\Unreal.log",
+      "sha256": "1b3f9408c976c2126a9761bb4c08372e09bbc75e6908eaba42b1e50918a4f42c",
+      "result": "passed"
+    },
+    {
+      "log": "Saved\\BuildArtifacts\\20260922-212658896-gui-repair-1920-1080\\Unreal.log",
+      "sha256": "1b05d552b19d6cbc268af0918ca3659992e4d84a88548b9edf63f2f12bda2949",
+      "result": "passed"
+    },
+    {
+      "log": "Saved\\BuildArtifacts\\20260922-212701381-gui-repair-1280-720\\Unreal.log",
+      "sha256": "ac6a3c05c7721b92a6b2a01ab2146603007faee5cf482287d4a81caa1bb9b4a4",
+      "result": "passed"
+    }
+  ],
+  "captures": 108,
+  "semantic_snapshots": 108,
+  "viewport_min_map_height_pixels": {
+    "scale-1.0/1280x720": 300,
+    "scale-1.0/1920x1080": 655,
+    "scale-1.4/1280x720": 124
+  },
+  "geography_validation": {
+    "status": "passed",
+    "reviewed_locations": 39,
+    "current_catalog_cities": 30,
+    "source_sha256": "4337eb85ddef43a7d6164ba4d49379c1ef866ce5ceacda0fb1378abfc8cea2dd",
+    "checks": [
+      "named gazetteer identity",
+      "approximate centre tolerance <6km",
+      "chart extent",
+      "unique stable IDs",
+      "current catalog coverage",
+      "generated lookup matches source"
+    ]
+  },
+  "capture_files": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Antwerp.png",
+      "sha256": "e674add4131584f5db8de629236b034367708e3fb937ebb03b055422266e4fb7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Antwerp.tsv",
+      "sha256": "ff445e686c3fc6f9cf5bdadf1026ade032e3c413bfa25b9e15f2dad5b5a21206"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Bergen.png",
+      "sha256": "34dbdadd910176ee8d6b548fc6d36a77f3a71d2565763aed031c5e949a9506c2"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Bergen.tsv",
+      "sha256": "262cdbb121bad83aaa6dc57ae49d99204b34bdd9dca264dda941214d2301e684"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Boston.png",
+      "sha256": "422fe54fc65b6567239355c728afc622b8879bca42c548e7592ab51b2904ed05"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Boston.tsv",
+      "sha256": "dc718dc6f8d4b8853991ee95bd867dfaf32c6b7867afed5d81f733141878dac8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Bruges.png",
+      "sha256": "7c7bdad61461dfd20c782b961429aa845bf916d0fb684bd35d4ac7d6ebdabd1e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Bruges.tsv",
+      "sha256": "02a502002e935b4a51461fff04ece2e0509d14e67eef546ea65752c4fe6d9ba4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Danzig.png",
+      "sha256": "6eb0901db18705184ed7ba7634121e824556a63309955aed856bb41a72478d74"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Danzig.tsv",
+      "sha256": "a2d4b52db3fdcd56251ef343a2561fdc913ea0d276c7d4c1787e2ab4fa8ba0aa"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Dorpat.png",
+      "sha256": "865cd5d7411f9128d02c05b6caa61433260ccf67a7e767ba72e5a7fd56ea15e9"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Dorpat.tsv",
+      "sha256": "73db609e2397abb5c129edb6d6e897360a1587f6516a0fb0f77a573ecb0f6c74"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Elbing.png",
+      "sha256": "4b3e3d1d490b43caa2337945ba4194cff3bfa988e4668523a44baaf8be27c3ed"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Elbing.tsv",
+      "sha256": "c779ff2cef2d6b52388f291286bb64c9211e727ef94a5795c389f51edd4faf28"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Greifswald.png",
+      "sha256": "a385ae640a535a89e9a9a47d3b52912f60fa94d6bdd5db0f01733d3d1958a72e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Greifswald.tsv",
+      "sha256": "c0222b9ac96ec31e251d004abea1b0b88a0d67795b27ef81c250f3b0de355480"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Hamburg.png",
+      "sha256": "42d56af1b6b7e0e173a9a263186a920b41c80385d9b4a410c017a0c44d7bb3b4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Hamburg.tsv",
+      "sha256": "cb36a5bb7e73f0d4acadc8b80458b8f6ced33330b48b5e187cbf4942236a48eb"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Kalmar.png",
+      "sha256": "363a31430144c7c511046b7fed250daf4d2e697be9f35d899078b087d40de5ec"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Kalmar.tsv",
+      "sha256": "f5fa51f004d6cd503e210bc0f8813b4d250c61bbecd2205712e50ead46c0703c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Kampen.png",
+      "sha256": "84262cc4fd3d4b733b0622b6976ac8a981d71476e2de06f54f70b71be0f5879b"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Kampen.tsv",
+      "sha256": "a5e649a1f85366740c66f84f8e31e0fd7d5488bad2c1f89d297c04a93ea5463e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_KingsLynn.png",
+      "sha256": "5dce65dd069e8c93342128744b35b5921ea52affa12f0030ab0e8c4011993246"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_KingsLynn.tsv",
+      "sha256": "b7990cefa452d9f210b9884557f44b2e4208f12d4c44835d99ff9e4c2756b920"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Konigsberg.png",
+      "sha256": "2aabadd93a2afc41b69da0eb9b08c985428cdba009489a993ad81f2c9d7fbb1b"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Konigsberg.tsv",
+      "sha256": "17474ada6cc4af2505983e603d1e40967ab7ef2efab46f13c7f799611e96569d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_London.png",
+      "sha256": "aa0229e77769e06339eb101f1e16400127786171a427ae88066d5652edc6c8e3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_London.tsv",
+      "sha256": "349a89a09c14a92a8be06a495b8c5974a5209cce5db9a365042bcce5869f33d2"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Lubeck.png",
+      "sha256": "f0fc928ed5e71ef6f44e133699e130fb4e595d0f23f0e582593be30f26955aa9"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Lubeck.tsv",
+      "sha256": "64d57194ee0c7d67a89cd8b05950f83b99f73ad540445894d26b0cb1def23916"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Luneburg.png",
+      "sha256": "5715956eb3bd357d6d8f704eec88408846348859f5fccb2311befd9eb46c08a2"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Luneburg.tsv",
+      "sha256": "b780045a2d2491fc38d7143815ce14f0b7ca980e3406a2452e17a00bf72b8a3f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Malmo.png",
+      "sha256": "1fed67d7660602b8bf877fa314e6dc65e9f2ab510ea8f852788890780f1060fa"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Malmo.tsv",
+      "sha256": "afb954bf25ff92d6138e235fcd48e9e174f68bfc995c50f68b835c8492975d10"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Narva.png",
+      "sha256": "6965ee5eeb9dd758297a7ce55373b6a0796bcb36f086c016fc6784fd42380023"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Narva.tsv",
+      "sha256": "08e639c9008b8e7680aa1f77cf1eaca47c63d981ca63bc2a7f427b277d1e9187"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Novgorod.png",
+      "sha256": "b998f7583ec581097a56d43157d19d9d1dd288c8888b1e092ab70755327b046a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Novgorod.tsv",
+      "sha256": "9aed93221ce17a82a1c3b30b387bdbed76c7b7912e1d93dd02a8cdc1027b9509"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Oslo.png",
+      "sha256": "513ecd13cf6313e56aea179494891d0591a63f4f7667f6906150e9cf370fee1d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Oslo.tsv",
+      "sha256": "16e0bb56269c9e5a501b90b79edccf4f7ca647b4ed0751dbf49fc8421f426d9d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Pskov.png",
+      "sha256": "852f2ff89681b05ec8c00004e4acbcb7d9bb33541aacbfb5b51589904a7c70fb"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Pskov.tsv",
+      "sha256": "7913111b2dbd2907e81e339afc16d2095ccd8e3c503a8dde1e089b10868a8aed"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Reval.png",
+      "sha256": "f2762e85b3e6911e7ef4fefab4e11543ecc6315d7369347d80d9dfb37175f02e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Reval.tsv",
+      "sha256": "b70295e0e5792eaa60d73f27e87ede0f1a8508c62afb8059da95390dbb94a54a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Riga.png",
+      "sha256": "609bf4e80fdb43fe1856ddb708350a43837080307be898f760e2af6b44aa7732"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Riga.tsv",
+      "sha256": "62674d7aed292e4810daa12c79837f27ab49ae7ed668e7167401de5e786c31f7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Rostock.png",
+      "sha256": "bc3fce054e7492a3dc45e0d5849bf002004c390e9edcd6afef5816894ac54485"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Rostock.tsv",
+      "sha256": "0825c6be214afb506caab5c5b4e594552dcf9db26d709117e53d00123ca43ea2"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Stettin.png",
+      "sha256": "a4f6c3ca9307a7fe098fd5c3e57775b01a6e678657747f1914d4dac664463abd"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Stettin.tsv",
+      "sha256": "ff40efe110150088a1c58a6f0e30df5e064e7f26fd92fb465af9feba235f4e9c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Stockholm.png",
+      "sha256": "0a6c44f83c5047dce3043a97cb82d23308ece587ffa48936d5137787d372ee26"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Stockholm.tsv",
+      "sha256": "7be892700f8c2b251802a17767f204774f5ccb8342908e441c4a5bdcfe6e6012"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Stralsund.png",
+      "sha256": "db616a912b719bbbf92b595ad173a1820e690426f245361404646cafb56e5f50"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Stralsund.tsv",
+      "sha256": "5d64754e1210f6ec3cdfcf894dfb5e8c36cf8fd6209dc1a35b06abc38d68ec09"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Thorn.png",
+      "sha256": "c8792cf7c959e9521ef077da362dbddc5844a4aba4c7d712099d71fbdff5b20c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Thorn.tsv",
+      "sha256": "c8ccfb48bd69430814e87daf0d4dcb02977d4801446f961a823666eed2f8f2fb"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Visby.png",
+      "sha256": "d9a38bfab3a1cd87de097cdc05386b49595a4533010f41f182f36937152f715b"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Visby.tsv",
+      "sha256": "bff9dc6ac54bacbf6caedd56210b119fdd1f9caebd2d2bec0bd33bbee9df7963"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Wismar.png",
+      "sha256": "53d211accc9f84237d04f4dbc63c02d9cace8c036757c0fd3cc8d34befac92ba"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-City_Wismar.tsv",
+      "sha256": "e43e0842c5dfb232cd1b53ff6e60dea40f46be999a283045f64c74eac8da0f3e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-ControllerCity.png",
+      "sha256": "5f11c8ad8fc253d11af65a6f5bc93163c9cd1be472c75a5668fa03d42b72e440"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-ControllerCity.tsv",
+      "sha256": "b846b201375449f9cdf8a7edb49ff0945b3edbd509b3a830933655329b3d59bc"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-FitRoute.png",
+      "sha256": "3be89cd0e563cdcb61f7e502cf4cf1f225d9682029a6a615d9c0f44209743597"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-FitRoute.tsv",
+      "sha256": "e3d9d50422acf0ca70c2c2d2653756b189afec65430d93605c96c5d3a2dce570"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-GoodReports.png",
+      "sha256": "898b1a9e61e8eb790cefa19cbd3a6c0bfc3f43232c0c86de6c01b3bb3cfd0dd7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-GoodReports.tsv",
+      "sha256": "005bdbc34b4227a71ff1ab372d84dd01d2a03352bbb0995b92826c6035b2a790"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-Presence.png",
+      "sha256": "d67e98693209cda8df6c24ea8cf5cee8c710c617df2c3a385cfb18a9732b59f4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-Presence.tsv",
+      "sha256": "01f55b92fe339fcaadc569bba54e7b08e49dcef929e9a2f7ebef1207a995dbb3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-Routes.png",
+      "sha256": "d0eeb6e1090452b981b0db12aa16139d96a9fad6da5f3608ad48d837827f13b7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-Routes.tsv",
+      "sha256": "33dd9da7e3cdf3842dc29b0436f22df8c9c8bb72a25a51f2588316d26fb9c14b"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-ZoomPan.png",
+      "sha256": "4fbe424777a8a5691cee68c34cb417bc4535a4068c4adc2f86cf54adb1f6f8ec"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1280x720-ZoomPan.tsv",
+      "sha256": "9a722d4e7814d51502a3701bb159bf3220ef2feeb2b42c78e3dd6adb61616a7f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Antwerp.png",
+      "sha256": "7d510a2fac52e0bbfa56d819006e42028123b7cbad0d5907e287e7a73a26a77e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Antwerp.tsv",
+      "sha256": "70473e5c50836be9ac93ff58efb809ac47b5cc64e38a0c0bbad770e103bfcd19"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Bergen.png",
+      "sha256": "a9f666c7b6e7bb49c749da24aa473f659f0c20e97b2e7ec2552051127ba74614"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Bergen.tsv",
+      "sha256": "0b0501e9dd0a527d1fdc141baa0c62db6b3c04b4f6bb565e2deadfe8ab6c4ef3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Boston.png",
+      "sha256": "07ab989af21f2325991346b8359de3dddbe9cb43b6335b56d521d9437505015a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Boston.tsv",
+      "sha256": "0da8753538d15be82f9cc17945483ce2d50dcbd47ac106afabb8be241eb6d2eb"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Bruges.png",
+      "sha256": "8ee7b6853ff79d9e9355fc741ba5d9605801d2ebe180df70437065d10367572a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Bruges.tsv",
+      "sha256": "ebe339cd15437ea6c3ae3aabee37216d4b8980fbac47f774b652c2abbb6ea95c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Danzig.png",
+      "sha256": "562e541fae8657025187884fd56f5954ab74822935e3c0c9e267c54a7efa3132"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Danzig.tsv",
+      "sha256": "2cf7c6fa21c28f80c41ae63dab8de4bd574ddad66821d221566075448d2bbd55"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Dorpat.png",
+      "sha256": "33c539c27a3fa65e3a1996e8a5763d26c9cd4a77fd7a8dd56e05a544ac718441"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Dorpat.tsv",
+      "sha256": "d6727b6b777af4faa6a68e43645f0626c5278a36b698cee221d5a9882ea38fc6"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Elbing.png",
+      "sha256": "bf51b96a44a122e7aacdc417b0c487c370dd5ef25bd39b233aa3dba09da1c4e4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Elbing.tsv",
+      "sha256": "cef58a8c42938a2c185c7b30592af39832c61514472803a1d8cbb020722cb36b"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Greifswald.png",
+      "sha256": "5237c07c8ae0f2f55e4e1ca44ffc901ef51e5d8c322f11f2277c383dd3187f46"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Greifswald.tsv",
+      "sha256": "369f9286c12ceb7a3a6c1089da236c9104487e6c8b2b4c8b2f55cc700f5cc555"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Hamburg.png",
+      "sha256": "4fae5e80641a93bf51f10f823d012364419b4c2265defd7db5f2fefebec1226c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Hamburg.tsv",
+      "sha256": "8dceb2e71d9bd722f04a983eade8c4204286cb8b462fe5688d2302edb19b0029"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Kalmar.png",
+      "sha256": "c31641e9207ec155ed006b97b5b1dd42b29f0f6ef52e0c3356b38880234e13fa"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Kalmar.tsv",
+      "sha256": "bfcf98dc23aa2cda22e719ad6d384439cd660eaeae1936c01a8e4322f9a8141e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Kampen.png",
+      "sha256": "665ba56aad6f5b2f05ec823d4fb9767503a714a940a59f5c0366e1b9c5b134d7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Kampen.tsv",
+      "sha256": "b40d65b23b6412cc4fb0eac5be27f3b738b657f9866b10af1f4d1b11b0183822"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_KingsLynn.png",
+      "sha256": "49b714eaf76fa53fa569200bb56cc92afe3f42538647a422b82818536a383ca8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_KingsLynn.tsv",
+      "sha256": "39cf26855e5d8f9df1b98976cafd3899956279aa90d8b56666a4de7cbd2f4610"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Konigsberg.png",
+      "sha256": "4be4e1fdd421dadd5bdaedf4f67b8e5018bc05ae8157f6d8fccbd21fe3192b90"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Konigsberg.tsv",
+      "sha256": "ab068600da4239b1c884e15155e01c30cfb4c8d5699cff2ea614c52aa745cdf0"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_London.png",
+      "sha256": "b3de93c4c210ed2f2ada28c65c2a3ae1734833f4488066c6aeff5245fdc08029"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_London.tsv",
+      "sha256": "dc12c6473c2c980c8ee41a5980150478c6b9be26dafed811f60e9e8bc28fc3cc"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Lubeck.png",
+      "sha256": "1d92fb4983d30d67e0d01a087144aa68445bdbeed145df23d11ed81e8d8c7aea"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Lubeck.tsv",
+      "sha256": "cf835601f2a1ea3f627ddebdc42ac7eb61d9da3191e928e6312de87aa71ea5f8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Luneburg.png",
+      "sha256": "37935dfc7812f171e94f089d5793e8ff3ba225dd1ef8f1885fe148853e9da770"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Luneburg.tsv",
+      "sha256": "f9dbec663f9dfa20a1476b3b094e888fa229a794aa281343be5bd1dbc260761c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Malmo.png",
+      "sha256": "b17d5a21be9615ff4b658c1d0ee59cd84f688f666f5b6e43ee5b3f048c60735f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Malmo.tsv",
+      "sha256": "1a27cfb955aaad1321a85d0158035bca2975284e8621e7f84113a861f7f2a926"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Narva.png",
+      "sha256": "9e3a0ea5934eb85882e7b996b37d30031c3906a6435d20ecd6d91b77dee396e1"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Narva.tsv",
+      "sha256": "47259078639b1943900d4b5ca70d4db143079323081f5a1100bf678a32ba147a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Novgorod.png",
+      "sha256": "439f7fcffaa956773c4f3f5c13ff3aeff1052738491481f682732b2eb7b408f9"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Novgorod.tsv",
+      "sha256": "9fe8587f0af7cf5cf8cf0cb2c10382c3866589f391e30289803f394db661e816"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Oslo.png",
+      "sha256": "738755ab4e4b7b06a91e3adcccafdb00f456ef5d8aeb7b4b8bf07d2b2650a779"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Oslo.tsv",
+      "sha256": "404299a8d055577b3b47b6687ec004cb337e68505cd12c1c03d178c68362ffad"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Pskov.png",
+      "sha256": "be387e76df45ac1bcf9d46d625647f72d392e4f26a4d03144962497285cf2fcf"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Pskov.tsv",
+      "sha256": "5b181dfb549f1cddabdbaee936189455b2a14d584ac44501380240145eab7c6b"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Reval.png",
+      "sha256": "39870b40f622dcff8c661a02a65bc5bc534d29f10c9c95f6ddb61ecbccdd1053"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Reval.tsv",
+      "sha256": "18dfeddf608534780668049c5364efff934fd42b7c7aea15292537c495ea41e8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Riga.png",
+      "sha256": "323ec92b372e754abd2008e7add0b0bb759b14b7e32bdbd1b6d0ac9ec1a977d3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Riga.tsv",
+      "sha256": "02e76871da8d6182b625435b1a4aafd8c6f58ab59562e9e5f81f5d4f0541c10c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Rostock.png",
+      "sha256": "752b3cbd063e81f6de13c88ebb8449a374fd2e8f103cd40b2b27e8890bb58527"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Rostock.tsv",
+      "sha256": "b34c01091c8005513ea8105159323c22b72bba438953e5701fbd93d2e737207d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Stettin.png",
+      "sha256": "238d9beb5ad6a0c6ebee85062520f80a54a82fd3d7e8941d34b45925334a9593"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Stettin.tsv",
+      "sha256": "f72d38ccef7591408082d722a8700519b9265f2941ce316dc43764c836de1a15"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Stockholm.png",
+      "sha256": "a2afb2b98892740150630cb61da8f981482f4d8d0324a43482f1e52b0e2e0237"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Stockholm.tsv",
+      "sha256": "92b6f1584dd7890ff273ec945e98abae00283cec010078f4674849a32565ad3e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Stralsund.png",
+      "sha256": "59bed1218ca8c21e475e2be3ff9242cd2beded584b4fe2a5680238a9a526f722"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Stralsund.tsv",
+      "sha256": "d7b6135dad6e919322c904756f6b34780507bc7c7be73bca8fbaeb79fb7c10f4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Thorn.png",
+      "sha256": "4d46e460f54ae4eceec584c4a17658e05bef3eca8f2dfea4ce712ed91144a7c2"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Thorn.tsv",
+      "sha256": "9f1ab5f73c986bb3823dfadea46064becdfecca5b33c1bdeee566825d4088679"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Visby.png",
+      "sha256": "c94d6d714fb4bf49f6ac9b9ac271e4503f5d29f29bd15c02edea9e9cbaf847a4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Visby.tsv",
+      "sha256": "2c487c9ef92a1778ec6ba843253a243778a98f98589429e02ad898058509bf96"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Wismar.png",
+      "sha256": "966bd9e7a4e19a38cc4e250b79657c29c14f48d08385cbfb1ed04a58767ce8fe"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-City_Wismar.tsv",
+      "sha256": "b11668f599a6598f0a06534d602cf10756831b7efb2489aac02e9c815a888263"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-ControllerCity.png",
+      "sha256": "4c9403f670b03e2654c53d42c08d63eb79be84970668a1749f2cdecb0c48005f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-ControllerCity.tsv",
+      "sha256": "736c77fed7bde124c727aa683705f168d41e9ee65932a91f6ef899aee6159a6f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-FitRoute.png",
+      "sha256": "ef710af29eb9dd4046de8de630c2f1ad7a7ed7a71e3b4f32ba64428fff890570"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-FitRoute.tsv",
+      "sha256": "7ed5bf2060aecf76975068d7f7ca723ae01b28d47141c867966914dadabd40f1"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-GoodReports.png",
+      "sha256": "df83b26223e81fa2e2e3f958d7ff7a213da25b0fd4d346d82af00fe1f703f7a5"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-GoodReports.tsv",
+      "sha256": "a405886078d59e092be1db6a1388ad00c3ef489db19273d8bacadb9f1596c74a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-Presence.png",
+      "sha256": "452547e96278f4452fb45e4ef930d32bb4b9c3ef8b10426049ec9f480567401a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-Presence.tsv",
+      "sha256": "95dd522cda57da230d77d5af74e89e8643d3e6e89b81c23f248a72385e6b1cbe"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-Routes.png",
+      "sha256": "fffaa71ff73a44d8a717369a6038501549e1b1bd9f6d5d82d3a4eada783b2d6c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-Routes.tsv",
+      "sha256": "a376752bb1401369179a32db17945d9330b90be3a96b9ee15287b879a458be86"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-ZoomPan.png",
+      "sha256": "8896d4a162b92f6e27fd10110b78ecdd1f635ab80d8e97059ca64f601a13a29f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.0/map-1920x1080-ZoomPan.tsv",
+      "sha256": "3a1d79969e0b31efcb4b5c697b0661b5f2880aaf98e1b1cc99487c2f044a5fdc"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Antwerp.png",
+      "sha256": "5524f97d4ed705dc5c45af95fdaaeeecc222fe6f4789df16e963f8fdd65e9405"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Antwerp.tsv",
+      "sha256": "7a0ddf3ca8a29221ed82f1c2b6f17bc80c0eacc17d31f84ed7693fd79921b19c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Bergen.png",
+      "sha256": "da7ccb2ee043eb2f3487d14a629e6346d72d231c778e0fe753ff6e94380d7df8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Bergen.tsv",
+      "sha256": "40a5237d921aa7769a8cba7fb7d2db31e6e50352c531c94406d417dbd6c8cf47"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Boston.png",
+      "sha256": "e965d4e82ee6291cffedd557142f05051dc9203a958c969bc9f15db528145710"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Boston.tsv",
+      "sha256": "c632dd51e55722d48037ac3ca84fead3b64742a1635acabdf632f83557513de2"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Bruges.png",
+      "sha256": "fc20ce8d5d8bbbdffeb899f8ce184aead8e4b81385e1bed7b240a5bab5201628"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Bruges.tsv",
+      "sha256": "2184187eb8bad1fa8b9304641e888cbf16308367de9c3e5e721608bf8b2919d0"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Danzig.png",
+      "sha256": "4384b30a478c92ecbc16434d4037c6940430890df1f952720f9a53fa8f97bc8d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Danzig.tsv",
+      "sha256": "9c248fee8007f6a02d4748c63e6044e2ce0a6e6dfc5b26a5170ed4e69f6faf11"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Dorpat.png",
+      "sha256": "487d4a65af29f2e6c89c8a55ac103141a45c1f817b7866225df9486ec46db6aa"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Dorpat.tsv",
+      "sha256": "41025179342c286c608d225b7d422bdb0268b5f9ea6210c3d73a19864d1c91ef"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Elbing.png",
+      "sha256": "216bf72449a9a6b46dcf888ea4284bedc9b50256bc1e62c7338bb160850855bf"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Elbing.tsv",
+      "sha256": "a45869f14111fd0c36aa586a4b6a9f66ec7de108894d724e052cd5561462db0f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Greifswald.png",
+      "sha256": "ea2d4bd1d4ed1c7d8f6f4b06f5cfe594232b57afbadfd603fb96a32901b05623"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Greifswald.tsv",
+      "sha256": "cd70c2f93806993245baa80095228b60bc1a74765afe0456dd761e2bbbdca4ce"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Hamburg.png",
+      "sha256": "10106e0f9dd7ade9217f000603be41a71f4fb7ad852e7e601436a4cacff95bf3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Hamburg.tsv",
+      "sha256": "1d7c9fe9760b416855485d1117083933dbac325e003b42c2d428d2d53e0ce3c3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Kalmar.png",
+      "sha256": "8454defeb4e565e2c01a86165e7cd573fc856cd5ff8cf89ed8f2567e20e64406"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Kalmar.tsv",
+      "sha256": "a2c5fa22419cb13515d087932c78380d2cfc1be8c0c543c9334baa0269a018a7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Kampen.png",
+      "sha256": "6f261bedf83255b5b828560673c47ac07df469edf4a4c8ef68c845eb6ec3f437"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Kampen.tsv",
+      "sha256": "3847bc8dd0a83d2ee6d737d55a4f23ebfdc373bfd887f73bab5f0465e649ec23"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_KingsLynn.png",
+      "sha256": "7b5ccae82dd3aa04da8e018ffdd39bc66adbb3bed7fe513c9cb13a282dcd503e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_KingsLynn.tsv",
+      "sha256": "c9df38efcd08d3473f9e32a660e10aa50d1cafdfe1de71341292a9429add21ea"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Konigsberg.png",
+      "sha256": "92c618659b2b05ff0d779b2420c4e6b93d5f640aa60a7276fa4ad00177ef8ff4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Konigsberg.tsv",
+      "sha256": "c4d20ac47ba1c8d94ef03975c5cc6d082263a2b51084b3182b6190fcec8991d1"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_London.png",
+      "sha256": "2b425dcbf6af71d1c331800a331d9132c0bbde059a8f863f146badc9f694b76f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_London.tsv",
+      "sha256": "35411cdc20e33372986b1a9794f85000e3cd136ccc25d5a40e6fb55a8b5a3c54"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Lubeck.png",
+      "sha256": "76823d4a10e70a64d1f36a31f67ab4b28274b50a2bba246394f2fdd77aab0db0"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Lubeck.tsv",
+      "sha256": "3708f936e57b1aa5cb73a76f678e6d708822d6fac82fc7ad5472f295cfc607ea"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Luneburg.png",
+      "sha256": "9fe8dc233c221a11662fdbb2cc8005303eea75e8f0f05c1cba44b1c82be88ec2"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Luneburg.tsv",
+      "sha256": "14d3e8f100cf61a2446f13ff83eeac378ca605c0d1914e2caeaac5f46a217146"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Malmo.png",
+      "sha256": "31bfbad1a596a6deeb0387c7c62c7be206fce0efe88c1d627ce9385687b4cadb"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Malmo.tsv",
+      "sha256": "d06cd55c008a49d9bcbe927608441b33b1b6bc8a8005285f612fef33c857e4cb"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Narva.png",
+      "sha256": "24e89c89a6107013e20b187ca2ec3610920294feb163f40e146efa715b5ce5b7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Narva.tsv",
+      "sha256": "e42716ede1c06d54d88ada50ee02df267aae686e7c74c26584f73544b2a557e3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Novgorod.png",
+      "sha256": "19ed1066ecfbb27f290ceb07fe84e4ab159e2ed1555aa8602c3f416c62534c18"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Novgorod.tsv",
+      "sha256": "37fa71fb343299db89a16149854f52cd7e59887f51d8dfdce121dab2917c9e9d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Oslo.png",
+      "sha256": "440ab2834431b03b031f43f3a7e11e4a258e3ec8e16dbc95c023d0a3da9f5c08"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Oslo.tsv",
+      "sha256": "bb18d3f6da61b015db80c19f21a79a618f2e175a76c8748575aabc12d47c56ac"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Pskov.png",
+      "sha256": "4c8e2604bdcd78c5b91db2ffe05356b0fc866b81eccf6b99fb46b6553880fbb8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Pskov.tsv",
+      "sha256": "b099c6b4b9714966f758c0bb2b80439da2adeccdf0709e2629f7b04518acd179"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Reval.png",
+      "sha256": "735a038595e1abf68acc151033293c70918272e9c81389447222acf3d47a0364"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Reval.tsv",
+      "sha256": "29c57da00d62d4035680ed7f18d3f1f2c1c43db75c37ca88edbe93408993b131"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Riga.png",
+      "sha256": "07a0a5ae655b3ea595f65b00a0b20d7d9fd3268720b050b65512da411e2fe5d9"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Riga.tsv",
+      "sha256": "4bba5b851738463075737a222a0334804261f093d948c5000c6c328a443abaef"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Rostock.png",
+      "sha256": "96e77f17bca0de538eaefea63069a4ff5a57c9c3cc56ff7d3232934caa37c322"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Rostock.tsv",
+      "sha256": "15771767d750123347bd7c3bbf889f4d89d25915d1c7a0f0a86faa16bd4baf4b"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Stettin.png",
+      "sha256": "0f3391ffa589f3d2f07643018a81b9da1c01c408463809e6a24b6ed864e18edc"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Stettin.tsv",
+      "sha256": "933dd37e20d753791051200b3c819acb2457d4deac53bdf049fe1715b960ae60"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Stockholm.png",
+      "sha256": "58cd9d2d5eafb533533fda2aa8d35613c0c7103141de7c9e658402c2195fcc18"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Stockholm.tsv",
+      "sha256": "762f4a7e6feb72a279770cd189efeee33487fb326ca0d72c07f8817d7da593ef"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Stralsund.png",
+      "sha256": "36c526b06f07dbd0ed5becf500516d561089acd27d91673e940ee454fe245479"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Stralsund.tsv",
+      "sha256": "aa1eaf4bd36a01a3c3d17b9713cb5aa5086f2b3e60850391a75ef199039288f8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Thorn.png",
+      "sha256": "7a0b3aed93fb6cc86e88b68c6fd536e412c6bc890f22c80a58245d22deff191c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Thorn.tsv",
+      "sha256": "0bfb50e42cc03f0403564dd712b8212d147c9c13fd966c3570b9737b2ae8870d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Visby.png",
+      "sha256": "ecc69a7240719f04b1f5ec6ecb64c50066802bc47d5a1941a5e005cd5609e04d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Visby.tsv",
+      "sha256": "b4e8ddebe35c1de573cc08b462c7a517b09c610bb85d370ef0403071fb51535e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Wismar.png",
+      "sha256": "56abdb3cf8450e46ffae6809a8e43452f6bca4fac95827059416201f7a52fecd"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-City_Wismar.tsv",
+      "sha256": "a29fea880c72785600a246463581c4901f914e006092ee50da2da7d431b18491"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-ControllerCity.png",
+      "sha256": "72a454f51aee04fcb1b027060410cf06d8589a1252278d911f83b1cb2bf49209"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-ControllerCity.tsv",
+      "sha256": "0e557a225efcff4727510a4ef22685c67a1a6cd845058ee09111b3a0ee19febc"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-FitRoute.png",
+      "sha256": "d5fef9ea18e563d1840446bcf63859c77b69ca3b841ad8da473e0ffddd2e36af"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-FitRoute.tsv",
+      "sha256": "9c03c6b15c297625c413ed95d26516bd85a799eaa0dfabc02623f98cd454f752"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-GoodReports.png",
+      "sha256": "84e1750dba55aa61cfb9f06f568180dec5e1d062f6a6baeef172e504a4f4892d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-GoodReports.tsv",
+      "sha256": "fab79106386e4a22cd077dc51a28498dfd23b44517fdf33de71986be51ba5660"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-Presence.png",
+      "sha256": "2c4935a4700278ce49e7b68917493d0f923e718f2d83584e6df329af4cd7483d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-Presence.tsv",
+      "sha256": "2993549c6973e13fa7e9f9f8831426fcc874e3701db53ab3443239bf580104b8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-Routes.png",
+      "sha256": "6909f54a88bedd01145891c449d5fbffdd96889728031204501cd48fb640ba9d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-Routes.tsv",
+      "sha256": "b513c3c5c36f68877b747cabd628685a5cc92f52f1c9f03b1fefd4b1ea3e5987"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-ZoomPan.png",
+      "sha256": "892aef905cc0d7a7db6bab917d72e15e660d9844b97cd7b5ccc27e2fc57dd6f0"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-03-captures/scale-1.4/map-1280x720-ZoomPan.tsv",
+      "sha256": "781d8af862b17d1c838f01e614d7f05690864442faff4aa0efb0cbb78e36d350"
+    }
+  ],
+  "rejected_iterations": [
+    "Zero-height compact map",
+    "Variable toolbar row height",
+    "Market-only capability notice reduced compact map height below 120px"
+  ],
+  "limitations": [
+    "Modern approximate geography, not medieval archaeological reconstruction",
+    "Route connections are not authoritative sailing/road tracks",
+    "No new river transport or hazard authority",
+    "No TG-18, Shipping, physical-controller or full localization certification"
+  ],
+  "original_pixel_visual_inspection": [
+    {
+      "capture": "TG-03-captures/scale-1.0/map-1280x720-Routes.png",
+      "result": "Readable region overview; labels avoid overlap; toolbar and summary contained."
+    },
+    {
+      "capture": "TG-03-captures/scale-1.0/map-1920x1080-GoodReports.png",
+      "result": "Selected Rostock agrees with inspector; known price/stock/age visible."
+    },
+    {
+      "capture": "TG-03-captures/scale-1.4/map-1280x720-City_London.png",
+      "result": "Western edge selection/focus and label readable; capability notice retained."
+    },
+    {
+      "capture": "TG-03-captures/scale-1.4/map-1280x720-City_Novgorod.png",
+      "result": "Eastern edge selection/focus and label readable at 140% large text/high contrast."
+    }
+  ],
+  "inspection_scope": "Original-pixel visual sampling as listed; all 108 screenshots have native dimensions and matching semantic map-height checks; all 30 cities selected/revealed in three runs. Not individually visually inspected all 108 images.",
+  "regression_timing": "UI, presence and save suites passed before the final spacing-only change; final build and all three viewport runs include that change.",
+  "implementation_sha256": {
+    "Scripts/BuildTradeChart.py": "e933556f4a0f0b6cc305f2fcd69e83a70cb9cc18b5f5527e52e3062f8c761f08",
+    "Scripts/ValidateTradeGeography.py": "ab2ddfcb19e62e48ee7c7efea9eabec2b24f2b339f2fff5ceaa5a24906102eb4",
+    "SourceArt/UI/TradeWorkspace/Geography/reviewed-city-locations.json": "b2bdfe4140bd610180c036f1c215a62cdad70a88c17a99bafdab23fcd47f4318",
+    "Source/Hansa/Public/UI/HansaTradeMapGeometry.h": "94301521189f9fb964f76ffe06620d484708fbea6c407c2c3a1e8ada0116084c",
+    "Source/Hansa/Private/UI/Trade/HansaTradeMapGeometry.cpp": "5754ee851c56142d1f97df8395d738b440646c2325e252a2f0fb842a718acc57",
+    "Source/Hansa/Private/UI/Trade/STradeRouteCanvas.cpp": "04be6f2584416bb621251faf4c5477a1c9e984e17342c34e4809681bea74726d",
+    "Source/Hansa/Private/UI/Trade/STradeRouteCanvas.h": "5d7ac314968e71c64ffdd4e9a8bc857c4814a653ae5ca8e9fbda3cd275617479",
+    "Source/Hansa/Private/UI/Trade/HansaTradeWorkspaceComponents.cpp": "78d4d275ce37f5e79d1d20b8554ec68d39c66613494fbc6aca819f52d21ea54c",
+    "Source/Hansa/Private/UI/Trade/HansaTradeWorkspaceComponents.h": "48210ab77f68e708089e14be396d9dc2eb930640a3696a0259e14a13cd748cdc",
+    "Source/Hansa/Private/UI/HansaTradeMapPresentationModel.cpp": "97111a1436575661ba31c08f56e7932f57b25786e1ec57f67dbb63a87aa6478e",
+    "Source/Hansa/Public/UI/HansaTradeMapPresentationModel.h": "f20984640b5a238d5692446a3f3dff118a0f2c7bc27ae121015697435d1ae7c5",
+    "Source/Hansa/Private/UI/SHansaTradeMap.cpp": "00a414439c715649be1e67dafe9f62e2adbacace187774d07711042366dfc5bd",
+    "Source/Hansa/Private/UI/HansaTradeChartData.inl": "12d93463bf1ff0731e23f805abd6905ffdbcc7625ba8b8903affb664186d3a8d",
+    "Source/Hansa/Private/UI/HansaTradeCityLocations.inl": "73c15ab94ad6b39a7d55d66d1cffc9c1a4937b1f7e2fa123cfda47779b42c9dc",
+    "Source/HansaTests/Private/UI/HansaTradeMapGeometryTests.cpp": "412eced89645e5924ba381409e12495a0035230339383ce6128549c0f0e4873c",
+    "Source/HansaTests/Private/UI/HansaTradeGeographicCaptureTests.cpp": "447da38149e81bb98b919b3ec46aff996326bf827cdb2b76a8e9d8308c1d944d",
+    "Content/Hansa/UI/TradeWorkspace/Geography.txt": "8b2129fc156965ffca525de92ee117c4a6ab470a6279ef4b7b019b4894ab6d81"
+  }
+}

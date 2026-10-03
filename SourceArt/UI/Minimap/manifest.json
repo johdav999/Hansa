@@ -1,0 +1,99 @@
+[
+  {
+    "name": "ZoomIn",
+    "native_size": [
+      1254,
+      1254
+    ],
+    "crop": [
+      254,
+      236,
+      1015,
+      1019
+    ],
+    "master": "SourceArt\\UI\\Minimap\\minimap--zoomin--default--1254x1254--v1.png",
+    "sizes": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ]
+  },
+  {
+    "name": "ZoomOut",
+    "native_size": [
+      1254,
+      1254
+    ],
+    "crop": [
+      253,
+      235,
+      1016,
+      1020
+    ],
+    "master": "SourceArt\\UI\\Minimap\\minimap--zoomout--default--1254x1254--v1.png",
+    "sizes": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ]
+  },
+  {
+    "name": "CenterMap",
+    "native_size": [
+      1254,
+      1254
+    ],
+    "crop": [
+      201,
+      191,
+      1051,
+      1038
+    ],
+    "master": "SourceArt\\UI\\Minimap\\minimap--centermap--default--1254x1254--v1.png",
+    "sizes": [
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      160
+    ]
+  },
+  {
+    "name": "Reference",
+    "native_size": [
+      1254,
+      1254
+    ],
+    "crop": null,
+    "master": "Docs\\Images\\UI\\Minimap\\minimap--reference--default--1254x1254--v1.png",
+    "sizes": []
+  }
+]

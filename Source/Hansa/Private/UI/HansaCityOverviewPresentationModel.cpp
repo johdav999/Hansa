@@ -562,7 +562,7 @@ void UHansaCityOverviewPresentationModel::UpdateStateForActiveRows()
 
 bool UHansaCityOverviewPresentationModel::SelectCityIntent(FName CityId)
 {
-    if(!Snapshot.bOpen || (CityId!=TEXT("City.Lubeck") && CityId!=TEXT("City.Rostock")) || CityId==Snapshot.CityStableId)return false;
+    if(!Snapshot.bOpen || !Hansa::Simulation::FHansaCityDefinitionId::TryParse(CityId.ToString()) || CityId==Snapshot.CityStableId)return false;
     const auto Previous=Snapshot;Snapshot.CityStableId=CityId;Snapshot.SelectedRowStableId=NAME_None;
     Snapshot.PopulationRows.Reset();Snapshot.ProductionRows.Reset();Snapshot.MarketRows.Reset();Snapshot.HeaderSummaries.Reset();
     Snapshot.CityTitle=CityId==TEXT("City.Rostock")?LOCTEXT("RostockTitle","Rostock City Overview"):LOCTEXT("DefaultTitle","Lübeck City Overview");
@@ -584,3 +584,5 @@ void UHansaCityOverviewPresentationModel::PublishIfChanged(const FHansaCityOverv
 
 bool UHansaCityOverviewPresentationModel::VisitCityIntent(){return Snapshot.bOpen && VisitRequested && VisitRequested(Snapshot.CityStableId);}
 void UHansaCityOverviewPresentationModel::SetVisitStatus(FText Status){const auto Previous=Snapshot;Snapshot.LastActionResult=Status;PublishIfChanged(Previous);}
+
+void UHansaCityOverviewPresentationModel::ApplyRemoteMarketCity(FName CityId){const auto Before=Snapshot;Snapshot.CityStableId=CityId;Snapshot.CityTitle=FText::FromString(CityId.ToString().RightChop(5)+TEXT(" Market"));Snapshot.LoadState=EHansaCityOverviewLoadState::Ready;Snapshot.HeaderSummaries.Reset();Snapshot.PopulationRows.Reset();Snapshot.ProductionRows.Reset();Snapshot.MarketRows.Reset();PublishIfChanged(Before);}

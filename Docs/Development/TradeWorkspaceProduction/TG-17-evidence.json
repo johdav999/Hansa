@@ -1,0 +1,318 @@
+{
+  "date": "2026-09-24",
+  "prompt": "TG-17",
+  "projection_schema": 13,
+  "intent_schema": 8,
+  "build": {
+    "path": "Saved/BuildArtifacts/20260924-105705243-build-HansaEditor-Win64-Development/Build.log",
+    "sha256": "22919e68631f330002400d84a8fa23c29118b67786ffbcd812c5deb13b739f8e"
+  },
+  "tests": [
+    {
+      "directory": "Saved/BuildArtifacts/20260924-105712355-automation-Hansa.UI.TradeMap",
+      "passed": 24,
+      "failed": 0,
+      "log": {
+        "path": "Saved/BuildArtifacts/20260924-105712355-automation-Hansa.UI.TradeMap/UnrealEditor.log",
+        "sha256": "c4a303dce619f813a631e8a360ac57a3fc1066b4b4bd0816112f4a7eed71ca8d"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-105741550-automation-Hansa.UI.VisitingTrade",
+      "passed": 2,
+      "failed": 0,
+      "log": {
+        "path": "Saved/BuildArtifacts/20260924-105741550-automation-Hansa.UI.VisitingTrade/UnrealEditor.log",
+        "sha256": "2a2d18c4022ac7f87e82503c38a932f30918d9dfb9901f0ba4b3bb3323ac98f1"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-105800458-automation-Hansa.UI.TradeCreator",
+      "passed": 3,
+      "failed": 1,
+      "log": {
+        "path": "Saved/BuildArtifacts/20260924-105800458-automation-Hansa.UI.TradeCreator/UnrealEditor.log",
+        "sha256": "6ca73078ae6c450faee83f375a4370691d98dadbd9f5606291bfff17f3c4fb5e"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-103617648-automation-Hansa.Multiplayer.Projections",
+      "passed": 1,
+      "failed": 0,
+      "log": {
+        "path": "Saved/BuildArtifacts/20260924-103617648-automation-Hansa.Multiplayer.Projections/UnrealEditor.log",
+        "sha256": "86a1b8796c76e63e97d5f6ab5119ed1568aaae8bdc64e9bbbb0ba294c3e9a2b3"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-110029343-automation-Hansa.Multiplayer",
+      "passed": 10,
+      "failed": 3,
+      "log": {
+        "path": "Saved/BuildArtifacts/20260924-110029343-automation-Hansa.Multiplayer/UnrealEditor.log",
+        "sha256": "5b79614184e0df2708adb86f68043e5ba64ea04e4ae181221526dec114d370c0"
+      }
+    }
+  ],
+  "process_runs": [
+    {
+      "directory": "Saved/BuildArtifacts/20260924-103704550-two-player-authority",
+      "succeeded": false,
+      "result": {
+        "path": "Saved/BuildArtifacts/20260924-103704550-two-player-authority/failure.json",
+        "sha256": "f080a7fd24cdf6cffe871ede98cb4957901e031cabed388312328959a1e3ef3e"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-104301392-two-player-authority",
+      "succeeded": false,
+      "result": {
+        "path": "Saved/BuildArtifacts/20260924-104301392-two-player-authority/failure.json",
+        "sha256": "3803094693260260453575c321adcb761b09de96795f57840caace6f863c0cc5"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-104456171-two-player-authority",
+      "succeeded": false,
+      "result": {
+        "path": "Saved/BuildArtifacts/20260924-104456171-two-player-authority/failure.json",
+        "sha256": "8fdd0b1c2ec23d260a9fd0ff64c5c6d9c629f65e28dbccfa3b98feecdafcac06"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-104720631-two-player-authority",
+      "succeeded": false,
+      "result": {
+        "path": "Saved/BuildArtifacts/20260924-104720631-two-player-authority/failure.json",
+        "sha256": "133be0c1ba71033c5d3b0a0c0970c2dbd78b04aa9555a45745dd5138c40f79a7"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-105012334-two-player-authority",
+      "succeeded": false,
+      "result": {
+        "path": "Saved/BuildArtifacts/20260924-105012334-two-player-authority/failure.json",
+        "sha256": "551fdd7840afb5b847d4dac92eb5748c16c1b458a7fbae24d676c9770857f4ed"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-105345398-two-player-authority",
+      "succeeded": false,
+      "result": {
+        "path": "Saved/BuildArtifacts/20260924-105345398-two-player-authority/failure.json",
+        "sha256": "2c76ce82dfdde1c32ac07987be58a6c1e66a25241857ceabda98f8e85bb80be4"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-105531439-two-player-authority",
+      "succeeded": true,
+      "result": {
+        "path": "Saved/BuildArtifacts/20260924-105531439-two-player-authority/result.json",
+        "sha256": "d4d74dc3cf5927efdb8870c8d0c2e0e92268907408a915d171944bab840c0217"
+      }
+    },
+    {
+      "directory": "Saved/BuildArtifacts/20260924-110106933-two-player-authority",
+      "succeeded": true,
+      "result": {
+        "path": "Saved/BuildArtifacts/20260924-110106933-two-player-authority/result.json",
+        "sha256": "594040d8f0a97011c1c4e21644a9cfc10d917638adbaf139fe30495389844336"
+      }
+    }
+  ],
+  "captures": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-17-captures/client1--screenshot-1280x720.png",
+      "sha256": "5a3598397e254092b962fbce8954d4f4d37c8c5d61436d8c57e1f92a4f38b410",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-17-captures/client1-trade-workspace--screenshot-1280x720.png",
+      "sha256": "147d22c48c631074ba67b302b6cbbc13a892dd6e9550ff44958aa8fc261ba36a",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-17-captures/client2--screenshot-1920x1080.png",
+      "sha256": "7190d7446186c35648d6d7d573dbbab3579753f39f14b91021825343e5669b49",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-17-captures/client2-reconnect--screenshot-1920x1080.png",
+      "sha256": "9b69c8a5b047d85290f5cbf0170e05fba8ad5e420f5fa9a7e20c1ea18afe8be5",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-17-captures/client2-trade-workspace--screenshot-1920x1080.png",
+      "sha256": "1243a6076dd68d83c9bdbc7dba6cba5b3db5d73e6e91e000acff16c7b12a447f",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    }
+  ],
+  "comparison": {
+    "image": {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-17-captures/wide-reference-left--remote-native-right.png",
+      "sha256": "f2de0d1689a87db548c02e92e80cfafe46f46de4e7a83884b533caf6994f88e7",
+      "dimensions": [
+        3592,
+        1080
+      ]
+    },
+    "reference": {
+      "path": "Docs/Images/UI/TradeWorkspace/trade-workspace--wide-shell--reference--1672x941--v1.png",
+      "sha256": "1a0a14aff62353e7bf06769bd5efd7fa4f1300473ecd30c5c3a712671132e12b",
+      "dimensions": [
+        1672,
+        941
+      ]
+    },
+    "actual": {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-17-captures/client2-trade-workspace--screenshot-1920x1080.png",
+      "sha256": "1243a6076dd68d83c9bdbc7dba6cba5b3db5d73e6e91e000acff16c7b12a447f",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "resampled": false
+  },
+  "existing_generated_masters": [
+    {
+      "master": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--citymarker--default--1254x1254--v1.png",
+        "sha256": "49795cd4263bec400188daf02fcefaa44112bb1b55ff09ad25914abb314b6d90",
+        "dimensions": [
+          1254,
+          1254
+        ]
+      },
+      "prompt": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--citymarker--default--1254x1254--v1.prompt.md",
+        "sha256": "85148ccf7b13a9c84e65450fe1d5aa31e05c9cbdb836579878137b84bd369ccf"
+      },
+      "changed_in_TG17": false
+    },
+    {
+      "master": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--citymarkerselected--default--1254x1254--v1.png",
+        "sha256": "fb9aab9567992bbb9b0885252f66fdd29f81d3f86b5d4273f0b2ab1638c82d37",
+        "dimensions": [
+          1254,
+          1254
+        ]
+      },
+      "prompt": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--citymarkerselected--default--1254x1254--v1.prompt.md",
+        "sha256": "3e988197cce3ab20fd470a6faba53fec3d5698dc8ae6c1cb0d49eb68f5af6e89"
+      },
+      "changed_in_TG17": false
+    },
+    {
+      "master": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--grainsack--default--1254x1254--v1.png",
+        "sha256": "92586e41b3959d7dde676a440d5652b6c2bbf96483f3b2d93f05bc8a61375138",
+        "dimensions": [
+          1254,
+          1254
+        ]
+      },
+      "prompt": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--grainsack--default--1254x1254--v1.prompt.md",
+        "sha256": "835f8529d6312f1285ee3963b56afa6c61052b6937151434c383bb1689518a2c"
+      },
+      "changed_in_TG17": false
+    },
+    {
+      "master": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--land--default--1254x1254--v1.png",
+        "sha256": "50b1242252726f692d8e7423d0772559de2fb88fbff97c9bd8315f84111ae3f7",
+        "dimensions": [
+          1254,
+          1254
+        ]
+      },
+      "prompt": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--land--default--1254x1254--v1.prompt.md",
+        "sha256": "ebf13020a397711ce834bf3d605c958df96f33c2d5701639fdd8ada2c9531408"
+      },
+      "changed_in_TG17": false
+    },
+    {
+      "master": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--linen--default--1254x1254--v1.png",
+        "sha256": "2629d228a2a15d87032ae7bfb59ca1cf682ad7b4957332742c29c7cdf04ef888",
+        "dimensions": [
+          1254,
+          1254
+        ]
+      },
+      "prompt": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--linen--default--1254x1254--v1.prompt.md",
+        "sha256": "b245237601a031a2acdf15ef4f7801253e9d4c15ebb63fc55b9cd04e75f8b5eb"
+      },
+      "changed_in_TG17": false
+    },
+    {
+      "master": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--merchant-office--active--1254x1254--v2.png",
+        "sha256": "7fd1b49d282cc88f51a70d6bad2e7738c12da30bebe44e244a6903972c08a23b",
+        "dimensions": [
+          1254,
+          1254
+        ]
+      },
+      "prompt": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--merchant-office--active--1254x1254--v2.prompt.md",
+        "sha256": "3280c502661cb7e08c450962ca292fbe53b8c33691731ba7990671fc1d72d0d9"
+      },
+      "changed_in_TG17": false
+    },
+    {
+      "master": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--rostock--default--1536x1024--v1.png",
+        "sha256": "3689a8c293a41e3c9941c7f8b36342c866f48513b19abeca72e017cdd07f7776",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "prompt": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--rostock--default--1536x1024--v1.prompt.md",
+        "sha256": "b61f12bad7844e81db069f6db50a401eacd247a187d8efc2eddf9793a1d4d60c"
+      },
+      "changed_in_TG17": false
+    },
+    {
+      "master": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--sea--default--1254x1254--v1.png",
+        "sha256": "79e063cb57c083ba740f5477f815371518bec0b626291541ee321d80f2eb58a8",
+        "dimensions": [
+          1254,
+          1254
+        ]
+      },
+      "prompt": {
+        "path": "SourceArt/UI/TradeWorkspace/trade-workspace--sea--default--1254x1254--v1.prompt.md",
+        "sha256": "7fc32455441b6db4f47ae113241ac5154618a1b4453c7312ac3c40ecd79bbb8e"
+      },
+      "changed_in_TG17": false
+    }
+  ],
+  "new_generated_assets": [],
+  "reference_fidelity_accepted": false,
+  "shipping_certified": false,
+  "limitations": "See TG-17.md; failed broader fixtures and inherited visual/packaged gates are not waived."
+}

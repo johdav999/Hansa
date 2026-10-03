@@ -194,7 +194,7 @@ namespace Hansa::Simulation
 		if(!Result.RecoveryDiagnostic.IsEmpty()){Result.Blocker=Result.RecoveryDiagnostic;Result.NextStep=TEXT("Do not delete records; restore compatible content or run an explicit migration.");return Result;}
 		switch (Station->Status)
 		{
-		case EHansaTradeStationStatus::Proposed: Result.Blocker = TEXT("Awaiting funding"); Result.NextStep = TEXT("Fund the authored money and material cost"); break;
+		case EHansaTradeStationStatus::Proposed: if(Station->ConstructionSite.bLocalDelivery){Result.Blocker=TEXT("Paid · awaiting local materials");Result.NextStep=TEXT("Assign a supply inventory, then deliver timber and planks in this city. Routes may remain active.");break;} Result.Blocker = Station->FundingInventoryId.IsValid()?TEXT("Awaiting pickup"):TEXT("Awaiting funding"); Result.NextStep = Station->FundingInventoryId.IsValid()?TEXT("Keep the assigned route active; missing materials are collected at its owned-city stop before ordinary loads. Construction begins automatically, or cancel with the reviewed refund."):TEXT("Review funding from an owned inventory, or collect missing materials using an assigned Cog route"); break;
 		case EHansaTradeStationStatus::UnderConstruction: Result.Blocker = FString::Printf(TEXT("Construction completes at tick %lld"), static_cast<long long>(Station->CompletionTick.GetValue())); Result.NextStep = TEXT("Advance simulation time"); break;
 		case EHansaTradeStationStatus::Active: Result.Blocker = Inventory->UsedCapacity.GetRawValue() > 0 ? TEXT("Closing will strand and preserve stored cargo") : FString(); Result.NextStep = Inventory->UsedCapacity.GetRawValue() > 0 ? TEXT("Close safely, then recover cargo outbound before final plot release") : TEXT("Station is operational"); break;
 		case EHansaTradeStationStatus::Suspended: Result.Blocker = TEXT("Station is suspended"); Result.NextStep = TEXT("Resolve the suspension cause"); break;
@@ -249,6 +249,7 @@ namespace Hansa::Simulation
 			const auto* Building=Registry->FindBuilding(StableId);if(!Building)continue;FHansaForeignConstructionOptionProjection Out;Out.BuildingDefinitionId=FHansaBuildingTypeId::TryParse(StableId).Value;Out.DisplayName=Building->DisplayName;Out.Category=Building->ConstructionMenuCategory==TEXT("Harbor")?TEXT("Commercial"):Building->ConstructionMenuCategory;
 			if(!Presence||Presence->Status!=EHansaForeignPresenceStatus::Active)Out.Reason=TEXT("No active foreign presence");
 			else if(!Presence->GrantedCapabilityIds.Contains(TEXT("PresenceCapability.MerchantQuarter")))Out.Reason=TEXT("Requires Merchant quarter");
+			else if(!Registry->FindPresenceStage(Presence->CurrentStageId)||!Registry->FindPresenceStage(Presence->CurrentStageId)->PermittedBuildingCategories.Contains(Out.Category))Out.Reason=TEXT("Current presence stage does not permit this category");
 			else if(!State->LeasedPlots.ContainsByPredicate([&](const auto& Lease){return Lease.OwnerId==HouseId&&Lease.CityId==CityId&&Lease.bActive&&Lease.PermittedBuildingCategories.Contains(Out.Category);}))Out.Reason=TEXT("No active leased plot permits this category");
 			else{Out.bPermitted=true;Out.Reason=TEXT("Permitted on the highlighted leased footprint");}
 			Result.Add(MoveTemp(Out));

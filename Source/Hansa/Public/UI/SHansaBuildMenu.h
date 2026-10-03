@@ -44,6 +44,16 @@ namespace Hansa::UI
 		virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
 
 	private:
+        void RefreshShips();
+        TSharedPtr<SHansaAction> ShipsButton;
+        TSharedPtr<SVerticalBox> ShipsPanel;
+        TSharedPtr<SScrollBox> ShipsScroll;
+        TSharedPtr<SScrollBox> CategoryScroll;
+        bool bWasShipsOpen = false;
+        TSharedPtr<SHorizontalBox> ShipsRow;
+        TSharedPtr<STextBlock> ShipsHint;
+        TArray<FHansaShipMenuEntry> CachedShips;
+        TMap<int64, TSharedPtr<SHansaAction>> ShipButtons;
 		void Refresh(const FHansaBuildMenuSnapshot& Snapshot, uint64 Revision);
 		void RebuildCategories(const FHansaBuildMenuSnapshot& Snapshot);
 		void RebuildChains(const FHansaBuildMenuSnapshot& Snapshot);

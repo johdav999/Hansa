@@ -3,6 +3,46 @@
 namespace Hansa::Simulation
 {
 
+ FHansaInventoryEndpoint FHansaInventoryEndpoint::CargoSlot(FHansaInventoryId Id, int32 Index)
+ {
+  auto Endpoint = Inventory(Id); Endpoint.CargoSlotIndex = Index; return Endpoint;
+ }
+
+ void FHansaInventoryLedger::MigrateCargoSlots()
+ {
+  for (auto& Record : Inventories)
+  {
+   if (Record.OwnerKind != EHansaInventoryOwnerKind::Vehicle || !Record.CargoSlots.IsEmpty()) continue;
+   // Canonical stock order gives repeatable allocation. Overflow is preserved for recovery,
+   // never made available as additional load capacity.
+   for (const auto& Stock : Record.Stocks)
+    if (Stock.Quantity.GetRawValue() > 0) Record.CargoSlots.Add({Stock.GoodId, Stock.Quantity});
+   Record.CargoSlots.SetNum(FMath::Max(3, Record.CargoSlots.Num()));
+  }
+ }
+
+ bool FHansaInventoryLedger::ValidateCargoSlots(const FHansaInventoryRecord& Record)
+ {
+  if (Record.OwnerKind != EHansaInventoryOwnerKind::Vehicle) return Record.CargoSlots.IsEmpty();
+  if (Record.CargoSlots.Num() < 3) return false;
+  for (const auto& Slot : Record.CargoSlots)
+  {
+   if (Slot.Quantity.GetRawValue() < 0 || (Slot.Quantity.GetRawValue() == 0) != !Slot.GoodId.IsValid()) return false;
+   if (Slot.GoodId.IsValid() && !Record.Stocks.ContainsByPredicate([&](const auto& S){return S.GoodId == Slot.GoodId;})) return false;
+  }
+  for (const auto& Stock : Record.Stocks)
+  {
+   int64 Total = 0;
+   for (const auto& Slot : Record.CargoSlots) if (Slot.GoodId == Stock.GoodId)
+   {
+    if (Slot.Quantity.GetRawValue() > MAX_int64 - Total) return false;
+    Total += Slot.Quantity.GetRawValue();
+   }
+   if (Total != Stock.Quantity.GetRawValue()) return false;
+  }
+  return true;
+ }
+
  TArray<FHansaSpoilageRecord> FHansaInventoryReadOnlyAccess::QuerySpoilage() const { return Ledger ? Ledger->Spoilage : TArray<FHansaSpoilageRecord>(); }
 bool FHansaInventoryLedger::SetHouseholdAvailable(FHansaInventoryId InventoryId, FHansaGoodId GoodId, bool bAvailable)
  {
@@ -334,6 +374,7 @@ bool FHansaInventoryLedger::SetHouseholdAvailable(FHansaInventoryId InventoryId,
 			Ledger.Inventories.Add(MoveTemp(Record));
 		}
 		Ledger.bInitialized = true;
+		Ledger.MigrateCargoSlots();
 		return THansaValueResult<FHansaInventoryLedger>::Success(MoveTemp(Ledger));
 	}
 
@@ -482,6 +523,42 @@ bool FHansaInventoryLedger::SetHouseholdAvailable(FHansaInventoryId InventoryId,
 		}
 
 		FHansaInventoryLedger Candidate = *this;
+		// Validate and mutate slot allocations on the candidate only. Failed transfers
+		// leave aggregate stock, reservations, slots and movement sequence unchanged.
+		auto ChangeSlots = [&](int32 InventoryIndex, int32 RequestedSlot, bool bLoad)
+		{
+			if (InventoryIndex == INDEX_NONE) return RequestedSlot == INDEX_NONE;
+			auto& Record = Candidate.Inventories[InventoryIndex];
+			if (Record.OwnerKind != EHansaInventoryOwnerKind::Vehicle) return RequestedSlot == INDEX_NONE;
+			if (RequestedSlot < INDEX_NONE || RequestedSlot >= Record.CargoSlots.Num()) return false;
+			if (bLoad)
+			{
+				int32 Selected = RequestedSlot;
+				if (Selected == INDEX_NONE)
+				{
+					for (int32 I = 0; I < 3; ++I) if (Record.CargoSlots[I].GoodId == GoodId) { Selected = I; break; }
+					if (Selected == INDEX_NONE) for (int32 I = 0; I < 3; ++I) if (!Record.CargoSlots[I].GoodId.IsValid()) { Selected = I; break; }
+				}
+				if (Selected < 0 || Selected >= 3) return false;
+				auto& Slot = Record.CargoSlots[Selected];
+				if (Slot.GoodId.IsValid() && Slot.GoodId != GoodId) return false;
+				const auto Sum = FHansaQuantity::TryAdd(Slot.Quantity, Quantity);
+				if (!Sum) return false;
+				Slot.GoodId = GoodId; Slot.Quantity = Sum.Value; return true;
+			}
+			int64 Remaining = Quantity.GetRawValue();
+			for (int32 I = 0; I < Record.CargoSlots.Num() && Remaining > 0; ++I)
+			{
+				if (RequestedSlot != INDEX_NONE && RequestedSlot != I) continue;
+				auto& Slot = Record.CargoSlots[I]; if (Slot.GoodId != GoodId) continue;
+				const int64 Taken = FMath::Min(Remaining, Slot.Quantity.GetRawValue());
+				Slot.Quantity = FHansaQuantity::FromRaw(Slot.Quantity.GetRawValue() - Taken); Remaining -= Taken;
+				if (Slot.Quantity.GetRawValue() == 0) Slot.GoodId = FHansaGoodId();
+			}
+			return Remaining == 0;
+		};
+		if (!ChangeSlots(SourceIndex, Source.CargoSlotIndex, false) || !ChangeSlots(DestinationIndex, Destination.CargoSlotIndex, true))
+			return Failure(EHansaInventoryTransactionError::InvalidEndpoint, Sequence, Quantity);
 		if (bSourceInventory)
 		{
 			FHansaInventoryRecord& SourceInventory = Candidate.Inventories[SourceIndex];
@@ -737,6 +814,7 @@ bool FHansaInventoryLedger::SetHouseholdAvailable(FHansaInventoryId InventoryId,
 		Projection.Reserved = Reserved.Value;
 		Projection.AcceptedGoods = Inventory.AcceptedGoods;
 			Projection.HouseholdExcludedGoods = Inventory.HouseholdExcludedGoods;
+			Projection.CargoSlots = Inventory.CargoSlots;
 		Projection.Stocks.Reserve(Inventory.Stocks.Num());
 		for (const FHansaInventoryStockRecord& Stock : Inventory.Stocks)
 		{

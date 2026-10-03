@@ -1,0 +1,783 @@
+{
+  "objects": [
+    {
+      "name": "Armature",
+      "type": "ARMATURE",
+      "dimensions": [
+        0.41917476058006287,
+        0.22741949558258057,
+        0.9458872675895691
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bones": [
+        {
+          "name": "root",
+          "parent": null
+        },
+        {
+          "name": "pelvis",
+          "parent": "root"
+        },
+        {
+          "name": "spine_01",
+          "parent": "pelvis"
+        },
+        {
+          "name": "spine_02",
+          "parent": "spine_01"
+        },
+        {
+          "name": "spine_03",
+          "parent": "spine_02"
+        },
+        {
+          "name": "clavicle_l",
+          "parent": "spine_03"
+        },
+        {
+          "name": "upperarm_l",
+          "parent": "clavicle_l"
+        },
+        {
+          "name": "lowerarm_l",
+          "parent": "upperarm_l"
+        },
+        {
+          "name": "hand_l",
+          "parent": "lowerarm_l"
+        },
+        {
+          "name": "index_01_l",
+          "parent": "hand_l"
+        },
+        {
+          "name": "index_02_l",
+          "parent": "index_01_l"
+        },
+        {
+          "name": "index_03_l",
+          "parent": "index_02_l"
+        },
+        {
+          "name": "middle_01_l",
+          "parent": "hand_l"
+        },
+        {
+          "name": "middle_02_l",
+          "parent": "middle_01_l"
+        },
+        {
+          "name": "middle_03_l",
+          "parent": "middle_02_l"
+        },
+        {
+          "name": "pinky_01_l",
+          "parent": "hand_l"
+        },
+        {
+          "name": "pinky_02_l",
+          "parent": "pinky_01_l"
+        },
+        {
+          "name": "pinky_03_l",
+          "parent": "pinky_02_l"
+        },
+        {
+          "name": "ring_01_l",
+          "parent": "hand_l"
+        },
+        {
+          "name": "ring_02_l",
+          "parent": "ring_01_l"
+        },
+        {
+          "name": "ring_03_l",
+          "parent": "ring_02_l"
+        },
+        {
+          "name": "thumb_01_l",
+          "parent": "hand_l"
+        },
+        {
+          "name": "thumb_02_l",
+          "parent": "thumb_01_l"
+        },
+        {
+          "name": "thumb_03_l",
+          "parent": "thumb_02_l"
+        },
+        {
+          "name": "lowerarm_twist_01_l",
+          "parent": "lowerarm_l"
+        },
+        {
+          "name": "upperarm_twist_01_l",
+          "parent": "upperarm_l"
+        },
+        {
+          "name": "clavicle_r",
+          "parent": "spine_03"
+        },
+        {
+          "name": "upperarm_r",
+          "parent": "clavicle_r"
+        },
+        {
+          "name": "lowerarm_r",
+          "parent": "upperarm_r"
+        },
+        {
+          "name": "hand_r",
+          "parent": "lowerarm_r"
+        },
+        {
+          "name": "index_01_r",
+          "parent": "hand_r"
+        },
+        {
+          "name": "index_02_r",
+          "parent": "index_01_r"
+        },
+        {
+          "name": "index_03_r",
+          "parent": "index_02_r"
+        },
+        {
+          "name": "middle_01_r",
+          "parent": "hand_r"
+        },
+        {
+          "name": "middle_02_r",
+          "parent": "middle_01_r"
+        },
+        {
+          "name": "middle_03_r",
+          "parent": "middle_02_r"
+        },
+        {
+          "name": "pinky_01_r",
+          "parent": "hand_r"
+        },
+        {
+          "name": "pinky_02_r",
+          "parent": "pinky_01_r"
+        },
+        {
+          "name": "pinky_03_r",
+          "parent": "pinky_02_r"
+        },
+        {
+          "name": "ring_01_r",
+          "parent": "hand_r"
+        },
+        {
+          "name": "ring_02_r",
+          "parent": "ring_01_r"
+        },
+        {
+          "name": "ring_03_r",
+          "parent": "ring_02_r"
+        },
+        {
+          "name": "thumb_01_r",
+          "parent": "hand_r"
+        },
+        {
+          "name": "thumb_02_r",
+          "parent": "thumb_01_r"
+        },
+        {
+          "name": "thumb_03_r",
+          "parent": "thumb_02_r"
+        },
+        {
+          "name": "lowerarm_twist_01_r",
+          "parent": "lowerarm_r"
+        },
+        {
+          "name": "upperarm_twist_01_r",
+          "parent": "upperarm_r"
+        },
+        {
+          "name": "neck_01",
+          "parent": "spine_03"
+        },
+        {
+          "name": "head",
+          "parent": "neck_01"
+        },
+        {
+          "name": "thigh_l",
+          "parent": "pelvis"
+        },
+        {
+          "name": "calf_l",
+          "parent": "thigh_l"
+        },
+        {
+          "name": "calf_twist_01_l",
+          "parent": "calf_l"
+        },
+        {
+          "name": "foot_l",
+          "parent": "calf_l"
+        },
+        {
+          "name": "ball_l",
+          "parent": "foot_l"
+        },
+        {
+          "name": "thigh_twist_01_l",
+          "parent": "thigh_l"
+        },
+        {
+          "name": "thigh_r",
+          "parent": "pelvis"
+        },
+        {
+          "name": "calf_r",
+          "parent": "thigh_r"
+        },
+        {
+          "name": "calf_twist_01_r",
+          "parent": "calf_r"
+        },
+        {
+          "name": "foot_r",
+          "parent": "calf_r"
+        },
+        {
+          "name": "ball_r",
+          "parent": "foot_r"
+        },
+        {
+          "name": "thigh_twist_01_r",
+          "parent": "thigh_r"
+        }
+      ]
+    },
+    {
+      "name": "tripo_node_545e3800",
+      "type": "MESH",
+      "dimensions": [
+        0.3843826651573181,
+        0.220139741897583,
+        0.9818971753120422
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "vertices": 9873,
+      "triangles": 19744,
+      "materials": [
+        "tripo_mat_545e3800"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "Armature|dig",
+      "frames": [
+        1.0,
+        394.0
+      ],
+      "curves": 619,
+      "animated_bones": [
+        "ball_l",
+        "ball_r",
+        "calf_l",
+        "calf_r",
+        "calf_twist_01_l",
+        "calf_twist_01_r",
+        "clavicle_l",
+        "clavicle_r",
+        "foot_l",
+        "foot_r",
+        "hand_l",
+        "hand_r",
+        "head",
+        "index_01_l",
+        "index_01_r",
+        "index_02_l",
+        "index_02_r",
+        "index_03_l",
+        "index_03_r",
+        "lowerarm_l",
+        "lowerarm_r",
+        "lowerarm_twist_01_l",
+        "lowerarm_twist_01_r",
+        "middle_01_l",
+        "middle_01_r",
+        "middle_02_l",
+        "middle_02_r",
+        "middle_03_l",
+        "middle_03_r",
+        "neck_01",
+        "pelvis",
+        "pinky_01_l",
+        "pinky_01_r",
+        "pinky_02_l",
+        "pinky_02_r",
+        "pinky_03_l",
+        "pinky_03_r",
+        "ring_01_l",
+        "ring_01_r",
+        "ring_02_l",
+        "ring_02_r",
+        "ring_03_l",
+        "ring_03_r",
+        "root",
+        "spine_01",
+        "spine_02",
+        "spine_03",
+        "thigh_l",
+        "thigh_r",
+        "thigh_twist_01_l",
+        "thigh_twist_01_r",
+        "thumb_01_l",
+        "thumb_01_r",
+        "thumb_02_l",
+        "thumb_02_r",
+        "thumb_03_l",
+        "thumb_03_r",
+        "upperarm_l",
+        "upperarm_r",
+        "upperarm_twist_01_l",
+        "upperarm_twist_01_r"
+      ]
+    },
+    {
+      "name": "Armature|idle",
+      "frames": [
+        1.0,
+        369.0
+      ],
+      "curves": 619,
+      "animated_bones": [
+        "ball_l",
+        "ball_r",
+        "calf_l",
+        "calf_r",
+        "calf_twist_01_l",
+        "calf_twist_01_r",
+        "clavicle_l",
+        "clavicle_r",
+        "foot_l",
+        "foot_r",
+        "hand_l",
+        "hand_r",
+        "head",
+        "index_01_l",
+        "index_01_r",
+        "index_02_l",
+        "index_02_r",
+        "index_03_l",
+        "index_03_r",
+        "lowerarm_l",
+        "lowerarm_r",
+        "lowerarm_twist_01_l",
+        "lowerarm_twist_01_r",
+        "middle_01_l",
+        "middle_01_r",
+        "middle_02_l",
+        "middle_02_r",
+        "middle_03_l",
+        "middle_03_r",
+        "neck_01",
+        "pelvis",
+        "pinky_01_l",
+        "pinky_01_r",
+        "pinky_02_l",
+        "pinky_02_r",
+        "pinky_03_l",
+        "pinky_03_r",
+        "ring_01_l",
+        "ring_01_r",
+        "ring_02_l",
+        "ring_02_r",
+        "ring_03_l",
+        "ring_03_r",
+        "root",
+        "spine_01",
+        "spine_02",
+        "spine_03",
+        "thigh_l",
+        "thigh_r",
+        "thigh_twist_01_l",
+        "thigh_twist_01_r",
+        "thumb_01_l",
+        "thumb_01_r",
+        "thumb_02_l",
+        "thumb_02_r",
+        "thumb_03_l",
+        "thumb_03_r",
+        "upperarm_l",
+        "upperarm_r",
+        "upperarm_twist_01_l",
+        "upperarm_twist_01_r"
+      ]
+    },
+    {
+      "name": "Armature|look_around",
+      "frames": [
+        1.0,
+        375.0
+      ],
+      "curves": 619,
+      "animated_bones": [
+        "ball_l",
+        "ball_r",
+        "calf_l",
+        "calf_r",
+        "calf_twist_01_l",
+        "calf_twist_01_r",
+        "clavicle_l",
+        "clavicle_r",
+        "foot_l",
+        "foot_r",
+        "hand_l",
+        "hand_r",
+        "head",
+        "index_01_l",
+        "index_01_r",
+        "index_02_l",
+        "index_02_r",
+        "index_03_l",
+        "index_03_r",
+        "lowerarm_l",
+        "lowerarm_r",
+        "lowerarm_twist_01_l",
+        "lowerarm_twist_01_r",
+        "middle_01_l",
+        "middle_01_r",
+        "middle_02_l",
+        "middle_02_r",
+        "middle_03_l",
+        "middle_03_r",
+        "neck_01",
+        "pelvis",
+        "pinky_01_l",
+        "pinky_01_r",
+        "pinky_02_l",
+        "pinky_02_r",
+        "pinky_03_l",
+        "pinky_03_r",
+        "ring_01_l",
+        "ring_01_r",
+        "ring_02_l",
+        "ring_02_r",
+        "ring_03_l",
+        "ring_03_r",
+        "root",
+        "spine_01",
+        "spine_02",
+        "spine_03",
+        "thigh_l",
+        "thigh_r",
+        "thigh_twist_01_l",
+        "thigh_twist_01_r",
+        "thumb_01_l",
+        "thumb_01_r",
+        "thumb_02_l",
+        "thumb_02_r",
+        "thumb_03_l",
+        "thumb_03_r",
+        "upperarm_l",
+        "upperarm_r",
+        "upperarm_twist_01_l",
+        "upperarm_twist_01_r"
+      ]
+    },
+    {
+      "name": "Armature|shovel",
+      "frames": [
+        1.0,
+        373.0
+      ],
+      "curves": 619,
+      "animated_bones": [
+        "ball_l",
+        "ball_r",
+        "calf_l",
+        "calf_r",
+        "calf_twist_01_l",
+        "calf_twist_01_r",
+        "clavicle_l",
+        "clavicle_r",
+        "foot_l",
+        "foot_r",
+        "hand_l",
+        "hand_r",
+        "head",
+        "index_01_l",
+        "index_01_r",
+        "index_02_l",
+        "index_02_r",
+        "index_03_l",
+        "index_03_r",
+        "lowerarm_l",
+        "lowerarm_r",
+        "lowerarm_twist_01_l",
+        "lowerarm_twist_01_r",
+        "middle_01_l",
+        "middle_01_r",
+        "middle_02_l",
+        "middle_02_r",
+        "middle_03_l",
+        "middle_03_r",
+        "neck_01",
+        "pelvis",
+        "pinky_01_l",
+        "pinky_01_r",
+        "pinky_02_l",
+        "pinky_02_r",
+        "pinky_03_l",
+        "pinky_03_r",
+        "ring_01_l",
+        "ring_01_r",
+        "ring_02_l",
+        "ring_02_r",
+        "ring_03_l",
+        "ring_03_r",
+        "root",
+        "spine_01",
+        "spine_02",
+        "spine_03",
+        "thigh_l",
+        "thigh_r",
+        "thigh_twist_01_l",
+        "thigh_twist_01_r",
+        "thumb_01_l",
+        "thumb_01_r",
+        "thumb_02_l",
+        "thumb_02_r",
+        "thumb_03_l",
+        "thumb_03_r",
+        "upperarm_l",
+        "upperarm_r",
+        "upperarm_twist_01_l",
+        "upperarm_twist_01_r"
+      ]
+    },
+    {
+      "name": "Armature|standing_relax",
+      "frames": [
+        1.0,
+        423.0
+      ],
+      "curves": 619,
+      "animated_bones": [
+        "ball_l",
+        "ball_r",
+        "calf_l",
+        "calf_r",
+        "calf_twist_01_l",
+        "calf_twist_01_r",
+        "clavicle_l",
+        "clavicle_r",
+        "foot_l",
+        "foot_r",
+        "hand_l",
+        "hand_r",
+        "head",
+        "index_01_l",
+        "index_01_r",
+        "index_02_l",
+        "index_02_r",
+        "index_03_l",
+        "index_03_r",
+        "lowerarm_l",
+        "lowerarm_r",
+        "lowerarm_twist_01_l",
+        "lowerarm_twist_01_r",
+        "middle_01_l",
+        "middle_01_r",
+        "middle_02_l",
+        "middle_02_r",
+        "middle_03_l",
+        "middle_03_r",
+        "neck_01",
+        "pelvis",
+        "pinky_01_l",
+        "pinky_01_r",
+        "pinky_02_l",
+        "pinky_02_r",
+        "pinky_03_l",
+        "pinky_03_r",
+        "ring_01_l",
+        "ring_01_r",
+        "ring_02_l",
+        "ring_02_r",
+        "ring_03_l",
+        "ring_03_r",
+        "root",
+        "spine_01",
+        "spine_02",
+        "spine_03",
+        "thigh_l",
+        "thigh_r",
+        "thigh_twist_01_l",
+        "thigh_twist_01_r",
+        "thumb_01_l",
+        "thumb_01_r",
+        "thumb_02_l",
+        "thumb_02_r",
+        "thumb_03_l",
+        "thumb_03_r",
+        "upperarm_l",
+        "upperarm_r",
+        "upperarm_twist_01_l",
+        "upperarm_twist_01_r"
+      ]
+    },
+    {
+      "name": "Armature|walk",
+      "frames": [
+        1.0,
+        57.0
+      ],
+      "curves": 619,
+      "animated_bones": [
+        "ball_l",
+        "ball_r",
+        "calf_l",
+        "calf_r",
+        "calf_twist_01_l",
+        "calf_twist_01_r",
+        "clavicle_l",
+        "clavicle_r",
+        "foot_l",
+        "foot_r",
+        "hand_l",
+        "hand_r",
+        "head",
+        "index_01_l",
+        "index_01_r",
+        "index_02_l",
+        "index_02_r",
+        "index_03_l",
+        "index_03_r",
+        "lowerarm_l",
+        "lowerarm_r",
+        "lowerarm_twist_01_l",
+        "lowerarm_twist_01_r",
+        "middle_01_l",
+        "middle_01_r",
+        "middle_02_l",
+        "middle_02_r",
+        "middle_03_l",
+        "middle_03_r",
+        "neck_01",
+        "pelvis",
+        "pinky_01_l",
+        "pinky_01_r",
+        "pinky_02_l",
+        "pinky_02_r",
+        "pinky_03_l",
+        "pinky_03_r",
+        "ring_01_l",
+        "ring_01_r",
+        "ring_02_l",
+        "ring_02_r",
+        "ring_03_l",
+        "ring_03_r",
+        "root",
+        "spine_01",
+        "spine_02",
+        "spine_03",
+        "thigh_l",
+        "thigh_r",
+        "thigh_twist_01_l",
+        "thigh_twist_01_r",
+        "thumb_01_l",
+        "thumb_01_r",
+        "thumb_02_l",
+        "thumb_02_r",
+        "thumb_03_l",
+        "thumb_03_r",
+        "upperarm_l",
+        "upperarm_r",
+        "upperarm_twist_01_l",
+        "upperarm_twist_01_r"
+      ]
+    },
+    {
+      "name": "Armature|wave_goodbye_02",
+      "frames": [
+        1.0,
+        142.0
+      ],
+      "curves": 619,
+      "animated_bones": [
+        "ball_l",
+        "ball_r",
+        "calf_l",
+        "calf_r",
+        "calf_twist_01_l",
+        "calf_twist_01_r",
+        "clavicle_l",
+        "clavicle_r",
+        "foot_l",
+        "foot_r",
+        "hand_l",
+        "hand_r",
+        "head",
+        "index_01_l",
+        "index_01_r",
+        "index_02_l",
+        "index_02_r",
+        "index_03_l",
+        "index_03_r",
+        "lowerarm_l",
+        "lowerarm_r",
+        "lowerarm_twist_01_l",
+        "lowerarm_twist_01_r",
+        "middle_01_l",
+        "middle_01_r",
+        "middle_02_l",
+        "middle_02_r",
+        "middle_03_l",
+        "middle_03_r",
+        "neck_01",
+        "pelvis",
+        "pinky_01_l",
+        "pinky_01_r",
+        "pinky_02_l",
+        "pinky_02_r",
+        "pinky_03_l",
+        "pinky_03_r",
+        "ring_01_l",
+        "ring_01_r",
+        "ring_02_l",
+        "ring_02_r",
+        "ring_03_l",
+        "ring_03_r",
+        "root",
+        "spine_01",
+        "spine_02",
+        "spine_03",
+        "thigh_l",
+        "thigh_r",
+        "thigh_twist_01_l",
+        "thigh_twist_01_r",
+        "thumb_01_l",
+        "thumb_01_r",
+        "thumb_02_l",
+        "thumb_02_r",
+        "thumb_03_l",
+        "thumb_03_r",
+        "upperarm_l",
+        "upperarm_r",
+        "upperarm_twist_01_l",
+        "upperarm_twist_01_r"
+      ]
+    }
+  ],
+  "fps": 24
+}

@@ -58,6 +58,7 @@ namespace Hansa::Simulation
 					AddString(Hash, Action.GoodId.ToString());
 					AddUInt64(Hash, static_cast<uint64>(Action.QuantityLimit.GetRawValue()));
 					AddUInt64(Hash, static_cast<uint64>(Action.MinimumSourceReserve.GetRawValue()));
+                    if (Action.CargoSlotIndex != INDEX_NONE) { AddUInt64(Hash, 0x534c4f54); AddUInt64(Hash, static_cast<uint64>(Action.CargoSlotIndex)); }
 				}
 			}
 		}
@@ -494,9 +495,9 @@ break;
 			AddUInt64(Hash, static_cast<uint64>(SpotTrade.ReviewedMarketUpdateTick)); AddUInt64(Hash, static_cast<uint64>(SpotTrade.ReviewedUnitPriceMilliMarks));
 			break;
 		case EHansaGameplayCommandType::ProposeTradeStation:
-			AddUInt64(Hash,ProposeTradeStation.StationId.GetValue());AddUInt64(Hash,ProposeTradeStation.FactorId.GetValue());AddUInt64(Hash,ProposeTradeStation.LeasedPlotId.GetValue());AddUInt64(Hash,ProposeTradeStation.InventoryId.GetValue());AddString(Hash,ProposeTradeStation.CityId.ToString());AddString(Hash,ProposeTradeStation.SiteId);break;
+			AddUInt64(Hash,ProposeTradeStation.StationId.GetValue());AddUInt64(Hash,ProposeTradeStation.FactorId.GetValue());AddUInt64(Hash,ProposeTradeStation.LeasedPlotId.GetValue());AddUInt64(Hash,ProposeTradeStation.InventoryId.GetValue());AddString(Hash,ProposeTradeStation.CityId.ToString());AddString(Hash,ProposeTradeStation.SiteId);if(ProposeTradeStation.bPlaceAndPay){AddString(Hash,TEXT("PlacedPresence.v1"));AddUInt64(Hash,ProposeTradeStation.Anchor.X);AddUInt64(Hash,ProposeTradeStation.Anchor.Y);AddUInt64(Hash,(uint8)ProposeTradeStation.Rotation);}break;
 		case EHansaGameplayCommandType::FundTradeStation:
-			AddUInt64(Hash,FundTradeStation.StationId.GetValue());AddUInt64(Hash,FundTradeStation.FundingInventoryId.GetValue());break;
+			AddUInt64(Hash,FundTradeStation.StationId.GetValue());AddUInt64(Hash,FundTradeStation.FundingInventoryId.GetValue());if(FundTradeStation.DeliveryMode){AddString(Hash,TEXT("ConstructionDelivery.v1"));AddUInt64(Hash,FundTradeStation.DeliveryMode);}break;
         case EHansaGameplayCommandType::ManageStationOrder:
             AddUInt64(Hash, ManageStationOrder.StationId.GetValue()); AddUInt32(Hash, ManageStationOrder.StationId.GetGeneration());
             AddUInt64(Hash, ManageStationOrder.OrderId); AddByte(Hash, static_cast<uint8>(ManageStationOrder.Action));

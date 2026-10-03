@@ -4,6 +4,7 @@ param(
     [ValidateSet('Development', 'DebugGame')]
     [string]$Configuration = 'Development',
 	[switch]$SkipBuild,
+    [switch]$DisableMcp,
 	[switch]$WithRendering,
     [switch]$NoZenDdc,
 	[string]$EngineRoot,
@@ -48,6 +49,7 @@ $arguments = @(
 	"-AbsLog=$unrealLogPath"
 )
 if ($NoZenDdc) { $arguments += '-ddc=NoZenLocalFallback' }
+if ($DisableMcp) { $arguments += '-DisablePlugins=ModelContextProtocol' }
 $editorCommand = $context.UnrealEditorCommand
 if ($Configuration -eq 'DebugGame') {
     $editorCommand = Join-Path (Split-Path $editorCommand) 'UnrealEditor-Win64-DebugGame-Cmd.exe'

@@ -3,6 +3,7 @@
 #include "Definitions/HansaPopulationDefinitions.h"
 #include "Definitions/HansaMarketDefinitions.h"
 #include "Definitions/HansaPresenceDefinitions.h"
+#include "Definitions/HansaTradeDefinitions.h"
 
 namespace Hansa::Editor::EconomicDefinitions
 {
@@ -13,8 +14,13 @@ inline TArray<FString> DescribeEconomicImpact(const FString& StableId, TConstArr
     for (const auto* Definition : Definitions)
     {
         if (!Definition) continue;
+        if (const auto* Stage = Cast<UHansaForeignPresenceStageDefinition>(Definition); Stage && Stage->StableDefinitionId == StableId)
+            Result.AddUnique(StableId + TEXT(".PlacedPresence (first paid placement bypasses trade qualification; currency, materials, one-time cargo reservations and later upgrades remain authored)"));
+        if (Cast<UHansaVehicleDefinition>(Definition) && Definition->StableDefinitionId == StableId)
+            Result.AddUnique(StableId + TEXT(".CargoSlots/RouteInstructions (persistent slot identity; active saves require migration review)"));
         if (const auto* Policy = Cast<UHansaCityTradePolicyDefinition>(Definition); Policy && Policy->StableDefinitionId == StableId)
             {
+            Result.AddUnique(Policy->CityId + TEXT(".PlacedPresence (lease geometry, paid construction, one-time ship delivery and local material escrow; active saves require migration review)"));
             Result.AddUnique(Policy->CityId + TEXT(".StationOrders (cap, budget, slot limits; active saves require migration review)"));
             Result.AddUnique(Policy->CityId + TEXT(".StationRoutes (RouteAccess/LocalStorage denial blocks transfers; physical cargo is preserved)"));
             }

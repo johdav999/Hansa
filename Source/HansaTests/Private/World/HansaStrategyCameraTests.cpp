@@ -21,14 +21,11 @@ bool FHansaStrategyCameraIntentTest::RunTest(const FString& Parameters)
 	using namespace Hansa::Game;
 
 	FHansaStrategyCameraSettings Settings;
-	Settings.BoundsMin = FVector2D(-1000.0, -1000.0);
-	Settings.BoundsMax = FVector2D(1000.0, 1000.0);
 	Settings.PanUnitsPerSecond = 100.0f;
 	Settings.FastPanMultiplier = 3.0f;
 	Settings.RotationDegreesPerSecond = 45.0f;
 	Settings.ZoomUnitsPerStep = 250.0f;
 	Settings.MinimumZoomDistance = 1000.0f;
-	Settings.MaximumZoomDistance = 5000.0f;
 
 	FHansaStrategyCameraState Initial;
 	Initial.Focus = FVector2D::ZeroVector;
@@ -57,14 +54,16 @@ bool FHansaStrategyCameraIntentTest::RunTest(const FString& Parameters)
 
 	FHansaStrategyCameraState Outside = Initial;
 	Outside.Focus = FVector2D(990.0, 990.0);
-	const FHansaStrategyCameraState Clamped = FHansaStrategyCameraModel::Advance(Outside, Combined, Settings, 20.0f);
-	TestTrue(TEXT("Pan focus remains inside authored map bounds"),
-		Clamped.Focus.X <= Settings.BoundsMax.X && Clamped.Focus.Y <= Settings.BoundsMax.Y);
+	const FHansaStrategyCameraState BeyondCity = FHansaStrategyCameraModel::Advance(Outside, Combined, Settings, 20.0f);
+	TestTrue(TEXT("Keyboard pan can continue beyond the old city bounds"),
+		BeyondCity.Focus.X > 1000.0 && BeyondCity.Focus.Y > 1000.0);
 
 	FHansaStrategyCameraIntent ZoomOut;
 	ZoomOut.ZoomSteps = -20.0f;
 	const FHansaStrategyCameraState Far = FHansaStrategyCameraModel::Advance(Initial, ZoomOut, Settings, 0.0f);
-	TestEqual(TEXT("Zoom-out intent clamps at the maximum"), Far.ZoomDistance, 5000.0f);
+	TestEqual(TEXT("Zoom-out intent passes the former maximum"), Far.ZoomDistance, 8000.0f);
+	const FHansaStrategyCameraState Farther = FHansaStrategyCameraModel::Advance(Far, ZoomOut, Settings, 0.0f);
+	TestEqual(TEXT("Further zoom-out continues beyond the former terrain limit"), Farther.ZoomDistance, 13000.0f);
 
 	const FHansaStrategyCameraState InvalidDelta = FHansaStrategyCameraModel::Advance(Initial, Combined, Settings, -1.0f);
 	TestTrue(TEXT("Invalid frame deltas cannot mutate presentation state"),

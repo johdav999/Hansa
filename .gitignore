@@ -48,6 +48,12 @@ cmake-build-*/
 # Local-only asset archives: keep final masters, production Content and scripts.
 # User-approved whole-tree source archive; including its embedded scripts/masters.
 /SourceArt/Generated/
+# Keep this reviewed merchant-office source package alongside its imported assets.
+!/SourceArt/Generated/
+/SourceArt/Generated/*
+!/SourceArt/Generated/Buildings/
+/SourceArt/Generated/Buildings/*
+!/SourceArt/Generated/Buildings/MerchantOffice/
 /Deliverables/PreservedFish/preservedfish-candidate.zip
 /SourceArt/Terrain/HansaWorld/Prototype_20260918/sources/etopo.tif
 /SourceArt/Generated/**/checkpoints/*.blend
@@ -73,3 +79,50 @@ crashinfo--*
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Documentation and non-runtime reference art stay local (2026-10-03).
+# Preserve machine-readable fixtures/inputs and regeneration tools in these trees.
+# Restore the local documentation/art archive for reference-led authoring or UAT.
+/Docs/**
+!/Docs/**/
+!/Docs/**/*.json
+!/Docs/**/*.csv
+!/Docs/**/*.yaml
+!/Docs/**/*.yml
+!/Docs/**/*.py
+!/Docs/**/*.ps1
+/SourceArt/UI/**
+!/SourceArt/UI/**/
+!/SourceArt/UI/**/*.json
+!/SourceArt/UI/**/*.csv
+!/SourceArt/UI/**/*.yaml
+!/SourceArt/UI/**/*.yml
+!/SourceArt/UI/**/*.py
+!/SourceArt/UI/**/*.ps1
+/SourceArt/StyleAnchors/**
+!/SourceArt/StyleAnchors/**/
+!/SourceArt/StyleAnchors/**/*.json
+!/SourceArt/StyleAnchors/**/*.csv
+!/SourceArt/StyleAnchors/**/*.py
+!/SourceArt/StyleAnchors/**/*.ps1
+/uat/**/*.png
+/uat/**/*.jpg
+/uat/**/*.jpeg
+/uat/**/*.webp
+/.codex-*.png
+/.codex-*.jpg
+/.codex-*.jpeg
+/.codex-*.webp
+*.md
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+# Repository instructions and third-party license notices remain tracked.
+!**/AGENTS.md
+!**/LICENSE*.md
+!**/LICENCE*.md
+!**/COPYING*.md
+!**/NOTICE*.md
+!**/*-OFL.md

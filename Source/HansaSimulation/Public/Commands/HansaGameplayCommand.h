@@ -125,8 +125,11 @@ namespace Hansa::Simulation
 	{
 		FHansaTradeStationId StationId; FHansaFactorId FactorId; FHansaLeasedPlotId LeasedPlotId; FHansaInventoryId InventoryId;
 		FHansaCityDefinitionId CityId; FString SiteId;
+		bool bPlaceAndPay = false;
+		FHansaGridCoordinate Anchor;
+		EHansaGridRotation Rotation = EHansaGridRotation::North;
 	};
-	struct FHansaFundTradeStationCommand { FHansaTradeStationId StationId; FHansaInventoryId FundingInventoryId; };
+	struct FHansaFundTradeStationCommand { FHansaTradeStationId StationId; FHansaInventoryId FundingInventoryId; uint8 DeliveryMode=0; };
 	struct FHansaCloseTradeStationCommand { FHansaTradeStationId StationId; };
 	struct FHansaRequestPresenceUpgradeCommand { FHansaCityDefinitionId CityId; FString TargetStageId; };
 	struct FHansaFundPresenceUpgradeCommand { FHansaCityDefinitionId CityId; FString TargetStageId; FHansaInventoryId FundingInventoryId; };

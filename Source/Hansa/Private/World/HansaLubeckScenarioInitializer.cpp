@@ -1,4 +1,5 @@
 #include "World/HansaLubeckScenarioInitializer.h"
+#include "Placement/HansaRostockPlacement.h"
 #include "World/HansaLubeckPlacementGrid.h"
 #include "World/HansaLubeckWorldFoundation.h"
 #include "Trade/HansaWaterNavigation.h"
@@ -221,6 +222,22 @@ namespace
 			const int32 HouseIndex = HouseByBand[Band];
 			Map->Cells[BuildableCellIndices[Ordinal]].OwnerId = Houses[HouseIndex];
 			++Counts[HouseIndex];
+		}
+		// Keep the playable opening within the player's own territory. The ordinal
+		// bands can otherwise cut directly through a multi-cell building footprint.
+		const int32 HomeRadius = Map->BoundsMin.X < 0 ? 24 : 4;
+		for (const int32 CellIndex : BuildableCellIndices)
+		{
+			FHansaPlacementGridCell& Cell = Map->Cells[CellIndex];
+			if (FMath::Abs(Cell.Coordinate.X - PlayerStart.X) <= HomeRadius &&
+				FMath::Abs(Cell.Coordinate.Y - PlayerStart.Y) <= HomeRadius)
+			{
+				if (Cell.OwnerId != Houses[0])
+				{
+					Map->HomeOwnerPredecessors.Add({CellIndex, Cell.OwnerId});
+					Cell.OwnerId = Houses[0];
+				}
+			}
 		}
 		for (const FHansaPlacedBuildingRecord& Record : Placement.Placements)
 		{
@@ -777,6 +794,11 @@ bool FHansaLubeckScenarioInitializer::TryLoadMvpRegistry(
 		UE_LOG(LogHansa, Error, TEXT("%s"), *OutError);
 		return false;
 	}
+#if !UE_BUILD_SHIPPING
+    if(FParse::Param(FCommandLine::Get(),TEXT("HansaCatalogHashEvidence")))
+        for(const auto& Row:Compiled.DefinitionHashes)
+            UE_LOG(LogHansa,Display,TEXT("CatalogHash %s %016llX"),*Row.StableId,static_cast<unsigned long long>(Row.ContentHash));
+#endif
 	if (Compiled.Registry.GetRegistryHash() != (bTextileCandidate ? TextileProductionCandidateRegistryHash : bArtisanCandidate ? ArtisanProductionCandidateRegistryHash : bFirewoodCandidate ? FirewoodCandidateRegistryHash : bP33Candidate ? P33CandidateRegistryHash : MvpRegistryHash))
 	{
 		OutError = FString::Printf(
@@ -850,7 +872,9 @@ bool FHansaLubeckScenarioInitializer::TryCreate(
                     // shared city inventory large enough for that grant and the retuned costs.
                     Inventory.Capacity = FHansaQuantity::FromRaw(20'000'000);
                     for (auto& Stock : Inventory.InitialStock)
-                        if (Stock.GoodId.ToString() == TEXT("Good.Planks"))
+                        if (Stock.GoodId.ToString() == TEXT("Good.Bread"))
+                            Stock.Quantity = FHansaQuantity::FromRaw(1'000'000);
+                        else if (Stock.GoodId.ToString() == TEXT("Good.Planks"))
                             Stock.Quantity = FHansaQuantity::FromRaw(
                                 Stock.Quantity.GetRawValue() * 4 + 1'000'000);
                         else if (Stock.GoodId.ToString() == TEXT("Good.Timber"))
@@ -883,6 +907,9 @@ bool FHansaLubeckScenarioInitializer::TryCreate(
 		TEXT("Hansa.Content.32To33.AddInertTradePresence"));
 	// Catalogs 11 and 16 change consumption/staffing and staple batch economics. Do not silently
 	// reinterpret in-flight production or old consumption history; preserve old saves on disk.
+	if(Initialization.Cities.ContainsByPredicate([](const auto& C){return C.DefinitionId.ToString()==TEXT("City.Rostock");}) &&
+        !Initialization.Placement.Maps.ContainsByPredicate([](const auto& M){return M.CityId.ToString()==TEXT("City.Rostock");}))
+        Initialization.Placement.Maps.Add(RostockPlacement::CreateMap());
 	auto CreatedTopology = FHansaPlacementTopology::TryCreate(MoveTemp(Initialization.Placement.Maps));
 	if (!CreatedTopology ||
 		!Assign(FHansaScenarioId::TryParse(ScenarioStableId), ScenarioId) ||

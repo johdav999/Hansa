@@ -1,0 +1,377 @@
+{
+  "prompt": "TG-05",
+  "tests": [
+    {
+      "file": "Saved/BuildArtifacts/20260923-073518289-automation-Hansa.Multiplayer.CommandPaths.AllCurrentActions/UnrealEditor.log",
+      "sha256": "cc977c79e8a7d9a365c9a034931ad27410cc5eaca9b2cb93a3317fc7aa6a10b0",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "AllCurrentActions",
+          "path": "Hansa.Multiplayer.CommandPaths.AllCurrentActions"
+        }
+      ]
+    },
+    {
+      "file": "Saved/BuildArtifacts/20260923-075754185-automation-Hansa.UI.TradeCreator/UnrealEditor.log",
+      "sha256": "abe999ca68fa30a9a6449694b8aeeb78f3f4cf6289b6b55ea39f6394b9d623ef",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "CreateDeliverSave",
+          "path": "Hansa.UI.TradeCreator.CreateDeliverSave"
+        },
+        {
+          "result": "Success",
+          "name": "RemoteProjectionDraft",
+          "path": "Hansa.UI.TradeCreator.RemoteProjectionDraft"
+        },
+        {
+          "result": "Success",
+          "name": "ReviewAndAcknowledgement",
+          "path": "Hansa.UI.TradeCreator.ReviewAndAcknowledgement"
+        },
+        {
+          "result": "Success",
+          "name": "ValidationAndRecovery",
+          "path": "Hansa.UI.TradeCreator.ValidationAndRecovery"
+        }
+      ]
+    },
+    {
+      "file": "Saved/BuildArtifacts/20260923-074305120-automation-Hansa.UI.TradeMap/UnrealEditor.log",
+      "sha256": "13e3437785139eadcee60fb1bf97a15ce738a08c75feb803f3b82217f0410674",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "OwnershipAndRefresh",
+          "path": "Hansa.UI.TradeMap.Components.OwnershipAndRefresh"
+        },
+        {
+          "result": "Success",
+          "name": "PrivacySelectionAndFilters",
+          "path": "Hansa.UI.TradeMap.Directory.PrivacySelectionAndFilters"
+        },
+        {
+          "result": "Success",
+          "name": "NativeScreens",
+          "path": "Hansa.UI.TradeMap.SectionNavigation.NativeScreens"
+        },
+        {
+          "result": "Success",
+          "name": "InputAndFeedback",
+          "path": "Hansa.UI.TradeMap.Shell.InputAndFeedback"
+        },
+        {
+          "result": "Success",
+          "name": "GeographicGeometry",
+          "path": "Hansa.UI.TradeMap.GeographicGeometry"
+        },
+        {
+          "result": "Success",
+          "name": "GeographicInput",
+          "path": "Hansa.UI.TradeMap.GeographicInput"
+        },
+        {
+          "result": "Success",
+          "name": "ProjectionAndSimpleEditor",
+          "path": "Hansa.UI.TradeMap.ProjectionAndSimpleEditor"
+        },
+        {
+          "result": "Success",
+          "name": "RuntimeCommandCommit",
+          "path": "Hansa.UI.TradeMap.RuntimeCommandCommit"
+        },
+        {
+          "result": "Success",
+          "name": "SemanticsAndResponsiveNativeEvidence",
+          "path": "Hansa.UI.TradeMap.SemanticsAndResponsiveNativeEvidence"
+        }
+      ]
+    },
+    {
+      "file": "Saved/BuildArtifacts/20260923-075305102-automation-Hansa.UI.TradeJourney/UnrealEditor.log",
+      "sha256": "87a4781ed9632dccc00d175c04375115832806b530af89c21455a84adecc0907",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "DeterministicImport",
+          "path": "Hansa.UI.TradeJourney.DeterministicImport"
+        },
+        {
+          "result": "Success",
+          "name": "Recovery",
+          "path": "Hansa.UI.TradeJourney.Recovery"
+        }
+      ]
+    }
+  ],
+  "viewport_runs": [
+    {
+      "file": "Saved/BuildArtifacts/20260923-075856891-gui-repair-1280-720/Unreal.log",
+      "sha256": "371413bf28c3a1e5891245eab74e68311a4f502e2d6cc1b237fe492795f54827",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "RealViewport",
+          "path": "Hansa.UI.TradeCreator.RealViewport"
+        }
+      ]
+    },
+    {
+      "file": "Saved/BuildArtifacts/20260923-075925285-gui-repair-1920-1080/Unreal.log",
+      "sha256": "b518cc7775e23a39c0f52084cef911ebea131577d14e99e8ee3090d863f78c98",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "RealViewport",
+          "path": "Hansa.UI.TradeCreator.RealViewport"
+        }
+      ]
+    }
+  ],
+  "captures": [
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-accessible-draft.png",
+      "sha256": "78a363cd1314eef8f19b7d078e0be7ce5d78b9423c514081e8c891ca7e5771ac",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-accessible-draft.tsv",
+      "sha256": "9f140006f468e70e3b05e3540a801ac2154f7531eb2b36b28636037d1b3853fc"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-accessible-review.png",
+      "sha256": "d7ac31d667dc55ee0a4c9cb216a714a77cd9cc5ae580a5402f4cdfb34111c61a",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-accessible-review.tsv",
+      "sha256": "d54460977d3ae0b29112871ef95788c069927d523568f6011a4ac81d6eaab1e7"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-delivery-or-port-blocker.png",
+      "sha256": "4ccc69cd51bb007867287f644c6ced319c94e48206f5e82bf10ce4309621469f",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-delivery-or-port-blocker.tsv",
+      "sha256": "b73f42a302bfa527fe2ad03cf129e735731bb4770ae86445c8f889f3b9623228"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-departed.png",
+      "sha256": "29c83f15e80cc40858eb650a962b944029ad698da8138d221cfbac8110418c62",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-departed.tsv",
+      "sha256": "348533043cbb478db4698e6d989ab7a7982834403c6c1afc65dc104c346a4bcc"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-directory.png",
+      "sha256": "f1173aab4e59444505672f720c43b5d8d49928ef32a3df53e1bd02bf701c44fe",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-directory.tsv",
+      "sha256": "dec181b49b2482cc4fdb6e765fdbaac724df37e28a7ed68ec4b2e6fde8e78d55"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-draft.png",
+      "sha256": "32c87a578717016db4b5188fe06b5551b998f51c9f60f71163f5b38e620bbeb2",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-draft.tsv",
+      "sha256": "5d1febc2dfcc1b975972206821670eac0ee00190e363ed18699b17c1608e87aa"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-invalid-name.png",
+      "sha256": "f0e27367d761e483fcc2adbfb2349340eb0cba4dbcbba9a4a90972c182fba1ac",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-invalid-name.tsv",
+      "sha256": "ab7c65a34a6dabba628ba89f5a701630521216cb2e0c38534ee4d6ac7b754974"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-retained.png",
+      "sha256": "29a273fcdc624be504748f9d8f044cc085a74b651a6fc1a0183b533aa48aa9b5",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-retained.tsv",
+      "sha256": "3bc920047069f55f36baffdfd5c3d1ce181ba9e7dbd07982de8e67152bbc4d63"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-review.png",
+      "sha256": "8099856164f6537976d314268cfae61ae41b2fe21885ba508d415abdb89ff7b2",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1280x720-scale100-review.tsv",
+      "sha256": "6636647225d7c72c13cdfb1027015bd7ea51d860cbaf29b819019a7cbed320a9"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-accessible-draft.png",
+      "sha256": "9dd559c37ef62fbc9977430c1076d979190ac5d0314191717f31aee764e59251",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-accessible-draft.tsv",
+      "sha256": "cc7558d48969e1d61814c9edc3be9a5194ff59665c3e65ee3c3a543e9edad573"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-accessible-review.png",
+      "sha256": "b31622b8c4deaa6e6378420031924b9b04bde8e9ed44a97af15595d08ba582e7",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-accessible-review.tsv",
+      "sha256": "7155f7d40060525ca9d1556eabcdbdfa8a2db32b210c0d976035f1f7164c10b1"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-delivery-or-port-blocker.png",
+      "sha256": "837dad2459a2a44931af873f1522ea443fe7d9538e43dc74b87e2094a9b1bc64",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-delivery-or-port-blocker.tsv",
+      "sha256": "ac5421c0a2b1254695077c2692e5ce89a628b490aa755e5a863782167e392d42"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-departed.png",
+      "sha256": "06e4defddff0614d659fc414d8f69743fa35ffc921bc05608360dfb05f024caf",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-departed.tsv",
+      "sha256": "4eeaee159acf119d440bd69516efb9f954bbb617a2d900e45e6e5fb9e6991c23"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-directory.png",
+      "sha256": "ec1465f223da79bbd05f295d094d0935998c8759d2552c2338ae3b107c1e3f42",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-directory.tsv",
+      "sha256": "2344e46294b69c0924d96130f59bec7a0a648ce5ff4f9b8400def42ba1f7c05e"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-draft.png",
+      "sha256": "19004f2c3b7a9956aeb2c9ec38f8a505218f09fad32134cda6e005f5c4402f40",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-draft.tsv",
+      "sha256": "a4c186149fd0ce3f3ab5e418f91e88ed5a06897f8d9b248d3bdb7651bbb2d25b"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-invalid-name.png",
+      "sha256": "026c5224bcf2bdc2c49dc6893910e6461f1468589199e62428b0501977ead122",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-invalid-name.tsv",
+      "sha256": "87514839e6ba134a24f8201f25991b9d1b3145ae3bd0bc39913e3d30b50bca0b"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-retained.png",
+      "sha256": "c4b0ea45f6228f9d850429d1deca75390f635606bdba33c3b5e1f269f283c0d9",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-retained.tsv",
+      "sha256": "7393886b49f7fe76dd6e543246fd21ec6bcac62a48eb6f74809c4915aa53dd58"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-review.png",
+      "sha256": "26ca4d120b1ec0cd3964530c96d82ed3902ffb78d7cdce3a8c66cd40a3385dc2",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/trade-1920x1080-scale100-review.tsv",
+      "sha256": "f09d84cddc5f19bb9dc01810ab2c2ddb396ff1a620c6b0513b4d7034370917c9"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/import-repeat-0.txt",
+      "sha256": "afb3578544d64c1e112a438d993d8791a954b018017e1610020c04ab2f96a3d8"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-05-captures/import-repeat-1.txt",
+      "sha256": "afb3578544d64c1e112a438d993d8791a954b018017e1610020c04ab2f96a3d8"
+    }
+  ],
+  "art": "Existing approved assets and native components reused; no new raster generation or imports.",
+  "build": {
+    "file": "Saved/BuildArtifacts/20260923-074012013-build-HansaEditor-Win64-Development/Build.log",
+    "sha256": "aee82e4f48f00e9ada1b1ae56e30304485cf545dc61640986094982eea6bb526",
+    "succeeded": true
+  },
+  "module_builds": [
+    {
+      "file": "Saved/TG05-final-runtime-build.log",
+      "sha256": "e8495e895ecd82e6695f361ed2336cbe47a9b9b24fce0ac444cf93df493b4c9c",
+      "succeeded": true
+    },
+    {
+      "file": "Saved/TG05-final-tests-build.log",
+      "sha256": "774a306de6010d931f4e4d1677329936beeb71e01c3ecafc0062f740683c9672",
+      "succeeded": true
+    }
+  ]
+}

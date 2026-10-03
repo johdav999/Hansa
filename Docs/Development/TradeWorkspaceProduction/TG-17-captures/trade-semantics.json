@@ -1,0 +1,164 @@
+[
+  {
+    "client": "client1",
+    "unavailable": {
+      "revision": 11152,
+      "node": {
+        "id": "TradeMap.New",
+        "role": "button",
+        "label": "New route",
+        "parentId": "TradeMap.Root",
+        "bounds": {
+          "x": 1057,
+          "y": 124,
+          "width": 140,
+          "height": 48
+        },
+        "state": {
+          "visible": true,
+          "enabled": false,
+          "focused": false,
+          "selected": false,
+          "loading": false,
+          "clipped": false,
+          "warning": false,
+          "error": false,
+          "valueType": "unavailable-reason",
+          "value": "Creating a new route is unavailable in this remote view: the complete route-planning permission report is not provided. Existing owned routes can be inspected and edited."
+        },
+        "children": [],
+        "actions": []
+      }
+    },
+    "focused": {
+      "revision": 11153,
+      "node": {
+        "id": "TradeMap.Close",
+        "role": "button",
+        "label": "Close trade map",
+        "parentId": "TradeMap.Root",
+        "bounds": {
+          "x": 1205,
+          "y": 124,
+          "width": 71,
+          "height": 48
+        },
+        "state": {
+          "visible": true,
+          "enabled": true,
+          "focused": true,
+          "selected": false,
+          "loading": false,
+          "clipped": false,
+          "warning": false,
+          "error": false,
+          "valueType": "",
+          "value": ""
+        },
+        "children": [],
+        "actions": [
+          "activate",
+          "focus"
+        ]
+      }
+    },
+    "capture": {
+      "width": 1280,
+      "height": 720,
+      "postCaptureResized": false,
+      "screenshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-trade-workspace/screenshot-1280x720.png",
+      "metadataPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-trade-workspace/metadata.json",
+      "semanticSnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-trade-workspace/semantic-ui.json",
+      "querySnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-trade-workspace/query-snapshot.json",
+      "contentSha1": "DC74AEA1DFF49C0B677A0086FD262165B65C0F24",
+      "revision": 11153,
+      "copied": {
+        "screenshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1-trade-workspace\\screenshot-1280x720.png",
+        "metadataPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1-trade-workspace\\metadata.json",
+        "semanticSnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1-trade-workspace\\semantic-ui.json",
+        "querySnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1-trade-workspace\\query-snapshot.json"
+      }
+    }
+  },
+  {
+    "client": "client2",
+    "unavailable": {
+      "revision": 2892,
+      "node": {
+        "id": "TradeMap.New",
+        "role": "button",
+        "label": "New route",
+        "parentId": "TradeMap.Root",
+        "bounds": {
+          "x": 1697,
+          "y": 76,
+          "width": 140,
+          "height": 48
+        },
+        "state": {
+          "visible": true,
+          "enabled": false,
+          "focused": false,
+          "selected": false,
+          "loading": false,
+          "clipped": false,
+          "warning": false,
+          "error": false,
+          "valueType": "unavailable-reason",
+          "value": "Creating a new route is unavailable in this remote view: the complete route-planning permission report is not provided. Existing owned routes can be inspected and edited."
+        },
+        "children": [],
+        "actions": []
+      }
+    },
+    "focused": {
+      "revision": 3306,
+      "node": {
+        "id": "TradeMap.Close",
+        "role": "button",
+        "label": "Close trade map",
+        "parentId": "TradeMap.Root",
+        "bounds": {
+          "x": 1845,
+          "y": 76,
+          "width": 71,
+          "height": 48
+        },
+        "state": {
+          "visible": true,
+          "enabled": true,
+          "focused": true,
+          "selected": false,
+          "loading": false,
+          "clipped": false,
+          "warning": false,
+          "error": false,
+          "valueType": "",
+          "value": ""
+        },
+        "children": [],
+        "actions": [
+          "activate",
+          "focus"
+        ]
+      }
+    },
+    "capture": {
+      "width": 1920,
+      "height": 1080,
+      "postCaptureResized": false,
+      "screenshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-trade-workspace/screenshot-1920x1080.png",
+      "metadataPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-trade-workspace/metadata.json",
+      "semanticSnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-trade-workspace/semantic-ui.json",
+      "querySnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-trade-workspace/query-snapshot.json",
+      "contentSha1": "F7771C5A8C0CB90E9C3811D296618D839BDB728D",
+      "revision": 3306,
+      "copied": {
+        "screenshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-trade-workspace\\screenshot-1920x1080.png",
+        "metadataPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-trade-workspace\\metadata.json",
+        "semanticSnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-trade-workspace\\semantic-ui.json",
+        "querySnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-trade-workspace\\query-snapshot.json"
+      }
+    }
+  }
+]

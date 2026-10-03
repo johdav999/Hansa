@@ -5,6 +5,7 @@
 #include "Containers/ArrayView.h"
 #include "Definitions/HansaSimulationDefinitionContext.h"
 #include "Diagnostics/HansaStateHash.h"
+#include "Queries/HansaLandQuery.h"
 #include "Model/HansaSimulationState.h"
 
 namespace Hansa::Simulation
@@ -182,6 +183,8 @@ namespace Hansa::Simulation
 		[[nodiscard]] TConstArrayView<FHansaRouteProjection> GetRoutes() const { return Routes; }
 		[[nodiscard]] TConstArrayView<FHansaForeignPresenceProjection> GetForeignPresences() const { return ForeignPresences; }
 		[[nodiscard]] TConstArrayView<FHansaTradeStationProjection> GetTradeStations() const { return TradeStations; }
+		[[nodiscard]] TConstArrayView<FHansaLeasedPlotState> GetLeasedPlots() const { return LeasedPlots; }
+        TConstArrayView<FHansaGridCoordinate> GetProtectedCells(const FString& City) const { const auto* Cells=ProtectedCells.Find(City);return Cells?TConstArrayView<FHansaGridCoordinate>(*Cells):TConstArrayView<FHansaGridCoordinate>(); }
 		[[nodiscard]] TConstArrayView<FHansaHouseResearchState> GetResearch() const { return Research; }
 		[[nodiscard]] TConstArrayView<FHansaInventoryProjection> GetInventories() const { return Inventories; }
         [[nodiscard]] TConstArrayView<FHansaSpoilageRecord> GetSpoilage() const { return Spoilage; }
@@ -226,6 +229,8 @@ namespace Hansa::Simulation
 		TArray<FHansaRouteProjection> Routes;
 		TArray<FHansaForeignPresenceProjection> ForeignPresences;
 		TArray<FHansaTradeStationProjection> TradeStations;
+		TArray<FHansaLeasedPlotState> LeasedPlots;
+        TMap<FString,TArray<FHansaGridCoordinate>> ProtectedCells;
 		TArray<FHansaHouseResearchState> Research;
 		TArray<FHansaInventoryProjection> Inventories;
         TArray<FHansaSpoilageRecord> Spoilage;
@@ -285,6 +290,9 @@ namespace Hansa::Simulation
 			FHansaCityDefinitionId CityId, FHansaGoodId GoodId, EHansaSpotTradeSide Side, FHansaQuantity Quantity) const;
 		[[nodiscard]] TConstArrayView<FHansaTestEntityState> GetTestEntities() const;
 		[[nodiscard]] const FHansaPlacementState& GetPlacement() const;
+		/** At most 64x64 cells; omitted topology cells remain explicitly unavailable. */
+		[[nodiscard]] FHansaLandQueryResult QueryLand(FHansaHouseId ViewerHouseId,
+			FHansaCityDefinitionId CityId, FHansaGridCoordinate BoundsMin, FHansaGridCoordinate BoundsMax, bool bCompactSurvey = false) const;
 		[[nodiscard]] FHansaPlacementValidationResult ValidatePlacement(
 			FHansaHouseId IssuingHouseId,
 			const FHansaPlacementSpec& Spec) const;

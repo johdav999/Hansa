@@ -1,4 +1,7 @@
 #include "World/HansaBuildingWorldProjection.h"
+#include "World/HansaBuildingSelectionFootprint.h"
+#include "World/HansaTradeStationPresentation.h"
+#include "Placement/HansaRostockPlacement.h"
 #include "Misc/ConfigCacheIni.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "World/HansaCompoundPresentation.h"
@@ -399,8 +402,9 @@ void AHansaBuildingWorldProjectionActor::ApplyProjection(
 		Height = MeshBounds.GetSize().Z;
 		MeshBottom = MeshBounds.Min.Z;
 	}
-	const FVector FirstCenter = Hansa::Game::LubeckPlacementGrid::GridToWorld({ MinX, MinY });
-	const FVector LastCenter = Hansa::Game::LubeckPlacementGrid::GridToWorld({ MaxX, MaxY });
+	const bool bRostock=Projection.Placement.CityId.ToString()==TEXT("City.Rostock");
+    const FVector FirstCenter = bRostock?Hansa::Simulation::RostockPlacement::CellCenter(MinX,MinY):Hansa::Game::LubeckPlacementGrid::GridToWorld({ MinX, MinY });
+	const FVector LastCenter = bRostock?Hansa::Simulation::RostockPlacement::CellCenter(MaxX,MaxY):Hansa::Game::LubeckPlacementGrid::GridToWorld({ MaxX, MaxY });
 	FVector LocalCenter = (FirstCenter + LastCenter) * 0.5;
 	const bool bHarborDeckDatum = Cast<AHansaHarborPresentation>(BuildingPresentation->GetChildActor()) != nullptr ||
 		Cast<AHansaRoadPresentation>(BuildingPresentation->GetChildActor()) != nullptr;
@@ -408,9 +412,12 @@ void AHansaBuildingWorldProjectionActor::ApplyProjection(
 		bHarborDeckDatum ? 100.0 : bAuthoredVisual ? 100.0 - MeshBottom : 100.0 + Height * 0.5;
 	const FTransform LocalTransform(
 		FRotator(0.0, bRoad ? 0.0 : RotationYaw(Projection.Placement.Rotation), 0.0), LocalCenter);
-	FTransform GroundedTransform = LocalTransform * Foundation.GetActorTransform();
-    GroundedTransform.SetLocation(Foundation.GroundPlacementPosition(GroundedTransform.GetLocation(),
-        bRoad && bAuthoredActor ? AHansaRoadPresentation::GroundBaseHeight() : 100.0));
+	FTransform GroundedTransform = bRostock?LocalTransform:LocalTransform * Foundation.GetActorTransform();
+    if (const auto* Harbor = Cast<AHansaHarborPresentation>(BuildingPresentation->GetChildActor()))
+        GroundedTransform.SetLocation(Harbor->GroundDeckLocation(GroundedTransform.GetLocation(), GroundedTransform.GetRotation()));
+    else
+        GroundedTransform.SetLocation(Foundation.GroundPlacementPosition(GroundedTransform.GetLocation(),
+            bRoad && bAuthoredActor ? AHansaRoadPresentation::GroundBaseHeight() : 100.0));
     if (bRoad && !bAuthoredActor) GroundedTransform.SetRotation(Hansa::Game::TerrainPlacement::RoadRotation(
         GetWorld(), GroundedTransform.GetLocation(), GroundedTransform.GetRotation()));
     SetActorTransform(GroundedTransform);
@@ -491,66 +498,10 @@ void AHansaBuildingWorldProjectionActor::SetSelected(const bool bInSelected)
 }
 
 void AHansaBuildingWorldProjectionActor::ConfigureSelectionFootprint(
-	const double Width, const double Depth, const double GroundZ)
+    const double Width, const double Depth, const double GroundZ)
 {
-	const double HalfWidth = (Width + 40.0) * 0.5;
-	const double HalfDepth = (Depth + 40.0) * 0.5;
-	const double BracketLength = FMath::Clamp(FMath::Min(Width, Depth) * 0.18, 70.0, 140.0);
-	const double BracketThickness = 12.0;
-	const double MarkerHeight = 6.0;
-	// The building is grounded at its centre, but its footprint may cross a slope.
-	// Lift each complete L above both bars' terrain samples, including their edges.
-	// Keep the authored datum as a floor for decks and worlds without terrain.
-	const auto TerrainLift = [this](const UStaticMeshComponent* Marker)
-	{
-		double Lift = 0.0;
-		for (const double X : { -50.0, 0.0, 50.0 })
-		{
-			for (const double Y : { -50.0, 0.0, 50.0 })
-			{
-				const FVector Bottom = Marker->GetComponentTransform().TransformPosition(FVector(X, Y, -50.0));
-				FHitResult Hit;
-				if (Hansa::Game::TerrainPlacement::Trace(GetWorld(), Bottom + FVector(0, 0, 1000000),
-					Bottom - FVector(0, 0, 1000000), Hit))
-				{
-					Lift = FMath::Max(Lift, Hit.ImpactPoint.Z + 2.0 - Bottom.Z);
-				}
-			}
-		}
-		return Lift;
-	};
-
-	int32 SegmentIndex = 0;
-	for (const double XSign : { -1.0, 1.0 })
-	{
-		for (const double YSign : { -1.0, 1.0 })
-		{
-			UStaticMeshComponent* Horizontal = SelectionCornerSegments[SegmentIndex++];
-			Horizontal->SetRelativeLocation(FVector(
-				XSign * (HalfWidth - BracketLength * 0.5), YSign * HalfDepth, GroundZ));
-			Horizontal->SetRelativeRotation(FRotator::ZeroRotator);
-			Horizontal->SetRelativeScale3D(FVector(
-				BracketLength / 100.0, BracketThickness / 100.0, MarkerHeight / 100.0));
-
-			UStaticMeshComponent* Vertical = SelectionCornerSegments[SegmentIndex++];
-			Vertical->SetRelativeLocation(FVector(
-				XSign * HalfWidth, YSign * (HalfDepth - BracketLength * 0.5), GroundZ));
-			Vertical->SetRelativeRotation(FRotator::ZeroRotator);
-			Vertical->SetRelativeScale3D(FVector(
-				BracketThickness / 100.0, BracketLength / 100.0, MarkerHeight / 100.0));
-			const FVector Lift(0.0, 0.0, FMath::Max(TerrainLift(Horizontal), TerrainLift(Vertical)));
-			Horizontal->AddWorldOffset(Lift);
-			Vertical->AddWorldOffset(Lift);
-		}
-	}
-
-	// SelectionOutline remains the stable public/test component, but is now the small
-	// non-colour diamond cue from the approved reference rather than an opaque slab.
-	SelectionOutline->SetRelativeLocation(FVector(0.0, -HalfDepth - 48.0, GroundZ));
-	SelectionOutline->SetRelativeRotation(FRotator(0.0, 45.0, 0.0));
-	SelectionOutline->SetRelativeScale3D(FVector(0.34, 0.34, MarkerHeight / 100.0));
-	SelectionOutline->AddWorldOffset(FVector(0.0, 0.0, TerrainLift(SelectionOutline)));
-
+    Hansa::Game::BuildingSelection::ConfigureFootprint(
+        GetWorld(), SelectionOutline, SelectionCornerSegments, Width, Depth, GroundZ);
 }
 
 void AHansaBuildingWorldProjectionActor::SetSelectionDepthEnabled(const bool bEnabled)
@@ -760,7 +711,7 @@ void AHansaBuildingPlacementGhost::ApplyPreview(
 	const EHansaPlacementFeedback Feedback,
 	const FText& Reason,
 	const AHansaLubeckWorldFoundation& Foundation,
-	const bool bDeferRoadFeedback, const uint8 AdjacentRoadMask, const uint64 ParcelSeed)
+	const bool bDeferRoadFeedback, const uint8 AdjacentRoadMask, const uint64 ParcelSeed, const FName City)
 {
 	PreviewBuildingId = BuildingDefinitionId;
 	ActiveRoadPieceCount = 0;
@@ -811,7 +762,7 @@ void AHansaBuildingPlacementGhost::ApplyPreview(
    Definition?Definition->CompoundStage:1,Context,Definition?Definition->CompoundDistrictId:FString());
   PresentationBounds=Compound->GetParcelBounds();
  }
-	UStaticMesh* AuthoredMesh = PresentationDefinition != nullptr ? PresentationDefinition->LoadPresentationMesh() : nullptr;
+	UStaticMesh* AuthoredMesh = BuildingDefinitionId==TEXT("Building.TradeHouse")?LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Mesh/hansa-artisan-houses/Meshes/SM_ArtisanHouse_D.SM_ArtisanHouse_D")):PresentationDefinition != nullptr ? PresentationDefinition->LoadPresentationMesh() : nullptr;
 	const bool bAuthoredActor = BuildingPresentation->GetChildActor() != nullptr && PresentationBounds.IsValid;
 	BuildingMesh->SetStaticMesh(!bAuthoredActor && AuthoredMesh != nullptr ? AuthoredMesh : CubeMesh.Get());
 	BuildingMesh->SetVisibility(!bAuthoredActor, true);
@@ -831,11 +782,24 @@ void AHansaBuildingPlacementGhost::ApplyPreview(
 	const float PreviewHeight=bRoadKitPreview ? AHansaRoadPresentation::GroundBaseHeight()+6 : 106;
 	const FVector First = Hansa::Game::LubeckPlacementGrid::GridToWorld({MinX, MinY}, PreviewHeight);
     const FVector Last = Hansa::Game::LubeckPlacementGrid::GridToWorld({MaxX, MaxY}, PreviewHeight);
-    const FVector Center = Foundation.GroundPlacementPosition(
+    FVector Center = Foundation.GroundPlacementPosition(
         Foundation.GetActorTransform().TransformPosition((First + Last) * 0.5),
         bRoadKitPreview ? AHansaRoadPresentation::GroundBaseHeight() : 100.0);
+    const bool bRostock=City==TEXT("City.Rostock");
+    const FTransform RostockSite=BuildingDefinitionId==TEXT("Building.TradeHouse")?AHansaTradeStationPresentation::SiteTransform(GetWorld()):FTransform::Identity;
+    if(bRostock){const FVector Nominal=RostockSite.TransformPosition((Hansa::Simulation::RostockPlacement::CellCenter(MinX,MinY,PreviewHeight)+Hansa::Simulation::RostockPlacement::CellCenter(MaxX,MaxY,PreviewHeight))*.5);Center=Hansa::Game::TerrainPlacement::Ground(GetWorld(),Nominal,Nominal.Z-6);}
+    if (const auto* Harbor = Cast<AHansaHarborPresentation>(BuildingPresentation->GetChildActor()))
+    {
+        FVector NominalDeck = bRostock
+            ? (Hansa::Simulation::RostockPlacement::CellCenter(MinX,MinY,100) +
+                Hansa::Simulation::RostockPlacement::CellCenter(MaxX,MaxY,100)) * .5
+            : Foundation.GetActorTransform().TransformPosition((First + Last) * .5 - FVector(0,0,6));
+        const FQuat Heading = (bRostock ? FQuat::Identity : Foundation.GetActorQuat()) *
+            FRotator(0, (RotationQuarterTurns % 4) * 90.0, 0).Quaternion();
+        Center = Harbor->GroundDeckLocation(NominalDeck, Heading) + FVector(0,0,6);
+    }
 	SetActorLocation(Center);
-    SetActorRotation(Foundation.GetActorQuat());
+    SetActorRotation(bRostock?RostockSite.GetRotation():Foundation.GetActorQuat());
 
 	const double Width = (MaxX - MinX + 1) * Hansa::Game::LubeckPlacementGrid::CellSize - 40.0;
 	const double Depth = (MaxY - MinY + 1) * Hansa::Game::LubeckPlacementGrid::CellSize - 40.0;
@@ -865,7 +829,7 @@ void AHansaBuildingPlacementGhost::ApplyPreview(
 	for (int32 Index = 0; Index < Cells.Num(); ++Index)
 	{
 		UStaticMeshComponent* CellMesh = AcquireFootprintCell(Index);
-		const FVector CellWorld = Foundation.PlacementCellToWorld(Cells[Index].X, Cells[Index].Y, bRoadKitPreview ? PreviewHeight-3 : 103.0f, bRoadKitPreview ? AHansaRoadPresentation::GroundBaseHeight() : 100.0f);
+		const FVector CellWorld = bRostock ? Hansa::Game::TerrainPlacement::Ground(GetWorld(),RostockSite.TransformPosition(Hansa::Simulation::RostockPlacement::CellCenter(Cells[Index].X,Cells[Index].Y,103)),RostockSite.TransformPosition(FVector(0,0,100)).Z)+FVector(0,0,3) : Foundation.PlacementCellToWorld(Cells[Index].X, Cells[Index].Y, bRoadKitPreview ? PreviewHeight-3 : 103.0f, bRoadKitPreview ? AHansaRoadPresentation::GroundBaseHeight() : 100.0f);
 		CellMesh->SetRelativeLocation(GetActorTransform().InverseTransformPosition(CellWorld) + FVector(0.0, 0.0,
 			Feedback == EHansaPlacementFeedback::Invalid && Index % 2 != 0 ? 8.0 : 0.0));
 		const double CellScale = Feedback == EHansaPlacementFeedback::Warning && Index % 2 != 0 ? 3.35 : 3.72;

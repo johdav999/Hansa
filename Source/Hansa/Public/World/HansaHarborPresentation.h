@@ -19,6 +19,9 @@ public:
     AHansaHarborPresentation();
     virtual void OnConstruction(const FTransform& Transform) override;
     void ApplyStatus(Hansa::Simulation::EHansaBuildingWorldStatus Status);
+    /** Level deck supported by the shore, with the authored berth clearance above local water.
+     * NominalDeck.Z is the legacy fallback; preview clearance is applied by the caller. */
+    FVector GroundDeckLocation(const FVector& NominalDeck, const FQuat& Heading) const;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Harbor") TObjectPtr<UInstancedStaticMeshComponent> PierDeck;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Harbor") TObjectPtr<UInstancedStaticMeshComponent> QuayEdge;

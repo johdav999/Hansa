@@ -89,7 +89,7 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaSaveEnvelope final
 	{
 	public:
-		static constexpr uint32 CurrentFormatVersion = 21;
+		static constexpr uint32 CurrentFormatVersion = 24;
 		static constexpr int32 MaximumBytes = 64 * 1024 * 1024;
 		static FHansaSaveResult Encode(const FHansaSaveSnapshot& Snapshot,
 			const FHansaSimulationDefinitionContext& Definitions, TArray<uint8>& OutBytes);

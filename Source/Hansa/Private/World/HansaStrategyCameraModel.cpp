@@ -18,10 +18,9 @@ namespace Hansa::Game
 
 	bool FHansaStrategyCameraSettings::IsValid() const
 	{
-		return BoundsMin.X <= BoundsMax.X && BoundsMin.Y <= BoundsMax.Y &&
-			PanUnitsPerSecond >= 0.0f && FastPanMultiplier >= 1.0f &&
+		return PanUnitsPerSecond >= 0.0f && FastPanMultiplier >= 1.0f &&
 			RotationDegreesPerSecond >= 0.0f && ZoomUnitsPerStep >= 0.0f &&
-			MinimumZoomDistance > 0.0f && MinimumZoomDistance <= MaximumZoomDistance &&
+			FMath::IsFinite(MinimumZoomDistance) && MinimumZoomDistance > 0.0f &&
 			FMath::IsFinite(MinimumPitchDegrees) && FMath::IsFinite(MaximumPitchDegrees) &&
 			MinimumPitchDegrees > -90.0f && MaximumPitchDegrees < 0.0f &&
 			MinimumPitchDegrees <= MaximumPitchDegrees;
@@ -63,16 +62,21 @@ namespace Hansa::Game
 			Settings.PanUnitsPerSecond * PanMultiplier * DeltaSeconds;
         // Pointer deltas are distances, independent of frame time and Shift.
         Next.Focus += Right * Intent.PanDisplacement.X + Forward * Intent.PanDisplacement.Y;
-		Next.Focus.X = FMath::Clamp(Next.Focus.X, Settings.BoundsMin.X, Settings.BoundsMax.X);
-		Next.Focus.Y = FMath::Clamp(Next.Focus.Y, Settings.BoundsMin.Y, Settings.BoundsMax.Y);
+		if (!FMath::IsFinite(Next.Focus.X) || !FMath::IsFinite(Next.Focus.Y))
+		{
+			return Current;
+		}
 
 		const float RotationIntent = FMath::Clamp(Intent.Rotate, -1.0f, 1.0f);
 		Next.YawDegrees = FMath::UnwindDegrees(
 			Next.YawDegrees + Intent.YawDisplacement + RotationIntent * Settings.RotationDegreesPerSecond * DeltaSeconds);
-		Next.ZoomDistance = FMath::Clamp(
-			Next.ZoomDistance - Intent.ZoomSteps * Settings.ZoomUnitsPerStep,
-			Settings.MinimumZoomDistance,
-			Settings.MaximumZoomDistance);
+		const double ZoomDistance = static_cast<double>(Next.ZoomDistance) -
+			static_cast<double>(Intent.ZoomSteps) * Settings.ZoomUnitsPerStep;
+		if (ZoomDistance > TNumericLimits<float>::Max())
+		{
+			return Current;
+		}
+		Next.ZoomDistance = static_cast<float>(FMath::Max(ZoomDistance, static_cast<double>(Settings.MinimumZoomDistance)));
 		Next.PitchDegrees = FMath::Clamp(
 			Next.PitchDegrees + Intent.PitchDisplacement,
 			Settings.MinimumPitchDegrees, Settings.MaximumPitchDegrees);

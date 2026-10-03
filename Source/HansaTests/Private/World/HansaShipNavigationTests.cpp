@@ -100,7 +100,8 @@ bool FHansaShipOrderContinuityTest::RunTest(const FString&)
     UWorld* World=UWorld::CreateWorld(EWorldType::Game,false,FName(TEXT("ShipOrderContinuity")),CreatePackage(TEXT("/Temp/Lubeck_Terrain_Preview_ShipOrderContinuity")));
     GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
     ON_SCOPE_EXIT{World->DestroyWorld(false);GEngine->DestroyWorldContext(World);};
-    World->SpawnActor<AHansaLubeckWorldFoundation>();
+    auto* Foundation=World->SpawnActor<AHansaLubeckWorldFoundation>(
+        AHansaLubeckWorldFoundation::StaticClass(),FTransform(FVector(3790434.0,4454879.0,0.0)));
     auto* Manager=World->SpawnActor<AHansaCargoProjectionManager>();
     TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>());
     FString Error;
@@ -115,6 +116,9 @@ bool FHansaShipOrderContinuityTest::RunTest(const FString&)
     auto* Actor=Manager->FindActor(Key);
     if(!TestNotNull(TEXT("Real ship presentation"),Actor))return false;
     const FVector Start=Actor->GetActorLocation();
+    const FVector ExpectedStart=Foundation->GetActorTransform().TransformPosition(
+        Hansa::Game::LubeckPlacementGrid::GridToWorld(Home,Start.Z));
+    TestTrue(TEXT("Ship uses the translated foundation's world position"),Start.Equals(ExpectedStart,0.01));
     Host->SetSpeed(EHansaRuntimeSimulationSpeed::Normal);
     Host->AdvanceRealTime(0.4);
     Manager->Sample(Host->GetPresentationTickFraction());
@@ -146,7 +150,8 @@ bool FHansaShipOrderContinuityTest::RunTest(const FString&)
     const auto MovingProjection=Host->BuildProjection();
     const auto* Moving=MovingProjection.Value.GetVehicles().FindByPredicate([&](const auto& V){return V.Id==Id;});
     const auto NextCell=Moving->Navigation.IsMoving()?Moving->Navigation.Path[Moving->Navigation.NextIndex]:Moving->Navigation.Cell;
-    const FVector Next=Hansa::Game::LubeckPlacementGrid::GridToWorld(NextCell,Start.Z);
+    const FVector Next=Foundation->GetActorTransform().TransformPosition(
+        Hansa::Game::LubeckPlacementGrid::GridToWorld(NextCell,Start.Z));
     Manager->Sample(0.999999);
     TestTrue(TEXT("New course reaches next authoritative cell continuously"),Actor->GetActorLocation().Equals(Next,0.01));
     Host->AdvanceRealTime(0.21);Manager->Sample(Host->GetPresentationTickFraction());
@@ -157,6 +162,24 @@ bool FHansaShipOrderContinuityTest::RunTest(const FString&)
     TestTrue(TEXT("Stop does not snap back to grid"),Actor->GetActorLocation().Equals(BeforeStop,0.001));
     Manager->Sample(0.999999);
     TestTrue(TEXT("Stop settles at authoritative cell"),Actor->GetActorLocation().Equals(Next,0.01));
+    return !HasAnyErrors();
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaCampaignBerthMappingTest,"Hansa.ShipNavigation.CampaignBerthMapping",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaCampaignBerthMappingTest::RunTest(const FString&)
+{
+    using namespace Hansa::Game::LubeckPlacementGrid;
+    const FVector Centre=CampaignLubeckCenter();
+    const FVector Water=CampaignLubeckWaterAnchor();
+    const FVector Origin=CampaignLubeckNavigationOrigin();
+    TestTrue(TEXT("Gameplay centre moves toward the coast"),
+        FVector::Dist2D(Centre,CampaignLubeckHistoricalCenter())>30000.0);
+    TestTrue(TEXT("Berth remains close enough to the city for camera access"),
+        FVector::Dist2D(Centre,Water)<10000.0);
+    TestTrue(TEXT("Starting grid cell maps exactly to the sea berth"),
+        (Origin+GridToWorld({36,22},0.0)).Equals(Water,0.01));
+    const auto Cell=WorldToGrid(Water-Origin);
+    TestTrue(TEXT("Sea berth maps back to the starting grid cell"),Cell==FHansaGridCoordinate{36,22});
     return !HasAnyErrors();
 }
 #endif

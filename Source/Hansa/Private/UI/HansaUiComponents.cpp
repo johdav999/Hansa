@@ -122,7 +122,7 @@ void SHansaGlyph::Construct(const FArguments& Args)
 FVector2D SHansaGlyph::ComputeDesiredSize(float) const { return FVector2D(Size,Size); }
 const FSlateBrush* GetGeneratedIconBrush(EUiGlyph Glyph, int32 PixelSize)
 {
-    static const TCHAR* Names[] = {TEXT("Information"),TEXT("Warning"),TEXT("Error"),TEXT("Check"),TEXT("Loading"),TEXT("Arrow"),TEXT("Cursor"),TEXT("Decoration"),TEXT("Bread"),TEXT("Fish"),TEXT("Planks"),TEXT("Building"),TEXT("Road"),TEXT("Production"),TEXT("Storage"),TEXT("Harbor"),TEXT("Civic"),TEXT("Farm"),TEXT("Mill"),TEXT("Bakery"),TEXT("Beer"),TEXT("Coin"),TEXT("Trend"),TEXT("People"),TEXT("Laborer"),TEXT("Wealthy"),TEXT("Pause"),TEXT("Play"),TEXT("Fast"),TEXT("Fastest"),TEXT("Grain"),TEXT("Flour"),TEXT("Timber"),TEXT("Salt"),TEXT("Iron"),TEXT("Tools"),TEXT("Close"),TEXT("Pin"),TEXT("Search"),TEXT("Star"),TEXT("Plus"),TEXT("Minus"),TEXT("Back"),TEXT("Up"),TEXT("Down"),TEXT("Lock"),TEXT("Settings"),TEXT("Research"),TEXT("Save"),TEXT("Map"),TEXT("Eye"),TEXT("Ship"),TEXT("Warehouse"),TEXT("Dock"),TEXT("Market"),TEXT("Hops"),TEXT("Malt"),TEXT("Barrels"),TEXT("LumberCamp"),TEXT("HopFarm"),TEXT("MaltHouse"),TEXT("Cooperage"),TEXT("Brewery"),TEXT("ArtisanHouse"),TEXT("Firewood"),TEXT("WoodcutterYard"),TEXT("PreservedFish"),TEXT("Season"),TEXT("Charcoal"),TEXT("RawHides"),TEXT("TanningBark"),TEXT("Leather"),TEXT("Shoes"),TEXT("Smithy"),TEXT("Tannery"),TEXT("Shoemaker"),TEXT("CharcoalBurner"),TEXT("Flax"),TEXT("Hemp"),TEXT("Beeswax"),TEXT("LinenCloth"),TEXT("LinenClothing"),TEXT("Candles"),TEXT("Rope"),TEXT("Weaver"),TEXT("Tailor"),TEXT("Chandler"),TEXT("Ropewalk")};
+    static const TCHAR* Names[] = {TEXT("Information"),TEXT("Warning"),TEXT("Error"),TEXT("Check"),TEXT("Loading"),TEXT("Arrow"),TEXT("Cursor"),TEXT("Decoration"),TEXT("Bread"),TEXT("Fish"),TEXT("Planks"),TEXT("Building"),TEXT("Road"),TEXT("Production"),TEXT("Storage"),TEXT("Harbor"),TEXT("Civic"),TEXT("Farm"),TEXT("Mill"),TEXT("Bakery"),TEXT("Beer"),TEXT("Coin"),TEXT("Trend"),TEXT("People"),TEXT("Laborer"),TEXT("Wealthy"),TEXT("Pause"),TEXT("Play"),TEXT("Fast"),TEXT("Fastest"),TEXT("Grain"),TEXT("Flour"),TEXT("Timber"),TEXT("Salt"),TEXT("Iron"),TEXT("Tools"),TEXT("Close"),TEXT("Pin"),TEXT("Search"),TEXT("Star"),TEXT("Plus"),TEXT("Minus"),TEXT("Back"),TEXT("Up"),TEXT("Down"),TEXT("Lock"),TEXT("Settings"),TEXT("Research"),TEXT("Save"),TEXT("Map"),TEXT("Eye"),TEXT("Ship"),TEXT("Warehouse"),TEXT("Dock"),TEXT("Market"),TEXT("Hops"),TEXT("Malt"),TEXT("Barrels"),TEXT("LumberCamp"),TEXT("HopFarm"),TEXT("MaltHouse"),TEXT("Cooperage"),TEXT("Brewery"),TEXT("ArtisanHouse"),TEXT("Firewood"),TEXT("WoodcutterYard"),TEXT("PreservedFish"),TEXT("Season"),TEXT("Charcoal"),TEXT("RawHides"),TEXT("TanningBark"),TEXT("Leather"),TEXT("Shoes"),TEXT("Smithy"),TEXT("Tannery"),TEXT("Shoemaker"),TEXT("CharcoalBurner"),TEXT("Flax"),TEXT("Hemp"),TEXT("Beeswax"),TEXT("LinenCloth"),TEXT("LinenClothing"),TEXT("Candles"),TEXT("Rope"),TEXT("Weaver"),TEXT("Tailor"),TEXT("Chandler"),TEXT("Ropewalk"),TEXT("Axe"),TEXT("ZoomIn"),TEXT("ZoomOut"),TEXT("CenterMap")};
     static_assert(UE_ARRAY_COUNT(Names) == int32(EUiGlyph::Count));
     static TMap<FString,TSharedPtr<FSlateDynamicImageBrush>> Brushes;
     int32 Density = 160;
@@ -130,7 +130,8 @@ const FSlateBrush* GetGeneratedIconBrush(EUiGlyph Glyph, int32 PixelSize)
         if (Candidate >= PixelSize) { Density=Candidate; break; }
     const FString Key = FString::Printf(TEXT("%s--%d"),Names[FMath::Clamp(int32(Glyph),0,UE_ARRAY_COUNT(Names)-1)],Density);
     auto& Brush = Brushes.FindOrAdd(Key);
-    const TCHAR* Folder = Glyph >= EUiGlyph::Flax ? TEXT("Hansa/UI/TextileProduction/")
+    const TCHAR* Folder = Glyph >= EUiGlyph::Axe ? TEXT("Hansa/UI/Icons/")
+        : Glyph >= EUiGlyph::Flax ? TEXT("Hansa/UI/TextileProduction/")
         : Glyph >= EUiGlyph::Charcoal ? TEXT("Hansa/UI/ArtisanProduction/") : TEXT("Hansa/UI/Icons/");
     if (!Brush) Brush = MakeShared<FSlateDynamicImageBrush>(
         FName(*(FPaths::ProjectContentDir()/Folder+Key+TEXT(".png"))),FVector2D(Density,Density));
@@ -248,7 +249,7 @@ void SHansaAction::Construct(const FArguments& Args)
     {
         EUiGlyph Icon;
         if(SymbolIcon(Args._Label,Icon,IconLabel)) Content=SAssignNew(LabelIcon,SHansaGlyph).Glyph(Icon).Size(24);
-        else Content=SAssignNew(LabelText,STextBlock).Text(Args._Label).WrappingPolicy(ETextWrappingPolicy::DefaultWrapping).Font(GetComponentFont(EHansaUiTypographyToken::Body,Preferences))
+        else Content=SAssignNew(LabelText,STextBlock).Text(Args._Label).WrappingPolicy(ETextWrappingPolicy::DefaultWrapping).Font(GetComponentFont(Args._Typography,Preferences))
             .ColorAndOpacity(FSlateColor::UseForeground()).AutoWrapText(!bCompact);
     }
 
@@ -278,7 +279,12 @@ int32 SHansaAction::OnPaint(const FPaintArgs& Args,const FGeometry& G,const FSla
 	int32 Layer,const FWidgetStyle& WidgetStyle,bool ParentEnabled) const
 {
 	int32 Top=SButton::OnPaint(Args,G,Clip,Out,Layer,WidgetStyle,ParentEnabled);
-	if(State==EUiState::Selected) Frame(Out,++Top,G,Color(EHansaUiColorToken::Brass),2.f,2.f);
+	if(State==EUiState::Selected) {
+  if(bUnderlinedSelection) {
+   const FVector2D Size=G.GetLocalSize();
+   FSlateDrawElement::MakeBox(Out,++Top,G.ToPaintGeometry(FVector2D(Size.X-8.f,3.f),FSlateLayoutTransform(FVector2D(4.f,Size.Y-3.f))),FCoreStyle::Get().GetBrush(TEXT("WhiteBrush")),ESlateDrawEffect::None,Color(EHansaUiColorToken::Brass));
+  } else Frame(Out,++Top,G,Color(EHansaUiColorToken::Brass),2.f,2.f);
+ }
 	if(HasKeyboardFocus() || HasUserFocus(0))
 	{
 		const auto Focus=UHansaUiStyleLibrary::GetFocusStyle(Preferences.bHighContrast);

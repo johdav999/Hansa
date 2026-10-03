@@ -1,0 +1,58 @@
+{
+  "master": "SourceArt/UI/TradeOrders/trade-orders--charcoal-crate--default--1254x1254--v1.png",
+  "native": [
+    1254,
+    1254
+  ],
+  "mode": "RGBA",
+  "generator": "built-in ImageGen",
+  "crop": null,
+  "alpha_bounds": [
+    0,
+    20,
+    1222,
+    1254
+  ],
+  "variants": [
+    {
+      "path": "Content/Hansa/UI/TradeOrders/charcoal-crate--80.png",
+      "size": [
+        80,
+        80
+      ],
+      "sha256": "2391172735d7ed73e76cad8937ac83ddedcdd4180644bda78cc95dcdab1dd5f6"
+    },
+    {
+      "path": "Content/Hansa/UI/TradeOrders/charcoal-crate--112.png",
+      "size": [
+        112,
+        112
+      ],
+      "sha256": "64de01223a5a7a224cb95d419afc51f221ba226e3004c54add4596c8835bd1ab"
+    },
+    {
+      "path": "Content/Hansa/UI/TradeOrders/charcoal-crate--128.png",
+      "size": [
+        128,
+        128
+      ],
+      "sha256": "bd7401090ac827499782abad24f0aa423fe1821a98dfbd078f146e38a22f1363"
+    },
+    {
+      "path": "Content/Hansa/UI/TradeOrders/charcoal-crate--160.png",
+      "size": [
+        160,
+        160
+      ],
+      "sha256": "24116b4f7d3b878246a4bba542cce30188236988e6886ff406fd9e7b9e7ad72a"
+    },
+    {
+      "path": "Content/Hansa/UI/TradeOrders/charcoal-crate--224.png",
+      "size": [
+        224,
+        224
+      ],
+      "sha256": "572222afce6df3a950d7f8aa4d7bdf89d380786124f11a0604207dfb85c131fd"
+    }
+  ]
+}

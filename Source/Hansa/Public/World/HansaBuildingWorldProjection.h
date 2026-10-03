@@ -211,7 +211,7 @@ public:
 		EHansaPlacementFeedback Feedback,
 		const FText& Reason,
 		const AHansaLubeckWorldFoundation& Foundation,
-		bool bDeferRoadFeedback = false, uint8 AdjacentRoadMask = 0, uint64 ParcelSeed = 0);
+		bool bDeferRoadFeedback = false, uint8 AdjacentRoadMask = 0, uint64 ParcelSeed = 0, FName City = TEXT("City.Lubeck"));
 	void ApplyRoadPreview(
 		TConstArrayView<FHansaRoadPreviewCell> Cells,
 		EHansaPlacementFeedback Feedback,

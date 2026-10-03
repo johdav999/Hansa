@@ -20,6 +20,7 @@ public:
 	virtual ~AHansaGameMode() override;
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+	virtual void StartPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
@@ -33,6 +34,8 @@ public:
 	void RequestMultiplayerProjectionRefresh(AHansaStrategyPlayerController& Controller,
 		int64 ClientKnownRevision);
 	void RefreshMultiplayerProjections(bool bForceFullRefresh);
+    void RequestMultiplayerLand(AHansaStrategyPlayerController& Controller,
+        const struct FHansaLandQueryRequest& Request);
 	[[nodiscard]] int32 GetRegisteredAuthorityClientCount() const;
 	[[nodiscard]] bool IsAuthorityFixtureMode() const { return bAuthorityFixtureMode; }
 
@@ -50,5 +53,6 @@ private:
 	uint64 RuntimeCampaignSeedOverride = 0;
 	EHansaRuntimeScenario RuntimeScenario = EHansaRuntimeScenario::LubeckGrainShortage;
 	bool bAuthorityFixtureMode = false;
+	bool bUseEmptyPlayerCity = true;
 	bool bSimulationHostInitializationAttempted = false;
 };

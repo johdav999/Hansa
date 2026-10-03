@@ -139,6 +139,7 @@ void Value(FHansaRouteCargoAction& V)
 	Value(V.GoodId);
 	Value(V.QuantityLimit);
 	Value(V.MinimumSourceReserve);
+	if (FormatVersion >= 22) Value(V.CargoSlotIndex);
 }
 
 void Value(FHansaRouteTransferRecord& V)
@@ -163,7 +164,8 @@ void Value(FHansaForeignPresenceContributions& V)
 void Value(FHansaPresenceHistoryEntry& V) { Value(V.Kind); Value(V.Tick); Value(V.SourceEventSequence); Value(V.StageId); Value(V.QuantityMilliUnits); Value(V.MoneyPfennig); }
 void Value(FHansaCityPrivilegeState& V){Value(V.PrivilegeId);Value(V.GrantedLeaseId);Value(V.Status);Value(V.GrantedTick);Value(V.ExpiryTick);Value(V.SpentMoneyPfennig);}
 void Value(FHansaCityProjectState& V){Value(V.ProjectId);Value(V.Status);Value(V.FundedTick);Value(V.CompletionTick);Value(V.SpentMoneyPfennig);Value(V.bSharedEffectApplied);}
-void Value(FHansaPresenceUpgradeState& V) { Value(V.Status); Value(V.TargetStageId); Value(V.FundingInventoryId); Value(V.RequestedTick); Value(V.FundedTick); Value(V.CompletionTick); Value(V.SpentMoneyPfennig); }
+void Value(FHansaPresenceConstructionSite& V) { Value(V.bLocalDelivery); Value(V.Anchor); Value(V.Rotation); }
+void Value(FHansaPresenceUpgradeState& V) { Value(V.Status); Value(V.TargetStageId); Value(V.FundingInventoryId); Value(V.RequestedTick); Value(V.FundedTick); Value(V.CompletionTick); Value(V.SpentMoneyPfennig); if(FormatVersion>=23){Value(V.ConstructionSite);Value(V.DeliveredGoods);} }
 
 void Value(FHansaForeignPresenceState& V)
 {
@@ -179,7 +181,9 @@ void Value(FHansaTradeStationState& V)
 	Value(V.Status); Value(V.ProposedTick); Value(V.FundedTick); Value(V.CompletionTick); Value(V.CompletedTick);
 	Value(V.UpkeepPfennigPerTick); Value(V.SpentMoneyRaw); Value(V.FundingInventoryId); Value(V.SpentGoods);
  if (FormatVersion >= 15) Value(V.Orders);
+ if (FormatVersion >= 23) Value(V.ConstructionSite);
  if (FormatVersion >= 21) { Value(V.OperationalState); Value(V.OperationalStateChangedTick); Value(V.OutstandingUpkeepPfennig); }
+ if(FormatVersion>=24){Value(V.DeliveryMode);Value(V.DeliveryReservations);}
 }
 void Value(FHansaLeasedPlotState& V)
 {
@@ -293,7 +297,10 @@ void Value(FHansaInventoryRecord& V)
 	Value(V.AcceptedGoods);
 	Value(V.Stocks);
 	if (FormatVersion >= 9) Value(V.HouseholdExcludedGoods);
+	if (FormatVersion >= 22) Value(V.CargoSlots);
 }
+
+void Value(FHansaCargoSlot& V) { Value(V.GoodId); Value(V.Quantity); }
 
 void Value(FHansaInventoryStockRecord& V)
 {
@@ -665,8 +672,8 @@ void Value(FHansaSetHouseholdAvailabilityCommand& V) { Value(V.MarketBuildingId)
 
 void Value(FHansaMoveShipCommand& V) { Value(V.VehicleId); Value(V.Target); }
 void Value(FHansaSpotTradeCommand& V) { Value(V.VehicleId); Value(V.CityId); Value(V.GoodId); Value(V.Side); Value(V.Quantity); Value(V.ReviewedMarketUpdateTick); Value(V.ReviewedUnitPriceMilliMarks); }
-void Value(FHansaProposeTradeStationCommand& V) { Value(V.StationId); Value(V.FactorId); Value(V.LeasedPlotId); Value(V.InventoryId); Value(V.CityId); Value(V.SiteId); }
-void Value(FHansaFundTradeStationCommand& V) { Value(V.StationId); Value(V.FundingInventoryId); }
+void Value(FHansaProposeTradeStationCommand& V) { Value(V.StationId); Value(V.FactorId); Value(V.LeasedPlotId); Value(V.InventoryId); Value(V.CityId); Value(V.SiteId); if(FormatVersion>=23){Value(V.bPlaceAndPay);Value(V.Anchor);Value(V.Rotation);} }
+void Value(FHansaFundTradeStationCommand& V) { Value(V.StationId); Value(V.FundingInventoryId); if(FormatVersion>=24)Value(V.DeliveryMode); }
 void Value(FHansaCloseTradeStationCommand& V) { Value(V.StationId); }
 
 void Value(FHansaStationOrderTerms& V) { Value(V.GoodId); Value(V.Side); Value(V.TargetOrReserveMilliUnits); Value(V.CapMilliUnits); Value(V.TotalBudgetPfennig); if (FormatVersion >= 18) { Value(V.LimitUnitPriceMilliMarks); Value(V.ReviewedMarketUpdateTick); Value(V.ReviewedUnitPriceMilliMarks); } }

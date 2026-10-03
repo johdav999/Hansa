@@ -1,0 +1,146 @@
+{
+  "generatedUtc": "2026-10-01T18:17:56.5084573Z",
+  "configuration": "DebugGame",
+  "captures": [
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--available--1280x720--scale1.4.png",
+      "sha256": "BBC544D4E5A24F82BA0EFDBD2BBD0FBA5093CAC1709E6B62B12205964157FED5",
+      "timestampUtc": "2026-10-01T18:15:33.1040056Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--available--1920x1080--scale1.0.png",
+      "sha256": "DDE45889A09E6D7AB783401594CADA2BF9A6E62FEC5115A012D99121A545370E",
+      "timestampUtc": "2026-10-01T18:15:33.5490350Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--available--2560x1440--scale1.0.png",
+      "sha256": "82785A4531EBF6933981335B9F841D789B3DBA56F90295B7D36934663C239944",
+      "timestampUtc": "2026-10-01T18:03:21.1958655Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--available--2834x901--scale0.8.png",
+      "sha256": "D3C1A824BB39EC233D4B9F2A4639F6B4AAF88E73A8CEBAD8666C71BD7881D4D0",
+      "timestampUtc": "2026-10-01T18:08:40.2866644Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--complete--1280x720--scale1.4.png",
+      "sha256": "5E1C810EAE9878E3D5945AFDC4305C0238D0D192D1CAE34BE0444EEF9E0EE455",
+      "timestampUtc": "2026-10-01T18:15:45.8552640Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--complete--1920x1080--scale1.0.png",
+      "sha256": "27E18340EF661FBADC0034E61D8E2567CB00CC65E64002A345FC991D8F6DC49C",
+      "timestampUtc": "2026-10-01T18:15:46.9287035Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--complete--2560x1440--scale1.0.png",
+      "sha256": "64B5AB462419C4B074421EB39DBEC88C41548B88192292161A2ED2D394D0F0BD",
+      "timestampUtc": "2026-10-01T18:03:35.1589988Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--complete--2834x901--scale0.8.png",
+      "sha256": "D387D7181D257DC63C1F5FEF287F2BB0B666E4705E4721F874D311D4AB54A03A",
+      "timestampUtc": "2026-10-01T18:08:54.6023003Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--construction--1280x720--scale1.4.png",
+      "sha256": "1F5A90A99AE911714249C847305569BD8389DB055D879FCDA2B0F23A2A6AD656",
+      "timestampUtc": "2026-10-01T18:15:42.5341837Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--construction--1920x1080--scale1.0.png",
+      "sha256": "C6854698CCE4A7D94BDAF114A46D28C09C4D547F6446C87F5116457F02988A54",
+      "timestampUtc": "2026-10-01T18:15:43.4430523Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--construction--2560x1440--scale1.0.png",
+      "sha256": "257ED7F1437F004F91C94FD4CDDD023F553CD466BBA9B882077CF4689E66952C",
+      "timestampUtc": "2026-10-01T18:03:31.5277460Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--construction--2834x901--scale0.8.png",
+      "sha256": "5373063649D90C28A6E3EEA4923CD298BCECE6E596224EAD546FFF53D3153074",
+      "timestampUtc": "2026-10-01T18:08:50.5912513Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--office-lease--1280x720--scale1.4.png",
+      "sha256": "CF06F56AC3A533029C1307BB16DE67922C996DEF66DEAF5DE7B5D15D70BE73F0",
+      "timestampUtc": "2026-10-01T18:15:48.9505863Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--office-lease--1920x1080--scale1.0.png",
+      "sha256": "DCCC079B18ADA4CADBF6A0C1A81A5B2AA2076E6C72BB81749AE8004D3E2455A9",
+      "timestampUtc": "2026-10-01T18:15:50.1725890Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--office-lease--2560x1440--scale1.0.png",
+      "sha256": "BDEC60999ADFBA2A102AB84478C90A4D5961EA1F713A1144B062C4BD51FE3C0C",
+      "timestampUtc": "2026-10-01T18:03:38.5575328Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--office-lease--2834x901--scale0.8.png",
+      "sha256": "3EE40F88422F303B55FE5F7BFF8E2D852E7D42592631B19ACD91735BFC997FB8",
+      "timestampUtc": "2026-10-01T18:08:58.0997804Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--office-lease-closure--1280x720--scale1.4.png",
+      "sha256": "71AF4E5469DE010785B3B864ECE99D54310869C05F49FCA6A3FBBC3CAC493692",
+      "timestampUtc": "2026-10-01T18:15:52.0463770Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--office-lease-closure--1920x1080--scale1.0.png",
+      "sha256": "2E50377FC493A3591DB5CC56FA42260C978572FDBFC0BC26C782406081D7412F",
+      "timestampUtc": "2026-10-01T18:15:53.3755330Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--office-lease-closure--2560x1440--scale1.0.png",
+      "sha256": "0C345652E05EF5117044B6DCC32AD5E7802855672DC9C7CFEEF14A5F5BDFD9DA",
+      "timestampUtc": "2026-10-01T18:03:41.9158344Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--office-lease-closure--2834x901--scale0.8.png",
+      "sha256": "662D7E42484E0FD89E0FD35EDA7037205A44AC02097E70FB39041BBA27602136",
+      "timestampUtc": "2026-10-01T18:09:01.5289063Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--review--1280x720--scale1.4.png",
+      "sha256": "C530C794F6E69A0C643D6571B738567347F342E0D3695DA55CCC66D98EA92B1D",
+      "timestampUtc": "2026-10-01T18:15:39.3805136Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--review--1920x1080--scale1.0.png",
+      "sha256": "6D09B90DA305C89826BE9BADB3405C82C075773B61E9456190A9A18F27DCA6EB",
+      "timestampUtc": "2026-10-01T18:15:40.1267203Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--review--2560x1440--scale1.0.png",
+      "sha256": "33FC663A04D306CC21C3D2AD7C8D791967FBE254AD2CE49FEF519DA039189CB7",
+      "timestampUtc": "2026-10-01T18:03:28.0610115Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--review--2834x901--scale0.8.png",
+      "sha256": "0128134B687781CABDC9F61FD9A6DAB06430430A420CF7222AF8674646F46BA7",
+      "timestampUtc": "2026-10-01T18:08:47.1150665Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--station-lease--1280x720--scale1.4.png",
+      "sha256": "CEBE4DF9054CB574969794BFB30424270DD77546583073A9D46FFA0A4BD12CF9",
+      "timestampUtc": "2026-10-01T18:15:36.1987228Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--station-lease--1920x1080--scale1.0.png",
+      "sha256": "AB2E2D2FACAB5F14D1A416E2A1B1D23E467BA26EDD410EA995534CA7B65D2AA5",
+      "timestampUtc": "2026-10-01T18:15:36.8084223Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--station-lease--2560x1440--scale1.0.png",
+      "sha256": "6BF873EA26CCD3733546A2A151441798D01A18CD4F9FB40C163FFEA41FD087FE",
+      "timestampUtc": "2026-10-01T18:03:24.5912590Z"
+    },
+    {
+      "path": "Docs/Images/UI/MerchantOfficeUpgrade/native-details--station-lease--2834x901--scale0.8.png",
+      "sha256": "C74DF1C0C62273C59F62DB9BAD92CD4231A7993DF6D07D11BA3C1BD96285BDE3",
+      "timestampUtc": "2026-10-01T18:08:43.6059149Z"
+    }
+  ]
+}

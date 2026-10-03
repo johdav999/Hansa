@@ -111,19 +111,41 @@ bool FHansaStationOrdersTest::RunTest(const FString&)
  Save={};Save.State=State;Save.BuildVersion=TEXT("TR-05-Test");Save.SavedUtc=TEXT("2026-09-20T00:00:00Z");Save.Players={{1,House}};TestTrue(TEXT("History save"),FHansaSaveEnvelope::Encode(Save,Definitions,Bytes).IsSuccess());TestTrue(TEXT("History load"),FHansaSaveEnvelope::Decode(Bytes,Definitions,Loaded).IsSuccess());
  TestEqual(TEXT("History retains exact receipts"),Loaded.State.CreateReadOnlyAccess(Definitions).QueryTradeStation(StationId)->Station.Orders[0].History.Num(),State.CreateReadOnlyAccess(Definitions).QueryTradeStation(StationId)->Station.Orders[0].History.Num());
 
- TStrongObjectPtr<UHansaTradeMapPresentationModel> Ui(NewObject<UHansaTradeMapPresentationModel>());Ui->InitializeDefaults();Ui->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Definitions.GetEconomicRegistry());Ui->Open();
- Ui->SetNetworkCommandIntent([&](const FHansaClientCommandIntent& I){FHansaManageStationOrderCommand C;C.StationId=StationId;C.OrderId=I.StationOrderId;C.Action=static_cast<EHansaStationOrderAction>(I.StationOrderAction);C.Terms.GoodId=FHansaGoodId::TryParse(I.GoodId).Value;C.Terms.Side=static_cast<EHansaStationOrderSide>(I.StationOrderSide);C.Terms.TargetOrReserveMilliUnits=I.StationOrderTarget;C.Terms.CapMilliUnits=I.StationOrderCap;C.Terms.TotalBudgetPfennig=I.StationOrderBudget;return Submit(C,House).IsSuccess();});
+ TStrongObjectPtr<UHansaTradeMapPresentationModel> Ui(NewObject<UHansaTradeMapPresentationModel>());Ui->InitializeDefaults();Ui->SetViewerHouse(House);Ui->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Definitions.GetEconomicRegistry());Ui->Open();
+ Ui->SetNetworkCommandIntent([&](const FHansaClientCommandIntent& I){
+  // Mirror the real transport's sequenced pending receipt and final acknowledgement.
+  FHansaClientCommandFeedback Receipt;Receipt.ClientSequence=Next;Receipt.ClientNonce=Next+5000;Receipt.State=EHansaClientCommandState::Pending;Ui->ReceiveCommandFeedback(Receipt);
+  FHansaManageStationOrderCommand C;C.StationId=StationId;C.OrderId=I.StationOrderId;C.Action=static_cast<EHansaStationOrderAction>(I.StationOrderAction);C.Terms.GoodId=FHansaGoodId::TryParse(I.GoodId).Value;C.Terms.Side=static_cast<EHansaStationOrderSide>(I.StationOrderSide);C.Terms.TargetOrReserveMilliUnits=I.StationOrderTarget;C.Terms.CapMilliUnits=I.StationOrderCap;C.Terms.TotalBudgetPfennig=I.StationOrderBudget;
+  Receipt.bAccepted=Submit(C,House).IsSuccess();Receipt.State=Receipt.bAccepted?EHansaClientCommandState::Accepted:EHansaClientCommandState::Rejected;Ui->ReceiveCommandFeedback(Receipt);return Receipt.bAccepted;
+ });
  auto Screen=SNew(Hansa::UI::SHansaTradeMap).Model(Ui.Get());
- TestTrue(TEXT("Orders reachable without any ship route"),Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Orders.Save")));
+ TestTrue(TEXT("Orders tab opens without any ship route"),Screen->ActivateSemanticId(TEXT("TradeMap.Navigate.Orders")));
+ TestTrue(TEXT("Orders reachable without any ship route"),Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Orders.New")));
  TestTrue(TEXT("Select existing order via ordinary control"),Screen->ActivateSemanticId(TEXT("TradeMap.Orders.Select")));
+ TestTrue(TEXT("Editor opens after selection"),Screen->GetControllerFocusOrder().Contains(TEXT("TradeMap.Orders.Save")));
  TestTrue(TEXT("Pause via native semantic control and gateway"),Screen->ActivateSemanticId(TEXT("TradeMap.Orders.Pause")));
  Ui->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Definitions.GetEconomicRegistry());
  TestTrue(TEXT("UI pause agrees with authoritative order"),State.CreateReadOnlyAccess(Definitions).QueryTradeStation(StationId)->Station.Orders[0].bPaused);
  const auto Widget=Screen->ResolveSemanticWidget(TEXT("TradeMap.Orders.Pause"));Step();Ui->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Definitions.GetEconomicRegistry());
  TestTrue(TEXT("Live history retains widget identity"),Widget==Screen->ResolveSemanticWidget(TEXT("TradeMap.Orders.Pause")));
  TestTrue(TEXT("UI shows last execution and causal budget"),Ui->GetSnapshot().StationOrderText.ToString().Contains(TEXT("pfennig")));
- TestTrue(TEXT("Cancel via ordinary control"),Screen->ActivateSemanticId(TEXT("TradeMap.Orders.Cancel")));
+ TestTrue(TEXT("Order list exposes the selected good and remaining budget"),Ui->GetSnapshot().StationOrderList.ToString().Contains(TEXT("Grain"))&&Ui->GetSnapshot().StationOrderList.ToString().Contains(TEXT("remaining")));
+ TestFalse(TEXT("Invalid numeric input rejected"),Ui->SetStationOrderNumber(TEXT("Cap"),TEXT("-1")));
+ TestTrue(TEXT("Fractional milli-unit cap can be entered exactly"),Ui->SetStationOrderNumber(TEXT("Cap"),TEXT("0.500")));
+ TestEqual(TEXT("Fractional cap displayed without truncation"),Ui->GetSnapshot().StationOrderCapInput,FString(TEXT("0.5")));
+ TestTrue(TEXT("Valid cap can be entered directly"),Ui->SetStationOrderNumber(TEXT("Cap"),TEXT("2")));
+ TestTrue(TEXT("Cancel review opens through ordinary control"),Screen->ActivateSemanticId(TEXT("TradeMap.Orders.Cancel")));
+ TestTrue(TEXT("Cancellation requires a second activation"),Ui->GetSnapshot().bConfirmStationOrderCancel);
+ TestFalse(TEXT("Review alone does not cancel"),State.CreateReadOnlyAccess(Definitions).QueryTradeStation(StationId)->Station.Orders[0].bCancelled);
+ TestTrue(TEXT("Confirm cancellation via ordinary control"),Screen->ActivateSemanticId(TEXT("TradeMap.Orders.Cancel")));
  TestTrue(TEXT("Cancelled state persists"),State.CreateReadOnlyAccess(Definitions).QueryTradeStation(StationId)->Station.Orders[0].bCancelled);
+ TestTrue(TEXT("New order opens through native control"),Screen->ActivateSemanticId(TEXT("TradeMap.Orders.New")));
+ TestTrue(TEXT("Create replacement through command gateway"),Screen->ActivateSemanticId(TEXT("TradeMap.Orders.Save")));
+ if(!TestEqual(TEXT("Replacement has stable new identity"),State.CreateReadOnlyAccess(Definitions).QueryTradeStation(StationId)->Station.Orders.Num(),2))return false;
+ Ui->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Definitions.GetEconomicRegistry());
+ TestTrue(TEXT("Edit replacement quantity through numeric field"),Ui->SetStationOrderNumber(TEXT("Cap"),TEXT("1.500")));
+ TestTrue(TEXT("Save edit through native control"),Screen->ActivateSemanticId(TEXT("TradeMap.Orders.Save")));
+ TestEqual(TEXT("Edited milli-unit cap reaches authority"),State.CreateReadOnlyAccess(Definitions).QueryTradeStation(StationId)->Station.Orders[1].Terms.CapMilliUnits,int64(1500));
 
  const auto PausedHistory=State.CreateReadOnlyAccess(Definitions).QueryTradeStation(StationId)->Station.Orders[0].History.Num();Step();TestEqual(TEXT("Cancelled order does not execute again"),State.CreateReadOnlyAccess(Definitions).QueryTradeStation(StationId)->Station.Orders[0].History.Num(),PausedHistory);
  auto Empty=MakeInitial(10000,10000,0,50000);State=FHansaSimulationState::TryCreate(Empty).Value;Next=1;Cache.Discard();
@@ -217,10 +239,10 @@ bool FHansaStationOrdersTest::RunTest(const FString&)
  Ui->ApplyProjection(State.CreateReadOnlyAccess(Definitions).BuildProjection().Value,*Definitions.GetEconomicRegistry());
  TestFalse(TEXT("Buffered route never claims known profit"),Ui->GetSnapshot().Routes[0].bProfitKnown);
  TestTrue(TEXT("Native manifest names station transfer"),Ui->GetSnapshot().Stops[0].ActionLabel.ToString().Contains(TEXT("station")));
- const auto ActionWidget=Screen->ResolveSemanticWidget(TEXT("TradeMap.Editor.Action.Cycle"));
- TestTrue(TEXT("Existing native action cycles station direction"),Screen->ActivateSemanticId(TEXT("TradeMap.Editor.Action.Cycle")));
+ // The old flat editor is intentionally inaccessible; station semantics remain a typed model intent.
+ TestFalse(TEXT("Retired flat action cannot activate"),Screen->ActivateSemanticId(TEXT("TradeMap.Editor.Action.Cycle")));
+ TestTrue(TEXT("Typed station action intent cycles direction"),Ui->CycleCargoActionIntent());
  TestTrue(TEXT("Cycle reaches station unload"),Ui->GetSnapshot().Stops[0].ActionLabel.ToString().Contains(TEXT("Unload to station")));
- TestTrue(TEXT("Action control retains identity"),ActionWidget==Screen->ResolveSemanticWidget(TEXT("TradeMap.Editor.Action.Cycle")));
 
  // TR-13: upkeep failure is an authoritative boundary state, and paying exact arrears restores service.
  auto RevokedInit=RouteInitial(5000);RevokedInit.ForeignPresences[0].Status=EHansaForeignPresenceStatus::Revoked;RevokedInit.TradeStations[0].Status=EHansaTradeStationStatus::Suspended;RevokedInit.TradeStations[0].OperationalState=EHansaTradeStationOperationalState::Revoked;RevokedInit.LeasedPlots[0].bActive=false;

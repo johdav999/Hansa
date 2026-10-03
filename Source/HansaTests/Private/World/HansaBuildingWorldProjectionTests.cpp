@@ -446,23 +446,39 @@ bool FHansaDataDrivenPresentationTest::RunTest(const FString& Parameters)
 	{
 		TestTrue(TEXT("Bakery construction uses authored geometry, not the fallback"),
 			Bakery->Construction->IsVisible() && !Bakery->Bakery->IsVisible() && !Actor->ConstructionPlaceholder->IsVisible());
+		TestTrue(TEXT("Construction hides bakery yard props"), !Bakery->BreadRack->IsVisible() && !Bakery->Handcart->IsVisible()
+			&& !Bakery->FirewoodBasket->IsVisible() && !Bakery->Millstone->IsVisible());
 		Projection.Status = EHansaBuildingWorldStatus::Ready;
 		Actor->ApplyProjection(Projection, *Foundation);
 		TestTrue(TEXT("Operating bakery exposes flour and bread roles"), Bakery->FlourSack->IsVisible() && Bakery->BreadCrate->IsVisible() && Bakery->Sign->IsVisible());
+		TestTrue(TEXT("Operating bakery displays all four production props"), Bakery->BreadRack->IsVisible() && Bakery->Handcart->IsVisible()
+			&& Bakery->FirewoodBasket->IsVisible() && Bakery->Millstone->IsVisible());
 		Projection.Status = EHansaBuildingWorldStatus::Blocked;
 		Actor->ApplyProjection(Projection, *Foundation);
 		TestTrue(TEXT("Blocked bakery keeps identity but suppresses operating cues"),
 			Bakery->Bakery->IsVisible() && Bakery->Sign->IsVisible() && !Bakery->FlourSack->IsVisible() && !Bakery->BreadCrate->IsVisible());
+		TestTrue(TEXT("Blocked bakery retains equipment but hides stock-bearing props"), !Bakery->BreadRack->IsVisible()
+			&& !Bakery->Handcart->IsVisible() && Bakery->FirewoodBasket->IsVisible() && Bakery->Millstone->IsVisible());
 		Projection.Status = EHansaBuildingWorldStatus::Ready;
 		Actor->ApplyProjection(Projection, *Foundation);
 		TestTrue(TEXT("Resumed bakery retains authored scale"), Bakery->GetActorScale3D().Equals(FVector::OneVector) && Bakery->BreadCrate->IsVisible());
-		for (UStaticMeshComponent* Part : {Bakery->Bakery.Get(), Bakery->Construction.Get(), Bakery->FlourSack.Get(), Bakery->BreadCrate.Get(), Bakery->Sign.Get()})
+		for (UStaticMeshComponent* Part : {Bakery->Bakery.Get(), Bakery->Construction.Get(), Bakery->FlourSack.Get(), Bakery->BreadCrate.Get(), Bakery->Sign.Get(),
+			Bakery->BreadRack.Get(), Bakery->FirewoodBasket.Get(), Bakery->Handcart.Get(), Bakery->Millstone.Get()})
 		{
 			UStaticMesh* Mesh = Part->GetStaticMesh();
 			if (!TestNotNull(TEXT("Every bakery role resolves"), Mesh)) continue;
-			TestTrue(TEXT("Role mesh is canonical"), Mesh->GetPathName().StartsWith(TEXT("/Game/Mesh/hansa-bakery/P10/")));
+			TestTrue(TEXT("Role mesh is canonical"), Mesh->GetPathName().StartsWith(TEXT("/Game/Mesh/hansa-bakery/")));
 			TestEqual(TEXT("Every bakery role has three LODs"), Mesh->GetNumLODs(), 3);
 			TestEqual(TEXT("Role collision cannot intercept selection"), Part->GetCollisionEnabled(), ECollisionEnabled::NoCollision);
+			TestFalse(TEXT("Decorative roles cannot alter navigation"), Part->CanEverAffectNavigation());
+			TestTrue(TEXT("Every role preserves its authored scale"), Part->GetRelativeScale3D().Equals(FVector::OneVector));
+			if (Mesh->GetPathName().StartsWith(TEXT("/Game/Mesh/hansa-bakery/Props/")))
+			{
+				const FBox YardBounds = Mesh->GetBoundingBox().TransformBy(Part->GetRelativeTransform());
+				TestTrue(TEXT("Prop stays inside bakery parcel"), YardBounds.Min.X >= -600 && YardBounds.Max.X <= 600
+					&& YardBounds.Min.Y >= -400 && YardBounds.Max.Y <= 400);
+				TestTrue(TEXT("Prop pivot is grounded"), FMath::Abs(YardBounds.Min.Z) < 1.0);
+			}
 			for (const FStaticMaterial& Slot : Mesh->GetStaticMaterials())
 				TestTrue(TEXT("Every material is assigned from the canonical bakery family"), Slot.MaterialInterface && Slot.MaterialInterface->GetPathName().StartsWith(TEXT("/Game/Mesh/hansa-bakery/")));
 		}

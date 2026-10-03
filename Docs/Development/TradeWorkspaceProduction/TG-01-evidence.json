@@ -1,0 +1,329 @@
+{
+  "prompt": "TG-01",
+  "status": "Implementation verified; full acceptance blocked by creator/journey suites",
+  "build": {
+    "path": "Saved/BuildArtifacts/20260922-195349109-tg01-build-final/Build.log",
+    "result": "Succeeded",
+    "configuration": "HansaEditor Win64 Development -DisableUnity"
+  },
+  "sources": [
+    {
+      "path": "Source/Hansa/Private/UI/SHansaTradeMap.cpp",
+      "sha256": "d12eed2b7144636e9b824ce21677bc127c4ad10cc50dcf4a7396718624113468"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaTradeMap.h",
+      "sha256": "50051869de5da90fe476a2639d15f04653737a8f5ad2bae6f0e86bf2cbdcecbd"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaTradeMapPresentationModel.cpp",
+      "sha256": "d6b6c3fe7d4f8cf9760efc6085fce111c265fc61c1e02c70c7e678ec652b5016"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaTradeMapPresentationModel.h",
+      "sha256": "ec768085caa5665a1ce78fb0ae4348f168be6d9131fcc2d9e828fe6f733cfd81"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaTradeRouteCreator.cpp",
+      "sha256": "32d417f39a9a0af0890d5614fe5078bed80647107d8a031be7ec85330ae9ed86"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/Trade/HansaTradeWorkspaceComponents.cpp",
+      "sha256": "1cc70bf898225fd4f52e9aa7d3d599248a523d1ea25d31b6e9da360536bf6ba3"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/Trade/HansaTradeWorkspaceComponents.h",
+      "sha256": "42b1836db5c70f6ab4facb572e1078fcf88569dfd1d400d822abff8d109ffdfc"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeMapTests.cpp",
+      "sha256": "21a98789d9c7791db68ec751ec55197b9c671fe043e5207580ac54f6af9126fa"
+    },
+    {
+      "path": "Source/HansaEditor/Private/Tests/HansaStationOrderTests.cpp",
+      "sha256": "0c685a42877d45a5cbddc8cf077b26698c795e88e77a25c34bbc2b8e288be42b"
+    }
+  ],
+  "semantics": {
+    "removed": [],
+    "added": [
+      "TradeMap.Schedule"
+    ]
+  },
+  "suites": [
+    {
+      "filter": "Hansa.UI.TradeMap",
+      "log": "Saved/BuildArtifacts/20260922-195623629-automation-Hansa.UI.TradeMap/UnrealEditor.log",
+      "sha256": "c7396e1af6848090d9dff0bdf0618420cae2c6f7d5c6a991c14adfbe37d1626a",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "OwnershipAndRefresh",
+          "path": "Hansa.UI.TradeMap.Components.OwnershipAndRefresh"
+        },
+        {
+          "result": "Success",
+          "name": "NativeScreens",
+          "path": "Hansa.UI.TradeMap.SectionNavigation.NativeScreens"
+        },
+        {
+          "result": "Success",
+          "name": "ProjectionAndSimpleEditor",
+          "path": "Hansa.UI.TradeMap.ProjectionAndSimpleEditor"
+        },
+        {
+          "result": "Success",
+          "name": "RuntimeCommandCommit",
+          "path": "Hansa.UI.TradeMap.RuntimeCommandCommit"
+        },
+        {
+          "result": "Success",
+          "name": "SemanticsAndResponsiveNativeEvidence",
+          "path": "Hansa.UI.TradeMap.SemanticsAndResponsiveNativeEvidence"
+        }
+      ],
+      "assertionFailures": []
+    },
+    {
+      "filter": "Hansa.Integration.TradePresence",
+      "log": "Saved/BuildArtifacts/20260922-195656207-automation-Hansa.Integration.TradePresence/UnrealEditor.log",
+      "sha256": "92e35b4a27da96b7a16747f0ee2902f254433cf52516b98864614c9834072744",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "CityPrivilegeProjectAndAuthority",
+          "path": "Hansa.Integration.TradePresence.CityPrivilegeProjectAndAuthority"
+        },
+        {
+          "result": "Success",
+          "name": "EstablishTradeStation",
+          "path": "Hansa.Integration.TradePresence.EstablishTradeStation"
+        },
+        {
+          "result": "Success",
+          "name": "LeasedForeignConstruction",
+          "path": "Hansa.Integration.TradePresence.LeasedForeignConstruction"
+        },
+        {
+          "result": "Success",
+          "name": "MerchantAICommandParity",
+          "path": "Hansa.Integration.TradePresence.MerchantAICommandParity"
+        },
+        {
+          "result": "Success",
+          "name": "MerchantOfficeProgression",
+          "path": "Hansa.Integration.TradePresence.MerchantOfficeProgression"
+        },
+        {
+          "result": "Success",
+          "name": "SeedQuerySaveAndInertTick",
+          "path": "Hansa.Integration.TradePresence.SeedQuerySaveAndInertTick"
+        },
+        {
+          "result": "Success",
+          "name": "StationOrders",
+          "path": "Hansa.Integration.TradePresence.StationOrders"
+        },
+        {
+          "result": "Success",
+          "name": "VisitingSpotTrade",
+          "path": "Hansa.Integration.TradePresence.VisitingSpotTrade"
+        }
+      ],
+      "assertionFailures": []
+    },
+    {
+      "filter": "Hansa.Integration.Save.RoundTripContinuation",
+      "log": "Saved/BuildArtifacts/20260922-195725402-automation-Hansa.Integration.Save.RoundTripContinuation/UnrealEditor.log",
+      "sha256": "d103c7926b5692d0c77a1f20b505c6e5c48f01d5c1279c7a2f4281dc4e0d6c10",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "RoundTripContinuation",
+          "path": "Hansa.Integration.Save.RoundTripContinuation"
+        }
+      ],
+      "assertionFailures": []
+    },
+    {
+      "filter": "Hansa.Integration.Save.RuntimeAuthorityContinuation",
+      "log": "Saved/BuildArtifacts/20260922-195751215-automation-Hansa.Integration.Save.RuntimeAuthorityContinuation/UnrealEditor.log",
+      "sha256": "7765f2f4fbbe061b8f4952f48e1dfdeba249d3a6994cee3cfa261a653f397eeb",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "RuntimeAuthorityContinuation",
+          "path": "Hansa.Integration.Save.RuntimeAuthorityContinuation"
+        }
+      ],
+      "assertionFailures": []
+    },
+    {
+      "filter": "Hansa.UI.TradeCreator",
+      "log": "Saved/BuildArtifacts/20260922-195126088-automation-Hansa.UI.TradeCreator/UnrealEditor.log",
+      "sha256": "c2a9dadee7f4e93950dda4a602c79ba3a31d93e85173b0b9e4905ea0ffa4bd11",
+      "tests": [
+        {
+          "result": "Fail",
+          "name": "CreateDeliverSave",
+          "path": "Hansa.UI.TradeCreator.CreateDeliverSave"
+        },
+        {
+          "result": "Success",
+          "name": "ValidationAndRecovery",
+          "path": "Hansa.UI.TradeCreator.ValidationAndRecovery"
+        }
+      ],
+      "assertionFailures": [
+        "[2026.09.22-17.51.54:808][ 57]LogAutomationController: Error: Expected 'Cash result deducts upkeep without fictional sales' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeCreatorTests.cpp(34)]",
+        "[2026.09.22-17.51.54:808][ 57]LogAutomationController: Error: Expected 'New route delivers real cargo to Rostock' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeCreatorTests.cpp(44)]"
+      ]
+    },
+    {
+      "filter": "Hansa.UI.TradeJourney",
+      "log": "Saved/BuildArtifacts/20260922-195158301-automation-Hansa.UI.TradeJourney/UnrealEditor.log",
+      "sha256": "451862c5fb682e3cbb4a502c616e1fd6aee767d80d0f4b1b4043f1b2f01081d5",
+      "tests": [
+        {
+          "result": "Fail",
+          "name": "DeterministicImport",
+          "path": "Hansa.UI.TradeJourney.DeterministicImport"
+        },
+        {
+          "result": "Fail",
+          "name": "Recovery",
+          "path": "Hansa.UI.TradeJourney.Recovery"
+        }
+      ],
+      "assertionFailures": [
+        "[2026.09.22-17.52.50:016][ 63]LogAutomationController: Error: Expected 'Imported Bread satisfies more actual needs than no-trade control' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(55)]",
+        "[2026.09.22-17.52.50:016][ 63]LogAutomationController: Error: Expected 'Source inventory records exported stock' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(56)]",
+        "[2026.09.22-17.52.50:016][ 63]LogAutomationController: Error: Expected 'Imported Bread satisfies more actual needs than no-trade control' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(55)]",
+        "[2026.09.22-17.52.50:016][ 63]LogAutomationController: Error: Expected 'Source inventory records exported stock' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(56)]",
+        "[2026.09.22-17.53.09:455][ 65]LogAutomationController: Error: Expected 'Insufficient stock warns without promising supply' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(79)]",
+        "[2026.09.22-17.53.09:455][ 65]LogAutomationController: Error: Expected 'Safe zero-load reserve plan is permitted' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(79)]",
+        "[2026.09.22-17.53.09:455][ 65]LogAutomationController: Error: Expected 'Moving route cannot edit' to be false. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(82)]",
+        "[2026.09.22-17.53.09:455][ 65]LogAutomationController: Error: Expected 'Edit error explains recovery and retains draft' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(84)]",
+        "[2026.09.22-17.53.09:455][ 65]LogAutomationController: Error: Expected 'Dirty draft does not block pause' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(85)]",
+        "[2026.09.22-17.53.09:455][ 65]LogAutomationController: Error: Expected 'Cancellation is reachable in controller order' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(88)]",
+        "[2026.09.22-17.53.09:455][ 65]LogAutomationController: Error: Expected 'Cancel through ordinary UI' to be true. [C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Source\\HansaTests\\Private\\UI\\HansaTradeJourneyTests.cpp(89)]"
+      ]
+    }
+  ],
+  "captures": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1280x720-Route.png",
+      "sha256": "f2c58f6cd5c2c753c310e7d457d5b1d726071c19eee2330304e9168b54e4eb68",
+      "source": "Saved/TradeWorkspace/trade-1280x720-Route.png",
+      "width": 1280,
+      "height": 720,
+      "qa": "Original-resolution inspection: hierarchy, readable navigation, selected tab and bounded scroll regions retained. Presence heading wraps at 720p."
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1280x720-Route.tsv",
+      "sha256": "23cc1509930cefcc7875385c773a75cfbba757d96aca3629fee77b7a528a48b4",
+      "source": "Saved/TradeWorkspace/trade-1280x720-Route.tsv"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1280x720-Presence.png",
+      "sha256": "92bfb6501b3af1b4a4345b88240a4b653e03598de09829a7c467b11cd14f329e",
+      "source": "Saved/TradeWorkspace/trade-1280x720-Presence.png",
+      "width": 1280,
+      "height": 720,
+      "qa": "Original-resolution inspection: hierarchy, readable navigation, selected tab and bounded scroll regions retained. Presence heading wraps at 720p."
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1280x720-Presence.tsv",
+      "sha256": "092c4ea58889d2092cdc5e0fa40ba73a4cd9f165c5b33cc9916039c616e29eee",
+      "source": "Saved/TradeWorkspace/trade-1280x720-Presence.tsv"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1280x720-Orders.png",
+      "sha256": "41285f4d58bcc88d507a42b9e8df3bf3a9625ac31958d3453e53656f3edf6f2a",
+      "source": "Saved/TradeWorkspace/trade-1280x720-Orders.png",
+      "width": 1280,
+      "height": 720,
+      "qa": "Original-resolution inspection: hierarchy, readable navigation, selected tab and bounded scroll regions retained. Presence heading wraps at 720p."
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1280x720-Orders.tsv",
+      "sha256": "d41f0049a33ef2f2c4673d063a47539421f29a70cb3c9c322cfdedfba5eb0393",
+      "source": "Saved/TradeWorkspace/trade-1280x720-Orders.tsv"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1280x720-Specialization.png",
+      "sha256": "e4deccdb4711eb50b0247ecb8367c243d01dd703ebba310ad9c6587e6f5f0735",
+      "source": "Saved/TradeWorkspace/trade-1280x720-Specialization.png",
+      "width": 1280,
+      "height": 720,
+      "qa": "Original-resolution inspection: hierarchy, readable navigation, selected tab and bounded scroll regions retained. Presence heading wraps at 720p."
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1280x720-Specialization.tsv",
+      "sha256": "b64396d4f05a83d11a53825ccd931e07dd82a3ce116114a5d0b19dbf5a9a74b5",
+      "source": "Saved/TradeWorkspace/trade-1280x720-Specialization.tsv"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1920x1080-Route.png",
+      "sha256": "c4a61bd61b06675eaa447cdba7d0fdb2f9d56f8f2e75a1bc8812052afbbc9358",
+      "source": "Saved/TradeWorkspace/trade-1920x1080-Route.png",
+      "width": 1920,
+      "height": 1080,
+      "qa": "Original-resolution inspection: hierarchy, readable navigation, selected tab and bounded scroll regions retained. Presence heading wraps at 720p."
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1920x1080-Route.tsv",
+      "sha256": "6e37f554a2a3243f6cd91757c1e064a7b58cc4ad7aa1ff5cdbf242cc42be3a00",
+      "source": "Saved/TradeWorkspace/trade-1920x1080-Route.tsv"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1920x1080-Presence.png",
+      "sha256": "34e4c071ad9b447c835dbbe1e92fbea304420469ec746633ffcffa0cd6e7dbfc",
+      "source": "Saved/TradeWorkspace/trade-1920x1080-Presence.png",
+      "width": 1920,
+      "height": 1080,
+      "qa": "Original-resolution inspection: hierarchy, readable navigation, selected tab and bounded scroll regions retained. Presence heading wraps at 720p."
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1920x1080-Presence.tsv",
+      "sha256": "416d5b696a340cac0b291da40d4b1e3dc52cb28714dec476c8eadb8195a231cc",
+      "source": "Saved/TradeWorkspace/trade-1920x1080-Presence.tsv"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1920x1080-Orders.png",
+      "sha256": "2f6fbeb5c69638cf9a2b47278f9c8c4f7c50ae504c1fec861d6b2fed4632fd12",
+      "source": "Saved/TradeWorkspace/trade-1920x1080-Orders.png",
+      "width": 1920,
+      "height": 1080,
+      "qa": "Original-resolution inspection: hierarchy, readable navigation, selected tab and bounded scroll regions retained. Presence heading wraps at 720p."
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1920x1080-Orders.tsv",
+      "sha256": "044c78e55d8abc1f27ab93b4d06df5f8f3a90cb14314a6bb34955b60c88f6cbb",
+      "source": "Saved/TradeWorkspace/trade-1920x1080-Orders.tsv"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1920x1080-Specialization.png",
+      "sha256": "f434ff97fadb1b9992413d489c064b4ff49ecca1d177948dbefabcef4915a34f",
+      "source": "Saved/TradeWorkspace/trade-1920x1080-Specialization.png",
+      "width": 1920,
+      "height": 1080,
+      "qa": "Original-resolution inspection: hierarchy, readable navigation, selected tab and bounded scroll regions retained. Presence heading wraps at 720p."
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-01-captures/trade-1920x1080-Specialization.tsv",
+      "sha256": "ea0745b7f941ca63d87c3251d9432ffcc8b01b857c1ccfe3a28cb0d3e465f217",
+      "source": "Saved/TradeWorkspace/trade-1920x1080-Specialization.tsv"
+    }
+  ],
+  "assets": {
+    "newGenerated": [],
+    "newImported": [],
+    "generationMode": "none; approved runtime imagery reused"
+  },
+  "limitations": [
+    "Three failing broader tests are preserved, not waived.",
+    "Creator failures match TR-01 baseline; journey failures remain unresolved and are not certified as baseline.",
+    "No Shipping, multiplayer, full UI-scale/localization matrix or later TG prompt completion is claimed."
+  ]
+}

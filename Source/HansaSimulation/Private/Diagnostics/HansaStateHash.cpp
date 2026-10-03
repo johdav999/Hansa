@@ -275,6 +275,7 @@ namespace Hansa::Simulation
 					for (const FString& CapabilityId : Presence.GrantedCapabilityIds) Builder.AddAsciiString(CapabilityId);
 					Builder.AddInt64(Presence.Contributions.LawfulTradeVolumeMilliUnits); Builder.AddInt64(Presence.Contributions.CompletedDeliveryCount); Builder.AddInt64(Presence.Contributions.InvestedPfennig);
 					if(FingerprintVersion>=30){Builder.AddUInt32(Presence.ActiveSpecializationIds.Num());for(const FString& SpecializationId:Presence.ActiveSpecializationIds)Builder.AddAsciiString(SpecializationId);Builder.AddInt64(Presence.SpecializationRevision);}if(FingerprintVersion>=29){Builder.AddInt64(Presence.Contributions.TransactionValuePfennig);Builder.AddInt64(Presence.Contributions.FulfilledShortageMilliUnits);Builder.AddInt64(Presence.Contributions.ReliableOperatingTicks);Builder.AddInt64(Presence.Contributions.SolventOperatingTicks);Builder.AddUInt64(Presence.LastAcceptedContributionEventSequence);Builder.AddUInt8(static_cast<uint8>(Presence.Upgrade.Status));Builder.AddAsciiString(Presence.Upgrade.TargetStageId);Builder.AddUInt64(Presence.Upgrade.FundingInventoryId.GetValue());Builder.AddUInt32(Presence.Upgrade.FundingInventoryId.GetGeneration());Builder.AddInt64(Presence.Upgrade.RequestedTick.GetValue());Builder.AddInt64(Presence.Upgrade.FundedTick.GetValue());Builder.AddInt64(Presence.Upgrade.CompletionTick.GetValue());Builder.AddInt64(Presence.Upgrade.SpentMoneyPfennig);Builder.AddUInt32(Presence.History.Num());for(const auto& Entry:Presence.History){Builder.AddUInt8(static_cast<uint8>(Entry.Kind));Builder.AddInt64(Entry.Tick.GetValue());Builder.AddUInt64(Entry.SourceEventSequence);Builder.AddAsciiString(Entry.StageId);Builder.AddInt64(Entry.QuantityMilliUnits);Builder.AddInt64(Entry.MoneyPfennig);}}
+					if(FingerprintVersion>=35){const auto& S=Presence.Upgrade.ConstructionSite;Builder.AddUInt8(S.bLocalDelivery?1:0);Builder.AddInt32(S.Anchor.X);Builder.AddInt32(S.Anchor.Y);Builder.AddUInt8((uint8)S.Rotation);Builder.AddUInt32(Presence.Upgrade.DeliveredGoods.Num());for(const auto& G:Presence.Upgrade.DeliveredGoods){Builder.AddAsciiString(G.GoodId.ToString());Builder.AddInt64(G.Quantity.GetRawValue());}}
 					if(FingerprintVersion>=32){Builder.AddUInt32(Presence.Privileges.Num());for(const auto& V:Presence.Privileges){Builder.AddAsciiString(V.PrivilegeId);Builder.AddUInt64(V.GrantedLeaseId.GetValue());Builder.AddUInt8((uint8)V.Status);Builder.AddInt64(V.GrantedTick.GetValue());Builder.AddInt64(V.ExpiryTick.GetValue());Builder.AddInt64(V.SpentMoneyPfennig);}Builder.AddUInt32(Presence.CityProjects.Num());for(const auto& V:Presence.CityProjects){Builder.AddAsciiString(V.ProjectId);Builder.AddUInt8((uint8)V.Status);Builder.AddInt64(V.FundedTick.GetValue());Builder.AddInt64(V.CompletionTick.GetValue());Builder.AddInt64(V.SpentMoneyPfennig);Builder.AddUInt8(V.bSharedEffectApplied?1:0);}Builder.AddUInt8(Presence.bGovernanceAuthority?1:0);Builder.AddAsciiString(Presence.GovernanceCharterId);Builder.AddInt64(Presence.GovernanceGrantedTick.GetValue());Builder.AddInt64(Presence.AuthorityRevision);}
 					Builder.AddUInt8(static_cast<uint8>(Presence.Status)); Builder.AddInt64(Presence.EstablishedTick.GetValue()); Builder.AddInt64(Presence.LastUpgradeTick.GetValue());
 					Builder.AddUInt64(Presence.StationId.GetValue()); Builder.AddUInt32(Presence.StationId.GetGeneration()); Builder.AddUInt64(Presence.LeasedPlotId.GetValue()); Builder.AddUInt32(Presence.LeasedPlotId.GetGeneration());
@@ -284,8 +285,10 @@ namespace Hansa::Simulation
 					Builder.AddUInt64(Station.Id.GetValue()); Builder.AddUInt32(Station.Id.GetGeneration()); Builder.AddUInt64(Station.OwnerId.GetValue()); Builder.AddUInt32(Station.OwnerId.GetGeneration());
 					Builder.AddAsciiString(Station.CityId.ToString()); Builder.AddAsciiString(Station.SiteId); Builder.AddUInt64(Station.InventoryId.GetValue()); Builder.AddUInt32(Station.InventoryId.GetGeneration());
 					Builder.AddUInt64(Station.FactorId.GetValue()); Builder.AddUInt32(Station.FactorId.GetGeneration()); Builder.AddUInt64(Station.LeasedPlotId.GetValue()); Builder.AddUInt32(Station.LeasedPlotId.GetGeneration());
+					if(FingerprintVersion>=35){Builder.AddUInt8(Station.ConstructionSite.bLocalDelivery?1:0);Builder.AddInt32(Station.ConstructionSite.Anchor.X);Builder.AddInt32(Station.ConstructionSite.Anchor.Y);Builder.AddUInt8((uint8)Station.ConstructionSite.Rotation);}
 					Builder.AddUInt8(static_cast<uint8>(Station.Status)); Builder.AddInt64(Station.ProposedTick.GetValue()); Builder.AddInt64(Station.FundedTick.GetValue()); Builder.AddInt64(Station.CompletionTick.GetValue()); Builder.AddInt64(Station.CompletedTick.GetValue());
 					Builder.AddInt64(Station.UpkeepPfennigPerTick); Builder.AddInt64(Station.SpentMoneyRaw); Builder.AddUInt64(Station.FundingInventoryId.GetValue()); Builder.AddUInt32(Station.FundingInventoryId.GetGeneration());
+                if(FingerprintVersion>=36){Builder.AddUInt32(Station.DeliveryMode);Builder.AddUInt32(Station.DeliveryReservations.Num());for(const auto Id:Station.DeliveryReservations){Builder.AddUInt64(Id.GetValue());Builder.AddUInt32(Id.GetGeneration());}}
 					Builder.AddUInt32(Station.SpentGoods.Num()); for (const auto& Cost : Station.SpentGoods) { Builder.AddAsciiString(Cost.GoodId.ToString()); Builder.AddInt64(Cost.Quantity.GetRawValue()); }
                     if (FingerprintVersion >= 28) {
                         Builder.AddUInt32(Station.Orders.Num());
@@ -410,6 +413,7 @@ namespace Hansa::Simulation
 							Builder.AddAsciiString(Action.GoodId.ToString());
 							Builder.AddInt64(Action.QuantityLimit.GetRawValue());
 							Builder.AddInt64(Action.MinimumSourceReserve.GetRawValue());
+							if (FingerprintVersion >= 34) Builder.AddInt32(Action.CargoSlotIndex);
 						}
 					}
 					Builder.AddUInt8(static_cast<uint8>(Route.Lifecycle));
@@ -461,6 +465,7 @@ namespace Hansa::Simulation
 					Builder.AddUInt32(Inventory.VehicleId.GetGeneration());
 					if (FingerprintVersion >= 27) { Builder.AddUInt64(Inventory.TradeStationId.GetValue()); Builder.AddUInt32(Inventory.TradeStationId.GetGeneration()); }
 					Builder.AddInt64(Inventory.Capacity.GetRawValue());
+                    if (FingerprintVersion >= 34) { Builder.AddUInt32(Inventory.CargoSlots.Num()); for (const auto& Slot : Inventory.CargoSlots) { Builder.AddAsciiString(Slot.GoodId.ToString()); Builder.AddInt64(Slot.Quantity.GetRawValue()); } }
 					Builder.AddUInt32(static_cast<uint32>(Inventory.AcceptedGoods.Num()));
 					for (const FHansaGoodId& GoodId : Inventory.AcceptedGoods)
 					{

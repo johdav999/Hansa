@@ -5,6 +5,7 @@
 #include "Misc/SecureHash.h"
 #include "Fixtures/HansaProductionFixture.h"
 #include "Save/HansaSaveEnvelope.h"
+#include "Placement/HansaRostockPlacement.h"
 #include "Diagnostics/HansaStateHash.h"
 
 #if WITH_DEV_AUTOMATION_TESTS && WITH_HANSA_AUTOMATION
@@ -34,16 +35,8 @@ bool FHansaSaveStationOrderMigrationTest::RunTest(const FString&)
  auto F=FHansaProductionFixture::TryCreate();if(!F)return false;const auto& D=F.Value.GetDefinitions();
  auto S=Capture(F.Value);TArray<uint8> Bytes;auto Encoded=FHansaSaveEnvelope::Encode(S,D,Bytes);if(!TestTrue(TEXT("Current empty-order archive encodes"),Encoded.IsSuccess()))return false;
  TestTrue(TEXT("No station records in synthetic migration source"),S.State.CreateReadOnlyAccess(D).GetTradeStations().IsEmpty());
- // With no station records or pending commands, v14 and v15 payload layouts are identical.
- // Reconstruct the genuine previous header and checksum, not a bypass of decode validation.
- const auto Put=[&](int32 Offset,uint64 Value,int32 Count){for(int32 I=0;I<Count;++I)Bytes[Offset+I]=static_cast<uint8>(Value>>(I*8));};
- Put(4,14,4);Put(16,27,4);
- int32 Offset=44;
- const auto Read32=[&](int32 At){uint32 V=0;for(int32 I=0;I<4;++I)V|=uint32(Bytes[At+I])<<(I*8);return V;};
- for(int32 I=0;I<4;++I){const int32 Length=Read32(Offset);Offset+=4+Length*2;}
- const int32 Migrations=Read32(Offset);Offset+=4;
- for(int32 I=0;I<Migrations;++I){const int32 Length=Read32(Offset);Offset+=4+Length*2;}
- Put(Offset,FHansaStateHasher::ComputeSavedVersion(S.State,D,27).GetOverallHash(),8);Sign(Bytes);
+ // Use the real historical payload layout; format 22 now includes cargo-slot arrays.
+ if(!TestTrue(TEXT("Genuine format-14 fixture"),FHansaSaveEnvelope::EncodeHistoricalFixtureForTests(S,D,14,27,Bytes).IsSuccess()))return false;
  FHansaSaveSnapshot Loaded;auto Result=FHansaSaveEnvelope::Decode(Bytes,D,Loaded);if(!TestTrue(*Result.Message,Result.IsSuccess()))return false;
  TestTrue(TEXT("v14 gets explicit order migration"),Result.AppliedMigrations.Contains(TEXT("Hansa.Save.14To15.AddStationOrders")));
  TestEqual(TEXT("Migration preserves existing gameplay"),Result.AuthoritativeHash,Encoded.AuthoritativeHash);
@@ -57,7 +50,7 @@ bool FHansaSaveEveryIntermediateMigrationTest::RunTest(const FString&)
 {
  using namespace Hansa::Tests::Save;
  auto F=FHansaProductionFixture::TryCreate();if(!TestTrue(TEXT("Historical fixture source creates"),F.IsSuccess()))return false;const auto& D=F.Value.GetDefinitions();const auto S=Capture(F.Value);
- struct FPair{uint32 Format;uint32 Fingerprint;};const FPair Pairs[]={{1,16},{2,16},{3,16},{4,17},{5,18},{6,19},{7,20},{8,21},{9,22},{10,23},{11,24},{12,25},{13,26},{14,27},{15,28},{16,28},{17,29},{18,30},{19,31},{20,32}};
+ struct FPair{uint32 Format;uint32 Fingerprint;};const FPair Pairs[]={{1,16},{2,16},{3,16},{4,17},{5,18},{6,19},{7,20},{8,21},{9,22},{10,23},{11,24},{12,25},{13,26},{14,27},{15,28},{16,28},{17,29},{18,30},{19,31},{20,32},{21,33},{22,34},{23,35}};
  for(const FPair Pair:Pairs)
  {
   TArray<uint8> Bytes;const auto Written=FHansaSaveEnvelope::EncodeHistoricalFixtureForTests(S,D,Pair.Format,Pair.Fingerprint,Bytes);if(!TestTrue(FString::Printf(TEXT("Format %u fixture writes genuine body"),Pair.Format),Written.IsSuccess()))return false;
@@ -186,7 +179,7 @@ bool FHansaSaveMigrationTest::RunTest(const FString& Parameters)
 	if (!TestTrue(*R.Message, R.IsSuccess())) return false;
 	TestEqual(TEXT("Prior format reported"), R.SourceFormatVersion, 1U);
     TestTrue(TEXT("Station order migration is explicit"),R.AppliedMigrations.Contains(TEXT("Hansa.Save.14To15.AddStationOrders")));
-	TestEqual(TEXT("Eighteen explicit migrations through recoverable station interruptions"), R.AppliedMigrations.Num(), 18);
+	TestEqual(TEXT("Explicit migrations through one-time construction delivery"), R.AppliedMigrations.Num(), 21);
     TestTrue(TEXT("Merchant-office specialization migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.17To18.AddMerchantOfficeSpecializationsAndPriceLimits")));
     TestTrue(TEXT("Bounded foreign-construction migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.18To19.AddBoundedForeignConstructionRights")));
     TestTrue(TEXT("City privilege/project/charter migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.19To20.AddCityPrivilegesProjectsAndCharters")));
@@ -196,7 +189,7 @@ bool FHansaSaveMigrationTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Foreign presence migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.11To12.SeedAuthoredForeignPresence")));
 	TestTrue(TEXT("Trade-station migration named explicitly"), R.AppliedMigrations.Contains(TEXT("Hansa.Save.13To14.AddTradeStationLifecycle")));
     TestEqual(TEXT("Legacy campaign without Rostock receives no orphaned presence"), Loaded.State.CreateReadOnlyAccess(D).GetForeignPresences().Num(), 0);
-	TestEqual(TEXT("Migration lineage captured"), Loaded.MigrationHistory.Num(), 18);
+	TestEqual(TEXT("Migration lineage captured"), Loaded.MigrationHistory.Num(), 21);
 	TestEqual(TEXT("Deterministic display default"), Loaded.DisplayName, D.GetScenarioId().ToString());
 	TestEqual(TEXT("Navigation migration preserves the reviewed legacy gameplay checksum"),
         FHansaStateHasher::ComputeSavedVersion(Loaded.State,D,22).GetOverallHash(),448186139431435968ULL);
@@ -227,7 +220,7 @@ bool FHansaSaveV2RouteLabels::RunTest(const FString&)
     TestEqual(TEXT("Prior format 2 recognized"),Result.SourceFormatVersion,2U);
     TestTrue(TEXT("Order migration present"),Result.AppliedMigrations.Contains(TEXT("Hansa.Save.14To15.AddStationOrders")));
     TestTrue(TEXT("Route-target migration present"),Result.AppliedMigrations.Contains(TEXT("Hansa.Save.15To16.ExplicitRouteTargets")));
-	TestEqual(TEXT("Catalog through recoverable station interruptions"),Result.AppliedMigrations.Num(),17);
+	TestEqual(TEXT("Catalog through construction delivery"),Result.AppliedMigrations.Num(),20);
 	TestTrue(TEXT("Recovery migration present"),Result.AppliedMigrations.Contains(TEXT("Hansa.Save.20To21.AddRecoverableTradeStationInterruptions")));
     TestTrue(TEXT("Prior campaigns get no invented labels"),Loaded.RouteLabels.IsEmpty());
     TArray<uint8> Current;TestTrue(TEXT("Migrated save encodes"),!!FHansaSaveEnvelope::Encode(Loaded,F.Value.GetDefinitions(),Current));
@@ -281,6 +274,94 @@ bool FHansaSaveMvpBudgetTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("MVP save remains inside the explicit 64 MiB envelope limit"),
 		CanonicalBytes.Num() > 0 && CanonicalBytes.Num() <= FHansaSaveEnvelope::MaximumBytes);
 	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaRostockTopologyMigration,"Hansa.Integration.Save.RostockTopologyMigration",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHansaRostockTopologyMigration::RunTest(const FString&)
+{
+ using namespace Hansa::Tests::Save;
+ auto F=FHansaProductionFixture::TryCreate();if(!F)return false;if(!F.Value.Step(7))return false;
+ const auto& Base=F.Value.GetDefinitions();auto Snapshot=Capture(F.Value);
+ const auto Seed=Snapshot.State.CreateReadOnlyAccess(Base);
+ FHansaPlacementMapInitialization Home;Home.CityId=FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")).Value;Home.BoundsMin={0,0};Home.BoundsMax={3,3};Home.RoadBuildingDefinitionId=FHansaBuildingTypeId::TryParse(TEXT("Building.Road")).Value;
+ for(int32 X=0;X<4;++X)for(int32 Y=0;Y<4;++Y)Home.Cells.Add({{X,Y},EHansaPlacementTerrain::Land,Seed.GetHouses()[0].Id,false});
+ auto OldMap=FHansaPlacementTopology::TryCreate({Home});
+ auto OldContext=FHansaSimulationDefinitionContext::TryCreate(Base.GetScenarioId(),Base.GetDefinitionHash(),*Base.GetEconomicRegistry(),OldMap.Value);const auto& Old=OldContext.Value;
+ FHansaSimulationInitialization Init;Init.Clock=Seed.GetClock();for(const auto& H:Seed.GetHouses())Init.Houses.Add({H.Id,H.Money});Init.Cities.Append(Seed.GetCities());
+ FHansaInventoryInitialization Stock;Stock.Id=FHansaInventoryId::TryCreate(42).Value;Stock.OwnerKind=EHansaInventoryOwnerKind::City;Stock.CityId=Home.CityId;Stock.Capacity=FHansaQuantity::FromRaw(100000);Stock.AcceptedGoods={FHansaGoodId::TryParse(TEXT("Good.Timber")).Value};Stock.InitialStock={{Stock.AcceptedGoods[0],FHansaQuantity::FromRaw(17000)}};Init.Inventories.Add(Stock);
+ auto State=FHansaSimulationState::TryCreate(MoveTemp(Init),Old.GetPlacementTopologyShared());if(!TestTrue(TEXT("Predecessor campaign initializes"),State.IsSuccess()))return false;Snapshot.State=MoveTemp(State.Value);
+ TArray<uint8> Bytes;
+ if(!TestTrue(TEXT("Real predecessor archive encodes"),FHansaSaveEnvelope::Encode(Snapshot,Old,Bytes).IsSuccess()))return false;
+ TArray<FHansaPlacementMapInitialization> Maps;Maps.Append(Snapshot.State.CreateReadOnlyAccess(Old).GetPlacement().GetMaps());
+ Maps.Add(RostockPlacement::CreateMap());auto Topology=FHansaPlacementTopology::TryCreate(Maps);if(!Topology)return false;
+ auto Current=FHansaSimulationDefinitionContext::TryCreate(Old.GetScenarioId(),Old.GetDefinitionHash(),*Old.GetEconomicRegistry(),Topology.Value);if(!Current)return false;
+ FHansaSaveSnapshot Loaded;const auto Migrated=FHansaSaveEnvelope::Decode(Bytes,Current.Value,Loaded);
+ if(!TestTrue(*Migrated.Message,Migrated.IsSuccess()))return false;
+ TestTrue(TEXT("Explicit named topology migration"),Migrated.AppliedMigrations.Contains(TEXT("Hansa.Save.AddRostockPlacementTopology.v1")));
+ const auto Before=Snapshot.State.CreateReadOnlyAccess(Old),After=Loaded.State.CreateReadOnlyAccess(Current.Value);
+ TestEqual(TEXT("Tick preserved"),Before.GetClock().GetTick().GetValue(),After.GetClock().GetTick().GetValue());
+ TestEqual(TEXT("Placements preserved"),Before.GetPlacement().GetPlacements().Num(),After.GetPlacement().GetPlacements().Num());
+ for(int32 I=0;I<Before.GetHouses().Num();++I)TestEqual(TEXT("Treasuries preserved"),Before.GetHouses()[I].Money.GetRawValue(),After.GetHouses()[I].Money.GetRawValue());
+ TArray<uint8> Again;TestTrue(TEXT("Migrated campaign resaves"),FHansaSaveEnvelope::Encode(Loaded,Current.Value,Again).IsSuccess());
+ FHansaSaveSnapshot Twice;const auto Second=FHansaSaveEnvelope::Decode(Again,Current.Value,Twice);
+ TestTrue(TEXT("Migration idempotent"),Second.IsSuccess()&&Second.AppliedMigrations.IsEmpty());TestEqual(TEXT("Stable migrated fingerprint"),Second.AuthoritativeHash,Migrated.AuthoritativeHash);
+ Maps.Last().Cells[0].bBlocked=!Maps.Last().Cells[0].bBlocked;auto Changed=FHansaPlacementTopology::TryCreate(Maps);
+ auto Wrong=FHansaSimulationDefinitionContext::TryCreate(Old.GetScenarioId(),Old.GetDefinitionHash(),*Old.GetEconomicRegistry(),Changed.Value);
+ FHansaSaveSnapshot Untouched;Untouched.DisplayName=TEXT("Untouched");TestFalse(TEXT("Unregistered map revision fails closed"),FHansaSaveEnvelope::Decode(Bytes,Wrong.Value,Untouched).IsSuccess());TestEqual(TEXT("Failed decode is transactional"),Untouched.DisplayName,FString(TEXT("Untouched")));
+ return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaHomeOwnershipTopologyMigration,
+ "Hansa.Integration.Save.LubeckHomeOwnershipTopologyMigration",
+ EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHansaHomeOwnershipTopologyMigration::RunTest(const FString&)
+{
+ using namespace Hansa::Tests::Save;
+ auto Fixture=FHansaProductionFixture::TryCreate();if(!Fixture)return false;
+ const auto& Base=Fixture.Value.GetDefinitions();auto Snapshot=Capture(Fixture.Value);
+ const auto Seed=Snapshot.State.CreateReadOnlyAccess(Base);
+ if(!TestTrue(TEXT("Fixture has a player house"),!Seed.GetHouses().IsEmpty()))return false;
+ // The production fixture has one house; author this migration's prior owner
+ // explicitly instead of relying on an unrelated fixture's participant count.
+ const auto FormerOwner=FHansaHouseId::TryCreate(900).Value;
+ FHansaPlacementMapInitialization Home;
+ Home.CityId=FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")).Value;
+ Home.BoundsMin={0,0};Home.BoundsMax={3,3};
+ Home.RoadBuildingDefinitionId=FHansaBuildingTypeId::TryParse(TEXT("Building.Road")).Value;
+ for(int32 X=0;X<4;++X)for(int32 Y=0;Y<4;++Y)
+  Home.Cells.Add({{X,Y},EHansaPlacementTerrain::Land,(X==3&&Y==3)?FormerOwner:Seed.GetHouses()[0].Id,false});
+ auto OldTopology=FHansaPlacementTopology::TryCreate({Home});if(!TestTrue(TEXT("Old topology validates"),OldTopology.IsSuccess()))return false;
+ auto OldContext=FHansaSimulationDefinitionContext::TryCreate(Base.GetScenarioId(),Base.GetDefinitionHash(),*Base.GetEconomicRegistry(),OldTopology.Value);
+ if(!TestTrue(TEXT("Old definitions validate"),OldContext.IsSuccess()))return false;
+ FHansaSimulationInitialization Init;Init.Clock=Seed.GetClock();
+ for(const auto& House:Seed.GetHouses())Init.Houses.Add({House.Id,House.Money});
+ Init.Houses.Add({FormerOwner,FHansaMoney()});
+ Init.Cities.Append(Seed.GetCities());
+ FHansaInventoryInitialization Stock;Stock.Id=FHansaInventoryId::TryCreate(42).Value;
+ Stock.OwnerKind=EHansaInventoryOwnerKind::City;Stock.CityId=Home.CityId;
+ Stock.Capacity=FHansaQuantity::FromRaw(100000);
+ Stock.AcceptedGoods={FHansaGoodId::TryParse(TEXT("Good.Timber")).Value};
+ Stock.InitialStock={{Stock.AcceptedGoods[0],FHansaQuantity::FromRaw(17000)}};
+ Init.Inventories.Add(Stock);
+ auto State=FHansaSimulationState::TryCreate(MoveTemp(Init),OldContext.Value.GetPlacementTopologyShared());
+ if(!TestTrue(TEXT("Old campaign validates"),State.IsSuccess()))return false;
+ Snapshot.State=MoveTemp(State.Value);
+ TArray<uint8> Bytes;
+ if(!TestTrue(TEXT("Old campaign encodes"),FHansaSaveEnvelope::Encode(Snapshot,OldContext.Value,Bytes).IsSuccess()))return false;
+ Home.HomeOwnerPredecessors.Add({15,FormerOwner});
+ Home.Cells[15].OwnerId=Seed.GetHouses()[0].Id;
+ auto CurrentTopology=FHansaPlacementTopology::TryCreate({Home});
+ if(!TestTrue(TEXT("Home ownership topology validates"),CurrentTopology.IsSuccess()))return false;
+ auto Current=FHansaSimulationDefinitionContext::TryCreate(Base.GetScenarioId(),Base.GetDefinitionHash(),*Base.GetEconomicRegistry(),CurrentTopology.Value);
+ if(!TestTrue(TEXT("Home ownership topology validates"),Current.IsSuccess()))return false;
+ FHansaSaveSnapshot Loaded;const auto Migrated=FHansaSaveEnvelope::Decode(Bytes,Current.Value,Loaded);
+ if(!TestTrue(*Migrated.Message,Migrated.IsSuccess()))return false;
+ TestTrue(TEXT("Exact home ownership migration is recorded"),Migrated.AppliedMigrations.Contains(TEXT("Hansa.Save.RestoreLubeckHomeConstructionArea.v1")));
+ TestEqual(TEXT("Player money survives ownership migration"),Loaded.State.CreateReadOnlyAccess(Current.Value).GetHouses()[0].Money.GetRawValue(),Seed.GetHouses()[0].Money.GetRawValue());
+ TArray<uint8> Resaved;TestTrue(TEXT("Migrated campaign saves"),FHansaSaveEnvelope::Encode(Loaded,Current.Value,Resaved).IsSuccess());
+ FHansaSaveSnapshot Again;const auto Reopened=FHansaSaveEnvelope::Decode(Resaved,Current.Value,Again);
+ TestTrue(TEXT("Migration is idempotent"),Reopened.IsSuccess()&&Reopened.AppliedMigrations.IsEmpty());
+ return !HasAnyErrors();
 }
 #endif
 

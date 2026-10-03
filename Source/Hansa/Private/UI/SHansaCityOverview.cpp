@@ -87,6 +87,11 @@ namespace Hansa::UI
 						[
 							SAssignNew(TitleText, STextBlock).TextStyle(&DarkHeadingStyle).OverflowPolicy(ETextOverflowPolicy::Ellipsis).Clipping(EWidgetClipping::ClipToBounds)
 						]
+						+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(8,0)
+                        [SAssignNew(CompactMarketBack,SHansaAction).Preferences(Preferences).Compact(false)
+                         .Label(LOCTEXT("CompactMarketBack","Market summary"))
+                         .Visibility_Lambda([this]{return CompactMarket()?EVisibility::Visible:EVisibility::Collapsed;})
+                         .OnClicked_Lambda([this]{ActivateSemanticId(TEXT("CityOverview.Market.Back"));return FReply::Handled();})]
 						+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
 						[
 							SNew(SBox).WidthOverride(112)[SAssignNew(CloseButton, SHansaAction).Preferences(Preferences).Compact(true)
@@ -95,7 +100,7 @@ namespace Hansa::UI
 						]
 					]
                     + SVerticalBox::Slot().AutoHeight().Padding(0,8)
-                    [SNew(SHorizontalBox)
+                    [SNew(SHorizontalBox).Visibility_Lambda([this]{return CompactMarket()?EVisibility::Collapsed:EVisibility::Visible;})
                      + SHorizontalBox::Slot().AutoWidth().Padding(0,0,8,0)[SNew(SBox).WidthOverride(128)[SAssignNew(LubeckButton,SHansaAction).Preferences(Preferences).Compact(true).Label(LOCTEXT("Lubeck","Lübeck")).OnClicked_Lambda([this]{if (Model.IsValid()) { Model->SelectCityIntent(TEXT("City.Lubeck")); } return FReply::Handled();})]]
                      + SHorizontalBox::Slot().AutoWidth().Padding(0,0,16,0)[SNew(SBox).WidthOverride(128)[SAssignNew(RostockButton,SHansaAction).Preferences(Preferences).Compact(true).Label(LOCTEXT("Rostock","Rostock")).OnClicked_Lambda([this]{if (Model.IsValid()) { Model->SelectCityIntent(TEXT("City.Rostock")); } return FReply::Handled();})]]
                      + SHorizontalBox::Slot().AutoWidth().Padding(0,0,16,0)[SNew(SBox).WidthOverride(128)[SAssignNew(VisitButton,SHansaAction).Preferences(Preferences).Compact(true).Label(LOCTEXT("VisitCity","Visit city")).OnClicked_Lambda([this]{if (Model.IsValid()) { Model->VisitCityIntent(); } return FReply::Handled();})]]
@@ -106,7 +111,7 @@ namespace Hansa::UI
 					]
 					+ SVerticalBox::Slot().AutoHeight()
 					[
-						SNew(SHorizontalBox)
+						SNew(SHorizontalBox).Visibility_Lambda([this]{return CompactMarket()?EVisibility::Collapsed:EVisibility::Visible;})
 						+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(2.0f)
 						[
 							SAssignNew(PopulationTab, SHansaAction).Preferences(Preferences).Compact(true).Label(LOCTEXT("PopulationTab", "Population"))
@@ -206,6 +211,7 @@ namespace Hansa::UI
         MapWidget(TEXT("CityOverview.Visit"),VisitButton);
         MapWidget(TEXT("CityOverview.Report"),ReportText);
         MapWidget(TEXT("CityOverview.Market.Details"),MarketDetailToggle);
+        MapWidget(TEXT("CityOverview.Market.Back"),CompactMarketBack);
 		MapWidget(TEXT("CityOverview.List"), ListPanel);
 		MapWidget(TEXT("CityOverview.State"), StatePanel);
         MapWidget(TEXT("CityOverview.State.Title"),StateTitleText);
@@ -302,10 +308,11 @@ namespace Hansa::UI
 	void SHansaCityOverview::RebuildFocusOrder(const FHansaCityOverviewSnapshot& Snapshot)
 	{
 		FocusOrder = { TEXT("CityOverview.Close"), TEXT("CityOverview.City.Lubeck"), TEXT("CityOverview.City.Rostock"), TEXT("CityOverview.Visit"), TEXT("CityOverview.Tab.Population"), TEXT("CityOverview.Tab.Production"), TEXT("CityOverview.Tab.Market") };
-		if(Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.CityStableId==TEXT("City.Lubeck") && Snapshot.ActiveTab==EHansaCityOverviewTab::Market && MarketTableModel.IsValid())FocusOrder.Add(TEXT("CityOverview.Market.Details"));
-		if (bFullMarket && Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.CityStableId==TEXT("City.Lubeck") && Snapshot.ActiveTab == EHansaCityOverviewTab::Market && MarketTableModel.IsValid() && MarketTableWidget.IsValid())
+		if(Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.ActiveTab==EHansaCityOverviewTab::Market && MarketTableModel.IsValid())FocusOrder.Add(TEXT("CityOverview.Market.Details"));
+		if (bFullMarket && Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.ActiveTab == EHansaCityOverviewTab::Market && MarketTableModel.IsValid() && MarketTableWidget.IsValid())
 		{
-			FocusOrder.Append(MarketTableWidget->GetControllerFocusOrder());
+			if(CompactMarket())FocusOrder={TEXT("CityOverview.Close"),TEXT("CityOverview.Market.Back")};
+            FocusOrder.Append(MarketTableWidget->GetControllerFocusOrder());
 			return;
 		}
 		if(Snapshot.LoadState==EHansaCityOverviewLoadState::Ready) for (const FHansaCityOverviewRowPresentation& Row : PresentedRows)
@@ -320,7 +327,7 @@ namespace Hansa::UI
 	{
 		PresentedRevision = Revision;
 		RootWidget->SetVisibility(Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed);
-		TitleText->SetText(Snapshot.CityTitle);TitleText->SetToolTipText(Snapshot.CityTitle);
+		TitleText->SetText(CompactMarket()?LOCTEXT("CompactMarketTitle","Market"):Snapshot.CityTitle);TitleText->SetToolTipText(Snapshot.CityTitle);
         const bool Remote=Snapshot.CityStableId==TEXT("City.Rostock");
         ReportText->SetText(Remote?LOCTEXT("RemoteContext","Trade reports only · civic data unavailable · no construction"):LOCTEXT("LocalContext","Inspect needs, production and trade"));
         LubeckButton->SetState(Remote?EUiState::Default:EUiState::Selected,FText());
@@ -349,10 +356,10 @@ namespace Hansa::UI
 		LastActionText->SetText(Snapshot.LastActionResult);
         LastActionText->SetVisibility(Snapshot.LastActionResult.IsEmpty()?EVisibility::Collapsed:EVisibility::Visible);
 		const bool bReady = Snapshot.LoadState == EHansaCityOverviewLoadState::Ready;
-        const bool MarketAvailable=bReady && !Remote && Snapshot.ActiveTab==EHansaCityOverviewTab::Market && MarketTableModel.IsValid();
+        const bool MarketAvailable=bReady && Snapshot.ActiveTab==EHansaCityOverviewTab::Market && MarketTableModel.IsValid();
         MarketDetailToggle->SetVisibility(MarketAvailable?EVisibility::Visible:EVisibility::Collapsed);
         MarketDetailToggle->SetLabel(bFullMarket?LOCTEXT("MarketSummary","Market summary"):LOCTEXT("FullMarket","Open full market"));
-		const bool bShowMarket = bReady && bFullMarket && Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.CityStableId==TEXT("City.Lubeck") && Snapshot.ActiveTab == EHansaCityOverviewTab::Market && MarketTableModel.IsValid();
+		const bool bShowMarket = bReady && bFullMarket && Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.ActiveTab == EHansaCityOverviewTab::Market && MarketTableModel.IsValid();
 		ListPanel->SetVisibility(bReady && !bShowMarket ? EVisibility::Visible : EVisibility::Collapsed);
 		SummaryBox->SetVisibility(bShowMarket?EVisibility::Collapsed:EVisibility::Visible);
 		if (MarketTableWidget.IsValid()) MarketTableWidget->SetVisibility(bShowMarket ? EVisibility::Visible : EVisibility::Collapsed);
@@ -405,9 +412,10 @@ namespace Hansa::UI
 	bool SHansaCityOverview::ActivateSemanticId(const FString& SemanticId)
 	{
 		if (!Model.IsValid() || !Model->GetSnapshot().bOpen) return false;
-		if (bFullMarket && Model->GetSnapshot().CityStableId==TEXT("City.Lubeck") && Model->GetSnapshot().ActiveTab==EHansaCityOverviewTab::Market && Model->GetSnapshot().LoadState==EHansaCityOverviewLoadState::Ready && MarketTableWidget.IsValid() && SemanticId.StartsWith(TEXT("Market."))) return MarketTableWidget->ActivateSemanticId(SemanticId);
-		if(SemanticId==TEXT("CityOverview.Market.Details")){
-            const auto& S=Model->GetSnapshot();if(S.CityStableId!=TEXT("City.Lubeck") || S.ActiveTab!=EHansaCityOverviewTab::Market || S.LoadState!=EHansaCityOverviewLoadState::Ready || !MarketTableModel.IsValid())return false;
+		if (bFullMarket && Model->GetSnapshot().ActiveTab==EHansaCityOverviewTab::Market && Model->GetSnapshot().LoadState==EHansaCityOverviewLoadState::Ready && MarketTableWidget.IsValid() && SemanticId.StartsWith(TEXT("Market."))) return MarketTableWidget->ActivateSemanticId(SemanticId);
+		if(SemanticId==TEXT("CityOverview.Market.Back")){ bFullMarket=false;Refresh(Model->GetSnapshot(),Model->GetRevision());FocusSemanticId(TEXT("CityOverview.Market.Details"));return true;}
+        if(SemanticId==TEXT("CityOverview.Market.Details")){
+            const auto& S=Model->GetSnapshot();if(S.ActiveTab!=EHansaCityOverviewTab::Market || S.LoadState!=EHansaCityOverviewLoadState::Ready || !MarketTableModel.IsValid())return false;
             bFullMarket=!bFullMarket;Refresh(S,Model->GetRevision());return true;
         }
         if (SemanticId == TEXT("CityOverview.City.Lubeck"))return Model->SelectCityIntent(TEXT("City.Lubeck"));
@@ -462,10 +470,11 @@ namespace Hansa::UI
 
 	TArray<FString> SHansaCityOverview::GetControllerFocusOrder() const
 	{
-		if (Model.IsValid() && bFullMarket && Model->GetSnapshot().CityStableId==TEXT("City.Lubeck") && Model->GetSnapshot().LoadState==EHansaCityOverviewLoadState::Ready && Model->GetSnapshot().ActiveTab == EHansaCityOverviewTab::Market && MarketTableWidget.IsValid())
+		if (Model.IsValid() && bFullMarket && Model->GetSnapshot().LoadState==EHansaCityOverviewLoadState::Ready && Model->GetSnapshot().ActiveTab == EHansaCityOverviewTab::Market && MarketTableWidget.IsValid())
 		{
 			TArray<FString> Current = { TEXT("CityOverview.Close"), TEXT("CityOverview.City.Lubeck"), TEXT("CityOverview.City.Rostock"), TEXT("CityOverview.Visit"), TEXT("CityOverview.Tab.Population"), TEXT("CityOverview.Tab.Production"), TEXT("CityOverview.Tab.Market") };
 			Current.Add(TEXT("CityOverview.Market.Details"));
+            if(CompactMarket())Current={TEXT("CityOverview.Close"),TEXT("CityOverview.Market.Back")};
             Current.Append(MarketTableWidget->GetControllerFocusOrder());
 			return Current;
 		}
@@ -527,10 +536,12 @@ namespace Hansa::UI
 				}
 			}
 			if(Id.StartsWith(TEXT("CityOverview.Header.")) || Id==TEXT("CityOverview.Header")) Node.State.bVisible &= !bFullMarket || Snapshot.ActiveTab!=EHansaCityOverviewTab::Market;
-			Nodes.Add(MoveTemp(Node));
+			if(CompactMarket() && (Id.StartsWith(TEXT("CityOverview.Tab.")) || Id.StartsWith(TEXT("CityOverview.City.")) || Id==TEXT("CityOverview.Visit") || Id==TEXT("CityOverview.Market.Details")))Node.State.bVisible=false;
+            Nodes.Add(MoveTemp(Node));
 		};
 
-		Add(TEXT("CityOverview.Root"), TEXT("HUD.Root"), Snapshot.CityTitle.ToString(), EHansaHudSemanticRole::Screen, false, false,
+		Add(TEXT("CityOverview.Market.Back"),TEXT("CityOverview.Root"),TEXT("Market summary"),EHansaHudSemanticRole::Button,true,true);
+        Add(TEXT("CityOverview.Root"), TEXT("HUD.Root"), Snapshot.CityTitle.ToString(), EHansaHudSemanticRole::Screen, false, false,
 			TEXT("load-state"), LoadStateValue(Snapshot.LoadState), Snapshot.bOpen, true, false, Snapshot.LoadState == EHansaCityOverviewLoadState::Error);
 		Add(TEXT("CityOverview.Close"), TEXT("CityOverview.Root"), TEXT("Close City Overview"), EHansaHudSemanticRole::Button, true, true);
 		Add(TEXT("CityOverview.Header"), TEXT("CityOverview.Root"), TEXT("City summaries"), EHansaHudSemanticRole::Panel, false, false, TEXT("count"), FString::FromInt(Snapshot.HeaderSummaries.Num()));
@@ -543,7 +554,7 @@ namespace Hansa::UI
 		Add(TEXT("CityOverview.Tab.Production"), TEXT("CityOverview.Root"), TEXT("Production"), EHansaHudSemanticRole::Tab, true, true, TEXT("selected"), Snapshot.ActiveTab == EHansaCityOverviewTab::Production ? TEXT("true") : TEXT("false"), Snapshot.ActiveTab == EHansaCityOverviewTab::Production);
 		Add(TEXT("CityOverview.Tab.Market"), TEXT("CityOverview.Root"), TEXT("Market"), EHansaHudSemanticRole::Tab, true, true, TEXT("selected"), Snapshot.ActiveTab == EHansaCityOverviewTab::Market ? TEXT("true") : TEXT("false"), Snapshot.ActiveTab == EHansaCityOverviewTab::Market);
 		Add(TEXT("CityOverview.Tab.Administration"), TEXT("CityOverview.Root"), TEXT("Administration · Future"), EHansaHudSemanticRole::Tab, false, false, TEXT("availability"), TEXT("future-placeholder"), false, false);
-		const bool bNativeMarket = bFullMarket && Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.CityStableId==TEXT("City.Lubeck") && Snapshot.ActiveTab == EHansaCityOverviewTab::Market && MarketTableModel.IsValid() && MarketTableWidget.IsValid();
+		const bool bNativeMarket = bFullMarket && Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.ActiveTab == EHansaCityOverviewTab::Market && MarketTableModel.IsValid() && MarketTableWidget.IsValid();
 		Add(TEXT("CityOverview.List"), TEXT("CityOverview.Root"), TEXT("Active tab rows"), EHansaHudSemanticRole::List, false, false, TEXT("count"),
 			FString::FromInt(bNativeMarket ? 0 : Pinned->GetActiveRows().Num()));
 		if (!bNativeMarket) for (const FHansaCityOverviewRowPresentation& Row : Pinned->GetActiveRows())
@@ -566,7 +577,7 @@ namespace Hansa::UI
 			false, false, TEXT("state-detail"), Snapshot.StateDetail.ToString(), false, true, Snapshot.LoadState == EHansaCityOverviewLoadState::Loading, bError);
 		Add(TEXT("CityOverview.State.Retry"), TEXT("CityOverview.State"), TEXT("Try again"), EHansaHudSemanticRole::Button, true, true,
 			TEXT("availability"), bError ? TEXT("available") : TEXT("not-error"), false, bError, false, bError);
-		if (bFullMarket && Snapshot.CityStableId==TEXT("City.Lubeck") && Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.ActiveTab == EHansaCityOverviewTab::Market && MarketTableWidget.IsValid()) {
+		if (bFullMarket && Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.ActiveTab == EHansaCityOverviewTab::Market && MarketTableWidget.IsValid()) {
             auto MarketNodes=MarketTableWidget->GetSemanticSnapshot();
             const auto Offset=MarketTableWidget->GetCachedGeometry().GetAbsolutePosition()-RootWidget->GetCachedGeometry().GetAbsolutePosition();
             for(auto& Node:MarketNodes) if(Node.Bounds.Width()>0 && Node.Bounds.Height()>0) Node.Bounds+=FIntPoint(FMath::RoundToInt(Offset.X),FMath::RoundToInt(Offset.Y));
@@ -579,7 +590,7 @@ namespace Hansa::UI
         Add(TEXT("CityOverview.Market.Details"),TEXT("CityOverview.Root"),TEXT("Toggle full market"),EHansaHudSemanticRole::Button,true,true);
         Add(TEXT("CityOverview.Report"),TEXT("CityOverview.Root"),TEXT("Report context"),EHansaHudSemanticRole::Status,false,false,TEXT("context"),ReportText->GetText().ToString());
         for(auto& Node:Nodes){
-            if(Node.Id==TEXT("CityOverview.Market.Details"))Node.State.bVisible=Snapshot.bOpen && Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.CityStableId==TEXT("City.Lubeck") && Snapshot.ActiveTab==EHansaCityOverviewTab::Market;
+            if(Node.Id==TEXT("CityOverview.Market.Details"))Node.State.bVisible=!CompactMarket() && Snapshot.bOpen && Snapshot.LoadState==EHansaCityOverviewLoadState::Ready && Snapshot.ActiveTab==EHansaCityOverviewTab::Market;
             if(Node.Id==TEXT("CityOverview.Tab.Administration"))Node.State.bVisible=false;
             if(Node.Id.StartsWith(TEXT("CityOverview.Row.")) && Snapshot.LoadState!=EHansaCityOverviewLoadState::Ready)Node.State.bVisible=false;
             if(Node.Id==TEXT("CityOverview.State.Retry") && Snapshot.LoadState!=EHansaCityOverviewLoadState::Error)Node.State.bVisible=false;

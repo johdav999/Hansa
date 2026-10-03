@@ -62,7 +62,7 @@ public:
                 Press(TEXT("CityOverview.City.Lubeck"));Press(TEXT("Market.Row.Good_Bread"));Press(TEXT("Market.Detail.Action.BeginRoute"));
                 if(Root->FocusSemanticId(TEXT("Session.Help.Hide")))Press(TEXT("Session.Help.Hide"));
                 Test->TestTrue(TEXT("Market shortage opens an import draft"),Trade->GetSnapshot().bCreating&&Trade->GetDraftStops()[0].Actions[0].Kind==EHansaRouteCargoActionKind::Unload);break;
-            case 3:{auto J=Fixture();if(!J){Test->AddError(TEXT("Missing fixture"));return true;}for(const auto& A:J->GetArrayField(TEXT("actions")))if(A->AsString()!=TEXT("TradeMap.Creator.Activate"))Press(A->AsString());Test->TestTrue(TEXT("Import review validates"),Trade->GetSnapshot().bCanCreate);break;}
+            case 3:{Trade->SelectStopIntent(1);Trade->AdjustMinimumReserveIntent(5000);auto J=Fixture();if(!J){Test->AddError(TEXT("Missing fixture"));return true;}for(const auto& A:J->GetArrayField(TEXT("actions")))if(A->AsString()!=TEXT("TradeMap.Creator.Activate"))Press(A->AsString());Test->TestTrue(TEXT("Import review validates"),Trade->GetSnapshot().bCanCreate);break;}
             case 4:Press(TEXT("TradeMap.Creator.Activate"));Route=Trade->GetSnapshot().SelectedRouteValue;Press(TEXT("TradeMap.Stop.1"));Press(TEXT("TradeMap.Editor.Visit"));ActionsDone=true;return false;
             case 7:Press(TEXT("HUD.TopStatus.ReturnCity"));break;
             case 9:Press(TEXT("HUD.TopStatus.CityOverview"));Press(TEXT("CityOverview.Tab.Market"));Press(TEXT("Market.Row.Good_Bread"));break;

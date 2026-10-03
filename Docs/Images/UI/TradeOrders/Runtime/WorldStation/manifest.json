@@ -1,0 +1,107 @@
+{
+  "captureTests": {
+    "1080p": "20261002-092455275-gui-repair-1920-1080",
+    "720p-large": "20261002-092455086-gui-repair-1280-720"
+  },
+  "role": "owning merchant house",
+  "source": "physical world selection in isolated native campaigns",
+  "records": [
+    {
+      "file": "merchant-office-orders--details--1920x1080--scale1.0.png",
+      "kind": "actual Slate viewport screenshot",
+      "nativeDimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "c8d4fde1ee33553953c8789d9a1aec0cc97dbfd0232e4d611b57a93c4d086806"
+    },
+    {
+      "file": "merchant-office-orders--editor--1280x720--scale1.4.png",
+      "kind": "actual Slate viewport screenshot",
+      "nativeDimensions": [
+        1280,
+        720
+      ],
+      "resampled": false,
+      "sha256": "f4e8f9d87078615e2042dcd3b7cac1dec2ba98f661ca8180b4d201f84a275c7c"
+    },
+    {
+      "file": "merchant-office-orders--editor--1920x1080--scale1.0.png",
+      "kind": "actual Slate viewport screenshot",
+      "nativeDimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "a04d80e3e74a73d746d34fc910a63c5c35437b698fe06a8194d842429fac8d33"
+    },
+    {
+      "file": "merchant-office-orders--list--1920x1080--scale1.0.png",
+      "kind": "actual Slate viewport screenshot",
+      "nativeDimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "a351d761ebe75c399f61737c86d59dd8010724b29990245fd12c384ac030f17f"
+    },
+    {
+      "file": "trade-station-orders--details--1920x1080--scale1.0.png",
+      "kind": "actual Slate viewport screenshot",
+      "nativeDimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "f83964a75113c043e999c23c081f51b117d94f41b445554bd2bb9c8ef6d5a289"
+    },
+    {
+      "file": "trade-station-orders--editor--1280x720--scale1.4.png",
+      "kind": "actual Slate viewport screenshot",
+      "nativeDimensions": [
+        1280,
+        720
+      ],
+      "resampled": false,
+      "sha256": "0542810cb2263a69ba15df16640032202fe2438b3233b798c30fd3f37ba7b11c"
+    },
+    {
+      "file": "trade-station-orders--editor--1920x1080--scale1.0.png",
+      "kind": "actual Slate viewport screenshot",
+      "nativeDimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "d673e2506f1a01b418452203db49d11e633868395516d5665d8c8f7ef2838e01"
+    },
+    {
+      "file": "trade-station-orders--list--1920x1080--scale1.0.png",
+      "kind": "actual Slate viewport screenshot",
+      "nativeDimensions": [
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "bd8aabd0385c5c991d7f3564e2af604169954b65e7d75074d8c15722bcc40bf0"
+    },
+    {
+      "file": "merchant-office-orders--native-panel--580x1008.png",
+      "kind": "exact screenshot crop",
+      "nativeDimensions": [
+        580,
+        1008
+      ],
+      "source": "merchant-office-orders--editor--1920x1080--scale1.0.png",
+      "sourceBounds": [
+        1340,
+        72,
+        1920,
+        1080
+      ],
+      "resampled": false,
+      "sha256": "bd8c872d04665f3f059c0cb2347e61c9ee0658a04570137817aa3fe54c55ba4d"
+    }
+  ]
+}

@@ -153,12 +153,27 @@ struct HANSA_API FHansaBuildMenuSnapshot final
 DECLARE_MULTICAST_DELEGATE_TwoParams(FHansaBuildMenuChanged, const FHansaBuildMenuSnapshot&, uint64);
 
 /** Event-updated build presenter and normal player-intent adapter to the authoritative command gateway. */
+struct HANSA_API FHansaShipMenuEntry
+{
+ int64 Id = 0;
+ FText Name;
+ bool operator==(const FHansaShipMenuEntry& Other) const { return Id == Other.Id && Name.EqualTo(Other.Name); }
+};
+
 UCLASS(BlueprintType)
 class HANSA_API UHansaBuildMenuPresentationModel final : public UObject
 {
 	GENERATED_BODY()
 
 public:
+ void SetShips(TArray<FHansaShipMenuEntry> Entries);
+ const TArray<FHansaShipMenuEntry>& GetShips() const { return Ships; }
+ bool IsShipsOpen() const { return bShipsOpen; }
+ bool ToggleShips();
+ bool SelectShip(int64 Id, bool bCenter);
+ int64 GetSelectedShip() const { return SelectedShip; }
+ const FText& GetShipFeedback() const { return ShipFeedback; }
+ TFunction<bool(int64, bool)> ShipIntent;
 	virtual ~UHansaBuildMenuPresentationModel() override;
 
 	bool InitializeForLubeck(UWorld* World, FString& OutError);
@@ -196,6 +211,8 @@ public:
 	bool CancelIntent();
 	bool ToggleDemolitionIntent();
 	bool DemolishBuildingIntent(int64 BuildingValue);
+	TFunction<void()> TradeHousePlacementRequested;
+ TFunction<const struct FHansaClientProjectionSnapshot*()> RemotePlacementProjection;
 	void SetNetworkPlaceIntent(TFunction<bool(TConstArrayView<Hansa::Simulation::FHansaPlacementSpec>)> Intent)
 	{ NetworkPlaceIntent = MoveTemp(Intent); }
 	void SetNetworkDemolishIntent(TFunction<bool(int64)> Intent)
@@ -223,8 +240,17 @@ public:
 	FHansaBuildMenuChanged& OnChanged() { return Changed; }
 
     void SetConstructionAllowed(bool Allowed);
+    void SetPlacementCity(FName City);
+    FName GetPlacementCity() const { return PlacementCity; }
+    bool BeginLeasedPlacement(FName City, uint64 Lease, FName Building);
     bool IsConstructionAllowed() const { return bConstructionAllowed; }
 private:
+ TArray<FHansaShipMenuEntry> Ships;
+ bool bShipsOpen = false;
+ int64 SelectedShip = 0;
+ FText ShipFeedback;
+    FName PlacementCity=TEXT("City.Lubeck");
+    uint64 PlacementLease=0;
     bool bConstructionAllowed=true;
 	bool bRandomLabourSelection = false;
 	TArray<FName> RemainingLabourCompounds;

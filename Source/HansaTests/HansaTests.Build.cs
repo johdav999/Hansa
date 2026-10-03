@@ -13,6 +13,7 @@ public class HansaTests : ModuleRules
 		}
 
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        bUseUnity = false; // Keep file-local fixture helpers isolated.
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{

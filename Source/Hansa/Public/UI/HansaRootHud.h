@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "UI/HansaTradeConstruction.h"
 
 #include "World/HansaStrategyCameraModel.h"
 #include "HansaRootHud.generated.h"
@@ -29,8 +30,12 @@ class HANSA_API AHansaRootHud final : public AHUD
 	GENERATED_BODY()
 
 public:
+	void RefreshRemoteSession();
 	TSharedPtr<Hansa::UI::SHansaRootHud> GetRootWidget() const { return RootHudWidget; }
 	virtual void BeginPlay() override;
+    virtual void Tick(float DeltaSeconds) override;
+    virtual void DrawHUD() override;
+    bool BeginForeignConstruction(FName City,uint64 Lease,FName Building);
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UFUNCTION(BlueprintPure, Category = "Hansa|UI|HUD")
@@ -64,23 +69,34 @@ public:
     UFUNCTION(BlueprintPure,Category="Hansa|City|Query") FText GetRostockArrivalSummary() const { return RostockArrivalSummary; }
 UHansaFrontendPresentationModel* GetFrontendPresentationModel() const {return FrontendPresentationModel;}
 private:
+    void RefreshCameraCity();
+    float CameraCityRefreshElapsed = 0.f;
     UFUNCTION() void HandleRostockShown();
     void RefreshRostockPresentation();
 	bool InspectRostockTradeStation();
+    UFUNCTION() void HandleStationQuarterShown();
+    bool ShowStationOnMap(FName City,int64 StationId);
     void PublishCityVisit();
     void CancelCityVisit();
+    FHansaTradeConstruction WorldConstruction;
+    FName PendingConstructionBuilding; uint64 PendingConstructionLease=0;
     FName SelectedRostockRole;
     FName ViewedCity=TEXT("City.Lubeck");
     bool bCityVisitLoading=false;
+    bool bCampaignCityCentreVisit=false;
     FText CityVisitStatus,RostockArrivalSummary;
     FTimerHandle CityVisitTimeout;
     Hansa::Game::FHansaStrategyCameraState HomeView;
     UPROPERTY(Transient) TObjectPtr<class ULevelStreamingDynamic> RostockLevel;
-    UPROPERTY(Transient) TObjectPtr<AActor> RostockTradeStationPresentation;
+    UPROPERTY(Transient) TObjectPtr<class AHansaTradeStationPresentation> RostockTradeStationPresentation;
+    UPROPERTY(Transient) TObjectPtr<class AHansaCityCentrePresentation> RostockCityCentre;
 	int64 SelectedTradeStationValue = 0;
 public:
     UFUNCTION(BlueprintCallable, Category="Hansa|World|Cargo") bool InspectCargo(FName SemanticId);
+    bool CenterShipIntent(int64 VehicleId);
 private:
+    void RefreshShipMenu();
+    int64 PendingCenterShip = 0;
     FName SelectedCargo;
     void HandleFrontendIntent(FName Action);
     void ApplySystemPreferences();
@@ -139,4 +155,5 @@ private:
 
 	TSharedPtr<Hansa::UI::SHansaRootHud> RootHudWidget;
 	TSharedPtr<SWidget> ViewportContent;
+    bool bRemoteSessionEntered=false;
 };

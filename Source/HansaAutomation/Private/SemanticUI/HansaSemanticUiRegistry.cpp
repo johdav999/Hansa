@@ -16,6 +16,9 @@ namespace Hansa::Automation
 		case EHansaSemanticRole::Text: return TEXT("text");
 		case EHansaSemanticRole::Button: return TEXT("button");
 		case EHansaSemanticRole::Alert: return TEXT("alert");
+        case EHansaSemanticRole::Tab: return TEXT("tab");
+        case EHansaSemanticRole::List: return TEXT("list");
+        case EHansaSemanticRole::ListItem: return TEXT("list-item");
 		default: return TEXT("unknown");
 		}
 	}

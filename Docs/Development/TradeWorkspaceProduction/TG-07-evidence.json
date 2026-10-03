@@ -1,0 +1,522 @@
+{
+  "prompt": "TG-07",
+  "build": {
+    "file": "Saved/BuildArtifacts/20260923-134913619-build-HansaEditor-Win64-Development/Build.log",
+    "sha256": "fdf6780d6bf8da0e30fb59dcd9fc238fa56bf473c70897c208987738415c52c3",
+    "succeeded": true
+  },
+  "tests": [
+    {
+      "file": "Saved/BuildArtifacts/20260923-134537715-automation-Hansa.UI.Trade/UnrealEditor.log",
+      "sha256": "7eb38112cd22f0ba1dda6af1167388470a3b3bd390832cdac456c22f655b4f8a",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "CreateDeliverSave",
+          "path": "Hansa.UI.TradeCreator.CreateDeliverSave"
+        },
+        {
+          "result": "Success",
+          "name": "RemoteProjectionDraft",
+          "path": "Hansa.UI.TradeCreator.RemoteProjectionDraft"
+        },
+        {
+          "result": "Success",
+          "name": "ReviewAndAcknowledgement",
+          "path": "Hansa.UI.TradeCreator.ReviewAndAcknowledgement"
+        },
+        {
+          "result": "Success",
+          "name": "ValidationAndRecovery",
+          "path": "Hansa.UI.TradeCreator.ValidationAndRecovery"
+        },
+        {
+          "result": "Success",
+          "name": "DeterministicImport",
+          "path": "Hansa.UI.TradeJourney.DeterministicImport"
+        },
+        {
+          "result": "Success",
+          "name": "Recovery",
+          "path": "Hansa.UI.TradeJourney.Recovery"
+        },
+        {
+          "result": "Success",
+          "name": "AuthoritativeStates",
+          "path": "Hansa.UI.TradeMap.CityInspector.AuthoritativeStates"
+        },
+        {
+          "result": "Success",
+          "name": "SelectionPrivacyAndRefresh",
+          "path": "Hansa.UI.TradeMap.CityInspector.SelectionPrivacyAndRefresh"
+        },
+        {
+          "result": "Success",
+          "name": "OwnershipAndRefresh",
+          "path": "Hansa.UI.TradeMap.Components.OwnershipAndRefresh"
+        },
+        {
+          "result": "Success",
+          "name": "PrivacySelectionAndFilters",
+          "path": "Hansa.UI.TradeMap.Directory.PrivacySelectionAndFilters"
+        },
+        {
+          "result": "Success",
+          "name": "InputAndFeedback",
+          "path": "Hansa.UI.TradeMap.Shell.InputAndFeedback"
+        },
+        {
+          "result": "Success",
+          "name": "GeographicGeometry",
+          "path": "Hansa.UI.TradeMap.GeographicGeometry"
+        },
+        {
+          "result": "Success",
+          "name": "GeographicInput",
+          "path": "Hansa.UI.TradeMap.GeographicInput"
+        },
+        {
+          "result": "Success",
+          "name": "ProjectionAndSimpleEditor",
+          "path": "Hansa.UI.TradeMap.ProjectionAndSimpleEditor"
+        },
+        {
+          "result": "Success",
+          "name": "RuntimeCommandCommit",
+          "path": "Hansa.UI.TradeMap.RuntimeCommandCommit"
+        },
+        {
+          "result": "Success",
+          "name": "SemanticsAndResponsiveNativeEvidence",
+          "path": "Hansa.UI.TradeMap.SemanticsAndResponsiveNativeEvidence"
+        },
+        {
+          "result": "Success",
+          "name": "AuthoritativeJourney",
+          "path": "Hansa.UI.TradeSchedule.AuthoritativeJourney"
+        },
+        {
+          "result": "Success",
+          "name": "MaximumStops",
+          "path": "Hansa.UI.TradeSchedule.MaximumStops"
+        },
+        {
+          "result": "Success",
+          "name": "SelectionPrivacyAndDraft",
+          "path": "Hansa.UI.TradeSchedule.SelectionPrivacyAndDraft"
+        }
+      ]
+    },
+    {
+      "file": "Saved/BuildArtifacts/20260923-134543668-automation-Hansa.Integration.TradePresence/UnrealEditor.log",
+      "sha256": "5e2768a696877c3f0055d2c31f243edc3eec2b0eefc8c7bcd8a93f8cf2b65cde",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "CityPrivilegeProjectAndAuthority",
+          "path": "Hansa.Integration.TradePresence.CityPrivilegeProjectAndAuthority"
+        },
+        {
+          "result": "Success",
+          "name": "EstablishTradeStation",
+          "path": "Hansa.Integration.TradePresence.EstablishTradeStation"
+        },
+        {
+          "result": "Success",
+          "name": "LeasedForeignConstruction",
+          "path": "Hansa.Integration.TradePresence.LeasedForeignConstruction"
+        },
+        {
+          "result": "Success",
+          "name": "MerchantAICommandParity",
+          "path": "Hansa.Integration.TradePresence.MerchantAICommandParity"
+        },
+        {
+          "result": "Success",
+          "name": "MerchantOfficeProgression",
+          "path": "Hansa.Integration.TradePresence.MerchantOfficeProgression"
+        },
+        {
+          "result": "Success",
+          "name": "SeedQuerySaveAndInertTick",
+          "path": "Hansa.Integration.TradePresence.SeedQuerySaveAndInertTick"
+        },
+        {
+          "result": "Success",
+          "name": "StationOrders",
+          "path": "Hansa.Integration.TradePresence.StationOrders"
+        },
+        {
+          "result": "Success",
+          "name": "VisitingSpotTrade",
+          "path": "Hansa.Integration.TradePresence.VisitingSpotTrade"
+        }
+      ]
+    },
+    {
+      "file": "Saved/BuildArtifacts/20260923-134938518-automation-Hansa.UI.TradeMap.CityInspector/UnrealEditor.log",
+      "sha256": "29d5a69984c565767ce3895d543efcdf6713fac13b6fd694556af4f44cc23ede",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "AuthoritativeStates",
+          "path": "Hansa.UI.TradeMap.CityInspector.AuthoritativeStates"
+        },
+        {
+          "result": "Success",
+          "name": "SelectionPrivacyAndRefresh",
+          "path": "Hansa.UI.TradeMap.CityInspector.SelectionPrivacyAndRefresh"
+        }
+      ]
+    }
+  ],
+  "captures": [
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Hamburg-overview.png",
+      "sha256": "d0c88360f0c845dea6e7c5a70e2610bd5a7e25e57d33298ed64b4309e0f2f934",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Hamburg-overview.tsv",
+      "sha256": "52255a91fdc56f4f18708994a6943c8b8749c85f81065e1ef2d504bed9526734"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Hamburg-remedy.png",
+      "sha256": "fd771e7c9d863f6536e000e90fe9432a015456bc52f4b13f408752cc2e2e47c6",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Hamburg-remedy.tsv",
+      "sha256": "14c2542e26c516ee8714b2e16ebbbc847dab1ff4fe53545a468c87f4a4debe55"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Lubeck-overview.png",
+      "sha256": "ea0ea2e339f4f8ffbb7cbe06c7cd8c5a47416e74c6d7d044404c89992a303947",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Lubeck-overview.tsv",
+      "sha256": "6dce0d5f4f68422b460c60a396724760246c54a2790707a51f78d98625d2cb0c"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Lubeck-remedy.png",
+      "sha256": "6bce2c6b8e07c09fc282f15183868e9042a8a81227ea67912481c267ddb322c6",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Lubeck-remedy.tsv",
+      "sha256": "35b8effff3adf62397c7ac07bb29482e6df5fb5a934c83c6c566345a2408e2a7"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Rostock-overview.png",
+      "sha256": "33360528d9ab19377c1a949e5b6501f88451d577edc03fbe5712bc79bc07a3b7",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Rostock-overview.tsv",
+      "sha256": "97d0ddb7cf4f0639201de1c054b7a2236d5d43178119dd28d2a7a1f43479c915"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Rostock-remedy.png",
+      "sha256": "ec0eda0399e84ed7e8639360f8c43c43b3a17cbb10b84f034bced62345f092dd",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.0-Rostock-remedy.tsv",
+      "sha256": "b526f5426c7b96d856298b58101daf79ed69fbfbc7283be877d739f18e155f8e"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Hamburg-overview.png",
+      "sha256": "b397a345e8b813add629d15d62960a777f1eeb1b956c016840b122ebd6602520",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Hamburg-overview.tsv",
+      "sha256": "3f49d4f31b86be7ab1656d2a7caeafde44d981b14054c2ed0b1f80cdd1ee5a84"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Hamburg-remedy.png",
+      "sha256": "55cc03e1455ef345ed5c1a6cfb38c7f1cfcd20fbe4737129250f0bfd40100d77",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Hamburg-remedy.tsv",
+      "sha256": "7357b28d1da276f6262e6d7d612e4f6cd7a55cef2f74336a81965cbc7df1f054"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Lubeck-overview.png",
+      "sha256": "554164d5de3bfdbbb60453980c6a481c08c376c6060f3ea260e0cc05f8f2dc86",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Lubeck-overview.tsv",
+      "sha256": "249869953ad5816855bcd771e201d46a1a69287f498ab0161de15c389d94a388"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Lubeck-remedy.png",
+      "sha256": "8e07618efa6ed7a3497243cd3931d6bc90cf075ab5eb83d4c233c7f3a864cb89",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Lubeck-remedy.tsv",
+      "sha256": "56a0667c3208c5e0f794212a3c0d4ed33ce79b776867db27d506d4e89d67d3b5"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Rostock-overview.png",
+      "sha256": "9edf3df6eee7664d526a73ac543a87efc7354917c3924ddb68a1260a6d5bc9f9",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Rostock-overview.tsv",
+      "sha256": "5612ca1c8f5e193ffacef5ed4623c8afa3ddb0d8097d9bfb37ebaba1d42cb73b"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Rostock-remedy.png",
+      "sha256": "d1d3122e822bdda5e033ef364e24820bc295205e69dc1c502c5639c4e05b36f5",
+      "native_dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1280x720-scale1.4-Rostock-remedy.tsv",
+      "sha256": "33e39803feedfe60c719deb04741decab43bd4d396dcf4fc301576195acbd9c5"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Hamburg-overview.png",
+      "sha256": "96c2e9cc44d4843332b8cd7283124df49b74428f379df2e64928a8943cf97f08",
+      "native_dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Hamburg-overview.tsv",
+      "sha256": "55bf1cfd1551971dc1fd369bfeb2c94705a899ba72095d69d2c8badf1227f521"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Hamburg-remedy.png",
+      "sha256": "a75cc98572e479097e65b9eb6d4f9f4c475dd3e322f643d5eae4861557ae5338",
+      "native_dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Hamburg-remedy.tsv",
+      "sha256": "21e07e860d58bd0648271120fe7c3b88a955b122b0b79a7373edc2f228faeaf0"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Lubeck-overview.png",
+      "sha256": "9c7198f32e2eb5cfa75b69ed53c9d847cc294530c3d8349b31a87274c3cc5c34",
+      "native_dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Lubeck-overview.tsv",
+      "sha256": "9864c859d909bf8e76902f8ba3bf9030b3a55a2eb67c82525f2e30e66c024e93"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Lubeck-remedy.png",
+      "sha256": "f4771cfa6429bf2023fc1e4f997b53957bf8e68dc86157ba5799bb0f201a7cbb",
+      "native_dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Lubeck-remedy.tsv",
+      "sha256": "80671d7a356755e35b7ea3d394f8c66072b7bcfacc69db8b81e0bbec41a2ec9b"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Rostock-overview.png",
+      "sha256": "234c468ef5b368b21cb6ef3e76a024f19936f9e213dc5436de5d2ec4f67042d0",
+      "native_dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Rostock-overview.tsv",
+      "sha256": "1845d1ae1d6ee00f2b399d0cf1e2cf8cc2e39fc154e89621cb0fad88140f3fa3"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Rostock-remedy.png",
+      "sha256": "d9d4f0fd1c4d0285c5e36e2d41fa4eebef85c1d23fb07d7d13160d2ac6fcfde3",
+      "native_dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1536x1024-scale1.0-Rostock-remedy.tsv",
+      "sha256": "a40a2c0d996e11e36b2018684dc1333716075b15fa4cba2ef040daa54852ee08"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Hamburg-overview.png",
+      "sha256": "6bf3b5f27dac9235a8b90ff5a28e031c0ad7d77bc7249cd60b1d2058b64ffb72",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Hamburg-overview.tsv",
+      "sha256": "e9a853d69a142ec5f44261f2018f37ad20c7879f4e77683e3425383c8671e59b"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Hamburg-remedy.png",
+      "sha256": "a05ba7c508d78863e92a50442c4d4fa2418447bac5a4de152919d0445f362f27",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Hamburg-remedy.tsv",
+      "sha256": "78df01897661f6891fdad01997a12e3f39e1abd08d9b1c00db36e99dcc869a2d"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Lubeck-overview.png",
+      "sha256": "a143b5b30a16620da2b40250e9ad8183c67b63d12a10ac147ececf8956f475bb",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Lubeck-overview.tsv",
+      "sha256": "01df77e677f1faa2e27b375f5461b581a1ba23f69a33811907630079928c7bad"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Lubeck-remedy.png",
+      "sha256": "d10fdc26a36a0d64008ffe18593a86952f547df43968313d85901c74a0c68c14",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Lubeck-remedy.tsv",
+      "sha256": "abe893d8b17e86071deb0f573b43b19b0e631aab2a7020d00002fb84a22ce6db"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Rostock-overview.png",
+      "sha256": "1c1d7f41d3af7219489eb241078d514b8c9820b6343549ff37588ec0c48cd50d",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Rostock-overview.tsv",
+      "sha256": "1be4dc189835d3177a81a2f58ba3bbd55761b4c076ba5f4cd3956ec29bdd4ba3"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Rostock-remedy.png",
+      "sha256": "0ee44f18a9b1b2af8389d869c18885d9d8613e8468f30a55843491554ffe5d24",
+      "native_dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/city-1920x1080-scale1.0-Rostock-remedy.tsv",
+      "sha256": "eedf841db95dd0a90da9db2144f935671645410c5f965e0aa48cb2ec7e93b5ca"
+    }
+  ],
+  "viewport_runs": [
+    {
+      "file": "Saved/BuildArtifacts/20260923-134942420-gui-repair-1920-1080/Unreal.log",
+      "sha256": "404e276164df6280cee9badba782a3ac5a15b66a722c29cf011eb8deaa539651",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "RealViewport",
+          "path": "Hansa.UI.TradeCity.RealViewport"
+        }
+      ]
+    },
+    {
+      "file": "Saved/BuildArtifacts/20260923-135006829-gui-repair-1280-720/Unreal.log",
+      "sha256": "48a0169dc2a20e7f5d41841f095f4896ffdc578b2b2f64de2c5c12a0806658ec",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "RealViewport",
+          "path": "Hansa.UI.TradeCity.RealViewport"
+        }
+      ]
+    },
+    {
+      "file": "Saved/BuildArtifacts/20260923-135030771-gui-repair-1280-720/Unreal.log",
+      "sha256": "9b157c65961ba8f1a0860f2d87a232b4e774802231cbe4a174dbd6db2ca6d6f7",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "RealViewport",
+          "path": "Hansa.UI.TradeCity.RealViewport"
+        }
+      ]
+    },
+    {
+      "file": "Saved/BuildArtifacts/20260923-135054614-gui-repair-1536-1024/Unreal.log",
+      "sha256": "6b76958a9e5cf20889e2561364460bac30c41e2afffcb690613c1e3b90eafa8b",
+      "tests": [
+        {
+          "result": "Success",
+          "name": "RealViewport",
+          "path": "Hansa.UI.TradeCity.RealViewport"
+        }
+      ]
+    }
+  ],
+  "reference": "Docs/Images/UI/TradeWorkspace/trade-workspace--schedule--reference--1536x1024--v1.png",
+  "artwork": "Existing approved ImageGen artwork reused; no new generation/import.",
+  "comparisons": [
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/reference-left-game-right--3072x1024.png",
+      "sha256": "1979901f2c8136e1d13f0200d7ab29a9673cd414339e87124b7485e2e747b6f4"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-07-captures/reference-game-overlay50--1536x1024.png",
+      "sha256": "b25dd456cfb7767cbde15cf5bcdc972650dea383bf2054d2b1eaf1757de1b643"
+    }
+  ],
+  "comparison_note": "Native-size diagnostic composites; reference sailing/cargo values differ from the truthful stopped New Game route. Shared workspace fidelity gaps remain; not a pixel-identical acceptance claim."
+}

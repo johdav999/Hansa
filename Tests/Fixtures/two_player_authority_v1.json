@@ -20,8 +20,8 @@
       "command": "multiplayer.place_building",
       "cityId": "City.Lubeck",
       "buildingDefinitionId": "Building.Road",
-      "anchorX": 10,
-      "anchorY": 30,
+      "anchorX": 22,
+      "anchorY": 4,
       "expected": "accepted"
     },
     {
@@ -80,5 +80,8 @@
     "postCaptureResized": false
   },
   "expectedFinalAuthoritativeHashV28Command11": "7d2c59fd78e1a566",
-  "fingerprintTransitionTR05": "Fingerprint 28 includes station orders; command schema 11 changes retained command fingerprints even when no orders exist. The original v27/command10 golden remains preserved above."
+  "fingerprintTransitionTR05": "Fingerprint 28 includes station orders; command schema 11 changes retained command fingerprints even when no orders exist. The original v27/command10 golden remains preserved above.",
+  "expectedFinalAuthoritativeHashV34Command14": "5e8916d8250be6c6",
+  "expectedFinalAuthoritativeHashV36Command14": "de4c6779eaf69685",
+  "fingerprintTransitionCargoSlots": "Fingerprint 34 persists physical cargo allocations. Command schema 14 is the current workspace contract. Placement fixture uses validated land cell (22,4); former (10,30) is rejected by current map rules. Historical checksum fields are preserved."
 }

@@ -2,6 +2,16 @@
 
 #include "CoreMinimal.h"
 
+#include "UI/HansaTradeEstablishment.h"
+#include "UI/HansaTradeConstruction.h"
+#include "UI/HansaTradeLedger.h"
+#include "UI/HansaTradeRecovery.h"
+#include "UI/HansaTradeViewTypes.h"
+#include "UI/HansaTradeCityInspector.h"
+#include "UI/HansaTradeSchedulePresentation.h"
+#include "UI/HansaTradeSpecialization.h"
+#include "UI/HansaTradeDecisions.h"
+#include "UI/HansaVisitingTrade.h"
 #include "HansaMultiplayerTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -29,7 +39,8 @@ enum class EHansaClientIntentType : uint8
     ManageStationOrder,
 	RequestPresenceUpgrade,
 	FundPresenceUpgrade,
-	ApplyPresenceSpecialization
+	ApplyPresenceSpecialization,
+ ManageCityPrivilege, FundCityProject, TransitionCityAuthority
 };
 
 UENUM(BlueprintType)
@@ -74,6 +85,7 @@ struct HANSA_API FHansaClientRouteActionIntent
 	UPROPERTY() FString GoodId;
 	UPROPERTY() int64 QuantityMilliUnits = 0;
 	UPROPERTY() int64 MinimumSourceReserveMilliUnits = 0;
+	UPROPERTY() int32 CargoSlotIndex = INDEX_NONE;
 };
 
 USTRUCT(BlueprintType)
@@ -107,11 +119,15 @@ struct HANSA_API FHansaClientCommandIntent
 {
 	GENERATED_BODY()
 
-	static constexpr int32 CurrentSchemaVersion = 7;
+	static constexpr int32 CurrentSchemaVersion = 10;
+    UPROPERTY() FString ExpectedRoutePlanKey;
 	static constexpr int32 MaximumPlacementCount = 256;
 	static constexpr int32 MaximumRouteStopCount = 16;
 	static constexpr int32 MaximumActionsPerStop = 16;
 
+ UPROPERTY() FString DecisionId;
+ UPROPERTY() uint8 DecisionAction=0;
+ UPROPERTY() int64 AuthorityRevision=0;
     UPROPERTY() int64 StationOrderId = 0;
     UPROPERTY() uint8 StationOrderAction = 0;
     UPROPERTY() uint8 StationOrderSide = 0;
@@ -176,11 +192,13 @@ struct HANSA_API FHansaClientCommandIntent
 	UPROPERTY() int32 TargetX = 0;
 	UPROPERTY() int32 TargetY = 0;
 	UPROPERTY() int64 QuantityMilliUnits = 0;
-	UPROPERTY() int64 ReviewedMarketUpdateTick = -1;
+	UPROPERTY() FString RecoveryReviewKey;
+ UPROPERTY() int64 ReviewedMarketUpdateTick = -1;
 	UPROPERTY() int64 ReviewedUnitPriceMilliMarks = 0;
 	UPROPERTY() bool bSpotTradeBuy = true;
 	UPROPERTY() int64 TradeStationId = 0;
 	UPROPERTY() int64 FundingInventoryId = 0;
+    UPROPERTY() uint8 ConstructionDeliveryMode=0;
 	UPROPERTY() FString TradeStationSiteId;
 	UPROPERTY() FString PresenceStageId;
 	UPROPERTY() FString PresenceSpecializationId;
@@ -296,7 +314,12 @@ struct HANSA_API FHansaReplicatedMarket
 USTRUCT(BlueprintType)
 struct HANSA_API FHansaReplicatedRoute
 {
-	GENERATED_BODY()
+ GENERATED_BODY()
+ /** Stop instructions and labels are owner-only. Public routes carry no plan. */
+ UPROPERTY() FString DefinitionId;
+ UPROPERTY() FString Label;
+ UPROPERTY() FString PlanKey;
+ UPROPERTY() TArray<FHansaClientRouteStopIntent> Stops;
 
 	UPROPERTY()
 	int64 RouteId = 0;
@@ -415,6 +438,14 @@ struct HANSA_API FHansaReplicatedCitySummary
 };
 
 USTRUCT(BlueprintType)
+struct HANSA_API FHansaReplicatedCargoSlot
+{
+ GENERATED_BODY()
+ UPROPERTY() FString GoodId;
+ UPROPERTY() int64 QuantityMilliUnits = 0;
+};
+
+USTRUCT(BlueprintType)
 struct HANSA_API FHansaReplicatedVehicle
 {
 	GENERATED_BODY()
@@ -424,6 +455,7 @@ struct HANSA_API FHansaReplicatedVehicle
 	UPROPERTY() FString Mode;
 	UPROPERTY() FString CurrentCityId;
 	UPROPERTY() bool bPrivateDetailsVisible = false;
+	UPROPERTY() TArray<FHansaReplicatedCargoSlot> CargoSlots;
 	UPROPERTY() int64 CargoMilliUnits = 0;
 	UPROPERTY() int64 CapacityMilliUnits = 0;
 };
@@ -525,16 +557,109 @@ struct HANSA_API FHansaReplicatedEvent
 	FString TechnologyId;
 };
 
+/** Only the owning house receives station order terms and execution history. */
+USTRUCT()
+struct HANSA_API FHansaReplicatedStationOrderExecution {
+ GENERATED_BODY()
+ UPROPERTY() int64 Tick=-1;
+ UPROPERTY() int64 RequestedMilliUnits=0;
+ UPROPERTY() int64 AppliedMilliUnits=0;
+ UPROPERTY() int64 MoneyDelta=0;
+ UPROPERTY() uint8 Outcome=0;
+ UPROPERTY() uint8 Blocker=0;
+};
+USTRUCT()
+struct HANSA_API FHansaReplicatedStationOrder {
+ GENERATED_BODY()
+ UPROPERTY() int64 Id=0;
+ UPROPERTY() FString GoodId;
+ UPROPERTY() uint8 Side=0;
+ UPROPERTY() int64 TargetMilliUnits=0;
+ UPROPERTY() int64 CapMilliUnits=1000;
+ UPROPERTY() int64 BudgetPfennig=0;
+ UPROPERTY() int64 LimitUnitPriceMilliMarks=0;
+ UPROPERTY() int64 ReviewedMarketUpdateTick=-1;
+ UPROPERTY() int64 ReviewedUnitPriceMilliMarks=0;
+ UPROPERTY() int64 SpentPfennig=0;
+ UPROPERTY() int64 NextUpdateTick=0;
+ UPROPERTY() bool bPaused=false;
+ UPROPERTY() bool bCancelled=false;
+ UPROPERTY() TArray<FHansaReplicatedStationOrderExecution> History;
+};
+USTRUCT()
+struct HANSA_API FHansaReplicatedStationOrders {
+ GENERATED_BODY()
+ UPROPERTY() FName City;
+ UPROPERTY() int64 StationId=0;
+ UPROPERTY() int64 CapacityMilliUnits=0;
+ UPROPERTY() int64 MaximumCapMilliUnits=0;
+ UPROPERTY() int64 MaximumBudgetPfennig=0;
+ UPROPERTY() bool bOperational=false;
+ UPROPERTY() TArray<FString> GoodIds;
+ UPROPERTY() TArray<FHansaReplicatedStationOrder> Orders;
+};
+
+USTRUCT()
+struct HANSA_API FHansaReplicatedPresenceRequirement {
+ GENERATED_BODY()
+ UPROPERTY() FString Id;
+ UPROPERTY() FString Description;
+ UPROPERTY() int64 Current=0;
+ UPROPERTY() int64 Required=0;
+ UPROPERTY() bool bMet=false;
+};
+USTRUCT()
+struct HANSA_API FHansaReplicatedPresence {
+ GENERATED_BODY()
+ UPROPERTY() FName City;
+ UPROPERTY() FString CurrentStage;
+ UPROPERTY() FString NextStageId;
+ UPROPERTY() FString NextStage;
+ UPROPERTY() FString Status;
+ UPROPERTY() FString Unlocks;
+ UPROPERTY() FString History;
+ UPROPERTY() uint8 UpgradeStatus=0;
+ UPROPERTY() int64 CompletionTick=0;
+ UPROPERTY() FString ConstructionDelivery;
+ UPROPERTY() bool bProgressMet=false;
+ UPROPERTY() bool bOfficeVisual=false;
+ /** Completed office capability; preview art also appears before construction. */
+ UPROPERTY() bool bOfficeBuilt=false;
+ UPROPERTY() FHansaTradeSpecialization Specialization;
+ UPROPERTY() FHansaTradeDecisions Decisions;
+ UPROPERTY() TArray<FHansaTradeConstruction> ConstructionReports;
+ UPROPERTY() TArray<FHansaReplicatedPresenceRequirement> Requirements;
+ UPROPERTY() TArray<FHansaEstablishmentChoice> Sources;
+};
+
 /**
  * Purpose-built immutable client read model. It intentionally has no authoritative
  * simulation container, mutable inventory, command queue, RNG, or save state.
  */
+/** Fully replaced viewer-scoped trade presentation, including unassigned owned vessels. */
+USTRUCT()
+struct HANSA_API FHansaReplicatedTradeWorkspace
+{
+ GENERATED_BODY()
+ UPROPERTY() TArray<FHansaTradeMapCityPresentation> Cities;
+ UPROPERTY() TArray<FHansaTradeCityInspector> Inspectors;
+ UPROPERTY() TArray<FHansaTradeMapRoutePresentation> Routes;
+ UPROPERTY() TArray<FHansaTradeDirectoryEntry> RouteDirectory;
+ UPROPERTY() TArray<FHansaTradeDirectoryEntry> FleetDirectory;
+ UPROPERTY() TArray<FHansaTradeSchedulePresentation> Schedules;
+ UPROPERTY() TArray<FString> GoodIds;
+};
+
+class UPackageMap;
+
 USTRUCT(BlueprintType)
 struct HANSA_API FHansaClientProjectionSnapshot
 {
 	GENERATED_BODY()
+    bool NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess);
 
-	static constexpr int32 CurrentSchemaVersion = 2;
+
+	static constexpr int32 CurrentSchemaVersion = 22;
 	static constexpr int32 MaximumCollectionEntries = 2048;
 
 	UPROPERTY()
@@ -581,9 +706,18 @@ struct HANSA_API FHansaClientProjectionSnapshot
 
 	UPROPERTY()
 	TArray<FHansaReplicatedMarket> Markets;
+ UPROPERTY() TArray<FHansaVisitingTradeOffer> VisitingTrade;
 
 	UPROPERTY()
 	TArray<FHansaReplicatedRoute> Routes;
+ /** Viewer-scoped establishment reviews, replaced in full on each snapshot. */
+ UPROPERTY() TArray<FHansaTradeEstablishment> StationEstablishments;
+ UPROPERTY() TArray<FHansaReplicatedPresence> Presences;
+ UPROPERTY() TArray<FHansaTradeLedger> StationLedgers;
+ UPROPERTY() TArray<FHansaTradeRecovery> Recoveries;
+ UPROPERTY() FHansaReplicatedTradeWorkspace TradeWorkspace;
+ UPROPERTY() bool bTradeWorkspaceIncluded=true;
+ UPROPERTY() TArray<FHansaReplicatedStationOrders> StationOrders;
 	UPROPERTY() TArray<FHansaReplicatedInventory> Inventories;
 	UPROPERTY() TArray<FHansaReplicatedProduction> Productions;
 	UPROPERTY() TArray<FHansaReplicatedPopulationCohort> PopulationCohorts;
@@ -602,3 +736,5 @@ struct HANSA_API FHansaClientProjectionSnapshot
 	TArray<FHansaReplicatedEvent> Events;
 	UPROPERTY() TArray<FHansaProjectionRemoval> Removed;
 };
+
+template<> struct TStructOpsTypeTraits<FHansaClientProjectionSnapshot> : TStructOpsTypeTraitsBase2<FHansaClientProjectionSnapshot> { enum { WithNetSerializer = true }; };

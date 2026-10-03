@@ -36,7 +36,7 @@ function remainingDeadline(deadline) {
   return remaining;
 }
 
-function processArguments(role, logPath) {
+function processArguments(role, logPath, name) {
   const common = [
     "-game",
     "-Multiprocess",
@@ -64,8 +64,8 @@ function processArguments(role, logPath) {
     "127.0.0.1:" + config.port,
 
     "-Windowed",
-    "-ResX=1280",
-    "-ResY=720",
+    "-ResX=" + (name.startsWith("client2") ? 1920 : 1280),
+    "-ResY=" + (name.startsWith("client2") ? 1080 : 720),
     ...common,
   ];
 }
@@ -74,7 +74,7 @@ function startProcess(name, role, pipeName) {
   const logPath = path.join(artifactDirectory, name + ".unreal.log");
   const streamPath = path.join(artifactDirectory, name + ".launcher.log");
   const output = createWriteStream(streamPath, { flags: "w" });
-  const child = spawn(config.unrealEditor, processArguments(role, logPath), {
+  const child = spawn(config.unrealEditor, processArguments(role, logPath, name), {
     cwd: config.projectRoot,
     env: {
       ...process.env,
@@ -132,6 +132,7 @@ async function connectEndpoint(name, pipeName, deadline) {
           "session",
           "capabilities",
           "health",
+          "semantic-ui",
           "gameplay.query",
           "gameplay.command",
           "fixture.control",
@@ -250,7 +251,45 @@ async function runProof(deadline) {
   );
   assert.deepEqual([initial1.publicHouseId, initial2.publicHouseId], [1, 2]);
 
-  const placed = await submitAndWait(client1, {
+  const tradeSemantics = [];
+  for (const [name, client] of [["client1", client1], ["client2", client2]]) {
+    await client.waitFor({ semanticId: "HUD.TopStatus.TradeMap", property: "exists", timeoutMs: Math.min(30000, remainingDeadline(deadline)) });
+    await client.uiFocus("HUD.TopStatus.TradeMap");
+    writeFileSync(path.join(artifactDirectory, name + "-open-trade-node.json"), JSON.stringify(await client.uiState("HUD.TopStatus.TradeMap"), null, 2));
+    await client.waitFor({ semanticId: "HUD.TopStatus.TradeMap", property: "visible", timeoutMs: 10000 });
+    await client.uiActivate("HUD.TopStatus.TradeMap");
+    await client.waitFor({ semanticId: "TradeMap.Close", property: "visible", timeoutMs: 10000 });
+    const unavailable = await client.uiState("TradeMap.New");
+    assert.equal(unavailable.node.state.enabled, false);
+    assert.match(unavailable.node.state.value, /unavailable.*remote/i);
+    await client.uiFocus("TradeMap.Close");
+    const focused = await client.uiState("TradeMap.Close");
+    assert.equal(focused.node.state.focused, true);
+    assert.ok(focused.node.bounds.width > 0 && focused.node.bounds.height > 0);
+    const capture = copyCapture(await client.captureScreenshot({ width: name === "client1" ? 1280 : 1920, height: name === "client1" ? 720 : 1080, bundleId: name + "-trade-workspace" }), name + "-trade-workspace");
+    tradeSemantics.push({ client: name, unavailable, focused, capture });
+  }
+  writeFileSync(path.join(artifactDirectory, "trade-semantics.json"), JSON.stringify(tradeSemantics, null, 2) + "\n");
+
+  async function nativeRouteToggle(client, routeId) {
+    const routesPage = await client.uiState("TradeMap.Page.Routes");
+    if (routesPage.node.state.enabled && routesPage.node.state.visible) await client.uiActivate("TradeMap.Page.Routes");
+    writeFileSync(path.join(artifactDirectory, "route-" + routeId + "-before-focus.json"), JSON.stringify(await client.uiState("TradeMap.Route." + routeId), null, 2));
+    await client.waitFor({ semanticId: "TradeMap.Route." + routeId, property: "enabled", timeoutMs: 10000 });
+    await client.uiFocus("TradeMap.Route." + routeId);
+    await client.waitFor({ semanticId: "TradeMap.Route." + routeId, property: "visible", timeoutMs: 10000 });
+    await client.uiActivate("TradeMap.Route." + routeId);
+    const workspacePage = await client.uiState("TradeMap.Page.Workspace");
+    if (workspacePage.node.state.enabled && workspacePage.node.state.visible) await client.uiActivate("TradeMap.Page.Workspace");
+    await client.uiActivate("TradeMap.Navigate.Route");
+    await client.uiFocus("TradeMap.Editor.ToggleActive");
+    await client.waitFor({ semanticId: "TradeMap.Editor.ToggleActive", property: "visible", timeoutMs: 10000 });
+    await client.uiActivate("TradeMap.Editor.ToggleActive");
+    const observed = await waitStatus(client, value => value.lastCommandFeedback?.clientSequence === 1 && value.lastCommandFeedback.accepted === true, "native route acknowledgement", deadline);
+    assert.ok(observed.lastCommandFeedback.acceptedGlobalSequence > 0);
+    return { semanticId: "TradeMap.Editor.ToggleActive", observed };
+  }
+  const placed = config.tradeWorkspaceOnly ? await nativeRouteToggle(client1, 1) : await submitAndWait(client1, {
     command: "multiplayer.place_building",
     clientSequence: 1,
     clientNonce: 11001,
@@ -266,20 +305,27 @@ async function runProof(deadline) {
     routeId: 3,
     active: true,
   }, { accepted: false, rejection: "NotAuthorized" }, deadline);
-  const secondRejected = await submitAndWait(client2, {
+  let secondRejected, secondAllowed;
+  if (config.tradeWorkspaceOnly) {
+    secondAllowed = await nativeRouteToggle(client2, 3);
+    secondRejected = await submitAndWait(client2, { command: "multiplayer.set_route_active", clientSequence: 2, clientNonce: 22002, routeId: 1, active: true }, { accepted: false, rejection: "NotAuthorized" }, deadline);
+  } else {
+    secondRejected = await submitAndWait(client2, {
     command: "multiplayer.set_route_active",
     clientSequence: 1,
     clientNonce: 22001,
     routeId: 1,
     active: true,
   }, { accepted: false, rejection: "NotAuthorized" }, deadline);
-  const secondAllowed = await submitAndWait(client2, {
+    secondAllowed = await submitAndWait(client2, {
     command: "multiplayer.set_route_active",
     clientSequence: 2,
     clientNonce: 22002,
     routeId: 3,
     active: true,
   }, { accepted: true }, deadline);
+
+  }
 
   let synchronized = {};
   while (remainingDeadline(deadline) > 0) {
@@ -292,8 +338,8 @@ async function runProof(deadline) {
     if (hash &&
       synchronized.client1.authoritativeHash === hash &&
       synchronized.client2.authoritativeHash === hash &&
-      synchronized.client1.placements.some((item) =>
-        item.cityId === "City.Lubeck" && item.buildingDefinitionId === "Building.Road") &&
+      (config.tradeWorkspaceOnly || synchronized.client1.placements.some((item) =>
+        item.cityId === "City.Lubeck" && item.buildingDefinitionId === "Building.Road")) &&
       route(synchronized.client2, 3)?.cargoVisible === true &&
       route(synchronized.client1, 3)?.cargoVisible === false) {
       break;
@@ -311,7 +357,7 @@ async function runProof(deadline) {
     "client1",
   );
   const capture2 = copyCapture(
-    await client2.captureScreenshot({ width: 1280, height: 720, bundleId: "client2-authority" }),
+    await client2.captureScreenshot({ width: 1920, height: 1080, bundleId: "client2-authority" }),
     "client2",
   );
 
@@ -347,6 +393,11 @@ async function runProof(deadline) {
   assert.equal(route(reconnected, 3)?.ownerHouseId, 2);
   assert.equal(route(reconnected, 3)?.cargoVisible, true);
 
+  await reconnectedClient.waitFor({ semanticId: "HUD.TopStatus.TradeMap", property: "exists", timeoutMs: 10000 });
+  await reconnectedClient.uiFocus("HUD.TopStatus.TradeMap");
+  await reconnectedClient.uiActivate("HUD.TopStatus.TradeMap");
+  await reconnectedClient.uiFocus("TradeMap.Close");
+  tradeSemantics.push({ client: "reconnected", focused: await reconnectedClient.uiState("TradeMap.Close") });
   const reconnectCapture = copyCapture(
     await reconnectedClient.captureScreenshot({
       width: 1920,
@@ -357,7 +408,7 @@ async function runProof(deadline) {
   );
 
   const result = {
-    operation: "RunTwoPlayerAuthorityProof",
+    operation: config.tradeWorkspaceOnly ? "TG17RemoteTradeProof" : "RunTwoPlayerAuthorityProof",
     status: "Succeeded",
     fixtureId: FIXTURE_ID,
     completedUtc: new Date().toISOString(),
@@ -368,7 +419,8 @@ async function runProof(deadline) {
     ])),
     correlations: [...new Set(correlations.filter(Boolean))],
     readiness: { server: serverReady, client1: initial1, client2: initial2 },
-    commands: { placed, firstRejected, secondRejected, secondAllowed },
+    tradeSemantics,
+    commands: { firstAllowed: placed, firstRejected, secondRejected, secondAllowed },
     synchronized,
     disconnect: serverAfterDisconnect,
     reconnect: { server: serverAfterReconnect, client: reconnected },
@@ -400,7 +452,7 @@ try {
 } catch (error) {
   failure = error;
   writeFileSync(path.join(artifactDirectory, "failure.json"), JSON.stringify({
-    operation: "RunTwoPlayerAuthorityProof",
+    operation: config.tradeWorkspaceOnly ? "TG17RemoteTradeProof" : "RunTwoPlayerAuthorityProof",
     status: "Failed",
     completedUtc: new Date().toISOString(),
     error: String(error?.stack ?? error),

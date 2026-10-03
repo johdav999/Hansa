@@ -1,22 +1,26 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('Production','TerrainPreview','P30Candidate')][string]$World = 'Production',
+    [ValidateSet('Production','Campaign','TerrainPreview','P30Candidate')][string]$World = 'Production',
     [switch]$P31Candidate,
     [switch]$P33Candidate,
     [switch]$NoZenDdc,
+    [switch]$DisableMcp,
     [switch]$ReadOnlyZenDdc,
     [int]$Width = 1920,
     [int]$Height = 1080,
     [ValidateRange(0.8,1.4)][float]$UiScale = 1.0,
     [string]$TestFilter = 'Hansa.UI.GuiRepair.RealViewport',
     [ValidateSet('Development','DebugGame')][string]$Configuration = 'Development',
-    [string]$EngineRoot
+    [string]$EngineRoot,
+    [string]$Culture,
+    [switch]$PseudoLocale
 )
 . (Join-Path $PSScriptRoot 'HansaBuild.Common.ps1')
 $context = Get-HansaBuildContext -EngineRoot $EngineRoot
 $artifactDirectory = New-HansaArtifactDirectory -Context $context -Operation "gui-repair-$Width-$Height"
 $unrealLog = Join-Path $artifactDirectory 'Unreal.log'
 $map = switch ($World) {
+    'Campaign' { '/Game/Hansa/World/HansaWorld_20260918/L_HansaWorld_WP' }
     'P30Candidate' { '/Game/Hansa/Generated/Staging/LubeckWorldArt_P30/L_Lubeck_WorldArt_Candidate' }
     'TerrainPreview' { '/Game/Hansa/Generated/Staging/LubeckTerrain_20260907/L_Lubeck_Terrain_Preview_WP' }
     default { '/Game/Hansa/World/Cities/Lubeck/L_Lubeck_MVP' }
@@ -26,9 +30,12 @@ $arguments = @($context.ProjectFile, $map,
     "-ResX=$Width", "-ResY=$Height", "-HansaGuiScale=$($UiScale.ToString([Globalization.CultureInfo]::InvariantCulture))", '-RenderOffscreen',
     "-ExecCmds=Automation RunTests $TestFilter",
     '-TestExit=Automation Test Queue Empty', "-AbsLog=$unrealLog")
+if ($PseudoLocale) { $arguments += "-HansaGuiPseudoLocale" }
+if ($Culture) { $arguments += "-culture=$Culture" }
 if ($P31Candidate) { $arguments += '-P31Candidate' }
 if ($P33Candidate) { $arguments += '-P33Candidate' }
 if ($NoZenDdc) { $arguments += '-ddc=NoZenLocalFallback' }
+if ($DisableMcp) { $arguments += '-DisablePlugins=ModelContextProtocol' }
 if ($ReadOnlyZenDdc) { $arguments += '-ZenLocalDataCacheReadOnly=true' }
 $executable = if ($Configuration -eq 'DebugGame') {
     Join-Path (Split-Path $context.UnrealEditorCommand) 'UnrealEditor-Win64-DebugGame-Cmd.exe'

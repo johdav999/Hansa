@@ -31,9 +31,9 @@ bool FHansaStrategyCameraDragTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Drag follows rotated camera axes"),
         FHansaStrategyCameraModel::Advance(Initial, Drag, Settings, 0.0f).Focus.Equals(FVector2D(-120.0, 60.0), 0.001));
     Drag.PanDisplacement = FVector2D(100000.0, 100000.0);
-    TestTrue(TEXT("Drag respects map bounds"),
-        FHansaStrategyCameraModel::Advance(Initial, Drag, Settings, 0.0f).Focus.Equals(
-            FVector2D(Settings.BoundsMin.X, Settings.BoundsMax.Y)));
+    const FVector2D BeyondCity = FHansaStrategyCameraModel::Advance(Initial, Drag, Settings, 0.0f).Focus;
+    TestTrue(TEXT("Drag crosses the old city bounds"),
+		BeyondCity.X < -99000.0 && BeyondCity.Y > 99000.0);
 	TestEqual(TEXT("Yaw uses horizontal pointer travel"),
 		FHansaStrategyCameraModel::YawPointerDisplacement(FVector2D(40.0f, 125.0f)), 40.0f);
 	TestEqual(TEXT("Opposing diagonal travel cannot cancel yaw"),
@@ -60,6 +60,11 @@ bool FHansaStrategyCameraDragTest::RunTest(const FString& Parameters)
         Pawn->Camera->Activate(true);
         Initial.Focus = FVector2D::ZeroVector;
         Initial.YawDegrees = 0.0f;
+        Pawn->RestoreViewState(Initial);
+        Pawn->SetViewBounds(FVector2D(-1000.0, -1000.0), FVector2D(1000.0, 1000.0));
+        Pawn->FocusWorldLocationIntent(FVector(50000.0, -50000.0, 0.0));
+        TestTrue(TEXT("Focus actions cross the minimap's city reference bounds"),
+            Pawn->GetFocusLocation2D().Equals(FVector2D(50000.0, -50000.0)));
         Pawn->RestoreViewState(Initial);
         Pawn->SetDragPanIntent(FVector2D(10.0, -10.0), true);
         Pawn->Tick(1.0f / 60.0f);

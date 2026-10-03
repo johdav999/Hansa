@@ -1,0 +1,291 @@
+{
+  "date": "2026-09-24",
+  "reference": "Docs/Images/UI/TradeWorkspace/trade-workspace--decisions--reference--1536x1024--v1.png",
+  "capture_kind": "Real assembled Development game, explicit saved test campaign; not Shipping or generated imagery",
+  "comparisons": "Native-size diagnostic compositions only, no resampling. Layout/state departures documented in TG-14.md.",
+  "build": "Saved/BuildArtifacts/20260924-082949085-build-HansaEditor-Win64-Development",
+  "tests": [
+    "Saved/BuildArtifacts/20260924-082643118-automation-Hansa.UI.TradeMap",
+    "Saved/BuildArtifacts/20260924-082745582-automation-Hansa.Integration.TradePresence.CityPrivilegeProjectAndAuthority"
+  ],
+  "viewport_runs": [
+    "Saved/BuildArtifacts/20260924-082644269-gui-repair-1920-1080",
+    "Saved/BuildArtifacts/20260924-082742923-gui-repair-1280-720",
+    "Saved/BuildArtifacts/20260924-082906685-gui-repair-1536-1024",
+    "Saved/BuildArtifacts/20260924-083007098-gui-repair-1280-720"
+  ],
+  "captures": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-00.tsv",
+      "sha256": "5fabc833577c42acf3bce1b59d29c971c66fc8c0d3b59c2d6e3b949acc98d4c7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-01.tsv",
+      "sha256": "cf0565d550732bbba8451e4eed1da2d49e2605d74232920af276b6b73c84e399"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-02.png",
+      "sha256": "67c7001e589a1733bc73b0439dc7c3c4134b05edd677c7a505286b8a6596cb29",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-02.tsv",
+      "sha256": "1964cea8f49cc5e529056855c2f26d89c3c112109c103890df31043deaf6e0c5"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-03.tsv",
+      "sha256": "c2da0cb445b58e7d86a9c5a1fec7b2463e0a12b28e5383a9265598383c343e51"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-04.png",
+      "sha256": "b7eeea49a4faa8c381459574d426908b401b2c1dfcacc775ab5e6bac18df9bda",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-04.tsv",
+      "sha256": "0bfab4b3cb1f20fa933d37ffd73adb91503e1559f63ea7b674726bf5f95b35f5"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-05.tsv",
+      "sha256": "32358cd6714539bc4947cdf37f370a5b2a045667ac7fc1c20d047126384157a6"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-06.png",
+      "sha256": "8716e8478da474d01e433be1122bdc86a5916225864aa448d0a9d4c54f83c55c",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-06.tsv",
+      "sha256": "465074d797973a4c5a430318dbc09c09d90dca6b58cd053cec52c8504e9e39e8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-07.tsv",
+      "sha256": "d14c235f49768a67b148f2a1ed8c270db3ba57df29a129a31ef8ccfc334b12af"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-08.png",
+      "sha256": "b24c4c35a59a5eee110976f24b3c88d4cdb20314158f8b76d9896e2e157e0650",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.0-08.tsv",
+      "sha256": "9aededee54cd6947156658ae73d91738b8bf34f3c1ad24b67c20c3fbe371b1b6"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-00.tsv",
+      "sha256": "0568b908ac2053e09caeb197ae2e85ae1dd5209660346fbf7e4f7d32e3563b88"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-01.tsv",
+      "sha256": "dd44530c3bebbcd57ebbc202f86cf88d7452711a5fc302abbafd8218254c76ae"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-02.png",
+      "sha256": "e5e2b3843ae94347c535721b970741aa2a9252aa9e841bef78b8b4397fa58f86",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-02.tsv",
+      "sha256": "e375321cc49d0f157d9f49bbefa27cd1fe6b245a50daa783b41ba2498baf1696"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-03.tsv",
+      "sha256": "b2f3769374fcc511064deea87ca06ee7f7435372fadbfabb42d1ecc5480d1b0f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-04.png",
+      "sha256": "6c621718801c30a1579cf02396172b729ec5a4f952b55ad5fa00848de232399b",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-04.tsv",
+      "sha256": "023020fad0390182fd1932495072ac8569a12baf48c928e0f3ec9f8e00058b0a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-05.tsv",
+      "sha256": "73f2aea68589e3fb0c9acb7a73c731b9b3e3d11230773191329b77683cc503d7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-06.png",
+      "sha256": "d5a99dfdcf0865765c13519518726e97527b06d9461c76f839c1dc735bdb65f7",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-06.tsv",
+      "sha256": "55b5b4500e6fa58d9ad3a483a639ab103539139c3567df04f0cceca77f27d97e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-07.tsv",
+      "sha256": "f94239fb2c1b1ba327baba8b926678a3e4695ef1cf06e579ffe03987e596656c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-08.png",
+      "sha256": "f678b1955655f85940853e1b865568d01dea5b35a6524c5799bb79a2f7768924",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1280x720-scale1.4-08.tsv",
+      "sha256": "18aec9e1a3ffc52208f9cbdf2dbb48975cd09876b292fa35b4e103c9702d7bee"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-00.tsv",
+      "sha256": "9b194abcb6092641d79070dc552ad6c0db436809c323ccd4a67d49f7d826d0f9"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-01.tsv",
+      "sha256": "001c49029866fa5dccfc808eb495b3d3c101719a06628147b79f91d1fb3e3881"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-02.png",
+      "sha256": "5ee955943955674b4ae136b364ec1b6e75702f341ef48dad1091bcdc2ae1f3d3",
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-02.tsv",
+      "sha256": "dfe0ab9352e268fa87f98777e93d976b28d273e73b0d527cefba12a3633ce566"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-03.tsv",
+      "sha256": "c5282fa4816ce7a5c5abbe699975ed5fad44128151a3b167a8ff5a06e095ff23"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-04.png",
+      "sha256": "0a947e44941440adbd8821170f97072f411ac9882638113acdf1ae6b54eaff86",
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-04.tsv",
+      "sha256": "ccc809dfc6640bd216f1d8be6a68967555e793b86e17621b96588965cb7bb4be"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-05.tsv",
+      "sha256": "745250f71f85d2fb29d75f893d4c5c64837129d27fa6873252e042268b2796ff"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-06.png",
+      "sha256": "f74777d0fc1e0234540bf5d703bcbeb61c2662878f3c2442052cfa91e7526433",
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-06.tsv",
+      "sha256": "da5c330e6213cd12dbde9d762ec4c59a74adcbdf193f56a8ce45dba81c45004c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-07.tsv",
+      "sha256": "bbc2d81a8b3c7c01c9629930b5101daa2e319a0cb26ab612ecbbd8b4ce8b94b7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-08.png",
+      "sha256": "0feefd33b8005e845182d4a0016ce429c8ee747620caeda9b4e61c908554f9ae",
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1536x1024-scale1.0-08.tsv",
+      "sha256": "9395ba1fdc00f8dfbd957fd67ea6f9d5adb88f81fd405a7f3a454db191ad28d6"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-00.tsv",
+      "sha256": "987c508cb6c6e63cd14613e901a8282d981383af9747786dcb76d16772584eeb"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-01.tsv",
+      "sha256": "d09454f5f14a77dcb6b9a43fc7cfc3f2351b9c73b32991883d5d3627c9194767"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-02.png",
+      "sha256": "62ad9c013be09020ec5b7798187d4d786f8237e792c643906c9696055ee99574",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-02.tsv",
+      "sha256": "69a7c30ecc7784a92507e908412e3242839eecb425881fa8586aca59e9bf1f24"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-03.tsv",
+      "sha256": "2baecc46a394ad147d95fb6a3c52249ef0f35cd604f37e74a457ce760cacfe64"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-04.png",
+      "sha256": "7d4a8a4822e345d80396e2a08bc52f654c53b6f8530cee115420528db8105d85",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-04.tsv",
+      "sha256": "30b5eeb74943092a77fb692e71c64ecd469b3eabafaf2649beec0f57ff1bf4b2"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-05.tsv",
+      "sha256": "0e4d183f68520141abfba1f2109499c118307681cea6647acf85fd81aba416cc"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-06.png",
+      "sha256": "f39a728f02d1b79ae4180dcfce00a6d6ff3a8d41c1ba6d23566cd97fc6ab3205",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-06.tsv",
+      "sha256": "ce5e1cc3374f3804b1c40fec2b4a93eed91709f45e272d3037b4c3d1e577fb7b"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-07.tsv",
+      "sha256": "85ead538572b253940104db6403abc2c48b89fc78f3ca5a5990d65a69d3ab3b8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-08.png",
+      "sha256": "7a6f08c850ff55881c8802c8d4b0e5e91023660133c471694c8cf9f283f1dce9",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-14-captures/decisions-1920x1080-scale1.0-08.tsv",
+      "sha256": "71133aeb17a80442707f5bf2ff2165fabe8cc92c173556c0f46f115a85308dee"
+    }
+  ]
+}

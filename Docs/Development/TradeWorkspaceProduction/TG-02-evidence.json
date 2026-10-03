@@ -1,0 +1,677 @@
+{
+  "prompt": "TG-02",
+  "build": {
+    "path": "Saved/BuildArtifacts/20260922-203922111-tg02-build-final/Build.log",
+    "result": "Succeeded",
+    "configuration": "HansaEditor Win64 Development, temporary non-unity target override restored after build"
+  },
+  "tests": [
+    {
+      "path": "Saved/BuildArtifacts/20260922-204149699-automation-Hansa.UI.TradeMap/UnrealEditor.log",
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260922-204217823-automation-Hansa.Integration.TradePresence/UnrealEditor.log",
+      "passed": 8,
+      "failed": 0
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260922-204235599-automation-Hansa.Integration.Save.RoundTripContinuation/UnrealEditor.log",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260922-204255794-automation-Hansa.Integration.Save.RuntimeAuthorityContinuation/UnrealEditor.log",
+      "passed": 1,
+      "failed": 0
+    }
+  ],
+  "capture_runs": [
+    {
+      "path": "Saved/BuildArtifacts/20260922-204148950-gui-repair-1920-1080/Unreal.log",
+      "result": "Success",
+      "native_size": [
+        1920,
+        1080
+      ],
+      "ui_scale": 1.0,
+      "views": 11
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260922-204149826-gui-repair-1280-720/Unreal.log",
+      "result": "Success",
+      "native_size": [
+        1280,
+        720
+      ],
+      "ui_scale": 1.4,
+      "views": 11
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260922-204239961-gui-repair-1280-720/Unreal.log",
+      "result": "Success",
+      "native_size": [
+        1280,
+        720
+      ],
+      "ui_scale": 1.0,
+      "views": 11
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260922-204241208-gui-repair-1920-1080/Unreal.log",
+      "result": "Success",
+      "native_size": [
+        1920,
+        1080
+      ],
+      "ui_scale": 1.4,
+      "views": 11
+    }
+  ],
+  "sources": [
+    {
+      "path": "Source/Hansa/Private/UI/SHansaTradeMap.cpp",
+      "sha256": "857585d9beb61621e5cfacac64e5d782b3da759222f218cad20c23bbac64495b"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/SHansaTradeMap.h",
+      "sha256": "25fcfab59f421affeaf80f9d314f7a722761981b271be6907405192334f4d120"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaTradeMapPresentationModel.cpp",
+      "sha256": "925207916ad3aeb11d918fec93805fc5fa06021d963b041774f6850dd366ba39"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaTradeMapPresentationModel.h",
+      "sha256": "5cd9e889740ef9c69788daa165f1e91aab909f12300b6fe13a4216bac3cc433a"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaTradeRouteCreator.cpp",
+      "sha256": "4c3e632b525334934b752df1fb1de841d896a385d99dff2f0902baad41fca0ce"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaRootHud.cpp",
+      "sha256": "a0752084521cfa523243e550afa1a3fbea39b110b3934d199d0fcdb774724f37"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/Trade/HansaTradeWorkspaceComponents.cpp",
+      "sha256": "de4cd7e9b01e9510c2a32b4e0c448e8ce7e3e7cfdad66e23b644ceb8696beffb"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/Trade/HansaTradeWorkspaceComponents.h",
+      "sha256": "cc13afa1fd8d786b9bd58b5392d1bb5923a1efe8fcead4701460579f9257fd9a"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeMapTests.cpp",
+      "sha256": "263f4a0d391d778f8b359285b64bc17563880b566467bae814454d3039e066e1"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeWorkspaceCaptureTests.cpp",
+      "sha256": "8456df10bd7c778109fc83532ca9ed74d4a6356f46e84e3da796a700d7431ebe"
+    }
+  ],
+  "captures": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Creator.png",
+      "sha256": "8654b438eb07e4da1e73fdc407f718cf7905a801396d6823fec3b15eeb43302c",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Creator.tsv",
+      "sha256": "7e56b37444e5e0779f3306c0b319adc1886ed145ad9c737851717b47f6857252"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Map.png",
+      "sha256": "1ae7b8fca060b9a8911ebf7359a600ac21700509215b8f7b7987feb456fe615d",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Map.tsv",
+      "sha256": "59d2bd098c10df3961a332a7e3bae5442ee51a5a5adac6444d4cf82554b94a6e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Orders.png",
+      "sha256": "5e99c52d86f6b5a8f1fa9773580731621b9daf45bd78275f99e47dd365c21bea",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Orders.tsv",
+      "sha256": "434482bfb9d8c9600ba1752440daf1ed40cfe9574139e3fc0f238431a2fe0531"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Presence.png",
+      "sha256": "4bfa71d9c51933f48e66d85ae07ce4e0594fffb08e4c9de42e7d4dc34263b6f8",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Presence.tsv",
+      "sha256": "0fbbd9cd70a8e47e0740b0c0582b2051bc5f58ef2241f41f4609f8127031557c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-PresenceFocus.png",
+      "sha256": "b28c04f8a2430afad9b8b320d894291b8a13f3e70e6f8dd2e9b3f5d7f3f13d4f",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-PresenceFocus.tsv",
+      "sha256": "db09e890a22172aa7bfc193e4d247ec79d058f93ca7403e43e5b282f20573c96"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Review.png",
+      "sha256": "b23e37fcc9f04a01c3da60e3d7f15c1103d19c3f9c063ce8b9cc02d465b16648",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Review.tsv",
+      "sha256": "5d572582862c578fb7af7c61b8988ab9b5efc86e957171b0b94f610935c13474"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Route.png",
+      "sha256": "bc09efa6dfb255e24a3e4f4df2be1c5cb72cd5e9f533339e38835d11c5488f32",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Route.tsv",
+      "sha256": "04c6f6100ced824bf57a1c256bb655e6608e21ace878634f908a7012e2f66201"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-RouteFocus.png",
+      "sha256": "bd84e7bccf1d19c1230cde88f3f9e9d71b4096c7ae0ea4dea867de49b182ecb7",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-RouteFocus.tsv",
+      "sha256": "df669880d195b6b7a5df9f041eb75165a4d1fe41950e323dee62adc9c5d467f6"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Routes.png",
+      "sha256": "37c04bb9438536603c0818f6534eac4d5cf84a1589545284e813c7c65423c69e",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Routes.tsv",
+      "sha256": "66be0271576e5ce46d2a48d5450cdf4c835baac67f085d4b2075c6c873448236"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Schedule.png",
+      "sha256": "635f129792dee79d5c1ae23388b3351f5195755477475a0d6e3f171b95cebde5",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Schedule.tsv",
+      "sha256": "d6bbd00200b5112b07b82870adfab9a5e3e78d2bf7cafd023e0f87fd54199b52"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Specialization.png",
+      "sha256": "72f795335039fb9b0e287699ba5a2146f98c2e61ca4008a6012f57303baab38c",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1280x720-Specialization.tsv",
+      "sha256": "09b7eb177deee68b0bc3f065c0e0b224f618f22d3d7b6bdf8ed1e9662c74cbd3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Creator.png",
+      "sha256": "f18511e19b008a7d0bdf1b51376b71b5dc7207b8920a61fc1257a4113f400070",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Creator.tsv",
+      "sha256": "b47a2a6473cd3acd15e3555c22006aa6512e3e221cdad4caa81f57139038b78c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Map.png",
+      "sha256": "8f3e283dc762bc290e669fad5de66e2499e2a37b731af7fb05ba81829b23a107",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Map.tsv",
+      "sha256": "00e66b6a404e71a277b7446097e1d5467a62ce51a1a3eebfafd12aec80423fba"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Orders.png",
+      "sha256": "3ca4dca998b0ae9b81d5b556f8bb351df9d79d5efead5f1e4e193567d3a60fcf",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Orders.tsv",
+      "sha256": "712ace5d7cca15ddcdb6984a1bf4f19d064bb28d342933c79759eab509d8cff5"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Presence.png",
+      "sha256": "7cb3ce3cd43e7c71832a8eb8ced8866b22ad5ad40e3c4b64af763e4d7e22a8df",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Presence.tsv",
+      "sha256": "80b496c558ec7a9c734950c25a6af821d1b06fabe92b6ef203442409ed5d28f3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-PresenceFocus.png",
+      "sha256": "c879a3186b2a4d44a2ee0799c9b9a90cfdc7491d7c2b8fc22b07c2f04d3cccaf",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-PresenceFocus.tsv",
+      "sha256": "4bcc291c13541c4cfa5ee55ae33c5ee0932dde118def4523a7040574324294b6"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Review.png",
+      "sha256": "a2bddec6fdf0be93f00463342a546ee07ec2a7fd3b8fbab305ac20875bffbd89",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Review.tsv",
+      "sha256": "70f0ccccc8659c724fcf467d56ba87c84908e693102f5b2c5060a237f2c94807"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Route.png",
+      "sha256": "9cd4035597a13ad4d0d1351572073d6d77e4f9916285b44a94fa54e189561833",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Route.tsv",
+      "sha256": "ebcec94e7b4df393b7d27d0a57413bf43ef7db711790a2e2cc2d09670b29de4e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-RouteFocus.png",
+      "sha256": "2a21ad2827460eb96aee1eac43cd4e0eddfd30dd008fcd705e4c9f5a3946f0b4",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-RouteFocus.tsv",
+      "sha256": "5d58cf8f4c374b1a1d08530412c8d13916f0d0a0717a03d848ae3dde628dd78d"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Routes.png",
+      "sha256": "9dac761d3a82d518d538faa41a425fdb7e4b6083b9de5a979c2302ce2aa164cd",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Routes.tsv",
+      "sha256": "c5813b53b7b8689ecbc2cf69f9e0fbd8bd3424ebb20b7bccd317c154dc29a89b"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Schedule.png",
+      "sha256": "664ded054cee499e5e29868d27fbdebfc3c547f790a21de8072b30c9640e743d",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Schedule.tsv",
+      "sha256": "1b2d48bee574f72c7a6cfb80bc74a2c6e154dfaa58a857c978912889a35c01b4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Specialization.png",
+      "sha256": "1a11a66f6081e5ce3fb7abd9f3e036db4b887b438428be8b240aed92006f2690",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.0,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.0/trade-1920x1080-Specialization.tsv",
+      "sha256": "dfd489ec82d88298e91ba0f159699a9a283196ece2c21fa20958c66aff6304f3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Creator.png",
+      "sha256": "563b53fb98c325a4b1d5048848a8c988e9954087bf9499a89ddd2cf71d1fd620",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Creator.tsv",
+      "sha256": "d4641876e42c13487648fa6159da5dde20266d434b294a08d8f279c0040395e1"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Map.png",
+      "sha256": "b7b4b568ea8115bbabc7266220417c8ef92ab0153b22deb757d9b3c4e9f73fe4",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Map.tsv",
+      "sha256": "9a51e1b83ff7ba903a3ac35dd8ade6bf41d212d2c2b664783f72f68d43f3de4f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Orders.png",
+      "sha256": "9d5b63e84ec6a4287e5a66fcc5dbc51156b79d2df3affb12757f976e5f81bdfe",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Orders.tsv",
+      "sha256": "8f60d3ea8538eef07fcaded26da52729d88f5a498934d674118466e802865205"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Presence.png",
+      "sha256": "bd01c061b5ba75591dff32126ef56ef7ddb1ae88da145b98dbe66df87d231e9f",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Presence.tsv",
+      "sha256": "c0b3ae11b060e28b04eaf1d1bf51f2cb6d0343cf8b34b7022b92a321d8722c71"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-PresenceFocus.png",
+      "sha256": "c483d594b03f9bcab67f2140cfd4184616f6e44e4cfa0c8a191ad87fe5f5ba02",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-PresenceFocus.tsv",
+      "sha256": "2c1c5109e538c8755b1c93e7ee62f0ea24416b1868e15729e258df8ab5e93f9c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Review.png",
+      "sha256": "213ef0060ac32e6db063422a42b1d5be611839d4e85cf3f3a9f285c47834efa8",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Review.tsv",
+      "sha256": "be2fdb24fd5ec7e0d204ea426eaab63b8df1b31b00536dbc36abf466303d4c0e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Route.png",
+      "sha256": "f8c05b5cfd6c422a6eac93286ddee1f06d9e37b6c7ff071c7f61d2cc51d5cea5",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Route.tsv",
+      "sha256": "eec4f15233fbc018d35c75130611761e4eb31e6105a4d823b0a196466391393e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-RouteFocus.png",
+      "sha256": "343c524f229f74e0b6b557e19f6583eecb80d1d31174fe499c44aec472e8419e",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-RouteFocus.tsv",
+      "sha256": "13e8a4f82266f0fc406b285453e6a960e28694998aa23341f5ce9ae5231b0362"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Routes.png",
+      "sha256": "f86e8d159268913a83c83a07ea7f7f9f45477960c07dd0c485b2b229c7dacca6",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Routes.tsv",
+      "sha256": "c781865872792689b0f78f6ce6c567ad0979959683038293f679bf3968ebef03"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Schedule.png",
+      "sha256": "3a659378c447534314fb6ba62d61b36943dda93cd7809b838dcc2b7b421f42c9",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Schedule.tsv",
+      "sha256": "faf23bef2f3e1fa90323d6d3d6c0c0f0b37e4d90afb03e9fd228866d319b64e7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Specialization.png",
+      "sha256": "4e9469c66f56619a10b7e5354a6a9d9e84613ade50ec10f162596fa3327b7a4a",
+      "width": 1280,
+      "height": 720,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1280x720-Specialization.tsv",
+      "sha256": "61a2e16a2cdb4479f5cf28be12bd335dc7de53cb5626ae8695959601dbb95dcc"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Creator.png",
+      "sha256": "5c2c799dc77185ffad966f2dbd593df461f5227248fc19e05d7919c28bcfcc50",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Creator.tsv",
+      "sha256": "fa3d64f00f06e6c067c391428962636e344fe9563b93c743973d2dd82e4dac43"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Map.png",
+      "sha256": "d623158150d70724f431133293ad922dbb56e96b5d21d0323058c41242c34bf1",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Map.tsv",
+      "sha256": "9dacb82b0f3b8a6cb40ab90f0b8201ac6797e8d025cc47f648afcb00b44191e0"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Orders.png",
+      "sha256": "236cfd91a0dcdfd61497c506cad3e7aa53e2d09f6ebe5a58b571ed11b5518ea7",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Orders.tsv",
+      "sha256": "e5349984ad25cbcf811384da1ae24af59e18c8a40f3af4a056b4f6f1cbdd3016"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Presence.png",
+      "sha256": "71ee15a70ae855319d9c9bc3aabfef04a8d3a9323005e542c56deaf4811fbc78",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Presence.tsv",
+      "sha256": "058baa994a2e8e4e67a0d550b38e06963ccfbe06ecb0485b7cb70fc95527988e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-PresenceFocus.png",
+      "sha256": "5196f3e94ab2c5ee21f8cfd98bc1fa98f2977dc8e276468e473915904f9fbba1",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-PresenceFocus.tsv",
+      "sha256": "bc33c1fdf8daefdce5bca86ee1e847e9ee4338e068445b527ce3658711deae34"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Review.png",
+      "sha256": "d0dd14ae127f4ce7af02810fdc6621e36b8693669e973238e7ec2a7b75277815",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Review.tsv",
+      "sha256": "565fdb726a14448e3f4b5910780f26936bdde4057c4e054a239d55b613e10fb0"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Route.png",
+      "sha256": "ec8fca616154495795e1d14da699b05894d5725a35155c7e775d839f24b3580a",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Route.tsv",
+      "sha256": "c392cefdab25ade43a53c8e98a4320733ebe091d520e98004a6e5541b5b61d9c"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-RouteFocus.png",
+      "sha256": "dc7e6a74138598948fe6fc11548cbe6715faa92043f71b7d02071b476303a445",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-RouteFocus.tsv",
+      "sha256": "7b5ea9e8f331521e8311529515c5140851e7c551d4d6f4ed28fe2d5ff7283069"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Routes.png",
+      "sha256": "d39b3aec5296ed1899414f3f789e242d7f3037510d54781c4cf2a63a48ed8cd7",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Routes.tsv",
+      "sha256": "c9a2dd82e3072820e6d8fc58260c4d11448b22989a50027c18d6735c4e8385ba"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Schedule.png",
+      "sha256": "47f803078a92c1a15cdf0d6008a2072b2e7b5cde0b7b3d0a1cf138275fbb0bdf",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Schedule.tsv",
+      "sha256": "5bd8af8bbbd9556795ba7bf3e820e56d4aa07c867f4f28d5cd6ddd4974b3a87f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Specialization.png",
+      "sha256": "cc0da05c87d0263cf9566332b7b3dea2a36e29c32cce52f631c81d2e62e79a8d",
+      "width": 1920,
+      "height": 1080,
+      "ui_scale": 1.4,
+      "post_capture_resized": false
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-02-captures/scale-1.4/trade-1920x1080-Specialization.tsv",
+      "sha256": "e0c15b4450fcbe110fa783f06cd083f7f69542c091cb1bd20ad981351e157e6d"
+    }
+  ],
+  "references": [
+    {
+      "path": "Docs/Images/UI/TradeWorkspace/trade-workspace--wide-shell--reference--1672x941--v1.png",
+      "sha256": "1a0a14aff62353e7bf06769bd5efd7fa4f1300473ecd30c5c3a712671132e12b",
+      "classification": "non-shipping reference"
+    },
+    {
+      "path": "Docs/Images/UI/TradeWorkspace/trade-workspace--wide-shell--reference--1672x941--v1.prompt.md",
+      "sha256": "6df3a4b7f1edd6737b57ea7d64d83092f8b1449c26e0a130051ccde8ef5307ab",
+      "classification": "non-shipping reference"
+    },
+    {
+      "path": "Docs/Images/UI/TradeWorkspace/trade-workspace--compact-shell--reference--1672x941--v1.png",
+      "sha256": "90b1a3aba745f460dff23f3e6178a38a2af36eb11ff0efebc7f31328e82d6fd1",
+      "classification": "non-shipping reference"
+    },
+    {
+      "path": "Docs/Images/UI/TradeWorkspace/trade-workspace--compact-shell--reference--1672x941--v1.prompt.md",
+      "sha256": "136e5ff54fb41e432a9dd3205bc05ee748cce8f002ad049bcf203309c8a92128",
+      "classification": "non-shipping reference"
+    }
+  ],
+  "production_rasters_added": 0,
+  "limitations": [
+    "Development viewport evidence, not Shipping or TG-18 release approval.",
+    "TG-01 creator/journey failures remain recorded separately; authoritative economics unchanged.",
+    "Existing map geography and later workflow depth remain assigned to TG-03 onward."
+  ],
+  "geometry_validation": {
+    "native_png_count": 44,
+    "visible_primary_controls_within_viewport": true,
+    "no_resampling": true
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "prompt": "TG-00",
+  "date": "2026-09-22",
+  "baselineRevision": "010849e8f14b1ce672e1ab2f7ec4ef1c0a7b9dbf",
+  "status": "Deliverables verified; reference-only",
+  "releaseStatus": "Blocked (inherited TR-14)",
+  "runtimeChanged": false,
+  "gameplayTestsRun": [],
+  "buildsRun": [],
+  "newRuntimeCaptures": [],
+  "componentCount": 22,
+  "auditGapCount": 31,
+  "coveredPrompts": [
+    "TG-00",
+    "TG-01",
+    "TG-02",
+    "TG-03",
+    "TG-04",
+    "TG-05",
+    "TG-06",
+    "TG-07",
+    "TG-08",
+    "TG-09",
+    "TG-10",
+    "TG-11",
+    "TG-12",
+    "TG-13",
+    "TG-14",
+    "TG-15",
+    "TG-16",
+    "TG-17",
+    "TG-18"
+  ],
+  "tradeUiTestsInspected": [
+    "Hansa.UI.TradeCreator.CreateDeliverSave",
+    "Hansa.UI.TradeCreator.RealViewport",
+    "Hansa.UI.TradeCreator.ValidationAndRecovery",
+    "Hansa.UI.TradeJourney.DeterministicImport",
+    "Hansa.UI.TradeJourney.RealViewport",
+    "Hansa.UI.TradeJourney.Recovery",
+    "Hansa.UI.TradeMap.ProjectionAndSimpleEditor",
+    "Hansa.UI.TradeMap.RuntimeCommandCommit",
+    "Hansa.UI.TradeMap.SectionNavigation.NativeScreens",
+    "Hansa.UI.TradeMap.SemanticsAndResponsiveNativeEvidence",
+    "Hansa.UI.TradeWorkspace.RealViewport"
+  ],
+  "observedTradeMapLiteralIds": [
+    "TradeMap.Canvas",
+    "TradeMap.Chart.Reset",
+    "TradeMap.Chart.ZoomIn",
+    "TradeMap.Chart.ZoomOut",
+    "TradeMap.City.City_",
+    "TradeMap.City.Filter",
+    "TradeMap.City.Search",
+    "TradeMap.Close",
+    "TradeMap.Creator.Activate",
+    "TradeMap.Creator.Add",
+    "TradeMap.Creator.City",
+    "TradeMap.Creator.Cog",
+    "TradeMap.Creator.Discard",
+    "TradeMap.Creator.Edit",
+    "TradeMap.Creator.Good",
+    "TradeMap.Creator.Name",
+    "TradeMap.Creator.Remove",
+    "TradeMap.Creator.Review",
+    "TradeMap.Creator.ReviewText",
+    "TradeMap.Creator.Validation",
+    "TradeMap.Editor.Action.Cycle",
+    "TradeMap.Editor.Cancel",
+    "TradeMap.Editor.Quantity.Decrease",
+    "TradeMap.Editor.Quantity.Increase",
+    "TradeMap.Editor.Reserve.Decrease",
+    "TradeMap.Editor.Reserve.Increase",
+    "TradeMap.Editor.ReserveRisk",
+    "TradeMap.Editor.RouteState",
+    "TradeMap.Editor.Save",
+    "TradeMap.Editor.Stop.Down",
+    "TradeMap.Editor.Stop.Up",
+    "TradeMap.Editor.ToggleActive",
+    "TradeMap.Editor.Visit",
+    "TradeMap.Good.Filter",
+    "TradeMap.Mode.Filter",
+    "TradeMap.Navigate.Orders",
+    "TradeMap.Navigate.Presence",
+    "TradeMap.Navigate.Route",
+    "TradeMap.Navigate.Specialization",
+    "TradeMap.New",
+    "TradeMap.Orders.Budget.Decrease",
+    "TradeMap.Orders.Budget.Increase",
+    "TradeMap.Orders.Cancel",
+    "TradeMap.Orders.Cap.Decrease",
+    "TradeMap.Orders.Cap.Increase",
+    "TradeMap.Orders.Good",
+    "TradeMap.Orders.Pause",
+    "TradeMap.Orders.Save",
+    "TradeMap.Orders.Select",
+    "TradeMap.Orders.Side",
+    "TradeMap.Orders.Status",
+    "TradeMap.Orders.Target.Decrease",
+    "TradeMap.Orders.Target.Increase",
+    "TradeMap.Presence.Commercial",
+    "TradeMap.Presence.Governance",
+    "TradeMap.Presence.Privilege",
+    "TradeMap.Presence.Progress",
+    "TradeMap.Presence.Project",
+    "TradeMap.Presence.Specialization.Apply",
+    "TradeMap.Presence.Specialization.Harbor",
+    "TradeMap.Presence.Specialization.Market",
+    "TradeMap.Presence.Specialization.Warehouse",
+    "TradeMap.Presence.Upgrade",
+    "TradeMap.Root",
+    "TradeMap.Route.Page.Next",
+    "TradeMap.Route.Page.Previous",
+    "TradeMap.Selection.NextCity",
+    "TradeMap.Selection.PreviousCity",
+    "TradeMap.Station.Action"
+  ],
+  "semanticInventoryNote": "Literal inventory only; dynamic families and compatibility are specified in the contract.",
+  "sourceAndHistoricalEvidence": [
+    {
+      "path": "Source/Hansa/Public/UI/SHansaTradeMap.h",
+      "sha256": "C28ECBB702394015800EE2489A2FD3A52622602394FF8189ADB44BC1D3A55CBA"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/SHansaTradeMap.cpp",
+      "sha256": "589D019DB9113338E765FD27E50E4BB0B7DC9F7511620F0E64C7F52B54F01199"
+    },
+    {
+      "path": "Source/Hansa/Public/UI/HansaTradeMapPresentationModel.h",
+      "sha256": "019BD182FAB319D4AF9122FE37B20AC2F37891727D275E38DA3893C3B869130D"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaTradeMapPresentationModel.cpp",
+      "sha256": "96152D0CA71F7A832DC54BAAA340F37D102C4222304B7D51AC165F0C992BC704"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaTradeRouteCreator.cpp",
+      "sha256": "E9A878C5C6095921941D4708803D483692C8299A244041036F2735ADBA6B7C68"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaTradeChartData.inl",
+      "sha256": "EE7AAB938D9B7BA032528CCE29ABC9807C0F5C72A8B72308711C2A99B936A021"
+    },
+    {
+      "path": "Source/Hansa/Private/UI/HansaTradeCityLocations.inl",
+      "sha256": "9ED3252164D521C0FC0081588502E0A91BAB11C9B9E674C28BFD99E50AB0071A"
+    },
+    {
+      "path": "Scripts/BuildTradeChart.py",
+      "sha256": "F7733417D21B7874F383C2F1A0D24ED235992E36DA41B14D70147CEC7189EA9F"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeCreatorCaptureTests.cpp",
+      "sha256": "40FD41BC9AA80141DE3A9B101D932B8E3B0739468354202948B77B8929FBADDF"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeCreatorTests.cpp",
+      "sha256": "DE29E12E675A87F4865FBB6120BA17D9F1042444E77DC9696C24CD4E8EB3CF91"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeJourneyCaptureTests.cpp",
+      "sha256": "82845B902BFD75937668B1D1564E1039CD56AD4BB2C0E3248810A7F37E86FD13"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeJourneyTests.cpp",
+      "sha256": "BD5CACA2FD31407064994D32FF41E2AEAD230761886C9E0F76A6D5FD3CB3DE50"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeMapTests.cpp",
+      "sha256": "7224FE95D8C7E48F7534E70D2174B89F972CF96985962201C5525A8369434117"
+    },
+    {
+      "path": "Source/HansaTests/Private/UI/HansaTradeWorkspaceCaptureTests.cpp",
+      "sha256": "9756549A27AF8D8B4BC3304055B08E98A04DD5EABEAAB533B548D8879CDAF71F"
+    },
+    {
+      "path": "Docs/Development/TradePresence/TR-06/evidence.json",
+      "sha256": "05D376DA1143134A661778AAE7F35F708E52EE9E0F9CF32B3B636E82B13AE350"
+    },
+    {
+      "path": "Docs/Development/TradePresence/TR-08/evidence.json",
+      "sha256": "E3CE180A66589D7E46A9D617842F12D855682C0BB06450100A9F7F89F1633013"
+    },
+    {
+      "path": "Docs/Development/TradePresence/TR-14/evidence.json",
+      "sha256": "2A136A1BC217BC6DFBBA99FB39E3A380CC2F84451681005945808D3D7D025419"
+    }
+  ],
+  "reference": {
+    "path": "Docs/Images/UI/TradeWorkspace/trade-workspace--composed--presence--1672x941--v2.png",
+    "sha256": "54A9546712AE4C3148A79F6614E180EBA2DB5DA890B9D5F863522D9B04CC3CDB",
+    "width": 1672,
+    "height": 941,
+    "colorType": "RGB opaque",
+    "requestedSize": "1920x1080",
+    "mode": "built-in ImageGen: generation from two style anchors, one targeted edit",
+    "shipping": false,
+    "resampled": false,
+    "originalResolutionInspected": true,
+    "sourceCopyHashMatches": true,
+    "newProductionRasterCount": 0,
+    "userSignOff": "Not separately claimed",
+    "promptRecord": "Docs/Images/UI/TradeWorkspace/trade-workspace--composed--presence--1672x941--v2.prompt.md"
+  },
+  "checks": {
+    "componentAndGapCounts": "passed",
+    "allTgPromptOwnersPresent": "passed",
+    "elevenTradeTestsInventoried": "passed",
+    "tradeRuntimeAndTestDiffEmpty": "passed",
+    "runtimeReferenceSearch": "no references in Source/Config/Scripts",
+    "assetHashMatchesOriginal": "passed",
+    "linkAndWhitespaceValidation": "passed (20 local links checked; LF text, no trailing whitespace)"
+  },
+  "scopeNotes": [
+    "No gameplay/schema/catalog/save/migration changes.",
+    "Four unrelated rabbit files and supplied untracked prompt pack preserved.",
+    "Four unrelated bakery zip files appeared during task and were not touched.",
+    "Image path/viewer sandbox failed; native bytes read through approved shell, ImageGen reused visible images.",
+    "Historical reports/manifests inspected, not all prior artifacts rerun or re-certified.",
+    "No TG-01 or later implementation performed."
+  ],
+  "deliverableHashes": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction.md",
+      "sha256": "77CB1017B899724F5C876C3BBE1508A2D938B944FABFC735D3F156A26DC72424"
+    },
+    {
+      "path": "Docs/Images/UI/TradeWorkspace/trade-workspace--composed--presence--1672x941--v2.prompt.md",
+      "sha256": "9B1AEA9864DFF67A0578DF4CF7B0770ACDC4D4F4E3DDB048ECA5A8ED1E3A03CD"
+    }
+  ]
+}

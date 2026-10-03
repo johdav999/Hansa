@@ -1,0 +1,99 @@
+{
+  "status": "partial; TG-13 world placement and shared visual acceptance remain open",
+  "configuration": "DebugGame",
+  "date": "2026-09-23",
+  "clientProjectionSchema": 8,
+  "buildAndConstructionTests": {
+    "path": "Saved/BuildArtifacts/20260923-215907920-automation-Hansa.UI.TradeMap.Construction",
+    "tests": 3,
+    "status": "passed"
+  },
+  "authoritativeConstruction": {
+    "path": "Saved/BuildArtifacts/20260923-220128665-automation-Hansa.Integration.TradePresence.LeasedForeignConstruction",
+    "tests": 1,
+    "status": "passed"
+  },
+  "multiplayerAuthority": {
+    "path": "Saved/BuildArtifacts/20260923-220127656-automation-Hansa.Multiplayer.Authority",
+    "passed": [
+      "EightIndependentHouses"
+    ],
+    "failed": [
+      "ServerValidatedProjections",
+      "TwoPlayerReconnectFixture"
+    ],
+    "notes": "Home-city placement assertions fail; reconnect fixture also expects fingerprint 28 / command 11 and a historical authoritative hash. No baseline run establishes whether all failures predate this change."
+  },
+  "captures": [
+    "Saved/BuildArtifacts/20260923-220126332-gui-repair-1280-720",
+    "Saved/BuildArtifacts/20260923-220128396-gui-repair-1920-1080"
+  ],
+  "inspectedAtOriginalResolution": [
+    "construction-1280x720-0.png",
+    "construction-1280x720-2.png",
+    "construction-1920x1080-0.png",
+    "construction-1920x1080-2.png"
+  ],
+  "files": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1280x720-0.png",
+      "bytes": 336485,
+      "sha256": "09fb982a4ff779a4168317d00dd083cbece8ccec7c8571f2133ef83162564357"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1280x720-0.tsv",
+      "bytes": 7396,
+      "sha256": "5b0afb4cecd9ab5781114c8730f9ce5813db03b9758a00e782ec1689608ff325"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1280x720-1.png",
+      "bytes": 279718,
+      "sha256": "c46d0be6a75fa0a275ff497339830c167cfc1e17731bbb2892887fdf553a3a98"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1280x720-1.tsv",
+      "bytes": 8262,
+      "sha256": "3ee98bfeb1503d2bc0cfbf519f33e134abe6d445e44f4079c3a7a419a3a9ea40"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1280x720-2.png",
+      "bytes": 536292,
+      "sha256": "1004acc0cbd80d934e6bcae5da707023583a36a780740526ba3a0974dce6c866"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1280x720-2.tsv",
+      "bytes": 8294,
+      "sha256": "348503ed8a4e1117d1fd0bcb757408ce3443f720e5fde038530c62c60740bb04"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1920x1080-0.png",
+      "bytes": 2495495,
+      "sha256": "8e8718bc5148ef9758d48aeea3e2440aea50f2b5d7a03a6bb9f77f17fa01fdd1"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1920x1080-0.tsv",
+      "bytes": 7434,
+      "sha256": "18ba20ef834134246b70a91686e8e9ee4970c25e80904a7e9e3a0280fc5d917a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1920x1080-1.png",
+      "bytes": 2543613,
+      "sha256": "82b60d4a01b8a9cfa2e88fe40e06d800e7d4c5b4617d13ed8fb1418677170659"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1920x1080-1.tsv",
+      "bytes": 8272,
+      "sha256": "86b247c762205feada4893919b26effb02d6b5c45cf22607f579ec2632c85218"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1920x1080-2.png",
+      "bytes": 2600991,
+      "sha256": "54b6fe6853427bad13e5297a4740952882710d17ed855a0bd59c7699ce0de703"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-13-followup-captures/construction-1920x1080-2.tsv",
+      "bytes": 8332,
+      "sha256": "f88ba8f3e1d02a0f8c6afc5b6078d163a5e6497ac883194a8b5268eb1ad90968"
+    }
+  ]
+}

@@ -141,6 +141,7 @@ public:
 	bool ActivateCausalIntent(FName RowStableId);
 	bool RetryIntent();
     bool SelectCityIntent(FName CityId);
+    void ApplyRemoteMarketCity(FName CityId);
     TFunction<bool(FName)> VisitRequested;
     bool VisitCityIntent();
     void SetVisitStatus(FText Status);

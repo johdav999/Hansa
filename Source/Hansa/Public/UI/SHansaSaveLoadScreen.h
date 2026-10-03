@@ -42,8 +42,9 @@ namespace Hansa::UI
 		void Refresh(const FHansaSaveLoadPresentationSnapshot& Snapshot, uint64 Revision);
 		void RebuildSlots(const FHansaSaveLoadPresentationSnapshot& Snapshot);
 		FReply HandleClose();
-		FReply HandleSelectSlot(EHansaSaveSlotId SlotId);
+		FReply HandleSelectSlot(FName StableId);
 		FReply HandleSave();
+		FReply HandleNewSave();
 		FReply HandleLoad();
 		FReply HandleConfirm();
 		FReply HandleCancel();
@@ -63,7 +64,7 @@ namespace Hansa::UI
 		TSharedPtr<SVerticalBox> SlotRows,MainPanel;
 		TSharedPtr<STextBlock> DetailTitle, DetailTimestamp, DetailScenario, DetailVersion, DetailHashes;
 		TSharedPtr<STextBlock> StatusText, RemedyText, ConfirmationText;
-		TSharedPtr<SButton> CloseButton, SaveButton, LoadButton, ConfirmButton, CancelButton;
+		TSharedPtr<SButton> CloseButton, NewSaveButton, SaveButton, LoadButton, ConfirmButton, CancelButton;
 		TSharedPtr<SWidget> RootWidget, ConfirmationWidget, StatusWidget;
 		TMap<FString, TWeakPtr<SWidget>> SemanticWidgets;
 	};

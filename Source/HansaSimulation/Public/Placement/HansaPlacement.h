@@ -87,6 +87,13 @@ namespace Hansa::Simulation
 		bool bBlocked = false;
 	};
 
+	/** Exact previous owner for a cell reassigned to the playable home opening. Save migration only. */
+	struct FHansaPlacementOwnerPredecessor final
+	{
+		int32 CellIndex = INDEX_NONE;
+		FHansaHouseId OwnerId;
+	};
+
 	struct FHansaPlacementMapInitialization final
 	{
 		FHansaCityDefinitionId CityId;
@@ -96,6 +103,10 @@ namespace Hansa::Simulation
 		TArray<FHansaPlacementGridCell> Cells;
 		/** Surveyed standing trees, canonicalized and validated with the immutable map. */
 		TArray<FHansaGridCoordinate> TreeCells;
+		/** Immutable municipal streets: blocked for construction, traversable by logistics. */
+		TArray<FHansaGridCoordinate> PublicRoadCells;
+		/** Excluded from the topology hash; reconstructs the exact pre-fix topology for old saves. */
+		TArray<FHansaPlacementOwnerPredecessor> HomeOwnerPredecessors;
 	};
 
 	/**
@@ -114,6 +125,8 @@ namespace Hansa::Simulation
 		[[nodiscard]] uint64 GetTopologyHash() const { return TopologyHash; }
 		[[nodiscard]] uint32 GetRecordCount() const { return RecordCount; }
 		[[nodiscard]] TConstArrayView<FHansaPlacementMapInitialization> GetMaps() const { return Maps; }
+		/** Derived once from immutable cells; excluded from topology identity and saves. */
+		[[nodiscard]] const TMap<FString, TArray<FHansaGridCoordinate>>& GetProtectedCells() const { return ProtectedCells; }
 		[[nodiscard]] const FHansaPlacementMapInitialization* FindMap(FHansaCityDefinitionId CityId) const;
 		[[nodiscard]] const FHansaPlacementGridCell* FindCell(
 			FHansaCityDefinitionId CityId,
@@ -121,6 +134,7 @@ namespace Hansa::Simulation
 
 	private:
 		TArray<FHansaPlacementMapInitialization> Maps;
+		TMap<FString, TArray<FHansaGridCoordinate>> ProtectedCells;
 		uint64 TopologyHash = 0;
 		uint32 RecordCount = 0;
 	};
@@ -174,6 +188,10 @@ namespace Hansa::Simulation
             Result.Reasons.Add({EHansaPlacementFailure::FoundationTooSteep, Cell,
                 TEXT("Placement.Validation.FoundationTooSteep"), TEXT("Placement.Remedy.FoundationTooSteep")});
             return Result;
+        }
+        FHansaPlacementValidationResult WithOccupiedFailure(FHansaGridCoordinate Cell) const
+        {
+            auto Result=*this;Result.Reasons.Add({EHansaPlacementFailure::Occupied,Cell,TEXT("Placement.Validation.Occupied"),TEXT("Placement.Remedy.Occupied")});return Result;
         }
 		[[nodiscard]] bool CanPlace() const { return Reasons.IsEmpty(); }
 		explicit operator bool() const { return CanPlace(); }
@@ -237,6 +255,8 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaPlacementRules final
 	{
 	public:
+		/** Shared ownership exception used by placement authority and read-only land views. */
+		[[nodiscard]] static bool IsStartingCityOpenLand(FHansaCityDefinitionId CityId);
 		[[nodiscard]] static FHansaPlacementValidationResult Validate(
 			const FHansaPlacementState& State,
 			const FHansaEconomicRegistry& Definitions,

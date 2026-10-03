@@ -1,4 +1,5 @@
 #pragma once
+#include "Inventory/HansaInventory.h"
 
 #include "Containers/Array.h"
 #include "Math/HansaFixedPoint.h"
@@ -98,6 +99,8 @@ namespace Hansa::Simulation
 		FHansaGoodId GoodId;
 		FHansaQuantity QuantityLimit;
 		FHansaQuantity MinimumSourceReserve;
+		// Persistent physical hold column; INDEX_NONE is a preserved legacy pooled instruction.
+		int32 CargoSlotIndex = INDEX_NONE;
 	};
 
 	struct HANSASIMULATION_API FHansaRouteStop final
@@ -219,6 +222,7 @@ namespace Hansa::Simulation
 		int64 AccruedUpkeepPfennig = 0;
 		FHansaSpotTradeRecord LastSpotTrade;
         FHansaWaterJourney Navigation;
+        TArray<FHansaCargoSlot> CargoSlots;
 	};
 
 	struct HANSASIMULATION_API FHansaRouteProjection final

@@ -12,7 +12,6 @@ bool FTradeCreatorDelivery::RunTest(const FString&)
     using namespace Hansa::Simulation;
     TStrongObjectPtr<UHansaRuntimeSimulationHost> Host(NewObject<UHansaRuntimeSimulationHost>());
     FString Error; if(!TestTrue(TEXT("Runtime ready"),Host->InitializeForLubeck(nullptr,Error)))return false;
-    if(!TestTrue(TEXT("Reserve automation research completed for delivery fixture"),Hansa::Tests::TradeJourney::UnlockReserveAutomation(Host.Get())))return false;
     TStrongObjectPtr<UHansaTradeMapPresentationModel> Model(NewObject<UHansaTradeMapPresentationModel>());
     Model->InitializeDefaults();Model->BindRuntime(Host.Get());Model->ApplyProjection(Host->BuildProjection().Value,*Host->GetEconomicRegistry());Model->Open();
     auto Screen=SNew(Hansa::UI::SHansaTradeMap).Model(Model.Get());
@@ -58,7 +57,7 @@ bool FTradeCreatorRecovery::RunTest(const FString&)
     Model->Open(TEXT("Market.Detail.Action.BeginRoute"),TEXT("Good.Bread"));
     TestEqual(TEXT("Market good seeds actual draft"),Model->GetDraftStops()[0].Actions[0].GoodId.ToString(),FString(TEXT("Good.Bread")));
     TestTrue(TEXT("Market opens creation"),Model->GetSnapshot().bCreating);
-    Model->ReviewCreateIntent();
+    Model->CycleCogIntent();Model->AdjustMinimumReserveIntent(5000);Model->ReviewCreateIntent();
     TestFalse(TEXT("Minimum reserve is blocked before research"),Model->GetSnapshot().bCanCreate);
     TestTrue(TEXT("Research gate explains the corrective action"),Model->GetSnapshot().Validation.ToString().Contains(TEXT("Reserve instructions")));
     if(!TestTrue(TEXT("Reserve automation can be unlocked through normal research commands"),Hansa::Tests::TradeJourney::UnlockReserveAutomation(Host.Get())))return false;
@@ -68,7 +67,7 @@ bool FTradeCreatorRecovery::RunTest(const FString&)
     TestFalse(TEXT("Duplicate adjacent cities invalid"),Model->GetSnapshot().bCanCreate);
     const uint64 Sequence=Host->GetLastProcessedCommandSequence();TestFalse(TEXT("Invalid cannot commit"),Model->CreateAndActivateIntent());
     TestEqual(TEXT("Failure leaves command history unchanged"),Host->GetLastProcessedCommandSequence(),Sequence);
-    Model->CycleStopCityIntent();Model->CloseIntent();Model->Open();TestTrue(TEXT("Close/reopen retains draft"),Model->GetSnapshot().bCreating);
+    for(int32 Choice=0;Choice<64&&Model->GetDraftStops()[0].CityId.ToString()!=TEXT("City.Lubeck");++Choice)Model->CycleStopCityIntent();Model->CloseIntent();Model->Open();TestTrue(TEXT("Close/reopen retains draft"),Model->GetSnapshot().bCreating);
     TestEqual(TEXT("Close/reopen retains name"),Model->GetSnapshot().DraftName,FString(TEXT("Rostock supplies")));
     Model->ReviewCreateIntent();TestTrue(TEXT("Corrected draft can retry"),Model->GetSnapshot().bCanCreate);
     const auto InvalidStops=TArray<FHansaRouteStop>{Model->GetDraftStops()[0],Model->GetDraftStops()[0]};uint64 Id=0;

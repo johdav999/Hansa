@@ -1,13 +1,18 @@
 #include "World/HansaGameMode.h"
 #include "World/HansaCargoProjectionManager.h"
-#include "World/HansaAmbientRabbits.h"
+#include "World/HansaAmbientAnimals.h"
+#include "World/HansaAmbientPeople.h"
 
 #include "EngineUtils.h"
 #include "Engine/World.h"
+#include "Engine/StaticMeshActor.h"
+#include "Engine/TextRenderActor.h"
+#include "GameFramework/WorldSettings.h"
 #include "HansaLog.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "UI/HansaRootHud.h"
 #include "World/HansaBuildingWorldProjection.h"
 #include "World/HansaGameState.h"
@@ -51,9 +56,28 @@ void AHansaGameMode::InitGame(const FString& MapName, const FString& Options, FS
 		}
 	}
 	bAuthorityFixtureMode = FParse::Param(FCommandLine::Get(), TEXT("HansaAuthorityFixture"));
+	bUseEmptyPlayerCity = ScenarioOption.IsEmpty() && !bAuthorityFixtureMode;
 	EnsureLubeckWorldComposition();
 	GetSimulationHost();
 	EnsureMultiplayerAuthority();
+}
+
+void AHansaGameMode::StartPlay()
+{
+	if (Hansa::Game::LubeckPlacementGrid::IsCampaignWorld(GetWorld()))
+	{
+		const FVector Source=Hansa::Game::LubeckPlacementGrid::CampaignLubeckHistoricalCenter();
+		const FVector Target=Hansa::Game::LubeckPlacementGrid::CampaignLubeckCenter()+FVector(0,0,171.27436);
+		const FVector Delta=Target-Source;
+		const FName CityTag(TEXT("City.Lubeck"));
+		for (TActorIterator<AStaticMeshActor> It(GetWorld()); It; ++It)
+			if (It->ActorHasTag(CityTag) && FVector::Dist2D(It->GetActorLocation(),Source)<100.0)
+				It->AddActorWorldOffset(Delta);
+		for (TActorIterator<ATextRenderActor> It(GetWorld()); It; ++It)
+			if (It->ActorHasTag(CityTag) && FVector::Dist2D(It->GetActorLocation(),Source)<100.0)
+				It->AddActorWorldOffset(Delta);
+	}
+	Super::StartPlay();
 }
 
 void AHansaGameMode::Tick(const float DeltaSeconds)
@@ -62,10 +86,25 @@ void AHansaGameMode::Tick(const float DeltaSeconds)
 	if (UHansaRuntimeSimulationHost* Host = GetSimulationHost())
 	{
 		const int64 Before = Host->GetSimulationTick();
-		Host->AdvanceRealTime(DeltaSeconds);
-        for (TActorIterator<AHansaCargoProjectionManager> It(GetWorld()); It; ++It) It->Sample(Host->GetPresentationTickFraction());
-        for (TActorIterator<AHansaBuildingWorldProjectionActor> It(GetWorld()); It; ++It) It->SampleProduction(Host->GetPresentationTickFraction());
-		if (Host->GetSimulationTick() != Before) RefreshMultiplayerProjections(false);
+		{
+			TRACE_CPUPROFILER_EVENT_SCOPE(Hansa_GameModeAdvance);
+			Host->AdvanceRealTime(DeltaSeconds);
+		}
+		{
+			TRACE_CPUPROFILER_EVENT_SCOPE(Hansa_CargoSample);
+			for (TActorIterator<AHansaCargoProjectionManager> It(GetWorld()); It; ++It)
+				It->Sample(Host->GetPresentationTickFraction());
+		}
+		{
+			TRACE_CPUPROFILER_EVENT_SCOPE(Hansa_ProductionSample);
+			for (TActorIterator<AHansaBuildingWorldProjectionActor> It(GetWorld()); It; ++It)
+				It->SampleProduction(Host->GetPresentationTickFraction());
+		}
+		if (GetNetMode() != NM_Standalone && Host->GetSimulationTick() != Before)
+		{
+			TRACE_CPUPROFILER_EVENT_SCOPE(Hansa_MultiplayerRefresh);
+			RefreshMultiplayerProjections(false);
+		}
 	}
 }
 
@@ -242,6 +281,22 @@ int32 AHansaGameMode::GetRegisteredAuthorityClientCount() const
 	return MultiplayerAuthority ? MultiplayerAuthority->GetRegisteredClientCount() : 0;
 }
 
+void AHansaGameMode::RequestMultiplayerLand(AHansaStrategyPlayerController& Controller,
+    const FHansaLandQueryRequest& Request)
+{
+    if (!Request.IsValid()) return;
+    FHansaLandQueryReply Reply;
+    Reply.Request=Request;
+    const uint64 Principal=FindPrincipal(Controller);
+    FString Error;
+    if (Principal!=0 && EnsureMultiplayerAuthority())
+        Reply.bAccepted=MultiplayerAuthority->QueryLand(Principal,
+            Hansa::Simulation::FHansaCityDefinitionId::TryParse(Request.City.ToString()).Value,
+            {Request.Min.X,Request.Min.Y},{Request.Max.X,Request.Max.Y},Reply.Result,Error,Request.Slot>=5);
+    if (!Reply.bAccepted || !Reply.IsValid()) { Reply.bAccepted=false; Reply.Result={}; }
+    Controller.ClientReceiveHansaLand(Reply);
+}
+
 void AHansaGameMode::RefreshMultiplayerProjections(const bool bForceFullRefresh)
 {
 	if (!EnsureMultiplayerAuthority()) return;
@@ -282,8 +337,11 @@ UHansaRuntimeSimulationHost* AHansaGameMode::GetSimulationHost()
 		bSimulationHostInitializationAttempted = true;
 		SimulationHost = NewObject<UHansaRuntimeSimulationHost>(this, TEXT("LubeckRuntimeSimulation"));
 		FString Error;
+		// Continue/save inspection must use the same topology as normal New Game.
+		// Seeded fixture buildings otherwise change the initial land-owner hash.
 		if (!SimulationHost->InitializeForLubeck(
-			GetWorld(), Error, RuntimeScenario, RuntimeCampaignSeedOverride))
+			GetWorld(), Error, RuntimeScenario, RuntimeCampaignSeedOverride,
+			bUseEmptyPlayerCity && GetNetMode() == NM_Standalone))
 		{
 			UE_LOG(LogHansa, Error, TEXT("Hansa runtime simulation initialization failed: %s"), *Error);
 			SimulationHost = nullptr;
@@ -315,6 +373,12 @@ void AHansaGameMode::EnsureLubeckWorldComposition()
 {
 	UWorld* World = GetWorld();
 	if (World == nullptr) return;
+	const bool bCampaignWorld = Hansa::Game::LubeckPlacementGrid::IsCampaignWorld(World);
+	if (bCampaignWorld && World->GetWorldSettings())
+		World->GetWorldSettings()->bEnableWorldBoundsChecks = false;
+	if (bCampaignWorld)
+		UE_LOG(LogHansa, Display, TEXT("Campaign world composition at Lübeck center %s"),
+			*Hansa::Game::LubeckPlacementGrid::CampaignLubeckCenter().ToString());
 
 	AHansaLubeckWorldFoundation* Foundation = nullptr;
 	for (TActorIterator<AHansaLubeckWorldFoundation> It(World); It; ++It)
@@ -327,8 +391,14 @@ void AHansaGameMode::EnsureLubeckWorldComposition()
 		FActorSpawnParameters Parameters;
 		Parameters.Name = TEXT("LubeckWorldFoundation");
 		Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		const FTransform FoundationTransform(bCampaignWorld
+			? Hansa::Game::LubeckPlacementGrid::CampaignLubeckCenter() : FVector::ZeroVector);
 		Foundation = World->SpawnActor<AHansaLubeckWorldFoundation>(
-			AHansaLubeckWorldFoundation::StaticClass(), FTransform::Identity, Parameters);
+			AHansaLubeckWorldFoundation::StaticClass(), FoundationTransform, Parameters);
+	}
+	else if (bCampaignWorld)
+	{
+		Foundation->SetActorLocation(Hansa::Game::LubeckPlacementGrid::CampaignLubeckCenter());
 	}
 
 	bool bHasProjectionManager = false;
@@ -350,14 +420,18 @@ void AHansaGameMode::EnsureLubeckWorldComposition()
     for (TActorIterator<AHansaCargoProjectionManager> It(World); It; ++It) {bHasCargoManager=true; break;}
     if (!bHasCargoManager) World->SpawnActor<AHansaCargoProjectionManager>();
 
-    bool bHasRabbits = false;
-    for (TActorIterator<AHansaAmbientRabbits> It(World); It; ++It) { bHasRabbits = true; break; }
-    if (!bHasRabbits && World->GetNetMode() == NM_Standalone) World->SpawnActor<AHansaAmbientRabbits>();
+    bool bHasAmbientPeople = false;
+    for (TActorIterator<AHansaAmbientPeople> It(World); It; ++It) { bHasAmbientPeople = true; break; }
+    if (!bHasAmbientPeople && World->GetNetMode() == NM_Standalone) World->SpawnActor<AHansaAmbientPeople>();
+
+    bool bHasAmbientAnimals = false;
+    for (TActorIterator<AHansaAmbientAnimals> It(World); It; ++It) { bHasAmbientAnimals = true; break; }
+    if (!bHasAmbientAnimals && World->GetNetMode() == NM_Standalone) World->SpawnActor<AHansaAmbientAnimals>();
 
 	for (TActorIterator<AHansaLubeckAutomationStart> It(World); It; ++It)
 	{
 		// The saved map may still contain the inland prototype PlayerStart.
-		if (Foundation && Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(World))
+		if (Foundation && (Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(World) || bCampaignWorld))
 			It->SetActorTransform(Foundation->GetAutomationStartTransform());
 		return;
 	}

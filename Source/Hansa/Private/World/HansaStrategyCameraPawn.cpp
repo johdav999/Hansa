@@ -41,6 +41,8 @@ void AHansaStrategyCameraPawn::SetPresentationExposureEV100(const float EV100)
 	if (Camera == nullptr) return;
 	FPostProcessSettings& Settings = Camera->PostProcessSettings;
 	Camera->PostProcessBlendWeight = 1.0f;
+	Settings.bOverride_MotionBlurAmount = true;
+	Settings.MotionBlurAmount = 0.0f;
 	Settings.bOverride_AutoExposureMethod = true;
 	Settings.AutoExposureMethod = AEM_Manual;
 	Settings.bOverride_AutoExposureMinBrightness = true;
@@ -80,7 +82,7 @@ void AHansaStrategyCameraPawn::BeginPlay()
 	CameraState.Focus = FVector2D(GetActorLocation().X, GetActorLocation().Y);
 	CameraState.YawDegrees = GetActorRotation().Yaw;
 	CameraState.PitchDegrees = CameraBoom->GetRelativeRotation().Pitch;
-	CameraState.ZoomDistance = FMath::Clamp(CameraBoom->TargetArmLength, MinimumZoomDistance, MaximumZoomDistance);
+	CameraState.ZoomDistance = FMath::Max(CameraBoom->TargetArmLength, MinimumZoomDistance);
 	ApplyCameraState();
 }
 
@@ -95,14 +97,11 @@ void AHansaStrategyCameraPawn::Tick(const float DeltaSeconds)
 	}
 
 	Hansa::Game::FHansaStrategyCameraSettings Settings;
-	Settings.BoundsMin = MapBoundsMin;
-	Settings.BoundsMax = MapBoundsMax;
 	Settings.PanUnitsPerSecond = PanUnitsPerSecond;
 	Settings.FastPanMultiplier = FastPanMultiplier;
 	Settings.RotationDegreesPerSecond = RotationDegreesPerSecond;
 	Settings.ZoomUnitsPerStep = ZoomUnitsPerStep;
 	Settings.MinimumZoomDistance = MinimumZoomDistance;
-	Settings.MaximumZoomDistance = MaximumZoomDistance;
 	const float PreviousYaw = CameraState.YawDegrees;
 	CameraState = Hansa::Game::FHansaStrategyCameraModel::Advance(CameraState, EffectiveIntent, Settings, DeltaSeconds);
 	PendingIntent.ZoomSteps = 0.0f;
@@ -192,10 +191,10 @@ void AHansaStrategyCameraPawn::ClearCameraIntents()
 
 void AHansaStrategyCameraPawn::FocusWorldLocationIntent(const FVector WorldLocation)
 {
-	if (!WorldLocation.ContainsNaN())
+	if (FMath::IsFinite(WorldLocation.X) && FMath::IsFinite(WorldLocation.Y))
 	{
-		CameraState.Focus.X = FMath::Clamp(WorldLocation.X, MapBoundsMin.X, MapBoundsMax.X);
-		CameraState.Focus.Y = FMath::Clamp(WorldLocation.Y, MapBoundsMin.Y, MapBoundsMax.Y);
+		CameraState.Focus.X = WorldLocation.X;
+		CameraState.Focus.Y = WorldLocation.Y;
 		PendingIntent.Pan = FVector2D::ZeroVector;
 		ApplyCameraState();
 	}

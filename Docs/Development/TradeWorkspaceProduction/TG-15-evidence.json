@@ -1,0 +1,380 @@
+{
+  "date": "2026-09-24",
+  "reference": "Docs/Images/UI/TradeWorkspace/trade-workspace--visiting-market--reference--1536x1024--v2.png",
+  "capture_kind": "Real assembled Development game, explicit saved test campaign after ordinary New Game; not Shipping or generated imagery",
+  "comparisons": "Native-size diagnostic compositions without resampling. Reference-fidelity gate remains open; see TG-15.md.",
+  "build": "Saved/BuildArtifacts/20260924-091054003-build-HansaEditor-Win64-Development",
+  "tests": [
+    "Saved/BuildArtifacts/20260924-090750088-automation-Hansa.UI.VisitingTrade.Journey",
+    "Saved/BuildArtifacts/20260924-090805044-automation-Hansa.UI.TradeMap",
+    "Saved/BuildArtifacts/20260924-090552302-automation-Hansa.UI.Market",
+    "Saved/BuildArtifacts/20260924-090132364-automation-Hansa.Integration.TradePresence.VisitingSpotTrade"
+  ],
+  "viewport_runs": [
+    "Saved/BuildArtifacts/20260924-091059359-gui-repair-1920-1080",
+    "Saved/BuildArtifacts/20260924-091123962-gui-repair-1280-720",
+    "Saved/BuildArtifacts/20260924-091147524-gui-repair-1536-1024",
+    "Saved/BuildArtifacts/20260924-091211683-gui-repair-1280-720"
+  ],
+  "packaged": {
+    "accepted": false,
+    "log": "Saved/TradeWorkspace/TG15/packaged-startup.log",
+    "blocker": "Ordinary New Game rejects loaded catalog EE2F7D53434867C9 against accepted 2A9D09E1C63AA6E1; residential definitions mismatch before visiting UI."
+  },
+  "captures": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-00.png",
+      "sha256": "dde011908b473b026fb3f210e5ce132d59f98a98e68fa40d4a0b8cff4cd200cf",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-00.tsv",
+      "sha256": "42e1d3a7c258db1c8d5a648de76f3f28cfac9b35682714531e682cfb19c2145b"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-01.png",
+      "sha256": "28032ad1e03a355f042c92e859dc6ef2aa2c334877f9e0a3ac7cbf1374bdd8e1",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-01.tsv",
+      "sha256": "5bde29d703cf2baa4555b00c93f587cc1b4f79faae471ef34234e04145892979"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-02.tsv",
+      "sha256": "33130b9a3ebfea5393a60743631e4968ad047c46f76667c963041274dbe08da1"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-03.tsv",
+      "sha256": "2bee9658ee2a19fd1dc27f9f98906d2c91698148d27447554f36c07567f0954e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-04.png",
+      "sha256": "732cfcece54967bf03cf44327b5b42043d0b8d44491b41860fb7fc2cd2003369",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-04.tsv",
+      "sha256": "dc5f16e96a9996f14836460a8694492fe2ec4877550c4eb9ebc44dd2d9ffb94e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-05.tsv",
+      "sha256": "437a486b7011c084c5898e3c65ba9d78504e98c09c325ff8d14eec01cc9199a7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-06.tsv",
+      "sha256": "becae3ccbcef885eb2a77388e12e50294039553457d1cccd322ac51791f8f05e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-07.png",
+      "sha256": "ef7c3abaae1707adddd5f6d4a2d61728a03f4ce2caed9c2e38a2ec801e37e9c5",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.0-07.tsv",
+      "sha256": "97b9737f6c39466e924e66f1b37a88f6e48ec551cf0e16df1cac4f2ef420ca00"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-00.png",
+      "sha256": "df9ada38c2c5dd2ce260b4e6599b280f59278205e68b4d9dc824f80d6365d255",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-00.tsv",
+      "sha256": "fc3af318e456b371a5bd0466c7a6792aab076b8b2491c89ad5ac34f4e6dfacbf"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-01.png",
+      "sha256": "312e07155b3a67f7c5122c0733e61a781c7acf4307f1816843a94706138f9ab3",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-01.tsv",
+      "sha256": "74a6c3832149c902eb0fd091608d17d7e7d462839332382fbf8af92520764bdb"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-02.tsv",
+      "sha256": "ec99e6000ae1cada6b59d2cec4c58adaa14e5aca614549a8b743bd471a95963e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-03.tsv",
+      "sha256": "0e25fbe44330dc21dd175448a4502ff478b1ef5ca4c0f095b7a5451e1a46aecf"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-04.png",
+      "sha256": "8125796eff52f6c224b11c4e048e733959ffc712b9f231697d3bffc7e5f79098",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-04.tsv",
+      "sha256": "be2fc8d3d68fa6d1ba62ccd758993d72515e323720ac0f72e13d672c46016ae3"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-05.tsv",
+      "sha256": "7a374ca24b16840ff4c342cacab6dde08e94e145b7e016745d63014661b639f5"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-06.tsv",
+      "sha256": "ba2c130b038f31570e28f059af24441763e93b06e1590c6c2e69f8ddc84f40ff"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-07.png",
+      "sha256": "98f31a5bfac3b062360a1430ceba4907d6aadcb3ace5a9cc48e2dafcf5958101",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1280x720-scale1.4-07.tsv",
+      "sha256": "c3eaf306cb2beddbca44c69d31ce91daa4a0a7bb33137141a7d724b968c823f0"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-00.png",
+      "sha256": "c9f56d4eb45842f7a63fd59af2fd9da73f55e36d1b7c5edc9cb525fd4612123b",
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-00.tsv",
+      "sha256": "ead9d90ed77632deb1a12027bb3f3aa186822b558eda6596d58c805eb0b2a5b4"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-01.png",
+      "sha256": "224b6eb98e7c007fd7bd46488a79a68819eabafe556f4dfb5f4ddc577441f19b",
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-01.tsv",
+      "sha256": "cfea2524479c1d6a4faf185dee06a0e7164e1cb7a896729c9ecfff78e739026a"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-02.tsv",
+      "sha256": "6f71414ec7acb1883f9df3dcb290e02abe60ecdc733230db240e13016961a8c5"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-03.tsv",
+      "sha256": "917a92bd950e1d74bac1473b720d5ed4d618acbec484497f493c3573ab944716"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-04.png",
+      "sha256": "cb97d3d2f174e5d35eb974d738ae16f6b2fa5d729b98d578a76c2483a26e6755",
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-04.tsv",
+      "sha256": "c87a8a9d570e4e6cc56a998d998554cf4384561062655d7c58740df1fa289e58"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-05.tsv",
+      "sha256": "1839312efcb637152df2e771b54025c0589bfb64b03a6036df193dfe43094500"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-06.tsv",
+      "sha256": "6c0176431b35ba613438a8913a95620b97c7a8fd38f89c4d8dfed09c34413e0f"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-07.png",
+      "sha256": "60b8bdaffa4d4344205f0122466a7c7bfdc320a2ebb1ba0ad8e9f4cfd74b2f69",
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1536x1024-scale1.0-07.tsv",
+      "sha256": "b435d8a1741496b5b7c04a761be8cf84acccdccd20fb7823c438befbae6c6c56"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-00.png",
+      "sha256": "c64d58524b55a9683eff42e90fae8925eb4c9252da49da90359ec69bb75716dc",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-00.tsv",
+      "sha256": "6b2d6c200c935032f02b37ff7e0ac84eeca0b2fe28cd6cfe301b3f6ee6d49eb8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-01.png",
+      "sha256": "e22102c41488e325d5dbe7ae4f318c763ae93ac31409608e185e2e71cbdbe59a",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-01.tsv",
+      "sha256": "3c218a4d681f3e2d58bf2a845ff51630c9b10a8879979d8ec5960d45a8157eb7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-02.tsv",
+      "sha256": "bb010fd38e0f88f33d32365dd4d484c113e537e26d8401d05e6e9100428f4db7"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-03.tsv",
+      "sha256": "73e96fbc1513cc842309a56406390ec307c28dd365a8f1446f40117da75c8157"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-04.png",
+      "sha256": "a6a0fd4c88052121620b026a192886a2bc7058383c786667061ed2e2b01f9129",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-04.tsv",
+      "sha256": "123b9004c3f9139b90ffa57e788f020fdc74e2c07ee716c52e294a2389bef102"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-05.tsv",
+      "sha256": "20e96644268e125a83e9fd3cd12a4aec87a2746401217866ae939d7476067e3e"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-06.tsv",
+      "sha256": "d5686c2c5c1e232dce1340f1cf7e89c372166ed99863ac66be8e748572a6afdd"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-07.png",
+      "sha256": "13e1ce990f42ef071706284a10898fe358c7aee75be1024f853c9c1cede69f91",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-15-captures/visiting-1920x1080-scale1.0-07.tsv",
+      "sha256": "739149f8d68a6c76648cda6a3788d5cdbf6ac8aa5b5ce9b690d97eef36aca4a7"
+    }
+  ],
+  "verification_hashes": [
+    {
+      "path": "Saved/BuildArtifacts/20260924-090750088-automation-Hansa.UI.VisitingTrade.Journey/AutomationCommand.log",
+      "sha256": "b90ac6e6c416dc00c180853031ace622de057aba24493c9715c9c0da4d1866cf"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090750088-automation-Hansa.UI.VisitingTrade.Journey/result.json",
+      "sha256": "f322740934eb5f5ba9649ab0de64d6cc466ce6cc5d6da2edff934cfab4718e3a"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090750088-automation-Hansa.UI.VisitingTrade.Journey/UnrealEditor.log",
+      "sha256": "231a6ef5687d3e5b22b3454e2b34d395f31436fc52aa59943b3858cdb1c02edf"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090805044-automation-Hansa.UI.TradeMap/AutomationCommand.log",
+      "sha256": "197084bbe7128bfafe816ecd01af0b23c0a7cfe33635f05e8984b6fd93800f4b"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090805044-automation-Hansa.UI.TradeMap/result.json",
+      "sha256": "04cf4e3775cc521a7be2046a4e8c27e5f634561e581969600025729208d1b33b"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090805044-automation-Hansa.UI.TradeMap/UnrealEditor.log",
+      "sha256": "b46d9c355fd916cfbec6f349e50687505957050f196c25a00065419ef840472f"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090552302-automation-Hansa.UI.Market/AutomationCommand.log",
+      "sha256": "a1b945987dc6bd8a95618b468714d65884c9f88ca9541d056f8d3aed3aa8cf05"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090552302-automation-Hansa.UI.Market/result.json",
+      "sha256": "d3bc32504be1c49ec7454f8dac2ff203db8b1fd44656888a461a7ba9d06243da"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090552302-automation-Hansa.UI.Market/UnrealEditor.log",
+      "sha256": "315214b60134ceb8c63bd913728081ee6174eafbafaf1d31bfa62bf11f8da251"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090132364-automation-Hansa.Integration.TradePresence.VisitingSpotTrade/AutomationCommand.log",
+      "sha256": "0303d478dc7ceb0aa24ef18f94645d9ee98f819fbe7a4905ba0bf1cf22c820b5"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090132364-automation-Hansa.Integration.TradePresence.VisitingSpotTrade/result.json",
+      "sha256": "02795906406f834415b3b9d48348bb4f3e07622d59959da62dcdb4345bfc98b2"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-090132364-automation-Hansa.Integration.TradePresence.VisitingSpotTrade/UnrealEditor.log",
+      "sha256": "26a13c91cbf393e4929df8f07034fe7241e640b1f190e7a6912b8e424a289353"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-091054003-build-HansaEditor-Win64-Development/Build.log",
+      "sha256": "4bdb5e4285222d0ce0d96c3c00043fa4ca2e17e1a684868735246a8fcfc66abf"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-091054003-build-HansaEditor-Win64-Development/result.json",
+      "sha256": "2b55f8f746a883a45e917eb7a9894c6b9ab794bb4c8a4134464932dff64fe0d2"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-091059359-gui-repair-1920-1080/Command.log",
+      "sha256": "f851826a184ffe5bf39bb45704a6bbb5ae4594e99c7178681748be7c3a1531fb"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-091059359-gui-repair-1920-1080/Unreal.log",
+      "sha256": "28056587905a299c1f6b86821cf789386d7afe6332de083fabb69f16c097b445"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-091123962-gui-repair-1280-720/Command.log",
+      "sha256": "92a1229aacf2239ca3ec8dfb1aaa03cad154a8e7bcaaefc0361879541641ac0d"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-091123962-gui-repair-1280-720/Unreal.log",
+      "sha256": "c82fd7daf3c6febc4fb22653753bdff8e6192b5db520207a51504034750b6b29"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-091147524-gui-repair-1536-1024/Command.log",
+      "sha256": "b2b319613b1b45618a166a531f6f38880b8e448517fb663fd47ba05857a86b8d"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-091147524-gui-repair-1536-1024/Unreal.log",
+      "sha256": "c0be60d34423f51398ee59c9874f4205bf803fc4977b25d2abd60b74c34b81de"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-091211683-gui-repair-1280-720/Command.log",
+      "sha256": "31285b8b036df106b34958f0154aedbd5b190f5514d7c5353900f33cea9155e0"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260924-091211683-gui-repair-1280-720/Unreal.log",
+      "sha256": "127d2403e9c97bc580ef2d4556a785217ac6af168518a685b33e2dace3ec3815"
+    },
+    {
+      "path": "Saved/TG15-Package-Final.log",
+      "sha256": "e556ca93ef1ab0d92b931318963520455b326d1d3f801bfcaf37714cdc08d5d3"
+    },
+    {
+      "path": "Saved/TradeWorkspace/TG15/packaged-startup.log",
+      "sha256": "d8effdbec3dd913e5956486bfc5ed695fb7cb0ea91d8790944539766830b386d"
+    }
+  ]
+}

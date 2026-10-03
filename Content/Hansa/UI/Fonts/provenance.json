@@ -7,7 +7,7 @@
     "sha256": "36db62940cb5728b12b1802476dc7fcf4c6c519a7bdd476ba23a4e555fc4655f",
     "retrieved": "2026-09-08",
     "digit_advance_units": 520,
-    "verified_glyphs": "L\u00fcbeckRostock\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6\u00df\u20ac0123456789"
+    "verified_glyphs": "LübeckRostockÅÄÖåäöß€0123456789"
   },
   {
     "file": "AtkinsonHyperlegible-Regular.ttf",
@@ -16,7 +16,7 @@
     "roles": "Body and Caption",
     "sha256": "7fb917c89019896d0b52ee84b7cbb3304c18cb90b19a62f5e32712bd23e97669",
     "retrieved": "2026-09-08",
-    "verified_glyphs": "L\u00fcbeckRostock\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6\u00df\u20ac0123456789"
+    "verified_glyphs": "LübeckRostockÅÄÖåäöß€0123456789"
   },
   {
     "file": "NotoSansSymbols2-Regular.ttf",
@@ -25,6 +25,15 @@
     "roles": "Composite fallback for legacy HUD symbols",
     "sha256": "630846d528dbe4c4981370a4d0a9475a1fd1491a129bb411f8e157cdb5de13c6",
     "retrieved": "2026-09-08",
-    "verified_glyphs": "\u2316\u25f7\u25cb\u25b3\u25b2"
+    "verified_glyphs": "⌖◷○△▲"
+  },
+  {
+    "file": "SourceSerif4-Regular.ttf",
+    "license": "SourceSerif4-OFL.md",
+    "source": "https://raw.githubusercontent.com/adobe-fonts/source-serif/release/TTF/SourceSerif4-Regular.ttf",
+    "roles": "SerifBody: reference-matched trade text",
+    "sha256": "e5a4ee6a3d87bb9024796be390c6771e2a0eb1883dae25effaf57ca01668e24b",
+    "retrieved": "2026-09-23",
+    "glyph_review": "Inspected regular serif text in native trade captures, including Lübeck, Lüneburg, numerals and punctuation. Broad localization glyph coverage has not been certified."
   }
 ]

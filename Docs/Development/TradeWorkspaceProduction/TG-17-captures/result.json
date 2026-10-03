@@ -1,0 +1,6463 @@
+{
+  "operation": "TG17RemoteTradeProof",
+  "status": "Succeeded",
+  "fixtureId": "two_player_authority_v1",
+  "completedUtc": "2026-09-24T09:01:53.011Z",
+  "port": 49277,
+  "processLogs": {
+    "server": {
+      "pid": 672,
+      "unrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\server.unreal.log",
+      "launcherLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\server.launcher.log"
+    },
+    "client1": {
+      "pid": 32836,
+      "unrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\client1.unreal.log",
+      "launcherLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\client1.launcher.log"
+    },
+    "client2": {
+      "pid": 37452,
+      "unrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\client2.unreal.log",
+      "launcherLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\client2.launcher.log"
+    },
+    "client2-reconnect": {
+      "pid": 37368,
+      "unrealLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\client2-reconnect.unreal.log",
+      "launcherLog": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\client2-reconnect.launcher.log"
+    }
+  },
+  "correlations": [
+    "85208e3e-0b14-4c68-a42d-4b898dac661b",
+    "85656b8b-c0ab-4dff-8484-2485db75bc00",
+    "0db50e0c-79b1-4570-9594-de5f258a0e32",
+    "8a78f0fe-b98a-4947-916c-3463ef1ec24e",
+    "6d22cfcf-0b61-4abc-904b-056022fd00a6",
+    "6d9b4596-0524-493f-a399-bfa89d0f0be6",
+    "7cabf117-bea2-4767-ba65-1d4eb5a079dd",
+    "d5ad3b73-6293-4d7a-8c6c-8c9c36bc5fcc",
+    "fa002186-fbb8-4e9b-91cc-695c59105e49",
+    "ca558eac-9e80-4990-a9c4-86db5b894454",
+    "9733d681-2f8d-401c-8659-692840cdd9b7",
+    "dc4c9768-766d-4487-916b-69364a413d29",
+    "6e9f9371-2f79-4b67-92df-4c7f13416b6f",
+    "c481a63b-97c7-4307-aa81-c172b5eb3cef",
+    "46a97111-f931-4ac7-9719-a9321bbb290e",
+    "4384a97c-a33a-4ef9-9ff6-a554bb451a22",
+    "ad4d6621-bffb-4161-87aa-94f98815636c",
+    "f48637b6-804a-45a1-a596-f31693e755e0",
+    "513510ea-1070-48c1-bfcc-ee2500039f0a",
+    "9f3c489c-4c88-40b9-8a0c-849144032891",
+    "f26ccff2-4f96-4448-9542-5ca32c93242c",
+    "ed4a0109-727d-4edd-900b-bee38982e911",
+    "a8bb3c88-4a9f-4a5a-a5fe-bd51258e67fc",
+    "25059914-d5d7-4306-b843-4820790ebf9b",
+    "d761dcb3-6720-48e6-a626-eab64aa822c9",
+    "965afa7e-2760-4e20-bcba-60808c12e657",
+    "8cd89333-c497-44da-a623-98df3e836495",
+    "d16c75e7-31f6-4882-b381-3b90f9dab7c0"
+  ],
+  "readiness": {
+    "server": {
+      "fixtureId": "two_player_authority_v1",
+      "correlationId": "7cabf117-bea2-4767-ba65-1d4eb5a079dd",
+      "processId": 672,
+      "netMode": "DedicatedServer",
+      "publicProjectionRevision": 2,
+      "publicServerTick": 0,
+      "publicAuthoritativeHash": "4eda451d1c8352bd",
+      "ready": true,
+      "registeredClientCount": 2,
+      "serverTick": 0,
+      "campaignSeed": "91470745841716"
+    },
+    "client1": {
+      "fixtureId": "two_player_authority_v1",
+      "correlationId": "0db50e0c-79b1-4570-9594-de5f258a0e32",
+      "processId": 32836,
+      "netMode": "Client",
+      "publicProjectionRevision": 1,
+      "publicServerTick": 0,
+      "publicAuthoritativeHash": "4eda451d1c8352bd",
+      "ready": true,
+      "publicHouseId": 1,
+      "projectionSchemaVersion": 13,
+      "projectionRevision": 1,
+      "serverTick": 0,
+      "fullRefresh": true,
+      "startingEventSequence": 1,
+      "lastEventSequence": 0,
+      "authoritativeHash": "4eda451d1c8352bd",
+      "projectionDigest": "0fa586f294c28eb5",
+      "ownerHouseId": 1,
+      "ownerMoneyPfennig": 100000,
+      "scenarioOutcome": "Active",
+      "winningVictoryId": "",
+      "placementCount": 62,
+      "marketCount": 27,
+      "routeCount": 9,
+      "victoryObjectiveCount": 11,
+      "eventCount": 0,
+      "placements": [
+        {
+          "buildingId": 1,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.GrainFarm",
+          "anchorX": 10,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 2,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Mill",
+          "anchorX": 15,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 3,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Bakery",
+          "anchorX": 19,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 7,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Brewery",
+          "anchorX": 23,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 9,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Residence.Laborer",
+          "anchorX": 27,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 13,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Residence.Laborer",
+          "anchorX": 15,
+          "anchorY": 16,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 14,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Market",
+          "anchorX": 10,
+          "anchorY": 15,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 15,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Dock",
+          "anchorX": 26,
+          "anchorY": 15,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 20,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 10,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 21,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 11,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 22,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 12,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 23,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 13,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 24,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 14,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 25,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 15,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 26,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 16,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 27,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 17,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 28,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 18,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 29,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 19,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 30,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 20,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 31,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 21,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 32,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 33,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 34,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 35,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 36,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 37,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 38,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 39,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 40,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 30,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 41,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 10,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 42,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 11,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 43,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 12,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 44,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 13,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 45,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 14,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 46,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 15,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 47,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 16,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 48,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 17,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 49,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 18,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 50,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 19,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 51,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 20,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 52,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 21,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 53,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 54,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 55,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 56,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 57,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 58,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 59,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 60,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 61,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 62,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 21,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 63,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 22,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 64,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 23,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 65,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 66,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 67,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 68,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 69,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 70,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 71,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 72,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 73,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 30,
+          "anchorY": 24,
+          "status": "Ready"
+        }
+      ],
+      "routes": [
+        {
+          "routeId": 1,
+          "ownerHouseId": 1,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": true,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 2,
+          "ownerHouseId": 1,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": true,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 3,
+          "ownerHouseId": 2,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 4,
+          "ownerHouseId": 3,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 5,
+          "ownerHouseId": 4,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 6,
+          "ownerHouseId": 5,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 7,
+          "ownerHouseId": 6,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 8,
+          "ownerHouseId": 7,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 9,
+          "ownerHouseId": 8,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        }
+      ],
+      "lastCommandFeedback": {
+        "accepted": false,
+        "clientSequence": 0,
+        "clientNonce": 0,
+        "rejection": "None",
+        "gatewayError": "",
+        "message": "",
+        "remedy": "",
+        "serverTick": 0,
+        "acceptedGlobalSequence": 0
+      }
+    },
+    "client2": {
+      "fixtureId": "two_player_authority_v1",
+      "correlationId": "6d9b4596-0524-493f-a399-bfa89d0f0be6",
+      "processId": 37452,
+      "netMode": "Client",
+      "publicProjectionRevision": 2,
+      "publicServerTick": 0,
+      "publicAuthoritativeHash": "4eda451d1c8352bd",
+      "ready": true,
+      "publicHouseId": 2,
+      "projectionSchemaVersion": 13,
+      "projectionRevision": 1,
+      "serverTick": 0,
+      "fullRefresh": true,
+      "startingEventSequence": 1,
+      "lastEventSequence": 0,
+      "authoritativeHash": "4eda451d1c8352bd",
+      "projectionDigest": "ec8a25526ea34da9",
+      "ownerHouseId": 2,
+      "ownerMoneyPfennig": 50000,
+      "scenarioOutcome": "Active",
+      "winningVictoryId": "",
+      "placementCount": 62,
+      "marketCount": 27,
+      "routeCount": 9,
+      "victoryObjectiveCount": 11,
+      "eventCount": 0,
+      "placements": [
+        {
+          "buildingId": 1,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.GrainFarm",
+          "anchorX": 10,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 2,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Mill",
+          "anchorX": 15,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 3,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Bakery",
+          "anchorX": 19,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 7,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Brewery",
+          "anchorX": 23,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 9,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Residence.Laborer",
+          "anchorX": 27,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 13,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Residence.Laborer",
+          "anchorX": 15,
+          "anchorY": 16,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 14,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Market",
+          "anchorX": 10,
+          "anchorY": 15,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 15,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Dock",
+          "anchorX": 26,
+          "anchorY": 15,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 20,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 10,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 21,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 11,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 22,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 12,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 23,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 13,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 24,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 14,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 25,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 15,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 26,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 16,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 27,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 17,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 28,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 18,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 29,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 19,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 30,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 20,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 31,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 21,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 32,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 33,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 34,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 35,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 36,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 37,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 38,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 39,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 40,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 30,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 41,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 10,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 42,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 11,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 43,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 12,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 44,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 13,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 45,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 14,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 46,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 15,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 47,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 16,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 48,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 17,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 49,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 18,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 50,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 19,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 51,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 20,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 52,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 21,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 53,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 54,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 55,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 56,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 57,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 58,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 59,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 60,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 61,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 62,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 21,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 63,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 22,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 64,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 23,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 65,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 66,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 67,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 68,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 69,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 70,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 71,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 72,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 73,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 30,
+          "anchorY": 24,
+          "status": "Ready"
+        }
+      ],
+      "routes": [
+        {
+          "routeId": 1,
+          "ownerHouseId": 1,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 2,
+          "ownerHouseId": 1,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 3,
+          "ownerHouseId": 2,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": true,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 4,
+          "ownerHouseId": 3,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 5,
+          "ownerHouseId": 4,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 6,
+          "ownerHouseId": 5,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 7,
+          "ownerHouseId": 6,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 8,
+          "ownerHouseId": 7,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 9,
+          "ownerHouseId": 8,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        }
+      ],
+      "lastCommandFeedback": {
+        "accepted": false,
+        "clientSequence": 0,
+        "clientNonce": 0,
+        "rejection": "None",
+        "gatewayError": "",
+        "message": "",
+        "remedy": "",
+        "serverTick": 0,
+        "acceptedGlobalSequence": 0
+      }
+    }
+  },
+  "tradeSemantics": [
+    {
+      "client": "client1",
+      "unavailable": {
+        "revision": 11152,
+        "node": {
+          "id": "TradeMap.New",
+          "role": "button",
+          "label": "New route",
+          "parentId": "TradeMap.Root",
+          "bounds": {
+            "x": 1057,
+            "y": 124,
+            "width": 140,
+            "height": 48
+          },
+          "state": {
+            "visible": true,
+            "enabled": false,
+            "focused": false,
+            "selected": false,
+            "loading": false,
+            "clipped": false,
+            "warning": false,
+            "error": false,
+            "valueType": "unavailable-reason",
+            "value": "Creating a new route is unavailable in this remote view: the complete route-planning permission report is not provided. Existing owned routes can be inspected and edited."
+          },
+          "children": [],
+          "actions": []
+        }
+      },
+      "focused": {
+        "revision": 11153,
+        "node": {
+          "id": "TradeMap.Close",
+          "role": "button",
+          "label": "Close trade map",
+          "parentId": "TradeMap.Root",
+          "bounds": {
+            "x": 1205,
+            "y": 124,
+            "width": 71,
+            "height": 48
+          },
+          "state": {
+            "visible": true,
+            "enabled": true,
+            "focused": true,
+            "selected": false,
+            "loading": false,
+            "clipped": false,
+            "warning": false,
+            "error": false,
+            "valueType": "",
+            "value": ""
+          },
+          "children": [],
+          "actions": [
+            "activate",
+            "focus"
+          ]
+        }
+      },
+      "capture": {
+        "width": 1280,
+        "height": 720,
+        "postCaptureResized": false,
+        "screenshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-trade-workspace/screenshot-1280x720.png",
+        "metadataPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-trade-workspace/metadata.json",
+        "semanticSnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-trade-workspace/semantic-ui.json",
+        "querySnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-trade-workspace/query-snapshot.json",
+        "contentSha1": "DC74AEA1DFF49C0B677A0086FD262165B65C0F24",
+        "revision": 11153,
+        "copied": {
+          "screenshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1-trade-workspace\\screenshot-1280x720.png",
+          "metadataPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1-trade-workspace\\metadata.json",
+          "semanticSnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1-trade-workspace\\semantic-ui.json",
+          "querySnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1-trade-workspace\\query-snapshot.json"
+        }
+      }
+    },
+    {
+      "client": "client2",
+      "unavailable": {
+        "revision": 2892,
+        "node": {
+          "id": "TradeMap.New",
+          "role": "button",
+          "label": "New route",
+          "parentId": "TradeMap.Root",
+          "bounds": {
+            "x": 1697,
+            "y": 76,
+            "width": 140,
+            "height": 48
+          },
+          "state": {
+            "visible": true,
+            "enabled": false,
+            "focused": false,
+            "selected": false,
+            "loading": false,
+            "clipped": false,
+            "warning": false,
+            "error": false,
+            "valueType": "unavailable-reason",
+            "value": "Creating a new route is unavailable in this remote view: the complete route-planning permission report is not provided. Existing owned routes can be inspected and edited."
+          },
+          "children": [],
+          "actions": []
+        }
+      },
+      "focused": {
+        "revision": 3306,
+        "node": {
+          "id": "TradeMap.Close",
+          "role": "button",
+          "label": "Close trade map",
+          "parentId": "TradeMap.Root",
+          "bounds": {
+            "x": 1845,
+            "y": 76,
+            "width": 71,
+            "height": 48
+          },
+          "state": {
+            "visible": true,
+            "enabled": true,
+            "focused": true,
+            "selected": false,
+            "loading": false,
+            "clipped": false,
+            "warning": false,
+            "error": false,
+            "valueType": "",
+            "value": ""
+          },
+          "children": [],
+          "actions": [
+            "activate",
+            "focus"
+          ]
+        }
+      },
+      "capture": {
+        "width": 1920,
+        "height": 1080,
+        "postCaptureResized": false,
+        "screenshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-trade-workspace/screenshot-1920x1080.png",
+        "metadataPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-trade-workspace/metadata.json",
+        "semanticSnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-trade-workspace/semantic-ui.json",
+        "querySnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-trade-workspace/query-snapshot.json",
+        "contentSha1": "F7771C5A8C0CB90E9C3811D296618D839BDB728D",
+        "revision": 3306,
+        "copied": {
+          "screenshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-trade-workspace\\screenshot-1920x1080.png",
+          "metadataPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-trade-workspace\\metadata.json",
+          "semanticSnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-trade-workspace\\semantic-ui.json",
+          "querySnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-trade-workspace\\query-snapshot.json"
+        }
+      }
+    },
+    {
+      "client": "reconnected",
+      "focused": {
+        "revision": 2480,
+        "node": {
+          "id": "TradeMap.Close",
+          "role": "button",
+          "label": "Close trade map",
+          "parentId": "TradeMap.Root",
+          "bounds": {
+            "x": 1845,
+            "y": 76,
+            "width": 71,
+            "height": 48
+          },
+          "state": {
+            "visible": true,
+            "enabled": true,
+            "focused": true,
+            "selected": false,
+            "loading": false,
+            "clipped": false,
+            "warning": false,
+            "error": false,
+            "valueType": "",
+            "value": ""
+          },
+          "children": [],
+          "actions": [
+            "activate",
+            "focus"
+          ]
+        }
+      }
+    }
+  ],
+  "commands": {
+    "firstAllowed": {
+      "semanticId": "TradeMap.Editor.ToggleActive",
+      "observed": {
+        "fixtureId": "two_player_authority_v1",
+        "correlationId": "9733d681-2f8d-401c-8659-692840cdd9b7",
+        "processId": 32836,
+        "netMode": "Client",
+        "publicProjectionRevision": 3,
+        "publicServerTick": 1,
+        "publicAuthoritativeHash": "e44bc01bef648ad0",
+        "ready": true,
+        "publicHouseId": 1,
+        "projectionSchemaVersion": 13,
+        "projectionRevision": 3,
+        "serverTick": 1,
+        "fullRefresh": false,
+        "startingEventSequence": 1,
+        "lastEventSequence": 7,
+        "authoritativeHash": "e44bc01bef648ad0",
+        "projectionDigest": "2f8dcd29e1e41345",
+        "ownerHouseId": 1,
+        "ownerMoneyPfennig": 100000,
+        "scenarioOutcome": "Active",
+        "winningVictoryId": "",
+        "placementCount": 62,
+        "marketCount": 27,
+        "routeCount": 9,
+        "victoryObjectiveCount": 11,
+        "eventCount": 7,
+        "placements": [
+          {
+            "buildingId": 1,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.GrainFarm",
+            "anchorX": 10,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 2,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Mill",
+            "anchorX": 15,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 3,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Bakery",
+            "anchorX": 19,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 7,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Brewery",
+            "anchorX": 23,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 9,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Residence.Laborer",
+            "anchorX": 27,
+            "anchorY": 20,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 13,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Residence.Laborer",
+            "anchorX": 15,
+            "anchorY": 16,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 14,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Market",
+            "anchorX": 10,
+            "anchorY": 15,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 15,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Dock",
+            "anchorX": 26,
+            "anchorY": 15,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 20,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 10,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 21,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 11,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 22,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 12,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 23,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 13,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 24,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 14,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 25,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 15,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 26,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 16,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 27,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 17,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 28,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 18,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 29,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 19,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 30,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 20,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 31,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 21,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 32,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 33,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 34,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 35,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 36,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 37,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 38,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 39,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 40,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 30,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 41,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 10,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 42,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 11,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 43,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 12,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 44,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 13,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 45,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 14,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 46,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 15,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 47,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 16,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 48,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 17,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 49,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 18,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 50,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 19,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 51,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 20,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 52,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 21,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 53,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 54,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 55,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 56,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 57,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 58,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 59,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 60,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 61,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 20,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 62,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 21,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 63,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 22,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 64,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 23,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 65,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 66,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 67,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 68,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 69,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 70,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 71,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 72,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 73,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 30,
+            "anchorY": 24,
+            "status": "Ready"
+          }
+        ],
+        "routes": [
+          {
+            "routeId": 1,
+            "ownerHouseId": 1,
+            "lifecycle": "Traveling",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": true,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 2,
+            "ownerHouseId": 1,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": true,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 3,
+            "ownerHouseId": 2,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 4,
+            "ownerHouseId": 3,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 5,
+            "ownerHouseId": 4,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 6,
+            "ownerHouseId": 5,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 7,
+            "ownerHouseId": 6,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 8,
+            "ownerHouseId": 7,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 9,
+            "ownerHouseId": 8,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          }
+        ],
+        "lastCommandFeedback": {
+          "accepted": true,
+          "clientSequence": 1,
+          "clientNonce": 1,
+          "rejection": "None",
+          "gatewayError": "None",
+          "message": "The server accepted the command.",
+          "remedy": "",
+          "serverTick": 1,
+          "acceptedGlobalSequence": 1
+        }
+      }
+    },
+    "firstRejected": {
+      "submitted": {
+        "fixtureId": "two_player_authority_v1",
+        "correlationId": "dc4c9768-766d-4487-916b-69364a413d29",
+        "command": "multiplayer.set_route_active",
+        "submitted": true,
+        "clientSequence": 2,
+        "clientNonce": 11002
+      },
+      "observed": {
+        "fixtureId": "two_player_authority_v1",
+        "correlationId": "6e9f9371-2f79-4b67-92df-4c7f13416b6f",
+        "processId": 32836,
+        "netMode": "Client",
+        "publicProjectionRevision": 3,
+        "publicServerTick": 1,
+        "publicAuthoritativeHash": "e44bc01bef648ad0",
+        "ready": true,
+        "publicHouseId": 1,
+        "projectionSchemaVersion": 13,
+        "projectionRevision": 3,
+        "serverTick": 1,
+        "fullRefresh": false,
+        "startingEventSequence": 1,
+        "lastEventSequence": 7,
+        "authoritativeHash": "e44bc01bef648ad0",
+        "projectionDigest": "2f8dcd29e1e41345",
+        "ownerHouseId": 1,
+        "ownerMoneyPfennig": 100000,
+        "scenarioOutcome": "Active",
+        "winningVictoryId": "",
+        "placementCount": 62,
+        "marketCount": 27,
+        "routeCount": 9,
+        "victoryObjectiveCount": 11,
+        "eventCount": 7,
+        "placements": [
+          {
+            "buildingId": 1,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.GrainFarm",
+            "anchorX": 10,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 2,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Mill",
+            "anchorX": 15,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 3,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Bakery",
+            "anchorX": 19,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 7,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Brewery",
+            "anchorX": 23,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 9,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Residence.Laborer",
+            "anchorX": 27,
+            "anchorY": 20,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 13,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Residence.Laborer",
+            "anchorX": 15,
+            "anchorY": 16,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 14,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Market",
+            "anchorX": 10,
+            "anchorY": 15,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 15,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Dock",
+            "anchorX": 26,
+            "anchorY": 15,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 20,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 10,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 21,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 11,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 22,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 12,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 23,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 13,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 24,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 14,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 25,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 15,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 26,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 16,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 27,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 17,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 28,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 18,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 29,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 19,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 30,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 20,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 31,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 21,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 32,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 33,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 34,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 35,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 36,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 37,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 38,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 39,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 40,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 30,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 41,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 10,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 42,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 11,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 43,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 12,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 44,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 13,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 45,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 14,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 46,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 15,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 47,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 16,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 48,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 17,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 49,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 18,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 50,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 19,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 51,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 20,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 52,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 21,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 53,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 54,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 55,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 56,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 57,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 58,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 59,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 60,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 61,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 20,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 62,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 21,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 63,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 22,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 64,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 23,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 65,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 66,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 67,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 68,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 69,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 70,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 71,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 72,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 73,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 30,
+            "anchorY": 24,
+            "status": "Ready"
+          }
+        ],
+        "routes": [
+          {
+            "routeId": 1,
+            "ownerHouseId": 1,
+            "lifecycle": "Traveling",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": true,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 2,
+            "ownerHouseId": 1,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": true,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 3,
+            "ownerHouseId": 2,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 4,
+            "ownerHouseId": 3,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 5,
+            "ownerHouseId": 4,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 6,
+            "ownerHouseId": 5,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 7,
+            "ownerHouseId": 6,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 8,
+            "ownerHouseId": 7,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 9,
+            "ownerHouseId": 8,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          }
+        ],
+        "lastCommandFeedback": {
+          "accepted": false,
+          "clientSequence": 2,
+          "clientNonce": 11002,
+          "rejection": "NotAuthorized",
+          "gatewayError": "NotAuthorized",
+          "message": "Your house does not own the requested target.",
+          "remedy": "Select an asset owned by your assigned house.",
+          "serverTick": 1,
+          "acceptedGlobalSequence": 0
+        }
+      }
+    },
+    "secondRejected": {
+      "submitted": {
+        "fixtureId": "two_player_authority_v1",
+        "correlationId": "f48637b6-804a-45a1-a596-f31693e755e0",
+        "command": "multiplayer.set_route_active",
+        "submitted": true,
+        "clientSequence": 2,
+        "clientNonce": 22002
+      },
+      "observed": {
+        "fixtureId": "two_player_authority_v1",
+        "correlationId": "9f3c489c-4c88-40b9-8a0c-849144032891",
+        "processId": 37452,
+        "netMode": "Client",
+        "publicProjectionRevision": 4,
+        "publicServerTick": 2,
+        "publicAuthoritativeHash": "d0e89437514cc4b6",
+        "ready": true,
+        "publicHouseId": 2,
+        "projectionSchemaVersion": 13,
+        "projectionRevision": 3,
+        "serverTick": 2,
+        "fullRefresh": false,
+        "startingEventSequence": 8,
+        "lastEventSequence": 10,
+        "authoritativeHash": "d0e89437514cc4b6",
+        "projectionDigest": "ac30040f9373a8ab",
+        "ownerHouseId": 2,
+        "ownerMoneyPfennig": 50000,
+        "scenarioOutcome": "Active",
+        "winningVictoryId": "",
+        "placementCount": 62,
+        "marketCount": 27,
+        "routeCount": 9,
+        "victoryObjectiveCount": 11,
+        "eventCount": 9,
+        "placements": [
+          {
+            "buildingId": 1,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.GrainFarm",
+            "anchorX": 10,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 2,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Mill",
+            "anchorX": 15,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 3,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Bakery",
+            "anchorX": 19,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 7,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Brewery",
+            "anchorX": 23,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 9,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Residence.Laborer",
+            "anchorX": 27,
+            "anchorY": 20,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 13,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Residence.Laborer",
+            "anchorX": 15,
+            "anchorY": 16,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 14,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Market",
+            "anchorX": 10,
+            "anchorY": 15,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 15,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Dock",
+            "anchorX": 26,
+            "anchorY": 15,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 20,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 10,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 21,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 11,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 22,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 12,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 23,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 13,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 24,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 14,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 25,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 15,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 26,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 16,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 27,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 17,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 28,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 18,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 29,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 19,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 30,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 20,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 31,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 21,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 32,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 33,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 34,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 35,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 36,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 37,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 38,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 39,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 40,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 30,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 41,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 10,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 42,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 11,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 43,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 12,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 44,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 13,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 45,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 14,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 46,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 15,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 47,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 16,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 48,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 17,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 49,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 18,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 50,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 19,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 51,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 20,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 52,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 21,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 53,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 54,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 55,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 56,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 57,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 58,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 59,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 60,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 61,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 20,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 62,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 21,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 63,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 22,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 64,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 23,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 65,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 66,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 67,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 68,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 69,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 70,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 71,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 72,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 73,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 30,
+            "anchorY": 24,
+            "status": "Ready"
+          }
+        ],
+        "routes": [
+          {
+            "routeId": 1,
+            "ownerHouseId": 1,
+            "lifecycle": "Traveling",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 2,
+            "ownerHouseId": 1,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 3,
+            "ownerHouseId": 2,
+            "lifecycle": "Traveling",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": true,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 4,
+            "ownerHouseId": 3,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 5,
+            "ownerHouseId": 4,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 6,
+            "ownerHouseId": 5,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 7,
+            "ownerHouseId": 6,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 8,
+            "ownerHouseId": 7,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 9,
+            "ownerHouseId": 8,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          }
+        ],
+        "lastCommandFeedback": {
+          "accepted": false,
+          "clientSequence": 2,
+          "clientNonce": 22002,
+          "rejection": "NotAuthorized",
+          "gatewayError": "NotAuthorized",
+          "message": "Your house does not own the requested target.",
+          "remedy": "Select an asset owned by your assigned house.",
+          "serverTick": 2,
+          "acceptedGlobalSequence": 0
+        }
+      }
+    },
+    "secondAllowed": {
+      "semanticId": "TradeMap.Editor.ToggleActive",
+      "observed": {
+        "fixtureId": "two_player_authority_v1",
+        "correlationId": "ad4d6621-bffb-4161-87aa-94f98815636c",
+        "processId": 37452,
+        "netMode": "Client",
+        "publicProjectionRevision": 4,
+        "publicServerTick": 2,
+        "publicAuthoritativeHash": "d0e89437514cc4b6",
+        "ready": true,
+        "publicHouseId": 2,
+        "projectionSchemaVersion": 13,
+        "projectionRevision": 3,
+        "serverTick": 2,
+        "fullRefresh": false,
+        "startingEventSequence": 8,
+        "lastEventSequence": 10,
+        "authoritativeHash": "d0e89437514cc4b6",
+        "projectionDigest": "ac30040f9373a8ab",
+        "ownerHouseId": 2,
+        "ownerMoneyPfennig": 50000,
+        "scenarioOutcome": "Active",
+        "winningVictoryId": "",
+        "placementCount": 62,
+        "marketCount": 27,
+        "routeCount": 9,
+        "victoryObjectiveCount": 11,
+        "eventCount": 9,
+        "placements": [
+          {
+            "buildingId": 1,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.GrainFarm",
+            "anchorX": 10,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 2,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Mill",
+            "anchorX": 15,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 3,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Bakery",
+            "anchorX": 19,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 7,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Brewery",
+            "anchorX": 23,
+            "anchorY": 20,
+            "status": "Blocked"
+          },
+          {
+            "buildingId": 9,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Residence.Laborer",
+            "anchorX": 27,
+            "anchorY": 20,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 13,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Residence.Laborer",
+            "anchorX": 15,
+            "anchorY": 16,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 14,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Market",
+            "anchorX": 10,
+            "anchorY": 15,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 15,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Dock",
+            "anchorX": 26,
+            "anchorY": 15,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 20,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 10,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 21,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 11,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 22,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 12,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 23,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 13,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 24,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 14,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 25,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 15,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 26,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 16,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 27,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 17,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 28,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 18,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 29,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 19,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 30,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 20,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 31,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 21,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 32,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 33,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 34,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 35,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 36,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 37,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 38,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 39,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 40,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 30,
+            "anchorY": 18,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 41,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 10,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 42,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 11,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 43,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 12,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 44,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 13,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 45,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 14,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 46,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 15,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 47,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 16,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 48,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 17,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 49,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 18,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 50,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 19,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 51,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 20,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 52,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 21,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 53,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 54,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 55,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 56,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 57,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 58,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 59,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 60,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 19,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 61,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 20,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 62,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 21,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 63,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 22,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 64,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 23,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 65,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 22,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 66,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 23,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 67,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 24,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 68,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 25,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 69,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 26,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 70,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 27,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 71,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 28,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 72,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 29,
+            "anchorY": 24,
+            "status": "Ready"
+          },
+          {
+            "buildingId": 73,
+            "ownerHouseId": 1,
+            "cityId": "City.Lubeck",
+            "buildingDefinitionId": "Building.Road",
+            "anchorX": 30,
+            "anchorY": 24,
+            "status": "Ready"
+          }
+        ],
+        "routes": [
+          {
+            "routeId": 1,
+            "ownerHouseId": 1,
+            "lifecycle": "Traveling",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 2,
+            "ownerHouseId": 1,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 3,
+            "ownerHouseId": 2,
+            "lifecycle": "Traveling",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": true,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 4,
+            "ownerHouseId": 3,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 5,
+            "ownerHouseId": 4,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 6,
+            "ownerHouseId": 5,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 7,
+            "ownerHouseId": 6,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 8,
+            "ownerHouseId": 7,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          },
+          {
+            "routeId": 9,
+            "ownerHouseId": 8,
+            "lifecycle": "Inactive",
+            "currentCityId": "City.Lubeck",
+            "cargoVisible": false,
+            "cargoMilliUnits": 0
+          }
+        ],
+        "lastCommandFeedback": {
+          "accepted": true,
+          "clientSequence": 1,
+          "clientNonce": 1,
+          "rejection": "None",
+          "gatewayError": "None",
+          "message": "The server accepted the command.",
+          "remedy": "",
+          "serverTick": 2,
+          "acceptedGlobalSequence": 2
+        }
+      }
+    }
+  },
+  "synchronized": {
+    "server": {
+      "fixtureId": "two_player_authority_v1",
+      "correlationId": "f26ccff2-4f96-4448-9542-5ca32c93242c",
+      "processId": 672,
+      "netMode": "DedicatedServer",
+      "publicProjectionRevision": 4,
+      "publicServerTick": 2,
+      "publicAuthoritativeHash": "d0e89437514cc4b6",
+      "ready": true,
+      "registeredClientCount": 2,
+      "serverTick": 2,
+      "campaignSeed": "91470745841716"
+    },
+    "client1": {
+      "fixtureId": "two_player_authority_v1",
+      "correlationId": "ed4a0109-727d-4edd-900b-bee38982e911",
+      "processId": 32836,
+      "netMode": "Client",
+      "publicProjectionRevision": 4,
+      "publicServerTick": 2,
+      "publicAuthoritativeHash": "d0e89437514cc4b6",
+      "ready": true,
+      "publicHouseId": 1,
+      "projectionSchemaVersion": 13,
+      "projectionRevision": 4,
+      "serverTick": 2,
+      "fullRefresh": false,
+      "startingEventSequence": 8,
+      "lastEventSequence": 10,
+      "authoritativeHash": "d0e89437514cc4b6",
+      "projectionDigest": "80f42cdd6c3a9478",
+      "ownerHouseId": 1,
+      "ownerMoneyPfennig": 99988,
+      "scenarioOutcome": "Active",
+      "winningVictoryId": "",
+      "placementCount": 62,
+      "marketCount": 27,
+      "routeCount": 9,
+      "victoryObjectiveCount": 11,
+      "eventCount": 9,
+      "placements": [
+        {
+          "buildingId": 1,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.GrainFarm",
+          "anchorX": 10,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 2,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Mill",
+          "anchorX": 15,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 3,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Bakery",
+          "anchorX": 19,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 7,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Brewery",
+          "anchorX": 23,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 9,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Residence.Laborer",
+          "anchorX": 27,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 13,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Residence.Laborer",
+          "anchorX": 15,
+          "anchorY": 16,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 14,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Market",
+          "anchorX": 10,
+          "anchorY": 15,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 15,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Dock",
+          "anchorX": 26,
+          "anchorY": 15,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 20,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 10,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 21,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 11,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 22,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 12,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 23,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 13,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 24,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 14,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 25,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 15,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 26,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 16,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 27,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 17,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 28,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 18,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 29,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 19,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 30,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 20,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 31,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 21,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 32,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 33,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 34,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 35,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 36,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 37,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 38,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 39,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 40,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 30,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 41,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 10,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 42,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 11,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 43,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 12,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 44,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 13,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 45,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 14,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 46,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 15,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 47,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 16,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 48,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 17,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 49,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 18,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 50,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 19,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 51,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 20,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 52,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 21,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 53,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 54,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 55,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 56,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 57,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 58,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 59,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 60,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 61,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 62,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 21,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 63,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 22,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 64,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 23,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 65,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 66,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 67,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 68,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 69,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 70,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 71,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 72,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 73,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 30,
+          "anchorY": 24,
+          "status": "Ready"
+        }
+      ],
+      "routes": [
+        {
+          "routeId": 1,
+          "ownerHouseId": 1,
+          "lifecycle": "Traveling",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": true,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 2,
+          "ownerHouseId": 1,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": true,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 3,
+          "ownerHouseId": 2,
+          "lifecycle": "Traveling",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 4,
+          "ownerHouseId": 3,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 5,
+          "ownerHouseId": 4,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 6,
+          "ownerHouseId": 5,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 7,
+          "ownerHouseId": 6,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 8,
+          "ownerHouseId": 7,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 9,
+          "ownerHouseId": 8,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        }
+      ],
+      "lastCommandFeedback": {
+        "accepted": false,
+        "clientSequence": 2,
+        "clientNonce": 11002,
+        "rejection": "NotAuthorized",
+        "gatewayError": "NotAuthorized",
+        "message": "Your house does not own the requested target.",
+        "remedy": "Select an asset owned by your assigned house.",
+        "serverTick": 1,
+        "acceptedGlobalSequence": 0
+      }
+    },
+    "client2": {
+      "fixtureId": "two_player_authority_v1",
+      "correlationId": "a8bb3c88-4a9f-4a5a-a5fe-bd51258e67fc",
+      "processId": 37452,
+      "netMode": "Client",
+      "publicProjectionRevision": 4,
+      "publicServerTick": 2,
+      "publicAuthoritativeHash": "d0e89437514cc4b6",
+      "ready": true,
+      "publicHouseId": 2,
+      "projectionSchemaVersion": 13,
+      "projectionRevision": 3,
+      "serverTick": 2,
+      "fullRefresh": false,
+      "startingEventSequence": 8,
+      "lastEventSequence": 10,
+      "authoritativeHash": "d0e89437514cc4b6",
+      "projectionDigest": "ac30040f9373a8ab",
+      "ownerHouseId": 2,
+      "ownerMoneyPfennig": 50000,
+      "scenarioOutcome": "Active",
+      "winningVictoryId": "",
+      "placementCount": 62,
+      "marketCount": 27,
+      "routeCount": 9,
+      "victoryObjectiveCount": 11,
+      "eventCount": 9,
+      "placements": [
+        {
+          "buildingId": 1,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.GrainFarm",
+          "anchorX": 10,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 2,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Mill",
+          "anchorX": 15,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 3,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Bakery",
+          "anchorX": 19,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 7,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Brewery",
+          "anchorX": 23,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 9,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Residence.Laborer",
+          "anchorX": 27,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 13,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Residence.Laborer",
+          "anchorX": 15,
+          "anchorY": 16,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 14,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Market",
+          "anchorX": 10,
+          "anchorY": 15,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 15,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Dock",
+          "anchorX": 26,
+          "anchorY": 15,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 20,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 10,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 21,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 11,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 22,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 12,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 23,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 13,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 24,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 14,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 25,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 15,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 26,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 16,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 27,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 17,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 28,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 18,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 29,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 19,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 30,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 20,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 31,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 21,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 32,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 33,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 34,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 35,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 36,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 37,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 38,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 39,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 40,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 30,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 41,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 10,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 42,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 11,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 43,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 12,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 44,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 13,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 45,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 14,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 46,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 15,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 47,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 16,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 48,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 17,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 49,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 18,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 50,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 19,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 51,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 20,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 52,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 21,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 53,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 54,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 55,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 56,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 57,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 58,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 59,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 60,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 61,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 62,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 21,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 63,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 22,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 64,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 23,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 65,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 66,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 67,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 68,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 69,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 70,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 71,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 72,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 73,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 30,
+          "anchorY": 24,
+          "status": "Ready"
+        }
+      ],
+      "routes": [
+        {
+          "routeId": 1,
+          "ownerHouseId": 1,
+          "lifecycle": "Traveling",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 2,
+          "ownerHouseId": 1,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 3,
+          "ownerHouseId": 2,
+          "lifecycle": "Traveling",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": true,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 4,
+          "ownerHouseId": 3,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 5,
+          "ownerHouseId": 4,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 6,
+          "ownerHouseId": 5,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 7,
+          "ownerHouseId": 6,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 8,
+          "ownerHouseId": 7,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 9,
+          "ownerHouseId": 8,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        }
+      ],
+      "lastCommandFeedback": {
+        "accepted": false,
+        "clientSequence": 2,
+        "clientNonce": 22002,
+        "rejection": "NotAuthorized",
+        "gatewayError": "NotAuthorized",
+        "message": "Your house does not own the requested target.",
+        "remedy": "Select an asset owned by your assigned house.",
+        "serverTick": 2,
+        "acceptedGlobalSequence": 0
+      }
+    }
+  },
+  "disconnect": {
+    "fixtureId": "two_player_authority_v1",
+    "correlationId": "25059914-d5d7-4306-b843-4820790ebf9b",
+    "processId": 672,
+    "netMode": "DedicatedServer",
+    "publicProjectionRevision": 4,
+    "publicServerTick": 2,
+    "publicAuthoritativeHash": "d0e89437514cc4b6",
+    "ready": true,
+    "registeredClientCount": 1,
+    "serverTick": 2,
+    "campaignSeed": "91470745841716"
+  },
+  "reconnect": {
+    "server": {
+      "fixtureId": "two_player_authority_v1",
+      "correlationId": "d16c75e7-31f6-4882-b381-3b90f9dab7c0",
+      "processId": 672,
+      "netMode": "DedicatedServer",
+      "publicProjectionRevision": 5,
+      "publicServerTick": 2,
+      "publicAuthoritativeHash": "d0e89437514cc4b6",
+      "ready": true,
+      "registeredClientCount": 2,
+      "serverTick": 2,
+      "campaignSeed": "91470745841716"
+    },
+    "client": {
+      "fixtureId": "two_player_authority_v1",
+      "correlationId": "8cd89333-c497-44da-a623-98df3e836495",
+      "processId": 37368,
+      "netMode": "Client",
+      "publicProjectionRevision": 5,
+      "publicServerTick": 2,
+      "publicAuthoritativeHash": "d0e89437514cc4b6",
+      "ready": true,
+      "publicHouseId": 2,
+      "projectionSchemaVersion": 13,
+      "projectionRevision": 1,
+      "serverTick": 2,
+      "fullRefresh": true,
+      "startingEventSequence": 1,
+      "lastEventSequence": 10,
+      "authoritativeHash": "d0e89437514cc4b6",
+      "projectionDigest": "4638f139563d0c25",
+      "ownerHouseId": 2,
+      "ownerMoneyPfennig": 50000,
+      "scenarioOutcome": "Active",
+      "winningVictoryId": "",
+      "placementCount": 62,
+      "marketCount": 27,
+      "routeCount": 9,
+      "victoryObjectiveCount": 11,
+      "eventCount": 9,
+      "placements": [
+        {
+          "buildingId": 1,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.GrainFarm",
+          "anchorX": 10,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 2,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Mill",
+          "anchorX": 15,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 3,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Bakery",
+          "anchorX": 19,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 7,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Brewery",
+          "anchorX": 23,
+          "anchorY": 20,
+          "status": "Blocked"
+        },
+        {
+          "buildingId": 9,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Residence.Laborer",
+          "anchorX": 27,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 13,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Residence.Laborer",
+          "anchorX": 15,
+          "anchorY": 16,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 14,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Market",
+          "anchorX": 10,
+          "anchorY": 15,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 15,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Dock",
+          "anchorX": 26,
+          "anchorY": 15,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 20,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 10,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 21,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 11,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 22,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 12,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 23,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 13,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 24,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 14,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 25,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 15,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 26,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 16,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 27,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 17,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 28,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 18,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 29,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 19,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 30,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 20,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 31,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 21,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 32,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 33,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 34,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 35,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 36,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 37,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 38,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 39,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 40,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 30,
+          "anchorY": 18,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 41,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 10,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 42,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 11,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 43,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 12,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 44,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 13,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 45,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 14,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 46,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 15,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 47,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 16,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 48,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 17,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 49,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 18,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 50,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 19,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 51,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 20,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 52,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 21,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 53,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 54,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 55,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 56,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 57,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 58,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 59,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 60,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 19,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 61,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 20,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 62,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 21,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 63,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 22,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 64,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 23,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 65,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 22,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 66,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 23,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 67,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 24,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 68,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 25,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 69,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 26,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 70,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 27,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 71,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 28,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 72,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 29,
+          "anchorY": 24,
+          "status": "Ready"
+        },
+        {
+          "buildingId": 73,
+          "ownerHouseId": 1,
+          "cityId": "City.Lubeck",
+          "buildingDefinitionId": "Building.Road",
+          "anchorX": 30,
+          "anchorY": 24,
+          "status": "Ready"
+        }
+      ],
+      "routes": [
+        {
+          "routeId": 1,
+          "ownerHouseId": 1,
+          "lifecycle": "Traveling",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 2,
+          "ownerHouseId": 1,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 3,
+          "ownerHouseId": 2,
+          "lifecycle": "Traveling",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": true,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 4,
+          "ownerHouseId": 3,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 5,
+          "ownerHouseId": 4,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 6,
+          "ownerHouseId": 5,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 7,
+          "ownerHouseId": 6,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 8,
+          "ownerHouseId": 7,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        },
+        {
+          "routeId": 9,
+          "ownerHouseId": 8,
+          "lifecycle": "Inactive",
+          "currentCityId": "City.Lubeck",
+          "cargoVisible": false,
+          "cargoMilliUnits": 0
+        }
+      ],
+      "lastCommandFeedback": {
+        "accepted": false,
+        "clientSequence": 0,
+        "clientNonce": 0,
+        "rejection": "None",
+        "gatewayError": "",
+        "message": "",
+        "remedy": "",
+        "serverTick": 0,
+        "acceptedGlobalSequence": 0
+      }
+    }
+  },
+  "diagnostics": {
+    "authoritativeHash": "d0e89437514cc4b6",
+    "clientProjectionDigests": {
+      "client1": "80f42cdd6c3a9478",
+      "client2": "ac30040f9373a8ab",
+      "reconnected": "4638f139563d0c25"
+    }
+  },
+  "screenshots": [
+    {
+      "width": 1280,
+      "height": 720,
+      "postCaptureResized": false,
+      "screenshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-authority/screenshot-1280x720.png",
+      "metadataPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-authority/metadata.json",
+      "semanticSnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-authority/semantic-ui.json",
+      "querySnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client1-authority/query-snapshot.json",
+      "contentSha1": "7F42C7657A224D967D646B18C159EA59C31B9858",
+      "revision": 19420,
+      "copied": {
+        "screenshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1\\screenshot-1280x720.png",
+        "metadataPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1\\metadata.json",
+        "semanticSnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1\\semantic-ui.json",
+        "querySnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client1\\query-snapshot.json"
+      }
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "postCaptureResized": false,
+      "screenshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-authority/screenshot-1920x1080.png",
+      "metadataPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-authority/metadata.json",
+      "semanticSnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-authority/semantic-ui.json",
+      "querySnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-authority/query-snapshot.json",
+      "contentSha1": "69BBBCD057C117582BB2897D3E51A3A2B6B0E1FC",
+      "revision": 10332,
+      "copied": {
+        "screenshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2\\screenshot-1920x1080.png",
+        "metadataPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2\\metadata.json",
+        "semanticSnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2\\semantic-ui.json",
+        "querySnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2\\query-snapshot.json"
+      }
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "postCaptureResized": false,
+      "screenshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-reconnected/screenshot-1920x1080.png",
+      "metadataPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-reconnected/metadata.json",
+      "semanticSnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-reconnected/semantic-ui.json",
+      "querySnapshotPath": "C:/Users/Johan/source/repos/Unreal/Hansa/Hansa/Saved/TestEvidence/Automation/S11P04/client2-reconnected/query-snapshot.json",
+      "contentSha1": "A23BF438C4702BDF77501FEB63966808ED419E4E",
+      "revision": 2893,
+      "copied": {
+        "screenshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-reconnect\\screenshot-1920x1080.png",
+        "metadataPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-reconnect\\metadata.json",
+        "semanticSnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-reconnect\\semantic-ui.json",
+        "querySnapshotPath": "C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260924-110106933-two-player-authority\\captures\\client2-reconnect\\query-snapshot.json"
+      }
+    }
+  ],
+  "timedOut": false
+}

@@ -138,6 +138,13 @@ void AHansaCargoProjectionManager::Synchronize(const FHansaSimulationProjection&
     const int64 Tick=P.GetClock().GetTick().GetValue();
     const bool bSameTick=!PreviousEntries.IsEmpty() && PreviousEntries[0].Observation.SimulationTick==Tick;
     const double TickFraction=(bSameTick || bPreserveNavigationPosition)?Host.GetPresentationTickFraction():0.;
+    const bool bCampaignWorld=Hansa::Game::LubeckPlacementGrid::IsCampaignWorld(GetWorld());
+    auto NavigationWorld=[&](const FHansaGridCoordinate Cell, const double Height)
+    {
+        const FVector Local=Hansa::Game::LubeckPlacementGrid::GridToWorld(Cell,Height);
+        return bCampaignWorld ? Hansa::Game::LubeckPlacementGrid::CampaignLubeckNavigationOrigin()+Local
+                              : Foundation.GetActorTransform().TransformPosition(Local);
+    };
     auto Berth = [&](FName CityId, FVector& Location, FVector& Outward)
     {
         if (CityId==TEXT("City.Rostock")) {Location=AHansaRostockQuarter::VisitOffset()+FVector(-700,3900,-125); Outward=FVector(1,0,0); return true;}
@@ -222,14 +229,16 @@ void AHansaCargoProjectionManager::Synchronize(const FHansaSimulationProjection&
             E.ProgressPerTick=0; // A recorded atomic transfer is held at the port for this displayed tick.
         }
         const auto* Inventory=P.GetInventories().FindByPredicate([&](const auto& I){return I.Id==V.CargoInventoryId && I.VehicleId==V.Id;});
+        if (Inventory) { O.CargoSlots = Inventory->CargoSlots; O.bCargoSlotsKnown = true; }
         int64 StockTotal=0; if(Inventory) for(const auto& Stock:Inventory->Stocks)StockTotal+=Stock.Stock.GetRawValue();
         if(!Inventory || StockTotal!=O.CargoMilliUnits) O.PresentationFailure=TEXT("Cargo inventory projection mismatch");
         FVector Dock, Outward;
         if(!Berth(O.CityId,Dock,Outward)) O.PresentationFailure=TEXT("City berth presentation unavailable");
         else if (V.Navigation.CityId.IsValid() && O.CityId==City(V.Navigation.CityId))
         {
-            Dock=Hansa::Game::LubeckPlacementGrid::GridToWorld(V.Navigation.Home,Dock.Z);
-            if(Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld()))Dock.Z=WaterHeight(GetWorld(),Dock);
+            Dock=NavigationWorld(V.Navigation.Home,Dock.Z);
+            if(Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld()) || bCampaignWorld)
+                Dock.Z=WaterHeight(GetWorld(),Dock);
         }
         if(O.PresentationFailure.IsEmpty()) E.Path=Traveling?(Arriving?TArray<FVector>{Dock+Outward*6500,Dock}:TArray<FVector>{Dock,Dock+Outward*6500}):TArray<FVector>{Dock};
         const auto& N=V.Navigation;
@@ -250,10 +259,16 @@ void AHansaCargoProjectionManager::Synchronize(const FHansaSimulationProjection&
             // Preserve any cargo-ledger validation failure while overriding the route display.
             E.StartProgress=0;E.ProgressPerTick=N.IsMoving()?1.:0.;E.LaneStart=0;E.LaneScale=1;
             E.Path.Reset();
-            auto Position=Hansa::Game::LubeckPlacementGrid::GridToWorld(N.Cell,0);
-            const double Height=Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld())?WaterHeight(GetWorld(),Position):Dock.Z;
+            auto Position=NavigationWorld(N.Cell,0);
+            const double Height=(Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld()) || bCampaignWorld)
+                ? WaterHeight(GetWorld(),Position) : Dock.Z;
             Position.Z=Height;E.Path.Add(Position);
-            if (N.IsMoving()) E.Path.Add(Hansa::Game::LubeckPlacementGrid::GridToWorld(N.Path[N.NextIndex],Height));
+            if (N.IsMoving())
+            {
+                FVector Next=NavigationWorld(N.Path[N.NextIndex],0);
+                Next.Z=Height;
+                E.Path.Add(Next);
+            }
             E.NavigationCell=N.Cell;
             E.NavigationNextCell=N.IsMoving()?N.Path[N.NextIndex]:N.Cell;
             const FEntry* Previous=PreviousEntries.FindByPredicate([&](const FEntry& Value)

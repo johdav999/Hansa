@@ -6,7 +6,7 @@
 void UHansaFrontendPresentationModel::Initialize(bool Ready){Snapshot={};Snapshot.bReady=Ready;Changed.Broadcast();}
 void UHansaFrontendPresentationModel::RefreshSlots(const TArray<FHansaSaveSlotMetadata>& Slots){
  Snapshot.bCanContinue=false;FString Latest;
- for(const auto& S:Slots)if(S.bCanLoad&&(!Snapshot.bCanContinue||S.SavedUtc>Latest)){Snapshot.bCanContinue=true;Snapshot.ContinueSlot=S.SlotId;Latest=S.SavedUtc;}
+ for(const auto& S:Slots)if(S.bCanLoad&&(!Snapshot.bCanContinue||S.SavedUtc>Latest)){Snapshot.bCanContinue=true;Snapshot.ContinueSlot=S.SlotId;Snapshot.ContinueSaveId=S.StableId;Latest=S.SavedUtc;}
  Changed.Broadcast();
 }
 void UHansaFrontendPresentationModel::Begin(FName Action){Snapshot.PendingAction=Action;Snapshot.Page=EHansaFrontendPage::Loading;Snapshot.Message=Action==TEXT("NewGame")?LOCTEXT("Starting","Preparing your merchant house…"):LOCTEXT("Loading","Restoring your saved game…");Changed.Broadcast();if(Intent)Intent(Action);}

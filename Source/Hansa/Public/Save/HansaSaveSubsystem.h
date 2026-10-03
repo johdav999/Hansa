@@ -38,7 +38,7 @@ struct HANSA_API FHansaSaveSlotMetadata final
 
 DECLARE_MULTICAST_DELEGATE(FHansaSaveSlotsChanged);
 
-/** Owns the two allowlisted MVP slots. Callers never provide a path or filename. */
+/** Owns legacy slots and uniquely identified manual saves. Callers never provide a path. */
 UCLASS()
 class HANSA_API UHansaSaveSubsystem final : public UGameInstanceSubsystem
 {
@@ -48,6 +48,10 @@ public:
 	void Refresh();
 	bool Save(EHansaSaveSlotId SlotId, const FString& DisplayName, FText& OutError, FText& OutRemedy);
 	bool Load(EHansaSaveSlotId SlotId, FText& OutError, FText& OutRemedy);
+	bool CreateManualSave(const FString& DisplayName, FName& OutId, FText& OutError, FText& OutRemedy);
+	bool SaveById(FName StableId, const FString& DisplayName, FText& OutError, FText& OutRemedy);
+	bool LoadById(FName StableId, FText& OutError, FText& OutRemedy);
+	[[nodiscard]] const FHansaSaveSlotMetadata* FindSave(FName StableId) const;
 	[[nodiscard]] const TArray<FHansaSaveSlotMetadata>& GetSlots() const { return Slots; }
 	[[nodiscard]] const FHansaSaveSlotMetadata* FindSlot(EHansaSaveSlotId SlotId) const;
 	FHansaSaveSlotsChanged& OnChanged() { return Changed; }
@@ -58,7 +62,9 @@ public:
 #endif
 private:
 	[[nodiscard]] FString SlotPath(EHansaSaveSlotId SlotId) const;
-	FHansaSaveSlotMetadata Inspect(EHansaSaveSlotId SlotId) const;
+	[[nodiscard]] FString SavePath(FName StableId) const;
+	bool WriteSave(FName StableId, const FString& DisplayName, bool bReplace, FText& OutError, FText& OutRemedy);
+	FHansaSaveSlotMetadata Inspect(FName StableId) const;
 	TWeakObjectPtr<UHansaRuntimeSimulationHost> Host;
 	UPROPERTY(Transient) TArray<FHansaSaveSlotMetadata> Slots;
 	FHansaSaveSlotsChanged Changed;

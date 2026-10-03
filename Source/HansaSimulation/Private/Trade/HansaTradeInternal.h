@@ -39,10 +39,15 @@ namespace Hansa::Simulation
 			FHansaSimulationTick Tick,
 			uint64& InOutPublishedEventCount,
 			TArray<FHansaDomainEvent>& OutEvents,
-			TConstArrayView<FHansaForeignPresenceState> Presences = {},
-			TConstArrayView<FHansaTradeStationState> Stations = {});
+			TArray<FHansaForeignPresenceState>& Presences,
+			TArray<FHansaTradeStationState>& Stations);
 
 	private:
+        static void CollectConstruction(FHansaVehicleState& Vehicle, FHansaInventoryLedger& Inventories,
+            const FHansaPlacementState& Placement, TConstArrayView<FHansaBuildingState> Buildings,
+            const FHansaEconomicRegistry& Registry, FHansaSimulationTick Tick,
+            TArray<FHansaForeignPresenceState>& Presences, TArray<FHansaTradeStationState>& Stations,
+            uint8 Pickup, uint64& EventSequence, TArray<FHansaDomainEvent>& Events);
 		static void PublishRouteEvent(
 			FHansaRouteState& Route,
 			FHansaVehicleState& Vehicle,

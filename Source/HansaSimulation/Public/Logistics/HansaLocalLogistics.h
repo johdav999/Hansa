@@ -9,6 +9,7 @@
 
 namespace Hansa::Simulation
 {
+    struct FHansaInventoryProjection;
 	class FHansaInventoryReadOnlyAccess;
 	class FHansaPlacementState;
 	class FHansaEconomicRegistry;
@@ -204,6 +205,10 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaLocalLogisticsQueries final
 	{
 	public:
+        /** Existing public-port/no-map fallback and physical home-market access used by sea cargo. */
+        [[nodiscard]] static bool HasSeaTradeAccess(const FHansaInventoryProjection& Inventory,
+            const FHansaInventoryReadOnlyAccess& Inventories,const FHansaPlacementState& Placement,
+            TConstArrayView<FHansaBuildingState> Buildings,const FHansaEconomicRegistry& Registry);
 		/** Tests only whether a completed building has orthogonal access to a completed road. */
 		[[nodiscard]] static FHansaLogisticsRoadPathProjection QueryBuildingRoadAccess(
 			FHansaBuildingId SourceBuildingId,

@@ -62,8 +62,11 @@ namespace Hansa::Simulation
 		EHansaInventoryEndpointKind Kind = EHansaInventoryEndpointKind::Inventory;
 		FHansaInventoryId InventoryId;
 		FName ExternalEndpointId;
+		// INDEX_NONE selects a deterministic matching slot for legacy/spot transfers.
+		int32 CargoSlotIndex = INDEX_NONE;
 
 		[[nodiscard]] static FHansaInventoryEndpoint Inventory(FHansaInventoryId InventoryId);
+		[[nodiscard]] static FHansaInventoryEndpoint CargoSlot(FHansaInventoryId InventoryId, int32 SlotIndex);
 		[[nodiscard]] static FHansaInventoryEndpoint Source(FName SourceId);
 		[[nodiscard]] static FHansaInventoryEndpoint Sink(FName SinkId);
 	};
@@ -102,6 +105,13 @@ namespace Hansa::Simulation
 		FHansaQuantity Quantity;
 	};
 
+	/** Physical allocation, independent of the ship's shared quantity capacity. */
+	struct HANSASIMULATION_API FHansaCargoSlot final
+	{
+		FHansaGoodId GoodId;
+		FHansaQuantity Quantity;
+	};
+
 	/** Canonically sorted authoritative record; callers receive it only through read-only owning snapshots. */
 	struct HANSASIMULATION_API FHansaInventoryRecord final
 	{
@@ -115,6 +125,7 @@ namespace Hansa::Simulation
 		TArray<FHansaGoodId> AcceptedGoods;
 		TArray<FHansaInventoryStockRecord> Stocks;
   TArray<FHansaGoodId> HouseholdExcludedGoods;
+		TArray<FHansaCargoSlot> CargoSlots;
 	};
 
 	struct HANSASIMULATION_API FHansaInventoryMovement final
@@ -169,7 +180,10 @@ namespace Hansa::Simulation
 		FHansaQuantity Reserved;
 		TArray<FHansaGoodId> AcceptedGoods;
 		TArray<FHansaInventoryStockProjection> Stocks;
+        // Filled by the authoritative simulation projection using the same access query as trade execution.
+        bool bSeaTradeAccess = false;
   TArray<FHansaGoodId> HouseholdExcludedGoods;
+		TArray<FHansaCargoSlot> CargoSlots;
 	};
 
 	struct FHansaSpoilageRecord
@@ -224,6 +238,9 @@ namespace Hansa::Simulation
 			int32 RecentMovementCapacity = 64);
 
 		[[nodiscard]] bool IsValid() const { return bInitialized; }
+		/** Assign old pooled stock without moving goods. Extra old products remain withdrawal-only recovery slots. */
+		void MigrateCargoSlots();
+		[[nodiscard]] static bool ValidateCargoSlots(const FHansaInventoryRecord& Record);
 		void SetHouseholdProtection(TArray<FHansaHouseholdStockProtection> Values) { HouseholdProtection = MoveTemp(Values); }
 		[[nodiscard]] int64 ProtectedRaw(FHansaInventoryId InventoryId, FHansaGoodId GoodId) const;
 
@@ -262,6 +279,7 @@ namespace Hansa::Simulation
         friend class FHansaSpoilageExecutor;
 		friend class FHansaInventoryReadOnlyAccess;
 		friend class FHansaStateHasher;
+		friend class FHansaMerchantOfficeTestSetup;
 
 		void AddRecentMovement(FHansaInventoryMovement Movement);
 		// Rebuilt from current cohorts/calendar/policy before mutations; excluded from saves/hash.

@@ -10,6 +10,7 @@ public class HansaEditor : ModuleRules
 		}
 
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        bUseUnity = false; // Isolate file-local editor fixture helpers.
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{

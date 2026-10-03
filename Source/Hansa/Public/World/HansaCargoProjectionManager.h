@@ -50,6 +50,8 @@ struct HANSA_API FHansaCargoWorldObservation
     UPROPERTY(BlueprintReadOnly) bool bNavigationMoving = false;
     UPROPERTY(BlueprintReadOnly) int64 CapacityMilliUnits = 0;
     UPROPERTY(BlueprintReadOnly) int64 UpkeepPfennigPerTick = 0;
+    TArray<Hansa::Simulation::FHansaCargoSlot> CargoSlots;
+    bool bCargoSlotsKnown = false;
     UPROPERTY(BlueprintReadOnly) FIntPoint NavigationTarget = FIntPoint::ZeroValue;
     UPROPERTY(BlueprintReadOnly) FIntPoint HomeWaterCell = FIntPoint::ZeroValue;
     UPROPERTY(BlueprintReadOnly) FText NavigationFeedback;

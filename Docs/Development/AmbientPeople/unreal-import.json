@@ -1,0 +1,57 @@
+{
+  "source_sha256": "08281ee93bdcc459b53db83038b8e2263cad73e3871653a58bb88dc26869309c",
+  "assets": [
+    {
+      "path": "/Game/Hansa/Characters/Laborer01/SK_Laborer01.SK_Laborer01",
+      "class": "SkeletalMesh",
+      "bounds": "<Struct 'BoxSphereBounds' (0x00000254BF547B80) {origin: {x: 6.854099, y: 1.498502, z: 86.067347}, box_extent: {x: 34.594337, y: 19.834134, z: 88.370763}, sphere_radius: 96.951291}>",
+      "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+    },
+    {
+      "path": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton",
+      "class": "Skeleton"
+    },
+    {
+      "path": "/Game/Hansa/Characters/Laborer01/SK_Laborer01dig.SK_Laborer01dig",
+      "class": "AnimSequence",
+      "seconds": 16.375,
+      "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+    },
+    {
+      "path": "/Game/Hansa/Characters/Laborer01/SK_Laborer01idle.SK_Laborer01idle",
+      "class": "AnimSequence",
+      "seconds": 15.333333015441895,
+      "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+    },
+    {
+      "path": "/Game/Hansa/Characters/Laborer01/SK_Laborer01look_around.SK_Laborer01look_around",
+      "class": "AnimSequence",
+      "seconds": 15.583333015441895,
+      "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+    },
+    {
+      "path": "/Game/Hansa/Characters/Laborer01/SK_Laborer01shovel.SK_Laborer01shovel",
+      "class": "AnimSequence",
+      "seconds": 15.5,
+      "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+    },
+    {
+      "path": "/Game/Hansa/Characters/Laborer01/SK_Laborer01standing_relax.SK_Laborer01standing_relax",
+      "class": "AnimSequence",
+      "seconds": 17.58333396911621,
+      "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+    },
+    {
+      "path": "/Game/Hansa/Characters/Laborer01/SK_Laborer01walk.SK_Laborer01walk",
+      "class": "AnimSequence",
+      "seconds": 2.3333332538604736,
+      "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+    },
+    {
+      "path": "/Game/Hansa/Characters/Laborer01/SK_Laborer01wave_goodbye_02.SK_Laborer01wave_goodbye_02",
+      "class": "AnimSequence",
+      "seconds": 5.875,
+      "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+    }
+  ]
+}

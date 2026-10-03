@@ -8,6 +8,20 @@
 
 namespace Hansa::Simulation
 {
+    bool FHansaLocalLogisticsQueries::HasSeaTradeAccess(const FHansaInventoryProjection& Inventory,
+        const FHansaInventoryReadOnlyAccess& Inventories,const FHansaPlacementState& Placement,
+        TConstArrayView<FHansaBuildingState> Buildings,const FHansaEconomicRegistry& Registry)
+    {
+        const auto* City=Registry.FindCityMarket(Inventory.CityId.ToString());
+        if(City&&City->bMarketOnly)return true;
+        if(!Placement.FindMap(Inventory.CityId))return true;
+        if(!QueryRoadPath(Inventory.Id,Inventory.Id,Inventories,Placement,Buildings,&Registry).bMarketEligible)return false;
+        for(const auto& Record:Placement.GetPlacements())
+            if(Record.Spec.CityId==Inventory.CityId&&Record.Spec.BuildingDefinitionId.ToString()==TEXT("Building.Dock")&&
+                QueryBuildingMarketAccess(Record.BuildingId,Inventory.Id,Inventories,Placement,Buildings,&Registry).bMarketEligible)return true;
+        return false;
+    }
+
 	const TCHAR* LexToString(const EHansaLogisticsPriority Priority)
 	{
 		switch (Priority)
@@ -142,6 +156,7 @@ namespace Hansa::Simulation
 			const TConstArrayView<FHansaBuildingState> Buildings)
 		{
 			TArray<FHansaGridCoordinate> Result;
+            Result.Append(Map.PublicRoadCells);
 			for (const FHansaPlacedBuildingRecord& Record : Placement.GetPlacements())
 			{
 				if (Record.Spec.CityId == Map.CityId &&

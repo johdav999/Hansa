@@ -1,0 +1,22 @@
+[
+  {
+    "name": "ZoomIn",
+    "file": "exec-c8f5f3bb-72c3-4235-b3a2-04b24f3df259.png",
+    "prompt": "Use case: stylized-concept. One individual production Hansa GUI ZoomIn icon on genuine transparent background. Match the magnifying glass in the composed minimap reference exactly in style: thick aged Brass #C19A52 circular ring with restrained warm highlights and Ink #202628 edge, short brass handle diagonally down-right, clear large Chalk #FAF7EF plus sign centered in lens. Lens interior transparent, not filled dark. Front view, simple bold silhouette readable at 24 pixels. Request 160x160 or closest supported square native size; centered object, 10% clear margin. Naturally colored painted game icon, crisp clean alpha, no panel, no text, no shadows outside silhouette, no extra objects, no watermark, no ornate engravings. Only one magnifying glass icon."
+  },
+  {
+    "name": "ZoomOut",
+    "file": "exec-067566a0-dfa1-4653-88f0-96cc888b7527.png",
+    "prompt": "Use case: precise-object-edit. Create the matching ZoomOut variant of the last transparent Hansa magnifying glass icon. Change ONLY the center plus sign to a thick horizontal Chalk #FAF7EF minus with the same dark Ink #202628 outline. Preserve ring, handle, exact framing and size, aged Brass #C19A52 material, highlights, lens transparency, all margins and clean alpha. One standalone icon, no panel, text, watermark or additional objects. Requested display variant 160x160 or nearest supported native size. Keep aspect ratio square."
+  },
+  {
+    "name": "CenterMap",
+    "file": "exec-dcbf113f-f03a-4ac1-ad13-a6ebb62c3f20.png",
+    "prompt": "Use case: stylized-concept. Single standalone Hansa GUI CenterMap icon on genuine transparent background, matching the composed minimap reference's fourth button. A simple front-facing thick aged Brass #C19A52 circular target ring, four SHORT attached outward cardinal ticks, and one large centered Chalk #FAF7EF round dot; open transparent space between dot and ring. No handle, no arrows, no map, no compass letters. Match the warm restrained material highlights and Ink #202628 outline of the supplied magnifying-glass family. Strong readable silhouette at 24 pixels, centered square composition with 10% transparent safe margin. Request 160x160 or nearest supported native square size. Clean alpha, no panel or backdrop, no ground shadow, text, watermark or fantasy ornament."
+  },
+  {
+    "name": "Reference",
+    "file": "exec-257af023-1d84-457a-bba2-0580ce02896c.png",
+    "prompt": "Use case: ui-mockup. Reference only: revised Hansa minimap matching the supplied screenshot. Square muted live coastal map left, narrow five-button Baltic Navy #152A35 rail right, thin aged Brass #C19A52 borders. Top to bottom: brass magnifying glass with clear plus; matching magnifying glass with clear minus; existing gold eye; brass circular centering target with four short cardinal ticks and central Chalk #FAF7EF dot; folded blue-and-parchment map for Land. No Land text on button. Preserve screenshot layout and restrained illustrated icon language, no extra controls, no fantasy embellishments. This is a composed hierarchy reference, not production assets. 1024x1024 canvas with minimap centered."
+  }
+]

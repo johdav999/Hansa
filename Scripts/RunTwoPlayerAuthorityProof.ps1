@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
 	[switch]$SkipBuild,
+    [switch]$TradeWorkspaceOnly,
 	[string]$EngineRoot,
 	[string]$ArtifactsRoot,
 	[ValidateRange(30, 300)]
@@ -58,6 +59,7 @@ Write-HansaJsonArtifact -Path $configPath -Value ([ordered]@{
 	seed = '91470745841716'
 	port = $port
 	timeoutSeconds = $TimeoutSeconds
+    tradeWorkspaceOnly = [bool]$TradeWorkspaceOnly
 	pipes = [ordered]@{
 		server = "hansa-s11p04-server-$runId"
 		client1 = "hansa-s11p04-client1-$runId"

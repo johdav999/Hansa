@@ -1,0 +1,130 @@
+[
+  {
+    "name": "harbor-site",
+    "master": "SourceArt/UI/Presence/presence--harbor-site--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "mode": "RGB",
+    "crop": null,
+    "generator": "built-in ImageGen",
+    "variants": [
+      {
+        "path": "Content/Hansa/UI/Presence/harbor-site--64.png",
+        "size": [
+          64,
+          64
+        ],
+        "sha256": "c025a9c0b8e6d9dccd235dc5b3305c539b0d52450403e41c83b25717aab75481"
+      },
+      {
+        "path": "Content/Hansa/UI/Presence/harbor-site--96.png",
+        "size": [
+          96,
+          96
+        ],
+        "sha256": "eb573bc1f518c409e1215bd7d3495c1d26396e8a030f3c42a50c909e80e4e4d3"
+      },
+      {
+        "path": "Content/Hansa/UI/Presence/harbor-site--128.png",
+        "size": [
+          128,
+          128
+        ],
+        "sha256": "deec888e5fb044b0aa99f9257bf67eb310a5be1061bb73e411150fcbb073ae9e"
+      },
+      {
+        "path": "Content/Hansa/UI/Presence/harbor-site--192.png",
+        "size": [
+          192,
+          192
+        ],
+        "sha256": "8719347c664057fce9e81186b7db4129ed339ea7f16923563fc00ea7f982537a"
+      },
+      {
+        "path": "Content/Hansa/UI/Presence/harbor-site--256.png",
+        "size": [
+          256,
+          256
+        ],
+        "sha256": "e612a5b725ea4e521184b0cdcd895c478d0bea17ae099aafe7cddabbac04b9a8"
+      },
+      {
+        "path": "Content/Hansa/UI/Presence/harbor-site--384.png",
+        "size": [
+          384,
+          384
+        ],
+        "sha256": "23f2f7150c64db2fe0a5fd9d293ad0985cf0dca031b4d85ef70ffd18ed2025a5"
+      }
+    ]
+  },
+  {
+    "name": "coin-purse",
+    "master": "SourceArt/UI/Presence/presence--coin-purse--default--1254x1254--v1.png",
+    "native": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "crop": null,
+    "generator": "built-in ImageGen",
+    "variants": [
+      {
+        "path": "Content/Hansa/UI/Presence/coin-purse--64.png",
+        "size": [
+          64,
+          64
+        ],
+        "sha256": "6653ccc526d6ed860511d84630a0deccf46f37d9e86e0d88ddcf22cc2af9b9aa"
+      },
+      {
+        "path": "Content/Hansa/UI/Presence/coin-purse--96.png",
+        "size": [
+          96,
+          96
+        ],
+        "sha256": "e23ea5ef4a738eae9132e0a448e26fd21d20d9a4d7fabc29fc4a84aae9708d31"
+      },
+      {
+        "path": "Content/Hansa/UI/Presence/coin-purse--128.png",
+        "size": [
+          128,
+          128
+        ],
+        "sha256": "bef337c5096f20cd7b8178766538ab23b5ad4dc6d1525133f0098274e4d8c04b"
+      },
+      {
+        "path": "Content/Hansa/UI/Presence/coin-purse--192.png",
+        "size": [
+          192,
+          192
+        ],
+        "sha256": "011541d7ea23864fc58e597a7963034a781ae213237c34b077fcc96eb7471740"
+      },
+      {
+        "path": "Content/Hansa/UI/Presence/coin-purse--256.png",
+        "size": [
+          256,
+          256
+        ],
+        "sha256": "323ea302f14d0fd62e0ea733eb1baeb9df65f6ec117a06c7ce5d8c09855ffc32"
+      },
+      {
+        "path": "Content/Hansa/UI/Presence/coin-purse--384.png",
+        "size": [
+          384,
+          384
+        ],
+        "sha256": "5784d753a2f8a9f1192be7218752be80668cdfd1b415c01c258024220c7294d3"
+      }
+    ],
+    "alpha_bounds": [
+      0,
+      20,
+      1234,
+      1254
+    ]
+  }
+]

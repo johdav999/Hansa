@@ -19,6 +19,7 @@ namespace Hansa::UI
 {
     class SHansaProductionInspector;
 class SHansaResidenceInspector;
+class SHansaShipInspector;
 	/** Reusable, stable-order contextual inspector for buildings and residences. */
 	class HANSA_API SHansaContextInspector final : public SCompoundWidget
 	{
@@ -57,6 +58,8 @@ class SHansaResidenceInspector;
 		bool bProductionMode = false;
 		TSharedPtr<SHansaResidenceInspector> ResidencePanel;
 		bool bResidenceMode=false;
+        TSharedPtr<SHansaShipInspector> ShipPanel;
+        bool bShipMode=false;
 		FUiPreferences Preferences;
 		TSharedPtr<SScrollBox> Scroll;
 		TSharedPtr<SHansaAction> CauseButton;

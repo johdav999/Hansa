@@ -1,0 +1,39 @@
+{
+  "generator": "built-in ImageGen",
+  "resampling": "Proportional Lanczos display variants under approved GUI exception; masters unchanged",
+  "runtimeCrop": "384x256 cog rendered proportionally and clipped by 384x104 header viewport; no aspect distortion",
+  "assets": [
+    {
+      "path": "SourceArt/UI/ShipDetails/ship-details--cog--default--1536x1024--v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "a05ad117a0efbe08011eb6b2eada571f73590a7253870483a56cf3124d56995a"
+    },
+    {
+      "path": "SourceArt/UI/ShipDetails/ship-details--hold--empty--1254x1254--v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "232121ac8e995ea677c7dbcc7b03c36134025583825cc12b134b4b758b4d89de"
+    },
+    {
+      "path": "Content/Hansa/UI/ShipDetails/cog--384x256.png",
+      "dimensions": [
+        384,
+        256
+      ],
+      "sha256": "009dc0059ba74bfc2bda3e705b04fc90994ca7d7b02a9e8267670a31b312c703"
+    },
+    {
+      "path": "Content/Hansa/UI/ShipDetails/hold--64.png",
+      "dimensions": [
+        64,
+        64
+      ],
+      "sha256": "25911e23103f1d8483ec2deb5c7e792ebbd8aeded1a9a502972c9931a1ea7b53"
+    }
+  ]
+}

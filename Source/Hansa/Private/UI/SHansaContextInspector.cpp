@@ -1,6 +1,7 @@
 #include "UI/SHansaContextInspector.h"
 #include "UI/SHansaProductionInspector.h"
 #include "UI/SHansaResidenceInspector.h"
+#include "UI/SHansaShipInspector.h"
 #include "Widgets/SOverlay.h"
 #include "UI/SHansaMarketDemandRow.h"
 
@@ -110,7 +111,9 @@ namespace Hansa::UI
         ChildSlot[SNew(SOverlay)
             + SOverlay::Slot()[LegacyContent]
             + SOverlay::Slot()[SAssignNew(ProductionPanel, SHansaProductionInspector).Model(Model.Get()).Preferences(Preferences)]
-            + SOverlay::Slot()[SAssignNew(ResidencePanel,SHansaResidenceInspector).Model(Model.Get()).Preferences(Preferences)]];
+            + SOverlay::Slot()[SAssignNew(ResidencePanel,SHansaResidenceInspector).Model(Model.Get()).Preferences(Preferences)]
+            + SOverlay::Slot()[SAssignNew(ShipPanel,SHansaShipInspector).Model(Model.Get()).Preferences(Preferences)]];
+        ShipPanel->SetVisibility(EVisibility::Collapsed);
         ProductionPanel->SetVisibility(EVisibility::Collapsed);
         ResidencePanel->SetVisibility(EVisibility::Collapsed);
 		IdentityWidget=IdentityText;MapWidget(TEXT("Inspector.Action.OpenCause"),CauseButton);
@@ -247,6 +250,9 @@ namespace Hansa::UI
         bProductionMode = Snapshot.Production.bValid && Snapshot.DataState == EHansaInspectorDataState::Ready;
         ProductionPanel->SetVisibility(bProductionMode && Snapshot.bOpen ? EVisibility::Visible : EVisibility::Collapsed);
         bResidenceMode=Snapshot.Residence.bValid && Snapshot.DataState==EHansaInspectorDataState::Ready;
+        bShipMode=Snapshot.Ship.bValid && Snapshot.DataState==EHansaInspectorDataState::Ready;
+        ShipPanel->SetVisibility(bShipMode && Snapshot.bOpen?EVisibility::Visible:EVisibility::Collapsed);
+        if(bShipMode){RootWidget->SetVisibility(EVisibility::Collapsed);ResidencePanel->SetVisibility(EVisibility::Collapsed);ShipPanel->Refresh(Snapshot);FocusOrder=ShipPanel->GetFocusOrder();PresentedRevision=Revision;return;}
         ResidencePanel->SetVisibility(bResidenceMode && Snapshot.bOpen?EVisibility::Visible:EVisibility::Collapsed);
         if(bResidenceMode){RootWidget->SetVisibility(EVisibility::Collapsed);ResidencePanel->Refresh(Snapshot);FocusOrder=ResidencePanel->GetFocusOrder();PresentedRevision=Revision;return;}
         if (bProductionMode)
@@ -327,6 +333,7 @@ namespace Hansa::UI
 
 	bool SHansaContextInspector::FocusSemanticId(const FString& SemanticId)
 	{
+        if(bShipMode)return ShipPanel->Focus(SemanticId);
 		if(bResidenceMode)return ResidencePanel->Focus(SemanticId);
 		if (bProductionMode) return ProductionPanel->Focus(SemanticId);
 		const TWeakPtr<SWidget>* Found = SemanticWidgets.Find(SemanticId);
@@ -366,12 +373,13 @@ namespace Hansa::UI
 		return FReply::Unhandled();
 	}
 
-	void SHansaContextInspector::RevealSemanticWidget(const FString& Id){if(bResidenceMode){ResidencePanel->Reveal(Id);return;}if(bProductionMode){ProductionPanel->Reveal(Id);return;}if(auto W=ResolveSemanticWidget(Id))Scroll->ScrollDescendantIntoView(W,false,EDescendantScrollDestination::IntoView);}
+	void SHansaContextInspector::RevealSemanticWidget(const FString& Id){if(bShipMode){ShipPanel->Reveal(Id);return;}if(bResidenceMode){ResidencePanel->Reveal(Id);return;}if(bProductionMode){ProductionPanel->Reveal(Id);return;}if(auto W=ResolveSemanticWidget(Id))Scroll->ScrollDescendantIntoView(W,false,EDescendantScrollDestination::IntoView);}
 
-	TSharedPtr<SWidget> SHansaContextInspector::ResolveSemanticWidget(const FString& Id) const {if(bResidenceMode)return ResidencePanel->Resolve(Id);if(bProductionMode)return ProductionPanel->Resolve(Id);const auto* W=SemanticWidgets.Find(Id);return W?W->Pin():nullptr;}
+	TSharedPtr<SWidget> SHansaContextInspector::ResolveSemanticWidget(const FString& Id) const {if(bShipMode)return ShipPanel->Resolve(Id);if(bResidenceMode)return ResidencePanel->Resolve(Id);if(bProductionMode)return ProductionPanel->Resolve(Id);const auto* W=SemanticWidgets.Find(Id);return W?W->Pin():nullptr;}
 
 	TArray<FHansaHudSemanticNode> SHansaContextInspector::GetSemanticSnapshot() const
 	{
+        if(bShipMode)return ShipPanel->GetSemanticSnapshot();
 		if(bResidenceMode)return ResidencePanel->GetSemanticSnapshot();
 		if (bProductionMode) return ProductionPanel->GetSemanticSnapshot();
 		TArray<FHansaHudSemanticNode> Nodes;

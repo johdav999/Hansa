@@ -26,6 +26,8 @@ namespace Hansa::UI
 		bool bSelected = false;
 		bool bWarning = false;
 		bool bError = false;
+        bool bLoading = false;
+        bool bClipped = false;
 		FString ValueType;
 		FString Value;
 	};

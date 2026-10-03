@@ -269,7 +269,7 @@ FLinearColor UHansaUiStyleLibrary::GetColor(const EHansaUiColorToken Token)
 FSlateFontInfo UHansaUiStyleLibrary::GetTypography(const EHansaUiTypographyToken Token)
 {
 	const bool bSerifRole = Token == EHansaUiTypographyToken::Display ||
-		Token == EHansaUiTypographyToken::Heading1 || Token == EHansaUiTypographyToken::Heading2;
+		Token == EHansaUiTypographyToken::Heading1 || Token == EHansaUiTypographyToken::Heading2 || Token == EHansaUiTypographyToken::MapLabelSelected;
 	const bool bTabularRole = Token == EHansaUiTypographyToken::Data;
 	int32 Size = 16;
 	switch (Token)
@@ -280,6 +280,8 @@ FSlateFontInfo UHansaUiStyleLibrary::GetTypography(const EHansaUiTypographyToken
 	case EHansaUiTypographyToken::Body: Size = 16; break;
 	case EHansaUiTypographyToken::Data: Size = 15; break;
 	case EHansaUiTypographyToken::Caption: Size = 13; break;
+    case EHansaUiTypographyToken::MapLabel: Size = 18; break;
+    case EHansaUiTypographyToken::MapLabelSelected: Size = 20; break;
 	default: break;
 	}
 	// Licensed project fonts; Data uses verified equal-width lining digits.
@@ -294,11 +296,12 @@ FSlateFontInfo UHansaUiStyleLibrary::GetTypography(const EHansaUiTypographyToken
 		return Font;
 	};
 	static const TSharedRef<const FCompositeFont> DisplayFont = MakeProjectFont(TEXT("SourceSerif4-Semibold.ttf"));
+	static const TSharedRef<const FCompositeFont> SerifBodyFont = MakeProjectFont(TEXT("SourceSerif4-Regular.ttf"));
 	static const TSharedRef<const FCompositeFont> BodyFont = MakeProjectFont(TEXT("AtkinsonHyperlegible-Regular.ttf"));
 	// The design brief specifies pixels at the 1080p reference scale. Slate font
 	// sizes are points at 96 DPI: convert once here, before application/UI scaling.
 	const float PointSize = static_cast<float>(Size) * 72.f / 96.f;
-	return FSlateFontInfo(bSerifRole || bTabularRole ? DisplayFont : BodyFont, PointSize, FName(TEXT("Regular")));
+	return FSlateFontInfo((Token==EHansaUiTypographyToken::SerifBody||Token==EHansaUiTypographyToken::MapLabel)?SerifBodyFont:bSerifRole || bTabularRole ? DisplayFont : BodyFont, PointSize, FName(TEXT("Regular")));
 }
 
 float UHansaUiStyleLibrary::GetSpacing(const EHansaUiSpacingToken Token)

@@ -1,4 +1,5 @@
 #include "Model/HansaSimulationState.h"
+#include "Presence/HansaPresenceConstruction.h"
 #include "Trade/HansaWaterNavigation.h"
 
 #include "Definitions/HansaSimulationDefinitionContext.h"
@@ -310,7 +311,8 @@ namespace Hansa::Simulation
                 for (const auto& Action : Stop.Actions)
                     if (static_cast<uint8>(Action.Kind) > static_cast<uint8>(EHansaRouteCargoActionKind::OwnedCityUnload) ||
                         Action.Condition != EHansaRouteCargoCondition::Always || !Action.GoodId.IsValid() ||
-                        Action.QuantityLimit.GetRawValue() <= 0 || Action.MinimumSourceReserve.GetRawValue() < 0)
+                        Action.QuantityLimit.GetRawValue() <= 0 || Action.MinimumSourceReserve.GetRawValue() < 0 || Action.CargoSlotIndex < INDEX_NONE || Action.CargoSlotIndex >= 3 ||
+                        (Action.CargoSlotIndex!=INDEX_NONE && Stop.Actions.ContainsByPredicate([&](const auto& Other){return &Other!=&Action&&Other.CargoSlotIndex==Action.CargoSlotIndex&&IsRouteLoad(Other.Kind)==IsRouteLoad(Action.Kind);})))
                         return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::OutOfRange);
 		for (const FHansaForeignPresenceState& Presence : Initialization.ForeignPresences)
 		{
@@ -320,7 +322,7 @@ namespace Hansa::Simulation
 				Presence.Contributions.InvestedPfennig < 0 || Presence.Contributions.TransactionValuePfennig < 0 || Presence.Contributions.FulfilledShortageMilliUnits < 0 ||
 				Presence.Contributions.ReliableOperatingTicks < 0 || Presence.Contributions.SolventOperatingTicks < 0 || Presence.History.Num() > 64 || Presence.SpecializationRevision < 0 ||
 				HasDuplicateKey(Presence.ActiveSpecializationIds, [](const FString& Id){ return Id; }) ||
-				Presence.LastAcceptedContributionEventSequence > Initialization.PublishedDomainEventCount || Presence.Upgrade.Status > EHansaPresenceUpgradeStatus::Funded ||
+				Presence.LastAcceptedContributionEventSequence > Initialization.PublishedDomainEventCount || Presence.Upgrade.Status > EHansaPresenceUpgradeStatus::AwaitingMaterials ||
 				(Presence.Upgrade.Status == EHansaPresenceUpgradeStatus::None && (!Presence.Upgrade.TargetStageId.IsEmpty() || Presence.Upgrade.FundingInventoryId.IsValid() || Presence.Upgrade.SpentMoneyPfennig != 0)) ||
 				(Presence.Upgrade.Status != EHansaPresenceUpgradeStatus::None && !FHansaPresenceStageId::TryParse(Presence.Upgrade.TargetStageId)) ||
 				(Presence.Upgrade.Status == EHansaPresenceUpgradeStatus::Funded && (!Presence.Upgrade.FundingInventoryId.IsValid() || Presence.Upgrade.SpentMoneyPfennig < 0 || Presence.Upgrade.CompletionTick.GetValue() < Presence.Upgrade.FundedTick.GetValue())) ||
@@ -330,6 +332,10 @@ namespace Hansa::Simulation
 			{
 				return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
 			}
+            const auto& U=Presence.Upgrade;
+            if(U.Status==EHansaPresenceUpgradeStatus::AwaitingMaterials&&(!U.ConstructionSite.bLocalDelivery||!U.FundingInventoryId.IsValid()||U.SpentMoneyPfennig<0||U.FundedTick.GetValue()!=0||U.CompletionTick.GetValue()!=0))return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
+            if(U.ConstructionSite.bLocalDelivery&&static_cast<uint8>(U.ConstructionSite.Rotation)>3)return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
+            for(int32 I=0;I<U.DeliveredGoods.Num();++I)if(!U.DeliveredGoods[I].GoodId.IsValid()||U.DeliveredGoods[I].Quantity.GetRawValue()<=0||(I>0&&!(U.DeliveredGoods[I-1].GoodId<U.DeliveredGoods[I].GoodId)))return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
 			for (const FString& CapabilityId : Presence.GrantedCapabilityIds)
 				if (!FHansaPresenceCapabilityId::TryParse(CapabilityId)) return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
 			for(const auto& Entry:Presence.History)if(Entry.Kind>EHansaPresenceHistoryKind::SpecializationReversed||Entry.Tick.GetValue()>Initialization.Clock.GetTick().GetValue()||Entry.SourceEventSequence>Initialization.PublishedDomainEventCount||Entry.QuantityMilliUnits<0||Entry.MoneyPfennig<0)return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
@@ -353,12 +359,25 @@ namespace Hansa::Simulation
 				(Station.OperationalState == EHansaTradeStationOperationalState::VoluntarilyClosed && Station.Status != EHansaTradeStationStatus::Closed) ||
 				(Station.OperationalState == EHansaTradeStationOperationalState::Revoked && Presence->Status != EHansaForeignPresenceStatus::Revoked))
 				return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
+            const bool UpgradeDelivery=Presence&&Presence->Upgrade.Status==EHansaPresenceUpgradeStatus::AwaitingMaterials&&Presence->Upgrade.ConstructionSite.bLocalDelivery&&Presence->Upgrade.FundingInventoryId==Station.FundingInventoryId&&(Station.Status==EHansaTradeStationStatus::Active||Station.Status==EHansaTradeStationStatus::Suspended);
+            if((Station.DeliveryMode&&Station.Status!=EHansaTradeStationStatus::Proposed&&!UpgradeDelivery)||Station.DeliveryMode>2||(!Station.ConstructionSite.bLocalDelivery&&Station.DeliveryMode)||(!Station.DeliveryMode&&!Station.DeliveryReservations.IsEmpty()))return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
+            if(Station.ConstructionSite.bLocalDelivery){
+                if(!Station.FundingInventoryId.IsValid()||!ValidInventoryLedger.Value.CreateReadOnlyAccess().QueryInventory(Station.FundingInventoryId)||
+                    (Station.Status!=EHansaTradeStationStatus::Closed&&!FHansaPresenceConstructionRules::ValidateSite(ValidPlacement.Value,Station.CityId,Lease->BoundsMin,Lease->BoundsMax,Station.ConstructionSite.Anchor,Station.ConstructionSite.Rotation).IsEmpty()))return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
+                if(Station.Status==EHansaTradeStationStatus::Proposed&&(Station.FundedTick.GetValue()!=0||Station.CompletionTick.GetValue()!=0))return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
+            }
             Station.Orders.Sort([](const auto& A, const auto& B){return A.Id < B.Id;});
             uint64 PreviousOrder = 0;
             for (const auto& Order : Station.Orders) {
                 if (Order.Id <= PreviousOrder || !ValidateStationOrder(Order, Initialization.Clock.GetTick().GetValue()))
                     return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
                 PreviousOrder = Order.Id;
+            }
+            if(Station.Status==EHansaTradeStationStatus::Proposed&&Station.FundingInventoryId.IsValid()&&!Station.ConstructionSite.bLocalDelivery){
+                const auto Funding=ValidInventoryLedger.Value.CreateReadOnlyAccess().QueryInventory(Station.FundingInventoryId);
+                const auto* Vehicle=Funding.IsSet()?Initialization.Vehicles.FindByPredicate([&](const auto& V){return V.CargoInventoryId==Station.FundingInventoryId&&V.OwnerId==Station.OwnerId;}):nullptr;
+                if(!Funding.IsSet()||Funding->OwnerKind!=EHansaInventoryOwnerKind::Vehicle||!Vehicle||Station.FundedTick.GetValue()!=0||Station.CompletionTick.GetValue()!=0)
+                    return THansaValueResult<FHansaSimulationState>::Failure(EHansaValueError::InvalidFormat);
             }
 			for (int32 Index = 0; Index < Station.SpentGoods.Num(); ++Index)
 				if (!Station.SpentGoods[Index].GoodId.IsValid() || Station.SpentGoods[Index].Quantity.GetRawValue() <= 0 ||
@@ -387,7 +406,9 @@ namespace Hansa::Simulation
 		}
 		for (const FHansaPlacedBuildingRecord& Placement : ValidPlacement.Value.GetPlacements())
 		{
-			const bool bUsesForeignLand = Placement.OccupiedCells.ContainsByPredicate([&](const FHansaGridCoordinate Cell)
+			// Starting-city buildings need no foreign lease when restoring saved occupancy.
+			const bool bUsesForeignLand = Placement.Spec.CityId.ToString() != TEXT("City.Lubeck") &&
+				Placement.OccupiedCells.ContainsByPredicate([&](const FHansaGridCoordinate Cell)
 			{
 				const FHansaPlacementGridCell* GridCell = ValidPlacement.Value.FindCell(Placement.Spec.CityId, Cell);
 				return GridCell != nullptr && GridCell->OwnerId != Placement.OwnerId;

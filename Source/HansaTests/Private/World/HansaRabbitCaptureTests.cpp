@@ -10,7 +10,7 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Widgets/SViewport.h"
 #include "ImageUtils.h"
-#include "World/HansaAmbientRabbits.h"
+#include "World/HansaAmbientAnimals.h"
 #include "World/HansaGameMode.h"
 #include "World/HansaRuntimeSimulationHost.h"
 #include "World/HansaStrategyCameraPawn.h"
@@ -37,14 +37,14 @@ public:
         auto* Host = Mode ? Mode->GetSimulationHost() : nullptr;
         auto* Camera = Cast<AHansaStrategyCameraPawn>(PC->GetPawn());
         if (!Host || !Camera) return false;
-        AHansaAmbientRabbits* Manager = nullptr;
-        for (TActorIterator<AHansaAmbientRabbits> It(World); It; ++It) { Manager = *It; break; }
-        if (!Manager || Manager->GetLiveRabbitCount() < 6) return false;
+        AHansaAmbientAnimals* Manager = nullptr;
+        for (TActorIterator<AHansaAmbientAnimals> It(World); It; ++It) { Manager = *It; break; }
+        if (!Manager || Manager->GetLiveAnimalCount(TEXT("Rabbit")) < 6) return false;
         if (!Manager->GetValidationError().IsEmpty()) { Test->AddError(Manager->GetValidationError()); return true; }
         if (Stage == 0 && !Prepared)
         {
             Host->SetSpeed(EHansaRuntimeSimulationSpeed::Normal);
-            const auto Observations = Manager->QueryRabbits();
+            const auto Observations = Manager->QueryAnimals();
             FocusId = Observations[0].StableId;
             Camera->AddZoomIntent((Camera->GetZoomDistance()-1200)/Camera->ZoomUnitsPerStep);
             Camera->FocusWorldLocationIntent(Observations[0].Location);
@@ -52,13 +52,13 @@ public:
             Prepared = true;
             return false;
         }
-        const auto Observations = Manager->QueryRabbits();
+        const auto Observations = Manager->QueryAnimals();
         const auto* Rabbit = Observations.FindByPredicate([&](const auto& O) { return O.StableId == FocusId; });
         if (!Rabbit || !Rabbit->bVisible) return false;
         Camera->FocusWorldLocationIntent(Rabbit->Location);
         if (FPlatformTime::Seconds() < Ready) return false;
-        if (Stage == 1 && Rabbit->Activity != EHansaRabbitActivity::Walk) return false;
-        if (Stage == 2 && (Rabbit->Activity != EHansaRabbitActivity::Jump || Rabbit->AnimationTime < .4f || Rabbit->AnimationTime > .6f)) return false;
+        if (Stage == 1 && Rabbit->Activity != EHansaAnimalActivity::Walk) return false;
+        if (Stage == 2 && (Rabbit->Activity != EHansaAnimalActivity::Jump || Rabbit->AnimationTime < .4f || Rabbit->AnimationTime > .6f)) return false;
         TArray<FColor> Pixels; FIntVector Size;
         if (!FSlateApplication::Get().TakeScreenshot(View->GetGameViewportWidget().ToSharedRef(), Pixels, Size))
         { Test->AddError(TEXT("Rabbit viewport capture failed")); return true; }
@@ -71,7 +71,7 @@ public:
         FFileHelper::SaveArrayToFile(PNG,*(Base+TEXT(".png")));
         FFileHelper::SaveStringToFile(FString::Printf(TEXT("id=%s\nposition=%s\nphase=%d\ntime=%.4f\npopulation=%d\njumps=%d\n"),
             *Rabbit->StableId,*Rabbit->Location.ToString(),int32(Rabbit->Activity),Rabbit->AnimationTime,
-            Manager->GetLiveRabbitCount(),Manager->GetCompletedJumpCount()),*(Base+TEXT(".txt")));
+            Manager->GetLiveAnimalCount(TEXT("Rabbit")),Manager->GetCompletedJumpCount()),*(Base+TEXT(".txt")));
         Test->AddInfo(FString::Printf(TEXT("Rabbit gameplay capture %d: %s"),Stage,*Base));
         ++Stage;
         return Stage >= 3;

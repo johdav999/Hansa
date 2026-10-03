@@ -25,6 +25,40 @@ namespace Hansa::UI
 {
 	namespace
 	{
+        class SHansaShipSlot final : public SHansaAction
+        {
+        public:
+            SLATE_BEGIN_ARGS(SHansaShipSlot) {}
+                SLATE_ARGUMENT(FHansaShipMenuEntry, Ship)
+                SLATE_ARGUMENT(FUiPreferences, Preferences)
+                SLATE_ARGUMENT(UHansaBuildMenuPresentationModel*, Model)
+            SLATE_END_ARGS()
+            void Construct(const FArguments& Args)
+            {
+                Model = Args._Model; Id = Args._Ship.Id;
+                SHansaAction::Construct(SHansaAction::FArguments().Preferences(Args._Preferences).Compact(true)
+                    .OnClicked_Lambda([this] { return Activate(true); })
+                    [SNew(SBox).WidthOverride(100).MinDesiredHeight(Args._Preferences.bLargeText ? 94 : 114)
+                     [SNew(SVerticalBox)
+                      +SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)[SNew(SHansaGlyph).Glyph(EUiGlyph::Ship).OnDark(true).Size(Args._Preferences.bLargeText ? 64 : 88)]
+                      +SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(Args._Ship.Name)
+                       .Font(GetComponentFont(EHansaUiTypographyToken::Caption, Args._Preferences))
+                       .ColorAndOpacity(UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Chalk))
+                       .Justification(ETextJustify::Center).WrapTextAt(100).AutoWrapText(true)]]]);
+            }
+            FReply OnMouseButtonDoubleClick(const FGeometry&, const FPointerEvent& Event) override
+            { return Event.GetEffectingButton() == EKeys::LeftMouseButton ? Activate(true) : FReply::Unhandled(); }
+            FReply OnKeyDown(const FGeometry& Geometry, const FKeyEvent& Event) override
+            {
+                if (Event.GetKey() == EKeys::Enter || Event.GetKey() == EKeys::SpaceBar || Event.GetKey() == EKeys::Gamepad_FaceButton_Bottom) return Activate(true);
+                return SHansaAction::OnKeyDown(Geometry, Event);
+            }
+        private:
+            FReply Activate(bool Center) { if (Model.IsValid()) { Model->SelectShip(Id, Center); return FReply::Handled(); } return FReply::Unhandled(); }
+            TWeakObjectPtr<UHansaBuildMenuPresentationModel> Model;
+            int64 Id = 0;
+        };
+
 		FString CategorySemanticId(const EHansaBuildCategory Category)
 		{
 			return FString::Printf(TEXT("BuildMenu.Category.%s"), ::LexToString(Category));
@@ -97,7 +131,7 @@ namespace Hansa::UI
                     BuildingId==TEXT("Building.Brewery")?EUiGlyph::Brewery:
                     BuildingId==TEXT("Building.Road")?EUiGlyph::Road:
                     (BuildingId==TEXT("Building.Residence.Artisan")||BuildingId==TEXT("Building.Residence.Artisan.Plot"))?EUiGlyph::ArtisanHouse:
-                    BuildingId==TEXT("Building.Warehouse")?EUiGlyph::Warehouse:
+                    (BuildingId==TEXT("Building.Warehouse")||BuildingId==TEXT("Building.TradeHouse"))?EUiGlyph::Warehouse:
                     BuildingId==TEXT("Building.Dock")?EUiGlyph::Dock:BuildingId==TEXT("Building.Market")?EUiGlyph::Market:EUiGlyph::Building;
                 SHansaAction::Construct(SHansaAction::FArguments().Kind(EHansaUiButtonStyle::Primary).Preferences(Args._Preferences)
                     .OnClicked_Lambda([this] {
@@ -132,7 +166,7 @@ namespace Hansa::UI
 				const bool Selected=Model.IsValid() && Model->GetSelectedCardId()==Card.StableId;
 				const FText Reason=Card.bLocked?Card.LockedReason:!Card.bAvailable?Card.AvailabilityReason:
 					Selected&&Snapshot.bDraggingCard?LOCTEXT("CardDragging","Dragging — release on a valid site"):
-					Selected&&Snapshot.bHasTarget?Snapshot.ValidationCause:LOCTEXT("CardReady","Select, then click a site. Hold and move to build a line.");
+					Selected&&Snapshot.bHasTarget?Snapshot.ValidationCause:LOCTEXT("CardReady","Select, then click a site. Click the mouse wheel to rotate 90 degrees. Hold and move to build a line.");
 				
 				const EUiState CardState=Card.bLocked||!Card.bAvailable?EUiState::Disabled:
 					Selected&&Snapshot.Feedback==EHansaPlacementFeedback::Invalid?EUiState::Error:
@@ -163,6 +197,7 @@ namespace Hansa::UI
 		const FName Focus=Model.IsValid()?Model->GetSnapshot().FocusedSemanticId:NAME_None;
 		if(Model.IsValid()) Model->OnChanged().Remove(ChangedHandle);
 		CachedCategories.Reset();CachedChains.Reset();CachedCardIds.Reset();ConnectorIds.Reset();
+        CachedShips.Reset(); ShipButtons.Reset(); bWasShipsOpen = false;
 		LaidOutChainTier.Reset();CategoryButtons.Reset();TierButtons.Reset();ChainButtons.Reset();CardButtons.Reset();SemanticWidgets.Reset();
 		Construct(FArguments().Model(Model.Get()).PlacementController(PlacementController.Get()).Preferences(InPreferences));
 		if(!Focus.IsNone()) FocusSemanticId(Focus.ToString());
@@ -184,8 +219,14 @@ namespace Hansa::UI
         [SNew(SScrollBox).ScrollWhenFocusChanges(EScrollWhenFocusChanges::InstantScroll)
          +SScrollBox::Slot()[SAssignNew(RootWidget,SVerticalBox)
          +SVerticalBox::Slot().AutoHeight()
-         [SNew(SScrollBox).Orientation(Orient_Horizontal)+SScrollBox::Slot()
+         [SAssignNew(CategoryScroll,SScrollBox).Orientation(Orient_Horizontal).ScrollWhenFocusChanges(EScrollWhenFocusChanges::InstantScroll)+SScrollBox::Slot()
           [SAssignNew(CategoriesWidget,SBorder).BorderImage(&PanelBrush).Padding(0)[SAssignNew(CategoryRow,SHorizontalBox)]]]
+         +SVerticalBox::Slot().AutoHeight().Padding(4)
+         [SAssignNew(ShipsPanel,SVerticalBox)
+          +SVerticalBox::Slot().AutoHeight()[SAssignNew(ShipsScroll,SScrollBox).Orientation(Orient_Horizontal)
+           .ScrollWhenFocusChanges(EScrollWhenFocusChanges::InstantScroll)
+           +SScrollBox::Slot()[SAssignNew(ShipsRow,SHorizontalBox)]]
+          +SVerticalBox::Slot().AutoHeight().Padding(4)[SAssignNew(ShipsHint,STextBlock).TextStyle(&DarkBodyStyle).AutoWrapText(true)]]
          +SVerticalBox::Slot().AutoHeight().Padding(4,4)
          [SAssignNew(TierScroll,SScrollBox).Orientation(Orient_Horizontal)+SScrollBox::Slot()
           [SAssignNew(TierRow,SHorizontalBox)]]
@@ -267,9 +308,18 @@ namespace Hansa::UI
 			CategoryButtons.Add(Category,Button);MapWidget(CategorySemanticId(Category),Button);
 		}
 		CategoryRow->AddSlot().AutoWidth().Padding(1)
+		[SAssignNew(ShipsButton,SHansaAction).Compact(true).Preferences(Preferences)
+            .OnClicked_Lambda([this] { return Invoke([this] { return Model->ToggleShips(); }); })
+            [SNew(SHorizontalBox)
+             +SHorizontalBox::Slot().AutoWidth()[SNew(SHansaGlyph).Glyph(EUiGlyph::Ship).OnDark(true).Size(28)]
+             +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(4,0)[SNew(STextBlock).Text(LOCTEXT("Ships", "Ships")).TextStyle(&DarkCaptionStyle)]]];
+        MapWidget(TEXT("BuildMenu.Ships"), ShipsButton);
+        MapWidget(TEXT("BuildMenu.ShipsPanel"), ShipsPanel);
+        MapWidget(TEXT("BuildMenu.ShipsHint"), ShipsHint);
+        CategoryRow->AddSlot().AutoWidth().Padding(1)
 		[SAssignNew(DemolitionButton,SHansaAction).Compact(true).Preferences(Preferences)
 			.Kind(EHansaUiButtonStyle::Destructive).OnClicked(this,&SHansaBuildMenu::ToggleDemolition)
-			[SNew(SHansaGlyph).Glyph(EUiGlyph::Minus).OnDark(true).Size(32)]];
+			[SNew(SHansaGlyph).Glyph(EUiGlyph::Axe).OnDark(true).Size(32)]];
 		MapWidget(TEXT("BuildMenu.Demolition"),DemolitionButton);
 	}
 
@@ -394,8 +444,52 @@ namespace Hansa::UI
 		ValidationCauseText->SetText(Snapshot.ValidationCause);ValidationRemedyText->SetText(Snapshot.ValidationRemedy);
 		ValidationIcon->SetGlyph(Snapshot.Feedback==EHansaPlacementFeedback::Invalid?EUiGlyph::Error:
 			Snapshot.Feedback==EHansaPlacementFeedback::Warning?EUiGlyph::Warning:EUiGlyph::Check);
-
+        RefreshShips();
 	}
+
+    void SHansaBuildMenu::RefreshShips()
+    {
+        const bool Open = Model->IsShipsOpen();
+        if (Open && !bWasShipsOpen) CategoryScroll->ScrollDescendantIntoView(ShipsButton, false);
+        bWasShipsOpen = Open;
+        ShipsPanel->SetVisibility(Open ? EVisibility::Visible : EVisibility::Collapsed);
+        ShipsButton->SetState(Open ? EUiState::Selected : EUiState::Default, LOCTEXT("ShipsTip", "Show all your ships. Select a ship to center the camera."));
+        FocusOrder.Add(TEXT("BuildMenu.Ships"));
+        if (CachedShips != Model->GetShips())
+        {
+            for (const auto& E : CachedShips) SemanticWidgets.Remove(FString::Printf(TEXT("BuildMenu.Ship.%lld"), E.Id));
+            ShipsRow->ClearChildren(); ShipButtons.Reset(); CachedShips = Model->GetShips();
+            for (const auto& E : CachedShips)
+            {
+                TSharedPtr<SHansaShipSlot> Button;
+                ShipsRow->AddSlot().AutoWidth().Padding(4)[SAssignNew(Button,SHansaShipSlot).Ship(E).Preferences(Preferences).Model(Model.Get())];
+                ShipButtons.Add(E.Id, Button);
+                const FString Id = FString::Printf(TEXT("BuildMenu.Ship.%lld"), E.Id);
+                Button->SetFocusHandler(FSimpleDelegate::CreateWeakLambda(Model.Get(), [M=Model, Id] { if(M.IsValid()) M->SetFocusedSemanticId(FName(*Id)); }));
+                MapWidget(Id, Button);
+            }
+        }
+        for (const auto& E : CachedShips)
+        {
+            ShipButtons[E.Id]->SetState(E.Id == Model->GetSelectedShip() ? EUiState::Selected : EUiState::Default,
+                FText::Format(LOCTEXT("ShipTip", "{0}\nSelect to center the camera."), E.Name));
+            if (Open) FocusOrder.Add(FString::Printf(TEXT("BuildMenu.Ship.%lld"), E.Id));
+        }
+        ShipsHint->SetText(CachedShips.IsEmpty() ? LOCTEXT("NoShips", "You do not own any ships.") : LOCTEXT("ShipsHelp", "Select a ship to center the camera."));
+        if (!Model->GetShipFeedback().IsEmpty()) ShipsHint->SetText(Model->GetShipFeedback());
+        ShipsHint->SetVisibility(Preferences.bLargeText && !CachedShips.IsEmpty() && Model->GetShipFeedback().IsEmpty() ? EVisibility::Collapsed : EVisibility::Visible);
+        if (!Model->IsConstructionAllowed())
+        {
+            for (const auto& Pair : CategoryButtons) Pair.Value->SetVisibility(EVisibility::Collapsed);
+            DemolitionButton->SetVisibility(EVisibility::Collapsed);
+            FocusOrder.RemoveAll([](const FString& Id) { return Id != TEXT("BuildMenu.Ships") && !Id.StartsWith(TEXT("BuildMenu.Ship.")); });
+        }
+        else
+        {
+            for (const auto& Pair : CategoryButtons) Pair.Value->SetVisibility(EVisibility::Visible);
+            DemolitionButton->SetVisibility(EVisibility::Visible);
+        }
+    }
 
 	FReply SHansaBuildMenu::ToggleDemolition()
 	{
@@ -448,6 +542,9 @@ namespace Hansa::UI
 	{
 		if (UHansaBuildMenuPresentationModel* Pinned = Model.Get())
 		{
+			if (SemanticId == TEXT("BuildMenu.Ships")) return Pinned->ToggleShips();
+            for (const auto& Ship : Pinned->GetShips())
+                if (SemanticId == FString::Printf(TEXT("BuildMenu.Ship.%lld"), Ship.Id)) return Pinned->SelectShip(Ship.Id, true);
 			if (SemanticId == TEXT("BuildMenu.Demolition")) return ToggleDemolition().IsEventHandled();
 			for (const EHansaBuildCategory Category : Pinned->GetSnapshot().Categories)
 				if (SemanticId == CategorySemanticId(Category)) return Pinned->SelectCategory(Category);
@@ -486,6 +583,8 @@ namespace Hansa::UI
 		if (!Widget.IsValid() || !Widget->IsEnabled() || !FocusOrder.Contains(SemanticId)) return false;
 		if (UHansaBuildMenuPresentationModel* Pinned = Model.Get()) Pinned->SetFocusedSemanticId(FName(*SemanticId));
   if (SemanticId.StartsWith(TEXT("BuildMenu.Tier."))) TierScroll->ScrollDescendantIntoView(Widget, false);
+  if (SemanticId.StartsWith(TEXT("BuildMenu.Ship."))) ShipsScroll->ScrollDescendantIntoView(Widget, false);
+  if (SemanticId == TEXT("BuildMenu.Ships") || SemanticId.StartsWith(TEXT("BuildMenu.Category."))) CategoryScroll->ScrollDescendantIntoView(Widget, false);
   if (FSlateApplication::IsInitialized()) FSlateApplication::Get().SetKeyboardFocus(Widget, EFocusCause::Navigation);
 		return true;
 	}
@@ -526,6 +625,7 @@ namespace Hansa::UI
   }
 		if (Key == EKeys::Escape || Key == EKeys::Gamepad_FaceButton_Right)
 		{
+            if (Model->IsShipsOpen()) { Model->SetOpen(false); FocusSemanticId(TEXT("BuildMenu.Ships")); return FReply::Handled(); }
 			if(!Model->GetSnapshot().bDemolitionMode && Model->GetSnapshot().SelectedBuildingId.IsNone()) { Model->SetOpen(false); return FReply::Handled(); }
 			return Invoke([this] { return Model->CancelIntent(); });
 		}
@@ -557,6 +657,10 @@ namespace Hansa::UI
    if (Id == TEXT("BuildMenu.EmptyTier")) N.State.bVisible = EmptyTierText->GetVisibility().IsVisible();
    if (Id == TEXT("BuildMenu.Demolition")) N.State.bVisible = true;
 			if (Id == TEXT("Demolition.Feedback")) N.State.bVisible = S.bDemolitionMode;
+            if (Id == TEXT("BuildMenu.Ships")) N.State.bVisible = true;
+            if (Id == TEXT("BuildMenu.ShipsPanel") || Id == TEXT("BuildMenu.ShipsHint") || Id.StartsWith(TEXT("BuildMenu.Ship."))) N.State.bVisible = Model->IsShipsOpen();
+            if (Id == TEXT("BuildMenu.ShipsHint")) N.State.bVisible &= ShipsHint->GetVisibility().IsVisible();
+            if (!Model->IsConstructionAllowed() && (Id.StartsWith(TEXT("BuildMenu.Category.")) || Id == TEXT("BuildMenu.Demolition"))) N.State.bVisible = false;
 			N.State.bSelected = bSelected; N.State.bFocused = S.FocusedSemanticId == FName(*Id); N.State.bError = bError; N.State.bWarning = bWarning;
 			N.State.ValueType = Type; N.State.Value = Value;
 			if (const TWeakPtr<SWidget>* Found = SemanticWidgets.Find(Id)) if (const TSharedPtr<SWidget> W = Found->Pin())
@@ -567,10 +671,16 @@ namespace Hansa::UI
 			}
 			Nodes.Add(MoveTemp(N));
 		};
-		Add(TEXT("BuildMenu.Root"), TEXT("HUD.BottomArea"), TEXT("Build menu"), EHansaHudSemanticRole::Panel, false, false, TEXT("open"), S.bOpen ? TEXT("true") : TEXT("false"), S.bOpen);
+        const bool TrayOpen = S.bOpen || Model->IsShipsOpen();
+		Add(TEXT("BuildMenu.Root"), TEXT("HUD.BottomArea"), TEXT("Build menu"), EHansaHudSemanticRole::Panel, false, false, TEXT("open"), TrayOpen ? TEXT("true") : TEXT("false"), TrayOpen);
 		Add(TEXT("BuildMenu.Demolition"), TEXT("BuildMenu.Categories"), TEXT("Demolition"), EHansaHudSemanticRole::Button, true, true, TEXT("boolean"), S.bDemolitionMode ? TEXT("true") : TEXT("false"), S.bDemolitionMode, Pinned->IsConstructionAllowed());
 		Add(TEXT("Demolition.Feedback"), TEXT("BuildMenu.Root"), S.ValidationCause.ToString(), EHansaHudSemanticRole::Status, false, false, TEXT("text"), S.ValidationCause.ToString(), false, true, S.Feedback == EHansaPlacementFeedback::Invalid);
 		Add(TEXT("BuildMenu.Categories"), TEXT("BuildMenu.Root"), TEXT("Build categories"), EHansaHudSemanticRole::Panel);
+        Add(TEXT("BuildMenu.Ships"), TEXT("BuildMenu.Categories"), TEXT("Ships"), EHansaHudSemanticRole::Button, true, true, TEXT("boolean"), Model->IsShipsOpen() ? TEXT("true") : TEXT("false"), Model->IsShipsOpen());
+        Add(TEXT("BuildMenu.ShipsPanel"), TEXT("BuildMenu.Root"), TEXT("Your ships"), EHansaHudSemanticRole::Panel);
+        Add(TEXT("BuildMenu.ShipsHint"), TEXT("BuildMenu.ShipsPanel"), ShipsHint->GetText().ToString(), EHansaHudSemanticRole::Status);
+        for (const auto& Ship : Model->GetShips())
+            Add(FString::Printf(TEXT("BuildMenu.Ship.%lld"), Ship.Id), TEXT("BuildMenu.ShipsPanel"), Ship.Name.ToString(), EHansaHudSemanticRole::Button, true, true, TEXT("vehicle-id"), FString::Printf(TEXT("%lld"), Ship.Id), Ship.Id == Model->GetSelectedShip());
 		for (const EHansaBuildCategory Category : S.Categories) Add(CategorySemanticId(Category), TEXT("BuildMenu.Categories"), CategoryLabel(Category).ToString(), EHansaHudSemanticRole::Button, true, true, TEXT("build-category"), ::LexToString(Category), !S.bDemolitionMode && S.bOpen && S.SelectedCategory == Category);
   Add(TEXT("BuildMenu.Tiers"), TEXT("BuildMenu.Root"), TEXT("Citizen tier"), EHansaHudSemanticRole::Panel);
   for (const auto Tier : BuildTiers)
@@ -648,7 +758,7 @@ namespace Hansa::UI
 
 	bool SHansaBuildMenu::IsScreenPositionOverMenu(const FVector2D AbsoluteScreenPosition) const
 	{
-        for(const auto& Surface:{CategoriesWidget, TSharedPtr<SWidget>(TierScroll), TSharedPtr<SWidget>(ChainsGrid), TSharedPtr<SWidget>(EmptyTierText), ExpansionWidget})
+        for(const auto& Surface:{CategoriesWidget, TSharedPtr<SWidget>(ShipsPanel), TSharedPtr<SWidget>(TierScroll), TSharedPtr<SWidget>(ChainsGrid), TSharedPtr<SWidget>(EmptyTierText), ExpansionWidget})
             if(Surface.IsValid() && Surface->GetVisibility().IsVisible() && Surface->GetCachedGeometry().IsUnderLocation(AbsoluteScreenPosition))return true;
         return false;
 	}

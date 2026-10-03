@@ -58,7 +58,7 @@ public:
                 H->GetScenarioPresentationModel()->AcknowledgeBriefing();H->GetScenarioPresentationModel()->DismissHelp();Host->SetSpeed(EHansaRuntimeSimulationSpeed::Paused);
                 Fingerprint=Host->BuildProjection().Value.GetFingerprint().Value;
             }
-            Camera->bEnableMouseEdgePan=false;Camera->ClearCameraIntents();Camera->MaximumZoomDistance=12000;
+            Camera->bEnableMouseEdgePan=false;Camera->ClearCameraIntents();
             Camera->FocusWorldLocationIntent(FVector(-3200,-700,100));
             const float Zoom=Stage<6?TArray<float>{2500,6500,12000}[Stage%3]:6500;
             Camera->AddZoomIntent((Camera->GetZoomDistance()-Zoom)/Camera->ZoomUnitsPerStep);

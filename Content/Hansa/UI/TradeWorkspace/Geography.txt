@@ -1,0 +1,14 @@
+Regional map geography
+
+City coordinates: GeoNames (https://www.geonames.org/), Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+Source: https://download.geonames.org/export/dump/cities15000.zip (accessed 2026-09-22).
+Modified: stable Hansa IDs associated with named settlements; existing approximate
+city centres cross-checked; additional regional centres selected; WGS84 points
+projected into the Hansa regional chart. These are not medieval harbour surveys.
+
+Land/coastlines and rivers: Natural Earth 1:10m, public domain.
+https://www.naturalearthdata.com/about/terms-of-use/
+Modified: clipped to 1 W–32 E, 50–61 N, simplified and triangulated for native Slate.
+Modern geographic context only. Rivers do not imply navigability.
+Route connections and ship progress are abstract projections, not sailing tracks.

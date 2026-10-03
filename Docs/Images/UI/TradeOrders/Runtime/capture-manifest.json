@@ -1,0 +1,101 @@
+{
+  "type": "real Unreal Slate viewport captures",
+  "resampled": false,
+  "captures": [
+    {
+      "file": "orders-2560x1440-scale1.0-new-buy.png",
+      "native_dimensions": [
+        2560,
+        1440
+      ],
+      "mode": "RGBA",
+      "sha256": "dc84dd3dc2fe03ff412b3636b0beedafda1f88c9ae05b4ef3df995f04a21e9a0"
+    },
+    {
+      "file": "orders-2560x1440-scale1.0-new-sell.png",
+      "native_dimensions": [
+        2560,
+        1440
+      ],
+      "mode": "RGBA",
+      "sha256": "07cfa208612aad5834135cda8e92d50ae628af285cad2fb4491aacf57fa612be"
+    },
+    {
+      "file": "orders-2560x1440-scale1.0-editor.png",
+      "native_dimensions": [
+        2560,
+        1440
+      ],
+      "mode": "RGBA",
+      "sha256": "4e7d6326ff1286f413112df41fbb9c5c55e03f8f464d020d2e0714686c6a67fa"
+    },
+    {
+      "file": "orders-2560x1440-scale1.0-editor-focused.png",
+      "native_dimensions": [
+        2560,
+        1440
+      ],
+      "mode": "RGBA",
+      "sha256": "431e679c0d29be871f8d135302c0263c97f2ef0700b63aed616aad93abfba7f7"
+    },
+    {
+      "file": "orders-2560x1440-scale1.0-list.png",
+      "native_dimensions": [
+        2560,
+        1440
+      ],
+      "mode": "RGBA",
+      "sha256": "a11ad043e8af9b17c8425abacf7bab1ecd2ecf2ee775eac5430a20fed51131ec"
+    },
+    {
+      "file": "orders-1920x1080-scale1.0-new-buy.png",
+      "native_dimensions": [
+        1920,
+        1080
+      ],
+      "mode": "RGBA",
+      "sha256": "fedf5b38538926f2d1b99786c26add4b67804034990464ccfe29d916c4d99e63"
+    },
+    {
+      "file": "orders-1280x720-scale1.4-editor-focused.png",
+      "native_dimensions": [
+        1280,
+        720
+      ],
+      "mode": "RGBA",
+      "sha256": "b87d5d86b58b7d45010148e9bfebeddc2888be4456c1fda5864105eb902cf17a"
+    },
+    {
+      "file": "orders-1280x720-scale1.4-new-buy.png",
+      "native_dimensions": [
+        1280,
+        720
+      ],
+      "mode": "RGBA",
+      "sha256": "9ee8ebd6ff7971882fd9162eac14f2fd621113cf4a833c57042805d4ade0080c"
+    },
+    {
+      "file": "orders-3440x1440-scale0.8-new-buy.png",
+      "native_dimensions": [
+        3440,
+        1440
+      ],
+      "mode": "RGBA",
+      "sha256": "5c918f67bd56a529c274fc8c992c37963906545986dcb9aa0f3758d433cb15aa"
+    }
+  ],
+  "panel_crop": {
+    "source": "orders-2560x1440-scale1.0-new-buy.png",
+    "rectangle": [
+      1972,
+      145,
+      2560,
+      1440
+    ],
+    "dimensions": [
+      588,
+      1295
+    ],
+    "resampled": false
+  }
+}

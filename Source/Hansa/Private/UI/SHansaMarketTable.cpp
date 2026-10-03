@@ -13,81 +13,29 @@
 #include "Widgets/SOverlay.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/Text/STextBlock.h"
+#include "UI/SHansaReferenceFrame.h"
+#include "Brushes/SlateDynamicImageBrush.h"
+#include "Brushes/SlateRoundedBoxBrush.h"
+#include "Widgets/Layout/SWrapBox.h"
+#include "Misc/Paths.h"
+#include "Widgets/Images/SImage.h"
 #include "Widgets/Views/STableRow.h"
 
 #define LOCTEXT_NAMESPACE "SHansaMarketTable"
 
 namespace Hansa::UI
 {
-	class SHansaPriceHistoryChart final : public SLeafWidget
-	{
-	public:
-		SLATE_BEGIN_ARGS(SHansaPriceHistoryChart) {}
-		SLATE_END_ARGS()
-
-		void Construct(const FArguments&) {}
-		void SetData(const TArray<FHansaMarketChartPointPresentation>& InPoints, const int64 Average, const int64 Minimum, const int64 Maximum, const bool bInStale)
-		{
-			Points = InPoints;
-			bStale = bInStale;
-			const int64 Low=FMath::Min(Minimum,Average),High=FMath::Max(Maximum,Average);
-            AverageNormalized=High==Low?.5f:float(Average-Low)/float(High-Low);
-            for(auto& Point:Points) Point.NormalizedPrice=High==Low?.5f:float(Point.PriceMilliMarks-Low)/float(High-Low);
-			Invalidate(EInvalidateWidgetReason::Paint);
-		}
-
-		virtual FVector2D ComputeDesiredSize(float) const override { return FVector2D(320.0f, 150.0f); }
-		virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& Geometry, const FSlateRect& CullingRect,
-			FSlateWindowElementList& Elements, const int32 LayerId, const FWidgetStyle& WidgetStyle, const bool bParentEnabled) const override
-		{
-			const FVector2D Size = Geometry.GetLocalSize();
-			const FLinearColor Grid=UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::MutedInk);
-			const FLinearColor Brass=UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Brass);
-            // P21 series treatment: dark outline preserves essential line contrast.
-            auto PriceLine=[&](const TArray<FVector2D>& PointsToDraw,float Thickness=2.f) {
-                FSlateDrawElement::MakeLines(Elements,LayerId+2,Geometry.ToPaintGeometry(),PointsToDraw,ESlateDrawEffect::None,UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Ink),true,Thickness+2);
-                FSlateDrawElement::MakeLines(Elements,LayerId+3,Geometry.ToPaintGeometry(),PointsToDraw,ESlateDrawEffect::None,Brass,true,Thickness);
-            };
-			for (int32 Line = 0; Line < 4; ++Line)
-			{
-				const float Y = 8.0f + (Size.Y - 16.0f) * static_cast<float>(Line) / 3.0f;
-				FSlateDrawElement::MakeLines(Elements, LayerId, Geometry.ToPaintGeometry(), { FVector2D(8.0f, Y), FVector2D(Size.X - 8.0f, Y) }, ESlateDrawEffect::None, Grid, true, 1.0f);
-			}
-			if (!Points.IsEmpty())
-			{
-				const float AverageY = 8.0f + (Size.Y - 16.0f) * (1.0f - AverageNormalized);
-				for (float X = 8.0f; X < Size.X - 8.0f; X += 10.0f)
-				{
-					FSlateDrawElement::MakeLines(Elements, LayerId + 1, Geometry.ToPaintGeometry(), { FVector2D(X, AverageY), FVector2D(FMath::Min(X + 5.0f, Size.X - 8.0f), AverageY) }, ESlateDrawEffect::None, Grid, true, 1.0f);
-				}
-			}
-			if (Points.Num() > 1)
-			{
-				TArray<FVector2D> LinePoints;
-				for (int32 Index = 0; Index < Points.Num(); ++Index)
-				{
-					const float X = 8.0f + (Size.X - 16.0f) * static_cast<float>(Points[Index].Tick-Points[0].Tick) / static_cast<float>(FMath::Max<int64>(1,Points.Last().Tick-Points[0].Tick));
-					const float Y = 8.0f + (Size.Y - 16.0f) * (1.0f - FMath::Clamp(Points[Index].NormalizedPrice, 0.0f, 1.0f));
-					LinePoints.Add(FVector2D(X, Y));
-				}
-				if(!bStale) PriceLine(LinePoints);
-                else for(int32 I=1;I<LinePoints.Num();++I) {
-                    const FVector2D A=LinePoints[I-1], B=LinePoints[I]; const double Length=(B-A).Size();
-                    for(double D=0;D<Length;D+=12) PriceLine({FMath::Lerp(A,B,D/Length),FMath::Lerp(A,B,FMath::Min(D+7,Length)/Length)});
-                }
-			}
-			if(Points.Num()==1) {
-                const double X=Size.X*.5,Y=8+(Size.Y-16)*(1-Points[0].NormalizedPrice);
-                PriceLine({FVector2D(X-4,Y),FVector2D(X+4,Y)},5);
-            }
-            return LayerId + 3;
-		}
-
-	private:
-		TArray<FHansaMarketChartPointPresentation> Points;
-		float AverageNormalized = 0.5f;
-		bool bStale = false;
-	};
+    class SQuayReceipt final : public SBorder
+    {
+    public:
+        virtual bool SupportsKeyboardFocus() const override { return true; }
+        virtual int32 OnPaint(const FPaintArgs& A,const FGeometry& G,const FSlateRect& R,FSlateWindowElementList& O,int32 L,const FWidgetStyle& Style,bool Enabled) const override {
+            const int32 End=SBorder::OnPaint(A,G,R,O,L,Style,Enabled);
+            if(HasKeyboardFocus()){const auto Z=G.GetLocalSize();FSlateDrawElement::MakeLines(O,End+1,G.ToPaintGeometry(),TArray<FVector2D>{{1,1},{Z.X-1,1},{Z.X-1,Z.Y-1},{1,Z.Y-1},{1,1}},ESlateDrawEffect::None,UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Brass),true,2);}
+            return End+1;
+        }
+    };
+#include "SHansaMarketPriceChart.inl"
 
 	namespace
 	{
@@ -150,6 +98,29 @@ namespace Hansa::UI
 		}
 	}
 
+#include "SHansaCommodityReport.inl"
+
+TSharedRef<SWidget> SHansaMarketTable::BuildQuayTrade()
+{
+return SNew(SVerticalBox)
++ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 12.0f, 0.0f, 2.0f)[SAssignNew(SpotTradePanel,SBorder).BorderImage(&DecisionBrush).Padding(10.0f)[SNew(SVerticalBox)
+							+ SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(LOCTEXT("SpotTradeHeading", "Quay trade")).TextStyle(&BodyStyle)]
+							+ SVerticalBox::Slot().AutoHeight()[SAssignNew(SpotTradeShipButton,SHansaAction).Preferences(Preferences).Typography(EHansaUiTypographyToken::SerifBody).Compact(false).Label(LOCTEXT("ChooseCog","Choose owned Cog")).OnClicked_Lambda([this]{return Model.IsValid()&&Model->CycleSpotTradeVehicleIntent()?FReply::Handled():FReply::Unhandled();})]
+                            + SVerticalBox::Slot().AutoHeight().Padding(0,2)[SAssignNew(SpotTradeVehicleText,STextBlock).TextStyle(&BodyStyle).AutoWrapText(true)]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0,4)[SAssignNew(SpotTradeSideButton,SHansaAction).Preferences(Preferences).Typography(EHansaUiTypographyToken::SerifBody).Compact(true).OnClicked_Lambda([this]{return Model.IsValid()&&Model->CycleSpotTradeSideIntent()?FReply::Handled():FReply::Unhandled();})]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0,2)[SNew(SHorizontalBox)
+								+ SHorizontalBox::Slot().AutoWidth()[SAssignNew(SpotTradeMinusButton,SHansaAction).Preferences(Preferences).Typography(EHansaUiTypographyToken::SerifBody).Compact(true).Label(LOCTEXT("SpotMinus", "− 1 cargo")).OnClicked_Lambda([this]{return Model.IsValid()&&Model->AdjustSpotTradeQuantityIntent(-1000)?FReply::Handled():FReply::Unhandled();})]
+								+ SHorizontalBox::Slot().FillWidth(1).HAlign(HAlign_Center).VAlign(VAlign_Center).Padding(6,0)[SAssignNew(SpotTradeQuantityText,STextBlock).TextStyle(&DataStyle)]
+								+ SHorizontalBox::Slot().AutoWidth()[SAssignNew(SpotTradePlusButton,SHansaAction).Preferences(Preferences).Typography(EHansaUiTypographyToken::SerifBody).Compact(true).Label(LOCTEXT("SpotPlus", "+ 1 cargo")).OnClicked_Lambda([this]{return Model.IsValid()&&Model->AdjustSpotTradeQuantityIntent(1000)?FReply::Handled():FReply::Unhandled();})]]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0,3)[SAssignNew(SpotTradeQuoteText,STextBlock).TextStyle(&BodyStyle).AutoWrapText(true)]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0,2)[SAssignNew(SpotTradeRemedyText,STextBlock).TextStyle(&BodyStyle).AutoWrapText(true)]
+							+ SVerticalBox::Slot().AutoHeight().Padding(0,5)[SAssignNew(SpotTradeConfirmButton,SHansaAction).Kind(EHansaUiButtonStyle::Primary).Preferences(Preferences).Typography(EHansaUiTypographyToken::SerifBody).Compact(false).OnClicked_Lambda([this]{return Model.IsValid()&&Model->ConfirmSpotTradeIntent()?FReply::Handled():FReply::Unhandled();})]
+							+ SVerticalBox::Slot().AutoHeight()[SAssignNew(SpotTradeRouteButton,SHansaAction).Preferences(Preferences).Typography(EHansaUiTypographyToken::SerifBody).Compact(false).Label(LOCTEXT("RouteLink","Create route")).OnClicked(this,&SHansaMarketTable::InvokeRoute)]
+                            + SVerticalBox::Slot().AutoHeight()[SAssignNew(SpotTradeStationButton,SHansaAction).Preferences(Preferences).Typography(EHansaUiTypographyToken::SerifBody).Compact(false).Label(LOCTEXT("StationLink","Establish station")).OnClicked_Lambda([this]{return Model.IsValid()&&Model->SpotTradeLinkIntent(TEXT("Station"))?FReply::Handled():FReply::Unhandled();})]
+                            + SVerticalBox::Slot().AutoHeight()[SAssignNew(SpotTradeManifestButton,SHansaAction).Preferences(Preferences).Typography(EHansaUiTypographyToken::SerifBody).Compact(false).Label(LOCTEXT("ManifestLink","Ship manifest")).OnClicked_Lambda([this]{return Model.IsValid()&&Model->SpotTradeLinkIntent(TEXT("Manifest"))?FReply::Handled():FReply::Unhandled();})]
+                            + SVerticalBox::Slot().AutoHeight()[SAssignNew(SpotTradeReceipt,SQuayReceipt).BorderImage(FCoreStyle::Get().GetBrush("NoBorder")).Padding(4)[SAssignNew(SpotTradeResultText,STextBlock).TextStyle(&BodyStyle).AutoWrapText(true)]]]];
+}
+
 	SHansaMarketTable::~SHansaMarketTable()
 	{
 		if (UHansaMarketTablePresentationModel* Pinned = Model.Get()) Pinned->OnChanged().Remove(ChangedHandle);
@@ -173,7 +144,7 @@ namespace Hansa::UI
 		CaptionOnDarkStyle = UHansaUiStyleLibrary::GetTextStyle(EHansaUiTypographyToken::Caption, true);
 
         HeadingStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::Heading2,Preferences));
-        BodyStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::Body,Preferences));
+        BodyStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::SerifBody,Preferences));
         DataStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::Data,Preferences));
         CaptionStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::Caption,Preferences));
         CaptionOnDarkStyle.SetFont(GetComponentFont(EHansaUiTypographyToken::Caption,Preferences));
@@ -221,7 +192,7 @@ namespace Hansa::UI
 			SNew(SHorizontalBox)
 			+ SHorizontalBox::Slot().FillWidth(0.60f).Padding(0.0f, 0.0f, 4.0f, 0.0f)
 			[
-				SNew(SVerticalBox)
+				SNew(SVerticalBox).Visibility_Lambda([this]{return CompactReport()&&ReportIsOpen()?EVisibility::Collapsed:EVisibility::Visible;})
 				+ SVerticalBox::Slot().AutoHeight()[SNew(SHorizontalBox)
 					+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(2.0f)[SAssignNew(SearchBox, SSearchBox).Style(&SearchStyle).DelayChangeNotificationsWhileTyping(false).HintText(LOCTEXT("Search", "Search goods")).OnTextChanged(this, &SHansaMarketTable::HandleSearchChanged)]
 					+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(6.0f, 0.0f)[SAssignNew(ResultText, STextBlock).TextStyle(&CaptionOnDarkStyle)]]
@@ -256,55 +227,9 @@ namespace Hansa::UI
 			]
 			+ SHorizontalBox::Slot().FillWidth(0.40f).Padding(4.0f, 0.0f, 0.0f, 0.0f)
 			[
-				SNew(SOverlay)
+				SNew(SOverlay).Visibility_Lambda([this]{return CompactReport()&&!ReportIsOpen()?EVisibility::Collapsed:EVisibility::Visible;})
 				+ SOverlay::Slot()[SAssignNew(DetailEmptyPanel, SBorder).BorderImage(&DecisionBrush).Padding(24.0f)[SNew(STextBlock).Text(LOCTEXT("SelectDetail", "Select a good to inspect its price, supply, demand and price factors.")).TextStyle(&BodyStyle).AutoWrapText(true)]]
-				+ SOverlay::Slot()[SAssignNew(DetailContentPanel, SBorder).BorderImage(&WorkingBrush).Padding(12.0f)[SAssignNew(DetailScroll,SScrollBox).AnimateWheelScrolling(false)
-					+ SScrollBox::Slot()[SNew(SVerticalBox)
-						+ SVerticalBox::Slot().AutoHeight()[SAssignNew(DetailTitle, STextBlock).TextStyle(&HeadingStyle).AutoWrapText(true)]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f, 0.0f, 10.0f)[SAssignNew(DetailConfidence, STextBlock).TextStyle(&CaptionStyle).AutoWrapText(true)]
-						+ SVerticalBox::Slot().AutoHeight()[SNew(SHorizontalBox)
-							+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(3.0f)[Metric(LOCTEXT("BaseValue", "Base value"), BaseValueText)]
-							+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(3.0f)[Metric(LOCTEXT("LocalPrice", "Local price"), LocalPriceText)]]
-						+ SVerticalBox::Slot().AutoHeight().Padding(3.0f)[Metric(LOCTEXT("VsAverage", "vs recent average"), DifferenceText)]
-						+ SVerticalBox::Slot().AutoHeight()[SNew(SHorizontalBox)
-							+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(3.0f)[Metric(LOCTEXT("StockReserveLabel", "Stock / desired reserve"), StockReserveText)]
-							+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(3.0f)[Metric(LOCTEXT("ReserveCoverage", "Reserve coverage"), ReserveDaysText)]]
-						+ SVerticalBox::Slot().AutoHeight()[SNew(SHorizontalBox)
-							+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(3.0f)[Metric(LOCTEXT("CitizenDemand", "Citizen demand"), CitizenDemandText)]
-							+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(3.0f)[Metric(LOCTEXT("IndustrialDemand", "Industrial demand"), IndustrialDemandText)]
-							+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(3.0f)[Metric(LOCTEXT("IncomingSupply", "Incoming"), IncomingSupplyText)]]
-
-                        + SVerticalBox::Slot().AutoHeight()[SNew(SHorizontalBox)
-                            + SHorizontalBox::Slot().FillWidth(1).Padding(3)[Metric(LOCTEXT("ProductionMetric","Production / tick"),ProductionText)]
-                            + SHorizontalBox::Slot().FillWidth(1).Padding(3)[Metric(LOCTEXT("ConsumptionMetric","Consumed / tick"),ConsumptionText)]]
-                        + SVerticalBox::Slot().AutoHeight().Padding(3,8)[SAssignNew(SupplyBalanceText,STextBlock).TextStyle(&BodyStyle).AutoWrapText(true)]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 8.0f, 0.0f, 2.0f)[SNew(STextBlock).Text(LOCTEXT("PriceHistory", "Price history")).TextStyle(&BodyStyle)]
-						+ SVerticalBox::Slot().AutoHeight()[SAssignNew(PriceChart, SHansaPriceHistoryChart)]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f, 0.0f, 8.0f)[SAssignNew(ChartSummaryText, STextBlock).TextStyle(&CaptionStyle).AutoWrapText(true)]
-						+ SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(LOCTEXT("WhyPrice", "Why this price?")).TextStyle(&BodyStyle)]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 3.0f, 0.0f, 8.0f)[SAssignNew(ExplanationText, STextBlock).TextStyle(&CaptionStyle).AutoWrapText(true)]
-						+ SVerticalBox::Slot().AutoHeight()[SAssignNew(FactorList, SVerticalBox)]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 10.0f, 0.0f, 2.0f)[SNew(STextBlock).Text(LOCTEXT("Consumers", "Consumers")).TextStyle(&BodyStyle)]
-						+ SVerticalBox::Slot().AutoHeight()[SAssignNew(ConsumerList, SVerticalBox)]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 10.0f, 0.0f, 2.0f)[SNew(STextBlock).Text(LOCTEXT("Producers", "Producers")).TextStyle(&BodyStyle)]
-						+ SVerticalBox::Slot().AutoHeight()[SAssignNew(ProducerList, SVerticalBox)]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 12.0f, 0.0f, 2.0f)[SAssignNew(SpotTradePanel,SBorder).BorderImage(&DecisionBrush).Padding(10.0f)[SNew(SVerticalBox)
-							+ SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(LOCTEXT("SpotTradeHeading", "Visiting merchant")).TextStyle(&BodyStyle)]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0,2)[SAssignNew(SpotTradeVehicleText,STextBlock).TextStyle(&CaptionStyle).AutoWrapText(true)]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0,4)[SAssignNew(SpotTradeSideButton,SHansaAction).Preferences(Preferences).Compact(true).OnClicked_Lambda([this]{return Model.IsValid()&&Model->CycleSpotTradeSideIntent()?FReply::Handled():FReply::Unhandled();})]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0,2)[SNew(SHorizontalBox)
-								+ SHorizontalBox::Slot().AutoWidth()[SAssignNew(SpotTradeMinusButton,SHansaAction).Preferences(Preferences).Compact(true).Label(LOCTEXT("SpotMinus", "− 1 cargo")).OnClicked_Lambda([this]{return Model.IsValid()&&Model->AdjustSpotTradeQuantityIntent(-1000)?FReply::Handled():FReply::Unhandled();})]
-								+ SHorizontalBox::Slot().FillWidth(1).HAlign(HAlign_Center).VAlign(VAlign_Center).Padding(6,0)[SAssignNew(SpotTradeQuantityText,STextBlock).TextStyle(&DataStyle)]
-								+ SHorizontalBox::Slot().AutoWidth()[SAssignNew(SpotTradePlusButton,SHansaAction).Preferences(Preferences).Compact(true).Label(LOCTEXT("SpotPlus", "+ 1 cargo")).OnClicked_Lambda([this]{return Model.IsValid()&&Model->AdjustSpotTradeQuantityIntent(1000)?FReply::Handled():FReply::Unhandled();})]]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0,3)[SAssignNew(SpotTradeQuoteText,STextBlock).TextStyle(&CaptionStyle).AutoWrapText(true)]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0,2)[SAssignNew(SpotTradeRemedyText,STextBlock).TextStyle(&CaptionStyle).AutoWrapText(true)]
-							+ SVerticalBox::Slot().AutoHeight().Padding(0,5)[SAssignNew(SpotTradeConfirmButton,SHansaAction).Kind(EHansaUiButtonStyle::Primary).Preferences(Preferences).Compact(false).OnClicked_Lambda([this]{return Model.IsValid()&&Model->ConfirmSpotTradeIntent()?FReply::Handled():FReply::Unhandled();})]
-							+ SVerticalBox::Slot().AutoHeight()[SAssignNew(SpotTradeResultText,STextBlock).TextStyle(&CaptionStyle).AutoWrapText(true)]]]						+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 12.0f, 0.0f, 0.0f)[SNew(SHorizontalBox)
-							+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(2.0f)[SAssignNew(PinButton, SHansaAction).Preferences(Preferences).Compact(true).OnClicked(this, &SHansaMarketTable::InvokePin)]
-							+ SHorizontalBox::Slot().FillWidth(1.0f).Padding(2.0f)[SAssignNew(RouteButton, SHansaAction).Preferences(Preferences).Compact(true).OnClicked(this, &SHansaMarketTable::InvokeRoute)]]
-						+ SVerticalBox::Slot().AutoHeight().Padding(2.0f)[SAssignNew(PinReasonText, STextBlock).TextStyle(&CaptionStyle).AutoWrapText(true)]
-						+ SVerticalBox::Slot().AutoHeight().Padding(2.0f)[SAssignNew(RouteReasonText, STextBlock).TextStyle(&CaptionStyle).AutoWrapText(true)]
-						+ SVerticalBox::Slot().AutoHeight().Padding(2.0f)[SAssignNew(ActionResultText, STextBlock).TextStyle(&CaptionStyle).AutoWrapText(true)]]]]
+				+ SOverlay::Slot()[BuildCommodityReport()]
 			]
 		];
 
@@ -318,6 +243,7 @@ namespace Hansa::UI
 		MapWidget(TEXT("Market.List"), ListPanel);
 		MapWidget(TEXT("Market.Empty"), EmptyPanel);
 		MapWidget(TEXT("Market.Detail"), DetailContentPanel);
+        MapWidget(TEXT("Market.Detail.Scroll"), DetailScroll);
 		MapWidget(TEXT("Market.Detail.Empty"), DetailEmptyPanel);
 		MapWidget(TEXT("Market.Detail.Action.Pin"), PinButton);
         MapWidget(TEXT("Market.Detail.Metric.BaseValue"),BaseValueText);
@@ -334,7 +260,12 @@ namespace Hansa::UI
         MapWidget(TEXT("Market.Detail.Chart"),PriceChart);
         MapWidget(TEXT("Market.Detail.Summary"),ExplanationText);
 		MapWidget(TEXT("Market.Detail.Action.BeginRoute"), RouteButton);
-		MapWidget(TEXT("Market.Detail.SpotTrade.Side"), SpotTradeSideButton);
+		MapWidget(TEXT("Market.Detail.SpotTrade.Route"), SpotTradeRouteButton);
+        MapWidget(TEXT("Market.Detail.SpotTrade.Receipt"), SpotTradeReceipt);
+        MapWidget(TEXT("Market.Detail.SpotTrade.Ship"), SpotTradeShipButton);
+        MapWidget(TEXT("Market.Detail.SpotTrade.Station"), SpotTradeStationButton);
+        MapWidget(TEXT("Market.Detail.SpotTrade.Manifest"), SpotTradeManifestButton);
+        MapWidget(TEXT("Market.Detail.SpotTrade.Side"), SpotTradeSideButton);
 		MapWidget(TEXT("Market.Detail.SpotTrade.Quantity.Decrease"), SpotTradeMinusButton);
 		MapWidget(TEXT("Market.Detail.SpotTrade.Quantity.Increase"), SpotTradePlusButton);
 		MapWidget(TEXT("Market.Detail.SpotTrade.Confirm"), SpotTradeConfirmButton);
@@ -357,6 +288,13 @@ namespace Hansa::UI
                 + SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(Label).TextStyle(&CaptionStyle).AutoWrapText(true).Justification(ETextJustify::Right)]
                 + SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text_Lambda([Item,Field]{ return Item.Get()->*Field; }).TextStyle(&DataStyle).AutoWrapText(true).Justification(ETextJustify::Right)];
         };
+        if(Preferences.bLargeText){
+            auto Row=SNew(STableRow<TSharedPtr<FHansaMarketTableRowPresentation>>,OwnerTable).Style(&RowStyle).Padding(4)
+            [SNew(SBorder).BorderImage(&WorkingBrush).Padding(8)[SNew(SVerticalBox)
+             +SVerticalBox::Slot().AutoHeight()[SAssignNew(GoodButton,SHansaAction).Preferences(Preferences).Compact(false).Label(Item->GoodLabel).OnClicked(this,&SHansaMarketTable::InvokeRow,Item->GoodStableId)]
+             +SVerticalBox::Slot().AutoHeight().Padding(0,8)[SNew(STextBlock).Text_Lambda([Item]{return FText::Format(LOCTEXT("LargeMarketRow","Stock {0} · Reserve {1}\nPrice {2}\n{3} · {4}"),Item->Stock,Item->Reserve,Item->Price,Item->Status,Item->ReportAge);}).TextStyle(&BodyStyle).AutoWrapText(true)]]];
+            MapWidget(RowId(Item->GoodStableId),GoodButton);GoodButton->SetState(Model.IsValid()&&Model->GetSnapshot().SelectedGoodStableId==Item->GoodStableId?EUiState::Selected:EUiState::Default);return Row;
+        }
         auto Result = SNew(STableRow<TSharedPtr<FHansaMarketTableRowPresentation>>,OwnerTable).Style(&RowStyle).Padding(4)
         [
             SNew(SBorder).BorderImage(&WorkingBrush).Padding(8)
@@ -390,6 +328,7 @@ namespace Hansa::UI
 		{
 			return;
 		}
+		bReportDismissed = false;
 		Model->SelectGoodIntent(Item->GoodStableId);
 	}
 
@@ -449,41 +388,59 @@ namespace Hansa::UI
 		PinReasonText->SetText(Detail.PinDisabledReason); PinReasonText->SetVisibility(!Detail.bPinEnabled && !Detail.PinDisabledReason.IsEmpty() ? EVisibility::Visible : EVisibility::Collapsed);
 		RouteReasonText->SetText(Detail.RouteDisabledReason); RouteReasonText->SetVisibility(!Detail.bRouteEnabled && !Detail.RouteDisabledReason.IsEmpty() ? EVisibility::Visible : EVisibility::Collapsed);
 		ActionResultText->SetText(Detail.LastActionResult); ActionResultText->SetVisibility(Detail.LastActionResult.IsEmpty() ? EVisibility::Collapsed : EVisibility::Visible);
-		SpotTradePanel->SetVisibility(Detail.bSpotTradeVisible ? EVisibility::Visible : EVisibility::Collapsed);
+		MarketAnalysisPanel->SetVisibility(Detail.bSpotTradeVisible?EVisibility::Collapsed:EVisibility::Visible);
+        SpotTradeShipButton->SetEnabled(Detail.bSpotTradeHasShipChoices&&!Detail.bSpotTradePending);
+        SpotTradeSideButton->SetEnabled(!Detail.bSpotTradePending);
+        SpotTradeManifestButton->SetEnabled(Detail.SpotTradeVehicleValue>0);
+        SpotTradeRouteButton->SetEnabled(Detail.bRouteEnabled&&!Detail.bSpotTradePending);
+        SpotTradePanel->SetVisibility(Detail.bSpotTradeVisible ? EVisibility::Visible : EVisibility::Collapsed);
 		SpotTradeVehicleText->SetText(Detail.SpotTradeVehicle); SpotTradeQuantityText->SetText(Detail.SpotTradeQuantity); SpotTradeQuoteText->SetText(Detail.SpotTradeQuote);
 		SpotTradeRemedyText->SetText(Detail.SpotTradeRemedy); SpotTradeResultText->SetText(Detail.SpotTradeResult);
+        SpotTradeReceipt->SetVisibility(Detail.SpotTradeResult.IsEmpty()?EVisibility::Collapsed:EVisibility::Visible);
 		SpotTradeSideButton->SetLabel(Detail.bSpotTradeBuy ? LOCTEXT("SpotBuySelected", "Buy selected · switch to sell") : LOCTEXT("SpotSellSelected", "Sell selected · switch to buy"));
-		SpotTradeSideButton->SetState(EUiState::Selected,FText()); SpotTradeMinusButton->SetEnabled(Detail.SpotTradeQuantityRaw > 1000); SpotTradePlusButton->SetEnabled(Detail.bSpotTradeVisible);
+		SpotTradeSideButton->SetState(EUiState::Selected,FText()); SpotTradeMinusButton->SetEnabled(Detail.SpotTradeQuantityRaw > 1000&&!Detail.bSpotTradePending); SpotTradePlusButton->SetEnabled(Detail.bSpotTradeVisible&&!Detail.bSpotTradePending);
 		SpotTradeConfirmButton->SetLabel(Detail.SpotTradeConfirmLabel); SpotTradeConfirmButton->SetState(Detail.bSpotTradeCanSubmit ? EUiState::Default : EUiState::Disabled, Detail.SpotTradeRemedy);
 		PriceChart->SetData(Detail.History, Detail.RecentAveragePriceMilliMarks, Detail.MinimumHistoryPriceMilliMarks, Detail.MaximumHistoryPriceMilliMarks, Detail.bStale);
 		const auto PreviouslyFocused=ResolveSemanticWidget(Snapshot.FocusedSemanticId.ToString());
         const bool bRestoreDetailFocus=Snapshot.FocusedSemanticId.ToString().StartsWith(TEXT("Market.Detail.")) && PreviouslyFocused && PreviouslyFocused->HasKeyboardFocus();
         const bool bRelationshipsChanged=PresentedDetail.Factors!=Detail.Factors || PresentedDetail.Consumers!=Detail.Consumers || PresentedDetail.Producers!=Detail.Producers;
         if (bRelationshipsChanged) RebuildDetailLists(Detail);
+		RefreshCommodityReport(Snapshot);
 		PresentedDetail = Detail;
 		FocusOrder = { TEXT("Market.Search"), TEXT("Market.Filter.Category"), TEXT("Market.Filter.Trend"), TEXT("Market.Filter.Quick"), TEXT("Market.Filter.Clear") };
 		for(int32 Index=0;Index<8;++Index) FocusOrder.Add(TEXT("Market.Header.")+SortName(static_cast<EHansaMarketSortColumn>(Index)));
 		for (const auto& Row : Snapshot.VisibleRows) FocusOrder.Add(RowId(Row.GoodStableId));
-		for(const auto& R:Detail.Consumers) if(R.BuildingValue>0) FocusOrder.Add(TEXT("Market.Detail.Consumer.")+MarketTableSafeId(R.StableId.ToString()));
-        for(const auto& R:Detail.Producers) if(R.BuildingValue>0) FocusOrder.Add(TEXT("Market.Detail.Producer.")+MarketTableSafeId(R.StableId.ToString()));
-        if (Detail.bPinEnabled) FocusOrder.Add(TEXT("Market.Detail.Action.Pin"));
-		if (Detail.bRouteEnabled) FocusOrder.Add(TEXT("Market.Detail.Action.BeginRoute"));
-		if (Detail.bSpotTradeVisible) { FocusOrder.Append({TEXT("Market.Detail.SpotTrade.Side"),TEXT("Market.Detail.SpotTrade.Quantity.Decrease"),TEXT("Market.Detail.SpotTrade.Quantity.Increase")}); if(Detail.bSpotTradeCanSubmit) FocusOrder.Add(TEXT("Market.Detail.SpotTrade.Confirm")); }
+		if(Detail.bHasSelection&&!bReportDismissed) FocusOrder.Add(TEXT("Market.Detail.Action.Close"));
+		for(const auto& R:Detail.Consumers) if(!bReportDismissed && R.BuildingValue>0) FocusOrder.Add(TEXT("Market.Detail.Consumer.")+MarketTableSafeId(R.StableId.ToString()));
+        for(const auto& R:Detail.Producers) if(!bReportDismissed && R.BuildingValue>0) FocusOrder.Add(TEXT("Market.Detail.Producer.")+MarketTableSafeId(R.StableId.ToString()));
+        if (!bReportDismissed && !Detail.bSpotTradeVisible && Detail.bPinEnabled) FocusOrder.Add(TEXT("Market.Detail.Action.Pin"));
+		if (!bReportDismissed && !Detail.bSpotTradeVisible && Detail.bRouteEnabled) FocusOrder.Add(TEXT("Market.Detail.Action.BeginRoute"));
+		if (!bReportDismissed && Detail.bSpotTradeVisible) { FocusOrder.Append({TEXT("Market.Detail.SpotTrade.Ship"),TEXT("Market.Detail.SpotTrade.Station"),TEXT("Market.Detail.SpotTrade.Route"),TEXT("Market.Detail.SpotTrade.Manifest"),TEXT("Market.Detail.SpotTrade.Side"),TEXT("Market.Detail.SpotTrade.Quantity.Decrease"),TEXT("Market.Detail.SpotTrade.Quantity.Increase")}); if(Detail.bSpotTradeCanSubmit) FocusOrder.Add(TEXT("Market.Detail.SpotTrade.Confirm")); }
+        if(!bReportDismissed && !Detail.SpotTradeResult.IsEmpty())FocusOrder.Add(TEXT("Market.Detail.SpotTrade.Receipt"));
         if(bRelationshipsChanged && bRestoreDetailFocus) FocusSemanticId(Snapshot.FocusedSemanticId.ToString());
 	}
 
 	void SHansaMarketTable::RebuildDetailLists(const FHansaSelectedGoodPresentation& Detail)
 	{
 		FactorList->ClearChildren(); ConsumerList->ClearChildren(); ProducerList->ClearChildren();
-		for (const auto& Factor : Detail.Factors)
-		{
-			FactorList->AddSlot().AutoHeight().Padding(0.0f, 2.0f)[SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot().FillWidth(1.0f)[SNew(STextBlock).Text(Factor.Label).TextStyle(&CaptionStyle).AutoWrapText(true)]
-				+ SHorizontalBox::Slot().AutoWidth().Padding(8.0f, 0.0f)[SNew(STextBlock).Text(Factor.Contribution).TextStyle(&DataStyle)]];
-		}
+        for (int32 Index=0; Index<Detail.Factors.Num(); ++Index)
+        {
+            const auto& Factor=Detail.Factors[Index];
+            static const EUiGlyph Icons[]={EUiGlyph::Storage,EUiGlyph::People,EUiGlyph::Production,EUiGlyph::Ship,EUiGlyph::Trend,EUiGlyph::Season,EUiGlyph::Civic};
+            const auto Icon=Icons[FMath::Min(Index,6)];
+            auto Row=SNew(SVerticalBox)
+                +SVerticalBox::Slot().AutoHeight()[SNew(SHorizontalBox)
+                 +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(0,0,10,0)[SNew(SHansaGlyph).Glyph(Icon).Size(20)]
+                 +SHorizontalBox::Slot().FillWidth(1).VAlign(VAlign_Center)[SNew(STextBlock).Text(Factor.Label).TextStyle(&ReportBodyStyle).AutoWrapText(true)]
+                 +SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(8,0)[SNew(STextBlock).Text(CommodityReport::Percent(Factor.ContributionBasisPoints)).TextStyle(&DataStyle)]];
+            if(Index==0 && Factor.ContributionBasisPoints!=0)
+                Row->AddSlot().AutoHeight().Padding(30,1,0,1)[SNew(STextBlock).Text(Factor.ContributionBasisPoints<0?LOCTEXT("ReportSurplusPressure","Price pressure from surplus stock"):LOCTEXT("ReportShortagePressure","Price pressure from low stock")).TextStyle(&ReportSmallStyle).AutoWrapText(true)];
+            FactorList->AddSlot().AutoHeight().Padding(0,1)[SNew(SBorder).BorderImage(Index==0?&DecisionBrush:FCoreStyle::Get().GetBrush("NoBorder")).Padding(FMargin(4,3))[Row]];
+        }
+
 		auto AddRelationships = [this](const TArray<FHansaMarketRelationshipPresentation>& Relationships, const TSharedPtr<SVerticalBox>& List, bool bProducer)
 		{
-			if (Relationships.IsEmpty()) List->AddSlot().AutoHeight()[SNew(STextBlock).Text(LOCTEXT("NoneReported", "None reported")).TextStyle(&CaptionStyle)];
+			if (Relationships.IsEmpty()) List->AddSlot().AutoHeight()[SNew(STextBlock).Text(LOCTEXT("NoneReported", "None reported")).TextStyle(&ReportSmallStyle)];
 			for (const auto& Relationship : Relationships)
 			{
 				TSharedPtr<SHansaAction> Reveal;
@@ -530,10 +487,13 @@ namespace Hansa::UI
 	FReply SHansaMarketTable::InvokeRow(const FName GoodStableId)
     {
         // Reselecting a good is a harmless no-op, not an unhandled input event.
+        if(bReportDismissed)DetailScroll->ScrollToStart();
+        bReportDismissed = false;
         if (Model.IsValid() && Model->GetSnapshot().VisibleRows.ContainsByPredicate(
             [GoodStableId](const auto& Row) { return Row.GoodStableId == GoodStableId; }))
         {
             Model->SelectGoodIntent(GoodStableId);
+            Refresh(Model->GetSnapshot(), Model->GetRevision());
         }
         return FReply::Handled();
     }
@@ -545,7 +505,7 @@ namespace Hansa::UI
         if(SemanticId.StartsWith(TEXT("Market.Filter.")) || SemanticId.StartsWith(TEXT("Market.Header.")) ||
            SemanticId.StartsWith(TEXT("Market.Row.")) || SemanticId.StartsWith(TEXT("Market.Detail.Action.")) ||
            SemanticId.StartsWith(TEXT("Market.Detail.Consumer.")) || SemanticId.StartsWith(TEXT("Market.Detail.Producer.")) ||
-           SemanticId.StartsWith(TEXT("Market.Detail.SpotTrade.")))
+           (SemanticId.StartsWith(TEXT("Market.Detail.SpotTrade.")) && SemanticId!=TEXT("Market.Detail.SpotTrade.Receipt")))
             StaticCastSharedPtr<SHansaAction>(Widget)->SetFocusHandler(FSimpleDelegate::CreateLambda([Weak=Model,Id=FName(*SemanticId)]{if(Weak.IsValid())Weak->SetFocusedSemanticId(Id);}));
     }
 
@@ -563,13 +523,15 @@ namespace Hansa::UI
     }
 
     FReply SHansaMarketTable::OnKeyDown(const FGeometry&,const FKeyEvent& Event) {
-        if(!Model.IsValid() || FocusOrder.IsEmpty())return FReply::Unhandled();
+        const TArray<FString> ActiveFocusOrder=GetControllerFocusOrder();
+        if(Model.IsValid()&&Model->GetSnapshot().FocusedSemanticId.ToString().StartsWith(TEXT("Market.Detail."))&&(Event.GetKey()==EKeys::PageDown||Event.GetKey()==EKeys::PageUp||Event.GetKey()==EKeys::Gamepad_RightStick_Down||Event.GetKey()==EKeys::Gamepad_RightStick_Up)){PendingDetailScroll.Reset();DetailScroll->SetScrollOffset(DetailScroll->GetScrollOffset()+((Event.GetKey()==EKeys::PageDown||Event.GetKey()==EKeys::Gamepad_RightStick_Down)?180.f:-180.f));return FReply::Handled();}
+        if(!Model.IsValid() || ActiveFocusOrder.IsEmpty())return FReply::Unhandled();
         const auto Key=Event.GetKey();
         if(Key!=EKeys::Tab && Key!=EKeys::Gamepad_DPad_Down && Key!=EKeys::Gamepad_DPad_Up)return FReply::Unhandled();
         const bool Forward=(Key==EKeys::Tab && !Event.IsShiftDown()) || Key==EKeys::Gamepad_DPad_Down;
-        int32 Index=FocusOrder.IndexOfByKey(Model->GetSnapshot().FocusedSemanticId.ToString());
-        Index=Index==INDEX_NONE?0:(Index+(Forward?1:FocusOrder.Num()-1))%FocusOrder.Num();
-        return FocusSemanticId(FocusOrder[Index])?FReply::Handled():FReply::Unhandled();
+        int32 Index=ActiveFocusOrder.IndexOfByKey(Model->GetSnapshot().FocusedSemanticId.ToString());
+        Index=Index==INDEX_NONE?0:(Index+(Forward?1:ActiveFocusOrder.Num()-1))%ActiveFocusOrder.Num();
+        return FocusSemanticId(ActiveFocusOrder[Index])?FReply::Handled():FReply::Unhandled();
     }
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -590,6 +552,8 @@ namespace Hansa::UI
 	bool SHansaMarketTable::ActivateSemanticId(const FString& SemanticId)
 	{
 		if (!Model.IsValid()) return false;
+        if (SemanticId.StartsWith(TEXT("Market.Detail.")) && (bReportDismissed || !Model->GetSnapshot().SelectedGood.bHasSelection)) return false;
+        if (SemanticId == TEXT("Market.Detail.Action.Close")) return CloseCommodityReport().IsEventHandled();
         for(const auto& R:Model->GetSnapshot().SelectedGood.Consumers) if(SemanticId==TEXT("Market.Detail.Consumer.")+MarketTableSafeId(R.StableId.ToString())) return Model->RevealRelationshipIntent(false,R.StableId);
         for(const auto& R:Model->GetSnapshot().SelectedGood.Producers) if(SemanticId==TEXT("Market.Detail.Producer.")+MarketTableSafeId(R.StableId.ToString())) return Model->RevealRelationshipIntent(true,R.StableId);
         if (SemanticId == TEXT("Market.Filter.Category")) return Model->CycleCategoryFilterIntent();
@@ -598,7 +562,11 @@ namespace Hansa::UI
 		if (SemanticId == TEXT("Market.Filter.Clear")) return Model->ClearFiltersIntent();
 		if (SemanticId == TEXT("Market.Detail.Action.Pin")) return Model->TogglePinIntent();
 		if (SemanticId == TEXT("Market.Detail.Action.BeginRoute")) return Model->BeginRouteIntent();
-		if (SemanticId == TEXT("Market.Detail.SpotTrade.Side")) return Model->CycleSpotTradeSideIntent();
+		if (SemanticId == TEXT("Market.Detail.SpotTrade.Route")) return Model->BeginRouteIntent();
+        if (SemanticId == TEXT("Market.Detail.SpotTrade.Ship")) return Model->CycleSpotTradeVehicleIntent();
+        if (SemanticId == TEXT("Market.Detail.SpotTrade.Station")) return Model->SpotTradeLinkIntent(TEXT("Station"));
+        if (SemanticId == TEXT("Market.Detail.SpotTrade.Manifest")) return Model->SpotTradeLinkIntent(TEXT("Manifest"));
+        if (SemanticId == TEXT("Market.Detail.SpotTrade.Side")) return Model->CycleSpotTradeSideIntent();
 		if (SemanticId == TEXT("Market.Detail.SpotTrade.Quantity.Decrease")) return Model->AdjustSpotTradeQuantityIntent(-1000);
 		if (SemanticId == TEXT("Market.Detail.SpotTrade.Quantity.Increase")) return Model->AdjustSpotTradeQuantityIntent(1000);
 		if (SemanticId == TEXT("Market.Detail.SpotTrade.Confirm")) return Model->ConfirmSpotTradeIntent();
@@ -607,13 +575,21 @@ namespace Hansa::UI
 			const FString Name = SemanticId.RightChop(14);
 			for (int32 Index = 0; Index < 8; ++Index) if (SortName(static_cast<EHansaMarketSortColumn>(Index)) == Name) return Model->SortByIntent(static_cast<EHansaMarketSortColumn>(Index));
 		}
-		for (const auto& Row : Model->GetSnapshot().VisibleRows) if (SemanticId == RowId(Row.GoodStableId)) return Model->SelectGoodIntent(Row.GoodStableId);
+		for (const auto& Row : Model->GetSnapshot().VisibleRows) if (SemanticId == RowId(Row.GoodStableId)) { if(bReportDismissed)DetailScroll->ScrollToStart();bReportDismissed=false; const bool Changed=Model->SelectGoodIntent(Row.GoodStableId); Refresh(Model->GetSnapshot(),Model->GetRevision()); return Changed || Model->GetSnapshot().SelectedGoodStableId==Row.GoodStableId; }
 		return false;
 	}
 
+    TArray<FString> SHansaMarketTable::GetControllerFocusOrder() const
+    {
+        if(!CompactReport())return FocusOrder;
+        TArray<FString> Result;
+        for(const auto& Id:FocusOrder)if(Id.StartsWith(TEXT("Market.Detail."))==ReportIsOpen())Result.Add(Id);
+        return Result;
+    }
+
 	bool SHansaMarketTable::FocusSemanticId(const FString& SemanticId)
 	{
-		if(!FocusOrder.Contains(SemanticId)) return false;
+		if(!GetControllerFocusOrder().Contains(SemanticId)) return false;
 		if(SemanticId.StartsWith(TEXT("Market.Row."))) for(const auto& Item:Items)
             if(SemanticId==RowId(Item->GoodStableId)) ListView->RequestScrollIntoView(Item);
         const TWeakPtr<SWidget>* Found = SemanticWidgets.Find(SemanticId);
@@ -629,7 +605,7 @@ namespace Hansa::UI
 			}
 		}
 		if (!Widget.IsValid() || !Widget->IsEnabled()) return false;
-        if(SemanticId.StartsWith(TEXT("Market.Detail."))) {
+        if(SemanticId.StartsWith(TEXT("Market.Detail.")) && !SemanticId.StartsWith(TEXT("Market.Detail.Action."))) {
             PendingDetailScroll=SemanticId;ScrollLayoutAttempts=0;
             DetailScroll->ScrollDescendantIntoView(Widget,false,EDescendantScrollDestination::Center);
         }
@@ -649,19 +625,28 @@ namespace Hansa::UI
 		{
 			FHansaHudSemanticNode Node; Node.Id = Id; Node.ParentId = Parent; Node.Label = Label; Node.Role = Role;
 			Node.State.ValueType = Type; Node.State.Value = Value; Node.bCanActivate = bActivate; Node.bCanFocus = bFocus;
-			Node.State.bSelected = bSelected; Node.State.bWarning = bWarning; Node.State.bFocused = Snapshot.FocusedSemanticId == FName(*Id);
+			Node.State.bLoading=Id.StartsWith(TEXT("Market.Detail.SpotTrade"))&&Snapshot.SelectedGood.bSpotTradePending;
+            Node.State.bSelected = bSelected; Node.State.bWarning = bWarning; Node.State.bFocused = Snapshot.FocusedSemanticId == FName(*Id);
 			if (const TWeakPtr<SWidget>* Found = SemanticWidgets.Find(Id)) if (const TSharedPtr<SWidget> Widget = Found->Pin())
 			{
 				Node.State.bVisible = Widget->GetVisibility().IsVisible(); Node.State.bEnabled = Widget->IsEnabled();
                 const auto G=Widget->GetCachedGeometry(); const auto P=G.GetAbsolutePosition()-GetCachedGeometry().GetAbsolutePosition(); const auto Size=G.GetDrawSize();
                 Node.Bounds=FIntRect(FMath::RoundToInt(P.X),FMath::RoundToInt(P.Y),FMath::RoundToInt(P.X+Size.X),FMath::RoundToInt(P.Y+Size.Y));
                 if(Id.StartsWith(TEXT("Market.Detail."))) {
-                    const auto Clip=DetailScroll->GetCachedGeometry();
+                    const auto Clip=Id.StartsWith(TEXT("Market.Detail.Action.")) ? DetailContentPanel->GetCachedGeometry() : DetailScroll->GetCachedGeometry();
                     const auto Min=Clip.GetAbsolutePosition()-GetCachedGeometry().GetAbsolutePosition(),Max=Min+Clip.GetDrawSize();
-                    Node.State.bVisible &= Snapshot.SelectedGood.bHasSelection && P.Y+Size.Y>Min.Y && P.Y<Max.Y;
+                    const FVector2D A(FMath::Max(P.X,Min.X),FMath::Max(P.Y,Min.Y)),B(FMath::Min(P.X+Size.X,Max.X),FMath::Min(P.Y+Size.Y,Max.Y));
+                    Node.State.bClipped=A!=P||B!=P+Size;Node.State.bVisible &= Snapshot.SelectedGood.bHasSelection&&!bReportDismissed&&B.X>A.X&&B.Y>A.Y;
+                    Node.Bounds=Node.State.bVisible?FIntRect(FMath::RoundToInt(A.X),FMath::RoundToInt(A.Y),FMath::RoundToInt(B.X),FMath::RoundToInt(B.Y)):FIntRect();
                 }
 			}
 			if(Id.StartsWith(TEXT("Market.Detail.")) && Id!=TEXT("Market.Detail.Empty")) Node.State.bVisible &= Snapshot.SelectedGood.bHasSelection;
+            if(Snapshot.SelectedGood.bSpotTradeVisible&&Id.StartsWith(TEXT("Market.Detail.Action."))&&Id!=TEXT("Market.Detail.Action.Close"))Node.State.bVisible=false;
+            if(CompactReport() && Id.StartsWith(TEXT("Market.")) && Id!=TEXT("Market.Root")) {
+                if(ReportIsOpen()&&!Id.StartsWith(TEXT("Market.Detail")))Node.State.bVisible=false;
+                if(!ReportIsOpen()&&Id.StartsWith(TEXT("Market.Detail")))Node.State.bVisible=false;
+            }
+            Node.bCanActivate &= Node.State.bEnabled;
             Nodes.Add(MoveTemp(Node));
 		};
 		Add(TEXT("Market.Root"), TEXT("CityOverview.Root"), TEXT("Market goods table"), EHansaHudSemanticRole::Panel, TEXT("goods-count"), FString::FromInt(Snapshot.AllRows.Num()));
@@ -692,7 +677,12 @@ namespace Hansa::UI
 		const auto& Detail = Snapshot.SelectedGood;
 		Add(TEXT("Market.Detail"), TEXT("Market.Root"), Detail.bHasSelection ? Detail.GoodLabel.ToString() + TEXT(" selected-good details") : TEXT("Selected-good details"),
 			EHansaHudSemanticRole::Panel, TEXT("good-id"), Detail.GoodStableId.ToString(), false, false, Detail.bHasSelection, Detail.bStale);
-		Add(TEXT("Market.Detail.Summary"), TEXT("Market.Detail"), Detail.Explanation.ToString(), EHansaHudSemanticRole::Text, TEXT("causal-summary"), Detail.ChartSummary.ToString());
+		Add(TEXT("Market.Detail.Action.Close"),TEXT("Market.Detail"),TEXT("Close commodity report"),EHansaHudSemanticRole::Button,TEXT("action"),TEXT("close-report"),true,true);
+        for(const TCHAR* Key : {TEXT("Stock"),TEXT("Reserve"),TEXT("Surplus")}) {
+            const auto Value=Key==FString(TEXT("Stock"))?ReportStockText:Key==FString(TEXT("Reserve"))?ReportReserveText:ReportSurplusText;
+            Add(FString(TEXT("Market.Detail.Metric."))+Key,TEXT("Market.Detail"),Key,EHansaHudSemanticRole::Status,TEXT("quantity"),Value->GetText().ToString());
+        }
+        Add(TEXT("Market.Detail.Summary"), TEXT("Market.Detail"), Detail.Explanation.ToString(), EHansaHudSemanticRole::Text, TEXT("causal-summary"), Detail.ChartSummary.ToString());
 		for (const TPair<const TCHAR*, const FText*> Metric : { TPair<const TCHAR*, const FText*>(TEXT("BaseValue"), &Detail.BaseValue),
 			{ TEXT("LocalPrice"), &Detail.LocalPrice }, { TEXT("RecentAverageDifference"), &Detail.RecentAverageDifference },
 			{ TEXT("StockVersusReserve"), &Detail.StockVersusReserve }, { TEXT("ReserveDays"), &Detail.ReserveDays },
@@ -725,7 +715,9 @@ namespace Hansa::UI
 		if (Detail.bSpotTradeVisible)
 		{
 			Add(TEXT("Market.Detail.SpotTrade"), TEXT("Market.Detail"), Detail.SpotTradeHeading.ToString(), EHansaHudSemanticRole::Panel, TEXT("quote"), Detail.SpotTradeQuote.ToString(), false, false, false, !Detail.bSpotTradeCanSubmit);
-			Add(TEXT("Market.Detail.SpotTrade.Side"), TEXT("Market.Detail.SpotTrade"), Detail.bSpotTradeBuy ? TEXT("Buy selected; switch to sell") : TEXT("Sell selected; switch to buy"), EHansaHudSemanticRole::Button, TEXT("side"), Detail.bSpotTradeBuy ? TEXT("buy") : TEXT("sell"), true, true, true);
+			for(const TCHAR* A:{TEXT("Ship"),TEXT("Station"),TEXT("Route"),TEXT("Manifest")})Add(FString(TEXT("Market.Detail.SpotTrade."))+A,TEXT("Market.Detail.SpotTrade"),A,EHansaHudSemanticRole::Button,TEXT("navigation"),Detail.SpotTradeVehicle.ToString(),true,true);
+            Add(TEXT("Market.Detail.SpotTrade.Receipt"),TEXT("Market.Detail.SpotTrade"),TEXT("Executed receipt"),EHansaHudSemanticRole::Status,TEXT("receipt"),Detail.SpotTradeResult.ToString(),false,true);
+            Add(TEXT("Market.Detail.SpotTrade.Side"), TEXT("Market.Detail.SpotTrade"), Detail.bSpotTradeBuy ? TEXT("Buy selected; switch to sell") : TEXT("Sell selected; switch to buy"), EHansaHudSemanticRole::Button, TEXT("side"), Detail.bSpotTradeBuy ? TEXT("buy") : TEXT("sell"), true, true, true);
 			Add(TEXT("Market.Detail.SpotTrade.Quantity.Decrease"), TEXT("Market.Detail.SpotTrade"), TEXT("Decrease quantity by one cargo"), EHansaHudSemanticRole::Button, TEXT("quantity"), Detail.SpotTradeQuantity.ToString(), true, true);
 			Add(TEXT("Market.Detail.SpotTrade.Quantity.Increase"), TEXT("Market.Detail.SpotTrade"), TEXT("Increase quantity by one cargo"), EHansaHudSemanticRole::Button, TEXT("quantity"), Detail.SpotTradeQuantity.ToString(), true, true);
 			Add(TEXT("Market.Detail.SpotTrade.Confirm"), TEXT("Market.Detail.SpotTrade"), Detail.SpotTradeConfirmLabel.ToString(), EHansaHudSemanticRole::Button, TEXT("eligibility"), Detail.SpotTradeRemedy.ToString(), Detail.bSpotTradeCanSubmit, Detail.bSpotTradeCanSubmit, false, !Detail.bSpotTradeCanSubmit);

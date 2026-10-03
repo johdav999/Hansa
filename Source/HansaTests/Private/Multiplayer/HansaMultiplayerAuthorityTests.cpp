@@ -72,6 +72,17 @@ bool FHansaServerAuthorityProjectionTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Rival principal binds to house two"),
 		Authority.RegisterAdmittedClient({202, FHansaParticipantId::TryCreate(1002).Value, Host->GetRivalHouseId(), EHansaAdmissionMode::LanOffline}, Hamburg, Error));
 	TestEqual(TEXT("Exactly two proof clients are registered"), Authority.GetRegisteredClientCount(), 2);
+	FHansaLandQueryResult LandView;
+	const FHansaCityDefinitionId LubeckId = FHansaCityDefinitionId::TryParse(TEXT("City.Lubeck")).Value;
+	TestFalse(TEXT("Unregistered principal cannot query land"),
+		Authority.QueryLand(999, LubeckId, {0, 0}, {0, 0}, LandView, Error));
+	TestFalse(TEXT("Client cannot query a city outside its interest"),
+		Authority.QueryLand(202, LubeckId, {0, 0}, {0, 0}, LandView, Error));
+	TestTrue(TEXT("Interested principal receives its own scoped land view"),
+		Authority.QueryLand(101, LubeckId, {0, 0}, {0, 0}, LandView, Error));
+	TestTrue(TEXT("Land query binds viewer to admitted house"), LandView.ViewerHouseId == Host->GetHouseId());
+	TestFalse(TEXT("Authority rejects oversized land requests"),
+		Authority.QueryLand(101, LubeckId, {0, 0}, {64, 0}, LandView, Error));
 
 	FHansaClientProjectionSnapshot PlayerInitial;
 	FHansaClientProjectionSnapshot RivalInitial;
@@ -112,10 +123,10 @@ bool FHansaServerAuthorityProjectionTest::RunTest(const FString& Parameters)
 	FHansaClientCommandIntent Place = Intent(1, 1001, EHansaClientIntentType::PlaceBuilding);
 	Place.CityId = TEXT("City.Lubeck");
 	Place.BuildingDefinitionId = TEXT("Building.Road");
-	Place.AnchorX = 10;
-	Place.AnchorY = 30;
+	Place.AnchorX = 22;
+	Place.AnchorY = 4;
 	const FHansaClientCommandFeedback Placed = Authority.SubmitIntent(101, Place);
-	TestTrue(TEXT("Owner placement intent is accepted through the server gateway"), Placed.bAccepted);
+	TestTrue(*(TEXT("Owner placement intent is accepted through the server gateway: ")+Placed.Message+TEXT(" / ")+Placed.GatewayError), Placed.bAccepted);
 	TestTrue(TEXT("Server assigns a positive global command order"), Placed.AcceptedGlobalSequence > 0);
 
 	FHansaClientCommandIntent Skipped = Intent(3, 1003, EHansaClientIntentType::QueueResearch);
@@ -411,9 +422,9 @@ bool FHansaTwoPlayerReconnectFixtureTest::RunTest(const FString& Parameters)
 		1, 11001, EHansaClientIntentType::PlaceBuilding);
 	Place.CityId = TEXT("City.Lubeck");
 	Place.BuildingDefinitionId = TEXT("Building.Road");
-	Place.AnchorX = 10;
-	Place.AnchorY = 30;
-	TestTrue(TEXT("First owner can place"), Authority.SubmitIntent(101, Place).bAccepted);
+	Place.AnchorX = 22;
+	Place.AnchorY = 4;
+	const auto Placed=Authority.SubmitIntent(101, Place);TestTrue(*(TEXT("First owner can place: ")+Placed.Message+TEXT(" / ")+Placed.GatewayError), Placed.bAccepted);
 
 	FHansaClientCommandIntent FirstRejected = Intent(
 		2, 11002, EHansaClientIntentType::SetRouteActive);
@@ -469,10 +480,10 @@ bool FHansaTwoPlayerReconnectFixtureTest::RunTest(const FString& Parameters)
 			return Route.RouteId == 3 && Route.OwnerHouseId == 2 && Route.bCargoVisible;
 		}));
 
-	TestEqual(TEXT("TR05 fixture pins fingerprint contract"),FHansaSimulationState::DeterminismFingerprintVersion,28U);
-	TestEqual(TEXT("TR05 fixture pins command contract"),FHansaCommandHeader::CurrentSchemaVersion,uint16(11));
+	TestEqual(TEXT("Delivery fixture pins fingerprint contract"),FHansaSimulationState::DeterminismFingerprintVersion,36U);
+	TestEqual(TEXT("Slot fixture pins command contract"),FHansaCommandHeader::CurrentSchemaVersion,uint16(14));
 	const FString ExpectedHash =
-		FixtureJson->GetStringField(TEXT("expectedFinalAuthoritativeHashV28Command11"));
+		FixtureJson->GetStringField(TEXT("expectedFinalAuthoritativeHashV36Command14"));
 	AddInfo(FString::Printf(TEXT("two_player_authority_v1 final authoritative hash: %s"),
 		*FirstFinal.AuthoritativeHash));
 	if (!ExpectedHash.StartsWith(TEXT("record-after")))

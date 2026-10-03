@@ -1,4 +1,6 @@
 #include "UI/HansaBuildMenuPresentationModel.h"
+#include "Network/HansaMultiplayerTypes.h"
+#include "UI/HansaTradeConstruction.h"
 
 #include "Commands/HansaGameplayCommandGateway.h"
 #include "Construction/HansaConstruction.h"
@@ -174,7 +176,13 @@ namespace
 	{
 		switch (Failure)
 		{
-		case EHansaPlacementFailure::NoNearbyTrees: return LOCTEXT("NoNearbyTrees", "No nearby trees");
+		case EHansaPlacementFailure::ForeignLeaseRequired: return LOCTEXT("LeaseRequired", "This land is outside your leased plots");
+        case EHansaPlacementFailure::ForeignLeaseSuspended: return LOCTEXT("LeaseSuspended", "Lease rights are suspended");
+        case EHansaPlacementFailure::ForeignLeaseBoundary: return LOCTEXT("LeaseBoundary", "Footprint crosses the lease boundary");
+        case EHansaPlacementFailure::ForeignBuildingCategoryDenied: return LOCTEXT("LeaseCategory", "Building category is not permitted here");
+        case EHansaPlacementFailure::ForeignPresenceStageInsufficient: return LOCTEXT("LeaseStage", "Foreign construction rights are unavailable");
+        case EHansaPlacementFailure::WrongOwner: return LOCTEXT("WrongOwner", "This land belongs to another owner");
+        case EHansaPlacementFailure::NoNearbyTrees: return LOCTEXT("NoNearbyTrees", "No nearby trees");
 		case EHansaPlacementFailure::RoadRequired: return LOCTEXT("RoadRequired", "Road required");
 		case EHansaPlacementFailure::ShorelineRequired: return LOCTEXT("ShoreRequired", "Land and water access required");
 		case EHansaPlacementFailure::Occupied: return LOCTEXT("Occupied", "Footprint occupied");
@@ -190,11 +198,17 @@ namespace
 	{
 		switch (Failure)
 		{
-		case EHansaPlacementFailure::NoNearbyTrees: return LOCTEXT("TreeRangeRemedy", "Move within 48 m of standing trees, clear of the camp footprint, buildings and roads.");
+		case EHansaPlacementFailure::ForeignLeaseRequired: return LOCTEXT("LeaseRequiredRemedy", "Choose an active plot in Expansion. The rest of this city remains autonomous.");
+        case EHansaPlacementFailure::ForeignLeaseSuspended: return LOCTEXT("LeaseSuspendedRemedy", "Restore station and presence access, then review your lease in Expansion.");
+        case EHansaPlacementFailure::ForeignLeaseBoundary: return LOCTEXT("LeaseBoundaryRemedy", "Move or rotate the entire footprint inside one active lease.");
+        case EHansaPlacementFailure::ForeignBuildingCategoryDenied: return LOCTEXT("LeaseCategoryRemedy", "Select a permitted building or review the plot and presence-stage categories.");
+        case EHansaPlacementFailure::ForeignPresenceStageInsufficient: return LOCTEXT("LeaseStageRemedy", "Review Presence and restore active Merchant quarter construction rights.");
+        case EHansaPlacementFailure::WrongOwner: return LOCTEXT("WrongOwnerRemedy", "Choose land you own or an explicitly authorized leased plot.");
+        case EHansaPlacementFailure::NoNearbyTrees: return LOCTEXT("TreeRangeRemedy", "Move within 48 m of standing trees, clear of the camp footprint, buildings and roads.");
 		case EHansaPlacementFailure::RoadRequired: return LOCTEXT("RoadRemedy", "Build next to a road.");
 		case EHansaPlacementFailure::ShorelineRequired: return LOCTEXT("ShoreRemedy", "Place across the shoreline with land on one side and water on the other.");
 		case EHansaPlacementFailure::Occupied: return LOCTEXT("OccupiedRemedy", "Choose an empty footprint.");
-		case EHansaPlacementFailure::OutsideBounds: return LOCTEXT("BoundsRemedy", "Move inside the Lübeck boundary.");
+		case EHansaPlacementFailure::OutsideBounds: return LOCTEXT("BoundsRemedy", "Move inside the selected city's permitted build boundary.");
 		case EHansaPlacementFailure::FoundationTooSteep: return LOCTEXT("FoundationSlopeRemedy", "Choose fully loaded, gentler ground: at most 15 degrees and 1.2 m foundation height.");
 		case EHansaPlacementFailure::TerrainNotBuildable: return LOCTEXT("TerrainRemedy", "Choose buildable land.");
 		case EHansaPlacementFailure::None: return LOCTEXT("ConfirmRemedy", "Confirm to begin construction.");
@@ -378,6 +392,12 @@ bool UHansaBuildMenuPresentationModel::BuildCatalogFromDefinitions(
 			OutChains.Add(MoveTemp(Chain));
 		}
 	}
+    if(const auto* Policy=Registry.FindCityTradePolicyForCity(TEXT("City.Rostock"));Policy&&!Policy->TradeStationSites.IsEmpty()){
+        FHansaBuildCardPresentation Card;Card.StableId=TEXT("Building.TradeHouse");Card.Name=LOCTEXT("TradeHouse","Trade house · Rostock");Card.Category=EHansaBuildCategory::Harbor;Card.Tier=LOCTEXT("ForeignPresence","Foreign presence");Card.Footprint=LOCTEXT("TradeHouseFootprint","8 × 8 m · commercial lease");Card.InputOutput=LOCTEXT("TradeHouseDelivery","Pay on placement; arrange automatic construction delivery from the site details.");Card.BrowsingTierMask=7;
+        if(const auto* Stage=Registry.GetPresenceStages().FindByPredicate([&](const auto& V){return V.GrantedCapabilityIds.Contains(TEXT("PresenceCapability.TradeStation"))&&Registry.IsValidPresenceTransition(TEXT("City.Rostock"),Policy->InitialStageId,V.StableId);})){
+            FString Cost=FString::Printf(TEXT("%lld pfennig"),Stage->UpgradeCostPfennig);for(const auto& G:Stage->UpgradeGoods)Cost+=TEXT(" · ")+FormatQuantity(G.QuantityMilliUnits)+TEXT(" ")+GoodName(Registry,G.GoodId);Card.Cost=FText::FromString(Cost);
+        }OutCards.Add(MoveTemp(Card));
+    }
 	OutCards.Sort([](const FHansaBuildCardPresentation& Left, const FHansaBuildCardPresentation& Right)
 	{
 		if (Left.Category != Right.Category) return static_cast<uint8>(Left.Category) < static_cast<uint8>(Right.Category);
@@ -452,6 +472,8 @@ bool UHansaBuildMenuPresentationModel::InitializeForLubeck(
 void UHansaBuildMenuPresentationModel::SetOpen(const bool bOpen)
 {
     if (bOpen && !bConstructionAllowed) return;
+    const bool HadShips = bShipsOpen;
+    bShipsOpen = false;
 	const FHansaBuildMenuSnapshot Previous = Snapshot;
 	Snapshot.bOpen = bOpen;
 	if (!bOpen) Snapshot.bDemolitionMode = false;
@@ -471,12 +493,45 @@ void UHansaBuildMenuPresentationModel::SetOpen(const bool bOpen)
 		Snapshot.ValidationRemedy = FText::GetEmpty();
 	}
 	PublishIfChanged(Previous);
+    if (HadShips) Changed.Broadcast(Snapshot, ++Revision);
+}
+
+void UHansaBuildMenuPresentationModel::SetShips(TArray<FHansaShipMenuEntry> Entries)
+{
+ Entries.Sort([](const auto& A, const auto& B) { return A.Id < B.Id; });
+ if (Ships == Entries) return;
+ Ships = MoveTemp(Entries);
+ if (!Ships.ContainsByPredicate([this](const auto& E) { return E.Id == SelectedShip; })) { SelectedShip = 0; ShipFeedback = FText::GetEmpty(); }
+ Changed.Broadcast(Snapshot, ++Revision);
+}
+
+bool UHansaBuildMenuPresentationModel::ToggleShips()
+{
+ const bool Open = !bShipsOpen;
+ ShipFeedback = FText::GetEmpty();
+ SetOpen(false); // Cancels placement and demolition before browsing the fleet.
+ bShipsOpen = Open;
+ Snapshot.FocusedSemanticId = TEXT("BuildMenu.Ships");
+ Changed.Broadcast(Snapshot, ++Revision);
+ return true;
+}
+
+bool UHansaBuildMenuPresentationModel::SelectShip(int64 Id, bool bCenter)
+{
+ if (!bShipsOpen || !Ships.ContainsByPredicate([Id](const auto& E) { return E.Id == Id; })) return false;
+ SelectedShip = Id;
+ Snapshot.FocusedSemanticId = FName(*FString::Printf(TEXT("BuildMenu.Ship.%lld"), Id));
+ const bool Success = !bCenter || (ShipIntent && ShipIntent(Id, true));
+ ShipFeedback = Success ? FText::GetEmpty() : LOCTEXT("ShipPositionUnavailable", "This ship's world position is unavailable. Open the trade map to inspect its voyage.");
+ Changed.Broadcast(Snapshot, ++Revision);
+ return Success;
 }
 
 bool UHansaBuildMenuPresentationModel::SelectCategory(const EHansaBuildCategory Category)
 {
     if (!bConstructionAllowed) return false;
 	if (GetSimulationHost() == nullptr || !Snapshot.Categories.Contains(Category)) return false;
+    bShipsOpen = false;
 	const FHansaBuildMenuSnapshot Previous = Snapshot;
 	EndBuildingStroke();
 	Snapshot.SelectedProductionChainOutputGoodId = NAME_None;
@@ -551,6 +606,7 @@ const FHansaBuildCardPresentation* UHansaBuildMenuPresentationModel::FindCard(co
 
 bool UHansaBuildMenuPresentationModel::IsCardVisible(const FName BuildingId) const
 {
+ if(PlacementCity==TEXT("City.Rostock")&&BuildingId!=TEXT("Building.Warehouse")&&BuildingId!=TEXT("Building.Market")&&BuildingId!=TEXT("Building.Dock")&&BuildingId!=TEXT("Building.TradeHouse"))return false;
 	const auto* Card = FindCard(BuildingId);
  if (!Card || !(Card->BrowsingTierMask & (1 << static_cast<uint8>(Snapshot.SelectedTier)))) return false;
  // Families remain in the internal catalog for random placement and previews.
@@ -606,7 +662,8 @@ bool UHansaBuildMenuPresentationModel::SelectBuilding(FName BuildingId)
 		BuildingId = PickRandomLabourCompound();
 	}
 	const FHansaBuildCardPresentation* Selected = FindCard(BuildingId);
-	if (Selected == nullptr || Selected->BrowsingTierMask == 0 || Selected->bLocked || !Selected->bAvailable) return false;
+	if (Selected == nullptr || (PlacementCity==TEXT("City.Rostock")&&BuildingId!=TEXT("Building.Warehouse")&&BuildingId!=TEXT("Building.Market")&&BuildingId!=TEXT("Building.Dock")&&BuildingId!=TEXT("Building.TradeHouse")) || Selected->BrowsingTierMask == 0 || Selected->bLocked || !Selected->bAvailable) return false;
+	if(BuildingId==TEXT("Building.TradeHouse")){if(TradeHousePlacementRequested)TradeHousePlacementRequested();PlacementCity=TEXT("City.Rostock");PlacementLease=0;}
 	const auto DefinitionId = FHansaBuildingTypeId::TryParse(BuildingId.ToString());
 	if (!DefinitionId) return false;
 	const FHansaBuildMenuSnapshot Previous = Snapshot;
@@ -627,7 +684,7 @@ bool UHansaBuildMenuPresentationModel::SelectBuilding(FName BuildingId)
 	Snapshot.bDraggingCard = false; Snapshot.bPointerOverWorld = false; Snapshot.FootprintCells.Reset();
 	ResetRoadPreview(Snapshot);
 	Snapshot.ValidationCause = FText::GetEmpty(); Snapshot.ValidationRemedy = LOCTEXT("ChooseTarget", "Move over the city to preview. Click to build; hold and move to place more.");
-	Runtime->Placement.SelectBuilding(Host->GetCityId(), DefinitionId.Value, BuildingId == TEXT("Building.Road"), Snapshot.bRepeat);
+	Runtime->Placement.SelectBuilding(FHansaCityDefinitionId::TryParse(PlacementCity.ToString()).Value, DefinitionId.Value, BuildingId == TEXT("Building.Road"), Snapshot.bRepeat);
 	PublishIfChanged(Previous); return true;
 }
 
@@ -811,7 +868,7 @@ TOptional<TPair<FIntPoint, int32>> UHansaBuildMenuPresentationModel::FindValidSh
 	const auto DefinitionId = FHansaBuildingTypeId::TryParse(Snapshot.SelectedBuildingId.ToString());
 	if (Definition == nullptr || !Definition->bRequiresShoreline || !DefinitionId) return {};
 
-	const FHansaPlacementMapInitialization* Map = Host->FindPlacementMap();
+	const FHansaPlacementMapInitialization* Map = Host->FindPlacementMap(FHansaCityDefinitionId::TryParse(PlacementCity.ToString()).Value);
 	if (Map == nullptr) return {};
 	// This is the authored central quay approach. Validation, rather than this preference, remains authoritative.
 	const FIntPoint PreferredHarborArea(27, 17);
@@ -833,7 +890,7 @@ TOptional<TPair<FIntPoint, int32>> UHansaBuildMenuPresentationModel::FindValidSh
 		for (int32 RotationQuarterTurns = 0; RotationQuarterTurns < 4; ++RotationQuarterTurns)
 		{
 			FHansaPlacementSpec Spec;
-			Spec.CityId = Host->GetCityId();
+			Spec.CityId = FHansaCityDefinitionId::TryParse(PlacementCity.ToString()).Value;
 			Spec.BuildingDefinitionId = DefinitionId.Value;
 			Spec.Anchor = Candidate;
 			Spec.Rotation = static_cast<EHansaGridRotation>(RotationQuarterTurns);
@@ -873,7 +930,7 @@ bool UHansaBuildMenuPresentationModel::ToggleRepeatIntent()
 	const FHansaBuildMenuSnapshot Previous = Snapshot; Snapshot.bRepeat = !Snapshot.bRepeat;
 	const FName Selected = Snapshot.SelectedBuildingId; Runtime->Placement.Cancel();
 	const auto DefinitionId = FHansaBuildingTypeId::TryParse(Selected.ToString());
-	Runtime->Placement.SelectBuilding(Host->GetCityId(), DefinitionId.Value, Selected == TEXT("Building.Road"), Snapshot.bRepeat);
+	Runtime->Placement.SelectBuilding(FHansaCityDefinitionId::TryParse(PlacementCity.ToString()).Value, DefinitionId.Value, Selected == TEXT("Building.Road"), Snapshot.bRepeat);
 	for (int32 Turn = 0; Turn < Snapshot.RotationQuarterTurns; ++Turn) Runtime->Placement.RotateClockwise();
 	Snapshot.bHasTarget = false; Snapshot.bCanConfirm = false; Snapshot.Feedback = EHansaPlacementFeedback::None;
 	ResetRoadPreview(Snapshot);
@@ -1001,7 +1058,7 @@ bool UHansaBuildMenuPresentationModel::ConfirmIntent(const bool bKeepSelection)
 		Runtime->Placement.Cancel();
 		if (!Snapshot.SelectedBuildingId.IsNone())
 		{
-			Runtime->Placement.SelectBuilding(Host->GetCityId(),
+			Runtime->Placement.SelectBuilding(FHansaCityDefinitionId::TryParse(PlacementCity.ToString()).Value,
 				FHansaBuildingTypeId::TryParse(Snapshot.SelectedBuildingId.ToString()).Value, false, Snapshot.bRepeat);
 			for (int32 Turn = 0; Turn < Snapshot.RotationQuarterTurns; ++Turn) Runtime->Placement.RotateClockwise();
 		}
@@ -1012,6 +1069,7 @@ bool UHansaBuildMenuPresentationModel::ConfirmIntent(const bool bKeepSelection)
 bool UHansaBuildMenuPresentationModel::ToggleDemolitionIntent()
 {
 	if (!bConstructionAllowed || !GetSimulationHost()) return false;
+    bShipsOpen = false;
 	const bool bEnable = !Snapshot.bDemolitionMode;
 	CancelIntent();
 	const FHansaBuildMenuSnapshot Previous = Snapshot;
@@ -1095,6 +1153,26 @@ void UHansaBuildMenuPresentationModel::RefreshValidation()
 	Snapshot.bCanConfirm = false;
 	UHansaRuntimeSimulationHost* Host = GetSimulationHost();
 	if (Host == nullptr || !Snapshot.bHasTarget) return;
+    if(Snapshot.SelectedBuildingId==TEXT("Building.TradeHouse")){
+        FHansaPlacementSpec Spec;Spec.CityId=FHansaCityDefinitionId::TryParse(PlacementCity.ToString()).Value;Spec.BuildingDefinitionId=FHansaBuildingTypeId::TryParse(TEXT("Building.TradeHouse")).Value;Spec.Anchor={Snapshot.AnchorCell.X,Snapshot.AnchorCell.Y};Spec.Rotation=static_cast<EHansaGridRotation>(Snapshot.RotationQuarterTurns);
+        FString Error=Host->TradeHousePlacementError(Spec,bool(RemotePlacementProjection));
+        if(RemotePlacementProjection){
+            const auto* Wire=RemotePlacementProjection();
+            // Free reservation qualification is separate from paid world placement.
+            const auto* E=Wire?Wire->StationEstablishments.FindByPredicate([&](const auto& E){return E.CityId==PlacementCity&&E.bHasAccess&&!E.StationId&&E.bHasCost&&E.Sites.ContainsByPredicate([](const auto& S){return S.bEligible;});}):nullptr;
+            if(!Wire||Wire->Revision<=0||!E)Error=TEXT("Wait for current city permissions, or choose an available trade-house lease.");
+            else if(const auto* Policy=Host->GetEconomicRegistry()->FindCityTradePolicyForCity(Spec.CityId.ToString())){
+                const auto* Stage=Host->GetEconomicRegistry()->GetPresenceStages().FindByPredicate([&](const auto& S){return S.GrantedCapabilityIds.Contains(TEXT("PresenceCapability.TradeStation"))&&Host->GetEconomicRegistry()->IsValidPresenceTransition(Spec.CityId.ToString(),Policy->InitialStageId,S.StableId);});
+                if(!Stage||Wire->OwnerMoneyPfennig<Stage->UpgradeCostPfennig)Error=TEXT("Not enough money to place this trade house.");
+            }
+        }
+        Snapshot.bCanConfirm=Error.IsEmpty();Snapshot.FootprintCells.Reset();
+        for(int32 X=0;X<2;++X)for(int32 Y=0;Y<2;++Y)Snapshot.FootprintCells.Add(Snapshot.AnchorCell+FIntPoint(X,Y));
+        Snapshot.Feedback=Snapshot.bCanConfirm?(RemotePlacementProjection?EHansaPlacementFeedback::Warning:EHansaPlacementFeedback::Valid):EHansaPlacementFeedback::Invalid;
+        Snapshot.ValidationCause=FText::FromString(Error.IsEmpty()?(RemotePlacementProjection?TEXT("Site preview · server checks availability on placement"):TEXT("Valid trade-house site · payment on placement")):Error);
+        Snapshot.ValidationRemedy=LOCTEXT("TradeHouseSupply","After placement, choose Arrange delivery. A Cog collects exact missing materials through a connected home Market and dock, then delivers them in Rostock. Full ships can wait or use reviewed construction priority.");
+        Snapshot.PlacementSummary=FindCard(Snapshot.SelectedBuildingId)->Cost;return;
+    }
 	if (Snapshot.bRoadDrawing)
 	{
 		RefreshRoadValidation();
@@ -1119,6 +1197,13 @@ void UHansaBuildMenuPresentationModel::RefreshValidation()
 	Snapshot.FootprintCells.Reset();
 	for (const FHansaGridCoordinate Cell : Validation.GetOccupiedCells()) Snapshot.FootprintCells.Add(FIntPoint(Cell.X, Cell.Y));
 	Snapshot.bCanConfirm = Validation.CanPlace();
+    if(PlacementCity==TEXT("City.Rostock")&&PlacementLease)
+    {
+        auto P=Host->BuildProjection();
+        const auto* L=P?P.Value.GetLeasedPlots().FindByPredicate([&](const auto& V){return V.Id.GetValue()==PlacementLease&&V.OwnerId==Host->GetHouseId()&&V.bActive;}):nullptr;
+        if(!L||Snapshot.FootprintCells.ContainsByPredicate([&](const auto C){return C.X<L->BoundsMin.X||C.X>L->BoundsMax.X||C.Y<L->BoundsMin.Y||C.Y>L->BoundsMax.Y;}))
+        {Snapshot.bCanConfirm=false;Snapshot.Feedback=EHansaPlacementFeedback::Invalid;Snapshot.ValidationCause=FText::FromString(TEXT("Footprint is outside the selected active lease."));Snapshot.ValidationRemedy=FText::FromString(TEXT("Move inside its brass boundary or choose another lease in Expansion."));return;}
+    }
 	const FHansaCompiledBuildingDefinition* Definition = Host->FindBuildingDefinition(Snapshot.SelectedBuildingId.ToString());
 	if (Snapshot.bCanConfirm && (Snapshot.bRepeat || (Definition != nullptr && Definition->bRequiresShoreline)))
 	{
@@ -1256,12 +1341,22 @@ void UHansaBuildMenuPresentationModel::RefreshAvailability()
 {
 	UHansaRuntimeSimulationHost* Host = GetSimulationHost();
 	if (Host == nullptr) return;
+    FHansaTradeConstruction Foreign;
+    if(PlacementCity==TEXT("City.Rostock"))if(auto P=Host->BuildProjection();P)Foreign=Hansa::UI::BuildTradeConstruction(P.Value,*Host->GetEconomicRegistry(),Host->GetHouseId(),PlacementCity,PlacementLease,NAME_None);
 	for (FHansaBuildCardPresentation& Card : Snapshot.Cards)
 	{
+        if(Card.StableId==TEXT("Building.TradeHouse")){Card.bAvailable=true;Card.bLocked=false;Card.AvailabilityReason=FText::GetEmpty();continue;}
+        if(PlacementCity==TEXT("City.Rostock"))
+        {
+            const auto* O=Foreign.Options.FindByPredicate([&](const auto& V){return V.Id==Card.StableId;});
+            Card.bAvailable=O&&O->bPermitted&&O->bAffordable&&!Card.bLocked;
+            Card.AvailabilityReason=O?O->Reason:FText::FromString(TEXT("This category is not permitted by the selected lease."));
+            continue;
+        }
 		Card.bAvailable = !Card.bLocked;
 		Card.AvailabilityReason = Card.bLocked ? Card.LockedReason : FText::GetEmpty();
 		if (Card.bLocked) continue;
-		const FHansaConstructionCostProjection Cost = Host->QueryConstructionCost(Card.StableId.ToString());
+		const FHansaConstructionCostProjection Cost = Host->QueryConstructionCost(Card.StableId.ToString(),FHansaCityDefinitionId::TryParse(PlacementCity.ToString()).Value);
 		if (Cost.IsAffordable()) continue;
 		Card.bAvailable = false;
 		TArray<FString> Missing;
@@ -1365,8 +1460,9 @@ UHansaRuntimeSimulationHost* UHansaBuildMenuPresentationModel::GetSimulationHost
 void UHansaBuildMenuPresentationModel::SetConstructionAllowed(bool Allowed)
 {
     if(bConstructionAllowed==Allowed)return;
-    if(!Allowed){CancelIntent();SetOpen(false);}
     bConstructionAllowed=Allowed;
+    if(!Allowed){CancelIntent();SetOpen(false);}
+    Changed.Broadcast(Snapshot, ++Revision);
 }
 
 uint8 UHansaBuildMenuPresentationModel::GetAdjacentRoadMaskForPreview() const
@@ -1383,4 +1479,20 @@ uint8 UHansaBuildMenuPresentationModel::GetAdjacentRoadMaskForPreview() const
 uint64 UHansaBuildMenuPresentationModel::GetParcelSeedForPreview() const
 {
  const auto* Host=GetSimulationHost();return Host?Host->GetNextParcelSeed():0;
+}
+
+void UHansaBuildMenuPresentationModel::SetPlacementCity(FName City)
+{
+ if(City!=TEXT("City.Lubeck")&&City!=TEXT("City.Rostock"))return;
+ CancelIntent();PlacementCity=City;PlacementLease=0;RefreshAvailability();
+}
+bool UHansaBuildMenuPresentationModel::BeginLeasedPlacement(FName City,uint64 Lease,FName Building)
+{
+ auto* Host=GetSimulationHost();if(!Host||City!=TEXT("City.Rostock"))return false;
+ auto P=Host->BuildProjection();if(!P)return false;
+ const auto View=Hansa::UI::BuildTradeConstruction(P.Value,*Host->GetEconomicRegistry(),Host->GetHouseId(),City,Lease,Building);
+ const auto* O=View.Options.FindByPredicate([&](const auto& V){return V.Id==Building;});
+ if(!Lease||View.SelectedLease!=Lease||!O||!O->bPermitted||!O->bAffordable)return false;
+ SetPlacementCity(City);PlacementLease=Lease;SetConstructionAllowed(true);RefreshAvailability();
+ return SelectBuilding(Building);
 }

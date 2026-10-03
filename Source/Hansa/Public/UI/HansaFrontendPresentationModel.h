@@ -9,6 +9,7 @@ struct HANSA_API FHansaFrontendSnapshot {
  EHansaFrontendPage Page=EHansaFrontendPage::Title;
  bool bHasSession=false,bReady=false,bCanContinue=false;
  EHansaSaveSlotId ContinueSlot=EHansaSaveSlotId::Manual;
+ FName ContinueSaveId=TEXT("manual");
  FText Message;
  FName PendingAction;
  float Volume=1.f,CameraSpeed=1.f;

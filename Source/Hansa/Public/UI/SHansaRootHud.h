@@ -35,6 +35,7 @@ struct FHansaSaveLoadPresentationSnapshot;
 struct FHansaTradeMapSnapshot;
 struct FHansaResearchPresentationSnapshot;
 namespace Hansa::UI { class SHansaBuildMenu; class SHansaMinimap; }
+namespace Hansa::UI { class FHansaLandOverlayUiState; class SHansaLandInspector; }
 namespace Hansa::UI { class SHansaCityOverview; }
 namespace Hansa::UI { class SHansaContextInspector; }
 namespace Hansa::UI { class SHansaResearchScreen; }
@@ -79,6 +80,11 @@ namespace Hansa::UI
 		[[nodiscard]] TArray<FHansaHudSemanticNode> GetSemanticSnapshot() const;
 		[[nodiscard]] TArray<FString> GetControllerFocusOrder() const;
 		bool ActivateSemanticId(const FString& SemanticId);
+		bool SelectLandWorldHit(const FHitResult& Hit);
+		void CloseLandSelection();
+		void CloseAllMenus();
+        TSharedPtr<FHansaLandOverlayUiState> GetLandState() const { return LandState; }
+        void RefreshLandPlacement();
 		bool FocusSemanticId(const FString& SemanticId);
 		virtual bool SupportsKeyboardFocus() const override { return true; }
 		virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
@@ -217,6 +223,10 @@ namespace Hansa::UI
 		TSharedPtr<STextBlock> DateText;
 		TSharedPtr<STextBlock> ResearchText, InfluenceText;
         TSharedPtr<SHansaMinimap> MinimapWidget;
+        TSharedPtr<FHansaLandOverlayUiState> LandState;
+        TSharedPtr<SHansaLandInspector> LandInspectorWidget;
+        double LastLandRefreshSeconds = 0.0;
+        bool bLastLandPanelShift = false;
 		TSharedPtr<SButton> ResearchButton;
 		TSharedPtr<STextBlock> ConnectionText;
 		TSharedPtr<STextBlock> FpsText;

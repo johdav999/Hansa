@@ -1,0 +1,206 @@
+{
+  "/Game/Hansa/Characters/Laborer01/A_Laborer01_Dig.A_Laborer01_Dig": {
+    "class": "AnimSequence",
+    "dependencies": [
+      "/Script/InterchangeEngine",
+      "/Script/MovieScene",
+      "/Script/AnimationModifiers",
+      "/Script/ControlRig",
+      "/Script/AnimationData",
+      "/ACLPlugin/ACLAnimBoneCompressionSettings",
+      "/ACLPlugin/ACLAnimCurveCompressionSettings",
+      "/Engine/Animation/DefaultVariableFrameStrippingSettings",
+      "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton"
+    ],
+    "sha256": "36648f0d2fd493c5fcfe522e0b285c27cecdb29ba4f5c6413a8c31b9459242c6",
+    "seconds": 16.375,
+    "frames": 393,
+    "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+  },
+  "/Game/Hansa/Characters/Laborer01/A_Laborer01_Idle.A_Laborer01_Idle": {
+    "class": "AnimSequence",
+    "dependencies": [
+      "/Script/InterchangeEngine",
+      "/Script/MovieScene",
+      "/Script/AnimationModifiers",
+      "/Script/ControlRig",
+      "/Script/AnimationData",
+      "/ACLPlugin/ACLAnimBoneCompressionSettings",
+      "/ACLPlugin/ACLAnimCurveCompressionSettings",
+      "/Engine/Animation/DefaultVariableFrameStrippingSettings",
+      "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton"
+    ],
+    "sha256": "c9152a337925c87b036912ee6690d03bb78483792c0cb8e95edd5925a068dd0e",
+    "seconds": 15.333333015441895,
+    "frames": 368,
+    "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+  },
+  "/Game/Hansa/Characters/Laborer01/A_Laborer01_LookAround.A_Laborer01_LookAround": {
+    "class": "AnimSequence",
+    "dependencies": [
+      "/Script/InterchangeEngine",
+      "/Script/MovieScene",
+      "/Script/AnimationModifiers",
+      "/Script/ControlRig",
+      "/Script/AnimationData",
+      "/ACLPlugin/ACLAnimBoneCompressionSettings",
+      "/ACLPlugin/ACLAnimCurveCompressionSettings",
+      "/Engine/Animation/DefaultVariableFrameStrippingSettings",
+      "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton"
+    ],
+    "sha256": "d4419f08c75ddd3a0f103a238ed33754da0d8bdf15604a2af85e848f64f24353",
+    "seconds": 15.583333015441895,
+    "frames": 374,
+    "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+  },
+  "/Game/Hansa/Characters/Laborer01/A_Laborer01_Shovel.A_Laborer01_Shovel": {
+    "class": "AnimSequence",
+    "dependencies": [
+      "/Script/InterchangeEngine",
+      "/Script/MovieScene",
+      "/Script/AnimationModifiers",
+      "/Script/ControlRig",
+      "/Script/AnimationData",
+      "/ACLPlugin/ACLAnimBoneCompressionSettings",
+      "/ACLPlugin/ACLAnimCurveCompressionSettings",
+      "/Engine/Animation/DefaultVariableFrameStrippingSettings",
+      "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton"
+    ],
+    "sha256": "143fa6f39c71e1ff71f73616300473f458649d61651a0ddb36157f76e6ba376e",
+    "seconds": 15.5,
+    "frames": 372,
+    "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+  },
+  "/Game/Hansa/Characters/Laborer01/A_Laborer01_StandingRelax.A_Laborer01_StandingRelax": {
+    "class": "AnimSequence",
+    "dependencies": [
+      "/Script/InterchangeEngine",
+      "/Script/MovieScene",
+      "/Script/AnimationModifiers",
+      "/Script/ControlRig",
+      "/Script/AnimationData",
+      "/ACLPlugin/ACLAnimBoneCompressionSettings",
+      "/ACLPlugin/ACLAnimCurveCompressionSettings",
+      "/Engine/Animation/DefaultVariableFrameStrippingSettings",
+      "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton"
+    ],
+    "sha256": "57282c4f816561a47475587afd77abe768f1c3dee4bd2389a01bc958209d0757",
+    "seconds": 17.58333396911621,
+    "frames": 422,
+    "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+  },
+  "/Game/Hansa/Characters/Laborer01/A_Laborer01_Walk.A_Laborer01_Walk": {
+    "class": "AnimSequence",
+    "dependencies": [
+      "/Script/InterchangeEngine",
+      "/Script/MovieScene",
+      "/Script/AnimationModifiers",
+      "/Script/ControlRig",
+      "/Script/AnimationData",
+      "/ACLPlugin/ACLAnimBoneCompressionSettings",
+      "/ACLPlugin/ACLAnimCurveCompressionSettings",
+      "/Engine/Animation/DefaultVariableFrameStrippingSettings",
+      "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton"
+    ],
+    "sha256": "e44bcdb010381aae4a0037fb225d60064d5865da428e8ec488a145ee6d8498d0",
+    "seconds": 2.3333332538604736,
+    "frames": 56,
+    "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+  },
+  "/Game/Hansa/Characters/Laborer01/A_Laborer01_WaveGoodbye.A_Laborer01_WaveGoodbye": {
+    "class": "AnimSequence",
+    "dependencies": [
+      "/Script/InterchangeEngine",
+      "/Script/MovieScene",
+      "/Script/AnimationModifiers",
+      "/Script/ControlRig",
+      "/Script/AnimationData",
+      "/ACLPlugin/ACLAnimBoneCompressionSettings",
+      "/ACLPlugin/ACLAnimCurveCompressionSettings",
+      "/Engine/Animation/DefaultVariableFrameStrippingSettings",
+      "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton"
+    ],
+    "sha256": "7295aa5a90a635d5fc33ede8efff3cfd85f5357e170331a88461db8c87fb57a4",
+    "seconds": 5.875,
+    "frames": 141,
+    "skeleton": "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton"
+  },
+  "/Game/Hansa/Characters/Laborer01/LOD_Laborer01.LOD_Laborer01": {
+    "class": "SkeletalMeshLODSettings",
+    "dependencies": [],
+    "sha256": "595576cc095508a34dc69343a0810076abb350a96fe6fa05d6c786379ad13bbb"
+  },
+  "/Game/Hansa/Characters/Laborer01/M_Laborer01.M_Laborer01": {
+    "class": "Material",
+    "dependencies": [
+      "/Game/Hansa/Characters/Laborer01/T_Laborer01_BaseColor",
+      "/Game/Hansa/Characters/Laborer01/T_Laborer01_Metallic",
+      "/Game/Hansa/Characters/Laborer01/T_Laborer01_Normal",
+      "/Game/Hansa/Characters/Laborer01/T_Laborer01_Roughness"
+    ],
+    "sha256": "c59aef38d292bd829001556427f968f220ee688c5fbbbddb169f93eb61e3a44b",
+    "used_with_skeletal_mesh": true
+  },
+  "/Game/Hansa/Characters/Laborer01/SK_Laborer01.SK_Laborer01": {
+    "class": "SkeletalMesh",
+    "dependencies": [
+      "/Script/InterchangeEngine",
+      "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton",
+      "/Game/Hansa/Characters/Laborer01/LOD_Laborer01",
+      "/Game/Hansa/Characters/Laborer01/M_Laborer01"
+    ],
+    "sha256": "2a0a67f9c50dff7bdd06a6ef9a29ab0f08f75160ad2a1c68eae091a7cc2f32c8",
+    "lod_vertices": [
+      12062,
+      6876,
+      3268
+    ],
+    "bounds": "<Struct 'BoxSphereBounds' (0x00000238F6DCA000) {origin: {x: 6.854099, y: 1.498502, z: 86.067347}, box_extent: {x: 34.594337, y: 19.834134, z: 88.370763}, sphere_radius: 96.951291}>",
+    "materials": [
+      "/Game/Hansa/Characters/Laborer01/M_Laborer01.M_Laborer01"
+    ]
+  },
+  "/Game/Hansa/Characters/Laborer01/SK_Laborer01_Skeleton.SK_Laborer01_Skeleton": {
+    "class": "Skeleton",
+    "dependencies": [
+      "/Game/Hansa/Characters/Laborer01/SK_Laborer01"
+    ],
+    "sha256": "a21951135521ade6ca6283372a3be8f53c9eb85602d90fea19f7b3c217c69145"
+  },
+  "/Game/Hansa/Characters/Laborer01/T_Laborer01_BaseColor.T_Laborer01_BaseColor": {
+    "class": "Texture2D",
+    "dependencies": [
+      "/Script/InterchangeEngine"
+    ],
+    "sha256": "dc1415e3355422e66bb6ec7d948b40897df31b506bad924931a31661c8c45319",
+    "srgb": true,
+    "compression": "<TextureCompressionSettings.TC_DEFAULT: 0>"
+  },
+  "/Game/Hansa/Characters/Laborer01/T_Laborer01_Metallic.T_Laborer01_Metallic": {
+    "class": "Texture2D",
+    "dependencies": [
+      "/Script/InterchangeEngine"
+    ],
+    "sha256": "4b1a54e5703edb56540d40d2df81ed4736f79cd41ffc59c298b2b3b26eebe29d",
+    "srgb": false,
+    "compression": "<TextureCompressionSettings.TC_MASKS: 2>"
+  },
+  "/Game/Hansa/Characters/Laborer01/T_Laborer01_Normal.T_Laborer01_Normal": {
+    "class": "Texture2D",
+    "dependencies": [
+      "/Script/InterchangeEngine"
+    ],
+    "sha256": "a9c48236fe97b76a8f6098d56a3866c365012d040a5f868289f2b857532a6050",
+    "srgb": false,
+    "compression": "<TextureCompressionSettings.TC_NORMALMAP: 1>"
+  },
+  "/Game/Hansa/Characters/Laborer01/T_Laborer01_Roughness.T_Laborer01_Roughness": {
+    "class": "Texture2D",
+    "dependencies": [
+      "/Script/InterchangeEngine"
+    ],
+    "sha256": "b114a780a8a393524e3bb7a8db7deae27f33ab7ecf861f247ffc2b9d0a373910",
+    "srgb": false,
+    "compression": "<TextureCompressionSettings.TC_MASKS: 2>"
+  }
+}

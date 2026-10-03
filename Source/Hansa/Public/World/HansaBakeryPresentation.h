@@ -25,4 +25,12 @@ public:
 	TObjectPtr<UStaticMeshComponent> BreadCrate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Presentation")
 	TObjectPtr<UStaticMeshComponent> Sign;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Presentation")
+	TObjectPtr<UStaticMeshComponent> BreadRack;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Presentation")
+	TObjectPtr<UStaticMeshComponent> FirewoodBasket;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Presentation")
+	TObjectPtr<UStaticMeshComponent> Handcart;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|Presentation")
+	TObjectPtr<UStaticMeshComponent> Millstone;
 };

@@ -1,0 +1,44 @@
+{
+  "status": "awaiting explicit production-promotion approval",
+  "packages": [
+    {
+      "source": "Content/Hansa/Generated/Staging/Rostock_P31/L_Rostock_Quarter.umap",
+      "destination": "Content/Hansa/World/Cities/Rostock/L_Rostock_Quarter.umap",
+      "bytes": 260633,
+      "sha256": "eddb97c64b208f3c03cab6d70b69f10cd5cf9721268143be18a264102d1550c8"
+    },
+    {
+      "source": "Content/Hansa/Generated/Staging/Rostock_P31/M_Rostock_Ground.uasset",
+      "destination": "Content/Hansa/World/Cities/Rostock/M_Rostock_Ground.uasset",
+      "bytes": 9538,
+      "sha256": "10f33e5eeccb76b9e5082f4525710d84083c2191c8a3b9c7acee65bd65ecdb38"
+    },
+    {
+      "source": "Content/Hansa/Generated/Staging/Rostock_P31/M_Rostock_Warnow.uasset",
+      "destination": "Content/Hansa/World/Cities/Rostock/M_Rostock_Warnow.uasset",
+      "bytes": 9319,
+      "sha256": "a79612ca55cc3933670c4fbef0a014e79e27edbfe34a572d85c3b0a95f8207b7"
+    },
+    {
+      "source": "Content/Hansa/Generated/Staging/Rostock_P31/MI_Rostock_Warnow.uasset",
+      "destination": "Content/Hansa/World/Cities/Rostock/MI_Rostock_Warnow.uasset",
+      "bytes": 4952,
+      "sha256": "c967ef26948656397b6e477c80db8a38629c9af3a9d567bf236491f32655cdbf"
+    },
+    {
+      "source": "Content/Hansa/Generated/Staging/Rostock_P31/SM_Rostock_Warnow.uasset",
+      "destination": "Content/Hansa/World/Cities/Rostock/SM_Rostock_Warnow.uasset",
+      "bytes": 10206,
+      "sha256": "9be9e33dadcddb12ae8bebf25b739fbb7cb29c2d7cd60f548a9d66f3a28fbbf0"
+    }
+  ],
+  "dependency_review": "Saved/TradeWorkspace/TG13/production-promotion-review.tsv",
+  "operation": "Duplicate the five packages, remap their internal references, retain staged originals, add the production quarter to the cook set, then verify production loading and dependency exclusions. Existing production files must not be overwritten.",
+  "validation_before_promotion": [
+    "Hansa.World.Rostock.PlacementAuthoring",
+    "Hansa.UI.TradeMap.Construction",
+    "Hansa.UI.TradeConstruction.RealViewport at 1280x720 and 1920x1080"
+  ],
+  "content_changes": "No visual edits: same reviewed native Landscape, Water and existing quarter meshes. Reference remapping changes serialized package bytes.",
+  "approval_reason": "Root AGENTS.md requires explicit approval before promotion to production content; automatic approval review rejected promotion on 2026-09-24."
+}

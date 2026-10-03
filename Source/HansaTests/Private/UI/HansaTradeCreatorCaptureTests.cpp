@@ -78,9 +78,15 @@ public:
   if(FPlatformTime::Seconds()-Ready<.7)return false;
   if(Stage==6){
    const auto P=Host->BuildProjection();const auto* R=P?P.Value.GetRoutes().FindByPredicate([this](const auto& It){return It.Id.GetValue()==RouteId;}):nullptr;
+   const bool HasDock=P&&P.Value.GetPlacements().ContainsByPredicate([](const auto& Placement){return Placement.Spec.CityId.ToString()==TEXT("City.Lubeck")&&Placement.Spec.BuildingDefinitionId.ToString()==TEXT("Building.Dock");});
+   if(!HasDock){
+    Test->TestTrue(TEXT("New Game retains the explicit port prerequisite"),Model->GetSnapshot().CreatorReview.ToString().Contains(TEXT("No home dock")));
+    Hud->GetPresentationModel()->SetSpeed(EHansaHudGameSpeed::Paused);
+   } else {
    if(!R||R->LastTransfer.Kind!=EHansaRouteCargoActionKind::Unload||R->LastTransfer.CityId.ToString()!=TEXT("City.Rostock")||R->LastTransfer.AppliedQuantity.GetRawValue()<=0)return false;
    Test->TestTrue(TEXT("Ordinary game clock produces Rostock cargo delivery"),true);
    Delivered=R->LastTransfer.AppliedQuantity.GetRawValue();Hud->GetPresentationModel()->SetSpeed(EHansaHudGameSpeed::Paused);
+   }
   }
   TArray<FColor> Pixels;FIntVector Size;
   if(!FSlateApplication::Get().TakeScreenshot(V->GetGameViewportWidget().ToSharedRef(),Pixels,Size)){Test->AddError(TEXT("Native screenshot failed"));return true;}
@@ -90,7 +96,7 @@ public:
    const auto Nodes=Root->GetSemanticSnapshot();const auto* N=Nodes.FindByPredicate([](const auto& It){return It.Id==TEXT("TradeMap.Creator.Activate");});
    Test->TestTrue(TEXT("Departure action is visible, within viewport and at least 48px high"),N&&N->State.bVisible&&N->State.bEnabled&&N->Bounds.Height()>=47&&N->Bounds.Min.X>=0&&N->Bounds.Min.Y>=0&&N->Bounds.Max.X<=X&&N->Bounds.Max.Y<=Y);
   }
-  const TCHAR* Names[]={TEXT("directory"),TEXT("draft"),TEXT("invalid-name"),TEXT("review"),TEXT("retained"),TEXT("departed"),TEXT("delivered"),TEXT("accessible-draft"),TEXT("accessible-review")};
+  const TCHAR* Names[]={TEXT("directory"),TEXT("draft"),TEXT("invalid-name"),TEXT("review"),TEXT("retained"),TEXT("departed"),TEXT("delivery-or-port-blocker"),TEXT("accessible-draft"),TEXT("accessible-review")};
   const FString Base=FPaths::ProjectSavedDir()/FString::Printf(TEXT("P26/trade-%dx%d-scale%d-%s"),X,Y,FMath::RoundToInt(Scale*100),Names[Stage]);
   TArray64<uint8> Png;FImageUtils::PNGCompressImageArray(Size.X,Size.Y,Pixels,Png);
   Test->TestTrue(TEXT("Native capture saved"),FFileHelper::SaveArrayToFile(Png,*(Base+TEXT(".png"))));

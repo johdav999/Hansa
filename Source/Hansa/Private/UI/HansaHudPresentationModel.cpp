@@ -326,3 +326,19 @@ void UHansaHudPresentationModel::BroadcastChange()
 }
 
 #undef LOCTEXT_NAMESPACE
+
+bool UHansaHudPresentationModel::ApplyRecoveryAlerts(const TArray<FHansaTradeRecovery>& Views)
+{
+ auto Updated=Snapshot;
+ Updated.Alerts.RemoveAll([&](const auto& A){return A.GroupId==TEXT("Recovery")&&!Views.ContainsByPredicate([&](const auto& V){return A.StableId.ToString()==FString::Printf(TEXT("Recovery.%lld"),V.Station);});});
+ for(const auto& V:Views){
+  const FName Id(*FString::Printf(TEXT("Recovery.%lld"),V.Station));
+  auto* A=Updated.Alerts.FindByPredicate([&](const auto& X){return X.StableId==Id;});
+  if(!V.bAttention&&!A)continue;
+  if(!A){A=&Updated.Alerts.AddDefaulted_GetRef();A->StableId=Id;A->GroupId=TEXT("Recovery");}
+  A->Label=FText::FromString(V.bAttention?V.Status:TEXT("Recovery resolved"));A->AffectedObject=FText::FromName(V.City);A->bWarning=V.bAttention;
+  A->Causal.Problem=A->Label;A->Causal.Cause=FText::FromString(V.Cause);A->Causal.Remedy=FText::FromString(TEXT("Open Recovery to inspect preserved dependencies and safe actions."));
+  A->Causal.RelatedSemanticId=FName(*FString::Printf(TEXT("TradeMap.Recovery.Station.%lld"),V.Station));A->Causal.Severity=V.bAttention?EHansaCausalSeverity::Warning:EHansaCausalSeverity::Notice;
+ }
+ return ApplySnapshot(Updated);
+}

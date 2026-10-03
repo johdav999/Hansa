@@ -43,6 +43,14 @@ void FHansaSpoilageExecutor::Advance(FHansaInventoryLedger& Ledger, TArray<FHans
     Reservation.Quantity=FHansaQuantity::FromRaw(Reservation.Quantity.GetRawValue()-RLost); ReservedLost+=RLost;
    }
    Stock->Quantity=FHansaQuantity::FromRaw(Raw-Lost);
+   int64 SlotLoss = Lost;
+   for (auto& Slot : Inventory.CargoSlots)
+   {
+    if (Slot.GoodId != Id || SlotLoss <= 0) continue;
+    const int64 Removed = FMath::Min(SlotLoss, Slot.Quantity.GetRawValue());
+    Slot.Quantity = FHansaQuantity::FromRaw(Slot.Quantity.GetRawValue() - Removed); SlotLoss -= Removed;
+    if (Slot.Quantity.GetRawValue() == 0) Slot.GoodId = FHansaGoodId();
+   }
    Stock->Reserved=FHansaQuantity::FromRaw(Stock->Reserved.GetRawValue()-ReservedLost);
    FHansaInventoryMovement Movement;
    Movement.Sequence=++Ledger.LastMovementSequence; Movement.Tick=Tick; Movement.Kind=EHansaInventoryMovementKind::SinkWithdrawal;

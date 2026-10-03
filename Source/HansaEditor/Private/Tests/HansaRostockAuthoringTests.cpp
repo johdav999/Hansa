@@ -28,6 +28,7 @@
 #include "WaterBodyCustomComponent.h"
 #include "WaterZoneActor.h"
 #include "World/HansaRostockQuarter.h"
+#include "Placement/HansaRostockPlacement.h"
 namespace {
 ALandscape* BuildRostockTerrain(UWorld* W,UMaterial* Ground)
 {
@@ -115,5 +116,33 @@ bool FHansaRostockRevision::RunTest(const FString&)
 }
     UEditorLoadingAndSavingUtils::GetDirtyMapPackages(Dirty);UEditorLoadingAndSavingUtils::GetDirtyContentPackages(Content);for(auto* P:Content)Dirty.AddUnique(P);
     return TestTrue(TEXT("Save corrected candidate materials"),UEditorLoadingAndSavingUtils::SavePackages(Dirty,true));
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaRostockPlacementAuthoring,"Hansa.World.Rostock.PlacementAuthoring",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHansaRostockPlacementAuthoring::RunTest(const FString&)
+{
+ using namespace Hansa::Simulation;
+ const auto Map=RostockPlacement::CreateMap();auto Topology=FHansaPlacementTopology::TryCreate({Map});
+ if(!TestTrue(TEXT("Canonical authored placement topology validates"),Topology.IsSuccess()))return false;
+ UWorld* World=UWorld::CreateWorld(EWorldType::Game,false);auto* Quarter=World->SpawnActor<AHansaRostockQuarter>();Quarter->RefreshTerrainPlacement();
+ TestTrue(TEXT("Actual prebuilt instances inspected"),Quarter->Modules[0]->GetInstanceCount()==12);
+ for(const auto& Component:Quarter->Modules)
+ {
+  if(!Component->GetStaticMesh())continue;
+  for(int32 Index=0;Index<Component->GetInstanceCount();++Index)
+  {
+   FTransform Transform;Component->GetInstanceTransform(Index,Transform,false);
+   const FBox Box=Component->GetStaticMesh()->GetBoundingBox().TransformBy(Transform);
+   const auto Min=RostockPlacement::WorldToCell(Box.Min+FVector(60000+.01,.01,0));
+   const auto Max=RostockPlacement::WorldToCell(Box.Max+FVector(60000-.01,-.01,0));
+   bool Covered=true;
+   for(int32 X=Min.X;X<=Max.X;++X)for(int32 Y=Min.Y;Y<=Max.Y;++Y){const auto* C=Topology.Value.FindCell(Map.CityId,{X,Y});Covered&=C&&(C->bBlocked||C->Terrain==EHansaPlacementTerrain::Water);}
+   TestTrue(FString::Printf(TEXT("Protected authored %s[%d] bounds %s .. %s"),*Component->GetName(),Index,*Box.Min.ToString(),*Box.Max.ToString()),Covered);
+  }
+ }
+ World->DestroyWorld(false);
+ auto Invalid=Map;const auto Duplicate=Invalid.PublicRoadCells[0];Invalid.PublicRoadCells.Add(Duplicate);TestFalse(TEXT("Duplicate civic road rejected"),FHansaPlacementTopology::TryCreate({Invalid}).IsSuccess());
+ Invalid=Map;Invalid.PublicRoadCells.Add({100,100});TestFalse(TEXT("Out-of-map civic road rejected"),FHansaPlacementTopology::TryCreate({Invalid}).IsSuccess());
+ return !HasAnyErrors();
 }
 #endif

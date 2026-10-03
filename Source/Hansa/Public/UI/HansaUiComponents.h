@@ -15,7 +15,7 @@ namespace Hansa::UI
 // Presentation-only state. Never enters the simulation or definition registry.
 enum class EUiState : uint8 { Default, Selected, Disabled, Loading, Warning, Error, Empty, Success, Stale };
 enum class EUiSurface : uint8 { TopBar, BottomTray, Panel, Card, Tooltip, Modal, Notification };
-enum class EUiGlyph : uint8 { Information, Warning, Error, Check, Loading, Arrow, Cursor, Decoration, Bread, Fish, Planks, Building, Road, Production, Storage, Harbor, Civic, Farm, Mill, Bakery, Beer, Coin, Trend, People, Laborer, Wealthy, Pause, Play, Fast, Fastest, Grain, Flour, Timber, Salt, Iron, Tools, Close, Pin, Search, Star, Plus, Minus, Back, Up, Down, Lock, Settings, Research, Save, Map, Eye, Ship, Warehouse, Dock, Market, Hops, Malt, Barrels, LumberCamp, HopFarm, MaltHouse, Cooperage, Brewery, ArtisanHouse, Firewood, WoodcutterYard, PreservedFish, Season, Charcoal, RawHides, TanningBark, Leather, Shoes, Smithy, Tannery, Shoemaker, CharcoalBurner, Flax, Hemp, Beeswax, LinenCloth, LinenClothing, Candles, Rope, Weaver, Tailor, Chandler, Ropewalk, Count };
+enum class EUiGlyph : uint8 { Information, Warning, Error, Check, Loading, Arrow, Cursor, Decoration, Bread, Fish, Planks, Building, Road, Production, Storage, Harbor, Civic, Farm, Mill, Bakery, Beer, Coin, Trend, People, Laborer, Wealthy, Pause, Play, Fast, Fastest, Grain, Flour, Timber, Salt, Iron, Tools, Close, Pin, Search, Star, Plus, Minus, Back, Up, Down, Lock, Settings, Research, Save, Map, Eye, Ship, Warehouse, Dock, Market, Hops, Malt, Barrels, LumberCamp, HopFarm, MaltHouse, Cooperage, Brewery, ArtisanHouse, Firewood, WoodcutterYard, PreservedFish, Season, Charcoal, RawHides, TanningBark, Leather, Shoes, Smithy, Tannery, Shoemaker, CharcoalBurner, Flax, Hemp, Beeswax, LinenCloth, LinenClothing, Candles, Rope, Weaver, Tailor, Chandler, Ropewalk, Axe, ZoomIn, ZoomOut, CenterMap, Count };
 enum class EUiSeries : uint8 { Price, Stock, CitizenDemand, IndustrialDemand, Incoming, Reserve };
 
 struct HANSA_API FUiPreferences
@@ -113,9 +113,10 @@ private:
 class HANSA_API SHansaAction : public SButton
 {
 public:
-	SLATE_BEGIN_ARGS(SHansaAction) : _Kind(EHansaUiButtonStyle::Primary), _State(EUiState::Default), _Compact(false) {}
+	SLATE_BEGIN_ARGS(SHansaAction) : _Kind(EHansaUiButtonStyle::Primary), _State(EUiState::Default), _Compact(false), _Typography(EHansaUiTypographyToken::Body) {}
 		SLATE_ARGUMENT(EHansaUiButtonStyle, Kind)
 		SLATE_ARGUMENT(bool, Compact)
+        SLATE_ARGUMENT(EHansaUiTypographyToken, Typography)
 		SLATE_ARGUMENT(EUiState, State)
 		SLATE_ARGUMENT(FUiPreferences, Preferences)
 		SLATE_ARGUMENT(FText, Label)
@@ -126,9 +127,12 @@ public:
 	void Construct(const FArguments& Args);
 	void SetState(EUiState NewState, const FText& Reason = FText::GetEmpty());
 	void SetLabel(const FText& Label);
+ void SetUnderlinedSelection(bool Value) { bUnderlinedSelection=Value; Invalidate(EInvalidateWidgetReason::Paint); }
 	void SetFocusHandler(FSimpleDelegate Handler) { FocusHandler=MoveTemp(Handler); }
 	FReply OnFocusReceived(const FGeometry& Geometry, const FFocusEvent& Event) override;
 	EUiState GetState() const { return State; }
+ // OnPaint supplies the design-system focus ring; suppress Slate's blue ring.
+ virtual const FSlateBrush* GetFocusBrush() const override { return nullptr; }
 	virtual int32 OnPaint(const FPaintArgs&, const FGeometry&, const FSlateRect&, FSlateWindowElementList&, int32, const FWidgetStyle&, bool) const override;
 private:
 	FReply Activate();
@@ -137,6 +141,7 @@ private:
 	FUiPreferences Preferences;
 	FOnClicked Action;
 	bool bCompact = false;
+ bool bUnderlinedSelection = false;
 	TSharedPtr<STextBlock> StateText;
 	TSharedPtr<STextBlock> LabelText;
     TSharedPtr<SHansaGlyph> LabelIcon;

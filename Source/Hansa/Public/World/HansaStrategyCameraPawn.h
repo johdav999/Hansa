@@ -93,9 +93,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|Camera", meta = (ClampMin = "1.0"))
 	float MinimumZoomDistance = 1800.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|Camera", meta = (ClampMin = "1.0"))
-	float MaximumZoomDistance = 9500.0f;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hansa|Camera")
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
@@ -106,6 +103,7 @@ public:
     void RestoreViewState(const Hansa::Game::FHansaStrategyCameraState& State);
     void SetViewBounds(FVector2D Min, FVector2D Max);
     void RestoreHomeBounds();
+    /** Minimap reference area; camera movement can continue beyond it. */
     FVector2D GetViewBoundsMin() const { return MapBoundsMin; }
     FVector2D GetViewBoundsMax() const { return MapBoundsMax; }
 private:

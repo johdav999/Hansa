@@ -1,4 +1,5 @@
 #include "Save/HansaSaveEnvelope.h"
+#include "Placement/HansaRostockPlacement.h"
 
 #include "Diagnostics/HansaStateHash.h"
 #include "Queries/HansaSimulationReadOnly.h"
@@ -85,7 +86,7 @@ namespace Hansa::Simulation
 			else if constexpr (std::is_same_v<T, EHansaCommandOrigin>) Max = 3;
 			else if constexpr (std::is_same_v<T, EHansaScenarioOutcome>) Max = 2;
 			else if constexpr (std::is_same_v<T, EHansaGameplayCommandType>) Max = static_cast<uint8>(EHansaGameplayCommandType::TransitionCityAuthority);
-			else if constexpr (std::is_same_v<T, EHansaPresenceUpgradeStatus>) Max = static_cast<uint8>(EHansaPresenceUpgradeStatus::Funded);
+			else if constexpr (std::is_same_v<T, EHansaPresenceUpgradeStatus>) Max = static_cast<uint8>(EHansaPresenceUpgradeStatus::AwaitingMaterials);
 			else if constexpr (std::is_same_v<T, EHansaPresenceHistoryKind>) Max = static_cast<uint8>(EHansaPresenceHistoryKind::SpecializationReversed);
 			else if constexpr (std::is_same_v<T, EHansaRemoteIndustryBlocker>) Max = static_cast<uint8>(EHansaRemoteIndustryBlocker::Disabled);
 			else if constexpr (std::is_same_v<T, EHansaForeignPresenceStatus>) Max = static_cast<uint8>(EHansaForeignPresenceStatus::Revoked);
@@ -495,11 +496,14 @@ namespace Hansa::Simulation
 		const bool bLegacyLeasedConstruction = Format == 18 && Fingerprint == 30;
 		const bool bLegacyPrivileges = Format == 19 && Fingerprint == 31;
 		const bool bLegacyTradeRecovery = Format == 20 && Fingerprint == 32;
+		const bool bLegacyDelivery = Format == 23 && Fingerprint == 35;
+		const bool bLegacyPlacedPresence = Format == 22 && Fingerprint == 34;
+		const bool bLegacyCargoSlots = Format == 21 && Fingerprint == 33;
         const bool bLegacyRouteTargets = Format == 15 && Fingerprint == 28;
         const bool bLegacyStationOrders = Format == 14 && Fingerprint == 27;
         const bool bLegacyFood = (Format == 7 || Format == 8) && (Fingerprint == 20 || Fingerprint == 21);
         if (Simulation != FHansaSimulationClock::CurrentSimulationVersion || Pipeline != FHansaSimulationState::CurrentSystemPipelineVersion ||
-			(!bLegacyConsumption && !bLegacyResidenceConsumption && !bLegacyLocalLogistics && !bLegacyTopology && !bLegacyFood && !bLegacyNavigation && !bLegacyPostNavigation && !bLegacySpotTrade && !bLegacyTradeStation && !bLegacyStationOrders && !bLegacyRouteTargets && !bLegacyPresenceProgression && !bLegacyPresenceSpecializations && !bLegacyLeasedConstruction && !bLegacyPrivileges && !bLegacyTradeRecovery &&
+			(!bLegacyConsumption && !bLegacyResidenceConsumption && !bLegacyLocalLogistics && !bLegacyTopology && !bLegacyFood && !bLegacyNavigation && !bLegacyPostNavigation && !bLegacySpotTrade && !bLegacyTradeStation && !bLegacyStationOrders && !bLegacyRouteTargets && !bLegacyPresenceProgression && !bLegacyPresenceSpecializations && !bLegacyLeasedConstruction && !bLegacyPrivileges && !bLegacyTradeRecovery && !bLegacyCargoSlots && !bLegacyPlacedPresence && !bLegacyDelivery &&
                 (Format != CurrentFormatVersion || Fingerprint != FHansaSimulationState::DeterminismFingerprintVersion)))
 			return Failure(EHansaSaveError::IncompatibleSimulation, TEXT("Save simulation rules differ from this build; an explicit migration is required."));
 		uint64 Content = 0, Registry = 0, PlacementTopologyHash = 0; FString Scenario;
@@ -519,20 +523,39 @@ namespace Hansa::Simulation
 				return Failure(EHansaSaveError::IncompatibleContent, TEXT("Save content/registry hash differs; install the original content or an explicit definition migration."));
 		}
 		if (Scenario != Definitions.GetScenarioId().ToString()) return Failure(EHansaSaveError::IncompatibleScenario, TEXT("Save belongs to a different scenario."));
-        TSharedPtr<const FHansaPlacementTopology> PreTreeTopology;
-        if (Format >= 7 && PlacementTopologyHash != Definitions.GetPlacementTopologyHash())
-        {
-            // Only migrate an exact terrain/ownership match lacking the newly authored tree survey.
-            // Verify the saved state against that original topology before adding resource cells.
-            TArray<FHansaPlacementMapInitialization> Maps;
-            if (const auto* Current = Definitions.GetPlacementTopology()) Maps.Append(Current->GetMaps());
-            bool bHasTrees = false;
-            for (auto& Map : Maps) { bHasTrees |= !Map.TreeCells.IsEmpty(); Map.TreeCells.Reset(); }
-            auto Legacy = FHansaPlacementTopology::TryCreate(MoveTemp(Maps));
-            if (!bHasTrees || !Legacy || Legacy.Value.GetTopologyHash() != PlacementTopologyHash)
-                return Failure(EHansaSaveError::IncompatibleContent, TEXT("Save placement topology differs; install the original map definition or an explicit topology migration."));
-            PreTreeTopology = MakeShared<FHansaPlacementTopology>(MoveTemp(Legacy.Value));
-        }
+        TSharedPtr<const FHansaPlacementTopology> OriginalTopology;
+        TArray<FString> TopologyMigrations;
+			auto FindTopologyMigration = [&](uint64 SavedTopologyHash)
+		{
+			// Exact predecessor hashes only. Never accept an arbitrary edited map.
+			for(int32 Variant=1;Variant<=7&&!OriginalTopology.IsValid();++Variant)
+			{
+				TArray<FHansaPlacementMapInitialization> Maps;
+				if(const auto* Current=Definitions.GetPlacementTopology())Maps.Append(Current->GetMaps());
+				bool Trees=false,Rostock=false,HomeOwners=false;
+				if(Variant&2)Rostock=Maps.RemoveAll([](const auto& M){return RostockPlacement::IsCanonicalMap(M);})==1;
+				if(Variant&1)for(auto& Map:Maps){Trees|=!Map.TreeCells.IsEmpty();Map.TreeCells.Reset();}
+				if(Variant&4)for(auto& Map:Maps)
+				{
+					for(const FHansaPlacementOwnerPredecessor& Previous:Map.HomeOwnerPredecessors)
+					{
+						if(!Map.Cells.IsValidIndex(Previous.CellIndex))return false;
+						Map.Cells[Previous.CellIndex].OwnerId=Previous.OwnerId;
+						HomeOwners=true;
+					}
+				}
+				if(((Variant&2)&&!Rostock)||((Variant&1)&&!Trees)||((Variant&4)&&!HomeOwners))continue;
+                auto Legacy=FHansaPlacementTopology::TryCreate(MoveTemp(Maps));
+                if(!Legacy||Legacy.Value.GetTopologyHash()!=SavedTopologyHash)continue;
+                OriginalTopology=MakeShared<FHansaPlacementTopology>(MoveTemp(Legacy.Value));
+				if(Trees)TopologyMigrations.Add(TEXT("Hansa.Save.7.AddStandingTreeSurvey"));
+				if(Rostock)TopologyMigrations.Add(TEXT("Hansa.Save.AddRostockPlacementTopology.v1"));
+				if(HomeOwners)TopologyMigrations.Add(TEXT("Hansa.Save.RestoreLubeckHomeConstructionArea.v1"));
+            }
+            return OriginalTopology.IsValid();
+        };
+        if(Format>=7&&PlacementTopologyHash!=Definitions.GetPlacementTopologyHash()&&!FindTopologyMigration(PlacementTopologyHash))
+            return Failure(EHansaSaveError::IncompatibleContent,TEXT("Save placement topology differs; an exact registered topology migration is required."));
 		FHansaSaveSnapshot Candidate; FHansaSaveResult Result; Result.SourceFormatVersion = Format;
 		if (DefinitionMigration.IsSet()) Result.AppliedMigrations.Add(DefinitionMigration.GetValue());
 		Header.Value(Candidate.BuildVersion); Header.Value(Candidate.SavedUtc);
@@ -563,12 +586,12 @@ namespace Hansa::Simulation
 				LegacyTopology = MakeShared<FHansaPlacementTopology>(MoveTemp(CreatedTopology.Value));
 			}
 			Candidate.State.Placement.Topology = LegacyTopology;
-			if (Candidate.State.Placement.GetTopologyHash() != Definitions.GetPlacementTopologyHash())
+			if (Candidate.State.Placement.GetTopologyHash() != Definitions.GetPlacementTopologyHash() && !FindTopologyMigration(Candidate.State.Placement.GetTopologyHash()))
 				return Failure(EHansaSaveError::IncompatibleContent, TEXT("Legacy save placement topology differs; install the original map definition or an explicit topology migration."));
 		}
 		else
 		{
-			Candidate.State.Placement.Topology = PreTreeTopology.IsValid() ? PreTreeTopology : Definitions.GetPlacementTopologyShared();
+			Candidate.State.Placement.Topology = OriginalTopology.IsValid() ? OriginalTopology : Definitions.GetPlacementTopologyShared();
 		}
 		if (Format < 3) { Result.AppliedMigrations.Add(TEXT("Hansa.Save.2To3.EmptyCosmeticRouteLabels")); Candidate.MigrationHistory.Add(TEXT("Hansa.Save.2To3.EmptyCosmeticRouteLabels")); }
 		TOptional<FHansaSimulationDefinitionContext> SavedDefinitions;
@@ -611,13 +634,12 @@ namespace Hansa::Simulation
 			Candidate.MigrationHistory.Add(Migration);
 			Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
 		}
-        if (PreTreeTopology.IsValid())
+        if (OriginalTopology.IsValid())
         {
             Candidate.State.Placement.Topology = Definitions.GetPlacementTopologyShared();
             Candidate.State.InvalidateAllStateHashCaches();
-            const FString Migration = TEXT("Hansa.Save.7.AddStandingTreeSurvey");
-            Result.AppliedMigrations.Add(Migration);
-            Candidate.MigrationHistory.Add(Migration);
+            Result.AppliedMigrations.Append(TopologyMigrations);
+            Candidate.MigrationHistory.Append(TopologyMigrations);
             Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
         }
         if (Format < 10)
@@ -722,6 +744,28 @@ namespace Hansa::Simulation
 			}
 			Candidate.State.InvalidateAllStateHashCaches();const FString Migration=TEXT("Hansa.Save.20To21.AddRecoverableTradeStationInterruptions");Result.AppliedMigrations.Add(Migration);Candidate.MigrationHistory.Add(Migration);Result.AuthoritativeHash=FHansaStateHasher::Compute(Candidate.State,Definitions).GetOverallHash();
 		}
+		if (Format < 22)
+        {
+            Candidate.State.InventoryLedger.MigrateCargoSlots();
+            Candidate.State.InvalidateAllStateHashCaches();
+            const FString Migration = TEXT("Hansa.Save.21To22.PreserveCargoSlotAllocations");
+            Result.AppliedMigrations.Add(Migration); Candidate.MigrationHistory.Add(Migration);
+            Result.AuthoritativeHash = FHansaStateHasher::Compute(Candidate.State, Definitions).GetOverallHash();
+        }
+		if (Format < 23)
+        {
+            Candidate.State.InvalidateAllStateHashCaches();
+            const FString Migration=TEXT("Hansa.Save.22To23.LocalPresenceConstruction");
+            Result.AppliedMigrations.Add(Migration);Candidate.MigrationHistory.Add(Migration);
+            Result.AuthoritativeHash=FHansaStateHasher::Compute(Candidate.State,Definitions).GetOverallHash();
+        }
+
+        if(Format<24){
+            Candidate.State.InvalidateAllStateHashCaches();
+            const FString Migration=TEXT("Hansa.Save.23To24.OneTimeConstructionDelivery");
+            Result.AppliedMigrations.Add(Migration);Candidate.MigrationHistory.Add(Migration);
+            Result.AuthoritativeHash=FHansaStateHasher::Compute(Candidate.State,Definitions).GetOverallHash();
+        }
 		if(const auto* RecoveryRegistry=Definitions.GetEconomicRegistry())
 		{
 			for(const auto& Station:Candidate.State.TradeStations)

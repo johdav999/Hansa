@@ -1,8 +1,12 @@
 #include "World/HansaStrategyPlayerController.h"
+#include "World/HansaTradeStationPresentation.h"
+#include "Placement/HansaRostockPlacement.h"
+#include "Audio/HansaBackgroundMusicComponent.h"
 #include "World/HansaTerrainPlacement.h"
 #include "World/HansaCargoProjectionManager.h"
 #include "World/HansaCargoVehiclePresentation.h"
 #include "World/HansaLubeckPlacementGrid.h"
+#include "World/HansaLubeckWorldFoundation.h"
 
 #include "HansaLog.h"
 #include "HAL/PlatformProcess.h"
@@ -22,8 +26,12 @@
 #include "InputTriggers.h"
 #include "World/HansaBuildingWorldProjection.h"
 #include "World/HansaGameMode.h"
+#include "World/HansaRuntimeSimulationHost.h"
 #include "UI/HansaBuildMenuPresentationModel.h"
 #include "UI/HansaRootHud.h"
+#include "UI/HansaMarketTablePresentationModel.h"
+#include "UI/HansaCityOverviewPresentationModel.h"
+#include "UI/HansaTradeMapPresentationModel.h"
 #include "UI/SHansaRootHud.h"
 #include "UI/HansaScenarioPresentationModel.h"
 #include "UI/HansaSaveLoadPresentationModel.h"
@@ -70,6 +78,7 @@ namespace
 
 AHansaStrategyPlayerController::AHansaStrategyPlayerController()
 {
+	BackgroundMusic = CreateDefaultSubobject<UHansaBackgroundMusicComponent>(TEXT("BackgroundMusic"));
 	bReplicates = true;
 	bShowMouseCursor = true;
 	bEnableMouseOverEvents = true;
@@ -80,6 +89,7 @@ AHansaStrategyPlayerController::AHansaStrategyPlayerController()
 void AHansaStrategyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	BackgroundMusic->StartMusic();
 	EnsureStrategyInputObjects();
 
 	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
@@ -100,6 +110,7 @@ void AHansaStrategyPlayerController::BeginPlay()
 
 void AHansaStrategyPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	BackgroundMusic->StopMusic();
 	if (AHansaBuildingPlacementGhost* Ghost = PlacementGhost.Get()) Ghost->Destroy();
 	PlacementGhost.Reset();
 	if (StrategyMappingContext != nullptr)
@@ -154,12 +165,48 @@ void AHansaStrategyPlayerController::ClientReceiveHansaCommandFeedback_Implement
 	const FHansaClientCommandFeedback& Feedback)
 {
 	LastCommandFeedback = Feedback;
+    if (Feedback.bAccepted) InvalidateLandQueries();
+    OnCommandFeedback.Broadcast(Feedback);
 	UE_LOG(LogHansa, Display,
 		TEXT("S11-P04 client feedback sequence=%lld accepted=%s rejection=%d serverOrder=%lld"),
 		static_cast<long long>(Feedback.ClientSequence),
 		Feedback.bAccepted ? TEXT("true") : TEXT("false"),
 		static_cast<int32>(Feedback.Rejection),
 		static_cast<long long>(Feedback.AcceptedGlobalSequence));
+}
+
+void AHansaStrategyPlayerController::ServerRequestHansaLand_Implementation(const FHansaLandQueryRequest& Request)
+{
+    if (!ServerLandQueryBudget.Consume(FPlatformTime::Seconds()) || !Request.IsValid()) return;
+    if (auto* Mode=GetWorld()?GetWorld()->GetAuthGameMode<AHansaGameMode>():nullptr)
+        Mode->RequestMultiplayerLand(*this,Request);
+}
+
+void AHansaStrategyPlayerController::ClientReceiveHansaLand_Implementation(const FHansaLandQueryReply& Reply)
+{
+    LandQueryCache.Receive(Reply,GetClientProjection().OwnerHouseId,FPlatformTime::Seconds());
+}
+
+EHansaLandViewStatus AHansaStrategyPlayerController::QueryLandForView(uint8 Slot, FName City,
+    FIntPoint Min, FIntPoint Max, Hansa::Simulation::FHansaLandQueryResult& OutResult)
+{
+    using namespace Hansa::Simulation;
+    OutResult={};
+    const auto CityId=FHansaCityDefinitionId::TryParse(City.ToString());
+    if (!CityId || !IsLocalController()) return EHansaLandViewStatus::Unavailable;
+    if (GetNetMode()==NM_Standalone)
+    {
+        auto* Mode=GetWorld()?GetWorld()->GetAuthGameMode<AHansaGameMode>():nullptr;
+        auto* Host=Mode?Mode->GetSimulationHost():nullptr;
+        if (!Host) return EHansaLandViewStatus::Unavailable;
+        OutResult=Host->QueryLand(Host->GetHouseId(),CityId.Value,{Min.X,Min.Y},{Max.X,Max.Y},Slot>=5);
+        return OutResult.Failure==EHansaLandQueryFailure::None?EHansaLandViewStatus::Ready:EHansaLandViewStatus::Unavailable;
+    }
+    FHansaLandQueryRequest Request;
+    const auto Status=LandQueryCache.Poll(Slot,City,Min,Max,GetClientProjection().OwnerHouseId,
+        FPlatformTime::Seconds(),Request,OutResult);
+    if (Request.RequestId>0) ServerRequestHansaLand(Request);
+    return Status;
 }
 
 void AHansaStrategyPlayerController::SetServerAuthorityIdentity(
@@ -192,13 +239,14 @@ bool AHansaStrategyPlayerController::SubmitLocalHansaIntent(FHansaClientCommandI
 	Intent.SchemaVersion = FHansaClientCommandIntent::CurrentSchemaVersion;
 	Intent.ClientSequence = NextClientCommandSequence++;
 	Intent.ClientNonce = NextClientCommandNonce++;
-	Intent.ExpectedServerTick = ClientProjection.ServerTick;
+	if(Intent.ExpectedServerTick==0)Intent.ExpectedServerTick = ClientProjection.ServerTick;
 	LastCommandFeedback = {};
 	LastCommandFeedback.State = EHansaClientCommandState::Pending;
 	LastCommandFeedback.ClientSequence = Intent.ClientSequence;
 	LastCommandFeedback.ClientNonce = Intent.ClientNonce;
 	LastCommandFeedback.Message = TEXT("Waiting for the authoritative server.");
 	LastCommandFeedback.Remedy = TEXT("Keep the selected object open until the server responds.");
+	OnCommandFeedback.Broadcast(LastCommandFeedback);
 	ServerSubmitHansaIntent(Intent);
 	return true;
 }
@@ -206,6 +254,9 @@ bool AHansaStrategyPlayerController::SubmitLocalHansaIntent(FHansaClientCommandI
 void AHansaStrategyPlayerController::OnRep_HansaClientProjection()
 {
 	ApplyClientProjectionUpdate(ClientProjection);
+    if(auto* H=Cast<AHansaRootHud>(GetHUD()))H->RefreshRemoteSession();
+    if(auto* H=Cast<AHansaRootHud>(GetHUD());H&&H->GetMarketTablePresentationModel()&&H->GetCityOverviewPresentationModel()){const auto City=H->GetCityOverviewPresentationModel()->GetSnapshot().CityStableId;H->GetMarketTablePresentationModel()->ApplyRemoteVisiting(ClientProjectionCache,City);H->GetCityOverviewPresentationModel()->ApplyRemoteMarketCity(City);}
+    if(auto* Hud=Cast<AHansaRootHud>(GetHUD());Hud&&Hud->GetTradeMapPresentationModel()){Hud->GetTradeMapPresentationModel()->ApplyRemoteEstablishment(ClientProjectionCache);if(Hud->GetPresentationModel())Hud->GetPresentationModel()->ApplyRecoveryAlerts(ClientProjectionCache.Recoveries);}
 	UE_LOG(LogHansa, Display,
 		TEXT("S11-P04 client projection revision=%lld full=%s tick=%lld authoritativeHash=%s projectionDigest=%s"),
 		static_cast<long long>(ClientProjection.Revision),
@@ -218,12 +269,19 @@ void AHansaStrategyPlayerController::OnRep_HansaClientProjection()
 void AHansaStrategyPlayerController::ApplyClientProjectionUpdate(
 	const FHansaClientProjectionSnapshot& Update)
 {
+    if(Update.SchemaVersion!=FHansaClientProjectionSnapshot::CurrentSchemaVersion)return;
+    if (Update.bFullRefresh || Update.OwnerHouseId!=ClientProjectionCache.OwnerHouseId ||
+        Update.ServerTick<ClientProjectionCache.ServerTick) InvalidateLandQueries();
+    if(ClientProjectionCache.Revision>0&&Update.OwnerHouseId!=ClientProjectionCache.OwnerHouseId&&!Update.bFullRefresh){ClientProjectionCache={};return;}
+    if(Update.OwnerHouseId==ClientProjectionCache.OwnerHouseId&&Update.Revision<=ClientProjectionCache.Revision)return;
 	if (Update.bFullRefresh || ClientProjectionCache.Revision <= 0)
 	{
 		ClientProjectionCache = Update;
 		return;
 	}
 	FHansaClientProjectionSnapshot Next = Update;
+    if(!Update.bTradeWorkspaceIncluded)Next.TradeWorkspace=ClientProjectionCache.TradeWorkspace;
+    Next.bTradeWorkspaceIncluded=true;
 	Next.Placements = ClientProjectionCache.Placements;
 	Next.Markets = ClientProjectionCache.Markets;
 	Next.Routes = ClientProjectionCache.Routes;
@@ -289,7 +347,9 @@ void AHansaStrategyPlayerController::SetupInputComponent()
 	Enhanced->BindAction(SelectAction, ETriggerEvent::Triggered, this, &AHansaStrategyPlayerController::HandleSelectHeld);
 	Enhanced->BindAction(SelectAction, ETriggerEvent::Completed, this, &AHansaStrategyPlayerController::HandleSelectReleased);
 	Enhanced->BindAction(SelectAction, ETriggerEvent::Canceled, this, &AHansaStrategyPlayerController::HandleSelectReleased);
+    if(LandOverlayAction)Enhanced->BindAction(LandOverlayAction,ETriggerEvent::Started,this,&AHansaStrategyPlayerController::HandleLandOverlay);
 	InputComponent->BindKey(EKeys::RightMouseButton, IE_Pressed, this, &AHansaStrategyPlayerController::HandleCameraDragPressed);
+	InputComponent->BindKey(EKeys::MiddleMouseButton, IE_Pressed, this, &AHansaStrategyPlayerController::HandlePlacementRotatePressed);
     InputComponent->BindKey(EKeys::RightMouseButton, IE_Released, this, &AHansaStrategyPlayerController::HandleRightMouseReleased);
     InputComponent->BindKey(EKeys::G, IE_Pressed, this, &AHansaStrategyPlayerController::HandleShipMoveIntent);
 	InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &AHansaStrategyPlayerController::HandleEscapeIntent);
@@ -382,6 +442,11 @@ void AHansaStrategyPlayerController::UpdateProjectionSelection(AActor* SelectedA
 
 void AHansaStrategyPlayerController::EnsureStrategyInputObjects()
 {
+	if(LandOverlayAction==nullptr)
+    {
+        LandOverlayAction=NewObject<UInputAction>(this,TEXT("IA_LandOverlay"));
+        LandOverlayAction->ValueType=EInputActionValueType::Boolean;
+    }
 	const bool bCompleteInputSet = StrategyMappingContext != nullptr && PanAction != nullptr &&
 		ZoomAction != nullptr && RotateAction != nullptr && FastPanAction != nullptr && SelectAction != nullptr;
 	if (bCompleteInputSet)
@@ -472,6 +537,13 @@ void AHansaStrategyPlayerController::AddDefaultMappings()
 	StrategyMappingContext->MapKey(SelectAction, EKeys::LeftMouseButton);
 	StrategyMappingContext->MapKey(SelectAction, EKeys::SpaceBar);
 	StrategyMappingContext->MapKey(SelectAction, EKeys::Gamepad_FaceButton_Bottom);
+    StrategyMappingContext->MapKey(LandOverlayAction,EKeys::L);
+}
+
+void AHansaStrategyPlayerController::HandleLandOverlay()
+{
+    if(auto* Hud=Cast<AHansaRootHud>(GetHUD());Hud&&Hud->GetRootWidget())
+        Hud->GetRootWidget()->ActivateSemanticId(TEXT("HUD.Minimap.Land"));
 }
 
 AHansaStrategyCameraPawn* AHansaStrategyPlayerController::GetStrategyCameraPawn() const
@@ -528,6 +600,16 @@ void AHansaStrategyPlayerController::HandleRotateCompleted(const FInputActionVal
 	if (AHansaStrategyCameraPawn* CameraPawn = GetStrategyCameraPawn())
 	{
 		CameraPawn->SetRotateIntent(0.0f);
+	}
+}
+
+void AHansaStrategyPlayerController::HandlePlacementRotatePressed()
+{
+	if (UHansaBuildMenuPresentationModel* BuildModel = GetBuildMenuModel();
+		BuildModel != nullptr && !BuildModel->GetSnapshot().SelectedBuildingId.IsNone())
+	{
+		BuildModel->RotateIntent();
+		SyncPlacementGhostAndCursor();
 	}
 }
 
@@ -678,7 +760,12 @@ void AHansaStrategyPlayerController::HandleShipMoveIntent()
         if (!Ship || !Ship->bSeaVehicle) continue;
         const double T=(Ship->GetActorLocation().Z-Origin.Z)/Direction.Z;
         if (T<=0) return;
-        const auto Cell=Hansa::Game::LubeckPlacementGrid::WorldToGrid(Origin+Direction*T);
+        FVector LocalTarget=Origin+Direction*T;
+        if(Hansa::Game::LubeckPlacementGrid::IsCampaignWorld(GetWorld()))
+            LocalTarget-=Hansa::Game::LubeckPlacementGrid::CampaignLubeckNavigationOrigin();
+        else for (TActorIterator<AHansaLubeckWorldFoundation> Foundation(GetWorld()); Foundation; ++Foundation)
+        { LocalTarget=Foundation->GetActorTransform().InverseTransformPosition(LocalTarget); break; }
+        const auto Cell=Hansa::Game::LubeckPlacementGrid::WorldToGrid(LocalTarget);
 		if (GetNetMode() != NM_Standalone)
 		{
 			FHansaClientCommandIntent Intent;
@@ -805,11 +892,18 @@ bool AHansaStrategyPlayerController::ResolvePlacementCellAtScreenPosition(
 		FVector Origin, Direction;
 		if (!DeprojectScreenPositionToWorld(ScreenPosition.X, ScreenPosition.Y, Origin, Direction) ||
 			FMath::IsNearlyZero(Direction.Z)) return false;
-		const double SurfaceZ = Foundation->PlacementCellToWorld(0, 0).Z;
+		const auto* PlacementModel=GetBuildMenuModel();
+        const double SurfaceZ = PlacementModel&&PlacementModel->GetPlacementCity()==TEXT("City.Rostock") ? 100. : Foundation->PlacementCellToWorld(0, 0).Z;
 		const double Distance = (SurfaceZ - Origin.Z) / Direction.Z;
 		if (Distance <= 0.0 || Distance > SelectionTraceDistance) return false;
 		Candidate = Origin + Direction * Distance;
 	}
+    if(const auto* Model=GetBuildMenuModel();Model&&Model->GetPlacementCity()==TEXT("City.Rostock"))
+    {
+        const FTransform Site=Model->GetSnapshot().SelectedBuildingId==TEXT("Building.TradeHouse")?AHansaTradeStationPresentation::SiteTransform(GetWorld()):FTransform::Identity;
+        const auto C=Hansa::Simulation::RostockPlacement::WorldToCell(Site.InverseTransformPosition(Candidate));
+        OutCell={C.X,C.Y};OutWorldLocation=Site.TransformPosition(Hansa::Simulation::RostockPlacement::CellCenter(C.X,C.Y,106));return true;
+    }
 	int32 X = 0, Y = 0;
 	if (!Foundation->WorldToPlacementCell(Candidate, X, Y)) return false;
 	OutCell = FIntPoint(X, Y);
@@ -939,7 +1033,7 @@ void AHansaStrategyPlayerController::SyncPlacementGhostAndCursor()
                 Ghost->ApplyPreview(Snapshot.SelectedBuildingId, Snapshot.AnchorCell,
                     Snapshot.RotationQuarterTurns, Snapshot.FootprintCells, Snapshot.Feedback,
                     Snapshot.ValidationCause, *Foundation, false, AdjacentRoadMask,
-                    BuildModel->GetParcelSeedForPreview());
+                    BuildModel->GetParcelSeedForPreview(), BuildModel->GetPlacementCity());
 			}
 		}
 	}

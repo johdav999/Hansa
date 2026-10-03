@@ -12,6 +12,12 @@ namespace
 {
 	FName SlotStableId(const EHansaSaveSlotId Slot) { return Slot == EHansaSaveSlotId::Manual ? TEXT("manual") : TEXT("autosave"); }
 	FText SlotLabel(const EHansaSaveSlotId Slot) { return Slot == EHansaSaveSlotId::Manual ? LOCTEXT("Manual", "Manual save") : LOCTEXT("Autosave", "Autosave"); }
+	bool IsSaveId(const FName Id)
+	{
+		if (Id == TEXT("manual") || Id == TEXT("autosave")) return true;
+		const FString Text = Id.ToString(); FGuid Guid;
+		return Text.StartsWith(TEXT("manual-")) && Text.Len() == 39 && FGuid::ParseExact(Text.Mid(7), EGuidFormats::Digits, Guid);
+	}
 	FString Hex64(const uint64 Value) { return FString::Printf(TEXT("%016llX"), static_cast<unsigned long long>(Value)); }
 	void DescribeError(const EHansaSaveError Error, const FString& Detail, FText& OutError, FText& OutRemedy)
 	{
@@ -32,7 +38,13 @@ void UHansaSaveSubsystem::BindRuntime(UHansaRuntimeSimulationHost* InHost) { Hos
 
 FString UHansaSaveSubsystem::SlotPath(const EHansaSaveSlotId SlotId) const
 {
-	const TCHAR* File = SlotId == EHansaSaveSlotId::Manual ? TEXT("manual.hansa") : TEXT("autosave.hansa");
+	return SavePath(SlotStableId(SlotId));
+}
+
+FString UHansaSaveSubsystem::SavePath(const FName StableId) const
+{
+	if (!IsSaveId(StableId)) return FString();
+	const FString File = StableId.ToString() + TEXT(".hansa");
 #if WITH_DEV_AUTOMATION_TESTS
     if (!AutomationSlotDirectory.IsEmpty()) return FPaths::ProjectSavedDir()/TEXT("Automation/Session")/AutomationSlotDirectory/File;
 #endif
@@ -44,10 +56,16 @@ const FHansaSaveSlotMetadata* UHansaSaveSubsystem::FindSlot(const EHansaSaveSlot
 	return Slots.FindByPredicate([SlotId](const FHansaSaveSlotMetadata& Slot) { return Slot.SlotId == SlotId; });
 }
 
-FHansaSaveSlotMetadata UHansaSaveSubsystem::Inspect(const EHansaSaveSlotId SlotId) const
+const FHansaSaveSlotMetadata* UHansaSaveSubsystem::FindSave(const FName StableId) const
 {
-	FHansaSaveSlotMetadata Metadata; Metadata.SlotId = SlotId; Metadata.StableId = SlotStableId(SlotId); Metadata.SlotLabel = SlotLabel(SlotId);
-	const FString Path = SlotPath(SlotId);
+	return Slots.FindByPredicate([StableId](const FHansaSaveSlotMetadata& Slot) { return Slot.StableId == StableId; });
+}
+
+FHansaSaveSlotMetadata UHansaSaveSubsystem::Inspect(const FName StableId) const
+{
+	FHansaSaveSlotMetadata Metadata; Metadata.SlotId = StableId == TEXT("autosave") ? EHansaSaveSlotId::Autosave : EHansaSaveSlotId::Manual;
+	Metadata.StableId = StableId; Metadata.SlotLabel = SlotLabel(Metadata.SlotId);
+	const FString Path = SavePath(StableId);
 	Metadata.bExists = IFileManager::Get().FileExists(*Path);
 	if (!Metadata.bExists)
 	{
@@ -83,19 +101,48 @@ FHansaSaveSlotMetadata UHansaSaveSubsystem::Inspect(const EHansaSaveSlotId SlotI
 
 void UHansaSaveSubsystem::Refresh()
 {
-	Slots = { Inspect(EHansaSaveSlotId::Manual), Inspect(EHansaSaveSlotId::Autosave) }; Changed.Broadcast();
+	Slots = { Inspect(TEXT("manual")), Inspect(TEXT("autosave")) };
+	TArray<FString> Files;
+	IFileManager::Get().FindFiles(Files, *(FPaths::GetPath(SlotPath(EHansaSaveSlotId::Manual)) / TEXT("manual-*.hansa")), true, false);
+	Files.Sort();
+	for (const FString& File : Files)
+	{
+		const FName Id(*FPaths::GetBaseFilename(File));
+		if (IsSaveId(Id)) Slots.Add(Inspect(Id));
+	}
+	Changed.Broadcast();
 }
 
 bool UHansaSaveSubsystem::Save(const EHansaSaveSlotId SlotId, const FString& DisplayName, FText& OutError, FText& OutRemedy)
 {
+	return WriteSave(SlotStableId(SlotId), DisplayName, true, OutError, OutRemedy);
+}
+
+bool UHansaSaveSubsystem::SaveById(const FName StableId, const FString& DisplayName, FText& OutError, FText& OutRemedy)
+{
+	return WriteSave(StableId, DisplayName, true, OutError, OutRemedy);
+}
+
+bool UHansaSaveSubsystem::CreateManualSave(const FString& DisplayName, FName& OutId, FText& OutError, FText& OutRemedy)
+{
+	OutId = NAME_None;
+	const FName Id(*(TEXT("manual-") + FGuid::NewGuid().ToString(EGuidFormats::Digits)));
+	if (!WriteSave(Id, DisplayName, false, OutError, OutRemedy)) return false;
+	OutId = Id; return true;
+}
+
+bool UHansaSaveSubsystem::WriteSave(const FName StableId, const FString& DisplayName, const bool bReplace, FText& OutError, FText& OutRemedy)
+{
 	OutError = FText::GetEmpty(); OutRemedy = FText::GetEmpty();
+	const FString Path = SavePath(StableId);
+	if (Path.IsEmpty()) { OutError = LOCTEXT("InvalidId", "This save is unavailable."); OutRemedy = LOCTEXT("InvalidIdRemedy", "Refresh the save list and choose a save."); return false; }
 	if (!Host.IsValid()) { OutError = LOCTEXT("NoRuntime", "The current game is not ready to save."); OutRemedy = LOCTEXT("NoRuntimeRemedy", "Return to the running scenario and try again."); return false; }
 	TArray<uint8> Bytes;
 	const FHansaSaveResult Captured = Host->CaptureSaveBytes(Bytes, DisplayName, FDateTime::UtcNow().ToIso8601());
 	if (!Captured) { DescribeError(Captured.Error, Captured.Message, OutError, OutRemedy); return false; }
-	const FString Path = SlotPath(SlotId); const FString TempPath = Path + TEXT(".tmp");
+	const FString TempPath = Path + TEXT(".tmp");
 	IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path), true); IFileManager::Get().Delete(*TempPath, false, true);
-	if (!FFileHelper::SaveArrayToFile(Bytes, *TempPath) || !IFileManager::Get().Move(*Path, *TempPath, true, true, false, true))
+	if (!FFileHelper::SaveArrayToFile(Bytes, *TempPath) || !IFileManager::Get().Move(*Path, *TempPath, bReplace, true, false, true))
 	{
 		IFileManager::Get().Delete(*TempPath, false, true);
 		OutError = LOCTEXT("WriteFailure", "The save could not be written atomically."); OutRemedy = LOCTEXT("WriteFailureRemedy", "Check available disk space and retry."); return false;
@@ -105,15 +152,20 @@ bool UHansaSaveSubsystem::Save(const EHansaSaveSlotId SlotId, const FString& Dis
 
 bool UHansaSaveSubsystem::Load(const EHansaSaveSlotId SlotId, FText& OutError, FText& OutRemedy)
 {
+	return LoadById(SlotStableId(SlotId), OutError, OutRemedy);
+}
+
+bool UHansaSaveSubsystem::LoadById(const FName StableId, FText& OutError, FText& OutRemedy)
+{
 	OutError = FText::GetEmpty(); OutRemedy = FText::GetEmpty();
-	const FHansaSaveSlotMetadata* Slot = FindSlot(SlotId);
+	const FHansaSaveSlotMetadata* Slot = FindSave(StableId);
 	if (!Slot || !Slot->bCanLoad || !Host.IsValid())
 	{
 		OutError = Slot && !Slot->Error.IsEmpty() ? Slot->Error : LOCTEXT("SlotUnavailable", "This slot cannot be loaded.");
 		OutRemedy = Slot && !Slot->Remedy.IsEmpty() ? Slot->Remedy : LOCTEXT("SlotUnavailableRemedy", "Select a compatible populated slot."); return false;
 	}
 	TArray<uint8> Bytes;
-	if (!FFileHelper::LoadFileToArray(Bytes, *SlotPath(SlotId)))
+	if (!FFileHelper::LoadFileToArray(Bytes, *SavePath(StableId)))
 	{
 		OutError = LOCTEXT("LoadReadFailure", "The save disappeared before it could be loaded."); OutRemedy = LOCTEXT("LoadReadRemedy", "Refresh the slot list and try again."); Refresh(); return false;
 	}

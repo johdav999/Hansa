@@ -1,8 +1,10 @@
 #include "Queries/HansaSimulationReadOnly.h"
+#include "Presence/HansaPresenceConstruction.h"
 
 #include "Construction/HansaConstructionInternal.h"
 #include "HansaSimulationModule.h"
 #include "Math/NumericLimits.h"
+#include "Math/IntPoint.h"
 
 namespace Hansa::Simulation
 {
@@ -687,6 +689,7 @@ namespace Hansa::Simulation
 		Projection.AccruedUpkeepPfennig = Vehicle->AccruedUpkeepPfennig;
 		Projection.LastSpotTrade = Vehicle->LastSpotTrade;
         Projection.Navigation = Vehicle->Navigation;
+        if(const auto Hold=State->InventoryLedger.CreateReadOnlyAccess().QueryInventory(Vehicle->CargoInventoryId))Projection.CargoSlots=Hold->CargoSlots;
 		return TOptional<FHansaVehicleProjection>(MoveTemp(Projection));
 	}
 
@@ -748,6 +751,177 @@ namespace Hansa::Simulation
 		return State->Placement;
 	}
 
+	FHansaLandQueryResult FHansaSimulationReadOnlyAccess::QueryLand(
+		const FHansaHouseId ViewerHouseId, const FHansaCityDefinitionId CityId,
+		FHansaGridCoordinate BoundsMin, FHansaGridCoordinate BoundsMax, bool bCompactSurvey) const
+	{
+        if (bCompactSurvey)
+            if (const auto* Map = State->Placement.FindMap(CityId)) { BoundsMin=Map->BoundsMin; BoundsMax=Map->BoundsMax; }
+		FHansaLandQueryResult Result;
+		Result.CityId = CityId;
+		Result.ViewerHouseId = ViewerHouseId;
+		Result.BoundsMin = BoundsMin;
+		Result.BoundsMax = BoundsMax;
+		if (!ViewerHouseId.IsValid() || !State->Houses.ContainsByPredicate(
+			[&](const FHansaHouseState& House) { return House.Id == ViewerHouseId; }))
+		{
+			Result.Failure = EHansaLandQueryFailure::InvalidViewer;
+			return Result;
+		}
+		if (!CityId.IsValid() || State->Placement.FindMap(CityId) == nullptr)
+		{
+			Result.Failure = EHansaLandQueryFailure::UnknownCity;
+			return Result;
+		}
+		const int64 Width = static_cast<int64>(BoundsMax.X) - BoundsMin.X + 1;
+		const int64 Height = static_cast<int64>(BoundsMax.Y) - BoundsMin.Y + 1;
+		if (Width <= 0 || Height <= 0)
+		{
+			Result.Failure = EHansaLandQueryFailure::InvalidBounds;
+			return Result;
+		}
+		if ((!bCompactSurvey && (Width > 64 || Height > 64 || Width * Height > 4096)) ||
+            (bCompactSurvey && (Width > 2048 || Height > 2048 || Width * Height > 4194304)))
+		{
+			Result.Failure = EHansaLandQueryFailure::TooLarge;
+			return Result;
+		}
+		// A cheap invalidation token; no topology scan or state hash is needed for a viewport query.
+		Result.StateRevision = (static_cast<uint64>(GetClock().GetTick().GetValue()) << 32) ^
+			GetLastProcessedCommandSequence() ^ (GetPublishedDomainEventCount() << 1);
+		const FHansaForeignPresenceState* Presence = State->ForeignPresences.FindByPredicate(
+			[&](const FHansaForeignPresenceState& Item)
+			{ return Item.HouseId == ViewerHouseId && Item.CityId == CityId; });
+		const bool bPresenceAllowsQuarter = Presence != nullptr && Presence->Status == EHansaForeignPresenceStatus::Active &&
+			Presence->GrantedCapabilityIds.Contains(TEXT("PresenceCapability.MerchantQuarter"));
+		TArray<const FHansaLeasedPlotState*> ViewerLeases;
+		for (const FHansaLeasedPlotState& Lease : State->LeasedPlots)
+		{
+			if (Lease.OwnerId != ViewerHouseId || Lease.CityId != CityId ||
+				Lease.BoundsMin.X > BoundsMax.X || Lease.BoundsMin.Y > BoundsMax.Y ||
+				Lease.BoundsMax.X < BoundsMin.X || Lease.BoundsMax.Y < BoundsMin.Y) continue;
+			ViewerLeases.Add(&Lease);
+			Result.ViewerLeases.Add({Lease.Id, Lease.BoundsMin, Lease.BoundsMax,
+				Lease.PermittedBuildingCategories, Lease.bActive});
+		}
+		TMap<FIntPoint, FHansaBuildingId> Occupants;
+		for (const FHansaPlacedBuildingRecord& Placement : State->Placement.GetPlacements())
+		{
+			if (Placement.Spec.CityId != CityId) continue;
+			for (const FHansaGridCoordinate Cell : Placement.OccupiedCells)
+			{
+				if (Cell.X >= BoundsMin.X && Cell.X <= BoundsMax.X &&
+					Cell.Y >= BoundsMin.Y && Cell.Y <= BoundsMax.Y)
+					Occupants.Add(FIntPoint(Cell.X, Cell.Y), Placement.BuildingId);
+			}
+		}
+		Result.Cells.Reserve(bCompactSurvey ? 4096 : static_cast<int32>(Width * Height));
+        auto Append = [&](FHansaLandCellView View)
+        {
+            if (bCompactSurvey && !Result.Cells.IsEmpty())
+            {
+                auto& Last=Result.Cells.Last();
+                if (Last.Coordinate.X==View.Coordinate.X && Last.Coordinate.Y+Last.RunLength==View.Coordinate.Y &&
+                    Last.bSurveyKnown==View.bSurveyKnown && Last.RecordedOwnerId==View.RecordedOwnerId &&
+                    Last.Terrain==View.Terrain && Last.Access==View.Access && Last.Reason==View.Reason &&
+                    Last.ViewerLeaseId==View.ViewerLeaseId && Last.bProtected==View.bProtected &&
+                    Last.OccupyingBuildingId==View.OccupyingBuildingId) { ++Last.RunLength; return; }
+            }
+            Result.Cells.Add(MoveTemp(View));
+        };
+		for (int64 X = BoundsMin.X; X <= BoundsMax.X; ++X)
+		{
+			for (int64 Y = BoundsMin.Y; Y <= BoundsMax.Y; ++Y)
+            {
+                if(bCompactSurvey && Result.Cells.Num()>65536) { Result.Cells.Reset();Result.Failure=EHansaLandQueryFailure::TooLarge;return Result; }
+                FHansaLandCellView View;
+				View.Coordinate = {static_cast<int32>(X), static_cast<int32>(Y)};
+				const FHansaPlacementGridCell* Cell = State->Placement.FindCell(CityId, View.Coordinate);
+				if (Cell == nullptr) { Append(MoveTemp(View)); continue; }
+				View.bSurveyKnown = true;
+				View.RecordedOwnerId = Cell->OwnerId;
+				View.Terrain = Cell->Terrain;
+				View.bProtected = Cell->bBlocked;
+				if (const FHansaBuildingId* Occupant = Occupants.Find(FIntPoint(View.Coordinate.X, View.Coordinate.Y)))
+					View.OccupyingBuildingId = *Occupant;
+				if (FHansaPlacementRules::IsStartingCityOpenLand(CityId))
+				{
+					View.Access = EHansaLandAccess::Permitted;
+					View.Reason = EHansaLandAccessReason::StartingCity;
+				}
+				else if (Cell->OwnerId == ViewerHouseId)
+				{
+					View.Access = EHansaLandAccess::Permitted;
+					View.Reason = EHansaLandAccessReason::RecordedOwner;
+				}
+				else
+				{
+					const FHansaLeasedPlotState* CoveringLease = nullptr;
+					for (const FHansaLeasedPlotState* Lease : ViewerLeases)
+					{
+						if (X < Lease->BoundsMin.X || X > Lease->BoundsMax.X ||
+							Y < Lease->BoundsMin.Y || Y > Lease->BoundsMax.Y) continue;
+						if (CoveringLease == nullptr || (!CoveringLease->bActive && Lease->bActive)) CoveringLease = Lease;
+					}
+					if (CoveringLease != nullptr)
+					{
+						View.ViewerLeaseId = CoveringLease->Id;
+						View.Reason = CoveringLease->bActive
+							? (bPresenceAllowsQuarter ? EHansaLandAccessReason::ActiveLease : EHansaLandAccessReason::ForeignPresenceInsufficient)
+							: EHansaLandAccessReason::ForeignLeaseInactive;
+						View.Access = CoveringLease->bActive && bPresenceAllowsQuarter
+							? EHansaLandAccess::Conditional : EHansaLandAccess::Denied;
+					}
+					else
+					{
+						View.Access = EHansaLandAccess::Denied;
+						View.Reason = EHansaLandAccessReason::ForeignLeaseRequired;
+					}
+				}
+				Append(MoveTemp(View));
+			}
+		}
+        if (bCompactSurvey)
+        {
+            if (Result.Cells.Num()>65536) { Result.Cells.Reset(); Result.Failure=EHansaLandQueryFailure::TooLarge; return Result; }
+            // Connected ownership/lease components, independent of occupancy and access.
+            // Runs keep this index proportional to contour complexity, not survey area.
+            TArray<int32> Parent; Parent.SetNumUninitialized(Result.Cells.Num());
+            TMap<int32,TArray<int32>> Rows;
+            for(int32 I=0;I<Parent.Num();++I) { Parent[I]=I; Rows.FindOrAdd(Result.Cells[I].Coordinate.X).Add(I); }
+            auto Root=[&](int32 I) { while(Parent[I]!=I) { Parent[I]=Parent[Parent[I]]; I=Parent[I]; } return I; };
+            auto Same=[](const auto& A,const auto& B) { return A.bSurveyKnown && B.bSurveyKnown &&
+                A.Terrain!=EHansaPlacementTerrain::Water && B.Terrain!=EHansaPlacementTerrain::Water &&
+                A.RecordedOwnerId.IsValid() && A.RecordedOwnerId==B.RecordedOwnerId && A.ViewerLeaseId==B.ViewerLeaseId; };
+            for(const auto& Row:Rows)
+            {
+                const auto* Previous=Rows.Find(Row.Key-1);
+                int32 Cursor=0;
+                for(int32 K=0;K<Row.Value.Num();++K)
+                {
+                    const int32 I=Row.Value[K]; const auto& A=Result.Cells[I];
+                    auto Join=[&](int32 J) { if(Same(A,Result.Cells[J])) { int32 R=Root(I),S=Root(J); Parent[FMath::Max(R,S)]=FMath::Min(R,S); } };
+                    if(K>0) { const int32 J=Row.Value[K-1]; const auto& B=Result.Cells[J]; if(B.Coordinate.Y+B.RunLength==A.Coordinate.Y) Join(J); }
+                    if(!Previous) continue;
+                    while(Cursor<Previous->Num() && Result.Cells[(*Previous)[Cursor]].Coordinate.Y+Result.Cells[(*Previous)[Cursor]].RunLength<=A.Coordinate.Y) ++Cursor;
+                    for(int32 J=Cursor;J<Previous->Num() && Result.Cells[(*Previous)[J]].Coordinate.Y<A.Coordinate.Y+A.RunLength;++J) Join((*Previous)[J]);
+                }
+            }
+            uint64 Hash=14695981039346656037ULL;
+            auto Add=[&](uint64 V) { Hash^=V; Hash*=1099511628211ULL; };
+            for(int32 I=0;I<Result.Cells.Num();++I)
+            {
+                auto& C=Result.Cells[I];
+                C.RegionId=C.bSurveyKnown && C.RecordedOwnerId.IsValid() && C.Terrain!=EHansaPlacementTerrain::Water ? Root(I)+1 : 0;
+                Add(C.Coordinate.X); Add(C.Coordinate.Y); Add(C.RunLength); Add(C.RegionId); Add(C.RecordedOwnerId.GetValue());
+                Add(C.RecordedOwnerId.GetGeneration()); Add(uint8(C.Access)); Add(uint8(C.Reason)); Add(uint8(C.Terrain));
+                Add(C.bSurveyKnown); Add(C.bProtected); Add(C.ViewerLeaseId.GetValue()); Add(C.ViewerLeaseId.GetGeneration()); Add(C.OccupyingBuildingId.GetValue()); Add(C.OccupyingBuildingId.GetGeneration());
+            }
+            Result.StateRevision=Hash; Result.SurveyPages=FMath::Max(1,FMath::DivideAndRoundUp(Result.Cells.Num(),256));
+        }
+        return Result;
+    }
+
 	FHansaPlacementValidationResult FHansaSimulationReadOnlyAccess::ValidatePlacement(
 		const FHansaHouseId IssuingHouseId,
 		const FHansaPlacementSpec& Spec) const
@@ -755,7 +929,7 @@ namespace Hansa::Simulation
 		const FHansaEconomicRegistry* Registry = Definitions->GetEconomicRegistry();
 		if (Registry != nullptr)
 		{
-			return FHansaPlacementRules::Validate(State->Placement, *Registry, IssuingHouseId, Spec, State->ForeignPresences, State->LeasedPlots);
+			return FHansaPresenceConstructionRules::ExcludeStations(FHansaPlacementRules::Validate(State->Placement, *Registry, IssuingHouseId, Spec, State->ForeignPresences, State->LeasedPlots),Spec.CityId,State->TradeStations);
 		}
 		return FHansaPlacementRules::Validate(State->Placement, FHansaEconomicRegistry(), IssuingHouseId, Spec, State->ForeignPresences, State->LeasedPlots);
 	}
@@ -1457,8 +1631,12 @@ namespace Hansa::Simulation
 		Projection.Routes = BuildRouteProjection();
 		Projection.ForeignPresences = BuildForeignPresenceProjection();
 		Projection.TradeStations = BuildTradeStationProjection();
+		Projection.LeasedPlots = State->LeasedPlots;
+		if (const auto* Topology = State->Placement.GetTopology()) Projection.ProtectedCells = Topology->GetProtectedCells();
 		Projection.Research = State->Research;
 		Projection.Inventories = State->InventoryLedger.CreateReadOnlyAccess().BuildProjection();
+        if(const auto* TradeRegistry=Definitions->GetEconomicRegistry())for(auto& Inventory:Projection.Inventories)
+            if(Inventory.OwnerKind==EHansaInventoryOwnerKind::City)Inventory.bSeaTradeAccess=FHansaLocalLogisticsQueries::HasSeaTradeAccess(Inventory,State->InventoryLedger.CreateReadOnlyAccess(),State->Placement,State->Buildings,*TradeRegistry);
         for(const auto& Loss:State->InventoryLedger.CreateReadOnlyAccess().QuerySpoilage()) Projection.Spoilage.Add(Loss);
 		Projection.Productions = BuildProductionProjection();
 		Projection.PopulationCohorts = BuildPopulationProjection();
@@ -1491,6 +1669,7 @@ namespace Hansa::Simulation
 		Projection.LogisticsRequests = BuildLogisticsRequestProjection();
 		Projection.LogisticsJobs = BuildLogisticsJobProjection();
         TMap<FString,TSet<FIntPoint>> CompoundRoadCells;
+        for(const auto& M:State->Placement.GetMaps())for(const auto C:M.PublicRoadCells)CompoundRoadCells.FindOrAdd(M.CityId.ToString()).Add(FIntPoint(C.X,C.Y));
         for(const auto& P:Projection.Placements)
          if(const auto* Map=State->Placement.FindMap(P.Spec.CityId))
           if(P.Spec.BuildingDefinitionId==Map->RoadBuildingDefinitionId)

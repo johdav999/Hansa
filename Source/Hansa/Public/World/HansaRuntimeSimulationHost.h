@@ -9,9 +9,11 @@
 #include "Queries/HansaSimulationReadOnly.h"
 #include "Scenario/HansaScenario.h"
 #include "Save/HansaSaveEnvelope.h"
+#include "UI/HansaTradeRecovery.h"
 #include "UObject/Object.h"
 #include "World/HansaLubeckScenarioInitializer.h"
 
+#include "UI/HansaVisitingTrade.h"
 #include "HansaRuntimeSimulationHost.generated.h"
 
 class UWorld;
@@ -53,6 +55,10 @@ public:
 		uint64 CampaignSeedOverride = 0,
         bool bEmptyPlayerCity = false);
 	bool StartNewGame(FString& OutError);
+#if !UE_BUILD_SHIPPING
+	/** Temporary, opt-in construction test setup. See [Hansa.MerchantOfficeTest] in DefaultGame.ini. */
+	bool ApplyMerchantOfficeTestSetup(FString& OutError);
+#endif
     Hansa::Simulation::FHansaCommandGatewayResult CancelRoute(Hansa::Simulation::FHansaRouteId RouteId);
 	[[nodiscard]] EHansaRuntimeScenario GetScenario() const;
 	void SetSpeed(EHansaRuntimeSimulationSpeed NewSpeed);
@@ -68,12 +74,17 @@ public:
 
 	[[nodiscard]] const Hansa::Simulation::FHansaCompiledBuildingDefinition* FindBuildingDefinition(
 		const FString& StableId) const;
-	[[nodiscard]] const Hansa::Simulation::FHansaPlacementMapInitialization* FindPlacementMap() const;
+	[[nodiscard]] const Hansa::Simulation::FHansaPlacementMapInitialization* FindPlacementMap(Hansa::Simulation::FHansaCityDefinitionId City = {}) const;
 	[[nodiscard]] Hansa::Simulation::FHansaPlacementValidationResult ValidatePlacement(
 		const Hansa::Simulation::FHansaPlacementSpec& Spec) const;
+	[[nodiscard]] Hansa::Simulation::FHansaLandQueryResult QueryLand(
+		Hansa::Simulation::FHansaHouseId ViewerHouseId,
+		Hansa::Simulation::FHansaCityDefinitionId CityId,
+		Hansa::Simulation::FHansaGridCoordinate BoundsMin,
+		Hansa::Simulation::FHansaGridCoordinate BoundsMax, bool bCompactSurvey = false) const;
 	[[nodiscard]] bool IsOwnedRoadCell(Hansa::Simulation::FHansaGridCoordinate Cell) const;
 	[[nodiscard]] Hansa::Simulation::FHansaConstructionCostProjection QueryConstructionCost(
-		const FString& BuildingStableId) const;
+		const FString& BuildingStableId, Hansa::Simulation::FHansaCityDefinitionId City = {}) const;
 	[[nodiscard]] bool IsTechnologyCompleted(const FString& TechnologyId) const;
 	Hansa::Simulation::FHansaCommandGatewayResult PlaceBuildings(
 		TConstArrayView<Hansa::Simulation::FHansaPlacementSpec> Specs);
@@ -115,9 +126,10 @@ public:
 		const Hansa::Simulation::FHansaCommandAuthorityContext& Authority,
 		const Hansa::Simulation::FHansaSpotTradeCommand& Payload);
 	Hansa::Simulation::FHansaCommandGatewayResult ProposeTradeStation(Hansa::Simulation::FHansaCityDefinitionId CityId, const FString& SiteId, Hansa::Simulation::FHansaTradeStationId& OutStationId);
-	Hansa::Simulation::FHansaCommandGatewayResult ProposeTradeStationForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority, Hansa::Simulation::FHansaCityDefinitionId CityId, const FString& SiteId, Hansa::Simulation::FHansaTradeStationId& OutStationId);
-	Hansa::Simulation::FHansaCommandGatewayResult FundTradeStation(Hansa::Simulation::FHansaTradeStationId StationId, Hansa::Simulation::FHansaInventoryId FundingInventoryId);
-	Hansa::Simulation::FHansaCommandGatewayResult FundTradeStationForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority, Hansa::Simulation::FHansaTradeStationId StationId, Hansa::Simulation::FHansaInventoryId FundingInventoryId);
+	Hansa::Simulation::FHansaCommandGatewayResult ProposeTradeStationForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority, Hansa::Simulation::FHansaCityDefinitionId CityId, const FString& SiteId, Hansa::Simulation::FHansaTradeStationId& OutStationId, const Hansa::Simulation::FHansaPresenceConstructionSite* Placement = nullptr);
+    FString TradeHousePlacementError(const Hansa::Simulation::FHansaPlacementSpec& Spec, bool bGeometryOnly=false) const;
+	Hansa::Simulation::FHansaCommandGatewayResult FundTradeStation(Hansa::Simulation::FHansaTradeStationId StationId, Hansa::Simulation::FHansaInventoryId FundingInventoryId,uint8 DeliveryMode=0);
+	Hansa::Simulation::FHansaCommandGatewayResult FundTradeStationForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority, Hansa::Simulation::FHansaTradeStationId StationId, Hansa::Simulation::FHansaInventoryId FundingInventoryId,uint8 DeliveryMode=0);
 	Hansa::Simulation::FHansaCommandGatewayResult ManageStationOrder(const Hansa::Simulation::FHansaManageStationOrderCommand& Payload);
 	Hansa::Simulation::FHansaCommandGatewayResult ManageStationOrderForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority, const Hansa::Simulation::FHansaManageStationOrderCommand& Payload);
 	Hansa::Simulation::FHansaCommandGatewayResult RequestPresenceUpgrade(const Hansa::Simulation::FHansaRequestPresenceUpgradeCommand& Payload);
@@ -126,6 +138,13 @@ public:
 	Hansa::Simulation::FHansaCommandGatewayResult FundPresenceUpgradeForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority, const Hansa::Simulation::FHansaFundPresenceUpgradeCommand& Payload);
 	Hansa::Simulation::FHansaCommandGatewayResult ApplyPresenceSpecialization(const Hansa::Simulation::FHansaApplyPresenceSpecializationCommand& Payload);
 	Hansa::Simulation::FHansaCommandGatewayResult ApplyPresenceSpecializationForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority, const Hansa::Simulation::FHansaApplyPresenceSpecializationCommand& Payload);
+	FString GetAuthorityScenarioId() const;
+	Hansa::Simulation::FHansaCommandGatewayResult ManageCityPrivilege(const Hansa::Simulation::FHansaManageCityPrivilegeCommand& Payload);
+	Hansa::Simulation::FHansaCommandGatewayResult ManageCityPrivilegeForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority,const Hansa::Simulation::FHansaManageCityPrivilegeCommand& Payload);
+	Hansa::Simulation::FHansaCommandGatewayResult FundCityProject(const Hansa::Simulation::FHansaFundCityProjectCommand& Payload);
+	Hansa::Simulation::FHansaCommandGatewayResult FundCityProjectForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority,const Hansa::Simulation::FHansaFundCityProjectCommand& Payload);
+	Hansa::Simulation::FHansaCommandGatewayResult TransitionCityAuthority(const Hansa::Simulation::FHansaTransitionCityAuthorityCommand& Payload);
+	Hansa::Simulation::FHansaCommandGatewayResult TransitionCityAuthorityForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority,const Hansa::Simulation::FHansaTransitionCityAuthorityCommand& Payload);
 	Hansa::Simulation::FHansaCommandGatewayResult CloseTradeStation(Hansa::Simulation::FHansaTradeStationId StationId);
 	Hansa::Simulation::FHansaCommandGatewayResult CloseTradeStationForAuthority(const Hansa::Simulation::FHansaCommandAuthorityContext& Authority, Hansa::Simulation::FHansaTradeStationId StationId);
 
@@ -207,9 +226,11 @@ public:
 	[[nodiscard]] Hansa::Simulation::FHansaLogisticsRoadPathProjection QueryLocalRoadPath(
 		Hansa::Simulation::FHansaInventoryId SourceInventoryId,
 		Hansa::Simulation::FHansaInventoryId DestinationInventoryId) const;
+    TArray<FHansaTradeRecovery> BuildTradeRecovery(Hansa::Simulation::FHansaHouseId Viewer) const;
+    TArray<FHansaVisitingTradeOffer> BuildVisitingTradeOffers(Hansa::Simulation::FHansaHouseId Viewer) const;
     Hansa::Simulation::FHansaSpotTradeQuoteProjection QuerySpotTradeQuote(Hansa::Simulation::FHansaVehicleId Vehicle, Hansa::Simulation::FHansaCityDefinitionId City, Hansa::Simulation::FHansaGoodId Good, Hansa::Simulation::EHansaSpotTradeSide Side, Hansa::Simulation::FHansaQuantity Quantity) const;
-    TOptional<Hansa::Simulation::FHansaKnownMarketPriceProjection> QueryKnownMarketPrice(Hansa::Simulation::FHansaCityDefinitionId City, Hansa::Simulation::FHansaGoodId Good) const;
-    TOptional<Hansa::Simulation::FHansaKnownMarketSupplyDemandProjection> QueryKnownMarketSupply(Hansa::Simulation::FHansaCityDefinitionId City, Hansa::Simulation::FHansaGoodId Good) const;
+    TOptional<Hansa::Simulation::FHansaKnownMarketPriceProjection> QueryKnownMarketPrice(Hansa::Simulation::FHansaCityDefinitionId City, Hansa::Simulation::FHansaGoodId Good, Hansa::Simulation::FHansaHouseId Viewer = {}) const;
+    TOptional<Hansa::Simulation::FHansaKnownMarketSupplyDemandProjection> QueryKnownMarketSupply(Hansa::Simulation::FHansaCityDefinitionId City, Hansa::Simulation::FHansaGoodId Good, Hansa::Simulation::FHansaHouseId Viewer = {}) const;
 	[[nodiscard]] const Hansa::Simulation::FHansaEconomicRegistry* GetEconomicRegistry() const;
 	[[nodiscard]] Hansa::Simulation::FHansaHouseId GetRivalHouseId() const;
 	void SetMerchantAIEnabled(bool bEnabled);

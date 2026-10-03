@@ -34,14 +34,11 @@ namespace Hansa::Game
 
 	struct HANSA_API FHansaStrategyCameraSettings
 	{
-		FVector2D BoundsMin = FVector2D(-12000.0f, -8000.0f);
-		FVector2D BoundsMax = FVector2D(12000.0f, 8000.0f);
 		float PanUnitsPerSecond = 2400.0f;
 		float FastPanMultiplier = 2.5f;
 		float RotationDegreesPerSecond = 75.0f;
 		float ZoomUnitsPerStep = 900.0f;
 		float MinimumZoomDistance = 1800.0f;
-		float MaximumZoomDistance = 9500.0f;
 		float MinimumPitchDegrees = -80.0f;
 		float MaximumPitchDegrees = -15.0f;
 

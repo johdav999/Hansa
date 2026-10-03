@@ -36,7 +36,10 @@ enum class EHansaUiTypographyToken : uint8
 	Heading2,
 	Body,
 	Data,
-	Caption
+	Caption,
+    SerifBody,
+    MapLabel,
+    MapLabelSelected
 };
 
 UENUM(BlueprintType)

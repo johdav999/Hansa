@@ -25,6 +25,7 @@ namespace Hansa::Simulation
 	class FHansaSimulationPipeline;
 	class FHansaSimulationReadOnlyAccess;
 	class FHansaStateHasher;
+	class FHansaMerchantOfficeTestSetup;
 
 	struct FHansaHouseState
 	{
@@ -102,7 +103,7 @@ namespace Hansa::Simulation
 	class HANSASIMULATION_API FHansaSimulationState final
 	{
 	public:
-		static constexpr uint32 DeterminismFingerprintVersion = 33;
+		static constexpr uint32 DeterminismFingerprintVersion = 36;
 		static constexpr uint32 CurrentSystemPipelineVersion = 1;
 		static constexpr uint64 EmptyCommandHistoryFingerprint = 14695981039346656037ULL;
 
@@ -122,6 +123,7 @@ namespace Hansa::Simulation
 		friend class FHansaSimulationPipeline;
 		friend class FHansaSimulationReadOnlyAccess;
 		friend class FHansaStateHasher;
+		friend class FHansaMerchantOfficeTestSetup;
 
 		[[nodiscard]] uint64 ComputeDeterminismFingerprint(
 			const FHansaSimulationDefinitionContext& Definitions) const;

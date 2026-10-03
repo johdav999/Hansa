@@ -11,7 +11,7 @@ namespace Hansa::Automation
 		{
 			double Value = 0.0;
 			if (!Object->TryGetNumberField(Field, Value) || !FMath::IsFinite(Value) ||
-				!FMath::IsNearlyEqual(Value, FMath::RoundToDouble(Value)))
+				FMath::Abs(Value)>9007199254740991.0 || !FMath::IsNearlyEqual(Value, FMath::RoundToDouble(Value)))
 			{
 				return false;
 			}
@@ -282,6 +282,9 @@ namespace Hansa::Automation
 		Json->SetStringField(TEXT("currentCityId"), Vehicle.CurrentCityId.ToString());
 		Json->SetNumberField(TEXT("cargoInventoryId"), static_cast<double>(Vehicle.CargoInventoryId.GetValue()));
 		Json->SetNumberField(TEXT("cargoMilliUnits"), Vehicle.Cargo.GetRawValue());
+        TArray<TSharedPtr<FJsonValue>> CargoSlots;
+        for(int32 Index=0;Index<Vehicle.CargoSlots.Num();++Index){const auto& Slot=Vehicle.CargoSlots[Index];auto Item=MakeShared<FJsonObject>();Item->SetNumberField(TEXT("slotIndex"),Index);Item->SetStringField(TEXT("goodId"),Slot.GoodId.ToString());Item->SetNumberField(TEXT("quantityMilliUnits"),Slot.Quantity.GetRawValue());Item->SetBoolField(TEXT("recoveryOnly"),Index>=3);CargoSlots.Add(MakeShared<FJsonValueObject>(Item));}
+        Json->SetArrayField(TEXT("cargoSlots"),CargoSlots);
 		Json->SetNumberField(TEXT("capacityMilliUnits"), Vehicle.Capacity.GetRawValue());
 		Json->SetNumberField(TEXT("freeCapacityMilliUnits"), Vehicle.FreeCapacity.GetRawValue());
 		Json->SetNumberField(TEXT("accruedUpkeepPfennig"), static_cast<double>(Vehicle.AccruedUpkeepPfennig));
@@ -328,6 +331,7 @@ namespace Hansa::Automation
 				ActionJson->SetStringField(TEXT("goodId"), Action.GoodId.ToString());
 				ActionJson->SetNumberField(TEXT("quantityLimitMilliUnits"), Action.QuantityLimit.GetRawValue());
 				ActionJson->SetNumberField(TEXT("minimumSourceReserveMilliUnits"), Action.MinimumSourceReserve.GetRawValue());
+                ActionJson->SetNumberField(TEXT("cargoSlotIndex"), Action.CargoSlotIndex);
 				Actions.Add(MakeShared<FJsonValueObject>(ActionJson));
 			}
 			StopJson->SetArrayField(TEXT("actions"), MoveTemp(Actions));
@@ -1023,6 +1027,28 @@ namespace Hansa::Automation
 		if (CommandName == TEXT("route.edit"))
 		{
 			Hansa::Simulation::FHansaRouteId RouteId;
+            if(Request->HasField(TEXT("stops")))
+            {
+             using namespace Hansa::Simulation;
+             const TArray<TSharedPtr<FJsonValue>>* InputStops=nullptr;
+             if(!ParseRouteId(Request,RouteId)||!Request->TryGetArrayField(TEXT("stops"),InputStops)||InputStops->Num()<2||InputStops->Num()>16){OutError=TEXT("route.edit requires routeId and 2–16 ordered stops.");return false;}
+             TArray<FHansaRouteStop> Stops;
+             for(const auto& InputStop:*InputStops){
+              const auto Obj=InputStop->AsObject();FString City;const TArray<TSharedPtr<FJsonValue>>* InputActions=nullptr;
+              if(!Obj||!Obj->TryGetStringField(TEXT("cityId"),City)||!Obj->TryGetArrayField(TEXT("actions"),InputActions)||InputActions->Num()>6){OutError=TEXT("Each stop needs cityId and at most six cargo instructions.");return false;}
+              const auto CityId=FHansaCityDefinitionId::TryParse(City);if(!CityId){OutError=TEXT("Invalid town ID.");return false;}
+              FHansaRouteStop Stop;Stop.CityId=CityId.Value;
+              for(const auto& InputAction:*InputActions){
+               const auto A=InputAction->AsObject();FString Good;int64 Kind=0,Slot=0,Quantity=0,Reserve=0;
+               if(!A||!A->TryGetStringField(TEXT("goodId"),Good)||!TryIntegral(A.ToSharedRef(),TEXT("kind"),Kind)||Kind<0||Kind>5||!TryIntegral(A.ToSharedRef(),TEXT("cargoSlotIndex"),Slot)||Slot<0||Slot>=3||!TryIntegral(A.ToSharedRef(),TEXT("quantityMilliUnits"),Quantity)||Quantity<=0||!TryIntegral(A.ToSharedRef(),TEXT("minimumReserveMilliUnits"),Reserve)||Reserve<0){OutError=TEXT("Each cargo instruction requires kind 0–5, slot 0–2, goodId, positive quantityMilliUnits and nonnegative minimumReserveMilliUnits.");return false;}
+               const auto GoodId=FHansaGoodId::TryParse(Good);if(!GoodId){OutError=TEXT("Invalid product ID.");return false;}
+               FHansaRouteCargoAction Action;Action.Kind=static_cast<EHansaRouteCargoActionKind>(Kind);Action.CargoSlotIndex=int32(Slot);Action.GoodId=GoodId.Value;Action.QuantityLimit=FHansaQuantity::FromRaw(Quantity);Action.MinimumSourceReserve=FHansaQuantity::FromRaw(Reserve);Stop.Actions.Add(Action);
+              }
+              Stops.Add(MoveTemp(Stop));
+             }
+             const auto Result=Fixture->EditRoute(RouteId,Stops);if(!Result){OutError=FString::Printf(TEXT("Authoritative route edit rejected: %s/%s"),LexToString(Result.GetError()),LexToString(Result.GetRoutePlanError()));return false;}
+             OutPayload=MakeSummary(1);OutPayload->SetStringField(TEXT("command"),CommandName);OutPayload->SetNumberField(TEXT("routeId"),double(RouteId.GetValue()));return true;
+            }
 			FString SourceText, DestinationText, GoodText;
 			int64 Quantity = 0, Reserve = 0;
 			if (!ParseRouteId(Request, RouteId) || !Request->TryGetStringField(TEXT("sourceCityId"), SourceText) ||

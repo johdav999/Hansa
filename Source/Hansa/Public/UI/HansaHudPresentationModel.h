@@ -5,6 +5,7 @@
 #include "UObject/Object.h"
 #include "UI/HansaInspectorPresentationModel.h"
 
+#include "UI/HansaTradeRecovery.h"
 #include "HansaHudPresentationModel.generated.h"
 
 namespace Hansa::Simulation
@@ -174,6 +175,7 @@ public:
 	void InitializeDefaults();
     void ResetCashHistory();
 	bool ApplySnapshot(const FHansaHudPresentationSnapshot& NewSnapshot);
+    bool ApplyRecoveryAlerts(const TArray<FHansaTradeRecovery>& Recoveries);
 
 	UFUNCTION(BlueprintCallable, Category = "Hansa|UI|HUD")
 	void ToggleAlertStack();

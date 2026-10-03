@@ -1,0 +1,296 @@
+{
+  "date": "2026-10-03",
+  "city": "Rostock",
+  "status": "source-art-candidates-not-imported",
+  "generationMode": "built-in-ImageGen-independent-text-to-image-transparent",
+  "requestedDimensions": [
+    1024,
+    1024
+  ],
+  "transformations": [],
+  "styleAnchor": "SourceArt/UI/Production/production--worker-portrait--default--1254x1254--v2.png",
+  "remainingGates": [
+    "Explicit source/production review and promotion",
+    "Actual 64/128px portraits on Navy/Linen backgrounds and supported UI density",
+    "Regenerate alpha/safe-margin variants if faint residual alpha is visible",
+    "Unreal staging/import and native UI acceptance"
+  ],
+  "portraits": [
+    {
+      "slug": "kerkhof",
+      "name": "Hinrik Kerkhof",
+      "house": "Kerkhof",
+      "id": "MerchantHouse.Rostock.Kerkhof",
+      "source": "SourceArt/UI/MerchantHouses/merchanthouses--kerkhof-portrait--neutral--1254x1254--v2.png",
+      "prompt": "SourceArt/UI/MerchantHouses/merchanthouses--kerkhof-portrait--neutral--1254x1254--v2.prompt.md",
+      "preview": "Docs/Images/UI/MerchantHouses/merchanthouses--kerkhof-portrait--neutral--1254x1254--v2.png",
+      "nativeDimensions": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaBounds": {
+        "1": [
+          0,
+          17,
+          1225,
+          1238
+        ],
+        "32": [
+          33,
+          71,
+          1223,
+          1201
+        ],
+        "128": [
+          34,
+          72,
+          1222,
+          1200
+        ],
+        "254": [
+          45,
+          73,
+          1213,
+          1198
+        ]
+      },
+      "opaqueEdgePixels": 0,
+      "inspection": "Original-resolution visual inspection completed; faint alpha below32 and less-than-requested margins documented in sibling prompt.",
+      "sha256": "16233923c46cacfed28816d0c02de27e9b27be2e53af0a93c4f238a716454ad2"
+    },
+    {
+      "slug": "kropelin",
+      "name": "Ludeke Kröpelin",
+      "house": "Kröpelin",
+      "id": "MerchantHouse.Rostock.Kropelin",
+      "source": "SourceArt/UI/MerchantHouses/merchanthouses--kropelin-portrait--neutral--1254x1254--v2.png",
+      "prompt": "SourceArt/UI/MerchantHouses/merchanthouses--kropelin-portrait--neutral--1254x1254--v2.prompt.md",
+      "preview": "Docs/Images/UI/MerchantHouses/merchanthouses--kropelin-portrait--neutral--1254x1254--v2.png",
+      "nativeDimensions": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaBounds": {
+        "1": [
+          0,
+          21,
+          1236,
+          1220
+        ],
+        "32": [
+          59,
+          99,
+          1207,
+          1189
+        ],
+        "128": [
+          59,
+          99,
+          1207,
+          1189
+        ],
+        "254": [
+          61,
+          101,
+          1205,
+          1187
+        ]
+      },
+      "opaqueEdgePixels": 0,
+      "inspection": "Original-resolution visual inspection completed; faint alpha below32 and less-than-requested margins documented in sibling prompt.",
+      "sha256": "c7f20bcebad44e182c29d13020e38fe0201c0f001611063a7a02d53952c03a5f"
+    },
+    {
+      "slug": "frese",
+      "name": "Claus Frese",
+      "house": "Frese",
+      "id": "MerchantHouse.Rostock.Frese",
+      "source": "SourceArt/UI/MerchantHouses/merchanthouses--frese-portrait--neutral--1254x1254--v2.png",
+      "prompt": "SourceArt/UI/MerchantHouses/merchanthouses--frese-portrait--neutral--1254x1254--v2.prompt.md",
+      "preview": "Docs/Images/UI/MerchantHouses/merchanthouses--frese-portrait--neutral--1254x1254--v2.png",
+      "nativeDimensions": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaBounds": {
+        "1": [
+          0,
+          20,
+          1238,
+          1228
+        ],
+        "32": [
+          71,
+          52,
+          1184,
+          1204
+        ],
+        "128": [
+          71,
+          52,
+          1183,
+          1204
+        ],
+        "254": [
+          73,
+          54,
+          1179,
+          1202
+        ]
+      },
+      "opaqueEdgePixels": 0,
+      "inspection": "Original-resolution visual inspection completed; faint alpha below32 and less-than-requested margins documented in sibling prompt.",
+      "sha256": "2f822e8c646a3e6be987b64226983058322261c74339d6fcd303bd70df9512b3"
+    },
+    {
+      "slug": "voss",
+      "name": "Gerd Voss",
+      "house": "Voss",
+      "id": "MerchantHouse.Rostock.Voss",
+      "source": "SourceArt/UI/MerchantHouses/merchanthouses--voss-portrait--neutral--1254x1254--v2.png",
+      "prompt": "SourceArt/UI/MerchantHouses/merchanthouses--voss-portrait--neutral--1254x1254--v2.prompt.md",
+      "preview": "Docs/Images/UI/MerchantHouses/merchanthouses--voss-portrait--neutral--1254x1254--v2.png",
+      "nativeDimensions": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaBounds": {
+        "1": [
+          19,
+          20,
+          1230,
+          1254
+        ],
+        "32": [
+          44,
+          76,
+          1227,
+          1212
+        ],
+        "128": [
+          44,
+          77,
+          1226,
+          1212
+        ],
+        "254": [
+          46,
+          78,
+          1223,
+          1209
+        ]
+      },
+      "opaqueEdgePixels": 0,
+      "inspection": "Original-resolution visual inspection completed; faint alpha below32 and less-than-requested margins documented in sibling prompt.",
+      "sha256": "0b7c9da322c6142975044dcafc69f52445ef108656a0c893b8c3d82e9a83e6db"
+    },
+    {
+      "slug": "tesch",
+      "name": "Bernd Tesch",
+      "house": "Tesch",
+      "id": "MerchantHouse.Rostock.Tesch",
+      "source": "SourceArt/UI/MerchantHouses/merchanthouses--tesch-portrait--neutral--1254x1254--v2.png",
+      "prompt": "SourceArt/UI/MerchantHouses/merchanthouses--tesch-portrait--neutral--1254x1254--v2.prompt.md",
+      "preview": "Docs/Images/UI/MerchantHouses/merchanthouses--tesch-portrait--neutral--1254x1254--v2.png",
+      "nativeDimensions": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaBounds": {
+        "1": [
+          0,
+          23,
+          1244,
+          1254
+        ],
+        "32": [
+          58,
+          67,
+          1180,
+          1209
+        ],
+        "128": [
+          58,
+          67,
+          1179,
+          1208
+        ],
+        "254": [
+          61,
+          71,
+          1178,
+          1207
+        ]
+      },
+      "opaqueEdgePixels": 0,
+      "inspection": "Original-resolution visual inspection completed; faint alpha below32 and less-than-requested margins documented in sibling prompt.",
+      "sha256": "c97cd47670da5d9aa16c7b70449b238f11ee421345743cb361fa8074f10784e0"
+    },
+    {
+      "slug": "witte",
+      "name": "Johann Witte",
+      "house": "Witte",
+      "id": "MerchantHouse.Rostock.Witte",
+      "source": "SourceArt/UI/MerchantHouses/merchanthouses--witte-portrait--neutral--1254x1254--v2.png",
+      "prompt": "SourceArt/UI/MerchantHouses/merchanthouses--witte-portrait--neutral--1254x1254--v2.prompt.md",
+      "preview": "Docs/Images/UI/MerchantHouses/merchanthouses--witte-portrait--neutral--1254x1254--v2.png",
+      "nativeDimensions": [
+        1254,
+        1254
+      ],
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaBounds": {
+        "1": [
+          0,
+          0,
+          1238,
+          1242
+        ],
+        "32": [
+          49,
+          71,
+          1198,
+          1228
+        ],
+        "128": [
+          49,
+          72,
+          1197,
+          1228
+        ],
+        "254": [
+          51,
+          73,
+          1192,
+          1225
+        ]
+      },
+      "opaqueEdgePixels": 0,
+      "inspection": "Original-resolution visual inspection completed; faint alpha below32 and less-than-requested margins documented in sibling prompt.",
+      "sha256": "feb86cbec768db3618b1bba283390a210b4009a0aa863de5a9f0b257e85ea3a3"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "date": "2026-09-23",
+  "status": "Functionality implemented; visual-reference acceptance incomplete",
+  "build": "HansaEditor Win64 Development passed",
+  "tests": {
+    "finalSchedule": 3,
+    "tradeRegression": 16,
+    "realViewportRuns": 2
+  },
+  "viewports": [
+    "1920x1080 at 100%",
+    "1280x720 at 140%, large text, high contrast, reduced motion"
+  ],
+  "visualInspection": "Native final cargo screenshots inspected. Wide table and compact quantity summaries render; flat vector map and overall shell do not match painted reference.",
+  "limitations": [
+    "Reference fidelity unfinished",
+    "Precise historical transfer blockers unavailable",
+    "No Shipping certification",
+    "Full physical controller traversal not certified"
+  ],
+  "logs": [
+    {
+      "path": "Saved/BuildArtifacts/20260923-085152438-build-HansaEditor-Win64-Development/Build.log",
+      "sha256": "8112D76D6D550D18ED43B8A70C69D0122F91F2F0BDCB5EFF60F7870D6616B93D"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260923-084651946-automation-Hansa.UI.TradeSchedule/UnrealEditor.log",
+      "sha256": "2E6DF2547276552B3ABA172241AF387C33746D09D93FF3F086CC282FDBBD5E75"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260923-084915730-gui-repair-1920-1080/Unreal.log",
+      "sha256": "3A958D912DB2AC85567A0EC3F479BCBAB50B993478AC30B28ED9EF781097D64A"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260923-085243849-gui-repair-1280-720/Unreal.log",
+      "sha256": "230EB37CED108F59D1465570808E3F2D2009146D55F745AA641499D89742FE23"
+    },
+    {
+      "path": "Saved/BuildArtifacts/20260923-084125112-automation-Hansa.UI.Trade/UnrealEditor.log",
+      "sha256": "AF7F1EB6FCE2AB291D09D943F53FD6DFAF9E9C3724979FCAA983202F8137374D"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1280x720-scale-1.4-0.png",
+      "bytes": 223024,
+      "sha256": "36B41C90416640E867ABD0E0BA52AA49F40B189321400E1ACE15E80347D26F60"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1280x720-scale-1.4-0.tsv",
+      "bytes": 36364,
+      "sha256": "E4AE3F31382FB82C83E027FC84E0EB855156569AE54C01DBEC1086B3925A93DE"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1280x720-scale-1.4-1.png",
+      "bytes": 234487,
+      "sha256": "FACCAF34B9FFBC6AC68068F740A83BC4274C542B620AC11EE9C6A1FA84A3D2D8"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1280x720-scale-1.4-1.tsv",
+      "bytes": 37570,
+      "sha256": "00523D7FED40225FD0854465EE375E553E9EC0BECCF5CBA763071807054A3FBC"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1280x720-scale-1.4-2.png",
+      "bytes": 223944,
+      "sha256": "58ABD83ADECA7D7A22CB35373D5DA98E4C9F4959AC613D556BAF234FBF3F30CF"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1280x720-scale-1.4-2.tsv",
+      "bytes": 36060,
+      "sha256": "FC09D3493772F17147EF32D4784D11047E72174E2EBB1A63B14F128E5603791D"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1920x1080-scale-1.0-0.png",
+      "bytes": 552131,
+      "sha256": "48AC5F302991F87E8FEB5CC7B2EC7E7A56DBD82BC1736D706F7D3C75DF554D37"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1920x1080-scale-1.0-0.tsv",
+      "bytes": 37410,
+      "sha256": "74098575458C3C56919A438B5AD8E15DAE2AE559DE4C10767020A4FF759D098B"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1920x1080-scale-1.0-1.png",
+      "bytes": 542630,
+      "sha256": "4BDCD498F5D752D2113E4DDE0E3E38CE480E7CDB05F2C7632514B1D43977744E"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1920x1080-scale-1.0-1.tsv",
+      "bytes": 38616,
+      "sha256": "03A76922628F0274CC4C1BF56803E179F44A565B2F5664A34F4B0558C6AC2104"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1920x1080-scale-1.0-2.png",
+      "bytes": 527263,
+      "sha256": "397B50CCAB8AD3F6815AFDCDA2E7A7101208FBA207DD035FAF7F6C6D247F0760"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/schedule-1920x1080-scale-1.0-2.tsv",
+      "bytes": 37104,
+      "sha256": "2A6886B4DB625CEEFBBE5CFC99A34A46A7C8EE906FC729217C85DE88EF99F0B6"
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/TG-06-captures/TG06-authority.tsv",
+      "bytes": 30004,
+      "sha256": "BBE5E575E6AAE64FC431DDD7886CD24349E2E06D3016C0A48E7E716501AF96E5"
+    }
+  ]
+}

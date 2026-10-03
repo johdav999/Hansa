@@ -6,7 +6,7 @@
 #include "Rendering/DrawElements.h"
 namespace Hansa::UI {
 void SHansaReferenceFrame::Construct(const FArguments& Args) {
- bDark=Args._Dark; ChildSlot.Padding(Args._Padding)[Args._Content.Widget];
+ bDark=Args._Dark;Surface=Args._Surface; ChildSlot.HAlign(Args._HAlign).Padding(Args._Padding)[Args._Content.Widget];
  SetVisibility(EVisibility::SelfHitTestInvisible);
 }
 int32 SHansaReferenceFrame::OnPaint(const FPaintArgs& Args,const FGeometry& G,const FSlateRect& Clip,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool Enabled) const {
@@ -16,6 +16,7 @@ int32 SHansaReferenceFrame::OnPaint(const FPaintArgs& Args,const FGeometry& G,co
  const auto Fill=bDark?UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::BalticNavy)*.65f:UHansaUiStyleLibrary::GetColor(EHansaUiColorToken::Linen);
  FLinearColor Opaque=Fill;Opaque.A=1;
  FSlateDrawElement::MakeBox(Out,Layer,G.ToPaintGeometry(),White,ESlateDrawEffect::None,Opaque);
+ if(Surface)FSlateDrawElement::MakeBox(Out,Layer,G.ToPaintGeometry(),Surface,ESlateDrawEffect::None,FLinearColor(1,1,1,.35f));
  auto Rule=[&](float Inset,FLinearColor Color){
   TArray<FVector2D> P={{Inset,Inset},{Size.X-Inset,Inset},{Size.X-Inset,Size.Y-Inset},{Inset,Size.Y-Inset},{Inset,Inset}};
   FSlateDrawElement::MakeLines(Out,Layer+1,G.ToPaintGeometry(),P,ESlateDrawEffect::None,Color,true,1.f);

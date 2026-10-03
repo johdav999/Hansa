@@ -65,6 +65,7 @@ bool FHansaCompleteAuthorizedProjectionTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Matching revision builds a delta"),
 		Authority.BuildProjection(5001, Initial.Revision, false, Unchanged, Error));
 	TestFalse(TEXT("Matching revision is not a full refresh"), Unchanged.bFullRefresh);
+    TestFalse(TEXT("Unchanged trade workspace omitted"),Unchanged.bTradeWorkspaceIncluded);
 	TestTrue(TEXT("Unchanged large collections are omitted"),
 		Unchanged.Placements.IsEmpty() && Unchanged.Markets.IsEmpty() &&
 		Unchanged.Inventories.IsEmpty() && Unchanged.Productions.IsEmpty() &&

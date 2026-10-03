@@ -6,6 +6,8 @@
 #include "Misc/AutomationTest.h"
 #include "Model/HansaSimulationState.h"
 #include "Placement/HansaPlacement.h"
+#include "Presence/HansaForeignPresence.h"
+#include "Queries/HansaSimulationReadOnly.h"
 #include "Systems/HansaSimulationPipeline.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -266,15 +268,91 @@ bool FHansaPlacementValidationTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Authored collision blockers reject placement"),
 		HasReason(View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Warehouse"), 4, 4)),
 			EHansaPlacementFailure::CellBlocked));
-	TestTrue(TEXT("Every footprint cell enforces land ownership"),
-		HasReason(View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Warehouse"), 5, 2)),
-			EHansaPlacementFailure::WrongOwner));
+	TestTrue(TEXT("Lübeck allows a building footprint across legacy house ownership bands"),
+		View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Warehouse"), 5, 2)).CanPlace());
+	TestTrue(TEXT("Lübeck allows roads on another house's land"),
+		View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Road"), 6, 2)).CanPlace());
+	FHansaForeignPresenceState PresenceElsewhere;
+	PresenceElsewhere.HouseId = HouseOne;
+	PresenceElsewhere.CityId = DefinitionId<FHansaCityDefinitionId>(TEXT("City.Rostock"));
+	const FHansaPlacementValidationResult HomeBoundary = FHansaPlacementRules::Validate(
+		View.GetPlacement(), *Definitions.GetEconomicRegistry(), HouseOne,
+		Spec(TEXT("Building.Warehouse"), 5, 2), MakeArrayView(&PresenceElsewhere, 1), {});
+	TestTrue(TEXT("Foreign presence elsewhere does not restrict construction in Lübeck"),
+		HomeBoundary.CanPlace());
+	TestFalse(TEXT("Lübeck ownership boundary does not request Merchant quarter rights"),
+		HasReason(HomeBoundary, EHansaPlacementFailure::ForeignPresenceStageInsufficient));
 	TestTrue(TEXT("Locked building types report a prerequisite failure"),
 		HasReason(View.ValidatePlacement(HouseTwo, Spec(TEXT("Building.Warehouse"), 6, 2)),
 			EHansaPlacementFailure::MissingPrerequisite));
 	TestTrue(TEXT("Unknown compiled definitions fail closed"),
 		HasReason(View.ValidatePlacement(HouseOne, Spec(TEXT("Building.Missing"), 1, 1)),
 			EHansaPlacementFailure::UnknownBuildingDefinition));
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FHansaStartingCityConstructionTest,
+	"Hansa.Simulation.Placement.StartingCityConstruction",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaStartingCityConstructionTest::RunTest(const FString& Parameters)
+{
+	using namespace Hansa::Simulation;
+	using namespace Hansa::Tests::Placement;
+	const auto Definitions = MakeDefinitions();
+	auto State = MakeState();
+	FHansaSimulationTransientCache Cache;
+	const auto BuildingSpec = Spec(TEXT("Building.Warehouse"), 5, 2);
+	TestTrue(TEXT("Viewer preview permits the same cross-owner Lübeck footprint"),
+		State.CreateReadOnlyAccess(Definitions).ValidatePlacement(EntityId<FHansaHouseId>(1), BuildingSpec).CanPlace());
+	const TArray<FHansaGameplayCommand> Commands = { Place(1, 1, 0, 101, BuildingSpec) };
+	const auto Result = FHansaGameplayCommandGateway::ExecuteTick(State, Definitions, Commands, Cache);
+	TestTrue(TEXT("Authoritative construction accepts a footprint crossing Lübeck ownership bands"), Result.IsSuccess());
+	const auto View = State.CreateReadOnlyAccess(Definitions);
+	TestEqual(TEXT("The building is committed"), View.GetPlacement().GetPlacements().Num(), 1);
+	if (!View.GetPlacement().GetPlacements().IsEmpty())
+	{
+		TestTrue(TEXT("The issuing player owns the new building"),
+			View.GetPlacement().GetPlacements()[0].OwnerId == EntityId<FHansaHouseId>(1));
+		const auto Restored = MakeState({View.GetPlacement().GetPlacements()[0]});
+		TestEqual(TEXT("Saved occupancy across Lübeck ownership bands restores without a lease"),
+			Restored.CreateReadOnlyAccess(Definitions).GetPlacement().GetPlacements().Num(), 1);
+	}
+	TestTrue(TEXT("Land ownership is preserved for save topology compatibility"),
+		View.GetPlacement().FindCell(BuildingSpec.CityId, {6, 2})->OwnerId == EntityId<FHansaHouseId>(2));
+	TestTrue(TEXT("Shared construction permission does not permit overlapping buildings"),
+		HasReason(View.ValidatePlacement(EntityId<FHansaHouseId>(2), Spec(TEXT("Building.Road"), 6, 2)),
+			EHansaPlacementFailure::Occupied));
+
+	// A paid road on House 2's recorded land must charge the builder's home
+	// treasury. Ownership bands affect neither the preview nor the payer.
+	auto FundedState = MakeState();
+	FHansaSimulationTransientCache FundedCache;
+	const auto RivalLandRoad = Spec(TEXT("Building.Road"), 6, 2);
+	TestTrue(TEXT("Cross-owner paid-road preview permits construction"),
+		FundedState.CreateReadOnlyAccess(Definitions).ValidatePlacement(EntityId<FHansaHouseId>(1), RivalLandRoad).CanPlace());
+	const TArray<FHansaGameplayCommand> FundedCommands = { Place(2, 1, 0, 102, RivalLandRoad) };
+	TestTrue(TEXT("Cross-owner paid-road command succeeds"),
+		FHansaGameplayCommandGateway::ExecuteTick(FundedState, Definitions, FundedCommands, FundedCache).IsSuccess());
+	int64 BuilderMoney = -1, RecordedOwnerMoney = -1;
+	for (const auto& House : FundedState.CreateReadOnlyAccess(Definitions).GetHouses())
+	{
+		if (House.Id == EntityId<FHansaHouseId>(1)) BuilderMoney = House.Money.GetRawValue();
+		if (House.Id == EntityId<FHansaHouseId>(2)) RecordedOwnerMoney = House.Money.GetRawValue();
+	}
+	TestEqual(TEXT("The Lübeck builder pays the road cost from home funds"), BuilderMoney, int64(99'975));
+	TestEqual(TEXT("The recorded landowner does not pay"), RecordedOwnerMoney, int64(100'000));
+
+	auto ForeignInitialization = MakePlacementInitialization();
+	const auto ForeignCity = DefinitionId<FHansaCityDefinitionId>(TEXT("City.Rostock"));
+	ForeignInitialization.Maps[0].CityId = ForeignCity;
+	const auto ForeignState = RequireValue(FHansaPlacementState::TryCreate(MoveTemp(ForeignInitialization)));
+	auto ForeignSpec = BuildingSpec;
+	ForeignSpec.CityId = ForeignCity;
+	TestTrue(TEXT("Other cities still enforce land ownership"),
+		HasReason(FHansaPlacementRules::Validate(ForeignState, *Definitions.GetEconomicRegistry(),
+			EntityId<FHansaHouseId>(1), ForeignSpec), EHansaPlacementFailure::WrongOwner));
 	return !HasAnyErrors();
 }
 
@@ -480,6 +558,146 @@ bool FHansaPlacementCanonicalOrderTest::RunTest(const FString& Parameters)
 		First.CreateReadOnlyAccess(Definitions).BuildStateHashReport().GetRecomputedSubsystemCount(), uint32(0));
 	TestEqual(TEXT("Topology diagnostics retain the canonical map and cell record count"),
 		First.CreateReadOnlyAccess(Definitions).GetPlacement().GetTopologyRecordCount(), uint32(65));
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FHansaLandQueryTest,
+	"Hansa.Simulation.Land.ViewerScopedCells",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaLandQueryTest::RunTest(const FString& Parameters)
+{
+	using namespace Hansa::Simulation;
+	using namespace Hansa::Tests::Placement;
+	const FHansaHouseId Viewer = EntityId<FHansaHouseId>(1);
+	const FHansaCityDefinitionId Lubeck = DefinitionId<FHansaCityDefinitionId>(TEXT("City.Lubeck"));
+	const FHansaCityDefinitionId Rostock = DefinitionId<FHansaCityDefinitionId>(TEXT("City.Rostock"));
+	FHansaSimulationInitialization Init;
+	Init.Clock = RequireValue(FHansaSimulationClock::TryCreate(
+		RequireValue(FHansaSimulationVersion::TryCreate(1)),
+		RequireValue(FHansaSimulationTick::TryCreate(0))));
+	Init.CampaignSeed = 42;
+	Init.Houses = {{Viewer, FHansaMoney::FromRaw(100000)},
+		{EntityId<FHansaHouseId>(2), FHansaMoney::FromRaw(100000)}};
+	Init.Cities = {{Lubeck, FHansaQuantity()}, {Rostock, FHansaQuantity()}};
+	FHansaPlacementInitialization Placement = MakePlacementInitialization();
+	FHansaPlacementMapInitialization ForeignMap = Placement.Maps[0];
+	ForeignMap.CityId = Rostock;
+	for (FHansaPlacementGridCell& Cell : ForeignMap.Cells)
+		if (Cell.Coordinate.X >= 5) Cell.OwnerId = EntityId<FHansaHouseId>(2);
+	Placement.Maps.Add(MoveTemp(ForeignMap));
+	Init.Placement = MoveTemp(Placement);
+	FHansaForeignPresenceState Presence;
+	Presence.HouseId = Viewer;
+	Presence.CityId = Rostock;
+	Presence.CurrentStageId = TEXT("PresenceStage.TradeStation");
+	Presence.Status = EHansaForeignPresenceStatus::Active;
+	Presence.GrantedCapabilityIds.Add(TEXT("PresenceCapability.MerchantQuarter"));
+	Presence.StationId = EntityId<FHansaTradeStationId>(10);
+	Presence.LeasedPlotId = EntityId<FHansaLeasedPlotId>(10);
+	Init.ForeignPresences.Add(Presence);
+	FHansaLeasedPlotState Lease;
+	Lease.Id = EntityId<FHansaLeasedPlotId>(10);
+	Lease.StationId = Presence.StationId;
+	Lease.OwnerId = Viewer;
+	Lease.CityId = Rostock;
+	Lease.SiteId = TEXT("Site.Test");
+	Lease.PlotCategory = TEXT("Commercial");
+	Lease.BoundsMin = {5, 2};
+	Lease.BoundsMax = {6, 3};
+	Lease.PermittedBuildingCategories = {TEXT("Storage")};
+	Lease.bActive = true;
+	Init.LeasedPlots.Add(Lease);
+	FHansaTradeStationState Station;
+	Station.Id = Presence.StationId;
+	Station.OwnerId = Viewer;
+	Station.CityId = Rostock;
+	Station.SiteId = Lease.SiteId;
+	Station.InventoryId = EntityId<FHansaInventoryId>(10);
+	Station.FactorId = EntityId<FHansaFactorId>(10);
+	Station.LeasedPlotId = Lease.Id;
+	Station.Status = EHansaTradeStationStatus::Active;
+	Init.TradeStations.Add(Station);
+	FHansaInventoryInitialization Inventory;
+	Inventory.Id = Station.InventoryId;
+	Inventory.TradeStationId = Station.Id;
+	Inventory.OwnerKind = EHansaInventoryOwnerKind::TradeStation;
+	Inventory.CityId = Rostock;
+	Inventory.Capacity = FHansaQuantity::FromRaw(1000);
+	Inventory.AcceptedGoods.Add(DefinitionId<FHansaGoodId>(TEXT("Good.Timber")));
+	Init.Inventories.Add(Inventory);
+	const FHansaSimulationDefinitionContext Definitions = MakeDefinitions();
+	FHansaSimulationInitialization SuspendedInit = Init;
+	SuspendedInit.LeasedPlots[0].bActive = false;
+	const FHansaSimulationState SuspendedState = RequireValue(FHansaSimulationState::TryCreate(MoveTemp(SuspendedInit)));
+	const FHansaSimulationState State = RequireValue(FHansaSimulationState::TryCreate(MoveTemp(Init)));
+	const auto View = State.CreateReadOnlyAccess(Definitions);
+	const auto Home = View.QueryLand(Viewer, Lubeck, {6, 2}, {6, 2});
+	TestEqual(TEXT("Home cell is surveyed"), Home.Cells.Num(), 1);
+	if (Home.Cells.Num() == 1)
+	{
+		TestEqual(TEXT("Recorded rival owner remains truthful"), Home.Cells[0].RecordedOwnerId.GetValue(), uint64(2));
+		TestTrue(TEXT("Lubeck permits construction across owner bands"), Home.Cells[0].Access == EHansaLandAccess::Permitted);
+	}
+	const auto Foreign = View.QueryLand(Viewer, Rostock, {4, 2}, {7, 4});
+	TestEqual(TEXT("Bounded region returns every cell"), Foreign.Cells.Num(), 12);
+	TestEqual(TEXT("Only viewer-owned intersecting lease is exposed"), Foreign.ViewerLeases.Num(), 1);
+	if (Foreign.ViewerLeases.Num() == 1)
+		TestEqual(TEXT("Category limit stays visible without claiming building validity"),
+			Foreign.ViewerLeases[0].PermittedBuildingCategories[0], FString(TEXT("Storage")));
+	const auto FindCell = [&](const int32 X, const int32 Y) -> const FHansaLandCellView*
+	{
+		return Foreign.Cells.FindByPredicate([&](const FHansaLandCellView& Cell)
+		{ return Cell.Coordinate == (FHansaGridCoordinate{X, Y}); });
+	};
+	if (const FHansaLandCellView* Covered = FindCell(6, 2))
+		TestTrue(TEXT("Foreign lease is conditional on the exact building footprint and category"),
+			Covered->Access == EHansaLandAccess::Conditional && Covered->ViewerLeaseId == Lease.Id);
+	else AddError(TEXT("Covered cell missing"));
+	if (const FHansaLandCellView* Outside = FindCell(7, 2))
+		TestTrue(TEXT("Adjacent foreign cell is not covered by the lease"), Outside->Access == EHansaLandAccess::Denied);
+	else AddError(TEXT("Outside cell missing"));
+	const auto SuspendedCell = SuspendedState.CreateReadOnlyAccess(Definitions).QueryLand(Viewer, Rostock, {6, 2}, {6, 2});
+	TestTrue(TEXT("Inactive lease is denied with its own reason"), SuspendedCell.Cells.Num() == 1 &&
+		SuspendedCell.Cells[0].Access == EHansaLandAccess::Denied &&
+		SuspendedCell.Cells[0].Reason == EHansaLandAccessReason::ForeignLeaseInactive);
+	const auto RivalView = View.QueryLand(EntityId<FHansaHouseId>(2), Rostock, {5, 2}, {5, 2});
+	TestTrue(TEXT("Rival does not receive viewer-private lease details"), RivalView.ViewerLeases.IsEmpty());
+	const auto Protected = View.QueryLand(Viewer, Rostock, {4, 4}, {4, 4});
+	TestTrue(TEXT("Protected ground is separate from land rights"), Protected.Cells.Num() == 1 &&
+		Protected.Cells[0].bProtected && Protected.Cells[0].Access == EHansaLandAccess::Permitted);
+	const auto Unknown = View.QueryLand(Viewer, Rostock, {8, 2}, {8, 2});
+	TestTrue(TEXT("Unknown topology stays unavailable"), Unknown.Cells.Num() == 1 &&
+		!Unknown.Cells[0].bSurveyKnown && Unknown.Cells[0].Access == EHansaLandAccess::Unavailable);
+	TestTrue(TEXT("Oversized request is rejected"), View.QueryLand(Viewer, Rostock, {0, 0}, {64, 0}).Failure == EHansaLandQueryFailure::TooLarge);
+	TestTrue(TEXT("Unrecognized viewer is rejected"), View.QueryLand(EntityId<FHansaHouseId>(3), Rostock, {0, 0}, {0, 0}).Failure == EHansaLandQueryFailure::InvalidViewer);
+	const auto OccupiedState = MakeState({RoadRecord(100, 1, 2)});
+	const auto Occupied = OccupiedState.CreateReadOnlyAccess(Definitions).QueryLand(Viewer, Lubeck, {1, 2}, {1, 2});
+	TestTrue(TEXT("Occupancy is reported separately from permission"), Occupied.Cells.Num() == 1 &&
+		Occupied.Cells[0].Access == EHansaLandAccess::Permitted && Occupied.Cells[0].OccupyingBuildingId.IsValid());
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaProtectedCellIndexTest,
+	"Hansa.Simulation.Placement.ProtectedCellIndex",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHansaProtectedCellIndexTest::RunTest(const FString&)
+{
+	using namespace Hansa::Tests::Placement;
+	auto Initialization = MakePlacementInitialization();
+	const auto Topology = FHansaPlacementTopology::TryCreate(Initialization.Maps);
+	if (!TestTrue(TEXT("Topology builds"), Topology.IsSuccess())) return false;
+	const auto* Protected = Topology.Value.GetProtectedCells().Find(TEXT("City.Lubeck"));
+	TestTrue(TEXT("Derived index contains exactly the blocked cell"), Protected && Protected->Num() == 1 && (*Protected)[0] == FHansaGridCoordinate{4, 4});
+	Algo::Reverse(Initialization.Maps[0].Cells);
+	const auto Reordered = FHansaPlacementTopology::TryCreate(Initialization.Maps);
+	TestTrue(TEXT("Index preserves canonical topology identity"), Reordered && Reordered.Value.GetTopologyHash() == Topology.Value.GetTopologyHash());
+	const auto State = MakeState();
+	const auto Definitions = MakeDefinitions();
+	const auto Projection = State.CreateReadOnlyAccess(Definitions).BuildProjection();
+	TestTrue(TEXT("Projection exposes the same protected coordinates"), Projection && Projection.Value.GetProtectedCells(TEXT("City.Lubeck")).Num() == 1 && Projection.Value.GetProtectedCells(TEXT("City.Lubeck"))[0] == FHansaGridCoordinate{4, 4});
 	return !HasAnyErrors();
 }
 

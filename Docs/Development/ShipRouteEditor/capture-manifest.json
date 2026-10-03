@@ -1,0 +1,218 @@
+[
+  {
+    "file": "Captures/actual-1280x720-scale-0.8-load.png",
+    "width": 1280,
+    "height": 720,
+    "sha256": "a7d03619b35bfa71b3b613d082c301767c779df823da6815ddf20e02f203f6c0",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1280x720-scale-0.8-ship-matrix.png",
+    "width": 1280,
+    "height": 720,
+    "sha256": "5ae2a92e347a19d9cd4106245feb94ffc7291f9543d7fd1eaec4023a4372dbb2",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1280x720-scale-0.8-unload.png",
+    "width": 1280,
+    "height": 720,
+    "sha256": "f602fc88928f5efa0f5bd93dc7703358d07d0c6b3bb7a08e5c9ed06615e92488",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1280x720-scale-1.0-load.png",
+    "width": 1280,
+    "height": 720,
+    "sha256": "250fd6a7681fe12a6775ebcbf6685b1227403c22eb041fcca7030cbc8ff8bd9b",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1280x720-scale-1.0-ship-matrix.png",
+    "width": 1280,
+    "height": 720,
+    "sha256": "ebc83224219210632cd8eafc732231436d188a795b104500c1b34782f6fed59e",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1280x720-scale-1.0-unload.png",
+    "width": 1280,
+    "height": 720,
+    "sha256": "228183a352f016ddeae4c4069d021fade462f753c524e0053ed5f48d8162e0ec",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1280x720-scale-1.4-load.png",
+    "width": 1280,
+    "height": 720,
+    "sha256": "ca5473a80f3c85423d0f44e00761294ef4c35bd411f29799324add1cbe454acd",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1280x720-scale-1.4-ship-matrix.png",
+    "width": 1280,
+    "height": 720,
+    "sha256": "f785bb36caef279c6d6adb60637e15e9a8b1f5476022a0e17fb5cc9ea82e71af",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1280x720-scale-1.4-unload.png",
+    "width": 1280,
+    "height": 720,
+    "sha256": "a616084180b566a0cd5ea53e08cd1733052a0bd1093a232a8e0239b5c26951ec",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1536x1024-scale-0.8-load.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "18fc61e6d5539d86a5fabcfaa080f26d3e643af33c0fdfb8aa9fa84d4500e557",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1536x1024-scale-0.8-ship-matrix.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "f207e2c37a7507bf17265e69875ee41441d9e20c0e1789fa41d5f00d15edce3e",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1536x1024-scale-0.8-unload.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "4be0eade697743029cd4e0c264b5e017e85995433df56dd0bed1ad68823ee2ab",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1536x1024-scale-1.0-load.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "1e576c6cee89f3db90fa0e1e7c845bbc89d597899b79e59bfdd3c39609f312cf",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1536x1024-scale-1.0-ship-matrix.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "c82575b058a7142a0e7f0c25fcac29de19a985655fba4c04c072af841bcc6563",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1536x1024-scale-1.0-unload.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "c9adbb101884775a7f3bc9f8f547311e0348ef04a35d6570ae603eb253fe5143",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1536x1024-scale-1.4-load.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "08bb364214f418e5accf4c1d9e9e2aee8c9760505a6c5ca1bf535511c28d9e64",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1536x1024-scale-1.4-ship-matrix.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "ecdf3aaf19aa21ca786c7e4ccfad036ef0733272cc46fa317cbfdc9be6a7cd6c",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1536x1024-scale-1.4-unload.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "b5150c7daedec336ef98120546cbdc9590722a0d060c9937386132564d443e13",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1920x1080-scale-0.8-load.png",
+    "width": 1920,
+    "height": 1080,
+    "sha256": "221e9dbc274e011b2aff53a94646798d16fb2e3340ff241c49da2d742211ec5a",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1920x1080-scale-0.8-ship-matrix.png",
+    "width": 1920,
+    "height": 1080,
+    "sha256": "b42953c2457439bd0b559cd40d24e6e7babe998f633e3b1ef403102455e8463c",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1920x1080-scale-0.8-unload.png",
+    "width": 1920,
+    "height": 1080,
+    "sha256": "65b1ae20ac52822953277199519eda463e93ca50b2ef84a609c92e6f4b40561e",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1920x1080-scale-1.0-load.png",
+    "width": 1920,
+    "height": 1080,
+    "sha256": "c78de68c207bc93f2d509f640ca6dc0573716f021999d746126b07b26c4be4b8",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1920x1080-scale-1.0-ship-matrix.png",
+    "width": 1920,
+    "height": 1080,
+    "sha256": "8eec9d76f70a1bc9a0812a5fedae3461511226f8999bf2de7aa9fae6d80246ec",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1920x1080-scale-1.0-unload.png",
+    "width": 1920,
+    "height": 1080,
+    "sha256": "e526bacfc3e42e6daa81d1179ef7ad545eaebc215b9512c14b03c7b840ee1ca5",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1920x1080-scale-1.4-load.png",
+    "width": 1920,
+    "height": 1080,
+    "sha256": "b14d1af006890216d32b0dba4bbc200355fe3ae5116da6b16f122426c472076c",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1920x1080-scale-1.4-ship-matrix.png",
+    "width": 1920,
+    "height": 1080,
+    "sha256": "b981a879a8aaed854d54b281411451dffebd2f1822f370172036070e5b2fa11a",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  },
+  {
+    "file": "Captures/actual-1920x1080-scale-1.4-unload.png",
+    "width": 1920,
+    "height": 1080,
+    "sha256": "d481d99d27cf5f40bac3de0be406b04716b7c5129de3e98dbcbc1c2bb9207f4a",
+    "kind": "actual Unreal viewport capture",
+    "resampled": false
+  }
+]

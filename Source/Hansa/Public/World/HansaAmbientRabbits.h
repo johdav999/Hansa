@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "World/HansaAmbientAnimals.h"
 #include "HansaAmbientRabbits.generated.h"
 
 class USkeletalMeshComponent;
@@ -25,25 +25,9 @@ struct FHansaRabbitObservation
     UPROPERTY(BlueprintReadOnly, Category="Rabbit") bool bVisible = false;
 };
 
-USTRUCT()
-struct FHansaAmbientRabbit
-{
-    GENERATED_BODY()
-    UPROPERTY(Transient) TObjectPtr<USkeletalMeshComponent> Mesh;
-    EHansaRabbitActivity Activity = EHansaRabbitActivity::Still;
-    FVector Start = FVector::ZeroVector;
-    FVector Destination = FVector::ZeroVector;
-    FQuat Heading = FQuat::Identity;
-    float Elapsed = 0;
-    float Duration = 0;
-    float PoseTime = 0;
-    int32 WalksSinceJump = 0;
-    bool bPlaced = false;
-};
-
 /** Local cosmetic wildlife. Never owns economy, collision, save state or multiplayer authority. */
 UCLASS(BlueprintType, Blueprintable)
-class HANSA_API AHansaAmbientRabbits : public AActor
+class HANSA_API AHansaAmbientRabbits : public AHansaAmbientAnimals
 {
     GENERATED_BODY()
 public:
@@ -66,31 +50,9 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Rabbit|Diagnostics") int32 GetLiveRabbitCount() const;
     UFUNCTION(BlueprintPure, Category="Rabbit|Diagnostics") TArray<FHansaRabbitObservation> QueryRabbits() const;
-    UFUNCTION(BlueprintPure, Category="Rabbit|Diagnostics") int32 GetCompletedJumpCount() const { return CompletedJumps; }
-    UFUNCTION(BlueprintPure, Category="Rabbit|Diagnostics") FString GetValidationError() const { return ValidationError; }
     /** Fail-closed asset contract, also shared by automation. */
     static bool ValidateClips(USkeletalMesh* Mesh, UAnimSequence* WalkClip, UAnimSequence* JumpClip, FString& Error);
 
 private:
-    friend class FHansaRabbitBehaviorTest;
-    bool SafeGround(const FVector& Candidate, FVector& Ground) const;
-    bool SafePath(const FVector& From, const FVector& To) const;
-    bool Place(FHansaAmbientRabbit& Rabbit);
-    void Stand(FHansaAmbientRabbit& Rabbit);
-    void Sample(FHansaAmbientRabbit& Rabbit);
-    void RefreshObstacles();
-    UPROPERTY(Transient) TArray<FHansaAmbientRabbit> Rabbits;
-    UPROPERTY(Transient) TObjectPtr<AHansaLubeckWorldFoundation> Foundation;
-    UPROPERTY(Transient) TObjectPtr<UHansaRuntimeSimulationHost> Host;
-    UPROPERTY(Transient) TObjectPtr<UAnimSequence> WalkClip;
-    UPROPERTY(Transient) TObjectPtr<UAnimSequence> JumpClip;
-    TSet<FIntPoint> Occupied;
-    FRandomStream Random;
-    FQuat MeshFacing = FQuat::Identity;
-    FVector JumpTravel = FVector::ZeroVector;
-    FVector TownCenter = FVector::ZeroVector;
-    float RefreshIn = 0;
-    bool bInitialized = false;
-    int32 CompletedJumps = 0;
-    FString ValidationError;
+    void SyncLegacyProfile();
 };

@@ -37,6 +37,9 @@ namespace Hansa::Automation
 
 	private:
 		bool Tick(float DeltaTime);
+        bool SynchronizeNativeHud();
+        FString NativeHudSignature;
+        const void* NativeHudIdentity = nullptr;
 		bool CreateServerPipe();
 		bool AcceptClient();
 		bool PumpClient();

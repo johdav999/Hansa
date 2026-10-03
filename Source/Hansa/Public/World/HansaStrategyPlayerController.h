@@ -3,13 +3,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Network/HansaMultiplayerTypes.h"
+#include "Network/HansaLandQueryTransport.h"
 
 #include "HansaStrategyPlayerController.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FHansaCommandFeedbackReceived, const FHansaClientCommandFeedback&);
 class UInputAction;
 class UInputMappingContext;
 class AHansaBuildingPlacementGhost;
 class AHansaLubeckWorldFoundation;
+class UHansaBackgroundMusicComponent;
 struct FInputActionValue;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
@@ -25,6 +28,7 @@ class HANSA_API AHansaStrategyPlayerController : public APlayerController
 
 public:
 	AHansaStrategyPlayerController();
+    FHansaCommandFeedbackReceived OnCommandFeedback;
 
 	virtual void BeginPlay() override;
 	virtual void PlayerTick(float DeltaTime) override;
@@ -43,6 +47,15 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void ClientReceiveHansaCommandFeedback(const FHansaClientCommandFeedback& Feedback);
+
+    UFUNCTION(Server, Reliable)
+    void ServerRequestHansaLand(const FHansaLandQueryRequest& Request);
+    UFUNCTION(Client, Reliable)
+    void ClientReceiveHansaLand(const FHansaLandQueryReply& Reply);
+    EHansaLandViewStatus QueryLandForView(uint8 Slot, FName City, FIntPoint Min, FIntPoint Max,
+        Hansa::Simulation::FHansaLandQueryResult& OutResult);
+    void InvalidateLandQueries() { LandQueryCache.Invalidate(); ++LandSurveyEpoch; }
+    uint64 GetLandSurveyEpoch() const { return LandSurveyEpoch; }
 
 	void SetServerAuthorityIdentity(uint64 PrincipalId, int64 HouseId);
 	void PublishServerProjection(const FHansaClientProjectionSnapshot& Projection);
@@ -100,10 +113,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hansa|Input")
 	TObjectPtr<UInputAction> SelectAction;
 
+	/** Land panel; the runtime fallback maps L and authored contexts may remap this action. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hansa|Input")
+	TObjectPtr<UInputAction> LandOverlayAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hansa|World|Selection", meta = (ClampMin = "1.0"))
 	float SelectionTraceDistance = 200000.0f;
 
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Hansa|Audio")
+	TObjectPtr<UHansaBackgroundMusicComponent> BackgroundMusic;
+
 	UFUNCTION()
 	void OnRep_HansaClientProjection();
 	void ApplyClientProjectionUpdate(const FHansaClientProjectionSnapshot& Update);
@@ -118,11 +138,13 @@ private:
 	void HandleZoom(const FInputActionValue& Value);
 	void HandleRotate(const FInputActionValue& Value);
 	void HandleRotateCompleted(const FInputActionValue& Value);
+	void HandlePlacementRotatePressed();
 	void HandleFastPan(const FInputActionValue& Value);
 	void HandleFastPanCompleted(const FInputActionValue& Value);
 	void HandleSelect(const FInputActionValue& Value);
 	void HandleSelectHeld(const FInputActionValue& Value);
 	void HandleSelectReleased(const FInputActionValue& Value);
+    void HandleLandOverlay();
     void HandleCameraDragPressed();
     void HandleCameraDragReleased();
     void HandleRightMouseReleased();
@@ -145,6 +167,9 @@ private:
 	FHansaClientCommandFeedback LastCommandFeedback;
 
 	uint64 AuthorityPrincipalId = 0;
+    uint64 LandSurveyEpoch=0;
+    FHansaLandQueryClientCache LandQueryCache;
+    FHansaLandQueryBudget ServerLandQueryBudget;
 	int64 AuthorityHouseId = 0;
 	int64 NextClientCommandSequence = 1;
 	int64 NextClientCommandNonce = 1;

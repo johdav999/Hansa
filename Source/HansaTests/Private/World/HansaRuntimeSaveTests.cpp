@@ -5,6 +5,27 @@
 #include "Misc/SecureHash.h"
 #include "UObject/StrongObjectPtr.h"
 #include "World/HansaRuntimeSimulationHost.h"
+#include "World/HansaGameMode.h"
+#include "Engine/World.h"
+#include "Misc/ScopeExit.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
+
+namespace {
+TOptional<Hansa::Simulation::FHansaGridCoordinate> FindSaveTestRoadRun(UHansaRuntimeSimulationHost& Host)
+{
+ using namespace Hansa::Simulation;
+ const auto* Map=Host.FindPlacementMap();if(!Map)return {};
+ FHansaPlacementSpec Spec;Spec.CityId=Host.GetCityId();Spec.BuildingDefinitionId=FHansaBuildingTypeId::TryParse(TEXT("Building.Road")).Value;
+ for(const auto& Cell:Map->Cells)
+ {
+  bool Valid=true;
+  for(int32 Offset=0;Offset<4;++Offset){Spec.Anchor={Cell.Coordinate.X,Cell.Coordinate.Y+Offset};Valid&=Host.ValidatePlacement(Spec).CanPlace();}
+  if(Valid)return Cell.Coordinate;
+ }
+ return {};
+}
+}
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaRuntimeSaveTest, "Hansa.Integration.Save.RuntimeAuthorityContinuation",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -85,8 +106,10 @@ bool FHansaRoadNetworkSaveTest::RunTest(const FString& Parameters)
 	const FHansaBuildingTypeId Road = FHansaBuildingTypeId::TryParse(TEXT("Building.Road")).Value;
 	FHansaPlacementSession Session;
 	Session.SelectBuilding(City, Road, true, false);
-	Session.BeginRoadDrag({ 18, 16 });
-	Session.UpdateRoadDrag({ 20, 16 });
+	const auto Start=FindSaveTestRoadRun(*Original);
+	if(!TestTrue(TEXT("Current house has a valid four-cell road run"),Start.IsSet()))return false;
+	Session.BeginRoadDrag(Start.GetValue());
+	Session.UpdateRoadDrag({ Start->X, Start->Y+2 });
 	const TArray<FHansaPlacementSpec> RoadSpecs = Session.BuildConfirmationSpecs();
 	TestEqual(TEXT("Save fixture uses a three-cell player-drawn road"), RoadSpecs.Num(), 3);
 	TestTrue(TEXT("Player-drawn road reaches the ordinary command gateway"), Original->PlaceBuildings(RoadSpecs).IsSuccess());
@@ -113,7 +136,7 @@ bool FHansaRoadNetworkSaveTest::RunTest(const FString& Parameters)
 	FHansaPlacementSpec Continuation;
 	Continuation.CityId = City;
 	Continuation.BuildingDefinitionId = Road;
-	Continuation.Anchor = { 21, 16 };
+	Continuation.Anchor = { Start->X, Start->Y+3 };
 	TestTrue(TEXT("Original road can continue after save"), Original->PlaceBuildings({ Continuation }).IsSuccess());
 	TestTrue(TEXT("Restored road can continue after load"), Loaded->PlaceBuildings({ Continuation }).IsSuccess());
 	const auto OriginalProjection = Original->BuildProjection();
@@ -146,7 +169,9 @@ bool FHansaConstructionRecoverySaveTest::RunTest(const FString& Parameters)
 	FHansaPlacementSpec Road;
 	Road.CityId = Original->GetCityId();
 	Road.BuildingDefinitionId = FHansaBuildingTypeId::TryParse(TEXT("Building.Road")).Value;
-	Road.Anchor = { 18, 16 };
+	const auto Start=FindSaveTestRoadRun(*Original);
+	if(!TestTrue(TEXT("Recovery fixture uses currently owned land"),Start.IsSet()))return false;
+	Road.Anchor = Start.GetValue();
 	if (!TestTrue(TEXT("Mistaken construction site enters the command gateway"), Original->PlaceBuildings({ Road }).IsSuccess())) return false;
 	const FHansaBuildingId SiteId = FHansaBuildingId::TryCreate(1).Value;
 	TestTrue(TEXT("Cancellation preflight accepts the unfinished site"), Original->PreviewCancelConstruction(SiteId).IsSuccess());
@@ -187,6 +212,115 @@ bool FHansaHistoricalCatalogRejectionTest::RunTest(const FString& Parameters)
     TArray<uint8> HistoricalAgain;
     FFileHelper::LoadFileToArray(HistoricalAgain, *(FPaths::ProjectDir() / TEXT("Tests/Fixtures/research_completion_stale_v7.hansa")));
     TestTrue(TEXT("Historical file is preserved byte-for-byte"), HistoricalAgain == Historical);
+    return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaLandOverlaySaveTest,
+    "Hansa.Integration.Save.LandOverlayCrossOwnerRoundTrip",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHansaLandOverlaySaveTest::RunTest(const FString&)
+{
+    using namespace Hansa::Simulation;
+    TStrongObjectPtr<UHansaRuntimeSimulationHost> Original(NewObject<UHansaRuntimeSimulationHost>());
+    TStrongObjectPtr<UHansaRuntimeSimulationHost> Loaded(NewObject<UHansaRuntimeSimulationHost>());
+    FString Error;
+    if(!TestTrue(TEXT("Original campaign initialized"),Original->InitializeForLubeck(nullptr,Error)) ||
+        !TestTrue(TEXT("Load target initialized"),Loaded->InitializeForLubeck(nullptr,Error)))return false;
+    TArray<uint8> Before,After;
+    const FString Stamp=TEXT("2026-09-27T00:00:00Z");
+    if(!TestTrue(TEXT("Existing campaign saves before any overlay query"),Original->CaptureSaveBytes(Before,TEXT("Land compatibility"),Stamp).IsSuccess()))return false;
+    const auto* Map=Original->FindPlacementMap();
+    if(!TestNotNull(TEXT("Lübeck map exists"),Map))return false;
+    FHansaPlacementSpec Road;Road.CityId=Original->GetCityId();Road.BuildingDefinitionId=FHansaBuildingTypeId::TryParse(TEXT("Building.Road")).Value;
+    FHansaHouseId RecordedOwner;bool Found=false;
+    for(const auto& Cell:Map->Cells)
+    {
+        if(!Cell.OwnerId.IsValid()||Cell.OwnerId==Original->GetHouseId())continue;
+        Road.Anchor=Cell.Coordinate;
+        if(Original->ValidatePlacement(Road).CanPlace()){RecordedOwner=Cell.OwnerId;Found=true;break;}
+    }
+    if(!TestTrue(TEXT("Current topology has valid cross-owner construction"),Found))return false;
+    const auto Survey=Original->QueryLand(Original->GetHouseId(),Road.CityId,Road.Anchor,Road.Anchor);
+    TestTrue(TEXT("Overlay reports ownership independently from rights"),Survey.Cells.Num()==1&&Survey.Cells[0].RecordedOwnerId==RecordedOwner&&Survey.Cells[0].Access==EHansaLandAccess::Permitted);
+    TestTrue(TEXT("Campaign remains saveable after query"),Original->CaptureSaveBytes(After,TEXT("Land compatibility"),Stamp).IsSuccess());
+    TestTrue(TEXT("Land query does not change save bytes"),Before==After);
+    auto Restore=Loaded->RestoreSaveBytes(Before);
+    TestTrue(TEXT("Campaign saved before using Land still loads"),Restore.IsSuccess());
+    TestTrue(TEXT("Overlay needs no save migration"),Restore.AppliedMigrations.IsEmpty());
+    if(!TestTrue(TEXT("Cross-owner road uses ordinary construction"),Original->PlaceBuildings({Road}).IsSuccess()))return false;
+    const auto Occupied=Original->QueryLand(Original->GetHouseId(),Road.CityId,Road.Anchor,Road.Anchor);
+    if(!TestTrue(TEXT("Constructed road occupies the queried cell"),Occupied.Cells.Num()==1&&Occupied.Cells[0].OccupyingBuildingId.IsValid()))return false;
+    const auto Building=Occupied.Cells[0].OccupyingBuildingId;
+    auto Saved=Original->CaptureSaveBytes(After,TEXT("Cross-owner road"),Stamp);
+    if(!TestTrue(TEXT("Cross-owner building saves"),Saved.IsSuccess()))return false;
+    Restore=Loaded->RestoreSaveBytes(After);
+    if(!TestTrue(TEXT("Cross-owner building restores"),Restore.IsSuccess()))return false;
+    TestEqual(TEXT("Restored fingerprint is exact"),Restore.AuthoritativeHash,Saved.AuthoritativeHash);
+    TestTrue(TEXT("No topology or ownership migration added"),Restore.AppliedMigrations.IsEmpty());
+    const auto Land=Loaded->QueryLand(Loaded->GetHouseId(),Road.CityId,Road.Anchor,Road.Anchor);
+    TestTrue(TEXT("Occupancy and recorded owner survive"),Land.Cells.Num()==1&&Land.Cells[0].OccupyingBuildingId==Building&&Land.Cells[0].RecordedOwnerId==RecordedOwner);
+    TestFalse(TEXT("Restored occupancy still blocks overlap"),Loaded->ValidatePlacement(Road).CanPlace());
+    const auto Projection=Loaded->BuildProjection();bool PlayerOwnsBuilding=false;
+    if(Projection)for(const auto& P:Projection.Value.GetBuildingWorldProjections())
+        if(P.BuildingId==Building)PlayerOwnsBuilding=P.OwnerId==Loaded->GetHouseId();
+    TestTrue(TEXT("New building belongs to the player after restore"),PlayerOwnsBuilding);
+    return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHansaFrontendBootSaveTest,
+    "Hansa.Integration.Save.NewGameReloadAfterFrontendBoot",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHansaFrontendBootSaveTest::RunTest(const FString&)
+{
+    using namespace Hansa::Simulation;
+    UWorld* World = UWorld::CreateWorld(EWorldType::Game, false);
+    ON_SCOPE_EXIT { World->DestroyWorld(false); };
+    auto* Mode = World->SpawnActor<AHansaGameMode>();
+    auto* Boot = Mode ? Mode->GetSimulationHost() : nullptr;
+    if (!TestNotNull(TEXT("Normal standalone frontend initializes"), Boot)) return false;
+    TStrongObjectPtr<UHansaRuntimeSimulationHost> NewGame(NewObject<UHansaRuntimeSimulationHost>());
+    FString Error;
+    if (!TestTrue(TEXT("Separate session starts New Game"),
+        NewGame->InitializeForLubeck(nullptr, Error) && NewGame->StartNewGame(Error))) return false;
+    TestEqual(TEXT("Frontend and New Game both begin empty"), Boot->GetPlacedBuildingCount(), 0);
+    const auto Start = FindSaveTestRoadRun(*NewGame);
+    if (!TestTrue(TEXT("New Game has a valid construction cell"), Start.IsSet())) return false;
+    FHansaPlacementSpec Road;
+    Road.CityId = NewGame->GetCityId();
+    Road.BuildingDefinitionId = FHansaBuildingTypeId::TryParse(TEXT("Building.Road")).Value;
+    Road.Anchor = Start.GetValue();
+    if (!TestTrue(TEXT("Player construction reaches the normal command gateway"), NewGame->PlaceBuildings({Road}).IsSuccess())) return false;
+    TestTrue(TEXT("Saved game advances beyond the opening"), NewGame->AdvanceTicks(7));
+    TArray<uint8> Bytes;
+    const auto Saved = NewGame->CaptureSaveBytes(Bytes, TEXT("Restart regression"), TEXT("2026-09-28T00:00:00Z"));
+    if (!TestTrue(*Saved.Message, Saved.IsSuccess())) return false;
+    FHansaSaveSnapshot Snapshot;
+    int64 Tick = 0;
+    const auto Inspected = Boot->InspectSaveBytes(Bytes, Snapshot, Tick);
+    if (!TestTrue(*Inspected.Message, Inspected.IsSuccess())) return false;
+    const auto Loaded = Boot->RestoreSaveBytes(Bytes);
+    TestTrue(*Loaded.Message, Loaded.IsSuccess());
+    TestEqual(TEXT("Restart preserves the authoritative checksum"), Loaded.AuthoritativeHash, Saved.AuthoritativeHash);
+    TestEqual(TEXT("Restart restores player construction"), Boot->GetPlacedBuildingCount(), 1);
+    TestEqual(TEXT("Restart restores the saved tick"), Boot->GetSimulationTick(), NewGame->GetSimulationTick());
+    TestTrue(TEXT("No topology migration is needed within the same build"), Loaded.AppliedMigrations.IsEmpty());
+    // Opt-in diagnosis only: ordinary CI never depends on local player saves.
+    if (FParse::Param(FCommandLine::Get(), TEXT("HansaVerifyExistingSaveSlots")))
+    for (const TCHAR* Slot : {TEXT("manual"), TEXT("autosave")})
+    {
+        TArray<uint8> Existing;
+        const FString Path = FPaths::ProjectSavedDir() / TEXT("SaveGames/Hansa") / (FString(Slot) + TEXT(".hansa"));
+        if (!TestTrue(*FString::Printf(TEXT("Read existing %s slot"), Slot), FFileHelper::LoadFileToArray(Existing, *Path))) return false;
+        FHansaSaveMetadata Metadata;
+        if (!TestTrue(TEXT("Existing slot integrity"), FHansaSaveEnvelope::InspectMetadata(Existing, Metadata).IsSuccess())) return false;
+        const auto Checked = Boot->InspectSaveBytes(Existing, Snapshot, Tick);
+        TestTrue(*FString::Printf(TEXT("Existing %s slot: %s"), Slot, *Checked.Message), Checked.IsSuccess());
+        const auto Restored = Boot->RestoreSaveBytes(Existing);
+        TestTrue(*FString::Printf(TEXT("Restore existing %s slot: %s"), Slot, *Restored.Message), Restored.IsSuccess());
+        TestEqual(TEXT("Existing slot restores its exact checksum"), Restored.AuthoritativeHash, Metadata.AuthoritativeHash);
+        AddInfo(FString::Printf(TEXT("Existing %s slot '%s' at %s validated; topology=%016llX, tick=%lld"),
+            Slot, *Metadata.DisplayName, *Metadata.SavedUtc, Metadata.PlacementTopologyHash, Tick));
+    }
     return !HasAnyErrors();
 }
 

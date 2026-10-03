@@ -19,6 +19,7 @@ class SVerticalBox;
 namespace Hansa::UI
 {
 	class SHansaPriceHistoryChart;
+	class SHansaMarketReserveBar;
 	/** Native sticky-header, virtualized presentation of the ten MVP market goods. */
 	class HANSA_API SHansaMarketTable final : public SCompoundWidget
 	{
@@ -36,13 +37,27 @@ namespace Hansa::UI
 		bool FocusSemanticId(const FString& SemanticId);
 		TSharedPtr<SWidget> ResolveSemanticWidget(const FString& Id) const { const auto* W=SemanticWidgets.Find(Id); return W?W->Pin():nullptr; }
 		[[nodiscard]] TArray<FHansaHudSemanticNode> GetSemanticSnapshot() const;
-		[[nodiscard]] const TArray<FString>& GetControllerFocusOrder() const { return FocusOrder; }
+		[[nodiscard]] TArray<FString> GetControllerFocusOrder() const;
 #if WITH_DEV_AUTOMATION_TESTS
 		[[nodiscard]] int32 GetListRefreshCountForTesting() const { return ListRefreshCount; }
 		bool SelectListItemForTesting(FName GoodStableId);
 #endif
 
 	private:
+		bool CompactReport() const { return Preferences.bLargeText || (GetCachedGeometry().GetLocalSize().X>0 && GetCachedGeometry().GetLocalSize().X<1100); }
+		bool ReportIsOpen() const { return Model.IsValid() && Model->GetSnapshot().SelectedGood.bHasSelection && !bReportDismissed; }
+		TSharedRef<SWidget> BuildCommodityReport();
+		TSharedRef<SWidget> BuildQuayTrade();
+		void RefreshCommodityReport(const FHansaMarketTableSnapshot& Snapshot);
+		FReply CloseCommodityReport();
+		TSharedPtr<SHansaMarketReserveBar> ReserveBar;
+		TSharedPtr<SHansaGlyph> ReportGoodIcon;
+		TSharedPtr<SWidget> ReportArtwork, ReportFooter;
+		TSharedPtr<SHansaAction> ReportCloseButton;
+		TSharedPtr<STextBlock> ReportStockText, ReportReserveText, ReportSurplusText, ReportBalanceLabel;
+		TSharedPtr<STextBlock> ReportPinLabel, ReportRouteLabel, ReportHistoryCount, ReportDescription;
+		FTextBlockStyle ReportTitleStyle, ReportPriceStyle, ReportSectionStyle, ReportBodyStyle, ReportSmallStyle;
+		bool bReportDismissed = false;
 		void Refresh(const FHansaMarketTableSnapshot& Snapshot, uint64 Revision);
 		void RebuildItems(const FHansaMarketTableSnapshot& Snapshot);
 		TSharedRef<ITableRow> GenerateRow(TSharedPtr<FHansaMarketTableRowPresentation> Item, const TSharedRef<STableViewBase>& OwnerTable);
@@ -113,9 +128,10 @@ namespace Hansa::UI
 		TSharedPtr<STextBlock> PinReasonText;
 		TSharedPtr<STextBlock> RouteReasonText;
 		TSharedPtr<STextBlock> ActionResultText;
-		TSharedPtr<SBorder> SpotTradePanel;
+		TSharedPtr<SBorder> SpotTradePanel, SpotTradeReceipt;
+ TSharedPtr<SVerticalBox> MarketAnalysisPanel;
 		TSharedPtr<STextBlock> SpotTradeVehicleText, SpotTradeQuantityText, SpotTradeQuoteText, SpotTradeRemedyText, SpotTradeResultText;
-		TSharedPtr<SHansaAction> SpotTradeSideButton, SpotTradeMinusButton, SpotTradePlusButton, SpotTradeConfirmButton;
+		TSharedPtr<SHansaAction> SpotTradeRouteButton, SpotTradeShipButton, SpotTradeStationButton, SpotTradeManifestButton, SpotTradeSideButton, SpotTradeMinusButton, SpotTradePlusButton, SpotTradeConfirmButton;
 		TSharedPtr<SVerticalBox> FactorList;
 		TSharedPtr<SVerticalBox> ConsumerList;
 		TSharedPtr<SVerticalBox> ProducerList;

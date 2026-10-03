@@ -15,7 +15,10 @@ namespace Hansa::Automation
 		Status,
 		Text,
 		Button,
-		Alert
+		Alert,
+        Tab,
+        List,
+        ListItem
 	};
 
 	enum class EHansaSemanticAction : uint8
@@ -46,6 +49,7 @@ namespace Hansa::Automation
 		bool bFocused = false;
 		bool bSelected = false;
 		bool bLoading = false;
+        bool bClipped = false;
 		bool bWarning = false;
 		bool bError = false;
 		/** Optional closed presentation type and value for non-boolean observable state. */

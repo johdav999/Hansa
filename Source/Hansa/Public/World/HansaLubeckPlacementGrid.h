@@ -12,6 +12,15 @@ namespace Hansa::Game::LubeckPlacementGrid
 	inline constexpr int32 SurveyMinX = -473, SurveyMaxX = 533;
 	inline constexpr int32 SurveyMinY = -484, SurveyMaxY = 522;
 	HANSA_API bool IsSurveyWorld(const UWorld* World);
+	HANSA_API bool IsCampaignWorld(const UWorld* World);
+	/** Original geographic reference from the terrain manifest; retained for provenance. */
+	HANSA_API FVector CampaignLubeckHistoricalCenter();
+	/** Gameplay Lübeck centre on dry ground near the Baltic shoreline. */
+	HANSA_API FVector CampaignLubeckCenter();
+	/** Open-water berth in the promoted regional Landscape. */
+	HANSA_API FVector CampaignLubeckWaterAnchor();
+	/** Translation from the prototype navigation grid to the campaign sea berth. */
+	HANSA_API FVector CampaignLubeckNavigationOrigin();
 	HANSA_API FVector SurveyStartLocation();
 	HANSA_API Hansa::Simulation::FHansaGridCoordinate SurveyFisheryAnchor();
 	HANSA_API Hansa::Simulation::THansaValueResult<Hansa::Simulation::FHansaPlacementInitialization>

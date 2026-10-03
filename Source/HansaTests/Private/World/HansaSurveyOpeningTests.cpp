@@ -58,6 +58,7 @@ bool FHansaSurveyOpeningTest::RunTest(const FString&)
 	int64 Planks=0;
 	int64 Timber=0;
 	int64 Tools=0;
+	int64 Bread=0;
 	for (const auto& Inventory : Opening.Value.GetInventories())
 		if (Inventory.CityId==Host->GetCityId() && Inventory.OwnerKind==EHansaInventoryOwnerKind::City)
 			for (const auto& Stock : Inventory.Stocks)
@@ -65,6 +66,7 @@ bool FHansaSurveyOpeningTest::RunTest(const FString&)
 				if (Stock.GoodId.ToString()==TEXT("Good.Planks")) Planks+=Stock.Available.GetRawValue();
 				if (Stock.GoodId.ToString()==TEXT("Good.Timber")) Timber+=Stock.Available.GetRawValue();
 				if (Stock.GoodId.ToString()==TEXT("Good.Tools")) Tools+=Stock.Available.GetRawValue();
+				if (Stock.GoodId.ToString()==TEXT("Good.Bread")) Bread+=Stock.Available.GetRawValue();
 			}
 	TestEqual(TEXT("New Game adds 1,000 construction-test planks to the 112-plank survey opening"),
 		Planks,int64(1'112'000));
@@ -72,6 +74,7 @@ bool FHansaSurveyOpeningTest::RunTest(const FString&)
 		Timber,int64(134'000));
 	TestEqual(TEXT("New Game adds 1,000 construction-test tools to the 18-tool authored opening"),
 		Tools,int64(1'018'000));
+	TestEqual(TEXT("New Game starts Lübeck's market with 1,000 bread"), Bread, int64(1'000'000));
 	const auto Anchor=SurveyFisheryAnchor();
 	TArray<FHansaPlacementSpec> Specs;
 	const auto Add=[&](const TCHAR* Id,int32 X,int32 Y)
@@ -153,6 +156,19 @@ bool FHansaSurveyOpeningOwnershipTest::RunTest(const FString&)
 	Road.CityId = Host->GetCityId();
 	Road.BuildingDefinitionId = FHansaBuildingTypeId::TryParse(TEXT("Building.Road")).Value;
 	Road.Anchor = WorldToGrid(SurveyStartLocation());
+	const FHansaPlacementMapInitialization* Map = Host->FindPlacementMap();
+	if (!TestNotNull(TEXT("Survey opening has a placement map"), Map)) return false;
+	for (const FHansaPlacementGridCell& Cell : Map->Cells)
+	{
+		if (Cell.Terrain == EHansaPlacementTerrain::Water || Cell.bBlocked ||
+			FMath::Abs(Cell.Coordinate.X - Road.Anchor.X) > 24 ||
+			FMath::Abs(Cell.Coordinate.Y - Road.Anchor.Y) > 24) continue;
+		if (Cell.OwnerId != Host->GetHouseId())
+		{
+			AddError(TEXT("Buildable land near the Lübeck opening belongs to another house."));
+			break;
+		}
+	}
 	const FHansaPlacementValidationResult Validation = Host->ValidatePlacement(Road);
 	TestTrue(TEXT("A road can be constructed where the playable survey camera opens"), Validation.CanPlace());
 	if (!Validation.CanPlace())

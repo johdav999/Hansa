@@ -122,7 +122,7 @@ bool operator==(const FHansaInspectorHistoryPresentation& Left, const FHansaInsp
 
 bool operator==(const FHansaInspectorSnapshot& Left, const FHansaInspectorSnapshot& Right)
 {
-	return Left.Residence == Right.Residence && Left.Production == Right.Production && Left.DataState == Right.DataState && Left.ObjectStableId == Right.ObjectStableId && InspectorPresentationModelTextEqual(Left.Identity, Right.Identity) &&
+	return Left.Ship == Right.Ship && Left.Residence == Right.Residence && Left.Production == Right.Production && Left.DataState == Right.DataState && Left.ObjectStableId == Right.ObjectStableId && InspectorPresentationModelTextEqual(Left.Identity, Right.Identity) &&
 		InspectorPresentationModelTextEqual(Left.State, Right.State) && InspectorPresentationModelTextEqual(Left.PrimaryResult, Right.PrimaryResult) &&
 		Left.Flows == Right.Flows && Left.Causal == Right.Causal && Left.Actions == Right.Actions &&
 		Left.History == Right.History && InspectorPresentationModelTextEqual(Left.LastActionResult, Right.LastActionResult) &&
@@ -954,7 +954,13 @@ bool UHansaInspectorPresentationModel::TogglePinIntent()
 	if (!Snapshot.bOpen) return false;
 	const FHansaInspectorSnapshot Previous = Snapshot; Snapshot.bPinned = !Snapshot.bPinned;
 	Snapshot.LastActionResult = Snapshot.bPinned ? LOCTEXT("PinnedResult", "Pinned tracker added") : LOCTEXT("UnpinnedResult", "Pinned tracker removed");
-	SetCommonActions(); PublishIfChanged(Previous); return true;
+    // Preserve contextual actions and observed disabled reasons when pinning.
+    if (auto* Pin = Snapshot.Actions.FindByPredicate([](const auto& A){return A.StableId == TEXT("Inspector.Action.Pin");}))
+    {
+        Pin->Label = Snapshot.bPinned ? LOCTEXT("Unpin", "Unpin tracker [P]") : LOCTEXT("Pin", "Pin tracker [P]");
+        Pin->bSelected = Snapshot.bPinned;
+    }
+    PublishIfChanged(Previous); return true;
 }
 
 bool UHansaInspectorPresentationModel::FrameIntent()
@@ -1204,6 +1210,7 @@ bool UHansaInspectorPresentationModel::RemoveBuildingIntent()
 
 bool UHansaInspectorPresentationModel::ActivateAction(const FName SemanticId)
 {
+    if(SemanticId==TEXT("Inspector.Ship.Route")){if(!IsActionEnabled(SemanticId)||Snapshot.Kind!=EHansaInspectorObjectKind::Cargo)return false;return OpenRelatedIntent();}
     if (SemanticId==TEXT("Inspector.Ship.Home") || SemanticId==TEXT("Inspector.Ship.Stop"))
     {
         auto* Host=RuntimeHost.Get();
@@ -1265,6 +1272,12 @@ bool UHansaInspectorPresentationModel::ActivateAction(const FName SemanticId)
         if (!IsActionEnabled(SemanticId)) return false;
         RelatedTargetRequested.Broadcast(TEXT("CityOverview.Market")); return true;
     }
+    if (SemanticId == TEXT("Inspector.Action.OpenRelated") && Snapshot.Ship.bValid)
+    {
+        if (!IsActionEnabled(SemanticId)) return false;
+        RelatedTargetRequested.Broadcast(TEXT("TradeMap.Root"));
+        return true;
+    }
 	if (SemanticId == TEXT("Inspector.Action.OpenRelated")) return OpenRelatedIntent();
 	if (SemanticId == TEXT("Inspector.Action.ToggleProduction")) return ToggleProductionIntent();
 	if (SemanticId == TEXT("Inspector.Action.UpgradeResidence")) return UpgradeResidenceIntent();
@@ -1292,6 +1305,15 @@ void UHansaInspectorPresentationModel::ShowCargo(const FHansaCargoWorldObservati
     Snapshot.FocusOriginSemanticId=Same?Previous.FocusOriginSemanticId:FocusOrigin;
     Snapshot.FocusedSemanticId=Same?Previous.FocusedSemanticId:TEXT("Inspector.Close");
     Snapshot.bPinned=Same&&Previous.bPinned; Snapshot.bCauseExpanded=Same&&Previous.bCauseExpanded;
+    if (O.JobId.IsEmpty())
+    {
+        auto& Ship = Snapshot.Ship;
+        Ship.bValid = true; Ship.bSlotsKnown = O.bCargoSlotsKnown;
+        Ship.Cargo = O.CargoMilliUnits; Ship.Capacity = O.CapacityMilliUnits; Ship.Upkeep = O.UpkeepPfennigPerTick;
+        Ship.bVoyage = !O.bFreeNavigation && (O.Phase == EHansaCargoWorldPhase::Traveling || O.Phase == EHansaCargoWorldPhase::Departing || O.Phase == EHansaCargoWorldPhase::Arriving);
+        Ship.ProgressBasisPoints = FMath::Clamp(FMath::RoundToInt(O.Progress * 10000), 0, 10000);
+        for (const auto& Slot : O.CargoSlots) Ship.Slots.Add({FName(*Slot.GoodId.ToString()), Slot.Quantity.GetRawValue()});
+    }
     const FText GoodLabel=InspectorPresentationModelStableLabel(O.GoodId.ToString());
     const FText SourceLabel=InspectorPresentationModelStableLabel(
         O.SourceBuildingDefinitionId.IsNone()?O.SourceBuildingId:O.SourceBuildingDefinitionId.ToString());
@@ -1369,7 +1391,7 @@ void UHansaInspectorPresentationModel::ShowCargo(const FHansaCargoWorldObservati
         Snapshot.Causal.Remedy=LOCTEXT("ShipHomeHelp","Return to berth before assigning a trade route. Resume time to move.");
     }
     Snapshot.LastActionResult=O.NavigationFeedback;
-    Snapshot.Causal.RelatedSemanticId=TEXT("TradeMap.Root");
+    Snapshot.Causal.RelatedSemanticId=O.JobId.IsEmpty()?FName(*FString::Printf(TEXT("TradeMap.Fleet.%lld"),FCString::Atoi64(*O.VehicleId))):FName(TEXT("TradeMap.Root"));
     Snapshot.Causal.Severity=O.PresentationFailure.IsEmpty()?EHansaCausalSeverity::None:EHansaCausalSeverity::Warning;
     if(O.TransferTick>=0)
     {
@@ -1378,6 +1400,7 @@ void UHansaInspectorPresentationModel::ShowCargo(const FHansaCargoWorldObservati
         Receipt.Age=FText::Format(LOCTEXT("CargoReceiptTick","Tick {0}"),FText::AsNumber(O.TransferTick)); Snapshot.History.Add(Receipt);
     }
     SetCommonActions(); Snapshot.Actions[0].bEnabled=O.bVisible;
+    if(O.JobId.IsEmpty())Snapshot.Actions.Add(Action(TEXT("Inspector.Ship.Route"),LOCTEXT("ShipRoute","Route"),LOCTEXT("ShipRouteTip","Open this ship’s detail window and trade route.")));
     if(O.bFreeNavigation)
     {
         Snapshot.Actions.Add(Action(TEXT("Inspector.Ship.Home"),LOCTEXT("ShipHome","Return to berth"),LOCTEXT("ShipHomeTip","Sail back to the starting berth to use a trade route.")));
@@ -1411,7 +1434,7 @@ void UHansaInspectorPresentationModel::ShowTradeStation(
 
 	switch (Station.Station.Status)
 	{
-	case EHansaTradeStationStatus::Proposed: Snapshot.State = LOCTEXT("StationProposed", "Proposed"); break;
+	case EHansaTradeStationStatus::Proposed: Snapshot.State = Station.Station.FundingInventoryId.IsValid()?LOCTEXT("StationPickup", "Awaiting pickup"):LOCTEXT("StationProposed", "Proposed"); break;
 	case EHansaTradeStationStatus::UnderConstruction: Snapshot.State = LOCTEXT("StationBuilding", "Under construction"); break;
 	case EHansaTradeStationStatus::Active: Snapshot.State = LOCTEXT("StationActive", "Active"); break;
 	case EHansaTradeStationStatus::Suspended: Snapshot.State = LOCTEXT("StationSuspended", "Suspended"); break;

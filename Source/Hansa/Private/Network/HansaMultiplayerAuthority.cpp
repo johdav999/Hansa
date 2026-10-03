@@ -1,4 +1,5 @@
 #include "Network/HansaMultiplayerAuthority.h"
+#include "UI/HansaTradeRemoteProjection.h"
 
 #include "Commands/HansaGameplayCommand.h"
 #include "Events/HansaDomainEvent.h"
@@ -62,6 +63,9 @@ namespace
 		HashInteger(Hash, Projection.ServerTick);
 		HashInteger(Hash, Projection.OwnerHouseId);
 		HashInteger(Hash, Projection.OwnerMoneyPfennig);
+        {TArray<uint8> Bytes;FMemoryWriter Writer(Bytes);FHansaReplicatedTradeWorkspace::StaticStruct()->SerializeItem(Writer,const_cast<FHansaReplicatedTradeWorkspace*>(&Projection.TradeWorkspace),nullptr);for(uint8 B:Bytes)HashByte(Hash,B);}
+        for(const auto& O:Projection.Recoveries){TArray<uint8> Bytes;FMemoryWriter Writer(Bytes);FHansaTradeRecovery::StaticStruct()->SerializeItem(Writer,const_cast<FHansaTradeRecovery*>(&O),nullptr);for(uint8 B:Bytes)HashByte(Hash,B);}
+        for(const auto& O:Projection.VisitingTrade){TArray<uint8> Bytes;FMemoryWriter Writer(Bytes);FHansaVisitingTradeOffer::StaticStruct()->SerializeItem(Writer,const_cast<FHansaVisitingTradeOffer*>(&O),nullptr);for(uint8 B:Bytes)HashByte(Hash,B);}
 		HashString(Hash, Projection.ScenarioOutcome);
 		HashString(Hash, Projection.WinningVictoryId);
 		for (const FHansaReplicatedPlacement& Item : Projection.Placements)
@@ -80,10 +84,12 @@ namespace
 		for (const FHansaReplicatedRoute& Item : Projection.Routes)
 		{
 			HashInteger(Hash, Item.RouteId); HashInteger(Hash, Item.OwnerHouseId);
+            HashString(Hash, Item.PlanKey); HashString(Hash, Item.Label);
 			HashInteger(Hash, Item.VehicleId); HashString(Hash, Item.Mode); HashString(Hash, Item.Lifecycle);
 			HashString(Hash, Item.CurrentCityId); HashInteger(Hash, Item.RemainingTravelTicks);
 			HashInteger(Hash, static_cast<uint8>(Item.bCargoVisible)); HashInteger(Hash, Item.CargoMilliUnits);
 		}
+        for(const auto& Vehicle:Projection.Vehicles){HashInteger(Hash,Vehicle.VehicleId);HashInteger(Hash,uint8(Vehicle.bPrivateDetailsVisible));for(const auto& Slot:Vehicle.CargoSlots){HashString(Hash,Slot.GoodId);HashInteger(Hash,Slot.QuantityMilliUnits);}}
 		HashInteger(Hash, Projection.Research.HouseId);
 		HashInteger(Hash, Projection.Research.AvailableResearchPoints);
 		HashString(Hash, Projection.Research.ActiveTechnologyId);
@@ -95,6 +101,24 @@ namespace
 			HashInteger(Hash, Item.CurrentValue); HashInteger(Hash, Item.TargetValue);
 			HashInteger(Hash, static_cast<uint8>(Item.bMet));
 		}
+        for(const auto& View:Projection.StationOrders){
+            HashString(Hash,View.City.ToString());HashInteger(Hash,View.StationId);
+            HashInteger(Hash,View.CapacityMilliUnits);HashInteger(Hash,View.MaximumCapMilliUnits);
+            HashInteger(Hash,View.MaximumBudgetPfennig);HashInteger(Hash,static_cast<uint8>(View.bOperational));
+            for(const auto& Good:View.GoodIds)HashString(Hash,Good);
+            for(const auto& Order:View.Orders){
+                HashInteger(Hash,Order.Id);HashString(Hash,Order.GoodId);HashInteger(Hash,Order.Side);
+                HashInteger(Hash,Order.TargetMilliUnits);HashInteger(Hash,Order.CapMilliUnits);
+                HashInteger(Hash,Order.BudgetPfennig);HashInteger(Hash,Order.SpentPfennig);
+                HashInteger(Hash,Order.NextUpdateTick);HashInteger(Hash,static_cast<uint8>(Order.bPaused));
+                HashInteger(Hash,static_cast<uint8>(Order.bCancelled));
+                for(const auto& Event:Order.History){
+                    HashInteger(Hash,Event.Tick);HashInteger(Hash,Event.AppliedMilliUnits);
+                    HashInteger(Hash,Event.MoneyDelta);HashInteger(Hash,Event.Outcome);HashInteger(Hash,Event.Blocker);
+                }
+            }
+        }
+        for(const auto& V:Projection.Presences){HashString(Hash,V.City.ToString());HashString(Hash,V.CurrentStage);HashString(Hash,V.Specialization.Key());for(const auto& C:V.ConstructionReports)HashString(Hash,C.Key());HashString(Hash,V.NextStageId);HashString(Hash,V.Status);HashInteger(Hash,V.UpgradeStatus);HashInteger(Hash,static_cast<uint8>(V.bOfficeVisual));HashInteger(Hash,V.CompletionTick);HashString(Hash,V.ConstructionDelivery);HashString(Hash,V.History);for(const auto& R:V.Requirements){HashString(Hash,R.Id);HashInteger(Hash,R.Current);HashInteger(Hash,R.Required);HashInteger(Hash,static_cast<uint8>(R.bMet));}for(const auto& C:V.Sources){HashString(Hash,C.Id);HashString(Hash,C.Detail.ToString());HashInteger(Hash,static_cast<uint8>(C.bEligible));}}
 		for (const FHansaReplicatedEvent& Item : Projection.Events)
 		{
 			HashInteger(Hash, Item.GlobalSequence); HashInteger(Hash, Item.Tick); HashString(Hash, Item.Type);
@@ -193,6 +217,8 @@ namespace
 				Action.Condition = EHansaRouteCargoCondition::Always;
 				Action.GoodId = GoodId.Value;
 				Action.QuantityLimit = FHansaQuantity::FromRaw(SourceAction.QuantityMilliUnits);
+				Action.CargoSlotIndex = SourceAction.CargoSlotIndex;
+				if (Action.CargoSlotIndex < INDEX_NONE || Action.CargoSlotIndex >= 3) return false;
 				Action.MinimumSourceReserve =
 					FHansaQuantity::FromRaw(SourceAction.MinimumSourceReserveMilliUnits);
 			}
@@ -402,17 +428,29 @@ namespace Hansa::Multiplayer
 		}
 		constexpr int64 MaximumAcceptedTickLag = 64;
 		const int64 ServerTick = RuntimeHost->GetSimulationTick();
-		if (Intent.ExpectedServerTick < 0 || Intent.ExpectedServerTick > ServerTick ||
-			(Intent.ExpectedServerTick > 0 && ServerTick - Intent.ExpectedServerTick > MaximumAcceptedTickLag))
+        const bool bReviewedStation=(Intent.Type==EHansaClientIntentType::ProposeTradeStation||Intent.Type==EHansaClientIntentType::FundTradeStation)&&Intent.ExpectedServerTick>0;
+		if (Intent.ExpectedServerTick < 0 || (Intent.ExpectedServerTick > ServerTick&&!bReviewedStation) ||
+			(Intent.ExpectedServerTick > 0 && ServerTick - Intent.ExpectedServerTick > MaximumAcceptedTickLag&&!bReviewedStation))
 		{
 			return Reject(Intent, EHansaClientCommandRejection::StaleProjection,
 				TEXT("The selected state is too old for this command."),
 				TEXT("Refresh the projection, review the current target, and submit again."), RuntimeHost);
 		}
 
+
 		++Client->ExpectedClientSequence;
 		Client->SeenNonces.Add(static_cast<uint64>(Intent.ClientNonce));
 		if (Client->SeenNonces.Num() > 256) Client->SeenNonces.Reset();
+
+        // A reviewed station proposal/spend promises exact terms, so its opt-in tick
+        // precondition is strict rather than the general 64-tick command tolerance.
+        if ((Intent.Type==EHansaClientIntentType::ProposeTradeStation || Intent.Type==EHansaClientIntentType::FundTradeStation) &&
+            Intent.ExpectedServerTick>0 && Intent.ExpectedServerTick!=ServerTick)
+        {
+            return Reject(Intent, EHansaClientCommandRejection::StaleProjection,
+                TEXT("The station review changed before confirmation."),
+                TEXT("Refresh station access, inventory and treasury, then review the exact transfer again. Nothing was spent."), RuntimeHost);
+        }
 
 		const FHansaCommandAuthorityContext Authority {
 			Client->HouseId, PrincipalId, EHansaCommandOrigin::MultiplayerRpc };
@@ -558,6 +596,12 @@ namespace Hansa::Multiplayer
 				: THansaValueResult<FHansaRouteId>::Failure(EHansaValueError::InvalidZero);
 			TArray<FHansaRouteStop> Stops;
 			bPayloadValid = Route && ConvertRouteStops(Intent.RouteStops, Stops);
+            if(bPayloadValid&&!Intent.ExpectedRoutePlanKey.IsEmpty()){
+             const auto P=RuntimeHost->BuildProjection();const auto* Current=P?P.Value.GetRoutes().FindByPredicate([&](const auto& R){return R.Id==Route.Value&&R.OwnerId==Client->HouseId;}):nullptr;
+             TArray<FHansaClientRouteStopIntent> CurrentStops;
+             if(Current)for(const auto& S:Current->Stops){auto& D=CurrentStops.AddDefaulted_GetRef();D.CityId=S.CityId.ToString();for(const auto& A:S.Actions)D.Actions.Add({uint8(A.Kind),A.GoodId.ToString(),A.QuantityLimit.GetRawValue(),A.MinimumSourceReserve.GetRawValue(),A.CargoSlotIndex});}
+             if(!Current||Hansa::UI::TradeRoutePlanKey(Intent.RouteId,CurrentStops)!=Intent.ExpectedRoutePlanKey)return Reject(Intent,EHansaClientCommandRejection::StaleProjection,TEXT("The route plan changed while you edited it."),TEXT("Your draft was not applied. Discard edits to load the current plan, then edit again."),RuntimeHost);
+            }
 			if (bPayloadValid) Gateway = RuntimeHost->EditRouteForAuthority(Authority, Route.Value, Stops);
 			break;
 		}
@@ -595,7 +639,7 @@ namespace Hansa::Multiplayer
 		{
 			const auto Station=Intent.TradeStationId>0?FHansaTradeStationId::TryCreate(static_cast<uint64>(Intent.TradeStationId)):THansaValueResult<FHansaTradeStationId>::Failure(EHansaValueError::InvalidZero);
 			const auto Inventory=Intent.FundingInventoryId>0?FHansaInventoryId::TryCreate(static_cast<uint64>(Intent.FundingInventoryId)):THansaValueResult<FHansaInventoryId>::Failure(EHansaValueError::InvalidZero);
-			bPayloadValid=Station&&Inventory;if(bPayloadValid)Gateway=RuntimeHost->FundTradeStationForAuthority(Authority,Station.Value,Inventory.Value);break;
+			bPayloadValid=Station&&Inventory&&Intent.ConstructionDeliveryMode<=2;if(bPayloadValid)Gateway=RuntimeHost->FundTradeStationForAuthority(Authority,Station.Value,Inventory.Value,Intent.ConstructionDeliveryMode);break;
 		}
         case EHansaClientIntentType::ManageStationOrder:
         {
@@ -623,10 +667,31 @@ namespace Hansa::Multiplayer
 			const auto City=FHansaCityDefinitionId::TryParse(Intent.CityId);const auto Inventory=Intent.FundingInventoryId>0?FHansaInventoryId::TryCreate(static_cast<uint64>(Intent.FundingInventoryId)):THansaValueResult<FHansaInventoryId>::Failure(EHansaValueError::InvalidZero);
 			bPayloadValid=City&&Inventory&&!Intent.PresenceSpecializationId.IsEmpty()&&Intent.PresenceSpecializationId.Len()<=64&&Intent.PresenceSpecializationAction<=1&&Intent.PresenceSpecializationRevision>=0;
 			if(bPayloadValid)Gateway=RuntimeHost->ApplyPresenceSpecializationForAuthority(Authority,{City.Value,Intent.PresenceSpecializationId,Inventory.Value,static_cast<EHansaPresenceSpecializationAction>(Intent.PresenceSpecializationAction),Intent.PresenceSpecializationRevision});break;
-		}		case EHansaClientIntentType::CloseTradeStation:
+		}		case EHansaClientIntentType::ManageCityPrivilege:
+        case EHansaClientIntentType::FundCityProject:
+        case EHansaClientIntentType::TransitionCityAuthority:
+        {
+            const auto City=FHansaCityDefinitionId::TryParse(Intent.CityId);
+            const auto Inventory=FHansaInventoryId::TryCreate(Intent.FundingInventoryId>0?uint64(Intent.FundingInventoryId):0);
+            const bool NeedsInventory=Intent.Type==EHansaClientIntentType::FundCityProject||(Intent.Type==EHansaClientIntentType::ManageCityPrivilege&&Intent.DecisionAction==0);
+            bPayloadValid=City&&!Intent.DecisionId.IsEmpty()&&Intent.DecisionId.Len()<=128&&Intent.AuthorityRevision>=0&&Intent.DecisionAction<=1&&(!NeedsInventory||Inventory);
+            if(bPayloadValid){
+                if(Intent.Type==EHansaClientIntentType::ManageCityPrivilege)Gateway=RuntimeHost->ManageCityPrivilegeForAuthority(Authority,{City.Value,Intent.DecisionId,Inventory.Value,{},static_cast<EHansaCityPrivilegeAction>(Intent.DecisionAction),Intent.AuthorityRevision});
+                else if(Intent.Type==EHansaClientIntentType::FundCityProject)Gateway=RuntimeHost->FundCityProjectForAuthority(Authority,{City.Value,Intent.DecisionId,Inventory.Value,Intent.AuthorityRevision});
+                else Gateway=RuntimeHost->TransitionCityAuthorityForAuthority(Authority,{City.Value,Intent.DecisionId,Intent.AuthorityRevision});
+            }
+            break;
+        }
+        case EHansaClientIntentType::CloseTradeStation:
 		{
 			const auto Station=Intent.TradeStationId>0?FHansaTradeStationId::TryCreate(static_cast<uint64>(Intent.TradeStationId)):THansaValueResult<FHansaTradeStationId>::Failure(EHansaValueError::InvalidZero);
-			bPayloadValid=Station.IsSuccess();if(bPayloadValid)Gateway=RuntimeHost->CloseTradeStationForAuthority(Authority,Station.Value);break;
+			bPayloadValid=Station.IsSuccess();
+            if(bPayloadValid&&!Intent.RecoveryReviewKey.IsEmpty()){
+                const auto Views=RuntimeHost->BuildTradeRecovery(Client->HouseId);
+                const auto* V=Views.FindByPredicate([&](const auto& X){return X.Station==Intent.TradeStationId;});
+                bPayloadValid=V&&V->bCanClose&&V->ReviewKey==Intent.RecoveryReviewKey;
+            }
+            if(bPayloadValid)Gateway=RuntimeHost->CloseTradeStationForAuthority(Authority,Station.Value);break;
 		}
 		case EHansaClientIntentType::MoveShip:
 		{
@@ -682,6 +747,33 @@ namespace Hansa::Multiplayer
 		return Client.Interest.CityIds.Contains(CityId);
 	}
 
+	bool FHansaMultiplayerAuthority::QueryLand(const uint64 PrincipalId,
+		const FHansaCityDefinitionId CityId, const FHansaGridCoordinate BoundsMin,
+		const FHansaGridCoordinate BoundsMax, FHansaLandQueryResult& OutResult, FString& OutError, bool bCompactSurvey) const
+	{
+		OutResult = FHansaLandQueryResult();
+		const FClientState* Client = Clients.Find(PrincipalId);
+		UHansaRuntimeSimulationHost* RuntimeHost = Host.Get();
+		if (Client == nullptr || RuntimeHost == nullptr || !RuntimeHost->IsReady())
+		{
+			OutError = TEXT("Land query requires an admitted client and a ready authority");
+			return false;
+		}
+		if (!CityId.IsValid() || !IsInterestedInCity(*Client, CityId.ToString()))
+		{
+			OutError = TEXT("City is outside client interest");
+			return false;
+		}
+		OutResult = RuntimeHost->QueryLand(Client->HouseId, CityId, BoundsMin, BoundsMax, bCompactSurvey);
+		if (OutResult.Failure != EHansaLandQueryFailure::None)
+		{
+			OutError = TEXT("Invalid land query bounds or city");
+			return false;
+		}
+		OutError.Reset();
+		return true;
+	}
+
 	bool FHansaMultiplayerAuthority::CanReadHousePrivate(const FClientState& Client,
 		const FHansaHouseId HouseId) const
 	{
@@ -715,6 +807,9 @@ namespace Hansa::Multiplayer
 		OutProjection.ServerTick = Source.GetClock().GetTick().GetValue();
 		OutProjection.AuthoritativeHash = HexHash(Source.GetFingerprint().Value);
 		OutProjection.OwnerHouseId = static_cast<int64>(Client->HouseId.GetValue());
+        OutProjection.Recoveries = RuntimeHost->BuildTradeRecovery(Client->HouseId);
+        OutProjection.VisitingTrade = RuntimeHost->BuildVisitingTradeOffers(Client->HouseId);
+        OutProjection.VisitingTrade.RemoveAll([&](const auto& O){return !IsInterestedInCity(*Client,O.City);});
 		auto BuildingOwner = [&Source](const FHansaBuildingId BuildingId)
 		{
 			const FHansaBuildingWorldProjection* Building = Source.GetBuildingWorldProjections().FindByPredicate(
@@ -783,6 +878,13 @@ namespace Hansa::Multiplayer
 				Dest.HistoryPriceMilliMarks.Add(Item.PriceHistory[Index].PriceMilliMarks);
 			}
 			Dest.bHistoryHasMore = HistoryStart > 0;
+            // Foreign market UI receives lawful report values, never live hidden stock.
+            if(Item.CityId!=RuntimeHost->GetCityId()){
+             const auto K=RuntimeHost->QueryKnownMarketPrice(Item.CityId,Item.GoodId,Client->HouseId);const auto S=RuntimeHost->QueryKnownMarketSupply(Item.CityId,Item.GoodId,Client->HouseId);
+             Dest.CurrentPriceMilliMarks=K&&K->PriceMilliMarks?K->PriceMilliMarks.GetValue():0;Dest.ReportAgeTicks=K&&K->ReportAgeTicks?K->ReportAgeTicks.GetValue():-1;Dest.bStale=!K||K->InformationState!=EHansaMarketInformationState::Current;
+             Dest.StockMilliUnits=S&&S->Stock?S->Stock->GetRawValue():-1;Dest.DesiredReserveMilliUnits=S&&S->DesiredReserve?S->DesiredReserve->GetRawValue():-1;
+             Dest.CitizenDemandMilliUnits=Dest.IndustrialDemandMilliUnits=Dest.RecentLocalProductionMilliUnits=Dest.ExpectedIncomingSupplyMilliUnits=Dest.UnmetDemandMilliUnits=0;Dest.HistoryPriceMilliMarks.Reset();Dest.HistoryTicks.Reset();Dest.HistoryTotalCount=0;Dest.bHistoryHasMore=false;
+            }
 		}
 		for (const FHansaRouteProjection& Item : Source.GetRoutes())
 		{
@@ -798,14 +900,19 @@ namespace Hansa::Multiplayer
 			Dest.Mode = LexToString(Item.Mode);
 			Dest.Lifecycle = LexToString(Item.Lifecycle);
 			Dest.CurrentCityId = CurrentCity;
-			Dest.RemainingTravelTicks = Item.RemainingTravelTicks;
+			Dest.RemainingTravelTicks = bPrivate ? Item.RemainingTravelTicks : 0;
 			Dest.bCargoVisible = bPrivate;
 			Dest.CargoMilliUnits = bPrivate && Vehicle != nullptr ? Vehicle->Cargo.GetRawValue() : 0;
 			Dest.CapacityMilliUnits = bPrivate && Vehicle != nullptr ? Vehicle->Capacity.GetRawValue() : 0;
 			Dest.FreeCapacityMilliUnits = bPrivate && Vehicle != nullptr ? Vehicle->FreeCapacity.GetRawValue() : 0;
-			Dest.TotalTravelTicks = Item.TotalTravelTicks;
-			Dest.ProgressPartsPerMillion = Item.Progress.GetPartsPerMillion();
-			Dest.CompletedLegCount = Item.CompletedLegCount;
+			Dest.TotalTravelTicks = bPrivate ? Item.TotalTravelTicks : 0;
+			Dest.ProgressPartsPerMillion = bPrivate ? Item.Progress.GetPartsPerMillion() : 0;
+			Dest.CompletedLegCount = bPrivate ? Item.CompletedLegCount : 0;
+            if(Item.OwnerId==Client->HouseId){
+             Dest.DefinitionId=Item.RouteDefinitionId.ToString();Dest.Label=RuntimeHost->GetRouteLabel(Item.Id.GetValue());
+             for(const auto& Stop:Item.Stops){auto& D=Dest.Stops.AddDefaulted_GetRef();D.CityId=Stop.CityId.ToString();for(const auto& A:Stop.Actions)D.Actions.Add({uint8(A.Kind),A.GoodId.ToString(),A.QuantityLimit.GetRawValue(),A.MinimumSourceReserve.GetRawValue(),A.CargoSlotIndex});}
+             Dest.PlanKey=Hansa::UI::TradeRoutePlanKey(Dest.RouteId,Dest.Stops);
+            }
 		}
 		for (const FHansaVehicleProjection& Item : Source.GetVehicles())
 		{
@@ -820,6 +927,7 @@ namespace Hansa::Multiplayer
 			Dest.bPrivateDetailsVisible = bPrivate;
 			Dest.CargoMilliUnits = bPrivate ? Item.Cargo.GetRawValue() : 0;
 			Dest.CapacityMilliUnits = bPrivate ? Item.Capacity.GetRawValue() : 0;
+            if (bPrivate) for (const auto& Inventory : Source.GetInventories()) if (Inventory.Id == Item.CargoInventoryId) for (const auto& Slot : Inventory.CargoSlots) Dest.CargoSlots.Add({Slot.GoodId.ToString(), Slot.Quantity.GetRawValue()});
 		}
 		for (const FHansaInventoryProjection& Item : Source.GetInventories())
 		{
@@ -981,9 +1089,120 @@ namespace Hansa::Multiplayer
 			? OutProjection.Events[0].GlobalSequence : static_cast<int64>(LastServerEventSequence + 1);
 		OutProjection.LastEventSequence = static_cast<int64>(LastServerEventSequence);
 		Client->LastDeliveredEventSequence = LastServerEventSequence;
-		FHansaClientProjectionSnapshot FullAuthorizedView = OutProjection;
+        if(const auto* Registry=RuntimeHost->GetEconomicRegistry())for(const auto& Policy:Registry->GetCityTradePolicies()) {
+            const FString& City=Policy.CityId;
+            if(!Source.GetForeignPresences().ContainsByPredicate([&](const auto& P){return P.HouseId==Client->HouseId&&P.CityId.ToString()==City;}))continue;
+            auto Base=Hansa::UI::BuildTradeEstablishment(Source,*Registry,Client->HouseId,FName(*City),{},{});
+            if(!Base.bVisible)continue;
+            OutProjection.StationEstablishments.Add(Base);
+            if(!Base.StationId)for(const auto& Site:Base.Sites)
+                OutProjection.StationEstablishments.Add(Hansa::UI::BuildTradeEstablishment(Source,*Registry,Client->HouseId,FName(*City),Site.Id,{}));
+        }
+		if(const auto* Registry=RuntimeHost->GetEconomicRegistry())for(const auto& Station:Source.GetTradeStations())if(Station.Station.OwnerId==Client->HouseId){
+            const FName City(*Station.Station.CityId.ToString());if(!OutProjection.StationLedgers.ContainsByPredicate([&](const auto& L){return L.City==City;}))OutProjection.StationLedgers.Add(Hansa::UI::BuildTradeLedger(Source,*Registry,Client->HouseId,City));
+        }
+        if(const auto* Registry=RuntimeHost->GetEconomicRegistry())for(const auto& Station:Source.GetTradeStations())if(Station.Station.OwnerId==Client->HouseId){
+            FHansaReplicatedStationOrders View;
+            View.City=FName(*Station.Station.CityId.ToString());
+            View.StationId=static_cast<int64>(Station.Station.Id.GetValue());
+            View.CapacityMilliUnits=Station.StorageCapacity.GetRawValue();
+            const auto* Presence=Source.GetForeignPresences().FindByPredicate([&](const auto& X){return X.HouseId==Client->HouseId&&X.CityId==Station.Station.CityId;});
+            View.bOperational=Station.Station.Status==EHansaTradeStationStatus::Active&&Presence&&Presence->Status==EHansaForeignPresenceStatus::Active&&Presence->Capabilities.ContainsByPredicate([](const auto& C){return C.CapabilityId==TEXT("PresenceCapability.StationOrders")&&C.bGranted;});
+            if(const auto* Policy=Registry->FindCityTradePolicyForCity(Station.Station.CityId.ToString())){
+                View.bOperational&=!Policy->DeniedCapabilityIds.Contains(TEXT("PresenceCapability.StationOrders"));
+                View.MaximumCapMilliUnits=Policy->MaximumOrderCapMilliUnits;
+                View.MaximumBudgetPfennig=Policy->MaximumOrderBudgetPfennig;
+            }
+            for(const auto& Market:Source.GetMarkets())if(Market.CityId==Station.Station.CityId)
+                View.GoodIds.AddUnique(Market.GoodId.ToString());
+            View.GoodIds.Sort();
+            for(const auto& Order:Station.Station.Orders){
+                FHansaReplicatedStationOrder Item;
+                Item.Id=static_cast<int64>(Order.Id);Item.GoodId=Order.Terms.GoodId.ToString();
+                Item.Side=static_cast<uint8>(Order.Terms.Side);Item.TargetMilliUnits=Order.Terms.TargetOrReserveMilliUnits;
+                Item.CapMilliUnits=Order.Terms.CapMilliUnits;Item.BudgetPfennig=Order.Terms.TotalBudgetPfennig;
+                Item.LimitUnitPriceMilliMarks=Order.Terms.LimitUnitPriceMilliMarks;
+                Item.ReviewedMarketUpdateTick=Order.Terms.ReviewedMarketUpdateTick;
+                Item.ReviewedUnitPriceMilliMarks=Order.Terms.ReviewedUnitPriceMilliMarks;
+                Item.SpentPfennig=Order.SpentPfennig;Item.NextUpdateTick=Order.NextUpdateTick;
+                Item.bPaused=Order.bPaused;Item.bCancelled=Order.bCancelled;
+                for(const auto& Event:Order.History){
+                    FHansaReplicatedStationOrderExecution E;E.Tick=Event.Tick;
+                    E.RequestedMilliUnits=Event.RequestedMilliUnits;E.AppliedMilliUnits=Event.AppliedMilliUnits;
+                    E.MoneyDelta=Event.MoneyDelta;E.Outcome=static_cast<uint8>(Event.Outcome);
+                    E.Blocker=static_cast<uint8>(Event.Blocker);Item.History.Add(E);
+                }
+                View.Orders.Add(MoveTemp(Item));
+            }
+            OutProjection.StationOrders.Add(MoveTemp(View));
+        }
+        // Presence progression is private to its owning house and replaced in full on each projection.
+        if(const auto* Registry=RuntimeHost->GetEconomicRegistry())for(const auto& Presence:Source.GetForeignPresences())if(Presence.HouseId==Client->HouseId){
+            FHansaReplicatedPresence View;View.City=FName(*Presence.CityId.ToString());View.Specialization=Hansa::UI::BuildTradeSpecialization(Source,*Registry,Client->HouseId,View.City);View.CurrentStage=Presence.CurrentStageDisplayName;View.Decisions=Hansa::UI::BuildTradeDecisions(Source,*Registry,Client->HouseId,View.City,RuntimeHost->GetAuthorityScenarioId());
+            View.bOfficeVisual=Presence.CurrentStageId.Contains(TEXT("MerchantOffice"))||Presence.NextStages.ContainsByPredicate([](const auto& Stage){return Stage.StageId.Contains(TEXT("MerchantOffice"));});
+            View.bOfficeBuilt=Presence.Capabilities.ContainsByPredicate([](const auto& Capability){return Capability.CapabilityId==TEXT("PresenceCapability.MerchantOffice")&&Capability.bGranted;});
+            View.Status=Presence.Status==EHansaForeignPresenceStatus::Suspended?TEXT("Suspended"):Presence.Status==EHansaForeignPresenceStatus::Revoked?TEXT("Revoked"):TEXT("Active");
+            View.UpgradeStatus=static_cast<uint8>(Presence.Upgrade.Status);View.CompletionTick=Presence.Upgrade.CompletionTick.GetValue();
+            if(Presence.Upgrade.Status==EHansaPresenceUpgradeStatus::AwaitingMaterials){
+                View.ConstructionDelivery=FString::Printf(TEXT("Deliver materials using inventory #%llu in this city. The current station remains operational.\n"),Presence.Upgrade.FundingInventoryId.GetValue());
+                if(const auto* Stage=Registry->FindPresenceStage(Presence.Upgrade.TargetStageId))for(const auto& Cost:Stage->UpgradeGoods){const auto* G=Presence.Upgrade.DeliveredGoods.FindByPredicate([&](const auto& X){return X.GoodId.ToString()==Cost.GoodId;});View.ConstructionDelivery+=FString::Printf(TEXT("%s: delivered %.1f / %.1f units\n"),*Cost.GoodId,double(G?G->Quantity.GetRawValue():0)/1000.,double(Cost.QuantityMilliUnits)/1000.);}
+            }
+            const bool LocalConstruction=Source.GetTradeStations().ContainsByPredicate([&](const auto& S){return S.Station.Id==Presence.StationId&&S.Station.ConstructionSite.bLocalDelivery;});
+            const auto* Next=Presence.NextStages.IsEmpty()?nullptr:&Presence.NextStages[0];
+            if(Next){
+                View.NextStageId=Next->StageId;View.NextStage=Next->DisplayName;View.bProgressMet=Next->bProgressRequirementsMet;
+                for(const auto& R:Next->Requirements){auto& V=View.Requirements.AddDefaulted_GetRef();V.Id=R.RequirementId;V.Description=R.Description;V.Current=R.CurrentValue;V.Required=R.RequiredValue;V.bMet=R.bMet;}
+                if(const auto* Stage=Registry->FindPresenceStage(Next->StageId)){
+                    for(const auto& Id:Stage->GrantedCapabilityIds){const auto* C=Registry->FindPresenceCapability(Id);View.Unlocks+=(C?C->DisplayName:Id)+TEXT("; ");}
+                    if(Presence.Upgrade.Status==EHansaPresenceUpgradeStatus::Requested){
+                        for(const auto& Inv:Source.GetInventories()){
+                            bool Owned=false;FString Label;
+                            if(Inv.OwnerKind==EHansaInventoryOwnerKind::TradeStation){Owned=Source.GetTradeStations().ContainsByPredicate([&](const auto& X){return X.Station.InventoryId==Inv.Id&&X.Station.OwnerId==Client->HouseId;});Label=TEXT("Station");}
+                            else if(Inv.OwnerKind==EHansaInventoryOwnerKind::Vehicle){Owned=Source.GetVehicles().ContainsByPredicate([&](const auto& X){return X.Id==Inv.VehicleId&&X.OwnerId==Client->HouseId;});Label=TEXT("Ship or vehicle");}
+                            else if(Inv.OwnerKind==EHansaInventoryOwnerKind::Building||Inv.OwnerKind==EHansaInventoryOwnerKind::Warehouse){Owned=Source.GetBuildingWorldProjections().ContainsByPredicate([&](const auto& X){return X.BuildingId==Inv.BuildingId&&X.OwnerId==Client->HouseId;});Label=TEXT("Building or warehouse");}
+                            if(!Owned)continue;
+                            FHansaEstablishmentChoice C;C.Id=LexToString(Inv.Id.GetValue());C.Label=FText::FromString(FString::Printf(TEXT("%s · inventory #%llu"),*Label,Inv.Id.GetValue()));C.bEligible=OutProjection.OwnerMoneyPfennig>=Stage->UpgradeCostPfennig&&Presence.Status==EHansaForeignPresenceStatus::Active;
+                            FString Detail=FString::Printf(TEXT("Treasury %lld pfennig · spend %lld · afterward %lld.\n"),OutProjection.OwnerMoneyPfennig,Stage->UpgradeCostPfennig,OutProjection.OwnerMoneyPfennig-Stage->UpgradeCostPfennig);
+                            for(const auto& G:Stage->UpgradeGoods){const auto* Stock=Inv.Stocks.FindByPredicate([&](const auto& X){return X.GoodId.ToString()==G.GoodId;});const int64 Available=Stock?Stock->Available.GetRawValue():0;C.bEligible&=LocalConstruction?(Inv.OwnerKind==EHansaInventoryOwnerKind::Vehicle||Inv.CityId==Presence.CityId):Available>=G.QuantityMilliUnits;const auto* Good=Registry->FindGood(G.GoodId);Detail+=FString::Printf(TEXT("%s: need %.1f · available %.1f units.\n"),*(Good?Good->DisplayName:G.GoodId),double(G.QuantityMilliUnits)/1000.,double(Available)/1000.);}
+                            if(!C.bEligible)Detail+=TEXT("Insufficient treasury, materials, or access. Replenish this source before review.\n");
+                            Detail+=LocalConstruction?TEXT("Pay once on confirmation. Deliver materials in this city to start the upgrade. The current station stays operational."):TEXT("Selected stock and treasury are consumed only after confirmation. Check route and production commitments.");
+                            C.Detail=FText::FromString(Detail);C.Transfer=C.Detail;View.Sources.Add(MoveTemp(C));
+                        }
+                        View.Sources.Sort([](const auto& A,const auto& B){return FCString::Strtoui64(*A.Id,nullptr,10)<FCString::Strtoui64(*B.Id,nullptr,10);});
+                    }
+                }
+            }
+            if(LocalConstruction&&Next&&Next->StageId==TEXT("PresenceStage.MerchantOffice")){
+                View.Sources=Hansa::UI::BuildMerchantOfficeSources(Source,*Registry,Client->HouseId,View.City);
+                if(Presence.Upgrade.Status==EHansaPresenceUpgradeStatus::AwaitingMaterials){
+                    const auto* Delivery=View.Sources.FindByPredicate([&](const auto& C){return C.Id==LexToString(Presence.Upgrade.FundingInventoryId.GetValue());});
+                    if(Delivery)View.ConstructionDelivery=TEXT("Upgrade paid. ")+Delivery->DeliveryStatus.ToString()+TEXT("\n")+Delivery->Transfer.ToString();
+                }
+            }
+            for(int32 I=FMath::Max(0,Presence.History.Num()-8);I<Presence.History.Num();++I){const auto& E=Presence.History[I];const TCHAR* Kind=E.Kind==EHansaPresenceHistoryKind::UpgradeRequested?TEXT("Review accepted"):E.Kind==EHansaPresenceHistoryKind::UpgradeFunded?TEXT("Funding accepted"):E.Kind==EHansaPresenceHistoryKind::UpgradeCompleted?TEXT("Construction completed"):TEXT("Lawful contribution");View.History+=FString::Printf(TEXT("%s ago · %s%s%s%s\n"),*Hansa::UI::PresenceDuration(FMath::Max<int64>(0,Source.GetClock().GetTick().GetValue()-E.Tick.GetValue()),Source.GetClock().GetMinutesPerTick()).ToString(),Kind,E.QuantityMilliUnits?*FString::Printf(TEXT(" · %.1f units"),double(E.QuantityMilliUnits)/1000.):TEXT(""),E.MoneyPfennig?*FString::Printf(TEXT(" · %lld pfennig"),E.MoneyPfennig):TEXT(""),E.SourceEventSequence?*FString::Printf(TEXT(" · event #%llu"),E.SourceEventSequence):TEXT(""));}
+            // Each report is scoped to this owner and a specific lease. Include empty reports
+            // so revocation/removal replaces earlier client data rather than retaining it.
+            auto Construction=Hansa::UI::BuildTradeConstruction(Source,*Registry,Client->HouseId,View.City,0,NAME_None);
+            const auto Plots=Construction.Plots;
+            if(Plots.Num()>FHansaClientProjectionSnapshot::MaximumCollectionEntries)
+            {
+                OutProjection={};OutError=TEXT("The authorized construction report exceeded its lease limit.");return false;
+            }
+            View.ConstructionReports.Add(MoveTemp(Construction));
+            for(const auto& Plot:Plots)
+                if(Plot.Id!=View.ConstructionReports[0].SelectedLease)
+                {
+                    auto Report=Hansa::UI::BuildTradeConstruction(Source,*Registry,Client->HouseId,View.City,Plot.Id,NAME_None);
+                    // Common plot geometry travels once; per-plot permissions/costs are separate.
+                    Report.Plots.Reset();View.ConstructionReports.Add(MoveTemp(Report));
+                }
+            OutProjection.Presences.Add(MoveTemp(View));
+        }
+        OutProjection.TradeWorkspace=Hansa::UI::BuildRemoteTradeWorkspace(*RuntimeHost,Source,OutProjection);
+        FHansaClientProjectionSnapshot FullAuthorizedView = OutProjection;
 		if (!OutProjection.bFullRefresh && Client->bHasLastFullProjection)
 		{
+            if(FHansaReplicatedTradeWorkspace::StaticStruct()->CompareScriptStruct(&Client->LastFullProjection.TradeWorkspace,&OutProjection.TradeWorkspace,0)){OutProjection.TradeWorkspace={};OutProjection.bTradeWorkspaceIncluded=false;}
 			MakeDeltaCollection(Client->LastFullProjection.Placements, OutProjection.Placements,
 				TEXT("placements"), [](const FHansaReplicatedPlacement& V) { return LexToString(V.BuildingId); }, OutProjection.Removed);
 			MakeDeltaCollection(Client->LastFullProjection.Markets, OutProjection.Markets,
@@ -1010,7 +1229,7 @@ namespace Hansa::Multiplayer
 		Client->bHasLastFullProjection = true;
 
 		const int32 Maximum = FHansaClientProjectionSnapshot::MaximumCollectionEntries;
-		if (OutProjection.Placements.Num() > Maximum || OutProjection.Markets.Num() > Maximum ||
+		if (OutProjection.Presences.Num() > Maximum || OutProjection.StationOrders.Num() > Maximum || OutProjection.StationLedgers.Num() > Maximum || OutProjection.StationEstablishments.Num() > Maximum || OutProjection.Placements.Num() > Maximum || OutProjection.Markets.Num() > Maximum ||
 			OutProjection.Routes.Num() > Maximum || OutProjection.Inventories.Num() > Maximum ||
 			OutProjection.Productions.Num() > Maximum || OutProjection.PopulationCohorts.Num() > Maximum ||
 			OutProjection.CitySummaries.Num() > Maximum || OutProjection.Vehicles.Num() > Maximum ||

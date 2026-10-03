@@ -224,7 +224,8 @@ AHansaLubeckWorldFoundation::AHansaLubeckWorldFoundation()
 void AHansaLubeckWorldFoundation::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	if (Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld())) bUseAuthoredWorld = true;
+	if (Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld()) ||
+		Hansa::Game::LubeckPlacementGrid::IsCampaignWorld(GetWorld())) bUseAuthoredWorld = true;
 	PlaceholderMaterials.Reset();
 	SunLight->SetVisibility(!bUseAuthoredWorld);
 	SkyLight->SetVisibility(!bUseAuthoredWorld);
@@ -256,6 +257,13 @@ void AHansaLubeckWorldFoundation::OnConstruction(const FTransform& Transform)
 void AHansaLubeckWorldFoundation::BeginPlay()
 {
 	Super::BeginPlay();
+    // Legacy MVP ground is native placeholder geometry rather than Landscape.
+    // Mark only land/shore for the same terrain-only traces used by the Land
+    // overlay; harbor props and water must never receive the ground treatment.
+    for (UStaticMeshComponent* Component : TopologyComponents)
+        if (Component && (Component->ComponentHasTag(TEXT("Hansa.World.Surface.Land")) ||
+            Component->ComponentHasTag(TEXT("Hansa.World.Surface.Shore"))))
+            Component->ComponentTags.AddUnique(TEXT("Hansa.Terrain"));
 	ApplyAuthoritativeSimulationLighting();
 }
 
@@ -320,6 +328,13 @@ FTransform AHansaLubeckWorldFoundation::GetAutomationStartTransform() const
 	if (Hansa::Game::LubeckPlacementGrid::IsSurveyWorld(GetWorld()))
 		return FTransform(FRotator(0,35,0), Hansa::Game::TerrainPlacement::Ground(
 			GetWorld(), Hansa::Game::LubeckPlacementGrid::SurveyStartLocation(), 100.0));
+	if (Hansa::Game::LubeckPlacementGrid::IsCampaignWorld(GetWorld()))
+	{
+		const FVector Centre=Hansa::Game::LubeckPlacementGrid::CampaignLubeckCenter();
+		const FVector Berth=Hansa::Game::LubeckPlacementGrid::CampaignLubeckWaterAnchor();
+		const FVector Focus=FMath::Lerp(Centre,Berth,0.45);
+		return FTransform(FRotator(0,35,0), Hansa::Game::TerrainPlacement::Ground(GetWorld(),Focus,100.0));
+	}
 	return AutomationStart != nullptr ? AutomationStart->GetComponentTransform() :
 		Hansa::Game::LubeckMap::AutomationStartTransform() * GetActorTransform();
 }
@@ -382,6 +397,12 @@ AHansaLubeckAutomationStart::AHansaLubeckAutomationStart(const FObjectInitialize
 
 FTransform AHansaLubeckWorldFoundation::GetCargoBerthTransform() const
 {
+    if(Hansa::Game::LubeckPlacementGrid::IsCampaignWorld(GetWorld()))
+    {
+        const FVector Outward=(Hansa::Game::LubeckPlacementGrid::CampaignLubeckWaterAnchor()-
+            Hansa::Game::LubeckPlacementGrid::CampaignLubeckCenter()).GetSafeNormal2D();
+        return FTransform(Outward.Rotation(),Hansa::Game::LubeckPlacementGrid::CampaignLubeckWaterAnchor());
+    }
     // The complete 7.81 m beam clears the north pier's eastern end (x=2125).
     return FTransform(FRotator(0,90,0),FVector(2650,850,-125))*GetActorTransform();
 }

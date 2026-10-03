@@ -19,6 +19,7 @@ struct HANSA_API FHansaSaveLoadPresentationSnapshot final
     FString SaveName=TEXT("Manual save");
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Save") bool bOpen = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Save") EHansaSaveSlotId SelectedSlot = EHansaSaveSlotId::Manual;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Save") FName SelectedSaveId = TEXT("manual");
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Save") TArray<FHansaSaveSlotMetadata> Slots;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Save") EHansaSaveLoadConfirmation Confirmation = EHansaSaveLoadConfirmation::None;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hansa|UI|Save") EHansaSaveLoadStatus Status = EHansaSaveLoadStatus::None;
@@ -41,9 +42,11 @@ public:
 	void Close();
 	void Refresh();
 	void SelectSlot(EHansaSaveSlotId SlotId);
+	void SelectSave(FName StableId);
 	void SetSavingAllowed(bool Allowed){Snapshot.bSavingAllowed=Allowed;Broadcast();}
     void SetSaveName(const FString& Name){Snapshot.SaveName=Name.Left(64).TrimStartAndEnd();}
 	void RequestSave();
+	void RequestNewSave();
 	void RequestLoad();
     void ReportOperationFailure(FText Error,FText Remedy){Snapshot.Status=EHansaSaveLoadStatus::Error;Snapshot.StatusMessage=MoveTemp(Error);Snapshot.StatusRemedy=MoveTemp(Remedy);Broadcast();}
 	void Confirm();
@@ -55,7 +58,7 @@ public:
 	FHansaSaveLoadFocusRestoreRequested& OnFocusRestoreRequested() { return FocusRestoreRequested; }
 private:
 	void Broadcast();
-	void PerformSave();
+	void PerformSave(bool bCreateNew = false);
 	void PerformLoad();
 	TWeakObjectPtr<UHansaSaveSubsystem> Subsystem;
 	FDelegateHandle SlotsChangedHandle;

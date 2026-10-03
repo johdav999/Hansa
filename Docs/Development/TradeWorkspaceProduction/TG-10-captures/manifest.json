@@ -1,0 +1,139 @@
+{
+  "mode": "real game viewport, native pixels",
+  "images": [
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1536x1024-scale1.0-list.png",
+      "sha256": "f8b5dfd1560d2f00b1e5b96094a2b981c553fbd831ac8d7b12981496ae1ee84c",
+      "pixels": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1536x1024-scale1.0-list.tsv",
+      "sha256": "efdcf6021b5c66e502c6076b5e7b49b3472e98fe53f65a4942096f6d16ff027e"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1536x1024-scale1.0-editor.png",
+      "sha256": "cef358ae90729b153834385047e0b1e55e80b0a47a86d791d6d714294f6f7d04",
+      "pixels": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1536x1024-scale1.0-editor.tsv",
+      "sha256": "6f35ee629884eeb49e82b1ee504bea2e1cf5e37277c2399708f3901de1543ba3"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1536x1024-scale1.0-editor-focused.png",
+      "sha256": "080747386ee98dd91271524ef055a2a0684371d16199cbc107d2e23290a76978",
+      "pixels": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1536x1024-scale1.0-editor-focused.tsv",
+      "sha256": "d2e07ed664f549df2cb4d707ccb572e75ba1490b7cf7a36df03980c9db626731"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1280x720-scale1.4-list.png",
+      "sha256": "18ac23ae24052a65019bcac917be5aa860aa3150a3f59ab30901b854c8ec6afd",
+      "pixels": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1280x720-scale1.4-list.tsv",
+      "sha256": "f5f358ead43a8bcb3f92d856fb66c5955aed37eccd8afbb6b4e5a9beaf7a8808"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1280x720-scale1.4-editor.png",
+      "sha256": "8f866e17cea561619051c5fa450f387914c4603a1f01c5ae08bcf3c3b93d49f0",
+      "pixels": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1280x720-scale1.4-editor.tsv",
+      "sha256": "150abe2d72b371978cc60abbe6db7003df97725956ba4e8b91a85fa6ed3fe57d"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1280x720-scale1.4-editor-focused.png",
+      "sha256": "5f64c6415c00d71b0002d2c3c980ed427d12751cefe072be6b531175e55d5569",
+      "pixels": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1280x720-scale1.4-editor-focused.tsv",
+      "sha256": "9ad949c53aa5ecade567fd971784998751ae151b24c813e338f991e5f3d49c0f"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1920x1080-scale1.0-list.png",
+      "sha256": "ded331c79995ccdd6d0ff7867ddc52290d2aa30bc33b4623bf8e27612517a74c",
+      "pixels": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1920x1080-scale1.0-list.tsv",
+      "sha256": "963707343d978446fcd94ae693949643fc7fa4e518e820d7a555ebff88bee11e"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1920x1080-scale1.0-editor.png",
+      "sha256": "2aed3d7f7d9fef844adfab84c0221fab4f33665f6425497d61c89918a1664746",
+      "pixels": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1920x1080-scale1.0-editor.tsv",
+      "sha256": "228f40b25754562846d7de96810e039ae2374a9e451389282d4c32fb7c982981"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1920x1080-scale1.0-editor-focused.png",
+      "sha256": "b3285b6fd258aa10608a5ffe348e22693f57694dbe123276a538caa00c8e9e8d",
+      "pixels": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/orders-1920x1080-scale1.0-editor-focused.tsv",
+      "sha256": "d5f73b8b5bcd5f6b2b9d3a54d4bbcd2ae47996777df0196ccbbdbb624d31eeb4"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/reference-vs-native-1536x1024.png",
+      "sha256": "85f485498e4dc4dd99d627bd240161b2d0171765d9989c095ee07961e4d860b4",
+      "pixels": [
+        3072,
+        1024
+      ],
+      "note": "left reference, right native; no resampling"
+    },
+    {
+      "file": "Docs/Development/TradeWorkspaceProduction/TG-10-captures/reference-vs-native-overlay-1536x1024.png",
+      "sha256": "27596ae8949f15ddaa23baf51f990334d4f214c6eba7797589807de278751f0a",
+      "pixels": [
+        1536,
+        1024
+      ],
+      "note": "50 percent reference/real-game blend; no resampling"
+    }
+  ],
+  "reference": "Docs/Images/UI/TradeWorkspace/trade-workspace--orders--composed-reference--1536x1024--v1.png",
+  "testArtifacts": [
+    "Saved/BuildArtifacts/20260923-173209655-automation-Hansa.UI.Trade",
+    "Saved/BuildArtifacts/20260923-172607374-automation-Hansa.UI.TradeMap.Ledger",
+    "Saved/BuildArtifacts/20260923-173433054-gui-repair-1536-1024",
+    "Saved/BuildArtifacts/20260923-173523761-gui-repair-1920-1080",
+    "Saved/BuildArtifacts/20260923-174046789-gui-repair-1280-720"
+  ]
+}

@@ -1,0 +1,549 @@
+{
+  "date": "2026-09-23",
+  "build": "Saved/BuildArtifacts/20260923-100853129-build-HansaEditor-Win64-Development",
+  "reference": "Docs/Images/UI/TradeWorkspace/trade-workspace--schedule--reference--1536x1024--v1.png",
+  "mode": "Real Unreal viewport captures; no generated screen used as implementation evidence",
+  "capture_stages": {
+    "0": "Owned / Overview / Cargo (compact: Overview page)",
+    "2": "Rival / Presence / private manifest (compact: Presence page)",
+    "3": "Directory after controller menu check",
+    "4": "Map after keyboard tools check",
+    "5": "Owned Cargo page",
+    "6": "Rival private Schedule page",
+    "7": "Overview after focus scrolling to port details",
+    "8": "Presence after native pointer-wheel scrolling"
+  },
+  "runs": {
+    "reference": "GUI native capture passed: C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260923-100929243-gui-repair-1536-1024",
+    "1080": "GUI native capture passed: C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260923-101006120-gui-repair-1920-1080",
+    "720": "GUI native capture passed: C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260923-101041038-gui-repair-1280-720",
+    "accessible": "GUI native capture passed: C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260923-100929668-gui-repair-1280-720",
+    "ultrawide": "GUI native capture passed: C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260923-101006597-gui-repair-3412-1132",
+    "scale80": "GUI native capture passed: C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260923-101042482-gui-repair-1920-1080",
+    "regression": "Automation tests succeeded. Filter: Hansa.UI.Trade. Tests found: 17. Artifacts: C:\\Users\\Johan\\source\\repos\\Unreal\\Hansa\\Hansa\\Saved\\BuildArtifacts\\20260923-100929436-automation-Hansa.UI.Trade"
+  },
+  "files": [
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-0.png",
+      "sha256": "0ec19c8d6f0df85160a3bfa644a19b6c50cf58934c3d3ae83dfffe484712222b",
+      "bytes": 727004,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-0.tsv",
+      "sha256": "ee7f7347623bac1f523f2d5d80089d6579ff09aad794bf6b2694a5a9723a90ab",
+      "bytes": 41042
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-2.png",
+      "sha256": "7eda48bb5632824806fabf209e943640992a11a8fc4ff5047fd873d84067643d",
+      "bytes": 470170,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-2.tsv",
+      "sha256": "6504cc8a528a1fd93790d7a7833529ef352ab1ba0e4ef40f6cb8cc5f536e17f6",
+      "bytes": 24606
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-3.png",
+      "sha256": "a5589333d36de9db73f8c992e2f7a3c6e007d0bb773732574033355efe77c733",
+      "bytes": 96032,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-3.tsv",
+      "sha256": "ec4c70bf5c547f5480115d90e6bebd77bddd8e0f8f23668a164331434bda79a6",
+      "bytes": 41252
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-4.png",
+      "sha256": "716aa2fb4633227564fd91d52d9c49cc738a97368ff883e98a98073b85126137",
+      "bytes": 1216752,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-4.tsv",
+      "sha256": "b2adb9b0a4c45cee130e8b0096a2c743c3a092fe3ae4053a35c556553b44d953",
+      "bytes": 41628
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-5.png",
+      "sha256": "6f5450de8e0c34ca59331951ad5d634d80a0b1823146862923ef6ed219a7145c",
+      "bytes": 338648,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-5.tsv",
+      "sha256": "3eebf45a511fdcfe789a5cfb721c882bcee9983c9031ea73f75d3c0ce8ac5227",
+      "bytes": 41070
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-6.png",
+      "sha256": "3d85d072588d1e026e96a2466873e56dcfaca6af93be6c3f396553d982209c97",
+      "bytes": 821394,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-6.tsv",
+      "sha256": "bb5a89a076c4c9e5f7ba60a194c3e4d36d75abcf2ed24e97070e4817ede57cc9",
+      "bytes": 24566
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-7.png",
+      "sha256": "e2146f95fb8566565e1afd5198d57fae2d649e24ad0be3b478c34e93a9e5811b",
+      "bytes": 495578,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-7.tsv",
+      "sha256": "939ee907693187eada5c201936e6965b2a550f24aa6f23e844db55dfc5dc54c4",
+      "bytes": 41090
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-8.png",
+      "sha256": "27c659dd5b7c94f13d79bb5ccc4c84bbed8c546e9a47471ce45a749817f1c701",
+      "bytes": 610455,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.0-8.tsv",
+      "sha256": "1f1ff758de879c65180a21c6447718e94dccd6225ea3ff2447851ca63de46bcd",
+      "bytes": 41170
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-0.png",
+      "sha256": "2024ca663f1c0c8f37fdd06f5c7dee11a5677462ecfd747fa839b9b3a2cdcbd8",
+      "bytes": 131757,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-0.tsv",
+      "sha256": "eb6a22ad71a9a8a71150e1b0978f213385071ca95a5724c5083bab25e2b2f334",
+      "bytes": 41024
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-2.png",
+      "sha256": "defb65768bc30d49abfcc748ab49994ee61f7e5cfb07e78dd69975ce679b99ba",
+      "bytes": 146493,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-2.tsv",
+      "sha256": "3273817ff6b0ecd1cb8d1fdade87c67cad82bf5866a27d484a12a752283fc770",
+      "bytes": 24572
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-3.png",
+      "sha256": "57fc8b2479892b8a11ef1c7fd5f3081f6543a4fe7f4c31e3afd0f1772cc67dbb",
+      "bytes": 122745,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-3.tsv",
+      "sha256": "15d685a63a949b987706499c0b78ee98f78b3a48398633be86b1694899360b1e",
+      "bytes": 41138
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-4.png",
+      "sha256": "c4006c0161dcf46682f9cfe1d0621fc09832dc219c9078d387106567c98d7b6a",
+      "bytes": 708524,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-4.tsv",
+      "sha256": "d84337dbdc81bd560a8bf279176dd4ac9c6ca2f5cbb61d517e8d48d037278930",
+      "bytes": 41620
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-5.png",
+      "sha256": "ec5dd16b817c6ed951219f963e8679e159043a3a57d742125c6f778dade2e14b",
+      "bytes": 163350,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-5.tsv",
+      "sha256": "8630cb94c18a64793c408644335d412770ffd3d7eaec992bc832660179c92e50",
+      "bytes": 41072
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-6.png",
+      "sha256": "e31bcdf232c80760694b6b259e90ec59a1ccb72d5eb6eca3b6bc6f34218d86a1",
+      "bytes": 143991,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-6.tsv",
+      "sha256": "cab812721b202762d34acc7867bff3ce491d25aa602d989db230792d230b8360",
+      "bytes": 24568
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-7.png",
+      "sha256": "6119464fcb14acc0d61c457fbf8eb17c550c27d3e6d1fa44467467cecc4baed3",
+      "bytes": 137400,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-7.tsv",
+      "sha256": "a0ad07df1a3f03642806a958a0735e7401098c024eb15a7c940554c8decf06ff",
+      "bytes": 41072
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-8.png",
+      "sha256": "06da02de89319751117c940c564ca2947dc755c495e63648f0233031b2b50308",
+      "bytes": 148811,
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1280x720-scale-1.4-8.tsv",
+      "sha256": "aacbac946aafbf51dd479b10d1ea43103fd620363911ea64ed1f5a140e8a1cf6",
+      "bytes": 41072
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1536x1024-scale-1.0-0.png",
+      "sha256": "4594666c339263554cbe868769d96312c4dbcfe14d92a6a89cbacfe22ef9712a",
+      "bytes": 1835973,
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1536x1024-scale-1.0-0.tsv",
+      "sha256": "0bf11f5e799108235a6eb1cd81548da15f048d8212fbe81f5b884f5cab32f39f",
+      "bytes": 41882
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1536x1024-scale-1.0-2.png",
+      "sha256": "3977407807a8c59b91ad5494bddab57dc8f37ce5de4aa8e2ad09a16a48a39220",
+      "bytes": 1866341,
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1536x1024-scale-1.0-2.tsv",
+      "sha256": "43666e3cb8e1c81d54acba77980ae0d0638ba956b7f8af2c7cf26f3ea36ccc91",
+      "bytes": 25416
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1536x1024-scale-1.0-7.png",
+      "sha256": "d7f20ead2dca02b9253ea97bd96b1fa295374c06130631470957a3abccb7708d",
+      "bytes": 1738112,
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1536x1024-scale-1.0-7.tsv",
+      "sha256": "9aa74221960ee3d1d87f11c522729d6204507444e5a752decdab1d6e7e7b887b",
+      "bytes": 41942
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1536x1024-scale-1.0-8.png",
+      "sha256": "c66af057792c48aa95e1ead87aa14710b7ea5272debaf1059879bf75f512c012",
+      "bytes": 1777363,
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1536x1024-scale-1.0-8.tsv",
+      "sha256": "939e10973084765c6e2f2b87bafa5a46f26d24027af5700f112d81fec51a0864",
+      "bytes": 42062
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-0.8-0.png",
+      "sha256": "dd28982cf165c9a80f3499d71537445f3fcf7229d53a2028f53fbbf6aa7b7bdf",
+      "bytes": 2561542,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-0.8-0.tsv",
+      "sha256": "4e81e9e35f4cb196df7c515e097cbc662b159c89d5461b120aa6024e064efd7e",
+      "bytes": 42060
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-0.8-2.png",
+      "sha256": "37c761f39cdcf800b7b6c920e0d1610a03242f0a972e3e3e1555bc40f88e0598",
+      "bytes": 2618247,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-0.8-2.tsv",
+      "sha256": "ded65548f2e6fdbc72deeceedbd4aa37cfa4549e92c8e768c7ecf0a438c46451",
+      "bytes": 25528
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-0.8-7.png",
+      "sha256": "7fbfe20795654fb8a4b03c673f47788255ef2d63e21aa92a768d352f7cd52dc8",
+      "bytes": 2561206,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-0.8-7.tsv",
+      "sha256": "4e81e9e35f4cb196df7c515e097cbc662b159c89d5461b120aa6024e064efd7e",
+      "bytes": 42060
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-0.8-8.png",
+      "sha256": "e3ad9b621c1f6a246d2bc68947001354c6845e677b57af1622d3e220ad2abb56",
+      "bytes": 2561519,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-0.8-8.tsv",
+      "sha256": "1029e0aeb6af9c12c0f3127504283a286f09d8841fdbccddc83c0bc08d40aa88",
+      "bytes": 42220
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-1.0-0.png",
+      "sha256": "aca7f68405bad0f325ffbb2f7b311215afd73b44c26cf611c2f88305ab4bf305",
+      "bytes": 2391426,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-1.0-0.tsv",
+      "sha256": "e3578ce7af7bc61a12c3bd3e8db21d73a43817de3fc15369bffce625971a2af5",
+      "bytes": 41920
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-1.0-2.png",
+      "sha256": "b541d7326f7a045cb115c5fcb3bf13f87a416736268fa5b2b4b845c3bc675c76",
+      "bytes": 2438663,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-1.0-2.tsv",
+      "sha256": "dc2adaf75d80a9d3879cab2c596f00fa87afd3ef8a053699e837b7d903ae4f3e",
+      "bytes": 25448
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-1.0-7.png",
+      "sha256": "9ac0dc02a5152f40be534ed188721c89880eb43a9415b3522834d465549901bd",
+      "bytes": 2305110,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-1.0-7.tsv",
+      "sha256": "c9b07b99eccf7bb3dfe9ae45bbbf0a49c0c65555a03eee354324de5df02c766e",
+      "bytes": 41980
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-1.0-8.png",
+      "sha256": "32305e9978b783b0abe5754f5066ba9ae3f4056dae066e7960554ecaa2f68ac9",
+      "bytes": 2325080,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-1920x1080-scale-1.0-8.tsv",
+      "sha256": "1e061c3132dd63ddce3cb2186be729c2efe077d6e9fb0400b4089d56c065251f",
+      "bytes": 42140
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-3412x1132-scale-1.0-0.png",
+      "sha256": "0fec2ad95d3f3d1a713902f3c63510d227715784faedc04d59a6b3ddc386cf47",
+      "bytes": 4042150,
+      "dimensions": [
+        3412,
+        1132
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-3412x1132-scale-1.0-0.tsv",
+      "sha256": "11edd9a4738e899a9b5be05d55d1d930aef2cad5a0b5a98371db6704ca1b0f31",
+      "bytes": 42102
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-3412x1132-scale-1.0-2.png",
+      "sha256": "b64a93bc8a2c8fc920e9601fc43315681abda5981de9b8b75a70b45762ee70a7",
+      "bytes": 4078202,
+      "dimensions": [
+        3412,
+        1132
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-3412x1132-scale-1.0-2.tsv",
+      "sha256": "89e86904e9f1810946ac0f8657ea06c749348968501ee977bf3ff34fb3818afe",
+      "bytes": 25610
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-3412x1132-scale-1.0-7.png",
+      "sha256": "52829148380112ec624a54ec463e98fef6793edd88b189907df3602a53882d8f",
+      "bytes": 3998439,
+      "dimensions": [
+        3412,
+        1132
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-3412x1132-scale-1.0-7.tsv",
+      "sha256": "79669b7f98683a4bdde28a6177e0e8a46d3a697d15ecd473d98210306ad465ca",
+      "bytes": 42142
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-3412x1132-scale-1.0-8.png",
+      "sha256": "c02224210eea40d2fab13b4d05fa3dd45c70c450324c20128d452a80e6a6d4ae",
+      "bytes": 3997817,
+      "dimensions": [
+        3412,
+        1132
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/trade-3412x1132-scale-1.0-8.tsv",
+      "sha256": "dc4a1108b2fc849462ed09e37758c57d3d4d128e54c6e7dea78e0ff1eab3d200",
+      "bytes": 42302
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/reference-game--overlay50--1536x1024.png",
+      "sha256": "6de2e6c5660410df7e1407f039b4df1b163b3dcd39dece87fb385b54fdb125a7",
+      "bytes": 2260058,
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "Docs/Development/TradeWorkspaceProduction/ReferenceFidelity-captures/reference-left--game-right--3072x1024.png",
+      "sha256": "e5609038bbdfa199144ff786beb02446db375068275fe473d5ecc4fbabaf4852",
+      "bytes": 4025220,
+      "dimensions": [
+        3072,
+        1024
+      ]
+    },
+    {
+      "path": "SourceArt/UI/TradeWorkspace/trade-workspace--land--default--1254x1254--v1.png",
+      "sha256": "50b1242252726f692d8e7423d0772559de2fb88fbff97c9bd8315f84111ae3f7",
+      "bytes": 3160446,
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "path": "SourceArt/UI/TradeWorkspace/trade-workspace--linen--default--1254x1254--v1.png",
+      "sha256": "2629d228a2a15d87032ae7bfb59ca1cf682ad7b4957332742c29c7cdf04ef888",
+      "bytes": 2202424,
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "path": "SourceArt/UI/TradeWorkspace/trade-workspace--rostock--default--1536x1024--v1.png",
+      "sha256": "3689a8c293a41e3c9941c7f8b36342c866f48513b19abeca72e017cdd07f7776",
+      "bytes": 3414278,
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "SourceArt/UI/TradeWorkspace/trade-workspace--sea--default--1254x1254--v1.png",
+      "sha256": "79e063cb57c083ba740f5477f815371518bec0b626291541ee321d80f2eb58a8",
+      "bytes": 2804418,
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "path": "Content/Hansa/UI/TradeWorkspace/T_UI_TradeWorkspace_Land_Default.uasset",
+      "sha256": "4446d1be92f5fe1ed94b0e6963a59f3832ea7790974ef0d694199013f5391889",
+      "bytes": 3186721
+    },
+    {
+      "path": "Content/Hansa/UI/TradeWorkspace/T_UI_TradeWorkspace_Linen_Default.uasset",
+      "sha256": "fad8375ff56f361361d28a1a9c3a0e1148ca283afd1df622fb9ab0c47b09beb9",
+      "bytes": 2422269
+    },
+    {
+      "path": "Content/Hansa/UI/TradeWorkspace/T_UI_TradeWorkspace_Rostock_Default.uasset",
+      "sha256": "0b1ee7d2928ceea58e6f159e4499f2a167a99c141799ce153582cf9b6ca23ee8",
+      "bytes": 3327296
+    },
+    {
+      "path": "Content/Hansa/UI/TradeWorkspace/T_UI_TradeWorkspace_Sea_Default.uasset",
+      "sha256": "0e8912ff7a0cf1552a95a7f6f5c3e8df149c32b707a0a626b51a70cf6adbd35e",
+      "bytes": 2899891
+    }
+  ]
+}

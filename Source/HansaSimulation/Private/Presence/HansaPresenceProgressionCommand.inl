@@ -25,8 +25,48 @@ case EHansaGameplayCommandType::FundPresenceUpgrade:
  if(Funding.IsSet()&&Funding->OwnerKind==EHansaInventoryOwnerKind::TradeStation){const auto* S=Candidate.TradeStations.FindByPredicate([&](const auto& V){return V.InventoryId==P.FundingInventoryId;});bOwned=S&&S->OwnerId==Header.Authority.IssuingHouseId;}
  if(Funding.IsSet()&&Funding->OwnerKind==EHansaInventoryOwnerKind::Vehicle){const auto* V=Candidate.Vehicles.FindByPredicate([&](const auto& X){return X.Id==Funding->VehicleId;});bOwned=V&&V->OwnerId==Header.Authority.IssuingHouseId;}
  if(Funding.IsSet()&&(Funding->OwnerKind==EHansaInventoryOwnerKind::Building||Funding->OwnerKind==EHansaInventoryOwnerKind::Warehouse)){const auto* B=Candidate.Buildings.FindByPredicate([&](const auto& X){return X.Id==Funding->BuildingId;});bOwned=B&&B->OwnerId==Header.Authority.IssuingHouseId;}
- if(!Presence||!Target||!House||!Funding.IsSet()||!bOwned||Presence->Upgrade.Status!=EHansaPresenceUpgradeStatus::Requested||Presence->Upgrade.TargetStageId!=P.TargetStageId) return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeStateInvalid,CommandIndex);
+ const auto* Policy=Registry?Registry->FindCityTradePolicyForCity(P.CityId.ToString()):nullptr;
+ if(!Presence||!Target||!House||!Funding.IsSet()||!bOwned||!Policy||Presence->Status!=EHansaForeignPresenceStatus::Active||
+  !Registry->IsValidPresenceTransition(P.CityId.ToString(),Presence->CurrentStageId,P.TargetStageId))return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeStateInvalid,CommandIndex);
+ // A placed Merchant Office can be requested and funded by one reviewed command.
+ // Both steps commit against the same candidate, so rejection never leaves a partial request.
+ const bool Direct=Presence->Upgrade.Status==EHansaPresenceUpgradeStatus::None&&P.TargetStageId==TEXT("PresenceStage.MerchantOffice")&&
+  Candidate.TradeStations.ContainsByPredicate([&](const auto& S){return S.Id==Presence->StationId&&S.OwnerId==Header.Authority.IssuingHouseId&&S.ConstructionSite.bLocalDelivery&&S.Status==EHansaTradeStationStatus::Active;});
+ if(!Direct&&(Presence->Upgrade.Status!=EHansaPresenceUpgradeStatus::Requested||Presence->Upgrade.TargetStageId!=P.TargetStageId))return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeStateInvalid,CommandIndex);
+ const auto& C=Presence->Contributions;
+ if(C.LawfulTradeVolumeMilliUnits<Target->RequiredLawfulTradeVolumeMilliUnits||C.CompletedDeliveryCount<Target->RequiredCompletedDeliveries||
+  (C.InvestedPfennig>MAX_int64-Target->UpgradeCostPfennig?MAX_int64:C.InvestedPfennig+Target->UpgradeCostPfennig)<Target->RequiredInvestedPfennig||C.TransactionValuePfennig<Target->RequiredTransactionValuePfennig||
+  C.FulfilledShortageMilliUnits<Target->RequiredFulfilledShortageMilliUnits||C.ReliableOperatingTicks<Target->RequiredReliableOperatingTicks||C.SolventOperatingTicks<Target->RequiredSolventOperatingTicks)return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeRequirementsUnmet,CommandIndex);
  if(House->Money.GetRawValue()<Target->UpgradeCostPfennig)return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeCostUnavailable,CommandIndex);
+ auto* PlacedStation=Candidate.TradeStations.FindByPredicate([&](const auto& S){return S.Id==Presence->StationId&&S.OwnerId==Header.Authority.IssuingHouseId&&S.ConstructionSite.bLocalDelivery&&S.Status==EHansaTradeStationStatus::Active;});
+ if(PlacedStation){
+  if(Funding->OwnerKind!=EHansaInventoryOwnerKind::Vehicle&&Funding->CityId!=P.CityId)return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeCostUnavailable,CommandIndex);
+  uint8 DeliveryMode=0;
+  if(Funding->OwnerKind==EHansaInventoryOwnerKind::Vehicle){
+   const auto* Vehicle=Candidate.Vehicles.FindByPredicate([&](const auto& V){return V.CargoInventoryId==P.FundingInventoryId&&V.OwnerId==Header.Authority.IssuingHouseId&&V.Mode==EHansaRouteMode::Sea;});
+   const auto* Route=Vehicle?Candidate.Routes.FindByPredicate([&](const auto& R){return R.VehicleId==Vehicle->Id&&R.OwnerId==Vehicle->OwnerId&&R.Lifecycle!=EHansaRouteLifecycleState::Cancelled;}):nullptr;
+   if(Route&&Route->Stops.ContainsByPredicate([&](const auto& Stop){return Stop.CityId==P.CityId;})&&Route->Stops.ContainsByPredicate([&](const auto& Stop){const auto* City=Registry->FindCityMarket(Stop.CityId.ToString());return City&&!City->bMarketOnly;}))DeliveryMode=2;
+   else if(!Vehicle||Vehicle->CurrentCityId!=P.CityId||Vehicle->Navigation.IsMoving()||(Route&&Route->Lifecycle==EHansaRouteLifecycleState::Traveling))return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeCostUnavailable,CommandIndex);
+  }
+  if(Direct&&!DeliveryMode)for(const auto& Cost:Target->UpgradeGoods){
+   const auto Good=FHansaGoodId::TryParse(Cost.GoodId);if(!Good)return MakeFailure(EHansaCommandGatewayError::InvalidDefinitionContext,CommandIndex);
+   const auto Local=Candidate.InventoryLedger.CreateReadOnlyAccess().QueryStock(PlacedStation->InventoryId,Good.Value);
+   const auto Source=Candidate.InventoryLedger.CreateReadOnlyAccess().QueryStock(P.FundingInventoryId,Good.Value);
+   const int64 Available=(Local?Local->Available.GetRawValue():0)+(P.FundingInventoryId!=PlacedStation->InventoryId&&Source?Source->Available.GetRawValue():0);
+   if(Available<Cost.QuantityMilliUnits)return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeCostUnavailable,CommandIndex);
+  }
+  House->Money=FHansaMoney::FromRaw(House->Money.GetRawValue()-Target->UpgradeCostPfennig);
+  auto& U=Presence->Upgrade;U.TargetStageId=P.TargetStageId;if(Direct)U.RequestedTick=TickBefore;U.Status=EHansaPresenceUpgradeStatus::AwaitingMaterials;U.ConstructionSite=PlacedStation->ConstructionSite;U.FundingInventoryId=P.FundingInventoryId;U.SpentMoneyPfennig=Target->UpgradeCostPfennig;
+  PlacedStation->DeliveryMode=DeliveryMode;PlacedStation->FundingInventoryId=P.FundingInventoryId;
+  // Use existing local station materials before importing missing quantities.
+  for(const auto& Cost:Target->UpgradeGoods){const auto Good=FHansaGoodId::TryParse(Cost.GoodId);if(!Good)return MakeFailure(EHansaCommandGatewayError::InvalidDefinitionContext,CommandIndex);const auto Stock=Candidate.InventoryLedger.CreateReadOnlyAccess().QueryStock(PlacedStation->InventoryId,Good.Value);const int64 Raw=Stock?FMath::Min(Cost.QuantityMilliUnits,Stock->Available.GetRawValue()):0;
+   if(Raw>0){if(!Candidate.InventoryLedger.TryTransfer(FHansaInventoryEndpoint::Inventory(PlacedStation->InventoryId),FHansaInventoryEndpoint::Sink(TEXT("PresenceConstructionEscrow")),Good.Value,FHansaQuantity::FromRaw(Raw),TickBefore,Candidate.InventoryLedger.CreateReadOnlyAccess().GetLastMovementSequence()+1).IsSuccess())return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeCostUnavailable,CommandIndex);U.DeliveredGoods.Add({Good.Value,FHansaQuantity::FromRaw(Raw)});}}
+  U.DeliveredGoods.Sort([](const auto& A,const auto& B){return A.GoodId<B.GoodId;});
+  Presence->Contributions.InvestedPfennig=Presence->Contributions.InvestedPfennig>MAX_int64-Target->UpgradeCostPfennig?MAX_int64:Presence->Contributions.InvestedPfennig+Target->UpgradeCostPfennig;
+  Presence->History.Add({EHansaPresenceHistoryKind::UpgradeFunded,TickBefore,Event.GlobalSequence,P.TargetStageId,0,Target->UpgradeCostPfennig});
+  Event.Type=EHansaDomainEventType::PresenceUpgradeFunded;Event.CityId=P.CityId;Event.Value=Target->UpgradeCostPfennig;break;
+ }
+
  for(const auto& Cost:Target->UpgradeGoods){const auto G=FHansaGoodId::TryParse(Cost.GoodId);const auto S=G?Candidate.InventoryLedger.CreateReadOnlyAccess().QueryStock(P.FundingInventoryId,G.Value):TOptional<FHansaInventoryStockProjection>();if(!G||!S.IsSet()||S->Available.GetRawValue()<Cost.QuantityMilliUnits)return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeCostUnavailable,CommandIndex);}
  House->Money=FHansaMoney::FromRaw(House->Money.GetRawValue()-Target->UpgradeCostPfennig);
  for(const auto& Cost:Target->UpgradeGoods){const auto G=FHansaGoodId::TryParse(Cost.GoodId).Value;const auto Tx=Candidate.InventoryLedger.TryTransfer(FHansaInventoryEndpoint::Inventory(P.FundingInventoryId),FHansaInventoryEndpoint::Sink(TEXT("PresenceUpgrade")),G,FHansaQuantity::FromRaw(Cost.QuantityMilliUnits),TickBefore,Candidate.InventoryLedger.CreateReadOnlyAccess().GetLastMovementSequence()+1);if(!Tx.IsSuccess())return MakeFailure(EHansaCommandGatewayError::PresenceUpgradeCostUnavailable,CommandIndex);}
